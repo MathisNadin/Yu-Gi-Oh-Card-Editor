@@ -6,9 +6,9 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Component, MouseEvent } from 'react';
+import { Component, MouseEvent, PropsWithChildren } from 'react';
 
-interface IContainerProps {
+interface IContainerProps extends PropsWithChildren {
   className: string;
   onClick: (e: MouseEvent) => void;
 }
@@ -32,7 +32,7 @@ export class Container extends Component<IContainerProps, IContainerState> {
 
   public render() {
     return <div className={this.props.className} onClick={e => this.onClick(e)} >
-      SALUT TOUT LE MONDE !
+      {this.props.children}
     </div>;
   }
 };
