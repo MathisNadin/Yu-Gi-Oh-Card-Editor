@@ -41,7 +41,7 @@ import { Container } from 'mn-toolkit/container/Container';
 } */
 
 function Hello() {
-  return <Container className='container' onClick={e => console.log(e)} />;
+  return <Container className='container' onClick={e => console.log('onClick', e)} />;
 }
 
 export default function App() {
