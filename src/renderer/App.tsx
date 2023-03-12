@@ -1,10 +1,11 @@
+/* eslint-disable import/order */
 /* eslint-disable prettier/prettier */
 import './App.css';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { Container } from 'mn-toolkit/container/Container';
 import { CardPreview } from './card-preview/CardPreview';
 import { CardOptions } from './card-options/CardOptions';
 import { BatchDisplay } from './batch-display/BatchDisplay';
+import { VerticalStack } from 'mn-toolkit/containable/VerticalStack';
 
 /* function Hello() {
   return (
@@ -44,11 +45,11 @@ import { BatchDisplay } from './batch-display/BatchDisplay';
 } */
 
 function Page() {
-  return <Container className='page' layout='vertical'>
-    <CardOptions  />
+  return <VerticalStack className='page'>
+    <CardOptions />
     <CardPreview />
     <BatchDisplay />
-  </Container>;
+  </VerticalStack>;
 }
 
 export default function App() {

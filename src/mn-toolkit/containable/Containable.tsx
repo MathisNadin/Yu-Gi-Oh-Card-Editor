@@ -66,6 +66,13 @@ export interface IContainableState {
 
 export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends Component<PROPS, STATE> {
 
+  public static get defaultProps(): Partial<IContainableProps> {
+    return {
+      zIndex: 'content',
+      floatPosition: 'none'
+    };
+  }
+
   public renderClasses(name?: string) {
     let classes: { [key: string]: boolean } = {};
     if (this.props.className) classes[this.props.className] = true;

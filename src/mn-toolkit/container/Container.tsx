@@ -22,7 +22,7 @@ export interface IContainerProps extends IContainableProps {
 export interface IContainerState extends IContainableState {
 }
 
-export class Container extends Containable<IContainerProps, IContainerState> {
+export class Container<PROPS extends IContainerProps, STATE extends IContainerState> extends Containable<PROPS, STATE> {
 
   public renderClasses(name?: string) {
     let classes = super.renderClasses(name);

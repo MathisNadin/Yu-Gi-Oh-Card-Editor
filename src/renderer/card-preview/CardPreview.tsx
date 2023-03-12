@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react/default-props-match-prop-types */
 /* eslint-disable react/sort-comp */
@@ -25,6 +26,8 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
 
   public render() {
     return this.renderAttributes(<div>
+      <img className='card-template' src='/assets/pictures/Contour [Bords Carrés]' alt='contour' />
+      <img className='card-template' src='/assets/pictures/Obelisk' alt='contour' />
     </div>, 'card-preview');
   }
 };
