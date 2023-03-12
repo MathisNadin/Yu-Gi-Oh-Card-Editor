@@ -45,7 +45,7 @@ import { BatchDisplay } from './batch-display/BatchDisplay';
 
 function Page() {
   return <Container className='page' layout='vertical'>
-    <CardOptions />
+    <CardOptions  />
     <CardPreview />
     <BatchDisplay />
   </Container>;

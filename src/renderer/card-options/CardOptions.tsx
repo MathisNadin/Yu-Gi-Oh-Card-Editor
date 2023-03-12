@@ -12,23 +12,16 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
-import { Container, IContainerProps, IContainerState } from 'mn-toolkit/container/Container';
 
-interface ICardOptionsProps extends IContainerProps {
+interface ICardOptionsProps extends IContainableProps {
 }
 
-interface ICardOptionsState extends IContainerState {
+interface ICardOptionsState extends IContainableState {
 }
 
-export class CardOptions extends Container {
-
-  public constructor(props: ICardOptionsProps) {
-    super(props);
-  }
-
-  public static defaultProps: Partial<ICardOptionsProps> = {
-  }
+export class CardOptions extends Containable<ICardOptionsProps, ICardOptionsState>{
 
   public render() {
     return this.renderAttributes(<div>

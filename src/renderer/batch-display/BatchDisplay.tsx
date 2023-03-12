@@ -12,23 +12,16 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
-import { Container, IContainerProps, IContainerState } from 'mn-toolkit/container/Container';
 
-interface IBatchDisplayProps extends IContainerProps {
+interface IBatchDisplayProps extends IContainableProps {
 }
 
-interface IBatchDisplayState extends IContainerState {
+interface IBatchDisplayState extends IContainableState {
 }
 
-export class BatchDisplay extends Container {
-
-  public constructor(props: IBatchDisplayProps) {
-    super(props);
-  }
-
-  public static defaultProps: Partial<IBatchDisplayProps> = {
-  }
+export class BatchDisplay extends Containable<IBatchDisplayProps, IBatchDisplayState> {
 
   public render() {
     return this.renderAttributes(<div>

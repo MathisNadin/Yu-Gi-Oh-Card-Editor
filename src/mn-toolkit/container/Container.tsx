@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable react/default-props-match-prop-types */
 /* eslint-disable react/sort-comp */
 /* eslint-disable react/static-property-placement */
@@ -11,59 +12,21 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Component, MouseEvent, PropsWithChildren, ReactElement, cloneElement } from 'react';
 import './styles.css';
-import { classNames } from 'mn-toolkit/tools';
-import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
+import { Containable, IContainableProps, IContainableState } from 'mn-toolkit/containable/Containable';
 
-export interface IContainerProps extends PropsWithChildren {
-  className: string;
+export interface IContainerProps extends IContainableProps {
   layout?: 'vertical' | 'horizontal';
-  onClick?: (e: MouseEvent) => void | Promise<void>;
 }
 
-export interface IContainerState {
-  loaded: boolean;
+export interface IContainerState extends IContainableState {
 }
 
-export class Container extends Component<IContainerProps, IContainerState> {
+export class Container extends Containable<IContainerProps, IContainerState> {
 
-  public constructor(props: IContainerProps) {
-    super(props);
-  }
-
-  public static defaultProps: Partial<IContainerProps> = {
-    className: '',
-  }
-
-  private onClick(e: MouseEvent) {
-    if (this.props.onClick) {
-      e.preventDefault();
-      handlePromise(this.props.onClick(e));
-    }
-  }
-
-  public renderClasses(mainClassName: string) {
-    return classNames(
-      'mn-container',
-      mainClassName,
-      this.props.className,
-      this.props.layout ? `${this.props.layout}-stack` : 'horizontal-stack',
-    );
-  }
-
-  public renderAttributes(fc: ReactElement, mainClassName: string) {
-    const newProps = {
-      ...fc.props,
-      className: this.renderClasses(mainClassName),
-      onClick: (e: MouseEvent) => this.onClick(e),
-    };
-    return cloneElement(fc, newProps, fc.props.children);
-  }
-
-  public render() {
-    return this.renderAttributes(<div>
-      {this.props.children}
-    </div>, 'plain-container');
+  public renderClasses(name?: string) {
+    let classes = super.renderClasses(name);
+    if (this.props.layout) classes[`${this.props.layout}-stack`] = true;
+    return classes;
   }
 };

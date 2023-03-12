@@ -12,23 +12,16 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
-import { Container, IContainerProps, IContainerState } from 'mn-toolkit/container/Container';
 
-interface ICardPreviewProps extends IContainerProps {
+interface ICardPreviewProps extends IContainableProps {
 }
 
-interface ICardPreviewState extends IContainerState {
+interface ICardPreviewState extends IContainableState {
 }
 
-export class CardPreview extends Container {
-
-  public constructor(props: ICardPreviewProps) {
-    super(props);
-  }
-
-  public static defaultProps: Partial<ICardPreviewProps> = {
-  }
+export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewState> {
 
   public render() {
     return this.renderAttributes(<div>

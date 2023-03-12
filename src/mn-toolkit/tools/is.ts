@@ -103,7 +103,7 @@ export function isError(obj: any) : obj is Error {
  *
  * @param {Object} subject subject to test.
  */
-export function isUndefined(subject: any): boolean {
+export function isUndefined(subject: any): subject is undefined {
   return typeof subject === 'undefined';
 }
 
@@ -113,7 +113,7 @@ export function isUndefined(subject: any): boolean {
  *
  * @param {Object} subject subject to test.
  */
- export function isDefined(subject: any): boolean {
+ export function isDefined<T>(subject: T | undefined): subject is T {
   return typeof subject !== 'undefined';
 }
 
