@@ -1,7 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { Container } from 'mn-toolkit/container/Container';
+import { CardPreview } from './card-preview/CardPreview';
+import { CardOptions } from './card-options/CardOptions';
+import { BatchDisplay } from './batch-display/BatchDisplay';
 
 /* function Hello() {
   return (
@@ -40,9 +43,11 @@ import { Container } from 'mn-toolkit/container/Container';
   );
 } */
 
-function Hello() {
-  return <Container className='container' onClick={e => console.log('onClick', e)}>
-    <h1>Coucou !</h1>
+function Page() {
+  return <Container className='page' layout='vertical'>
+    <CardOptions />
+    <CardPreview />
+    <BatchDisplay />
   </Container>;
 }
 
@@ -50,7 +55,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Hello />} />
+        <Route path="/" element={<Page />} />
       </Routes>
     </Router>
   );

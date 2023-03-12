@@ -1,0 +1,9 @@
+.mn-container {
+  &.vertical-stack {
+    flex-direction: column;
+  }
+
+  &.horizontal-stack {
+    flex-direction: row;
+  }
+}
