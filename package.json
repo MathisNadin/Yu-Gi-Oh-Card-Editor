@@ -11,13 +11,9 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
-  "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/MathisNadin/Yu-Gi-Oh-Card-Editor.git"
   },
   "license": "MIT",
   "author": {
@@ -34,18 +30,23 @@
   ],
   "main": "./src/main/main.ts",
   "scripts": {
-    "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
+    "build": "concurrently \"npm run build:main\" \"npm run build:renderer\" \"npm run build:css\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
+    "build:css": "node-sass src/ -o src/ ",
+    "watch:css": "npm run build:css && node-sass src/ -o src/ -w -r",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
-    "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
+    "start": "ts-node ./.erb/scripts/check-port-in-use.js && concurrently \"npm run start:renderer\" \"npm run watch:css\" \"npm run start:js\"",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest"
+    "test": "jest && react-scripts-ts test --env=jsdom",
+    "start:js": "react-scripts-ts start",
+    "build:js": "react-scripts-ts build",
+    "eject": "react-scripts-ts eject"
   },
   "browserslist": [],
   "prettier": {
@@ -95,6 +96,8 @@
     }
   },
   "dependencies": {
+    "@electron/asar": "^3.2.3",
+    "@electron/osx-sign": "^1.0.4",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^5.3.0",
@@ -112,6 +115,7 @@
     "@testing-library/react": "^13.4.0",
     "@types/jest": "^29.4.0",
     "@types/node": "18.13.0",
+    "@types/node-sass": "^4.11.3",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@types/react-test-renderer": "^18.0.0",
@@ -128,7 +132,7 @@
     "css-minimizer-webpack-plugin": "^4.2.2",
     "detect-port": "^1.5.1",
     "electron": "^23.0.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^22.10.3",
     "electron-devtools-installer": "^3.2.0",
     "electronmon": "^2.0.2",
     "eslint": "^8.33.0",
@@ -149,6 +153,8 @@
     "jest": "^29.4.2",
     "jest-environment-jsdom": "^29.4.2",
     "mini-css-extract-plugin": "^2.7.2",
+    "node-sass": "^8.0.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.8.4",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",

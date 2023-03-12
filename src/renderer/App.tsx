@@ -1,8 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
 import './App.css';
+import { Container } from 'mn-toolkit/container/Container';
 
-function Hello() {
+/* function Hello() {
   return (
     <div>
       <div className="Hello">
@@ -37,6 +38,10 @@ function Hello() {
       </div>
     </div>
   );
+} */
+
+function Hello() {
+  return <Container className='container' onClick={e => console.log(e)} />;
 }
 
 export default function App() {
