@@ -1,4 +1,9 @@
 .mn-containable {
   display: flex;
   position: relative;
+
+  &.mn-fill {
+    flex: 1;
+    overflow: hidden;
+  }
 }

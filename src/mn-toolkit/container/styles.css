@@ -3,3 +3,9 @@
 
 .mn-container.horizontal-stack {
   flex-direction: row; }
+
+.mn-container.mn-gutter {
+  gap: 16px; }
+
+.mn-container.mn-margin {
+  margin: 16px; }

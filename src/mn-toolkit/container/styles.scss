@@ -6,4 +6,12 @@
   &.horizontal-stack {
     flex-direction: row;
   }
+
+  &.mn-gutter {
+    gap: 16px;
+  }
+
+  &.mn-margin {
+    margin: 16px;
+  }
 }

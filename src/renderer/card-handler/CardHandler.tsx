@@ -49,7 +49,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
           width: 0
         },
         frame: 'effect',
-        stType: 'none',
+        stType: 'normal',
         attribute: 'dark',
         abilities: [],
         level: 0,
@@ -87,7 +87,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public render() {
-    return this.renderAttributes(<HorizontalStack>
+    return this.renderAttributes(<HorizontalStack gutter>
       <CardEditor />
       <CardPreview card={this.state.card} />
       <BatchDisplay />

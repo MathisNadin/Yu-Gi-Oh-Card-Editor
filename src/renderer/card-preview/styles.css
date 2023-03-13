@@ -3,7 +3,12 @@
   min-width: 40%;
   justify-content: center;
   align-items: center; }
-  .card-preview .card-template {
-    position: absolute;
-    width: 100%;
-    object-fit: cover; }
+
+.card-preview .card-link-arrows {
+  justify-content: center;
+  align-items: center; }
+
+.card-preview .card-layer {
+  position: absolute;
+  width: 100%;
+  object-fit: cover; }

@@ -8,7 +8,7 @@ export type TFrame =
 
 export type TAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine' | 'spell' | 'trap';
 
-export type TStIcon = 'none' | 'ritual' | 'quickplay' | 'field' | 'continuous' | 'equip' | 'link' | 'counter';
+export type TStIcon = 'normal' | 'ritual' | 'quickplay' | 'field' | 'continuous' | 'equip' | 'link' | 'counter';
 
 export type TNameStyle = 'default' | 'white' | 'black' | 'yellow' | 'gold' | 'silver' | 'rare' | 'ultra' | 'secret';
 
