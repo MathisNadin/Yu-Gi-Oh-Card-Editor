@@ -19,13 +19,13 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
+import { ICard } from 'renderer/card-handler/ICard';
 
 /* const contour = require('../resources/pictures/Contour [Bords Carrés].png');
 const frame = require('../resources/pictures/card frames/Monstre à Effet.png'); */
 
 interface ICardPreviewProps extends IContainableProps {
-  cardFrame: string;
-  level: string;
+  card: ICard;
 }
 
 interface ICardPreviewState extends IContainableState {
@@ -45,15 +45,15 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     this.state = {
       loaded: true,
       contour: require(`${this.picturesImageSourceURL}Contour [Bords Carrés].png`),
-      cardFrame: require(`${this.picturesImageSourceURL}card frames/${this.props.cardFrame}.png`),
-      level: require(`${this.picturesImageSourceURL}levels/${this.props.level}.png`)
+      cardFrame: require(`${this.picturesImageSourceURL}card frames/${props.card.frame}.png`),
+      level: require(`${this.picturesImageSourceURL}levels/${props.card.level}.png`)
     };
   }
 
   public static getDerivedStateFromProps(nextProps: ICardPreviewProps, prevState: ICardPreviewState) {
     return {
-      cardFrame: require(`../resources/pictures/card frames/${nextProps.cardFrame}.png`),
-      level: require(`../resources/pictures/levels/${nextProps.level}.png`)
+      cardFrame: require(`../resources/pictures/card frames/${nextProps.card.frame}.png`),
+      level: require(`../resources/pictures/levels/${nextProps.card.level}.png`)
     };
   }
 

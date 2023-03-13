@@ -22,85 +22,74 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { BatchDisplay } from 'renderer/batch-display/BatchDisplay';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
 import { CardPreview } from 'renderer/card-preview/CardPreview';
-
-export type TFrame =
-  'normal' | 'effect' | 'ritual' | 'fusion' |
-  'synchro' | 'darkSynchro' | 'xyz' | 'link' |
-  'spell' | 'trap' | 'token' | 'tokenAtkDef' |
-  'skill' | 'obelisk' | 'slifer' | 'ra' | 'legendaryDragon';
-
-export type TAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine' | 'spell' | 'trap';
-
-export type TStIcon = 'none' | 'ritual' | 'quickplay' | 'field' | 'continuous' | 'equip' | 'link' | 'counter';
-
-export type TNameStyle = 'default' | 'white' | 'black' | 'yellow' | 'gold' | 'silver' | 'rare' | 'ultra' | 'secret';
-
-export type TEdition = 'unlimited' | 'firstEdition' | 'limited' | 'forbidden' | 'duelTerminal' | 'anime';
-
-export type TSticker = 'none' | 'silver' | 'gold' | 'grey' | 'white' | 'lightBlue' | 'skyBlue' | 'cyan' | 'aqua' | 'green';
-
-export interface ICard {
-  name: string;
-  nameStyle: TNameStyle;
-  artwork: {
-    url: string;
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-  };
-  frame: TFrame;
-  stType: TStIcon;
-  attribute: TAttribute;
-  abilities: string[];
-  level: number;
-  atk: number;
-  def: number;
-  description: string;
-  pendulum: boolean;
-  pendEffect: string;
-  scales: {
-    left: number;
-    right: number;
-  };
-  linkArrows: {
-    top: boolean;
-    bottom: boolean;
-    left: boolean;
-    right: boolean;
-    topLeft: boolean;
-    topRight: boolean;
-    bottomLeft: boolean;
-    bottomRight: boolean;
-  }
-  edition: TEdition;
-  cardSet: string;
-  passcode: number;
-  sticker: TSticker;
-  copyright: boolean;
-  oldCopyright: boolean;
-  speed: boolean;
-  rush: boolean;
-  legend: boolean;
-  atkMax: number;
-}
+import { ICard } from './ICard';
 
 interface ICardHandlerProps extends IContainableProps {
 }
 
 interface ICardHandlerState extends IContainableState {
+  card: ICard;
 }
 
 export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> {
 
   public constructor(props: ICardHandlerProps) {
     super(props);
+
+    this.state = {
+      loaded: true,
+      card: {
+        name: '',
+        nameStyle: 'default',
+        artwork: {
+          url: '',
+          x: 0,
+          y: 0,
+          height: 0,
+          width: 0
+        },
+        frame: 'effect',
+        stType: 'none',
+        attribute: 'dark',
+        abilities: [],
+        level: 0,
+        atk: 0,
+        def: 0,
+        description: '',
+        pendulum: false,
+        pendEffect: '',
+        scales: {
+          left: 0,
+          right: 0
+        },
+        linkArrows: {
+          top: false,
+          bottom: false,
+          left: false,
+          right: false,
+          topLeft: false,
+          topRight: false,
+          bottomLeft: false,
+          bottomRight: false
+        },
+        edition: 'unlimited',
+        cardSet: '',
+        passcode: -1,
+        sticker: 'none',
+        copyright: false,
+        oldCopyright: false,
+        speed: false,
+        rush: false,
+        legend: false,
+        atkMax: 0
+      }
+    }
   }
 
   public render() {
     return this.renderAttributes(<HorizontalStack>
       <CardEditor />
-      <CardPreview cardFrame='Monstre à Effet' level='2' />
+      <CardPreview card={this.state.card} />
       <BatchDisplay />
     </HorizontalStack>, 'card-handler');
   }
