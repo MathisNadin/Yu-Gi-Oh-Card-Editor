@@ -85,8 +85,8 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     classes['mn-ghost'] = !!this.props.ghost;
     classes['mn-disable'] = !!this.props.disabled;
     classes['mn-draggable'] = !!this.props.draggable;
-    if (this.props.zIndex) classes[`an-zindex-${this.props.zIndex}`] = true;
-    if (this.props.floatPosition) classes[`an-float-${this.props.floatPosition}`] = true;
+    if (this.props.zIndex) classes[`mn-zindex-${this.props.zIndex}`] = true;
+    if (this.props.floatPosition) classes[`mn-float-${this.props.floatPosition}`] = true;
     return classes;
   }
 

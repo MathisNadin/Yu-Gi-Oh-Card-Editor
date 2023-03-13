@@ -2,10 +2,7 @@
 /* eslint-disable prettier/prettier */
 import './App.css';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { CardPreview } from './card-preview/CardPreview';
-import { CardOptions } from './card-options/CardOptions';
-import { BatchDisplay } from './batch-display/BatchDisplay';
-import { VerticalStack } from 'mn-toolkit/containable/VerticalStack';
+import { CardHandler } from './card-handler/CardHandler';
 
 /* function Hello() {
   return (
@@ -45,11 +42,7 @@ import { VerticalStack } from 'mn-toolkit/containable/VerticalStack';
 } */
 
 function Page() {
-  return <VerticalStack className='page'>
-    <CardOptions />
-    <CardPreview />
-    <BatchDisplay />
-  </VerticalStack>;
+  return <CardHandler />;
 }
 
 export default function App() {
