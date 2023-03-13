@@ -36,14 +36,17 @@ interface ICardPreviewState extends IContainableState {
 
 export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewState> {
 
+  private picturesImageSourceURL = "../resources/pictures/";
+  private fontsSourceURL = "../resources/fonts/";
+
   public constructor(props: ICardPreviewProps) {
     super(props);
 
     this.state = {
       loaded: true,
-      contour: require(`../resources/pictures/Contour [Bords Carrés].png`),
-      cardFrame: require(`../resources/pictures/card frames/${this.props.cardFrame}.png`),
-      level: require(`../resources/pictures/levels/${this.props.level}.png`)
+      contour: require(`${this.picturesImageSourceURL}Contour [Bords Carrés].png`),
+      cardFrame: require(`${this.picturesImageSourceURL}card frames/${this.props.cardFrame}.png`),
+      level: require(`${this.picturesImageSourceURL}levels/${this.props.level}.png`)
     };
   }
 
