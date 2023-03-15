@@ -3,12 +3,40 @@
   min-width: 40%;
   justify-content: center;
   align-items: center; }
-
-.card-preview .card-link-arrows {
-  justify-content: center;
-  align-items: center; }
-
-.card-preview .card-layer {
-  position: absolute;
-  width: 100%;
-  object-fit: cover; }
+  .card-preview .card-layer {
+    position: absolute;
+    width: 100%;
+    object-fit: cover; }
+    .card-preview .card-layer.artwork {
+      width: 75.3%;
+      height: 38.9%;
+      bottom: 34.83%; }
+    .card-preview .card-layer.card-link-arrows {
+      justify-content: center;
+      align-items: center;
+      width: 100%; }
+    .card-preview .card-layer.card-abilities {
+      justify-content: center;
+      align-items: center;
+      width: 84%;
+      bottom: 27%;
+      left: -16%;
+      display: flex; }
+      .card-preview .card-layer.card-abilities p {
+        font-size: large; }
+    .card-preview .card-layer.card-description {
+      justify-content: center;
+      align-items: center;
+      width: 84%;
+      height: 11.5%;
+      bottom: 19.6%;
+      display: flex; }
+      .card-preview .card-layer.card-description.with-abilities {
+        height: 9.5%; }
+    .card-preview .card-layer p {
+      max-width: 100%;
+      text-align: justify; }
+      .card-preview .card-layer p.white-text {
+        color: white; }
+      .card-preview .card-layer p.black-text {
+        color: black; }

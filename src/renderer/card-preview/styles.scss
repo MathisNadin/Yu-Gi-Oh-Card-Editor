@@ -4,14 +4,71 @@
   justify-content: center;
   align-items: center;
 
-  .card-link-arrows {
-    justify-content: center;
-    align-items: center;
-  }
-
   .card-layer {
     position: absolute;
     width: 100%;
     object-fit: cover;
+
+    &.artwork {
+      width: 75.3%;
+      height: 38.9%;
+      bottom: 34.83%;
+
+      &.artwork-pendulum {
+      }
+
+      &.artwork-pendulum-link {
+      }
+    }
+
+    &.card-link-arrows {
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    &.card-abilities {
+      justify-content: center;
+      align-items: center;
+      width: 84%;
+      // height: 112px;
+      bottom: 27%;
+      left: -16%;
+      display: flex;
+      // position: relative;
+      // border: black solid 3px;
+
+      p {
+        font-size: large;
+      }
+    }
+
+    &.card-description {
+      justify-content: center;
+      align-items: center;
+      width: 84%;
+      height: 11.5%;
+      bottom: 19.6%;
+      display: flex;
+      // border: black solid 3px;
+      // border-top: black solid 3px;
+
+      &.with-abilities {
+        height: 9.5%;
+      }
+    }
+
+    p {
+      max-width: 100%;
+      text-align: justify;
+
+      &.white-text {
+        color: white;
+      }
+
+      &.black-text {
+        color: black;
+      }
+    }
   }
 }

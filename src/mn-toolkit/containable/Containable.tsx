@@ -90,7 +90,7 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     return classes;
   }
 
-  protected renderAttributes(fc: ReactElement, name?: string) {
+  public renderAttributes(fc: ReactElement, name?: string) {
     let newProps = {
       ...fc.props,
       className: classNames(this.renderClasses(name)),
@@ -127,7 +127,7 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     return cloneElement(fc, newProps, fc.props.children);
   }
 
-  protected renderStyle() {
+  public renderStyle() {
     let style: { [key: string]: number | boolean | string } = {};
     if (this.props.style) {
       for (let k in this.props.style) {
