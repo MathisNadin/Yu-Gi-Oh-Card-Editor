@@ -1,42 +1,80 @@
+@font-face {
+  font-family: fontDesc;
+  src: url(../resources/fonts/matrixBook.ttf); }
+
+@font-face {
+  font-family: fontAbilities;
+  src: url(../resources/fonts/itcStoneSerifBold.ttf); }
+
 .card-preview {
-  height: 100%;
-  min-width: 40%;
   justify-content: center;
-  align-items: center; }
-  .card-preview .card-layer {
-    position: absolute;
-    width: 100%;
-    object-fit: cover; }
-    .card-preview .card-layer.artwork {
-      width: 75.3%;
-      height: 38.9%;
-      bottom: 34.83%; }
-    .card-preview .card-layer.card-link-arrows {
-      justify-content: center;
-      align-items: center;
-      width: 100%; }
-    .card-preview .card-layer.card-abilities {
-      justify-content: center;
-      align-items: center;
-      width: 84%;
-      bottom: 27%;
-      left: -16%;
-      display: flex; }
-      .card-preview .card-layer.card-abilities p {
-        font-size: large; }
-    .card-preview .card-layer.card-description {
-      justify-content: center;
-      align-items: center;
-      width: 84%;
-      height: 11.5%;
-      bottom: 19.6%;
-      display: flex; }
-      .card-preview .card-layer.card-description.with-abilities {
-        height: 9.5%; }
-    .card-preview .card-layer p {
-      max-width: 100%;
-      text-align: justify; }
-      .card-preview .card-layer p.white-text {
-        color: white; }
-      .card-preview .card-layer p.black-text {
-        color: black; }
+  align-items: center;
+  width: 40%;
+  padding: 29.15129% 0; }
+
+.card-preview .card-layer {
+  position: absolute;
+  width: 100%;
+  object-fit: cover; }
+
+.card-preview .card-layer.hidden {
+  visibility: hidden; }
+
+.card-preview .card-layer.artwork {
+  width: 75.5%;
+  height: 52.1%;
+  bottom: 29.7%; }
+
+.card-preview .card-layer.card-link-arrows {
+  justify-content: center;
+  align-items: center;
+  width: 100%; }
+
+.card-preview .card-layer.card-abilities {
+  font-family: fontAbilities;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 84.5%;
+  height: 2%;
+  top: 75.696202531%;
+  gap: 3px; }
+
+.card-preview .card-layer.card-abilities .abilities-text {
+  margin: 0; }
+
+.card-preview .card-layer.card-abilities .abilities-text.abilities {
+  margin-top: 0.25%;
+  text-transform: uppercase;
+  font-size: 17px; }
+
+.card-preview .card-layer.card-abilities .abilities-text.abilities .uppercase {
+  font-size: 20px; }
+
+.card-preview .card-layer.card-abilities .abilities-text.abilities-bracket {
+  font-size: 20px; }
+
+.card-preview .card-layer.card-description {
+  font-family: fontDesc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 84%;
+  top: 75.696202531%;
+  height: 15%; }
+
+.card-preview .card-layer.card-description.with-abilities {
+  top: 78%;
+  height: 12.5%; }
+
+.card-preview .card-layer.card-description .description-text {
+  margin: 0;
+  max-width: 100%;
+  text-align: justify;
+  text-shadow: 0 0 black; }
+
+.card-preview .card-layer .white-text {
+  color: white; }
+
+.card-preview .card-layer .black-text {
+  color: black; }

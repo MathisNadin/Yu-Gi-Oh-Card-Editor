@@ -1,18 +1,33 @@
+@font-face {
+  font-family: fontDesc;
+  src: url(../resources/fonts/matrixBook.ttf);
+}
+
+@font-face {
+  font-family: fontAbilities;
+  src: url(../resources/fonts/itcStoneSerifBold.ttf);
+}
+
 .card-preview {
-  height: 100%;
-  min-width: 40%;
   justify-content: center;
   align-items: center;
+  width: 40%;
+  $previewPadding: 29.1512915129%;
+  padding: $previewPadding 0;
 
   .card-layer {
     position: absolute;
     width: 100%;
     object-fit: cover;
 
+    &.hidden {
+      visibility: hidden;
+    }
+
     &.artwork {
-      width: 75.3%;
-      height: 38.9%;
-      bottom: 34.83%;
+      width: 75.5%;
+      height: 52.1%;
+      bottom: 29.7%;
 
       &.artwork-pendulum {
       }
@@ -28,47 +43,71 @@
     }
 
     &.card-abilities {
-      justify-content: center;
-      align-items: center;
-      width: 84%;
-      // height: 112px;
-      bottom: 27%;
-      left: -16%;
+      font-family: fontAbilities;
       display: flex;
-      // position: relative;
+      justify-content: start;
+      align-items: center;
+      width: 84.5%;
+      height: 2%;
+      top: 75.696202531%;
+      gap: 3px;
       // border: black solid 3px;
 
-      p {
-        font-size: large;
+      .abilities-text {
+        margin: 0;
+
+        &.abilities {
+          margin-top: 0.25%;
+          text-transform: uppercase;
+          font-size: 17px;
+
+          .uppercase {
+            font-size: 20px;
+          }
+        }
+
+        &.abilities-bracket {
+          font-size: 20px;
+
+          &.left-bracket {
+          }
+
+          &.right-bracket {
+          }
+        }
       }
     }
 
     &.card-description {
+      font-family: fontDesc;
+      display: flex;
       justify-content: center;
       align-items: center;
       width: 84%;
-      height: 11.5%;
-      bottom: 19.6%;
-      display: flex;
-      // border: black solid 3px;
+      top: 75.696202531%;
+      height: 15%;
       // border-top: black solid 3px;
+      // border-bottom: black solid 3px;
 
       &.with-abilities {
-        height: 9.5%;
+        top: 78%;
+        height: 12.5%;
+      }
+
+      .description-text {
+        margin: 0;
+        max-width: 100%;
+        text-align: justify;
+        text-shadow: 0 0 black;
       }
     }
 
-    p {
-      max-width: 100%;
-      text-align: justify;
+    .white-text {
+      color: white;
+    }
 
-      &.white-text {
-        color: white;
-      }
-
-      &.black-text {
-        color: black;
-      }
+    .black-text {
+      color: black;
     }
   }
 }

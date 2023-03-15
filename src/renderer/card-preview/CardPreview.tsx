@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-const */
@@ -29,12 +30,15 @@ import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
 import { ICard } from 'renderer/card-handler/ICard';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
+import { Fragment } from 'react';
 
 interface ICardPreviewProps extends IContainableProps {
   card: ICard;
 }
 
 interface ICardPreviewState extends IContainableState {
+  textResized: boolean,
+
   hasPendulumFrame: boolean;
   hasLinkArrows: boolean;
   defaultTextColor: 'black' | 'white';
@@ -90,10 +94,11 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
 
     this.state = {
       loaded: true,
+      textResized: false,
 
       hasPendulumFrame,
       hasLinkArrows: card.frame === 'link' || card.stType === 'link',
-      defaultTextColor: card.frame === 'xyz' ? 'white' : 'black',
+      defaultTextColor: card.frame === 'xyz' || card.frame === 'link' ? 'white' : 'black',
 
       border: require('../resources/pictures/squareBorders.png'),
       artworkBg: require(`../resources/pictures/whiteArtwork${card.pendulum ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`),
@@ -145,7 +150,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       loaded: true,
 
       hasLinkArrows: card.frame === 'link' || card.stType === 'link',
-      defaultTextColor: card.frame === 'xyz' ? 'white' : 'black',
+      defaultTextColor: card.frame === 'xyz' || card.frame === 'link' ? 'white' : 'black',
 
       artworkBg: require(`../resources/pictures/whiteArtwork${card.pendulum ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`),
       artwork: card.artwork.url || require('../resources/pictures/artworkTest4.jpg'),
@@ -174,7 +179,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   public componentDidMount() {
-    setTimeout(() => this.adjustDescFontSize(), 100);
+    setTimeout(() => this.adjustDescFontSize(), 500);
   }
 
   public componentDidUpdate() {
@@ -197,8 +202,10 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       if (newLineHeight < 1.05) newLineHeight = 1.05;
 
       if (newFontSize >= 1) {
-        this.setState({ descFontSize: newFontSize, descLineHeight: newLineHeight });
+        this.setState({ textResized: false, descFontSize: newFontSize, descLineHeight: newLineHeight });
       }
+    } else if (!this.state.textResized) {
+      this.setState({ textResized: true });
     }
   }
 
@@ -248,19 +255,34 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   private renderAbilities() {
-    return this.renderAttributes(<HorizontalStack gutter>
-      <p className={`abilities-text black-text`}>{'['}</p>
-      <p style={{}} className={`abilities-text black-text`}>{this.props.card.abilities.join(' / ')}</p>
-      <p style={{}} className={`abilities-text black-text`}>{']'}</p>
-    </HorizontalStack>, 'card-layer card-abilities');
+    let text = this.props.card.abilities.join(' / ');
+    const upperCaseIndexes = text.split('').map((char, index) => char === char.toUpperCase() ? index : -1).filter(i => i !== -1);
+    const lowerCaseText = text.toLowerCase();
+
+    return this.renderAttributes(<HorizontalStack>
+      <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
+      <p style={{}} className={`abilities-text black-text abilities`}>
+        {upperCaseIndexes.map((index, i) => (
+          <Fragment key={i}>
+            <span className='uppercase'>
+              {text.slice(index, index+1)}
+            </span>
+            <span className='lowercase'>
+              {lowerCaseText.slice(index+1, upperCaseIndexes[i+1] || text.length)}
+            </span>
+          </Fragment>
+        ))}
+      </p>
+      <p style={{}} className={`abilities-text black-text abilities-bracket right-bracket`}>{']'}</p>
+    </HorizontalStack>, `card-layer card-abilities`);
   }
 
   private renderDescription() {
-    let containerClass = 'card-layer card-description';
+    let containerClass = `card-layer card-description ${this.state.textResized ? '' : 'hidden'}`;
     if (this.hasAbilities) containerClass = `${containerClass} with-abilities`;
 
     return this.renderAttributes(<Container>
-      <p style={{ fontSize: `${this.state.descFontSize}px`, lineHeight: this.state.descLineHeight }} className={`description-text ${this.state.defaultTextColor}-text`}>
+      <p style={{ fontSize: `${this.state.descFontSize}px`, lineHeight: this.state.descLineHeight }} className={`description-text black-text`}>
         {this.props.card.description}
       </p>
     </Container>, containerClass);
