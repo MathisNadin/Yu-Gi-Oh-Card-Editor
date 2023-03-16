@@ -6,11 +6,29 @@
   font-family: fontAbilities;
   src: url(../resources/fonts/itcStoneSerifBold.ttf); }
 
+@font-face {
+  font-family: fontPasscode;
+  src: url(../resources/fonts/itcStoneSerif.ttf); }
+
+@font-face {
+  font-family: fontCardSet;
+  src: url(../resources/fonts/itcStoneSerif.ttf); }
+
+@font-face {
+  font-family: fontAtkDef;
+  src: url(../resources/fonts/matrixBoldSmallCaps.ttf); }
+
 .card-preview {
   justify-content: center;
   align-items: center;
   width: 40%;
   padding: 29.15129% 0; }
+
+.card-preview .white-text {
+  color: white; }
+
+.card-preview .black-text {
+  color: black; }
 
 .card-preview .card-layer {
   position: absolute;
@@ -24,6 +42,34 @@
   width: 75.5%;
   height: 52.1%;
   bottom: 29.7%; }
+
+.card-preview .card-layer.atk-def {
+  top: 87.85%;
+  font-family: fontAtkDef;
+  font-size: 24.5px; }
+
+.card-preview .card-layer.atk-def.atk {
+  right: -63.2%; }
+
+.card-preview .card-layer.atk-def.def {
+  right: -83%; }
+
+.card-preview .card-layer.card-set {
+  top: 69.7%;
+  right: -72.2%;
+  font-family: fontCardSet;
+  font-size: 15px;
+  text-shadow: 0 0 black; }
+
+.card-preview .card-layer.card-set.on-link {
+  right: -64.5%; }
+
+.card-preview .card-layer.passcode {
+  top: 93.2%;
+  left: 4%;
+  font-family: fontPasscode;
+  font-size: 15px;
+  text-shadow: 0 0 black; }
 
 .card-preview .card-layer.card-link-arrows {
   justify-content: center;
@@ -72,9 +118,3 @@
   max-width: 100%;
   text-align: justify;
   text-shadow: 0 0 black; }
-
-.card-preview .card-layer .white-text {
-  color: white; }
-
-.card-preview .card-layer .black-text {
-  color: black; }

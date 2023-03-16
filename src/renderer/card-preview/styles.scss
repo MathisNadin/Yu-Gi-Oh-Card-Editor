@@ -8,12 +8,35 @@
   src: url(../resources/fonts/itcStoneSerifBold.ttf);
 }
 
+@font-face {
+  font-family: fontPasscode;
+  src: url(../resources/fonts/itcStoneSerif.ttf);
+}
+
+@font-face {
+  font-family: fontCardSet;
+  src: url(../resources/fonts/itcStoneSerif.ttf);
+}
+
+@font-face {
+  font-family: fontAtkDef;
+  src: url(../resources/fonts/matrixBoldSmallCaps.ttf);
+}
+
 .card-preview {
   justify-content: center;
   align-items: center;
   width: 40%;
   $previewPadding: 29.1512915129%;
   padding: $previewPadding 0;
+
+  .white-text {
+    color: white;
+  }
+
+  .black-text {
+    color: black;
+  }
 
   .card-layer {
     position: absolute;
@@ -34,6 +57,46 @@
 
       &.artwork-pendulum-link {
       }
+    }
+
+    &.copyright {
+    }
+
+    &.edition {
+    }
+
+    &.atk-def {
+      top: 87.85%;
+      font-family: fontAtkDef;
+      font-size: 24.5px;
+
+      &.atk {
+        right: -63.2%;
+      }
+
+      &.def {
+        right: -83%;
+      }
+    }
+
+    &.card-set {
+      top: 69.7%;
+      right: -72.2%;
+      font-family: fontCardSet;
+      font-size: 15px;
+      text-shadow: 0 0 black;
+
+      &.on-link {
+        right: -64.5%;
+      }
+    }
+
+    &.passcode {
+      top: 93.2%;
+      left: 4%;
+      font-family: fontPasscode;
+      font-size: 15px;
+      text-shadow: 0 0 black;
     }
 
     &.card-link-arrows {
@@ -100,14 +163,6 @@
         text-align: justify;
         text-shadow: 0 0 black;
       }
-    }
-
-    .white-text {
-      color: white;
-    }
-
-    .black-text {
-      color: black;
     }
   }
 }

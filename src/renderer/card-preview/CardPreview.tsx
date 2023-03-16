@@ -77,6 +77,8 @@ interface ICardPreviewState extends IContainableState {
   atkDefLine: string;
   atkLinkLine: string;
   sticker: string;
+  copyright: string;
+  edition: string;
 }
 
 export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewState> {
@@ -134,6 +136,8 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       atkDefLine: require(`../resources/pictures/atkDefLine.png`),
       atkLinkLine: require(`../resources/pictures/atkLinkLine.png`),
       sticker: require(`../resources/pictures/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
+      copyright: require(`../resources/pictures/limitations/${card.copyrightYear}/${card.frame === 'xyz' ? 'white' : 'black'}/copyright.png`),
+      edition: require(`../resources/pictures/limitations/${card.copyrightYear}/${card.frame === 'xyz' ? 'white' : 'black'}/${card.edition}.png`),
     };
   }
 
@@ -148,38 +152,11 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
 
     return {
       loaded: true,
-
-      hasLinkArrows: card.frame === 'link' || card.stType === 'link',
-      defaultTextColor: card.frame === 'xyz' || card.frame === 'link' ? 'white' : 'black',
-
-      artworkBg: require(`../resources/pictures/whiteArtwork${card.pendulum ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`),
-      artwork: card.artwork.url || require('../resources/pictures/artworkTest4.jpg'),
-
-      cardFrame: require(`../resources/pictures/card-frames/${card.frame}.png`),
-      pendulumFrame: require(`../resources/pictures/pendulum-frames/${card.frame}.png`),
-
-      linkArrowT: require(`../resources/pictures/link-arrows/top${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowB: require(`../resources/pictures/link-arrows/bottom${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowL: require(`../resources/pictures/link-arrows/left${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowR: require(`../resources/pictures/link-arrows/right${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTL: require(`../resources/pictures/link-arrows/topLeft${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTR: require(`../resources/pictures/link-arrows/topRight${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBL: require(`../resources/pictures/link-arrows/bottomLeft${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBR: require(`../resources/pictures/link-arrows/bottomRight${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-
-      attribute: require(`../resources/pictures/attributes/${card.attribute}.png`),
-      level: require(`../resources/pictures/levels/${card.level}.png`),
-      negativeLevel: require(`../resources/pictures/negative-levels/${card.level}.png`),
-      rank: require(`../resources/pictures/ranks/${card.level}.png`),
-      linkRating: require(`../resources/pictures/link-ratings/${card.level}.png`),
-      stIcon: require(`../resources/pictures/st/${card.stType}${card.stType === 'normal' ? card.frame === 'spell' ? '-spell' : '-trap' : '' }.png`),
-
-      sticker: require(`../resources/pictures/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
     };
   }
 
   public componentDidMount() {
-    setTimeout(() => this.adjustDescFontSize(), 500);
+    setTimeout(() => this.adjustDescFontSize(), 1000);
   }
 
   public componentDidUpdate() {
@@ -240,6 +217,17 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
         : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />}
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
+      <p className={`card-layer passcode ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>
+
+      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text ${this.props.card.frame === 'link' ? 'on-link' : ''}`}>
+        {this.props.card.cardSet}
+      </p>
+
+      {this.hasAbilities && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
+      {this.hasAbilities && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
+
+      <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />
+      <img className='card-layer edition' src={this.state.edition} alt='edition' />
 
       {this.hasAbilities && this.renderAbilities()}
       {this.renderDescription()}
