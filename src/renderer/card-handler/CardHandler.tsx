@@ -49,7 +49,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
           width: 0
         },
         frame: 'link',
-        stType: 'normal',
+        stType: 'link',
         attribute: 'light',
         abilities: ['Cyberse', 'Lien', 'Effet'],
         level: 4,
@@ -87,7 +87,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
 
   public render() {
     return this.renderAttributes(<HorizontalStack gutter>
-      <CardEditor />
+      <CardEditor card={this.state.card} onCardChange={card => this.setState({ card })} />
       <CardPreview card={this.state.card} />
       <BatchDisplay />
     </HorizontalStack>, 'card-handler');

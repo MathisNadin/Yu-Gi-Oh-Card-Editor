@@ -1,6 +1,7 @@
 .mn-containable {
   display: flex;
   position: relative; }
-  .mn-containable.mn-fill {
-    flex: 1;
-    overflow: hidden; }
+
+.mn-containable.mn-fill {
+  flex: 1;
+  overflow: hidden; }

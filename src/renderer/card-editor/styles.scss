@@ -1,2 +1,42 @@
 .card-editor {
+  height: 100%;
+  width: 30%;
+  margin-left: 10px;
+  align-items: flex-start;
+  font-size: 15px;
+
+  .label-with-separator {
+    border-bottom: 1px solid darkgray;
+    padding-bottom: 5px;
+  }
+
+  .card-editor-section {
+    max-width: 100%;
+    margin: 10px 0 10px 10px;
+
+    &.card-frames {
+      .card-frames-label {
+        color: black;
+        margin: 5px 0;
+      }
+
+      .card-frames-icons {
+        max-width: 100%;
+        flex-wrap: wrap;
+
+        .card-frame-container {
+          height: 50px;
+          margin: 2px 10px 2px 0;
+
+          .card-frame {
+            &.selected {
+              border: 2px solid black;
+              border-radius: 3px;
+              margin: -2px;
+            }
+          }
+        }
+      }
+    }
+  }
 }

@@ -3,7 +3,7 @@
 export type TFrame =
   'normal' | 'effect' | 'ritual' | 'fusion' |
   'synchro' | 'darkSynchro' | 'xyz' | 'link' |
-  'spell' | 'trap' | 'token' | 'tokenAtkDef' |
+  'spell' | 'trap' | 'token' | 'monsterToken' |
   'skill' | 'obelisk' | 'slifer' | 'ra' | 'legendaryDragon';
 
 export type TAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine' | 'spell' | 'trap';

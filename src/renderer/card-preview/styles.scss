@@ -29,6 +29,7 @@
 }
 
 .card-preview {
+  margin: 0 auto;
   justify-content: center;
   align-items: center;
   width: 40%;
@@ -123,13 +124,13 @@
     }
 
     &.card-set {
-      top: 69.4%;
+      top: 69.445%;
       right: -71.2%;
       font-family: fontCardSet;
       font-size: 16px;
       text-shadow: 0 0 black;
 
-      &.on-link {
+      &.with-arrows {
         right: -63.4%;
       }
 
@@ -207,7 +208,7 @@
       justify-content: flex-start;
       width: 84%;
       top: 75%;
-      height: 15%;
+      height: 18.4%;
 
       &.with-abilities {
         top: 78%;

@@ -33,13 +33,16 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
+import { toPng } from 'html-to-image';
 
 interface ICardPreviewProps extends IContainableProps {
   card: ICard;
 }
 
+type TAdjustState = 'todo' | 'name' | 'pend' | 'abilities' | 'desc' | 'done';
+
 interface ICardPreviewState extends IContainableState {
-  adjustState: 'todo' | 'name' | 'pend' | 'abilities' | 'desc' | 'done';
+  adjustState: TAdjustState;
   adjustTextState: 'unknown' | 'tooBig' | 'tooSmall';
 
   hasPendulumFrame: boolean;
@@ -90,23 +93,24 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   public constructor(props: ICardPreviewProps) {
     super(props);
     this.handleResize = this.handleResize.bind(this);
+    this.refreshState(props.card, false);
+  }
 
-    const card = props.card;
+  public componentWillReceiveProps(nextProps: ICardPreviewProps, _prevState: ICardPreviewState) {
+    this.refreshState(nextProps.card, true);
+  }
+
+  private refreshState(card: ICard, setState: boolean) {
     const copyrightPath = `${card.copyrightYear}/${card.frame === 'xyz' ? 'white' : 'black'}`;
-    const hasPendulumFrame = card.pendulum
-      && card.frame !== 'token'
-      && card.frame !== 'spell'
-      && card.frame !== 'trap'
-      && card.frame !== 'skill'
-      && card.frame !== 'legendaryDragon';
+    const hasPendulumFrame = this.hasPendulumFrame(card);
 
-    this.state = {
+    const state: ICardPreviewState = {
       loaded: true,
       adjustState: 'todo',
       adjustTextState: 'unknown',
 
       hasPendulumFrame,
-      hasLinkArrows: card.frame === 'link' || card.stType === 'link',
+      hasLinkArrows: this.hasLinkArrows(card),
       defaultTextColor: card.frame === 'xyz' || card.frame === 'link' ? 'white' : 'black',
 
       border: require('../resources/pictures/squareBorders.png'),
@@ -114,7 +118,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       artwork: card.artwork.url || require('../resources/pictures/artworkTest4.jpg'),
 
       cardFrame: require(`../resources/pictures/card-frames/${card.frame}.png`),
-      pendulumFrame: require(`../resources/pictures/pendulum-frames/${card.frame}.png`),
+      pendulumFrame: require(`../resources/pictures/pendulum-frames/${hasPendulumFrame ? card.frame : 'normal'}.png`),
 
       linkArrowT: require(`../resources/pictures/link-arrows/top${hasPendulumFrame ? 'Pendulum' : ''}.png`),
       linkArrowB: require(`../resources/pictures/link-arrows/bottom${hasPendulumFrame ? 'Pendulum' : ''}.png`),
@@ -147,20 +151,12 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       copyright: require(`../resources/pictures/limitations/${copyrightPath}/copyright.png`),
       edition: require(`../resources/pictures/limitations/${copyrightPath}/${card.edition}.png`),
     };
-  }
 
-  public static getDerivedStateFromProps(nextProps: ICardPreviewProps, _prevState: ICardPreviewState) {
-    const card = nextProps.card;
-    const hasPendulumFrame = card.pendulum
-      && card.frame !== 'token'
-      && card.frame !== 'spell'
-      && card.frame !== 'trap'
-      && card.frame !== 'skill'
-      && card.frame !== 'legendaryDragon';
-
-    return {
-      loaded: true,
-    };
+    if (setState) {
+      this.setState(state);
+    } else {
+      this.state = state;
+    }
   }
 
   public componentDidMount() {
@@ -178,6 +174,27 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
 
   private handleResize() {
     handlePromise(this.adjustAllFontSizes());
+  }
+
+  private hasLinkArrows(card: ICard) {
+    return card.frame === 'link' || ((card.frame === 'spell' || card.frame === 'trap') && card.stType === 'link');
+  }
+
+  private hasPendulumFrame(card: ICard) {
+    return card.pendulum
+    && card.frame !== 'token'
+    && card.frame !== 'spell'
+    && card.frame !== 'trap'
+    && card.frame !== 'skill'
+    && card.frame !== 'legendaryDragon';
+  }
+
+  private get hasAbilities(): boolean {
+    return this.props.card.frame !== 'token'
+      && this.props.card.frame !== 'spell'
+      && this.props.card.frame !== 'trap'
+      && this.props.card.frame !== 'skill'
+      && this.props.card.frame !== 'legendaryDragon';
   }
 
   private async adjustAllFontSizes() {
@@ -264,6 +281,11 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   public async convertAbilitiesToImg() {
+    if (!this.hasAbilities) {
+      this.setState({ adjustState: 'desc' });
+      return;
+    }
+
     const container = document.querySelector('.card-abilities') as HTMLDivElement;
     if (!container) return;
     const rightBracket = container.querySelector('.right-bracket') as HTMLDivElement;
@@ -331,6 +353,18 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     }
   }
 
+  private async generateImage() {
+    const element = document.querySelector('.card-preview') as HTMLElement;
+    if (element) {
+      try {
+        const dataUrl = await toPng(element, { width: 1000 });
+        console.log(dataUrl);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   public render() {
     let artworkClass = 'card-layer artwork-container';
     if (this.props.card.pendulum) {
@@ -341,7 +375,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       }
     }
 
-    return this.renderAttributes(<Container>
+    return this.renderAttributes(<Container onTap={() => this.generateImage()}>
       <img className='card-layer border' src={this.state.border} alt='border' />
 
       {this.state.hasPendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
@@ -357,14 +391,14 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       {this.renderLevelOrStIcon()}
       {this.renderStPlus()}
 
-      {this.props.card.frame === 'link'
+      {this.hasAbilities && (this.props.card.frame === 'link'
         ? <img className='card-layer atk-link-line' src={this.state.atkLinkLine} alt='atkLinkLine' />
-        : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />}
+        : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />)}
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
       {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
 
-      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text ${this.props.card.frame === 'link' ? 'on-link' : ''} ${this.props.card.pendulum ? 'on-pendulum' : ''}`}>
+      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text ${this.hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${this.props.card.pendulum ? 'on-pendulum' : ''}`}>
         {this.props.card.cardSet}
       </p>
 
@@ -395,14 +429,6 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     return this.renderAttributes(<HorizontalStack>
       <p className={className}>{this.props.card.name}</p>
     </HorizontalStack>, `card-layer card-name-container`);
-  }
-
-  private get hasAbilities(): boolean {
-    return this.props.card.frame !== 'token'
-      && this.props.card.frame !== 'spell'
-      && this.props.card.frame !== 'trap'
-      && this.props.card.frame !== 'skill'
-      && this.props.card.frame !== 'legendaryDragon';
   }
 
   private renderAbilities() {
@@ -452,7 +478,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   private renderStPlus() {
-    if ((this.props.card.frame === 'spell' || this.props.card.frame === 'trap') && this.props.card.stType === 'normal') {
+    if ((this.props.card.frame === 'spell' || this.props.card.frame === 'trap') && this.props.card.stType !== 'normal' && this.props.card.stType !== 'link') {
       return <img className='card-layer st-plus' src={this.props.card.frame === 'spell' ? this.state.spellPlus : this.state.trapPlus} alt='stPlus' />;
     }
     return null;
