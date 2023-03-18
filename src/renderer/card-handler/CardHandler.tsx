@@ -55,9 +55,9 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
         level: 4,
         atk: 2500,
         def: 2500,
-        description: `2+ monstres Une fois, tant que cette carte est face recto sur le Terrain (Effet Rapide) : vous pouvez cibler un nombre de monstres sur le Terrain et/ou dans le Cimetière, inférieur ou égal au nombre de monstres co-liés à cette carte ; renvoyez-les à la main. Si un monstre pointé par cette carte est détruit au combat ou envoyé au Cimetière : vous pouvez Invoquer Spécialement 1 monstre Cyberse depuis votre main. Vous ne pouvez utiliser chaque effet de "Dragon Pare-Feu" qu'une fois par tour.`,
+        description: `2+ monstres nombre de monstres co-liés à cette carte ; renvoyez-les à la main. Si un monstre pointé par cette carte est détruit au combat ou envoyé au Cimetière : vous pouvez Invoquer Spécialement 1 monstre Cyberse depuis votre main. Vous ne pouvez utiliser chaque effet de "Dragon Pare-Feu" qu'une fois par tour.`,
         pendulum: false,
-        pendEffect: '',
+        pendEffect: `2+ monstres nombre de monstres co-liés à cette carte ; renvoyez-les à la main. Si un monstre pointé par cette carte est détruit au combat ou envoyé au Cimetière : vous pouvez Invoquer Spécialement 1 monstre Cyberse depuis votre main. Vous ne pouvez utiliser chaque effet de "Dragon Pare-Feu" qu'une fois par tour.`,
         scales: {
           left: 10,
           right: 1

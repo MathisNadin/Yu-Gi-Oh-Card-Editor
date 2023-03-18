@@ -3,6 +3,10 @@
   src: url(../resources/fonts/matrixBook.ttf); }
 
 @font-face {
+  font-family: fontName;
+  src: url(../resources/fonts/yuGiOhMatrixRegularSmallCaps1.ttf); }
+
+@font-face {
   font-family: fontAbilities;
   src: url(../resources/fonts/itcStoneSerifBold.ttf); }
 
@@ -38,31 +42,72 @@
 .card-preview .card-layer.hidden {
   visibility: hidden; }
 
-.card-preview .card-layer.artwork {
-  width: 75.5%;
-  height: 52.1%;
-  bottom: 29.7%; }
+.card-preview .card-layer.artwork-container {
+  max-width: 75.5%;
+  top: 18.5%; }
+
+.card-preview .card-layer.artwork-container.artwork-pendulum {
+  max-width: 86.3%;
+  max-height: 52.1%;
+  top: 18%; }
+
+.card-preview .card-layer.artwork-container.artwork-pendulum-link {
+  max-width: 81.1%;
+  max-height: 55.7%;
+  top: 18%;
+  margin-right: 0.2%; }
+
+.card-preview .card-layer.artwork-container .artwork {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; }
+
+.card-preview .card-layer.card-name-container {
+  height: 7%;
+  width: 75%;
+  top: 3.26%;
+  left: 8%;
+  font-family: fontName;
+  font-size: 63px;
+  display: flex;
+  justify-content: start; }
+
+.card-preview .card-layer.card-name-container .card-name {
+  width: max-content;
+  margin: 0;
+  overflow-x: visible;
+  white-space: nowrap;
+  position: absolute;
+  z-index: -1; }
+
+.card-preview .card-layer.card-name-container .html2canvas-name {
+  max-width: 100%; }
 
 .card-preview .card-layer.atk-def {
-  top: 87.85%;
+  top: 87.81%;
   font-family: fontAtkDef;
-  font-size: 24.5px; }
+  font-size: 24.5px;
+  text-shadow: 0 0 black; }
 
 .card-preview .card-layer.atk-def.atk {
-  right: -63.2%; }
+  right: -62.6%; }
 
 .card-preview .card-layer.atk-def.def {
   right: -83%; }
 
 .card-preview .card-layer.card-set {
-  top: 69.7%;
-  right: -72.2%;
+  top: 69.4%;
+  right: -71.2%;
   font-family: fontCardSet;
-  font-size: 15px;
+  font-size: 16px;
   text-shadow: 0 0 black; }
 
 .card-preview .card-layer.card-set.on-link {
-  right: -64.5%; }
+  right: -63.4%; }
+
+.card-preview .card-layer.card-set.on-pendulum {
+  top: 89.2%;
+  right: -9%; }
 
 .card-preview .card-layer.passcode {
   top: 93.2%;
@@ -82,9 +127,15 @@
   justify-content: start;
   align-items: center;
   width: 84.5%;
-  height: 2%;
-  top: 75.696202531%;
+  height: 3%;
+  top: 75%;
   gap: 3px; }
+
+.card-preview .card-layer.card-abilities.on-pendulum-link {
+  top: 77.5%; }
+
+.card-preview .card-layer.card-abilities .html2canvas-abilities {
+  max-width: 95%; }
 
 .card-preview .card-layer.card-abilities .abilities-text {
   margin: 0; }
@@ -92,7 +143,11 @@
 .card-preview .card-layer.card-abilities .abilities-text.abilities {
   margin-top: 0.25%;
   text-transform: uppercase;
-  font-size: 17px; }
+  font-size: 17px;
+  overflow-x: visible;
+  white-space: nowrap;
+  position: absolute;
+  z-index: -1; }
 
 .card-preview .card-layer.card-abilities .abilities-text.abilities .uppercase {
   font-size: 20px; }
@@ -103,17 +158,41 @@
 .card-preview .card-layer.card-description {
   font-family: fontDesc;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   width: 84%;
-  top: 75.696202531%;
+  top: 75%;
   height: 15%; }
 
 .card-preview .card-layer.card-description.with-abilities {
   top: 78%;
   height: 12.5%; }
 
+.card-preview .card-layer.card-description.on-pendulum-link {
+  top: 80.5%;
+  height: 9.5%; }
+
 .card-preview .card-layer.card-description .description-text {
+  margin: 0;
+  max-width: 100%;
+  text-align: justify;
+  text-shadow: 0 0 black; }
+
+.card-preview .card-layer.card-pendulum-effect {
+  font-family: fontDesc;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 68%;
+  top: 63.2%;
+  height: 10%; }
+
+.card-preview .card-layer.card-pendulum-effect.on-link {
+  width: 63%;
+  top: 62.8%;
+  height: 10.3%; }
+
+.card-preview .card-layer.card-pendulum-effect .pendulum-effect-text {
   margin: 0;
   max-width: 100%;
   text-align: justify;
