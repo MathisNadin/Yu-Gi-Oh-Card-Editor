@@ -1,253 +1,34 @@
-@font-face {
-  font-family: fontDesc;
-  src: url(../resources/fonts/matrixBook.ttf);
-}
-
-@font-face {
-  font-family: fontName;
-  src: url(../resources/fonts/yuGiOhMatrixRegularSmallCaps1.ttf);
-}
-
-@font-face {
-  font-family: fontAbilities;
-  src: url(../resources/fonts/itcStoneSerifBold.ttf);
-}
-
-@font-face {
-  font-family: fontPasscode;
-  src: url(../resources/fonts/itcStoneSerif.ttf);
-}
-
-@font-face {
-  font-family: fontCardSet;
-  src: url(../resources/fonts/itcStoneSerif.ttf);
-}
-
-@font-face {
-  font-family: fontAtkDef;
-  src: url(../resources/fonts/matrixBoldSmallCaps.ttf);
-}
-
 .card-preview {
-  margin: 0 auto;
   justify-content: center;
   align-items: center;
   width: 40%;
-  $previewPadding: 29.1512915129%;
-  padding: $previewPadding 0;
+  height: 100%;
 
-  .white-text {
-    color: white;
-  }
-
-  .black-text {
-    color: black;
-  }
-
-  .card-layer {
+  .cover {
+    top: 0;
+    left: 0;
+    height: 1200px;
+    width: 900px;
     position: absolute;
+    background-color: aliceblue;
+  }
+
+  .card-preview-img {
+    position: absolute;
+    align-self: center;
+    height: auto;
     width: 100%;
-    object-fit: cover;
+    z-index: 1;
 
-    &.hidden {
-      visibility: hidden;
+    &.img-render {
     }
 
-    &.artwork-container {
-      max-width: 75.5%;
-      top: 18.5%;
+    &.rendering {
+      position: absolute;
+      z-index: 2;
 
-      &.artwork-pendulum {
-        max-width: 86.3%;
-        max-height: 52.1%;
-        top: 18%;
-      }
-
-      &.artwork-pendulum-link {
-        max-width: 81.1%;
-        max-height: 55.7%;
-        top: 18%;
-        margin-right: 0.2%;;
-        // z-index: 900;
-      }
-
-      .artwork {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-    }
-
-    &.copyright {
-    }
-
-    &.edition {
-    }
-
-    &.card-name-container {
-      height: 7%;
-      width: 75%;
-      top: 3.26%;
-      left: 8%;
-      font-family: fontName;
-      font-size: 63px;
-      display: flex;
-      justify-content: start;
-
-      .card-name {
-        width: max-content;
-        margin: 0;
-        overflow-x: visible;
-        white-space: nowrap;
-        position: absolute;
-        z-index: -1;
-      }
-
-      .html2canvas-name {
-        max-width: 100%;
-      }
-    }
-
-    &.atk-def {
-      top: 87.81%;
-      font-family: fontAtkDef;
-      font-size: 24.5px;
-      text-shadow: 0 0 black;
-
-      &.atk {
-        right: -62.6%;
-      }
-
-      &.def {
-        right: -83%;
-      }
-    }
-
-    &.card-set {
-      top: 69.445%;
-      right: -71.2%;
-      font-family: fontCardSet;
-      font-size: 16px;
-      text-shadow: 0 0 black;
-
-      &.with-arrows {
-        right: -63.4%;
-      }
-
-      &.on-pendulum {
-        top: 89.2%;
-        right: -9%;
-      }
-    }
-
-    &.passcode {
-      top: 93.2%;
-      left: 4%;
-      font-family: fontPasscode;
-      font-size: 15px;
-      text-shadow: 0 0 black;
-    }
-
-    &.card-link-arrows {
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
-
-    &.card-abilities {
-      font-family: fontAbilities;
-      display: flex;
-      justify-content: start;
-      align-items: center;
-      width: 84.5%;
-      height: 3%;
-      top: 75%;
-      gap: 3px;
-
-      &.on-pendulum-link {
-        top: 77.5%;
-      }
-
-      .html2canvas-abilities {
-        max-width: 95%;
-      }
-
-      .abilities-text {
-        margin: 0;
-
-        &.abilities {
-          margin-top: 0.25%;
-          text-transform: uppercase;
-          font-size: 17px;
-          overflow-x: visible;
-          white-space: nowrap;
-          position: absolute;
-          z-index: -1;
-
-          .uppercase {
-            font-size: 20px;
-          }
-        }
-
-        &.abilities-bracket {
-          font-size: 20px;
-
-          &.left-bracket {
-          }
-
-          &.right-bracket {
-          }
-        }
-      }
-    }
-
-    &.card-description {
-      font-family: fontDesc;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      width: 84%;
-      top: 75%;
-      height: 18.4%;
-
-      &.with-abilities {
-        top: 78%;
-        height: 12.5%;
-      }
-
-      &.on-pendulum-link {
-        top: 80.5%;
-        height: 9.5%;
-      }
-
-      .description-text {
-        margin: 0;
-        max-width: 100%;
-        text-align: justify;
-        text-shadow: 0 0 black;
-      }
-    }
-
-    &.card-pendulum-effect {
-      font-family: fontDesc;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      width: 68%;
-      top: 63.2%;
-      height: 10%;
-
-      &.on-link {
-        width: 63%;
-        top: 62.8%;
-        height: 10.3%;
-      }
-
-      .pendulum-effect-text {
-        margin: 0;
-        max-width: 100%;
-        text-align: justify;
-        text-shadow: 0 0 black;
+      &.hidden {
+        visibility: hidden;
       }
     }
   }

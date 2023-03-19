@@ -48,7 +48,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
           height: 0,
           width: 0
         },
-        frame: 'link',
+        frame: 'effect',
         stType: 'link',
         attribute: 'light',
         abilities: ['Cyberse', 'Lien', 'Effet'],
