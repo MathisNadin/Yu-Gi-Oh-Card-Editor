@@ -234,7 +234,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       let newLineHeight = 1 + (12 - newFontSize) / 90;
       if (newLineHeight < 1.05) newLineHeight = 1.05;
 
-      if (newFontSize >= 1) {
+      if (newFontSize >= 5) {
         this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooBig' });
       } else {
         this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
@@ -324,7 +324,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       let newLineHeight = 1 + (12 - newFontSize) / 90;
       if (newLineHeight < 1.05) newLineHeight = 1.05;
 
-      if (newFontSize >= 1) {
+      if (newFontSize >= 5) {
         this.setState({ descFontSize: newFontSize, descLineHeight: newLineHeight, adjustTextState: 'tooBig' });
       } else {
         this.setState({ adjustState: 'done', adjustTextState: 'unknown' });

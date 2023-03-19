@@ -129,9 +129,9 @@
       .card-builder .card-layer.card-abilities .abilities-text {
         margin: 0; }
         .card-builder .card-layer.card-abilities .abilities-text.abilities {
-          margin-top: 1px;
+          margin-top: 3px;
           text-transform: uppercase;
-          font-size: 27px;
+          font-size: 26px;
           overflow-x: visible;
           white-space: nowrap;
           position: absolute;

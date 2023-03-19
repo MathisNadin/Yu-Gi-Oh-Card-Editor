@@ -124,7 +124,7 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     if (this.props.name) newProps.name = this.props.name;
     if (this.props.hint) newProps.title = this.props.hint;
 
-    return cloneElement(fc, newProps, fc.props.children);
+    return cloneElement(fc, newProps, fc.props.children) as ReactElement;
   }
 
   public renderStyle() {

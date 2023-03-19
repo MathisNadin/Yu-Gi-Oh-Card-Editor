@@ -16,23 +16,30 @@
   }
 
   .card-editor-section {
-    max-width: 100%;
+    width: 100%;
     margin: 10px 0 10px 10px;
+
+    .card-items {
+      max-width: 100%;
+      flex-wrap: wrap;
+
+      .item-container {
+        margin: 4px 10px 4px 0;
+        cursor: pointer;
+      }
+    }
 
     &.card-attributes {
       .card-attributes-icons {
-        max-width: 100%;
-        flex-wrap: wrap;
-
         .card-attribute-container {
           height: 30px;
-          margin: 2px 10px 2px 0;
 
           .card-attribute {
             &.selected {
               border: 2px solid black;
-              border-radius: 3px;
-              margin: -2px;
+              border-radius: 17px;
+              margin: -3px;
+              padding: 1px;
             }
           }
         }
@@ -41,12 +48,8 @@
 
     &.card-frames {
       .card-frames-icons {
-        max-width: 100%;
-        flex-wrap: wrap;
-
         .card-frame-container {
           height: 50px;
-          margin: 2px 10px 2px 0;
 
           .card-frame {
             &.selected {
@@ -58,5 +61,48 @@
         }
       }
     }
+
+    &.card-levels {
+      .card-levels-icons {
+        .card-level-container {
+          width: 30px;
+          height: 30px;
+          line-height: 30px;
+
+          .card-level {
+            margin: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            color: black;
+            font-size: 15px;
+            text-align: center;
+            background-color: lightgray;
+            border-radius: 3px;
+
+            &.selected {
+              border: 2px solid black;
+              margin: -2px;
+            }
+          }
+        }
+      }
+    }
+
+    &.card-name {
+      .name-input {
+        width: 75%;
+      }
+    }
+
+    &.card-description {
+      .description-input {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: justify;
+        resize: none;
+        height: 150px;
+      }
+    }
+
   }
 }
