@@ -122,7 +122,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     if (isUndefined(description)) return;
     this.state.card.description = description;
     this.setState({ card: this.state.card });
-    console.log(description);
     this.debouncedOnCardChange(this.state.card);
   }
 

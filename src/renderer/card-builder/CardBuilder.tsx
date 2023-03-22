@@ -33,6 +33,7 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
+import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 
 interface ICardBuilderProps extends IContainableProps {
   card: ICard;
@@ -193,7 +194,6 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     return this.props.card.frame !== 'token'
       && this.props.card.frame !== 'spell'
       && this.props.card.frame !== 'trap'
-      && this.props.card.frame !== 'skill'
       && this.props.card.frame !== 'legendaryDragon';
   }
 
@@ -208,61 +208,6 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         if (this.props.onCardReady) this.props.onCardReady();
         break;
       }
-    }
-  }
-
-  private adjustPendFontSize() {
-    if (!this.props.card.pendulum) {
-      this.setState({ adjustState: 'abilities' });
-      return;
-    }
-
-    const container = document.querySelector('.card-pendulum-effect') as HTMLDivElement;
-    const text = document.querySelector('.pendulum-effect-text') as HTMLDivElement;
-    if (!container || !text || this.state.pendFontSize === 0) {
-      this.setState({ adjustState: 'abilities' });
-      return;
-    }
-
-    const textHeight = text.clientHeight;
-    const parentHeight = container.offsetHeight;
-    const fontSize = this.state.pendFontSize;
-    const textWidth = text.offsetWidth;
-
-    if (textHeight > parentHeight || textWidth > container.offsetWidth) {
-      const newFontSize = fontSize - 0.5;
-      let newLineHeight = 1 + (12 - newFontSize) / 90;
-      if (newLineHeight < 1.05) newLineHeight = 1.05;
-
-      if (newFontSize >= 5) {
-        this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooBig' });
-      } else {
-        this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
-      }
-    }
-    else if (textHeight < parentHeight || textWidth < container.offsetWidth) {
-      if (this.state.adjustTextState === 'tooBig') {
-        if (this.state.pendLineHeight < 1.2) {
-          let newLineHeight = this.state.pendLineHeight + 0.1;
-          if (newLineHeight > 1.2) newLineHeight = 1.2;
-          this.setState({ pendLineHeight: newLineHeight });
-        } else {
-          this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
-        }
-      } else {
-        const newFontSize = fontSize + 0.5;
-        let newLineHeight = 1 + (12 + newFontSize) / 90;
-        if (newLineHeight > 1.2) newLineHeight = 1.2;
-
-        if (newFontSize <= 30) {
-          this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooSmall' });
-        } else {
-          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
-        }
-      }
-    }
-    else {
-      this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
     }
   }
 
@@ -306,20 +251,85 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     this.setState({ adjustState: 'desc' });
   }
 
+  private adjustPendFontSize() {
+    if (!this.props.card.pendulum) {
+      this.setState({ adjustState: 'abilities' });
+      return;
+    }
+
+    const container = document.querySelector('.card-pendulum-effect-holder') as HTMLDivElement;
+    const texts = document.querySelectorAll('.pendulum-effect-text') as NodeListOf<HTMLDivElement>;
+    if (!container || !texts?.length || this.state.pendFontSize === 0) {
+      this.setState({ adjustState: 'abilities' });
+      return;
+    }
+
+    let textHeight = 0;
+    let textWidth = 0;
+    textWidth = texts[0].clientWidth;
+    texts.forEach(text => {
+      textHeight += text.clientHeight;
+    });
+    const parentHeight = container.clientHeight;
+    const parentWidth = container.clientWidth;
+    const fontSize = this.state.pendFontSize;
+
+    if (textHeight > parentHeight || textWidth > parentWidth) {
+      const newFontSize = fontSize - 0.5;
+      let newLineHeight = 1 + (12 - newFontSize) / 90;
+      if (newLineHeight < 1.05) newLineHeight = 1.05;
+
+      if (newFontSize >= 5) {
+        this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooBig' });
+      } else {
+        this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+      }
+    }
+    else if (textHeight < parentHeight || textWidth < parentWidth) {
+      if (this.state.adjustTextState === 'tooBig') {
+        if (this.state.pendLineHeight < 1.2) {
+          let newLineHeight = this.state.pendLineHeight + 0.1;
+          if (newLineHeight > 1.2) newLineHeight = 1.2;
+          this.setState({ pendLineHeight: newLineHeight });
+        } else {
+          this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+        }
+      } else {
+        const newFontSize = fontSize + 0.5;
+        let newLineHeight = 1 + (12 + newFontSize) / 90;
+        if (newLineHeight > 1.2) newLineHeight = 1.2;
+
+        if (newFontSize <= 30) {
+          this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooSmall' });
+        } else {
+          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+        }
+      }
+    }
+    else {
+      this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+    }
+  }
+
   public adjustDescFontSize() {
-    const container = document.querySelector('.card-description') as HTMLDivElement;
-    const text = document.querySelector('.description-text') as HTMLDivElement;
-    if (!container || !text || this.state.descFontSize === 0) {
+    const container = document.querySelector('.card-description-holder') as HTMLDivElement;
+    const texts = document.querySelectorAll('.description-text') as NodeListOf<HTMLDivElement>;
+    if (!container || !texts?.length || this.state.descFontSize === 0) {
       this.setState({ adjustState: 'done' });
       return;
     }
 
-    const textHeight = text.clientHeight;
-    const parentHeight = container.offsetHeight;
+    let textHeight = 0;
+    let textWidth = 0;
+    textWidth = texts[0].clientWidth;
+    texts.forEach(text => {
+      textHeight += text.clientHeight;
+    });
+    const parentHeight = container.clientHeight;
+    const parentWidth = container.clientWidth;
     const fontSize = this.state.descFontSize;
-    const textWidth = text.offsetWidth;
 
-    if (textHeight > parentHeight || textWidth > container.offsetWidth) {
+    if (textHeight > parentHeight || textWidth > parentWidth) {
       const newFontSize = fontSize - 0.5;
       let newLineHeight = 1 + (12 - newFontSize) / 90;
       if (newLineHeight < 1.05) newLineHeight = 1.05;
@@ -330,7 +340,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
       }
     }
-    else if (textHeight < parentHeight || textWidth < container.offsetWidth) {
+    else if (textHeight < parentHeight || textWidth < parentWidth) {
       if (this.state.adjustTextState === 'tooBig') {
         if (this.state.descLineHeight < 1.2) {
           let newLineHeight = this.state.descLineHeight + 0.1;
@@ -410,16 +420,21 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderName() {
-    let className = `card-layer card-name ${this.state.defaultTextColor}-text ${this.props.card.nameStyle}`;
+    let hStackClassName = `card-layer card-name-container`;
+    let pClassName = `card-layer card-name ${this.props.card.nameStyle}`;
     if (this.props.card.frame === 'skill') {
-      className = `${className} skill-name`;
-    } else if (this.props.card.frame === 'link') {
-      className = `${className} on-link`;
+      pClassName = `${pClassName} white-text skill-name`;
+      hStackClassName = `${hStackClassName} skill-name-container`;
+    } else {
+      pClassName = `${pClassName} ${this.state.defaultTextColor}-text`;
+      if (this.props.card.frame === 'link') {
+        pClassName = `${pClassName} on-link`;
+      }
     }
 
     return this.renderAttributes(<HorizontalStack>
-      <p className={className}>{this.props.card.name}</p>
-    </HorizontalStack>, `card-layer card-name-container`);
+      <p className={pClassName}>{this.props.card.name}</p>
+    </HorizontalStack>, hStackClassName);
   }
 
   private renderAbilities() {
@@ -434,7 +449,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
       <p style={{}} className={`abilities-text black-text abilities`}>
         {upperCaseIndexes.map((index, i) => (
-          <Fragment key={i}>
+          <Fragment key={`uppercase-index-${i}`}>
             <span className='uppercase'>
               {text.slice(index, index+1)}
             </span>
@@ -449,23 +464,35 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderPendulum() {
-    return this.renderAttributes(<Container>
-      <p style={{ fontSize: `${this.state.pendFontSize}px`, lineHeight: this.state.pendLineHeight }} className={`pendulum-effect-text black-text`}>
-        {this.props.card.pendEffect}
-      </p>
-    </Container>, `card-layer card-pendulum-effect ${this.props.card.frame === 'link' ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`);
+    const pendEffect = this.props.card.pendEffect.split('\n');
+
+    return this.renderAttributes(<VerticalStack>
+      {pendEffect.map(text => {return <p
+        className='pendulum-effect-text black-text'
+        style={{
+          fontSize: `${this.state.pendFontSize}px`,
+          lineHeight: this.state.pendLineHeight,
+          marginBottom: this.state.pendLineHeight / 2
+        }}>{text}</p>})}
+    </VerticalStack>, `card-layer card-pendulum-effect-holder ${this.props.card.frame === 'link' ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`);
   }
 
   private renderDescription() {
-    let containerClass = `card-layer card-description${this.state.adjustState === 'done' ? '' : ' hidden'}`;
+    let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
     if (this.hasAbilities) containerClass = `${containerClass} with-abilities`;
     if (this.props.card.pendulum && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
 
-    return this.renderAttributes(<Container>
-      <p style={{ fontSize: `${this.state.descFontSize}px`, lineHeight: this.state.descLineHeight }} className={`description-text black-text`}>
-        {this.props.card.description}
-      </p>
-    </Container>, containerClass);
+    const description = this.props.card.description.split('\n');
+
+    return this.renderAttributes(<VerticalStack>
+      {description.map(d => {return <p
+        className='description-text black-text'
+        style={{
+          fontSize: `${this.state.descFontSize}px`,
+          lineHeight: this.state.descLineHeight,
+          marginBottom: this.state.descLineHeight / 2
+        }}>{d}</p>})}
+    </VerticalStack>, containerClass);
   }
 
   private renderStPlus() {

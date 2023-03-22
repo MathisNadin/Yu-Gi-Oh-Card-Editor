@@ -119,6 +119,16 @@
       display: flex;
       justify-content: start;
 
+      &.skill-name-container {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+        top: 55px;
+        font-size: 62px;
+        letter-spacing: -4px;
+        text-shadow: 0 0 2px black;
+        -webkit-text-stroke: 2.5px black;
+      }
+
       .card-name {
         width: max-content;
         margin: 0;
@@ -247,7 +257,7 @@
       }
     }
 
-    &.card-description {
+    &.card-description-holder {
       font-family: fontDesc;
       display: flex;
       align-items: flex-start;
@@ -282,7 +292,7 @@
       }
     }
 
-    &.card-pendulum-effect {
+    &.card-pendulum-effect-holder {
       font-family: fontDesc;
       display: flex;
       align-items: flex-start;

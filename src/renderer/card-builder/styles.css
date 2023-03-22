@@ -34,147 +34,189 @@
   width: 40%;
   $previewPadding: 29.1512915129%;
   padding: $previewPadding 0; */ }
-  .card-builder .white-text {
-    color: white; }
-  .card-builder .black-text {
-    color: black; }
-  .card-builder .card-layer {
-    position: absolute;
-    width: 100%;
-    object-fit: cover; }
-    .card-builder .card-layer.hidden {
-      visibility: hidden; }
-    .card-builder .card-layer.artwork-container {
-      height: 614px;
-      width: 614px;
-      top: 218px;
-      left: 99px; }
-      .card-builder .card-layer.artwork-container.artwork-pendulum {
-        height: 665px;
-        width: 703px;
-        top: 211px;
-        left: 55px; }
-      .card-builder .card-layer.artwork-container.artwork-pendulum-link {
-        height: 661px;
-        width: 657px;
-        top: 211px;
-        left: 77px; }
-      .card-builder .card-layer.artwork-container .artwork {
-        width: 100%;
-        height: 100%; }
-    .card-builder .card-layer.card-name-container {
-      height: 84px;
-      width: 608px;
-      top: 39px;
-      left: 62px;
-      font-family: fontName;
-      font-size: 95px;
-      display: flex;
-      justify-content: start; }
-      .card-builder .card-layer.card-name-container .card-name {
-        width: max-content;
-        margin: 0;
-        overflow-x: visible;
-        white-space: nowrap;
-        position: absolute;
-        z-index: -1; }
-      .card-builder .card-layer.card-name-container .html2canvas-name {
-        max-width: 100%; }
-    .card-builder .card-layer.atk-def {
-      top: 1041px;
-      font-family: fontAtkDef;
-      font-size: 37px;
-      text-align: end;
-      text-shadow: 0 0 black; }
-      .card-builder .card-layer.atk-def.atk {
-        right: 231px; }
-      .card-builder .card-layer.atk-def.def {
-        right: 67px; }
-    .card-builder .card-layer.card-set {
-      top: 824px;
-      right: -581px;
-      font-family: fontCardSet;
-      font-size: 24px;
-      text-shadow: 0 0 black; }
-      .card-builder .card-layer.card-set.with-arrows {
-        right: -520px; }
-      .card-builder .card-layer.card-set.on-pendulum {
-        top: 1057px;
-        right: -68px; }
-    .card-builder .card-layer.passcode {
-      top: 1103px;
-      left: 36px;
-      font-family: fontPasscode;
-      font-size: 23px;
-      text-shadow: 0 0 black; }
-    .card-builder .card-layer.card-link-arrows {
-      justify-content: center;
-      align-items: center;
-      width: 813px;
-      height: 1185px; }
-    .card-builder .card-layer.card-abilities {
-      font-family: fontAbilities;
-      display: flex;
-      justify-content: start;
-      align-items: center;
-      top: 888px;
-      left: 63px;
-      width: 689px;
-      height: 37px;
-      gap: 3px; }
-      .card-builder .card-layer.card-abilities.on-pendulum-link {
-        top: 920px; }
-      .card-builder .card-layer.card-abilities .html2canvas-abilities {
-        max-width: 95%; }
-      .card-builder .card-layer.card-abilities .abilities-text {
-        margin: 0; }
-        .card-builder .card-layer.card-abilities .abilities-text.abilities {
-          margin-top: 3px;
-          text-transform: uppercase;
-          font-size: 26px;
-          overflow-x: visible;
-          white-space: nowrap;
-          position: absolute;
-          z-index: -1; }
-          .card-builder .card-layer.card-abilities .abilities-text.abilities .uppercase {
-            font-size: 30px; }
-        .card-builder .card-layer.card-abilities .abilities-text.abilities-bracket {
-          font-size: 30px; }
-    .card-builder .card-layer.card-description {
-      font-family: fontDesc;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      top: 888px;
-      left: 65px;
-      width: 680px;
-      height: 220px; }
-      .card-builder .card-layer.card-description.with-abilities {
-        top: 923px;
-        height: 150px; }
-      .card-builder .card-layer.card-description.on-pendulum-link {
-        top: 957px;
-        height: 117px; }
-      .card-builder .card-layer.card-description .description-text {
-        margin: 0;
-        max-width: 100%;
-        text-align: justify;
-        text-shadow: 0 0 black; }
-    .card-builder .card-layer.card-pendulum-effect {
-      font-family: fontDesc;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      width: 556px;
-      height: 127px;
-      top: 746px;
-      left: 127px; }
-      .card-builder .card-layer.card-pendulum-effect.on-link {
-        width: 513px;
-        top: 743px;
-        left: 148px; }
-      .card-builder .card-layer.card-pendulum-effect .pendulum-effect-text {
-        margin: 0;
-        max-width: 100%;
-        text-align: justify;
-        text-shadow: 0 0 black; }
+
+.card-builder .white-text {
+  color: white; }
+
+.card-builder .black-text {
+  color: black; }
+
+.card-builder .card-layer {
+  position: absolute;
+  width: 100%;
+  object-fit: cover; }
+
+.card-builder .card-layer.hidden {
+  visibility: hidden; }
+
+.card-builder .card-layer.artwork-container {
+  height: 614px;
+  width: 614px;
+  top: 218px;
+  left: 99px; }
+
+.card-builder .card-layer.artwork-container.artwork-pendulum {
+  height: 665px;
+  width: 703px;
+  top: 211px;
+  left: 55px; }
+
+.card-builder .card-layer.artwork-container.artwork-pendulum-link {
+  height: 661px;
+  width: 657px;
+  top: 211px;
+  left: 77px; }
+
+.card-builder .card-layer.artwork-container .artwork {
+  width: 100%;
+  height: 100%; }
+
+.card-builder .card-layer.card-name-container {
+  height: 84px;
+  width: 608px;
+  top: 39px;
+  left: 62px;
+  font-family: fontName;
+  font-size: 95px;
+  display: flex;
+  justify-content: start; }
+
+.card-builder .card-layer.card-name-container.skill-name-container {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  top: 55px;
+  font-size: 62px;
+  letter-spacing: -4px;
+  text-shadow: 0 0 2px black;
+  -webkit-text-stroke: 2.5px black; }
+
+.card-builder .card-layer.card-name-container .card-name {
+  width: max-content;
+  margin: 0;
+  overflow-x: visible;
+  white-space: nowrap;
+  position: absolute;
+  z-index: -1; }
+
+.card-builder .card-layer.card-name-container .html2canvas-name {
+  max-width: 100%; }
+
+.card-builder .card-layer.atk-def {
+  top: 1041px;
+  font-family: fontAtkDef;
+  font-size: 37px;
+  text-align: end;
+  text-shadow: 0 0 black; }
+
+.card-builder .card-layer.atk-def.atk {
+  right: 231px; }
+
+.card-builder .card-layer.atk-def.def {
+  right: 67px; }
+
+.card-builder .card-layer.card-set {
+  top: 824px;
+  right: -581px;
+  font-family: fontCardSet;
+  font-size: 24px;
+  text-shadow: 0 0 black; }
+
+.card-builder .card-layer.card-set.with-arrows {
+  right: -520px; }
+
+.card-builder .card-layer.card-set.on-pendulum {
+  top: 1057px;
+  right: -68px; }
+
+.card-builder .card-layer.passcode {
+  top: 1103px;
+  left: 36px;
+  font-family: fontPasscode;
+  font-size: 23px;
+  text-shadow: 0 0 black; }
+
+.card-builder .card-layer.card-link-arrows {
+  justify-content: center;
+  align-items: center;
+  width: 813px;
+  height: 1185px; }
+
+.card-builder .card-layer.card-abilities {
+  font-family: fontAbilities;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  top: 888px;
+  left: 63px;
+  width: 689px;
+  height: 37px;
+  gap: 3px; }
+
+.card-builder .card-layer.card-abilities.on-pendulum-link {
+  top: 920px; }
+
+.card-builder .card-layer.card-abilities .html2canvas-abilities {
+  max-width: 95%; }
+
+.card-builder .card-layer.card-abilities .abilities-text {
+  margin: 0; }
+
+.card-builder .card-layer.card-abilities .abilities-text.abilities {
+  margin-top: 3px;
+  text-transform: uppercase;
+  font-size: 26px;
+  overflow-x: visible;
+  white-space: nowrap;
+  position: absolute;
+  z-index: -1; }
+
+.card-builder .card-layer.card-abilities .abilities-text.abilities .uppercase {
+  font-size: 30px; }
+
+.card-builder .card-layer.card-abilities .abilities-text.abilities-bracket {
+  font-size: 30px; }
+
+.card-builder .card-layer.card-description-holder {
+  font-family: fontDesc;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  top: 888px;
+  left: 65px;
+  width: 680px;
+  height: 220px; }
+
+.card-builder .card-layer.card-description-holder.with-abilities {
+  top: 923px;
+  height: 150px; }
+
+.card-builder .card-layer.card-description-holder.on-pendulum-link {
+  top: 957px;
+  height: 117px; }
+
+.card-builder .card-layer.card-description-holder .description-text {
+  margin: 0;
+  max-width: 100%;
+  text-align: justify;
+  text-shadow: 0 0 black; }
+
+.card-builder .card-layer.card-pendulum-effect-holder {
+  font-family: fontDesc;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 556px;
+  height: 127px;
+  top: 746px;
+  left: 127px; }
+
+.card-builder .card-layer.card-pendulum-effect-holder.on-link {
+  width: 513px;
+  top: 743px;
+  left: 148px; }
+
+.card-builder .card-layer.card-pendulum-effect-holder .pendulum-effect-text {
+  margin: 0;
+  max-width: 100%;
+  text-align: justify;
+  text-shadow: 0 0 black; }
