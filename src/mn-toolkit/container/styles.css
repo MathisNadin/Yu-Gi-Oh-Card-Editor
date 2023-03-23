@@ -9,3 +9,9 @@
 
 .mn-container.mn-margin {
   margin: 16px; }
+
+.mn-container.mn-scroll {
+  overflow-y: auto; }
+
+.mn-container.mn-scrollX {
+  overflow-x: auto; }

@@ -14,4 +14,8 @@ export class HorizontalStack extends Container<IHorizontalStackProps, IHorizonta
       layout: 'horizontal'
     };
   }
+
+  public renderClasses(name?: string) {
+    return super.renderClasses(name);
+  }
 }

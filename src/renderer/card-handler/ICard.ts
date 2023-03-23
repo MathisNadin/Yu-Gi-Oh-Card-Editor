@@ -52,11 +52,31 @@ export interface ICard {
   }
   edition: TEdition;
   cardSet: string;
-  passcode: number;
+  passcode: string;
   sticker: TSticker;
   copyrightYear: '2020' | '1996';
   speed: boolean;
   rush: boolean;
   legend: boolean;
   atkMax: number;
+}
+
+export function hasLinkArrows(card: ICard): boolean {
+  return card.frame === 'link' || ((card.frame === 'spell' || card.frame === 'trap') && card.stType === 'link');
+}
+
+export function hasPendulumFrame(card: ICard): boolean {
+  return card.pendulum
+    && card.frame !== 'token'
+    && card.frame !== 'spell'
+    && card.frame !== 'trap'
+    && card.frame !== 'skill'
+    && card.frame !== 'legendaryDragon';
+}
+
+export function hasAbilities(card: ICard): boolean {
+  return card.frame !== 'token'
+    && card.frame !== 'spell'
+    && card.frame !== 'trap'
+    && card.frame !== 'legendaryDragon';
 }

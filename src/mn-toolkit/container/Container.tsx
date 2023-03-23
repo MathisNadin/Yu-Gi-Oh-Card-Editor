@@ -20,6 +20,8 @@ export interface IContainerProps extends IContainableProps {
   layout?: 'vertical' | 'horizontal';
   gutter?: boolean;
   margin?: boolean;
+  scroll?: boolean;
+  scrollX?: boolean;
 }
 
 export interface IContainerState extends IContainableState {
@@ -40,6 +42,8 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     if (this.props.layout) classes[`${this.props.layout}-stack`] = true;
     if (this.props.gutter) classes['mn-gutter'] = true;
     if (this.props.margin) classes['mn-margin'] = true;
+    if (this.props.scroll) classes['mn-scroll'] = true;
+    if (this.props.scrollX) classes['mn-scrollX'] = true;
     return classes;
   }
 };

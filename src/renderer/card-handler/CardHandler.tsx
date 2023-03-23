@@ -74,7 +74,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
         },
         edition: 'limited',
         cardSet: 'COTD-FR045',
-        passcode: 91875164,
+        passcode: '91875164',
         sticker: 'silver',
         copyrightYear: '2020',
         speed: false,

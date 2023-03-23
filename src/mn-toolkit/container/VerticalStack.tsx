@@ -14,4 +14,8 @@ export class VerticalStack extends Container<IVerticalStackProps, IVerticalStack
       layout: 'vertical'
     };
   }
+
+  public renderClasses(name?: string) {
+    return super.renderClasses(name);
+  }
 }

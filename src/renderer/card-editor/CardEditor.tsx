@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
@@ -20,8 +21,10 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TFrame } from 'renderer/card-handler/ICard';
-import { isUndefined } from 'mn-toolkit/tools';
+import { ICard, TAttribute, TFrame, hasAbilities, hasPendulumFrame } from 'renderer/card-handler/ICard';
+import { integer, isUndefined } from 'mn-toolkit/tools';
+import lockOpen from '../resources/pictures/lock-open.svg';
+import lockClosed from '../resources/pictures/lock-closed.svg';
 
 interface EventTargetWithValue extends EventTarget {
   value: string;
@@ -33,6 +36,7 @@ interface ICardEditorProps extends IContainableProps {
 }
 
 interface ICardEditorState extends IContainableState {
+  lockPend: boolean;
   card: ICard;
   cardFrames: {
     id: TFrame;
@@ -54,6 +58,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
     this.state = {
       loaded: true,
+      lockPend: props.card.scales.left === props.card.scales.right,
       card: props.card,
       cardFrames: [
         { id: 'normal', file: require(`../resources/pictures/card-frames/normal.png`) },
@@ -95,6 +100,19 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   public onFrameChange(frame: TFrame) {
     this.state.card.frame = frame;
+
+    if (frame === 'spell') {
+      this.state.card.attribute = 'spell';
+    } else if (frame === 'trap') {
+      this.state.card.attribute = 'trap';
+    } else {
+      if (this.state.card.attribute === 'spell' || this.state.card.attribute === 'trap') {
+        this.state.card.attribute = 'dark';
+      }
+      if (this.state.card.level > 8 && frame === 'link') {
+        this.state.card.level = 8;
+      }
+    }
     this.setState({ card: this.state.card });
     this.props.onCardChange(this.state.card);
   }
@@ -105,10 +123,31 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.props.onCardChange(this.state.card);
   }
 
-  public onLevelChange(level: number) {
-    this.state.card.level = level;
+  public onLevelChange(level: string, max: number) {
+    if (isUndefined(level)) return;
+    const levelNumber = integer(level);
+    if (levelNumber > max) return;
+    this.state.card.level = levelNumber;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  public onAtkChange(atk: string) {
+    if (isUndefined(atk)) return;
+    const atkNumber = integer(atk);
+    if (atkNumber > 999999) return;
+    this.state.card.atk = atkNumber;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  public onDefChange(def: string) {
+    if (isUndefined(def)) return;
+    const defNumber = integer(def);
+    if (defNumber > 999999) return;
+    this.state.card.def = defNumber;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onNameChange(name: string) {
@@ -125,30 +164,87 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
-  public render() {
-    let levelLabel: string;
-    let levels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    if (this.state.card.frame === 'link') {
-      levelLabel = 'Classifications Lien';
-    } else {
-      levels = levels.concat([9, 10, 11, 12, 13]);
+  private onPendChange() {
+    this.state.card.pendulum = !this.state.card.pendulum;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
 
-      if (this.state.card.frame === 'xyz') {
-        levelLabel = 'Rangs';
-      } else if (this.state.card.frame === 'darkSynchro') {
-        levelLabel = 'Niveaux Négatifs';
-      } else {
-        levelLabel = 'Niveaux';
-      }
+  private onPendLockChange() {
+    const lockPend = !this.state.lockPend;
+    this.setState({ lockPend });
+    if (lockPend && this.state.card.scales.left !== this.state.card.scales.right) {
+      this.state.card.scales.right = this.state.card.scales.left;
+      this.setState({ card: this.state.card });
+      this.props.onCardChange(this.state.card);
     }
+  }
 
+  public onLeftScaleChange(left: string) {
+    if (isUndefined(left)) return;
+    const leftNumber = integer(left);
+    this.state.card.scales.left = leftNumber;
+    if (this.state.lockPend) this.state.card.scales.right = leftNumber;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  public onRightScaleChange(right: string) {
+    if (isUndefined(right)) return;
+    const rightNumber = integer(right);
+    this.state.card.scales.right = rightNumber;
+    if (this.state.lockPend) this.state.card.scales.left = rightNumber;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onPendEffChange(pendEffect: string) {
+    if (isUndefined(pendEffect)) return;
+    this.state.card.pendEffect = pendEffect;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onCardSetChange(cardSet: string) {
+    if (isUndefined(cardSet)) return;
+    this.state.card.cardSet = cardSet;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onPasscodeChange(passcode: string) {
+    if (isUndefined(passcode)) return;
+    this.state.card.passcode = passcode;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  public render() {
+    return this.renderAttributes(<VerticalStack scroll>
+      {this.renderBasicCardDetails()}
+      {hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
+      {hasPendulumFrame(this.state.card) && this.renderPendulumCardDetails()}
+      {this.renderMiscDetails()}
+    </VerticalStack>, 'card-editor');
+  }
+
+  private renderBasicCardDetails() {
     return this.renderAttributes(<VerticalStack>
-      <VerticalStack className='card-editor-section card-name'>
-        <p className='editor-label name-label label-with-separator'>Nom</p>
-        <input type='text' className='name-input' value={this.state.card.name} onInput={e => this.onNameChange((e.target as EventTargetWithValue).value)} />
+      <VerticalStack className='section-header'>
+        <p className='section-header-title'>Bases de la Carte</p>
       </VerticalStack>
 
-      <VerticalStack className='card-editor-section card-attributes'>
+      <HorizontalStack className='card-editor-sub-section card-name card-input-container'>
+        <p className='editor-label name-label'>Nom</p>
+        <input type='text' className='name-input card-input' value={this.state.card.name} onInput={e => this.onNameChange((e.target as EventTargetWithValue).value)} />
+      </HorizontalStack>
+
+      <VerticalStack className='card-editor-sub-section card-description card-textarea'>
+        <p className='editor-label description-label label-with-separator'>Description</p>
+        <textarea className='description-input textarea-input' value={this.state.card.description} onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)} />
+      </VerticalStack>
+
+      <VerticalStack className='card-editor-sub-section card-attributes'>
         <p className='editor-label attributes-label label-with-separator'>Icones</p>
         <HorizontalStack className='card-items card-attributes-icons'>
           {this.state.cardAttributes.map(attribute =>
@@ -162,7 +258,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
       </VerticalStack>
 
-      <VerticalStack className='card-editor-section card-frames'>
+      <VerticalStack className='card-editor-sub-section card-frames'>
         <p className='editor-label frames-label label-with-separator'>Types de carte</p>
         <HorizontalStack className='card-items card-frames-icons'>
           {this.state.cardFrames.map(frame =>
@@ -175,25 +271,118 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           )}
         </HorizontalStack>
       </VerticalStack>
+    </VerticalStack>, 'card-editor-section basic-section');
+  }
 
-      <VerticalStack className='card-editor-section card-levels'>
-        <p className='editor-label levels-label label-with-separator'>{levelLabel}</p>
-        <HorizontalStack className='card-items card-levels-icons'>
-          {levels.map(level =>
-            <HorizontalStack className='item-container card-level-container' onTap={() => this.onLevelChange(level)}>
-              <p className={`card-level${this.state.card.level === level ? ' selected' : ''}`}>
-                {level}
-              </p>
-            </HorizontalStack>
-          )}
+  private renderMonsterCardDetails() {
+    let levelLabel: string;
+    let max: number;
+    // let levels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    if (this.state.card.frame === 'link') {
+      levelLabel = 'Classification Lien';
+      max = 8
+    } else {
+      // levels = levels.concat([9, 10, 11, 12, 13]);
+      max = 13;
+
+      if (this.state.card.frame === 'xyz') {
+        levelLabel = 'Rang';
+      } else if (this.state.card.frame === 'darkSynchro') {
+        levelLabel = 'Niveau Négatif';
+      } else {
+        levelLabel = 'Niveau';
+      }
+    }
+
+    return this.renderAttributes(<VerticalStack>
+      <VerticalStack className='section-header'>
+        <p className='section-header-title'>Détails de la Carte Monstre</p>
+      </VerticalStack>
+
+      <HorizontalStack className='card-editor-sub-section level-and-pend-section'>
+        <HorizontalStack className='card-level card-input-container'>
+          <p className='editor-label level-label'>{levelLabel}</p>
+          <input type='number' min={0} max={max} className='level-input card-input' value={this.state.card.level} onInput={e => this.onLevelChange((e.target as EventTargetWithValue).value, max)} />
         </HorizontalStack>
+
+        <HorizontalStack className='card-pendulum card-input-container'>
+          <input type='checkbox' className='pendulum-input card-input' defaultChecked={this.state.card.pendulum} onInput={() => this.onPendChange()} />
+          <p className='editor-label pendulum-label'>Pendule</p>
+        </HorizontalStack>
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-sub-section atk-def-section'>
+        <HorizontalStack className='card-stats card-atk card-input-container'>
+          <p className='editor-label atk-label'>ATK</p>
+          <input type='number' min={0} max={999999} className='atk-input card-input' value={this.state.card.atk} onInput={e => this.onAtkChange((e.target as EventTargetWithValue).value)} />
+        </HorizontalStack>
+
+        <VerticalStack className='separator-container' fill />
+
+        {this.state.card.frame !== 'link' && <HorizontalStack className='card-stats card-def card-input-container'>
+          <p className='editor-label def-label'>DEF</p>
+          <input readOnly={this.state.lockPend} type='number' min={0} max={999999} className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
+        </HorizontalStack>}
+      </HorizontalStack>
+    </VerticalStack>, 'card-editor-section abilities-section');
+  }
+
+  private renderPendulumCardDetails() {
+    let lockBtnClass = 'pend-lock';
+    let lockSVG: string;
+    if (this.state.lockPend) {
+      lockSVG = lockClosed;
+      lockBtnClass = `${lockBtnClass} lock-closed`;
+    } else {
+      lockSVG = lockOpen;
+      lockBtnClass = `${lockBtnClass} lock-opened`;
+    }
+
+    return this.renderAttributes(<VerticalStack>
+      <VerticalStack className='section-header'>
+        <p className='section-header-title'>Détails de la Carte Pendule</p>
       </VerticalStack>
 
-      <VerticalStack className='card-editor-section card-description'>
-        <p className='editor-label description-label label-with-separator'>Description</p>
-        <textarea className='description-input' value={this.state.card.description} onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)} />
+      <HorizontalStack className='card-editor-sub-section scales-section'>
+        <HorizontalStack className='card-scale card-left-scale card-input-container'>
+          <p className='editor-label scale-label'>Échelle Gauche</p>
+          <input type='number' min={0} max={13} className='scale-input card-input' value={this.state.card.scales.left} onInput={e => this.onLeftScaleChange((e.target as EventTargetWithValue).value)} />
+        </HorizontalStack>
+
+        <VerticalStack className='separator-container pend-lock-container' fill>
+          <button type='button' className={lockBtnClass} onClick={() => this.onPendLockChange()}>
+            <img src={lockSVG} alt='lock' />
+          </button>
+        </VerticalStack>
+
+        <HorizontalStack className='card-scale card-right-scale card-input-container'>
+          <p className='editor-label scale-label'>Échelle Droite</p>
+          <input readOnly={this.state.lockPend} type='number' min={0} max={13} className='scale-input card-input' value={this.state.card.scales.right} onInput={e => this.onRightScaleChange((e.target as EventTargetWithValue).value)} />
+        </HorizontalStack>
+      </HorizontalStack>
+
+      <VerticalStack className='card-editor-sub-section card-pendulum-effect card-textarea'>
+        <p className='editor-label pendulum-effect-label label-with-separator'>Effet Pendule</p>
+        <textarea className='pendulum-effect-input textarea-input' value={this.state.card.pendEffect} onInput={e => this.onPendEffChange((e.target as EventTargetWithValue).value)} />
+      </VerticalStack>
+    </VerticalStack>, 'card-editor-section pendulum-section');
+  }
+
+  private renderMiscDetails() {
+    return this.renderAttributes(<VerticalStack>
+      <VerticalStack className='section-header'>
+        <p className='section-header-title'>Détails Divers</p>
       </VerticalStack>
 
-    </VerticalStack>, 'card-editor');
+      <HorizontalStack className='card-editor-sub-section card-card-set card-input-container'>
+        <p className='editor-label card-set-label'>Set</p>
+        <input type='text' className='card-set-input card-input' value={this.state.card.cardSet} onInput={e => this.onCardSetChange((e.target as EventTargetWithValue).value)} />
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-sub-section card-passcode card-input-container'>
+        <p className='editor-label passcode-label'>Code</p>
+        <input type='text' pattern='\d*' maxLength={8} className='passcode-input card-input' value={this.state.card.passcode} onInput={e => this.onPasscodeChange((e.target as EventTargetWithValue).value)} />
+      </HorizontalStack>
+    </VerticalStack>, 'card-editor-section misc-section');
   }
 };

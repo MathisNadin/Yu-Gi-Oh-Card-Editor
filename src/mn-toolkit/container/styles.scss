@@ -14,4 +14,12 @@
   &.mn-margin {
     margin: 16px;
   }
+
+  &.mn-scroll {
+    overflow-y: auto;
+  }
+
+  &.mn-scrollX {
+    overflow-x: auto;
+  }
 }

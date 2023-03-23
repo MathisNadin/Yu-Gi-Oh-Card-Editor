@@ -3,11 +3,12 @@
   width: 30%;
   margin-left: 10px;
   align-items: flex-start;
-  font-size: 15px;
+  font-size: 17px;
 
   .editor-label {
     color: black;
     margin: 5px 0;
+    font-size: 13px;
 
     &.label-with-separator {
       border-bottom: 1px solid darkgray;
@@ -15,94 +16,232 @@
     }
   }
 
+  .horizontal-stack {
+    p {
+      width: 15%;
+      margin-right: 10px;
+    }
+  }
+
   .card-editor-section {
-    width: 100%;
-    margin: 10px 0 10px 10px;
+    width: 95%;
+    align-items: center;
+    margin: 10px 0 5px 10px;
+    border: 1px solid #0052a3;
+    border-radius: 0 0 8px 8px;
 
-    .card-items {
-      max-width: 100%;
-      flex-wrap: wrap;
+    &.misc-section {
+      margin-bottom: 40px;
+    }
 
-      .item-container {
-        margin: 4px 10px 4px 0;
-        cursor: pointer;
+    .section-header {
+      width: 100%;
+      background: linear-gradient(
+        200.96deg,
+        white -29.09%,
+        #70afee 51.77%,
+        #318ce7 129.35%
+      );
+      border-bottom: 1px solid #0052a3;
+
+      .section-header-title {
+        margin: 8px;
+        color: white;
+        font-size: 15px;
       }
     }
 
-    &.card-attributes {
-      .card-attributes-icons {
-        .card-attribute-container {
-          height: 30px;
+    .card-editor-sub-section {
+      width: 95%;
+      padding: 2%;
 
-          .card-attribute {
-            &.selected {
-              border: 2px solid black;
-              border-radius: 17px;
-              margin: -3px;
-              padding: 1px;
+      .card-items {
+        max-width: 100%;
+        flex-wrap: wrap;
+
+        .item-container {
+          margin: 4px 10px 4px 0;
+          cursor: pointer;
+        }
+      }
+
+      &.atk-def-section {
+        .card-stats {
+          width: 48%;
+          justify-content: center;
+          align-items: center;
+
+          .editor-label {
+            width: 20%;
+          }
+
+          .card-input {
+            width: 80%;
+          }
+        }
+      }
+
+      &.level-and-pend-section {
+        .card-level {
+          width: 65%;
+          justify-content: center;
+          align-items: center;
+
+          .level-label {
+            width: fit-content;
+          }
+
+          .level-input {
+            flex: 1;
+          }
+        }
+
+        .card-pendulum {
+          width: 30%;
+          margin-left: 5%;
+          justify-content: center;
+          align-items: center;
+
+          .pendulum-input {
+            width: 30%;
+          }
+
+          .pendulum-label {
+            flex: 1;
+          }
+        }
+      }
+
+      &.scales-section {
+        .card-scale {
+          width: 40%;
+          justify-content: center;
+          align-items: center;
+
+          .scale-label {
+            width: 75%;
+          }
+
+          .scale-input {
+            width: 25%;
+          }
+
+          input[readOnly] {
+            color: #999;
+            background-color: #f7f7f7;
+            border-color: #ddd;
+            cursor: not-allowed;
+          }
+        }
+
+        .pend-lock-container {
+          align-items: center;
+
+          .pend-lock {
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            padding: 8px;
+            margin: 0 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+
+            img {
+              height: 16px;
+              width: 16px;
+            }
+
+            &.lock-opened {
+              background-color: rgba(222, 25, 60, 0.6);
+            }
+
+            &.lock-closed {
+              background-color: rgba(0, 100, 170, 0.6);
+            }
+
+            &:hover {
+              background-color: rgba(185, 200, 205, 0.6);
             }
           }
         }
       }
-    }
 
-    &.card-frames {
-      .card-frames-icons {
-        .card-frame-container {
-          height: 50px;
+      &.card-attributes {
+        .card-attributes-icons {
+          .card-attribute-container {
+            height: 30px;
 
-          .card-frame {
-            &.selected {
-              border: 2px solid black;
-              border-radius: 3px;
-              margin: -2px;
+            .card-attribute {
+              &.selected {
+                border: 2px solid black;
+                border-radius: 17px;
+                margin: -3px;
+                padding: 1px;
+              }
             }
           }
         }
       }
-    }
 
-    &.card-levels {
-      .card-levels-icons {
-        .card-level-container {
-          width: 30px;
-          height: 30px;
-          line-height: 30px;
+      &.card-frames {
+        .card-frames-icons {
+          .card-frame-container {
+            height: 50px;
 
-          .card-level {
-            margin: 0;
+            .card-frame {
+              &.selected {
+                border: 2px solid black;
+                border-radius: 3px;
+                margin: -2px;
+              }
+            }
+          }
+        }
+      }
+
+      &.card-levels {
+        .card-levels-icons {
+          .card-level-container {
             width: 30px;
             height: 30px;
             line-height: 30px;
-            color: black;
-            font-size: 15px;
-            text-align: center;
-            background-color: lightgray;
-            border-radius: 3px;
 
-            &.selected {
-              border: 2px solid black;
-              margin: -2px;
+            .card-level {
+              margin: 0;
+              width: 30px;
+              height: 30px;
+              line-height: 30px;
+              color: black;
+              font-size: 13px;
+              text-align: center;
+              background-color: lightgray;
+              border-radius: 3px;
+
+              &.selected {
+                border: 2px solid black;
+                margin: -2px;
+              }
             }
           }
         }
       }
-    }
 
-    &.card-name {
-      .name-input {
-        width: 75%;
+      &.card-input-container {
+        .card-input {
+          width: 85%;
+        }
       }
-    }
 
-    &.card-description {
-      .description-input {
-        font-family: Arial, Helvetica, sans-serif;
-        text-align: justify;
-        resize: none;
-        height: 150px;
+      &.card-textarea {
+        .textarea-input {
+          font-family: Arial, Helvetica, sans-serif;
+          text-align: justify;
+          resize: none;
+          height: 115px;
+        }
       }
-    }
 
+    }
   }
 }

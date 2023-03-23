@@ -28,7 +28,7 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
-import { ICard } from 'renderer/card-handler/ICard';
+import { ICard, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
@@ -46,8 +46,8 @@ interface ICardBuilderState extends IContainableState {
   adjustState: TAdjustState;
   adjustTextState: 'unknown' | 'tooBig' | 'tooSmall';
 
-  hasPendulumFrame: boolean;
-  hasLinkArrows: boolean;
+  usePendulumFrame: boolean;
+  withLinkArrows: boolean;
   defaultTextColor: 'black' | 'white';
 
   border: string;
@@ -103,32 +103,32 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private refreshState(card: ICard, setState: boolean) {
     const copyrightPath = `${card.copyrightYear}/${card.frame === 'xyz' ? 'white' : 'black'}`;
-    const hasPendulumFrame = this.hasPendulumFrame(card);
+    const usePendulumFrame = hasPendulumFrame(card);
 
     const state: ICardBuilderState = {
       loaded: true,
       adjustState: 'todo',
       adjustTextState: 'unknown',
 
-      hasPendulumFrame,
-      hasLinkArrows: this.hasLinkArrows(card),
+      usePendulumFrame,
+      withLinkArrows: hasLinkArrows(card),
       defaultTextColor: card.frame === 'xyz' || card.frame === 'link' ? 'white' : 'black',
 
       border: require('../resources/pictures/squareBorders.png'),
-      artworkBg: require(`../resources/pictures/whiteArtwork${card.pendulum ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`),
+      artworkBg: require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`),
       artwork: card.artwork.url || require('../resources/pictures/artworkTest4.jpg'),
 
       cardFrame: require(`../resources/pictures/card-frames/${card.frame}.png`),
-      pendulumFrame: require(`../resources/pictures/pendulum-frames/${hasPendulumFrame ? card.frame : 'normal'}.png`),
+      pendulumFrame: require(`../resources/pictures/pendulum-frames/${usePendulumFrame ? card.frame : 'normal'}.png`),
 
-      linkArrowT: require(`../resources/pictures/link-arrows/top${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowB: require(`../resources/pictures/link-arrows/bottom${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowL: require(`../resources/pictures/link-arrows/left${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowR: require(`../resources/pictures/link-arrows/right${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTL: require(`../resources/pictures/link-arrows/topLeft${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTR: require(`../resources/pictures/link-arrows/topRight${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBL: require(`../resources/pictures/link-arrows/bottomLeft${hasPendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBR: require(`../resources/pictures/link-arrows/bottomRight${hasPendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowT: require(`../resources/pictures/link-arrows/top${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowB: require(`../resources/pictures/link-arrows/bottom${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowL: require(`../resources/pictures/link-arrows/left${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowR: require(`../resources/pictures/link-arrows/right${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowTL: require(`../resources/pictures/link-arrows/topLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowTR: require(`../resources/pictures/link-arrows/topRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowBL: require(`../resources/pictures/link-arrows/bottomLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowBR: require(`../resources/pictures/link-arrows/bottomRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
 
       descFontSize: 30,
       descLineHeight: 1.2,
@@ -177,26 +177,6 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     handlePromise(this.adjustAllFontSizes());
   }
 
-  private hasLinkArrows(card: ICard) {
-    return card.frame === 'link' || ((card.frame === 'spell' || card.frame === 'trap') && card.stType === 'link');
-  }
-
-  private hasPendulumFrame(card: ICard) {
-    return card.pendulum
-    && card.frame !== 'token'
-    && card.frame !== 'spell'
-    && card.frame !== 'trap'
-    && card.frame !== 'skill'
-    && card.frame !== 'legendaryDragon';
-  }
-
-  private get hasAbilities(): boolean {
-    return this.props.card.frame !== 'token'
-      && this.props.card.frame !== 'spell'
-      && this.props.card.frame !== 'trap'
-      && this.props.card.frame !== 'legendaryDragon';
-  }
-
   private async adjustAllFontSizes() {
     switch (this.state.adjustState) {
       case 'todo': this.setState({ adjustState: 'name' }); break;
@@ -229,7 +209,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertAbilitiesToImg() {
-    if (!this.hasAbilities) {
+    if (!hasAbilities(this.props.card)) {
       this.setState({ adjustState: 'desc' });
       return;
     }
@@ -252,7 +232,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private adjustPendFontSize() {
-    if (!this.props.card.pendulum) {
+    if (!hasPendulumFrame(this.props.card)) {
       this.setState({ adjustState: 'abilities' });
       return;
     }
@@ -368,7 +348,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public render() {
     let artworkClass = 'card-layer artwork-container';
-    if (this.props.card.pendulum) {
+    if (hasPendulumFrame(this.props.card)) {
       if (this.props.card.frame === 'link') {
         artworkClass = `${artworkClass} artwork-pendulum-link`;
       } else {
@@ -379,41 +359,41 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     return this.renderAttributes(<Container>
       <img className='card-layer border' src={this.state.border} alt='border' />
 
-      {this.state.hasPendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
+      {this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
       <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
       {this.renderAttributes(<div><img className='artwork' src={this.state.artwork} alt='artwork' /></div>, artworkClass)}
 
-      {!this.state.hasPendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
-      {this.state.hasPendulumFrame && <img className='card-layer pendulum-frame' src={this.state.pendulumFrame} alt='pendulumFrame' />}
+      {!this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
+      {this.state.usePendulumFrame && <img className='card-layer pendulum-frame' src={this.state.pendulumFrame} alt='pendulumFrame' />}
 
-      {this.state.hasLinkArrows && this.renderLinkArrows()}
+      {this.state.withLinkArrows && this.renderLinkArrows()}
 
       <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
       {this.renderLevelOrStIcon()}
       {this.renderStPlus()}
 
-      {this.hasAbilities && (this.props.card.frame === 'link'
+      {hasAbilities(this.props.card) && (this.props.card.frame === 'link'
         ? <img className='card-layer atk-link-line' src={this.state.atkLinkLine} alt='atkLinkLine' />
         : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />)}
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
       {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
 
-      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text ${this.hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${this.props.card.pendulum ? 'on-pendulum' : ''}`}>
+      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text ${hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${hasPendulumFrame(this.props.card) ? 'on-pendulum' : ''}`}>
         {this.props.card.cardSet}
       </p>
 
-      {this.hasAbilities && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
-      {this.hasAbilities && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
+      {hasAbilities(this.props.card) && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
+      {hasAbilities(this.props.card) && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
 
       <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />
       <img className='card-layer edition' src={this.state.edition} alt='edition' />
 
-      {this.hasAbilities && this.renderAbilities()}
+      {hasAbilities(this.props.card) && this.renderAbilities()}
       {this.renderDescription()}
-      {this.props.card.pendulum && this.renderPendulum()}
-      {this.state.hasPendulumFrame && <img className='card-layer card-scale left-scale' src={this.state.leftScale} alt='leftScale' />}
-      {this.state.hasPendulumFrame && <img className='card-layer card-scale right-scale' src={this.state.rightScale} alt='rightScale' />}
+      {hasPendulumFrame(this.props.card) && this.renderPendulum()}
+      {this.state.usePendulumFrame && <img className='card-layer card-scale left-scale' src={this.state.leftScale} alt='leftScale' />}
+      {this.state.usePendulumFrame && <img className='card-layer card-scale right-scale' src={this.state.rightScale} alt='rightScale' />}
       {this.renderName()}
 
     </Container>, 'card-builder');
@@ -443,7 +423,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const lowerCaseText = text.toLowerCase();
 
     let containerClass = 'card-layer card-abilities';
-    if (this.props.card.pendulum && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
+    if (hasPendulumFrame(this.props.card) && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
 
     return this.renderAttributes(<HorizontalStack>
       <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
@@ -479,8 +459,9 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private renderDescription() {
     let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
-    if (this.hasAbilities) containerClass = `${containerClass} with-abilities`;
-    if (this.props.card.pendulum && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
+    if (hasAbilities(this.props.card)) containerClass = `${containerClass} with-abilities`;
+    if (this.props.card.frame === 'normal') containerClass = `${containerClass} normal-text`;
+    if (hasPendulumFrame(this.props.card) && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
 
     const description = this.props.card.description.split('\n');
 

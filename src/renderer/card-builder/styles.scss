@@ -270,6 +270,10 @@
       // top: 75%;
       // height: 18.4%;
 
+      &.normal-text {
+        font-style: italic;
+      }
+
       &.with-abilities {
         top: 923px;
         height: 150px;
