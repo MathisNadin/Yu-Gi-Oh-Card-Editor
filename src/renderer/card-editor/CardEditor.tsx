@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-const */
 /* eslint-disable prefer-destructuring */
@@ -23,8 +24,13 @@ import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { ICard, TAttribute, TFrame, hasAbilities, hasPendulumFrame } from 'renderer/card-handler/ICard';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
+import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
+import plus from '../resources/pictures/plus.svg';
+import cross from '../resources/pictures/cross.svg';
+import upArrow from '../resources/pictures/up-arrow.svg';
+import downArrow from '../resources/pictures/down-arrow.svg';
 
 interface EventTargetWithValue extends EventTarget {
   value: string;
@@ -47,6 +53,7 @@ interface ICardEditorState extends IContainableState {
     file: string;
   }[];
   selectedFrame: TFrame;
+  selectedAbility: number;
 }
 
 export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> {
@@ -90,7 +97,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'spell', file: require(`../resources/pictures/icons/attributeSpell.png`) },
         { id: 'trap', file: require(`../resources/pictures/icons/attributeTrap.png`) },
       ],
-      selectedFrame: props.card.frame
+      selectedFrame: props.card.frame,
+      selectedAbility: -1,
     }
   }
 
@@ -226,6 +234,49 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onAbilityChange(newValue: string, iAbility: number) {
+    this.state.card.abilities[iAbility] = newValue;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onAddAbility() {
+    if (this.state.selectedAbility === -1) {
+      this.state.card.abilities.push('');
+    } else {
+      this.state.card.abilities.splice(this.state.selectedAbility + 1, 0, '');
+    }
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onRemoveAbility() {
+    if (this.state.selectedAbility === -1) return;
+    this.state.card.abilities.splice(this.state.selectedAbility, 1);
+    this.setState({ card: this.state.card, selectedAbility: -1 });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onMoveAbilityUp() {
+    if (this.state.selectedAbility < 1) return;
+    const newIndex = this.state.selectedAbility - 1;
+    let element = this.state.card.abilities[this.state.selectedAbility];
+    this.state.card.abilities.splice(this.state.selectedAbility, 1);
+    this.state.card.abilities.splice(newIndex, 0, element);
+    this.setState({ card: this.state.card, selectedAbility: newIndex });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onMoveAbilityDown() {
+    if (this.state.selectedAbility === -1 || this.state.selectedAbility > this.state.card.attribute.length) return;
+    const newIndex = this.state.selectedAbility + 1;
+    let element = this.state.card.abilities[this.state.selectedAbility];
+    this.state.card.abilities.splice(this.state.selectedAbility, 1);
+    this.state.card.abilities.splice(newIndex, 0, element);
+    this.setState({ card: this.state.card, selectedAbility: newIndex });
+    this.props.onCardChange(this.state.card);
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
@@ -327,26 +378,31 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
       <VerticalStack className='card-editor-sub-section abilities-section'>
         <HorizontalStack className='abilities-edit-buttons'>
-          <button type='button' className='abilities-edit-btn add-btn' onClick={() => this.onPendLockChange()}>
-            <img src={lockClosed} alt='lock' />
+          <button type='button' className='abilities-edit-btn add-btn' onClick={() => this.onAddAbility()}>
+            <img src={plus} alt='lock' />
           </button>
 
-          <button type='button' className='abilities-edit-btn delete-btn' onClick={() => this.onPendLockChange()}>
-            <img src={lockClosed} alt='lock' />
+          <button type='button' className='abilities-edit-btn delete-btn' onClick={() => this.onRemoveAbility()}>
+            <img src={cross} alt='lock' />
           </button>
 
-          <button type='button' className='abilities-edit-btn up-btn' onClick={() => this.onPendLockChange()}>
-            <img src={lockClosed} alt='lock' />
+          <button type='button' className='abilities-edit-btn up-btn' onClick={() => this.onMoveAbilityUp()}>
+            <img src={upArrow} alt='lock' />
           </button>
 
-          <button type='button' className='abilities-edit-btn down-btn' onClick={() => this.onPendLockChange()}>
-            <img src={lockClosed} alt='lock' />
+          <button type='button' className='abilities-edit-btn down-btn' onClick={() => this.onMoveAbilityDown()}>
+            <img src={downArrow} alt='lock' />
           </button>
         </HorizontalStack>
 
-        <VerticalStack>
+        <VerticalStack className='abilities-list'>
           {this.state.card.abilities.map((ability, iAbility) => {
-            return <input type='text' className='ability-input card-input' value={ability} />
+            return <InplaceEdit
+              key={`${iAbility}-${ability}`}
+              className={`ability-input card-input ${iAbility === this.state.selectedAbility ? 'selected' : ''}`}
+              value={ability}
+              onSingleClick={() => this.setState({ selectedAbility: iAbility === this.state.selectedAbility ? -1 : iAbility })}
+              onChange={newValue => this.onAbilityChange(newValue, iAbility)} />
           })}
         </VerticalStack>
       </VerticalStack>

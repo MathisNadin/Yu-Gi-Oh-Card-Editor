@@ -169,16 +169,20 @@
       }
 
       &.abilities-section {
+        gap: 6px;
+
         .abilities-edit-buttons {
+          gap: 10px;
+
           .abilities-edit-btn {
             display: flex;
             align-items: center;
             width: fit-content;
-            padding: 8px;
-            margin: 0 8px;
-            border: none;
+            padding: 5px;
+            border: 1px outset #318ce7;
             border-radius: 4px;
             cursor: pointer;
+            background-color: transparent;
 
             img {
               height: 16px;
@@ -195,6 +199,38 @@
 
             &:hover {
               background-color: rgba(185, 200, 205, 0.6);
+            }
+          }
+        }
+
+        .abilities-list {
+          border: 1px solid #318ce7;
+          gap: 5px;
+          padding: 3px 0;
+          background-color: white;
+          font-size: 13px;
+          color: black;
+
+          .ability-input {
+            border: none;
+            padding: 3px;
+            height: 15px;
+
+            &.selected {
+              background-color: lightblue;
+            }
+
+            .inplace-edit-div {
+              height: 15px;
+            }
+
+            .inplace-edit-input {
+              padding: 0;
+              margin: -2px;
+
+              &:focus-visible {
+                outline: none;
+              }
             }
           }
         }
@@ -280,7 +316,7 @@
           width: fit-content;
           padding: 8px;
           margin-left: 2%;
-          border: none;
+          border: 1px outset lightgray;
           border-radius: 4px;
           cursor: pointer;
           width: auto;

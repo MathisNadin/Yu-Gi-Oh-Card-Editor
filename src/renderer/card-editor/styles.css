@@ -98,24 +98,48 @@
             background-color: rgba(0, 100, 170, 0.6); }
           .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock:hover {
             background-color: rgba(185, 200, 205, 0.6); }
-      .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn {
-        display: flex;
-        align-items: center;
-        width: fit-content;
-        padding: 8px;
-        margin: 0 8px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer; }
-        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn img {
-          height: 16px;
-          width: 16px; }
-        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
-          background-color: rgba(222, 25, 60, 0.6); }
-        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
-          background-color: rgba(0, 100, 170, 0.6); }
-        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn:hover {
-          background-color: rgba(185, 200, 205, 0.6); }
+      .card-editor .card-editor-section .card-editor-sub-section.abilities-section {
+        gap: 6px; }
+        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons {
+          gap: 10px; }
+          .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn {
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            padding: 5px;
+            border: 1px outset #318ce7;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: transparent; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn img {
+              height: 16px;
+              width: 16px; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
+              background-color: rgba(222, 25, 60, 0.6); }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
+              background-color: rgba(0, 100, 170, 0.6); }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn:hover {
+              background-color: rgba(185, 200, 205, 0.6); }
+        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list {
+          border: 1px solid #318ce7;
+          gap: 5px;
+          padding: 3px 0;
+          background-color: white;
+          font-size: 13px;
+          color: black; }
+          .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input {
+            border: none;
+            padding: 3px;
+            height: 15px; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input.selected {
+              background-color: lightblue; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-div {
+              height: 15px; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input {
+              padding: 0;
+              margin: -2px; }
+              .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
+                outline: none; }
       .card-editor .card-editor-section .card-editor-sub-section.card-attributes .card-attributes-icons .card-attribute-container {
         height: 30px; }
         .card-editor .card-editor-section .card-editor-sub-section.card-attributes .card-attributes-icons .card-attribute-container .card-attribute.selected {
@@ -159,7 +183,7 @@
         width: fit-content;
         padding: 8px;
         margin-left: 2%;
-        border: none;
+        border: 1px outset lightgray;
         border-radius: 4px;
         cursor: pointer;
         width: auto;

@@ -100,13 +100,15 @@
         right: 67px; }
     .card-builder .card-layer.card-set {
       top: 824px;
-      right: -581px;
+      right: 83px;
+      text-align: end;
       font-family: fontCardSet;
       font-size: 24px;
       text-shadow: 0 0 black; }
       .card-builder .card-layer.card-set.with-arrows {
-        right: -520px; }
+        right: 147px; }
       .card-builder .card-layer.card-set.on-pendulum {
+        text-align: start;
         top: 1057px;
         right: -68px; }
     .card-builder .card-layer.passcode {

@@ -165,18 +165,22 @@
       // top: 69.445%;
       // right: -71.2%;
       top: 824px;
-      right: -581px;
+      // right: -581px;
+      right: 83px;
+      text-align: end;
       font-family: fontCardSet;
       // font-size: 16px;
       font-size: 24px;
       text-shadow: 0 0 black;
 
       &.with-arrows {
-        right: -520px;
+        // right: -520px;
         // right: -63.4%;
+        right: 147px;
       }
 
       &.on-pendulum {
+        text-align: start;
         top: 1057px;
         right: -68px;
         // top: 89.2%;
