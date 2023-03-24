@@ -22,7 +22,7 @@ import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { ICard, TAttribute, TFrame, hasAbilities, hasPendulumFrame } from 'renderer/card-handler/ICard';
-import { integer, isUndefined } from 'mn-toolkit/tools';
+import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 
@@ -69,14 +69,14 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'darkSynchro', file: require(`../resources/pictures/card-frames/darkSynchro.png`) },
         { id: 'xyz', file: require(`../resources/pictures/card-frames/xyz.png`) },
         { id: 'link', file: require(`../resources/pictures/card-frames/link.png`) },
-        { id: 'spell', file: require(`../resources/pictures/card-frames/spell.png`) },
-        { id: 'trap', file: require(`../resources/pictures/card-frames/trap.png`) },
-        { id: 'monsterToken', file: require(`../resources/pictures/card-frames/monsterToken.png`) },
-        { id: 'token', file: require(`../resources/pictures/card-frames/token.png`) },
         { id: 'obelisk', file: require(`../resources/pictures/card-frames/obelisk.png`) },
         { id: 'slifer', file: require(`../resources/pictures/card-frames/slifer.png`) },
         { id: 'ra', file: require(`../resources/pictures/card-frames/ra.png`) },
         { id: 'legendaryDragon', file: require(`../resources/pictures/card-frames/legendaryDragon.png`) },
+        { id: 'spell', file: require(`../resources/pictures/card-frames/spell.png`) },
+        { id: 'trap', file: require(`../resources/pictures/card-frames/trap.png`) },
+        { id: 'monsterToken', file: require(`../resources/pictures/card-frames/monsterToken.png`) },
+        { id: 'token', file: require(`../resources/pictures/card-frames/token.png`) },
         { id: 'skill', file: require(`../resources/pictures/card-frames/skill.png`) },
       ],
       cardAttributes: [
@@ -219,6 +219,13 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onArtworkURLChange(path: string) {
+    if (isEmpty(path)) return;
+    this.state.card.artwork.url = path;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
@@ -237,6 +244,13 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section card-name card-input-container'>
         <p className='editor-label name-label'>Nom</p>
         <input type='text' className='name-input card-input' value={this.state.card.name} onInput={e => this.onNameChange((e.target as EventTargetWithValue).value)} />
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-sub-section card-artwork card-input-container'>
+        <p className='editor-label artwork-label'>Image</p>
+        <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
+        <button type='button' className='artwork-btn' onClick={() => document.getElementById('artwork-input')?.click()}>...</button>
+        <input type='file' accept='image/*' id='artwork-input' className='artwork-hidden-input' onChange={e => this.onArtworkURLChange((e.target.files as FileList)[0].path)} />
       </HorizontalStack>
 
       <VerticalStack className='card-editor-sub-section card-description card-textarea'>
@@ -310,6 +324,32 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           <p className='editor-label pendulum-label'>Pendule</p>
         </HorizontalStack>
       </HorizontalStack>
+
+      <VerticalStack className='card-editor-sub-section abilities-section'>
+        <HorizontalStack className='abilities-edit-buttons'>
+          <button type='button' className='abilities-edit-btn add-btn' onClick={() => this.onPendLockChange()}>
+            <img src={lockClosed} alt='lock' />
+          </button>
+
+          <button type='button' className='abilities-edit-btn delete-btn' onClick={() => this.onPendLockChange()}>
+            <img src={lockClosed} alt='lock' />
+          </button>
+
+          <button type='button' className='abilities-edit-btn up-btn' onClick={() => this.onPendLockChange()}>
+            <img src={lockClosed} alt='lock' />
+          </button>
+
+          <button type='button' className='abilities-edit-btn down-btn' onClick={() => this.onPendLockChange()}>
+            <img src={lockClosed} alt='lock' />
+          </button>
+        </HorizontalStack>
+
+        <VerticalStack>
+          {this.state.card.abilities.map((ability, iAbility) => {
+            return <input type='text' className='ability-input card-input' value={ability} />
+          })}
+        </VerticalStack>
+      </VerticalStack>
 
       <HorizontalStack className='card-editor-sub-section atk-def-section'>
         <HorizontalStack className='card-stats card-atk card-input-container'>

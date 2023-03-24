@@ -34,6 +34,7 @@ import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
+import { isEmpty } from 'mn-toolkit/tools';
 
 interface ICardBuilderProps extends IContainableProps {
   card: ICard;
@@ -94,16 +95,33 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   public constructor(props: ICardBuilderProps) {
     super(props);
     this.handleResize = this.handleResize.bind(this);
-    this.refreshState(props.card, false);
+    handlePromise(this.refreshState(props.card, false));
   }
 
   public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
-    this.refreshState(nextProps.card, true);
+    handlePromise(this.refreshState(nextProps.card, true));
   }
 
-  private refreshState(card: ICard, setState: boolean) {
+  private async refreshState(card: ICard, setState: boolean) {
     const copyrightPath = `${card.copyrightYear}/${card.frame === 'xyz' ? 'white' : 'black'}`;
     const usePendulumFrame = hasPendulumFrame(card);
+
+    const artworkBg = require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`);
+    let artwork: string;
+
+    let needForceUpdate = false;
+    let artworkExists = false;
+    if (!isEmpty(card.artwork.url)) {
+      needForceUpdate = true;
+      artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
+    }
+
+    if (artworkExists) {
+      artwork = `file://${card.artwork.url}`;
+      artwork = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
+    } else {
+      artwork = artworkBg;
+    }
 
     const state: ICardBuilderState = {
       loaded: true,
@@ -115,8 +133,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       defaultTextColor: card.frame === 'xyz' || card.frame === 'link' ? 'white' : 'black',
 
       border: require('../resources/pictures/squareBorders.png'),
-      artworkBg: require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`),
-      artwork: card.artwork.url || require('../resources/pictures/artworkTest4.jpg'),
+      artworkBg,
+      artwork,
 
       cardFrame: require(`../resources/pictures/card-frames/${card.frame}.png`),
       pendulumFrame: require(`../resources/pictures/pendulum-frames/${usePendulumFrame ? card.frame : 'normal'}.png`),
@@ -157,6 +175,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       this.setState(state);
     } else {
       this.state = state;
+      if (needForceUpdate) this.forceUpdate();
     }
   }
 
@@ -347,6 +366,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public render() {
+    if (!this.state?.loaded) return <div></div>;
+
     let artworkClass = 'card-layer artwork-container';
     if (hasPendulumFrame(this.props.card)) {
       if (this.props.card.frame === 'link') {

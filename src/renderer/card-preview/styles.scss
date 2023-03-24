@@ -17,7 +17,9 @@
     position: absolute;
     align-self: center;
     height: auto;
-    width: 100%;
+    max-height: 90%;
+    width: auto;
+    max-width: 100%;
     z-index: 1;
 
     &.img-render {
