@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 
 export type TFrame =
@@ -15,6 +16,8 @@ export type TNameStyle = 'default' | 'white' | 'black' | 'yellow' | 'gold' | 'si
 export type TEdition = 'unlimited' | 'firstEdition' | 'limited' | 'forbidden' | 'duelTerminal' | 'anime';
 
 export type TSticker = 'none' | 'silver' | 'gold' | 'grey' | 'white' | 'lightBlue' | 'skyBlue' | 'cyan' | 'aqua' | 'green';
+
+export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 export interface ICard {
   name: string;
@@ -40,16 +43,7 @@ export interface ICard {
     left: number;
     right: number;
   };
-  linkArrows: {
-    top: boolean;
-    bottom: boolean;
-    left: boolean;
-    right: boolean;
-    topLeft: boolean;
-    topRight: boolean;
-    bottomLeft: boolean;
-    bottomRight: boolean;
-  }
+  linkArrows: { [key in TLinkArrows]: boolean };
   edition: TEdition;
   cardSet: string;
   passcode: string;

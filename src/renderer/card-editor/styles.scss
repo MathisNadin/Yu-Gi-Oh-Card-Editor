@@ -53,6 +53,64 @@
       }
     }
 
+    &.link-arrow-section {
+
+      .link-arrow-line {
+        width: 95%;
+        justify-content: center;
+        gap: 8px;
+
+        .link-arrow-btn {
+          height: 50px;
+          width: 20%;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          background-color: transparent;
+          box-shadow: none;
+          transition: none;
+          padding: 0;
+
+          &.hidden {
+            cursor: auto;
+          }
+
+          img {
+            height: 100%;
+            width: 100%;
+
+            &.top-left-img {
+              transform: rotate(-45deg);
+            }
+
+            &.top-right-img {
+              transform: rotate(45deg);
+            }
+
+            &.left-img {
+              transform: rotate(-90deg);
+            }
+
+            &.right-img {
+              transform: rotate(90deg);
+            }
+
+            &.bottom-left-img {
+              transform: rotate(225deg);
+            }
+
+            &.bottom-img {
+              transform: rotate(180deg);
+            }
+
+            &.bottom-right-img {
+              transform: rotate(-225deg);
+            }
+          }
+        }
+      }
+    }
+
     .card-editor-sub-section {
       width: 95%;
       padding: 2%;

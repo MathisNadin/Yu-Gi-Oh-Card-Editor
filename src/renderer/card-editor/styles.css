@@ -40,6 +40,50 @@
   color: white;
   font-size: 15px; }
 
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line {
+  width: 95%;
+  justify-content: center;
+  gap: 8px; }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn {
+  height: 50px;
+  width: 20%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: transparent;
+  box-shadow: none;
+  transition: none;
+  padding: 0; }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn.hidden {
+  cursor: auto; }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img {
+  height: 100%;
+  width: 100%; }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.top-left-img {
+  transform: rotate(-45deg); }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.top-right-img {
+  transform: rotate(45deg); }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.left-img {
+  transform: rotate(-90deg); }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.right-img {
+  transform: rotate(90deg); }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.bottom-left-img {
+  transform: rotate(225deg); }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.bottom-img {
+  transform: rotate(180deg); }
+
+.card-editor .card-editor-section.link-arrow-section .link-arrow-line .link-arrow-btn img.bottom-right-img {
+  transform: rotate(-225deg); }
+
 .card-editor .card-editor-section .card-editor-sub-section {
   width: 95%;
   padding: 2%; }

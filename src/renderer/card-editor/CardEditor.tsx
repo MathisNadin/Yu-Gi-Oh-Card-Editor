@@ -22,7 +22,7 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TEdition, TFrame, TSticker, hasAbilities, hasPendulumFrame } from 'renderer/card-handler/ICard';
+import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TSticker, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
@@ -32,6 +32,8 @@ import plus from '../resources/pictures/plus.svg';
 import cross from '../resources/pictures/cross.svg';
 import upArrow from '../resources/pictures/up-arrow.svg';
 import downArrow from '../resources/pictures/down-arrow.svg';
+import triangle from '../resources/pictures/triangle.svg';
+import triangleRed from '../resources/pictures/triangle-red.svg';
 
 interface EventTargetWithValue extends EventTarget {
   value: string;
@@ -241,6 +243,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onLinkArrowChange(arrow: TLinkArrows) {
+    this.state.card.linkArrows[arrow] = !this.state.card.linkArrows[arrow];
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
   private onAddAbility() {
     if (this.state.selectedAbility === -1) {
       this.state.card.abilities.push('');
@@ -307,6 +315,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       {this.renderBasicCardDetails()}
       {hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
       {hasPendulumFrame(this.state.card) && this.renderPendulumCardDetails()}
+      {hasLinkArrows(this.state.card) && this.renderLinkArrows()}
       {this.renderMiscDetails()}
     </VerticalStack>, 'card-editor');
   }
@@ -487,6 +496,54 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         <textarea className='pendulum-effect-input textarea-input' value={this.state.card.pendEffect} onInput={e => this.onPendEffChange((e.target as EventTargetWithValue).value)} />
       </VerticalStack>
     </VerticalStack>, 'card-editor-section pendulum-section');
+  }
+
+  private renderLinkArrows() {
+    return this.renderAttributes(<VerticalStack>
+      <VerticalStack className='section-header'>
+        <p className='section-header-title'>Flèches Lien</p>
+      </VerticalStack>
+
+      <HorizontalStack className='link-arrow-line'>
+        <button type='button' className='link-arrow-btn top-left-btn' onClick={() => this.onLinkArrowChange('topLeft')}>
+          <img className='link-arrow-img top-left-img' src={this.state.card.linkArrows.topLeft ? triangleRed : triangle} alt='lock' />
+        </button>
+
+        <button type='button' className='link-arrow-btn top-btn' onClick={() => this.onLinkArrowChange('top')}>
+          <img className='link-arrow-img top-img' src={this.state.card.linkArrows.top ? triangleRed : triangle} alt='lock' />
+        </button>
+
+        <button type='button' className='link-arrow-btn top-right-btn' onClick={() => this.onLinkArrowChange('topRight')}>
+          <img className='link-arrow-img top-right-img' src={this.state.card.linkArrows.topRight ? triangleRed : triangle} alt='lock' />
+        </button>
+      </HorizontalStack>
+
+      <HorizontalStack className='link-arrow-line'>
+        <button type='button' className='link-arrow-btn left-btn' onClick={() => this.onLinkArrowChange('left')}>
+          <img className='link-arrow-img left-img' src={this.state.card.linkArrows.left ? triangleRed : triangle} alt='lock' />
+        </button>
+
+        <div className='link-arrow-btn hidden'></div>
+
+        <button type='button' className='link-arrow-btn right-btn' onClick={() => this.onLinkArrowChange('right')}>
+          <img className='link-arrow-img right-img' src={this.state.card.linkArrows.right ? triangleRed : triangle} alt='lock' />
+        </button>
+      </HorizontalStack>
+
+      <HorizontalStack className='link-arrow-line'>
+        <button type='button' className='link-arrow-btn bottom-left-btn' onClick={() => this.onLinkArrowChange('bottomLeft')}>
+          <img className='link-arrow-img bottom-left-img' src={this.state.card.linkArrows.bottomLeft ? triangleRed : triangle} alt='lock' />
+        </button>
+
+        <button type='button' className='link-arrow-btn bottom-btn' onClick={() => this.onLinkArrowChange('bottom')}>
+          <img className='link-arrow-img bottom-img' src={this.state.card.linkArrows.bottom ? triangleRed : triangle} alt='lock' />
+        </button>
+
+        <button type='button' className='link-arrow-btn bottom-right-btn' onClick={() => this.onLinkArrowChange('bottomRight')}>
+          <img className='link-arrow-img bottom-right-img' src={this.state.card.linkArrows.bottomRight ? triangleRed : triangle} alt='lock' />
+        </button>
+      </HorizontalStack>
+    </VerticalStack>, 'card-editor-section link-arrow-section');
   }
 
   private renderMiscDetails() {
