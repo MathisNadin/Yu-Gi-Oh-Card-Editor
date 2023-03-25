@@ -22,7 +22,7 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TSticker, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
+import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TStIcon, TSticker, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
@@ -53,6 +53,10 @@ interface ICardEditorState extends IContainableState {
   }[];
   cardAttributes: {
     id: TAttribute;
+    file: string;
+  }[];
+  cardStTypes: {
+    id: TStIcon;
     file: string;
   }[];
   selectedFrame: TFrame;
@@ -100,6 +104,15 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'spell', file: require(`../resources/pictures/icons/attributeSpell.png`) },
         { id: 'trap', file: require(`../resources/pictures/icons/attributeTrap.png`) },
       ],
+      cardStTypes: [
+        { id: 'normal', file: require(`../resources/pictures/icons/stIconNormal.png`) },
+        { id: 'ritual', file: require(`../resources/pictures/icons/stIconRitual.png`) },
+        { id: 'quickplay', file: require(`../resources/pictures/icons/stIconQuickplay.png`) },
+        { id: 'continuous', file: require(`../resources/pictures/icons/stIconContinuous.png`) },
+        { id: 'equip', file: require(`../resources/pictures/icons/stIconEquip.png`) },
+        { id: 'counter', file: require(`../resources/pictures/icons/stIconCounter.png`) },
+        { id: 'link', file: require(`../resources/pictures/icons/stIconLink.png`) },
+      ],
       selectedFrame: props.card.frame,
       selectedAbility: -1,
     }
@@ -130,6 +143,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   public onAttributeChange(attribute: TAttribute) {
     this.state.card.attribute = attribute;
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
+  public onStTypeChange(stType: TStIcon) {
+    this.state.card.stType = stType;
     this.setState({ card: this.state.card });
     this.props.onCardChange(this.state.card);
   }
@@ -356,6 +375,20 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           )}
         </HorizontalStack>
       </VerticalStack>
+
+      {(this.state.card.frame === 'spell' || this.state.card.frame === 'trap') && <VerticalStack className='card-editor-sub-section card-st-icons'>
+        <p className='editor-label st-icons-label label-with-separator'>Type de Magie/Piège</p>
+        <HorizontalStack className='card-items card-st-icons-icons'>
+          {this.state.cardStTypes.map(stType =>
+            <HorizontalStack className='item-container card-st-icon-container'>
+              <img src={stType.file}
+                alt={`st-icon-${stType.id}`}
+                className={`card-st-icon${this.state.card.stType === stType.id ? ' selected' : ''}`}
+                onClick={() => this.onStTypeChange(stType.id)} />
+            </HorizontalStack>
+          )}
+        </HorizontalStack>
+      </VerticalStack>}
 
       <VerticalStack className='card-editor-sub-section card-frames'>
         <p className='editor-label frames-label label-with-separator'>Types de carte</p>

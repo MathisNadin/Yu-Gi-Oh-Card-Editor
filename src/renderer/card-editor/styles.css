@@ -267,6 +267,19 @@
   margin: -3px;
   padding: 1px; }
 
+.card-editor .card-editor-section .card-editor-sub-section.card-st-icons .card-st-icons-icons .card-st-icon-container {
+  height: 30px; }
+
+.card-editor .card-editor-section .card-editor-sub-section.card-st-icons .card-st-icons-icons .card-st-icon-container .card-st-icon {
+  height: 30px;
+  width: 30px; }
+
+.card-editor .card-editor-section .card-editor-sub-section.card-st-icons .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
+  border: 2px solid black;
+  border-radius: 17px;
+  margin: -3px;
+  padding: 1px; }
+
 .card-editor .card-editor-section .card-editor-sub-section.card-frames .card-frames-icons .card-frame-container {
   height: 50px; }
 

@@ -54,7 +54,6 @@
     }
 
     &.link-arrow-section {
-
       .link-arrow-line {
         width: 95%;
         justify-content: center;
@@ -341,6 +340,26 @@
             height: 30px;
 
             .card-attribute {
+              &.selected {
+                border: 2px solid black;
+                border-radius: 17px;
+                margin: -3px;
+                padding: 1px;
+              }
+            }
+          }
+        }
+      }
+
+      &.card-st-icons {
+        .card-st-icons-icons {
+          .card-st-icon-container {
+            height: 30px;
+
+            .card-st-icon {
+              height: 30px;
+              width: 30px;
+
               &.selected {
                 border: 2px solid black;
                 border-radius: 17px;
