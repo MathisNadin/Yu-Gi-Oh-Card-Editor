@@ -22,9 +22,10 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TFrame, hasAbilities, hasPendulumFrame } from 'renderer/card-handler/ICard';
+import { ICard, TAttribute, TEdition, TFrame, TSticker, hasAbilities, hasPendulumFrame } from 'renderer/card-handler/ICard';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
+import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
@@ -277,6 +278,30 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.props.onCardChange(this.state.card);
   }
 
+  private onEditionChange(edition: TEdition) {
+    this.state.card.edition = edition;
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onStickerChange(sticker: TSticker) {
+    this.state.card.sticker = sticker;
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onCopyrightChange() {
+    this.state.card.hasCopyright = !this.state.card.hasCopyright;
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onOldCopyrightChange() {
+    this.state.card.oldCopyright = !this.state.card.oldCopyright;
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
@@ -470,6 +495,30 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         <p className='section-header-title'>Détails Divers</p>
       </VerticalStack>
 
+      <HorizontalStack className='card-editor-sub-section card-edition card-input-container'>
+        <p className='editor-label card-edition-label'>Édition</p>
+        <Dropdown<TEdition>
+          className='card-edition-dropdown'
+          options={[
+            'unlimited',
+            'firstEdition',
+            'limited',
+            'forbidden',
+            'duelTerminal',
+            'anime'
+          ]}
+          optionsLabel={[
+            'Aucune',
+            '1ère Édition',
+            'Limitée',
+            'Interdite',
+            'Duel Terminal',
+            'Anime'
+          ]}
+          defaultOption={this.state.card.edition}
+          onSelect={value => this.onEditionChange(value)} />
+      </HorizontalStack>
+
       <HorizontalStack className='card-editor-sub-section card-card-set card-input-container'>
         <p className='editor-label card-set-label'>Set</p>
         <input type='text' className='card-set-input card-input' value={this.state.card.cardSet} onInput={e => this.onCardSetChange((e.target as EventTargetWithValue).value)} />
@@ -478,6 +527,50 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section card-passcode card-input-container'>
         <p className='editor-label passcode-label'>Code</p>
         <input type='text' pattern='\d*' maxLength={8} className='passcode-input card-input' value={this.state.card.passcode} onInput={e => this.onPasscodeChange((e.target as EventTargetWithValue).value)} />
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-sub-section card-edition card-input-container'>
+        <p className='editor-label card-edition-label'>Sticker</p>
+        <Dropdown<TSticker>
+          className='card-edition-dropdown'
+          options={[
+            'none',
+            'silver',
+            'gold',
+            'grey',
+            'white',
+            'lightBlue',
+            'skyBlue',
+            'cyan',
+            'aqua',
+            'green'
+          ]}
+          optionsLabel={[
+            'Aucun',
+            'Argent',
+            'Or',
+            'Gris',
+            'Blanc',
+            'Bleu clair',
+            'Bleu ciel',
+            'Cyan',
+            'Aqua',
+            'Vert'
+          ]}
+          defaultOption={this.state.card.sticker}
+          onSelect={value => this.onStickerChange(value)} />
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-sub-section copyright-section'>
+        <HorizontalStack className='card-copyright card-input-container'>
+          <input type='checkbox' className='copyright-input card-input' defaultChecked={this.state.card.hasCopyright} onInput={() => this.onCopyrightChange()} />
+          <p className='editor-label copyright-label'>Copyright</p>
+        </HorizontalStack>
+
+        <HorizontalStack className='card-copyright-old card-input-container'>
+          <input type='checkbox' className='copyright-old-input card-input' defaultChecked={this.state.card.oldCopyright} onInput={() => this.onOldCopyrightChange()} />
+          <p className='editor-label copyright-old-label'>1996</p>
+        </HorizontalStack>
       </HorizontalStack>
     </VerticalStack>, 'card-editor-section misc-section');
   }

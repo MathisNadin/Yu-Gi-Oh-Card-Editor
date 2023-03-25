@@ -103,7 +103,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private async refreshState(card: ICard, setState: boolean) {
-    const copyrightPath = `${card.copyrightYear}/${card.frame === 'xyz' ? 'white' : 'black'}`;
+    const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${card.frame === 'xyz' ? 'white' : 'black'}`;
     const usePendulumFrame = hasPendulumFrame(card);
 
     const artworkBg = require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`);
@@ -168,7 +168,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       atkLinkLine: require(`../resources/pictures/atkLinkLine.png`),
       sticker: require(`../resources/pictures/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
       copyright: require(`../resources/pictures/limitations/${copyrightPath}/copyright.png`),
-      edition: require(`../resources/pictures/limitations/${copyrightPath}/${card.edition}.png`),
+      edition: require(`../resources/pictures/limitations/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
     };
 
     if (setState) {
@@ -407,8 +407,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       {hasAbilities(this.props.card) && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
       {hasAbilities(this.props.card) && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
 
-      <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />
-      <img className='card-layer edition' src={this.state.edition} alt='edition' />
+      {this.props.card.hasCopyright && <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />}
+      {this.props.card.edition !== 'unlimited' && <img className='card-layer edition' src={this.state.edition} alt='edition' />}
 
       {hasAbilities(this.props.card) && this.renderAbilities()}
       {this.renderDescription()}

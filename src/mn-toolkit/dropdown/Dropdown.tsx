@@ -1,77 +1,55 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-return-assign */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/prefer-default-export */
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { createRef } from 'react';
+import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 
-interface DropdownProps extends IContainableProps {
-  options: string[];
-  defaultOption?: string;
+interface DropdownProps<T extends string> extends IContainableProps {
+  options: T[];
+  optionsLabel?: string[];
+  defaultOption?: T;
+  onSelect: (value: T) => void;
 }
 
-interface DropdownState extends IContainableState {
+interface DropdownState<T extends string> extends IContainableState {
   isOpen: boolean;
-  selectedOption: string;
+  selectedOption: T;
 }
 
-export class Dropdown extends Containable<DropdownProps, DropdownState> {
-  popoverRef = createRef<HTMLDivElement>();
+export class Dropdown<T extends string> extends Containable<DropdownProps<T>, DropdownState<T>> {
 
-  public constructor(props: DropdownProps) {
+  public constructor(props: DropdownProps<T>) {
     super(props);
 
     this.state = {
       loaded: true,
       isOpen: false,
-      selectedOption: props.options[0],
+      selectedOption: props.defaultOption as T,
     };
   }
 
-  private toggleDropdown = () => {
-    this.setState({ isOpen: !this.state.isOpen });
+  private onChange(value: T) {
+    if (this.props.onSelect) this.props.onSelect(value);
   }
 
-  private handleOptionSelect = (option: string) => {
-    this.setState({ selectedOption: option, isOpen: false });
-  }
-
-  private handleOutsideClick = (event: MouseEvent) => {
-    if (this.popoverRef.current && !this.popoverRef.current.contains(event.target as Node)) {
-      this.setState({ isOpen: false });
-    }
-  }
-
-  public componentDidMount() {
-    document.addEventListener('mousedown', this.handleOutsideClick);
-  }
-
-  public componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleOutsideClick);
+  public renderClasses(name?: string) {
+    return super.renderClasses(name);
   }
 
   public render() {
-    const { options } = this.props;
-    const { isOpen, selectedOption } = this.state;
-
-    return (
-      <div className="dropdown" ref={this.popoverRef}>
-        <div className="dropdown-toggle" onClick={this.toggleDropdown}>
-          {selectedOption}
-        </div>
-        {isOpen && (
-          <div className="popover">
-            <ul className="dropdown-menu">
-              {options.map((option) => (
-                <li key={option} onClick={() => this.handleOptionSelect(option)}>
-                  {option}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
+    return this.renderAttributes(<VerticalStack>
+      <select onChange={e => this.onChange(e.target.value as T)}>
+        {this.props.options.map((option, iOption) => {
+          return <option key={iOption} defaultValue={option} value={option} selected={option === this.props.defaultOption}>
+            {this.props.optionsLabel ? this.props.optionsLabel[iOption] : option}
+          </option>;
+        })}
+      </select>
+    </VerticalStack>, 'mn-dropdown');
   }
 }

@@ -54,7 +54,8 @@ export interface ICard {
   cardSet: string;
   passcode: string;
   sticker: TSticker;
-  copyrightYear: '2020' | '1996';
+  hasCopyright: boolean;
+  oldCopyright: boolean;
   speed: boolean;
   rush: boolean;
   legend: boolean;
