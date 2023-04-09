@@ -12,7 +12,6 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { ReactElement, JSXElementConstructor } from 'react';
 import './styles.css';
 import { Containable, IContainableProps, IContainableState } from 'mn-toolkit/containable/Containable';
 

@@ -73,6 +73,10 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     };
   }
 
+  public constructor(props: PROPS) {
+    super(props);
+  }
+
   public renderClasses(name?: string) {
     let classes: { [key: string]: boolean } = {};
     if (this.props.className) classes[this.props.className] = true;

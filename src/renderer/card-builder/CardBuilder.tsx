@@ -387,11 +387,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       {!this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
       {this.state.usePendulumFrame && <img className='card-layer pendulum-frame' src={this.state.pendulumFrame} alt='pendulumFrame' />}
 
-      {this.state.withLinkArrows && this.renderLinkArrows()}
-
       <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
       {this.renderLevelOrStIcon()}
       {this.renderStPlus()}
+
+      {this.state.withLinkArrows && this.renderLinkArrows()}
 
       {hasAbilities(this.props.card) && (this.props.card.frame === 'link'
         ? <img className='card-layer atk-link-line' src={this.state.atkLinkLine} alt='atkLinkLine' />

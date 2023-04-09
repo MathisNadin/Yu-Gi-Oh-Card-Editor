@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-const */
@@ -26,6 +27,8 @@ import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TStIcon, TSticker, ha
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
+import { Popup } from 'mn-toolkit/popup/Popup';
+import { ArtworkEditDialog } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
@@ -45,6 +48,7 @@ interface ICardEditorProps extends IContainableProps {
 }
 
 interface ICardEditorState extends IContainableState {
+  showArtworkPopup: boolean;
   lockPend: boolean;
   card: ICard;
   cardFrames: {
@@ -72,6 +76,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
     this.state = {
       loaded: true,
+      showArtworkPopup: false,
       lockPend: props.card.scales.left === props.card.scales.right,
       card: props.card,
       cardFrames: [
@@ -353,8 +358,18 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section card-artwork card-input-container'>
         <p className='editor-label artwork-label'>Image</p>
         <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
-        <button type='button' className='artwork-btn' onClick={() => document.getElementById('artwork-input')?.click()}>...</button>
+        <button type='button' className='artwork-btn' onClick={() => this.setState({ showArtworkPopup: true })} /* onClick={() => document.getElementById('artwork-input')?.click()} */>...</button>
         <input type='file' accept='image/*' id='artwork-input' className='artwork-hidden-input' onChange={e => this.onArtworkURLChange((e.target.files as FileList)[0].path)} />
+        {this.state.showArtworkPopup && <Popup
+          title="Édition de l'image"
+          innerHeight='70%'
+          innerWidth='70%'
+          onClosePopup={() => this.setState({ showArtworkPopup: false })}
+          content={<ArtworkEditDialog
+            artworkURL={this.state.card.artwork.url}
+            hasPendulumFrame={hasPendulumFrame(this.state.card)}
+            hasLinkFrame={this.state.card.frame === 'link'} />}
+        />}
       </HorizontalStack>
 
       <VerticalStack className='card-editor-sub-section card-description card-textarea'>
