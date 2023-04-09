@@ -46,7 +46,7 @@ export class Popup extends Container<PopupProps, PopupState> {
           <p className='mn-popup-title'>{this.props.title}</p>
           <img className='mn-popup-close' src={cross} alt='cross' onClick={() => this.onClosePopup()} />
         </HorizontalStack>
-        {this.props.content}
+        {this.renderAttributes(this.props.content, 'mn-popup-content')}
       </VerticalStack>
     </VerticalStack>, 'mn-popup');
   }

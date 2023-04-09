@@ -28,6 +28,7 @@ import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import { Popup } from 'mn-toolkit/popup/Popup';
+import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { ArtworkEditDialog } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
@@ -37,10 +38,6 @@ import upArrow from '../resources/pictures/up-arrow.svg';
 import downArrow from '../resources/pictures/down-arrow.svg';
 import triangle from '../resources/pictures/triangle.svg';
 import triangleRed from '../resources/pictures/triangle-red.svg';
-
-interface EventTargetWithValue extends EventTarget {
-  value: string;
-}
 
 interface ICardEditorProps extends IContainableProps {
   card: ICard;
@@ -358,8 +355,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section card-artwork card-input-container'>
         <p className='editor-label artwork-label'>Image</p>
         <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
-        <button type='button' className='artwork-btn' onClick={() => this.setState({ showArtworkPopup: true })} /* onClick={() => document.getElementById('artwork-input')?.click()} */>...</button>
-        <input type='file' accept='image/*' id='artwork-input' className='artwork-hidden-input' onChange={e => this.onArtworkURLChange((e.target.files as FileList)[0].path)} />
+        <button type='button' className='artwork-btn' onClick={() => this.setState({ showArtworkPopup: true })}>...</button>
         {this.state.showArtworkPopup && <Popup
           title="Édition de l'image"
           innerHeight='70%'
@@ -368,7 +364,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           content={<ArtworkEditDialog
             artworkURL={this.state.card.artwork.url}
             hasPendulumFrame={hasPendulumFrame(this.state.card)}
-            hasLinkFrame={this.state.card.frame === 'link'} />}
+            hasLinkFrame={this.state.card.frame === 'link'}
+            onArtworkURLChange={path => this.onArtworkURLChange(path)} />}
         />}
       </HorizontalStack>
 

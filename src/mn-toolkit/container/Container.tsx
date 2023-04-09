@@ -15,6 +15,10 @@
 import './styles.css';
 import { Containable, IContainableProps, IContainableState } from 'mn-toolkit/containable/Containable';
 
+export interface EventTargetWithValue extends EventTarget {
+  value: string;
+}
+
 export interface IContainerProps extends IContainableProps {
   layout?: 'vertical' | 'horizontal';
   gutter?: boolean;

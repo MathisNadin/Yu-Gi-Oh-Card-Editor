@@ -24,15 +24,18 @@ import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 import { integer, isEmpty } from 'mn-toolkit/tools';
 import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/src/ReactCrop.scss'
+import { Container, EventTargetWithValue } from 'mn-toolkit/container/Container';
 
 interface IArtworkEditDialogProps extends IContainableProps {
   artworkURL: string;
   hasPendulumFrame: boolean;
   hasLinkFrame: boolean;
+  onArtworkURLChange: (url: string) => void;
 }
 
 interface IArtworkEditDialogState extends IContainableState {
   artwork: string;
+  higher: boolean;
   crop: Crop;
 }
 
@@ -41,8 +44,9 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   public constructor(props: IArtworkEditDialogProps) {
     super(props);
     this.state = {
-      loaded: false,
+      loaded: true,
       artwork: '',
+      higher: false,
       crop: {
         x: 0,
         y: 0,
@@ -54,8 +58,13 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     handlePromise(this.load());
   }
 
+  public componentWillReceiveProps(_nextProps: IArtworkEditDialogProps, _prevState: IArtworkEditDialogState) {
+    handlePromise(this.load());
+  }
+
   private async load() {
     let artwork = '';
+    let higher = false;
 
     let needForceUpdate = false;
     let artworkExists = false;
@@ -67,69 +76,40 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     if (artworkExists) {
       artwork = `file://${this.props.artworkURL}`;
       artwork = await window.electron.ipcRenderer.createImgFromPath(this.props.artworkURL);
+      higher = this.imgIsHigher(artwork);
     }
 
     this.setState({
       loaded: true,
+      higher,
       artwork,
     });
   }
 
-  private onRectangleRef(div: HTMLDivElement) {
-    if (!div) return;
-    let isResizing = false;
-    let startX: number;
-    let startY: number;
-    let startWidth: number;
-    let startHeight: number;
-
-    div.addEventListener('mousedown', e => {
-      const target = e.target as Element;
-      if (target.classList.contains('resize-rectangle')) {
-        isResizing = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        startWidth = integer(
-          window.getComputedStyle(div).getPropertyValue('width')
-        );
-        startHeight = integer(
-          window.getComputedStyle(div).getPropertyValue('height')
-        );
-      }
-    });
-
-    div.addEventListener('mousemove', e => {
-      if (isResizing) {
-        const width = startWidth + e.clientX - startX;
-        const height = startHeight + e.clientY - startY;
-        if (width > 0 && height > 0) {
-          div.style.width = `${width}px`;
-          div.style.height = `${height}px`;
-        }
-      } else if ((e.target as Element).classList.contains('resize-rectangle')) {
-        div.style.cursor = 'move';
-      } else {
-        div.style.cursor = 'auto';
-      }
-    });
-
-    div.addEventListener('mouseup', e => {
-      isResizing = false;
-    });
+  private imgIsHigher(base64: string): boolean {
+    const image = new Image();
+    image.src = base64;
+    return image.height > image.width;
   }
 
   public render() {
     if (!this.state?.loaded) return <div></div>;
     return this.renderAttributes(<HorizontalStack>
-      <VerticalStack className='artwork-edit'>
-        {!!this.state.artwork.length && <ReactCrop crop={this.state.crop} onChange={(crop: Crop) => this.setState({ crop })}>
-          <img className='artwork-img' src={this.state.artwork} alt='artwork' />
-        </ReactCrop>}
-{/*         {!!this.state.artwork.length && <img className='artwork-img' src={this.state.artwork} alt='artwork' />}
-        <div className='resize-rectangle' ref={(ref: HTMLDivElement) => this.onRectangleRef(ref)} ></div> */}
-      </VerticalStack>
+      <Container className='artwork-cropping'>
+        {!!this.state.artwork.length &&
+          <ReactCrop className={`cropping-interface ${this.state.higher ? 'higher' : ''}`} crop={this.state.crop} onChange={(crop: Crop) => this.setState({ crop })}>
+            <img className='artwork-img' src={this.state.artwork} alt='artwork' />
+          </ReactCrop>
+        }
+      </Container>
 
-      <VerticalStack className='artwork-details'>
+      <VerticalStack className='artwork-editing'>
+        <HorizontalStack className='artwork-path'>
+          <p className='path-label'>Chemin :</p>
+          <input type='text' className='path-text-input' value={this.props.artworkURL} onInput={e => this.props.onArtworkURLChange && this.props.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
+          <button type='button' className='path-btn' onClick={() => document.getElementById('path-hidden-input')?.click()}>...</button>
+          <input type='file' accept='image/*' id='path-hidden-input' className='path-hidden-input' onChange={e => this.props.onArtworkURLChange && this.props.onArtworkURLChange((e.target.files as FileList)[0].path)} />
+        </HorizontalStack>
       </VerticalStack>
     </HorizontalStack>, 'artwork-edit-dialog');
   }
