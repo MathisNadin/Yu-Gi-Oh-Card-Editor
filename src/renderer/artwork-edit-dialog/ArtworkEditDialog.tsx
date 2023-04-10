@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable global-require */
@@ -17,14 +18,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import './styles.css';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
-import { integer, isEmpty } from 'mn-toolkit/tools';
-import ReactCrop, { Crop } from 'react-image-crop';
-import 'react-image-crop/src/ReactCrop.scss'
-import { Container, EventTargetWithValue } from 'mn-toolkit/container/Container';
+import { isEmpty } from 'mn-toolkit/tools';
+import { Crop } from 'react-image-crop';
+import { ArtworkCropping } from './ArtworkCropping';
+import { ArtworkEditing } from './ArtworkEditing';
+import './styles.css';
 
 interface IArtworkEditDialogProps extends IContainableProps {
   artworkURL: string;
@@ -34,8 +34,8 @@ interface IArtworkEditDialogProps extends IContainableProps {
 }
 
 interface IArtworkEditDialogState extends IContainableState {
-  artwork: string;
-  higher: boolean;
+  artworkURL: string;
+  artworkBase64: string;
   crop: Crop;
 }
 
@@ -45,8 +45,8 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     super(props);
     this.state = {
       loaded: true,
-      artwork: '',
-      higher: false,
+      artworkURL: props.artworkURL,
+      artworkBase64: '',
       crop: {
         x: 0,
         y: 0,
@@ -55,62 +55,62 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
         unit: '%'
       }
     }
-    handlePromise(this.load());
+  }
+
+  public componentDidMount() {
+    handlePromise(this.loadArtworkBase64());
   }
 
   public componentWillReceiveProps(_nextProps: IArtworkEditDialogProps, _prevState: IArtworkEditDialogState) {
-    handlePromise(this.load());
+    handlePromise(this.loadArtworkBase64());
   }
 
-  private async load() {
-    let artwork = '';
-    let higher = false;
+  private async loadArtworkBase64(artworkURL?: string) {
+    artworkURL = artworkURL || this.state.artworkURL;
 
-    let needForceUpdate = false;
-    let artworkExists = false;
-    if (!isEmpty(this.props.artworkURL)) {
-      needForceUpdate = true;
-      artworkExists = await window.electron.ipcRenderer.checkFileExists(this.props.artworkURL);
+    let artworkBase64 = '';
+    if (!isEmpty(artworkURL) && await window.electron.ipcRenderer.checkFileExists(artworkURL)) {
+      artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
     }
 
-    if (artworkExists) {
-      artwork = `file://${this.props.artworkURL}`;
-      artwork = await window.electron.ipcRenderer.createImgFromPath(this.props.artworkURL);
-      higher = this.imgIsHigher(artwork);
-    }
-
-    this.setState({
+    const state: IArtworkEditDialogState = {
       loaded: true,
-      higher,
-      artwork,
-    });
-  }
+      artworkURL,
+      artworkBase64,
+      crop: this.state?.crop || {
+        x: 0,
+        y: 0,
+        height: 100,
+        width: 100,
+        unit: '%'
+      }
+    }
 
-  private imgIsHigher(base64: string): boolean {
-    const image = new Image();
-    image.src = base64;
-    return image.height > image.width;
+    if (this.state) {
+      this.setState(state);
+    } else {
+      this.state = state;
+    }
   }
 
   public render() {
     if (!this.state?.loaded) return <div></div>;
     return this.renderAttributes(<HorizontalStack>
-      <Container className='artwork-cropping'>
-        {!!this.state.artwork.length &&
-          <ReactCrop className={`cropping-interface ${this.state.higher ? 'higher' : ''}`} crop={this.state.crop} onChange={(crop: Crop) => this.setState({ crop })}>
-            <img className='artwork-img' src={this.state.artwork} alt='artwork' />
-          </ReactCrop>
-        }
-      </Container>
+      <ArtworkCropping
+        artworkBase64={this.state.artworkBase64}
+        hasPendulumFrame={this.props.hasPendulumFrame}
+        hasLinkFrame={this.props.hasLinkFrame}
+        crop={this.state.crop}
+        onCroppingChange={crop => this.setState({ crop })} />
 
-      <VerticalStack className='artwork-editing'>
-        <HorizontalStack className='artwork-path'>
-          <p className='path-label'>Chemin :</p>
-          <input type='text' className='path-text-input' value={this.props.artworkURL} onInput={e => this.props.onArtworkURLChange && this.props.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
-          <button type='button' className='path-btn' onClick={() => document.getElementById('path-hidden-input')?.click()}>...</button>
-          <input type='file' accept='image/*' id='path-hidden-input' className='path-hidden-input' onChange={e => this.props.onArtworkURLChange && this.props.onArtworkURLChange((e.target.files as FileList)[0].path)} />
-        </HorizontalStack>
-      </VerticalStack>
+      <ArtworkEditing
+        artworkURL={this.state.artworkURL}
+        artworkBase64={this.state.artworkBase64}
+        hasPendulumFrame={this.props.hasPendulumFrame}
+        hasLinkFrame={this.props.hasLinkFrame}
+        crop={this.state.crop}
+        onCroppingChange={crop => this.setState({ crop })}
+        onArtworkURLChange={url => handlePromise(this.loadArtworkBase64(url))} />
     </HorizontalStack>, 'artwork-edit-dialog');
   }
 }
