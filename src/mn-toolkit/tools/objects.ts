@@ -10,7 +10,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable prettier/prettier */
-import { asArray } from ".";
 import { isArray, isObject } from "./is";
 
 const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -67,6 +66,18 @@ export function serialize(data: any) {
   });
 }
 
+
+/**
+ * Convert any value to an array.
+ * If the value is an array, it stays the same.
+ *
+ * @param {any} x source value
+ * @return {any[]} resulting array
+ */
+export function asArray<T>(x: T | T[]) : T[] {
+  if (isArray(x)) return x;
+  return [x];
+}
 
 /**
  * Add default properties to an object.

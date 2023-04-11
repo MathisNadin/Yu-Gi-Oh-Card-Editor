@@ -16,8 +16,34 @@
 /* eslint-disable prefer-const */
 /* eslint-disable prettier/prettier */
 
+import { Crop } from "react-image-crop";
 import { isEmpty, isBoolean, isString, isArray, isObject } from "./is";
 import { each } from "./objects";
+
+
+export async function getCroppedArtworkBase64(src: string, crop: Crop) {
+  if (!src?.length) return '';
+  const image = new Image();
+  image.src = src;
+  await new Promise<void>(resolve => {
+    image.onload = () => {
+      resolve();
+    };
+  });
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width * crop.width / 100;
+  canvas.height = image.height * crop.height / 100;
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  ctx.drawImage(
+    image,
+    image.width * crop.x / 100,
+    image.width * crop.y / 100,
+    canvas.width, canvas.height,
+    0, 0, canvas.width, canvas.height
+  );
+  return canvas.toDataURL();
+}
+
 
 /**
  * Convert a string version to its numeric version.
@@ -113,17 +139,6 @@ export function boolean(x: any, d = false) {
 
 
 
-/**
- * Convert any value to an array.
- * If the value is an array, it stays the same.
- *
- * @param {any} x source value
- * @return {any[]} resulting array
- */
-export function asArray<T>(x: T | T[]) : T[] {
-  if (isArray(x)) return x;
-  return [x];
-}
 
 
 export function debounce(func: Function, wait?: number) {

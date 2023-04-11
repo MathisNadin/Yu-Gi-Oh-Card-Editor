@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable lines-between-class-members */
@@ -24,6 +25,7 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import './styles.css';
 import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
+import { getCroppedArtworkBase64, integer } from 'mn-toolkit/tools';
 
 interface IArtworkEditingProps extends IContainableProps {
   artworkURL: string;
@@ -33,12 +35,14 @@ interface IArtworkEditingProps extends IContainableProps {
   crop: Crop;
   onCroppingChange: (crop: Crop) => void;
   onArtworkURLChange: (url: string) => void;
+  onValidate: (url: string, crop: Crop) => void;
 }
 
 interface IArtworkEditingState extends IContainableState {
   artworkURL: string;
   crop: Crop;
   croppedArtworkBase64: string;
+  keepRatio: boolean;
 }
 
 export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEditingState> {
@@ -49,7 +53,8 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       loaded: true,
       artworkURL: props.artworkURL,
       crop: props.crop,
-      croppedArtworkBase64: ''
+      croppedArtworkBase64: '',
+      keepRatio: false
     }
     handlePromise(this.load(props));
   }
@@ -59,7 +64,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private async load(props: IArtworkEditingProps) {
-    const croppedArtworkBase64 = await this.getCroppedArtworkBase64(props.artworkBase64, props.crop);
+    const croppedArtworkBase64 = await getCroppedArtworkBase64(props.artworkBase64, props.crop);
     this.setState({
       crop: props.crop,
       artworkURL: props.artworkURL,
@@ -67,43 +72,54 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     });
   }
 
-  private async getCroppedArtworkBase64(src: string, crop: Crop) {
-    if (!src?.length) return '';
-    const image = new Image();
-    image.src = src;
-    await new Promise<void>(resolve => {
-      image.onload = () => {
-        resolve();
-      };
-    });
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width * crop.width / 100;
-    canvas.height = image.height * crop.height / 100;
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(
-      image,
-      image.width * crop.x / 100,
-      image.width * crop.y / 100,
-      canvas.width, canvas.height,
-      0, 0, canvas.width, canvas.height
-    );
-    return canvas.toDataURL();
-  }
-
   private onArtworkURLChange(artworkURL: string) {
     if (!artworkURL) return;
-    this.setState({ artworkURL });
+    const crop: Crop = {
+      x: 0,
+      y: 0,
+      height: 100,
+      width: 100,
+      unit: '%'
+    };
+    this.setState({ artworkURL, crop });
     if (this.props.onArtworkURLChange) this.props.onArtworkURLChange(artworkURL);
   }
 
-  private onCroppingChange(crop: Crop) {
+  private onCropXChange(x: number) {
+    if (x < 0) x = 0;
+    const crop = this.state.crop;
+    crop.x = x;
+    this.setState({ crop });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+  }
+
+  private onCropYChange(y: number) {
+    if (y < 0) y = 0;
+    const crop = this.state.crop;
+    crop.y = y;
+    this.setState({ crop });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+  }
+
+  private onCropWidthChange(width: number) {
+    if (width < 1) width = 1;
+    const crop = this.state.crop;
+    crop.width = width;
+    this.setState({ crop });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+  }
+
+  private onCropHeightChange(height: number) {
+    if (height < 1) height = 1;
+    const crop = this.state.crop;
+    crop.height = height;
     this.setState({ crop });
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
 
   public render() {
     if (!this.state?.loaded) return <div></div>;
-    return this.renderAttributes(<VerticalStack>
+    return this.renderAttributes(<VerticalStack fill scroll>
         <HorizontalStack className='artwork-path'>
           <p className='path-label'>Chemin :</p>
           <input type='text' className='path-text-input' value={this.state.artworkURL} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
@@ -111,7 +127,43 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
           <input type='file' accept='image/*' id='path-hidden-input' className='path-hidden-input' onChange={e => this.onArtworkURLChange((e.target.files as FileList)[0]?.path)} />
         </HorizontalStack>
 
-        {this.state.croppedArtworkBase64?.length && <img src={this.state.croppedArtworkBase64} className='cropped-img' alt='cropped-img' />}
+        {this.state.croppedArtworkBase64?.length
+          ? <img src={this.state.croppedArtworkBase64} className='cropped-img' alt='cropped-img' />
+          : <div className='cropped-img' />
+        }
+
+        <HorizontalStack className='ratio-checkbox'>
+          <input type='checkbox' className='ratio-input' defaultChecked={this.state.keepRatio} onInput={() => this.setState({ keepRatio: !this.state.keepRatio })} />
+          <p className='editor-label pendulum-label'>Conserver le ratio</p>
+        </HorizontalStack>
+
+        <HorizontalStack className='ratio-section'>
+          <VerticalStack className='ratio-column ratio-column-1'>
+            <HorizontalStack className='ratio-crop-data ratio-x'>
+              <p className='ratio-label ratio-x-label'>X</p>
+              <input type='number' className='ratio-input ratio-x-input' value={this.state.crop.x} onInput={e => this.onCropXChange(integer((e.target as EventTargetWithValue).value))} />
+            </HorizontalStack>
+
+            <HorizontalStack className='ratio-crop-data ratio-y'>
+              <p className='ratio-label ratio-y-label'>Y</p>
+              <input type='number' className='ratio-input ratio-y-input' value={this.state.crop.y} onInput={e => this.onCropYChange(integer((e.target as EventTargetWithValue).value))} />
+            </HorizontalStack>
+          </VerticalStack>
+
+          <VerticalStack className='ratio-column ratio-column-2'>
+            <HorizontalStack className='ratio-crop-data ratio-width'>
+              <p className='ratio-label ratio-width-label'>Largeur</p>
+              <input type='number' className='ratio-input ratio-width-input' value={this.state.crop.width} onInput={e => this.onCropWidthChange(integer((e.target as EventTargetWithValue).value))} />
+            </HorizontalStack>
+
+            <HorizontalStack className='ratio-crop-data ratio-height'>
+              <p className='ratio-label ratio-height-label'>Hauteur</p>
+              <input type='number' className='ratio-input ratio-height-input' value={this.state.crop.height} onInput={e => this.onCropHeightChange(integer((e.target as EventTargetWithValue).value))} />
+            </HorizontalStack>
+          </VerticalStack>
+        </HorizontalStack>
+
+        <button type='button' className='validate-btn' onClick={() => this.props.onValidate(this.state.artworkURL, this.state.crop)}>OK</button>
     </VerticalStack>, 'artwork-editing');
   }
 }

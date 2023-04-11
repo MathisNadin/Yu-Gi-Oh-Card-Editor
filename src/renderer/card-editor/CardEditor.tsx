@@ -30,6 +30,7 @@ import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import { Popup } from 'mn-toolkit/popup/Popup';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { ArtworkEditDialog } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
+import { Crop } from 'react-image-crop';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
@@ -251,9 +252,28 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
-  private onArtworkURLChange(path: string) {
-    if (isEmpty(path)) return;
-    this.state.card.artwork.url = path;
+  private onArtworkInfoChange(url: string, crop: Crop) {
+    if (isEmpty(url)) return;
+    this.state.card.artwork = {
+      url,
+      x: crop.x,
+      y: crop.y,
+      height: crop.height,
+      width: crop.width
+    }
+    this.setState({ card: this.state.card, showArtworkPopup: false });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onArtworkURLChange(url: string) {
+    if (isEmpty(url)) return;
+    this.state.card.artwork = {
+      url,
+      x: 0,
+      y: 0,
+      height: 100,
+      width: 100
+    }
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
@@ -363,9 +383,16 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           onClosePopup={() => this.setState({ showArtworkPopup: false })}
           content={<ArtworkEditDialog
             artworkURL={this.state.card.artwork.url}
+            crop={{
+              x: this.state.card.artwork.x,
+              y: this.state.card.artwork.y,
+              height: this.state.card.artwork.height,
+              width: this.state.card.artwork.width,
+              unit: '%'
+            }}
             hasPendulumFrame={hasPendulumFrame(this.state.card)}
             hasLinkFrame={this.state.card.frame === 'link'}
-            onArtworkURLChange={path => this.onArtworkURLChange(path)} />}
+            onValidate={(url, crop) => this.onArtworkInfoChange(url, crop)} />}
         />}
       </HorizontalStack>
 

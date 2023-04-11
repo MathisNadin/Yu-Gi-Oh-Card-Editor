@@ -30,7 +30,8 @@ interface IArtworkEditDialogProps extends IContainableProps {
   artworkURL: string;
   hasPendulumFrame: boolean;
   hasLinkFrame: boolean;
-  onArtworkURLChange: (url: string) => void;
+  crop: Crop;
+  onValidate: (url: string, crop: Crop) => void;
 }
 
 interface IArtworkEditDialogState extends IContainableState {
@@ -47,25 +48,19 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
       loaded: true,
       artworkURL: props.artworkURL,
       artworkBase64: '',
-      crop: {
-        x: 0,
-        y: 0,
-        height: 100,
-        width: 100,
-        unit: '%'
-      }
+      crop: props.crop
     }
   }
 
   public componentDidMount() {
-    handlePromise(this.loadArtworkBase64());
+    handlePromise(this.loadArtworkBase64(undefined, true));
   }
 
   public componentWillReceiveProps(_nextProps: IArtworkEditDialogProps, _prevState: IArtworkEditDialogState) {
     handlePromise(this.loadArtworkBase64());
   }
 
-  private async loadArtworkBase64(artworkURL?: string) {
+  private async loadArtworkBase64(artworkURL?: string, usePropsCrop?: boolean) {
     artworkURL = artworkURL || this.state.artworkURL;
 
     let artworkBase64 = '';
@@ -77,7 +72,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
       loaded: true,
       artworkURL,
       artworkBase64,
-      crop: this.state?.crop || {
+      crop: usePropsCrop ? this.props.crop : {
         x: 0,
         y: 0,
         height: 100,
@@ -110,7 +105,8 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
         hasLinkFrame={this.props.hasLinkFrame}
         crop={this.state.crop}
         onCroppingChange={crop => this.setState({ crop })}
-        onArtworkURLChange={url => handlePromise(this.loadArtworkBase64(url))} />
+        onArtworkURLChange={url => handlePromise(this.loadArtworkBase64(url))}
+        onValidate={(url, crop) => this.props.onValidate(url, crop)}/>
     </HorizontalStack>, 'artwork-edit-dialog');
   }
 }

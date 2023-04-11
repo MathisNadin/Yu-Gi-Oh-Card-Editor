@@ -34,7 +34,7 @@ import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { isEmpty } from 'mn-toolkit/tools';
+import { getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
 
 interface ICardBuilderProps extends IContainableProps {
   card: ICard;
@@ -53,7 +53,7 @@ interface ICardBuilderState extends IContainableState {
 
   border: string;
   artworkBg: string;
-  artwork: string;
+  croppedArtworkBase64: string;
 
   cardFrame: string;
   pendulumFrame: string;
@@ -107,7 +107,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const usePendulumFrame = hasPendulumFrame(card);
 
     const artworkBg = require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`);
-    let artwork: string;
+    let croppedArtworkBase64: string;
 
     let needForceUpdate = false;
     let artworkExists = false;
@@ -117,10 +117,17 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     }
 
     if (artworkExists) {
-      artwork = `file://${card.artwork.url}`;
-      artwork = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
+      croppedArtworkBase64 = `file://${card.artwork.url}`;
+      croppedArtworkBase64 = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
+      croppedArtworkBase64 = await getCroppedArtworkBase64(croppedArtworkBase64, {
+        x: card.artwork.x,
+        y: card.artwork.y,
+        height: card.artwork.height,
+        width: card.artwork.width,
+        unit: '%'
+      });
     } else {
-      artwork = artworkBg;
+      croppedArtworkBase64 = artworkBg;
     }
 
     const state: ICardBuilderState = {
@@ -134,7 +141,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       border: require('../resources/pictures/squareBorders.png'),
       artworkBg,
-      artwork,
+      croppedArtworkBase64,
 
       cardFrame: require(`../resources/pictures/card-frames/${card.frame}.png`),
       pendulumFrame: require(`../resources/pictures/pendulum-frames/${usePendulumFrame ? card.frame : 'normal'}.png`),
@@ -382,7 +389,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       {this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
       <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
-      {this.renderAttributes(<div><img className='artwork' src={this.state.artwork} alt='artwork' /></div>, artworkClass)}
+      {this.renderAttributes(<div><img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' /></div>, artworkClass)}
 
       {!this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
       {this.state.usePendulumFrame && <img className='card-layer pendulum-frame' src={this.state.pendulumFrame} alt='pendulumFrame' />}
