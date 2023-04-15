@@ -1,4 +1,7 @@
 {
+  "name": "yu-gi-oh-card-editor",
+  "displayName": "Yu-Gi-Oh! Card Editor",
+  "version": "0.1.1",
   "description": "A foundation for scalable desktop apps",
   "keywords": [
     "electron",
@@ -17,17 +20,9 @@
   },
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
   },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    }
-  ],
   "main": "./src/main/main.ts",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\" \"npm run build:css\"",
