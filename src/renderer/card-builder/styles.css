@@ -208,6 +208,9 @@
   top: 923px;
   height: 150px; }
 
+.card-builder .card-layer.card-description-holder.with-abilities.on-skill {
+  height: 180px; }
+
 .card-builder .card-layer.card-description-holder.on-pendulum-link {
   top: 957px;
   height: 117px; }

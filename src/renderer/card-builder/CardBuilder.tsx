@@ -407,7 +407,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       {this.state.withLinkArrows && this.renderLinkArrows()}
 
-      {hasAbilities(this.props.card) && (this.props.card.frame === 'link'
+      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && (this.props.card.frame === 'link'
         ? <img className='card-layer atk-link-line' src={this.state.atkLinkLine} alt='atkLinkLine' />
         : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />)}
 
@@ -418,8 +418,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {this.props.card.cardSet}
       </p>
 
-      {hasAbilities(this.props.card) && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
-      {hasAbilities(this.props.card) && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
+      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
+      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
 
       {this.props.card.hasCopyright && <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />}
       {this.props.card.edition !== 'unlimited' && <img className='card-layer edition' src={this.state.edition} alt='edition' />}
@@ -494,7 +494,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private renderDescription() {
     let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
-    if (hasAbilities(this.props.card)) containerClass = `${containerClass} with-abilities`;
+    if (hasAbilities(this.props.card)) {
+      containerClass = `${containerClass} with-abilities`;
+
+      if (this.props.card.frame === 'skill') {
+        containerClass = `${containerClass} on-skill`;
+      }
+    }
     if (this.props.card.frame === 'normal') containerClass = `${containerClass} normal-text`;
     if (hasPendulumFrame(this.props.card) && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
 
