@@ -244,35 +244,39 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertAtkToImg() {
-    const container = document.querySelector('.atk') as HTMLDivElement;
-    if (!container) return;
-    const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
-    if (!atk) return;
+    if (hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link') {
+      const container = document.querySelector('.atk') as HTMLDivElement;
+      if (!container) return;
+      const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
+      if (!atk) return;
 
-    const canvas = await html2canvas(atk, { backgroundColor: null });
-    canvas.className = 'html2canvas-atk';
-    const existingCanvas = container.querySelector('.html2canvas-atk');
-    if (existingCanvas) {
-      container.replaceChild(canvas, existingCanvas);
-    } else {
-      container.appendChild(canvas);
+      const canvas = await html2canvas(atk, { backgroundColor: null });
+      canvas.className = 'html2canvas-atk';
+      const existingCanvas = container.querySelector('.html2canvas-atk');
+      if (existingCanvas) {
+        container.replaceChild(canvas, existingCanvas);
+      } else {
+        container.appendChild(canvas);
+      }
     }
     this.setState({ adjustState: 'def' });
   }
 
   public async convertDefToImg() {
-    const container = document.querySelector('.def') as HTMLDivElement;
-    if (!container) return;
-    const def = container.querySelector('.def-text') as HTMLParagraphElement;
-    if (!def) return;
+    if (hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link') {
+      const container = document.querySelector('.def') as HTMLDivElement;
+      if (!container) return;
+      const def = container.querySelector('.def-text') as HTMLParagraphElement;
+      if (!def) return;
 
-    const canvas = await html2canvas(def, { backgroundColor: null });
-    canvas.className = 'html2canvas-def';
-    const existingCanvas = container.querySelector('.html2canvas-def');
-    if (existingCanvas) {
-      container.replaceChild(canvas, existingCanvas);
-    } else {
-      container.appendChild(canvas);
+      const canvas = await html2canvas(def, { backgroundColor: null });
+      canvas.className = 'html2canvas-def';
+      const existingCanvas = container.querySelector('.html2canvas-def');
+      if (existingCanvas) {
+        container.replaceChild(canvas, existingCanvas);
+      } else {
+        container.appendChild(canvas);
+      }
     }
     this.setState({ adjustState: 'pend' });
   }
