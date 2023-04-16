@@ -22,6 +22,7 @@ export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'top
 export interface ICard {
   name: string;
   nameStyle: TNameStyle;
+  tcgAt: boolean;
   artwork: {
     url: string;
     x: number;

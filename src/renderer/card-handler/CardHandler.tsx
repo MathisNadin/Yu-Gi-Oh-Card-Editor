@@ -41,6 +41,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
       card: {
         name: 'Dragon Pare-Feu',
         nameStyle: 'default',
+        tcgAt: true,
         artwork: {
           url: '',
           x: 0,

@@ -44,7 +44,12 @@
 .card-builder .card-layer {
   position: absolute;
   width: 100%;
-  object-fit: cover; }
+  object-fit: cover;
+  /*     &.copyright {
+    }
+
+    &.edition {
+    } */ }
 
 .card-builder .card-layer.hidden {
   visibility: hidden; }
@@ -118,7 +123,7 @@
   right: 67px; }
 
 .card-builder .card-layer.card-set {
-  top: 824px;
+  top: 825px;
   right: 83px;
   text-align: end;
   font-family: fontCardSet;
@@ -179,7 +184,12 @@
   font-size: 30px; }
 
 .card-builder .card-layer.card-abilities .abilities-text.abilities-bracket {
-  font-size: 30px; }
+  font-size: 30px;
+  /*           &.left-bracket {
+          }
+
+          &.right-bracket {
+          } */ }
 
 .card-builder .card-layer.card-description-holder {
   font-family: fontDesc;
