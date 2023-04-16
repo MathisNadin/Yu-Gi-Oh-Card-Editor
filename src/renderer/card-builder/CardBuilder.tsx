@@ -104,7 +104,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private async refreshState(card: ICard, setState: boolean) {
-    const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${card.frame === 'xyz' ? 'white' : 'black'}`;
+    const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${card.frame === 'xyz' || card.frame === 'skill' ? 'white' : 'black'}`;
     const usePendulumFrame = hasPendulumFrame(card);
 
     const artworkBg = require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`);
@@ -219,10 +219,18 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   public async convertNameToImg() {
     const container = document.querySelector('.card-name-container') as HTMLDivElement;
     if (!container) return;
-    const abilities = container.querySelector('.card-name') as HTMLDivElement;
-    if (!abilities) return;
+    const name = container.querySelector('.card-name') as HTMLDivElement;
+    if (!name) return;
 
-    const canvas = await html2canvas(abilities, { backgroundColor: null });
+    if (this.props.card.frame === 'skill') {
+      name.style.width = `${name.scrollWidth + 6}px`;
+      name.style.height = `${name.scrollHeight + 3}px`;
+    } else {
+      name.style.width = '';
+      name.style.height = '';
+    }
+
+    const canvas = await html2canvas(name, { backgroundColor: null });
     canvas.className = 'html2canvas-name';
     const existingCanvas = container.querySelector('.html2canvas-name');
     if (existingCanvas) {
@@ -393,7 +401,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       {!this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}
       {this.state.usePendulumFrame && <img className='card-layer pendulum-frame' src={this.state.pendulumFrame} alt='pendulumFrame' />}
 
-      <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
+      {this.props.card.frame !== 'skill' && <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />}
       {this.renderLevelOrStIcon()}
       {this.renderStPlus()}
 
@@ -404,9 +412,9 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />)}
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
-      {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
+      {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${this.props.card.frame === 'xyz' || this.props.card.frame === 'skill' ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
 
-      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' ? 'white' : 'black'}-text ${hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${hasPendulumFrame(this.props.card) ? 'on-pendulum' : ''}`}>
+      <p className={`card-layer card-set ${this.props.card.frame === 'xyz' || this.props.card.frame === 'skill' ? 'white' : 'black'}-text ${hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${hasPendulumFrame(this.props.card) ? 'on-pendulum' : ''}`}>
         {this.props.card.cardSet}
       </p>
 
