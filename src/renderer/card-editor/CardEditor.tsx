@@ -23,7 +23,7 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TStIcon, TSticker, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
+import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
@@ -146,6 +146,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   public onAttributeChange(attribute: TAttribute) {
     this.state.card.attribute = attribute;
+    this.setState({ card: this.state.card });
+    this.props.onCardChange(this.state.card);
+  }
+
+  private onNameStyleChange(nameStyle: TNameStyle) {
+    this.state.card.nameStyle = nameStyle;
     this.setState({ card: this.state.card });
     this.props.onCardChange(this.state.card);
   }
@@ -370,6 +376,36 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section card-name card-input-container'>
         <p className='editor-label name-label'>Nom</p>
         <input type='text' className='name-input card-input' value={this.state.card.name} onInput={e => this.onNameChange((e.target as EventTargetWithValue).value)} />
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-sub-section card-name-style card-input-container'>
+        <p className='editor-label card-name-style-label'>Édition</p>
+        <Dropdown<TNameStyle>
+          className='card-name-style-dropdown'
+          options={[
+            'default',
+            'white',
+            'black',
+            'yellow',
+            'gold',
+            'silver',
+            'rare',
+            'ultra',
+            'secret'
+          ]}
+          optionsLabel={[
+            'Par défaut',
+            'Blanc',
+            'Noir',
+            'Jaune',
+            'Or',
+            'Argent',
+            'Rare',
+            'Ultra Rare',
+            'Secret Rare'
+          ]}
+          defaultOption={this.state.card.nameStyle}
+          onSelect={value => this.onNameStyleChange(value)} />
       </HorizontalStack>
 
       <HorizontalStack className='card-editor-sub-section card-artwork card-input-container'>

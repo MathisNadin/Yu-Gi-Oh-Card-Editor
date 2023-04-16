@@ -106,6 +106,30 @@
   position: absolute;
   z-index: -1; }
 
+.card-builder .card-layer.card-name-container .card-name.white {
+  color: white; }
+
+.card-builder .card-layer.card-name-container .card-name.black {
+  color: black; }
+
+.card-builder .card-layer.card-name-container .card-name.yellow {
+  color: yellow; }
+
+.card-builder .card-layer.card-name-container .card-name.gold {
+  color: gold; }
+
+.card-builder .card-layer.card-name-container .card-name.silver {
+  color: silver; }
+
+.card-builder .card-layer.card-name-container .card-name.rare {
+  color: #949494; }
+
+.card-builder .card-layer.card-name-container .card-name.ultra {
+  color: #deb21d; }
+
+.card-builder .card-layer.card-name-container .card-name.secret {
+  color: #d3fcfc; }
+
 .card-builder .card-layer.card-name-container .html2canvas-name {
   max-width: 100%; }
 

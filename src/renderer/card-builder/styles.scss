@@ -140,6 +140,38 @@
         white-space: nowrap;
         position: absolute;
         z-index: -1;
+
+        &.white {
+          color: white;
+        }
+
+        &.black {
+          color: black;
+        }
+
+        &.yellow {
+          color: yellow;
+        }
+
+        &.gold {
+          color: gold;
+        }
+
+        &.silver {
+          color: silver;
+        }
+
+        &.rare {
+          color: #949494;
+        }
+
+        &.ultra {
+          color: #deb21d;
+        }
+
+        &.secret {
+          color: #d3fcfc;
+        }
       }
 
       .html2canvas-name {
