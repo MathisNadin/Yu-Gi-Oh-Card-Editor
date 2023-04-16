@@ -490,7 +490,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       pClassName = `${pClassName} white-text skill-name`;
       hStackClassName = `${hStackClassName} skill-name-container`;
     } else {
-      pClassName = `${pClassName} ${this.state.defaultTextColor}-text`;
+      pClassName = `${pClassName} ${this.props.card.frame === 'xyz' || this.props.card.frame === 'link' || this.props.card.frame === 'spell' || this.props.card.frame === 'trap' ? 'white' : 'black'}-text`;
       if (this.props.card.frame === 'link') {
         pClassName = `${pClassName} on-link`;
       }
