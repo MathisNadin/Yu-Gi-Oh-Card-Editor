@@ -103,10 +103,16 @@
           justify-content: start;
           height: 20px;
 
+          &.ratio-x, &.ratio-y {
+            margin-right: 5px;
+          }
+
           .ratio-label {
             color: black;
             font-size: 13px;
             max-width: 35%;
+            padding: 0;
+            margin-right: 5px;
           }
 
           .ratio-input {

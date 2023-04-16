@@ -41,7 +41,7 @@ interface ICardBuilderProps extends IContainableProps {
   onCardReady: () => void;
 }
 
-type TAdjustState = 'todo' | 'name' | 'pend' | 'abilities' | 'desc' | 'done';
+type TAdjustState = 'waiting' | 'todo' | 'name' | 'pend' | 'abilities' | 'desc' | 'done';
 
 interface ICardBuilderState extends IContainableState {
   adjustState: TAdjustState;
@@ -99,6 +99,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
+    this.setState({ adjustState: 'waiting' });
     handlePromise(this.refreshState(nextProps.card, true));
   }
 
@@ -210,10 +211,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       case 'pend': this.adjustPendFontSize(); break;
       case 'abilities': await this.convertAbilitiesToImg(); break;
       case 'desc': this.adjustDescFontSize(); break;
-      default: {
-        if (this.props.onCardReady) this.props.onCardReady();
-        break;
-      }
+      case 'done': if (this.props.onCardReady) this.props.onCardReady(); break;
+      default: break;
     }
   }
 

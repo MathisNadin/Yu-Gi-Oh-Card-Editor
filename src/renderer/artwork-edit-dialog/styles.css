@@ -62,10 +62,14 @@
         align-items: center;
         justify-content: start;
         height: 20px; }
+        .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data.ratio-x, .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data.ratio-y {
+          margin-right: 5px; }
         .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data .ratio-label {
           color: black;
           font-size: 13px;
-          max-width: 35%; }
+          max-width: 35%;
+          padding: 0;
+          margin-right: 5px; }
         .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data .ratio-input {
           width: 70%; }
     .artwork-edit-dialog .artwork-editing .validate-btn {
