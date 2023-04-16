@@ -134,17 +134,26 @@
   max-width: 100%; }
 
 .card-builder .card-layer.atk-def {
-  top: 1041px;
+  top: 1078.4px;
+  width: 74px;
   font-family: fontAtkDef;
   font-size: 37px;
   text-align: end;
   text-shadow: 0 0 black; }
 
 .card-builder .card-layer.atk-def.atk {
-  right: 231px; }
+  left: 512px; }
 
 .card-builder .card-layer.atk-def.def {
-  right: 67px; }
+  left: 673px; }
+
+.card-builder .card-layer.atk-def .stat-text {
+  margin: 0;
+  position: absolute;
+  z-index: -1; }
+
+.card-builder .card-layer.atk-def canvas {
+  max-width: 100%; }
 
 .card-builder .card-layer.card-set {
   top: 825px;

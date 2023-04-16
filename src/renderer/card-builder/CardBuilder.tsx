@@ -41,7 +41,7 @@ interface ICardBuilderProps extends IContainableProps {
   onCardReady: () => void;
 }
 
-type TAdjustState = 'waiting' | 'todo' | 'name' | 'pend' | 'abilities' | 'desc' | 'done';
+type TAdjustState = 'waiting' | 'todo' | 'name' | 'atk' | 'def' | 'pend' | 'abilities' | 'desc' | 'done';
 
 interface ICardBuilderState extends IContainableState {
   adjustState: TAdjustState;
@@ -208,6 +208,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     switch (this.state.adjustState) {
       case 'todo': this.setState({ adjustState: 'name' }); break;
       case 'name': await this.convertNameToImg(); break;
+      case 'atk': this.convertAtkToImg(); break;
+      case 'def': this.convertDefToImg(); break;
       case 'pend': this.adjustPendFontSize(); break;
       case 'abilities': await this.convertAbilitiesToImg(); break;
       case 'desc': this.adjustDescFontSize(); break;
@@ -233,6 +235,40 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const canvas = await html2canvas(name, { backgroundColor: null });
     canvas.className = 'html2canvas-name';
     const existingCanvas = container.querySelector('.html2canvas-name');
+    if (existingCanvas) {
+      container.replaceChild(canvas, existingCanvas);
+    } else {
+      container.appendChild(canvas);
+    }
+    this.setState({ adjustState: 'atk' });
+  }
+
+  public async convertAtkToImg() {
+    const container = document.querySelector('.atk') as HTMLDivElement;
+    if (!container) return;
+    const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
+    if (!atk) return;
+
+    const canvas = await html2canvas(atk, { backgroundColor: null });
+    canvas.className = 'html2canvas-atk';
+    const existingCanvas = container.querySelector('.html2canvas-atk');
+    if (existingCanvas) {
+      container.replaceChild(canvas, existingCanvas);
+    } else {
+      container.appendChild(canvas);
+    }
+    this.setState({ adjustState: 'def' });
+  }
+
+  public async convertDefToImg() {
+    const container = document.querySelector('.def') as HTMLDivElement;
+    if (!container) return;
+    const def = container.querySelector('.def-text') as HTMLParagraphElement;
+    if (!def) return;
+
+    const canvas = await html2canvas(def, { backgroundColor: null });
+    canvas.className = 'html2canvas-def';
+    const existingCanvas = container.querySelector('.html2canvas-def');
     if (existingCanvas) {
       container.replaceChild(canvas, existingCanvas);
     } else {
@@ -418,8 +454,17 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {this.props.card.cardSet}
       </p>
 
-      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && <p className={`card-layer atk-def atk black-text`}>{this.props.card.atk}</p>}
-      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link' && <p className={`card-layer atk-def def black-text`}>{this.props.card.def}</p>}
+      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill'
+        && <Container className='card-layer atk-def atk'>
+          <p className={`stat-text atk-text black-text`}>{this.props.card.atk}</p>
+        </Container>
+      }
+
+      {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link'
+        && <Container className='card-layer atk-def def'>
+          <p className={`stat-text def-text black-text`}>{this.props.card.def}</p>
+        </Container>
+      }
 
       {this.props.card.hasCopyright && <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />}
       {this.props.card.edition !== 'unlimited' && <img className='card-layer edition' src={this.state.edition} alt='edition' />}
