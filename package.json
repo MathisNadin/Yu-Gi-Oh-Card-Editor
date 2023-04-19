@@ -1,8 +1,8 @@
 {
   "name": "yu-gi-oh-card-editor",
   "displayName": "Yu-Gi-Oh! Card Editor",
-  "version": "0.1.1",
-  "description": "A foundation for scalable desktop apps",
+  "version": "0.1.3",
+  "description": "Un éditeur de cartes Yu-Gi-Oh",
   "keywords": [
     "electron",
     "boilerplate",
@@ -18,7 +18,6 @@
     "type": "git",
     "url": "git+https://github.com/MathisNadin/Yu-Gi-Oh-Card-Editor.git"
   },
-  "license": "MIT",
   "author": {
     "name": "Mathis Nadin",
     "email": "mathis.nadin@gmail.com"
@@ -178,8 +177,8 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Yu-Gi-Oh! Card Editor",
+    "appId": "org.erb.YuGiOhCardEditor",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

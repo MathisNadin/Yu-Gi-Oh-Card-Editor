@@ -1,12 +1,10 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
-  "license": "MIT",
+  "name": "yu-gi-oh-card-editor",
+  "version": "0.1.3",
+  "description": "Un éditeur de cartes Yu-Gi-Oh",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
   },
   "main": "./dist/main/main.js",
   "scripts": {
