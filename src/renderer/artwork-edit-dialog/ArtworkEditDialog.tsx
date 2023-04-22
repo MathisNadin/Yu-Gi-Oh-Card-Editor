@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable lines-between-class-members */
@@ -19,7 +20,6 @@
 /* eslint-disable prettier/prettier */
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 import { isEmpty } from 'mn-toolkit/tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
@@ -53,11 +53,11 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   }
 
   public componentDidMount() {
-    handlePromise(this.loadArtworkBase64(undefined, true));
+    app.$errorManager.handlePromise(this.loadArtworkBase64(undefined, true));
   }
 
   public componentWillReceiveProps(_nextProps: IArtworkEditDialogProps, _prevState: IArtworkEditDialogState) {
-    handlePromise(this.loadArtworkBase64());
+    app.$errorManager.handlePromise(this.loadArtworkBase64());
   }
 
   private async loadArtworkBase64(artworkURL?: string, usePropsCrop?: boolean) {
@@ -105,7 +105,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
         hasLinkFrame={this.props.hasLinkFrame}
         crop={this.state.crop}
         onCroppingChange={crop => this.setState({ crop })}
-        onArtworkURLChange={url => handlePromise(this.loadArtworkBase64(url))}
+        onArtworkURLChange={url => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
         onValidate={(url, crop) => this.props.onValidate(url, crop)}/>
     </HorizontalStack>, 'artwork-edit-dialog');
   }

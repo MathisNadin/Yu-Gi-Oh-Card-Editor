@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-param-reassign */
@@ -32,7 +33,6 @@ import { ICard, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/c
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
-import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
 
@@ -95,12 +95,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   public constructor(props: ICardBuilderProps) {
     super(props);
     this.handleResize = this.handleResize.bind(this);
-    handlePromise(this.refreshState(props.card, false));
+    app.$errorManager.handlePromise(this.refreshState(props.card, false));
   }
 
   public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
     this.setState({ adjustState: 'waiting' });
-    handlePromise(this.refreshState(nextProps.card, true));
+    app.$errorManager.handlePromise(this.refreshState(nextProps.card, true));
   }
 
   private async refreshState(card: ICard, setState: boolean) {
@@ -189,11 +189,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public componentDidMount() {
     window.addEventListener('resize', this.handleResize);
-    setTimeout(() => handlePromise(this.adjustAllFontSizes()), 1000);
+    setTimeout(() => app.$errorManager.handlePromise(this.adjustAllFontSizes()), 1000);
   }
 
   public componentDidUpdate() {
-    handlePromise(this.adjustAllFontSizes());
+    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   public componentWillUnmount() {
@@ -201,7 +201,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private handleResize() {
-    handlePromise(this.adjustAllFontSizes());
+    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private async adjustAllFontSizes() {

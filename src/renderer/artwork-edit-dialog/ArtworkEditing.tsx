@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
@@ -24,7 +25,6 @@ import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import './styles.css';
-import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 import { getCroppedArtworkBase64, integer } from 'mn-toolkit/tools';
 
 interface IArtworkEditingProps extends IContainableProps {
@@ -56,11 +56,11 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       croppedArtworkBase64: '',
       keepRatio: false
     }
-    handlePromise(this.load(props));
+    app.$errorManager.handlePromise(this.load(props));
   }
 
   public componentWillReceiveProps(nextProps: IArtworkEditingProps, _prevState: IArtworkEditingState) {
-    handlePromise(this.load(nextProps));
+    app.$errorManager.handlePromise(this.load(nextProps));
   }
 
   private async load(props: IArtworkEditingProps) {

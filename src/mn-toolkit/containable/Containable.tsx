@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-extra-boolean-cast */
@@ -19,7 +20,6 @@
 import './styles.css';
 import { Component, MouseEvent, PropsWithChildren, ReactElement, cloneElement } from 'react';
 import { classNames, isDefined, isNumber } from 'mn-toolkit/tools';
-import { handlePromise } from 'mn-toolkit/error-manager/ErrorManager';
 
 export type FloatPosition = 'none' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'middle-left' | 'middle-right';
 
@@ -99,20 +99,20 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
       ...fc.props,
       className: classNames(this.renderClasses(name)),
       style: this.renderStyle(),
-      onClick: (e: MouseEvent) => handlePromise(this.props.onTap?.(e)),
-      onScroll: (e: UIEvent) => handlePromise(this.props.onScroll?.(e)),
+      onClick: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onTap?.(e)),
+      onScroll: (e: UIEvent) => app.$errorManager.handlePromise(this.props.onScroll?.(e)),
       draggable: this.props.draggable,
-      onMouseEnter: (e: MouseEvent) => handlePromise(this.props.onMouseEnter?.(e)),
-      onMouseLeave: (e: MouseEvent) => handlePromise(this.props.onMouseLeave?.(e)),
-      onDragStart: (e: DragEvent) => handlePromise(this.props.onDragStart?.(e)),
-      onDragEnd: (e: DragEvent) => handlePromise(this.props.onDragEnd?.(e)),
-      onDragLeave: (e: DragEvent) => handlePromise(this.props.onDragLeave?.(e)),
-      onDragEnter: (e: DragEvent) => handlePromise(this.props.onDragEnter?.(e))
+      onMouseEnter: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseEnter?.(e)),
+      onMouseLeave: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseLeave?.(e)),
+      onDragStart: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragStart?.(e)),
+      onDragEnd: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnd?.(e)),
+      onDragLeave: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragLeave?.(e)),
+      onDragEnter: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnter?.(e))
     };
 
     if (this.props.onDrop || this.props.onDragOver) {
       if (this.props.onDrop) newProps.onDrop = (e: DragEvent) => {
-        e.preventDefault(); handlePromise(this.props.onDrop?.(e));
+        e.preventDefault(); app.$errorManager.handlePromise(this.props.onDrop?.(e));
       };
       newProps.onDragOver = (e: DragEvent) => {
         // Nécessaire pour que l'event onDrop fonctionne bien
@@ -120,7 +120,7 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
           e.stopPropagation();
           e.preventDefault();
         }
-        if (this.props.onDragOver) handlePromise(this.props.onDragOver(e));
+        if (this.props.onDragOver) app.$errorManager.handlePromise(this.props.onDragOver(e));
       };
     }
 
