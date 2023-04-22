@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import { Application } from 'mn-toolkit/bootstrap';
 import App from './App';
 import { ErrorManagerService } from 'mn-toolkit/error-manager';
+import { IndexedDBService } from 'mn-toolkit/indexedDB/IndexedDBService';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
@@ -22,5 +23,6 @@ window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
 (window as any).app = new Application();
 
 app.service('$errorManager', ErrorManagerService);
+app.service('$indexedDB', IndexedDBService);
 
 app.bootstrap();

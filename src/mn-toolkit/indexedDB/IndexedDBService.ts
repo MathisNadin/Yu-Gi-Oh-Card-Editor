@@ -8,10 +8,10 @@ export class IndexedDBService {
   private objectStoreName: string;
   private db: IDBDatabase | null = null;
 
-  public constructor(dbName: string, dbVersion: number, objectStoreName: string) {
-    this.dbName = dbName;
-    this.dbVersion = dbVersion;
-    this.objectStoreName = objectStoreName;
+  public constructor() {
+    this.dbName = 'card-editor-db';
+    this.dbVersion = 1;
+    this.objectStoreName = 'card-editor-object-store';
   }
 
   private async openDB(): Promise<void> {
@@ -32,7 +32,7 @@ export class IndexedDBService {
   }
 
   public async get<T>(key: string): Promise<T> {
-    await this.openDB();
+    if (!this.db) await this.openDB();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName]);
       const objectStore = transaction.objectStore(this.objectStoreName);
@@ -47,7 +47,7 @@ export class IndexedDBService {
   }
 
   public async save<T>(key: string, value: T): Promise<void> {
-    await this.openDB();
+    if (!this.db) await this.openDB();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
@@ -60,4 +60,114 @@ export class IndexedDBService {
       };
     });
   }
+
+  public async delete(key: string): Promise<void> {
+    if (!this.db) await this.openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const objectStore = transaction.objectStore(this.objectStoreName);
+      const request = objectStore.delete(key);
+      request.onerror = () => {
+        reject(new Error(`Failed to delete object with key ${key}`));
+      };
+      request.onsuccess = () => {
+        resolve();
+      };
+    });
+  }
+
+  public async getAll<T>(): Promise<T[]> {
+    if (!this.db) await this.openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([this.objectStoreName]);
+      const objectStore = transaction.objectStore(this.objectStoreName);
+      const request = objectStore.getAll();
+      request.onerror = () => {
+        reject(new Error('Failed to get all objects'));
+      };
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+    });
+  }
+
+  public async getAllByKey<T>(): Promise<{ [key: string]: T }> {
+    if (!this.db) await this.openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([this.objectStoreName], 'readonly');
+      const objectStore = transaction.objectStore(this.objectStoreName);
+      const result: { [key: string]: T } = {};
+
+      objectStore.openCursor().onsuccess = (event: any) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          result[cursor.key] = cursor.value;
+          cursor.continue();
+        } else {
+          resolve(result);
+        }
+      };
+
+      transaction.onerror = () => {
+        reject(new Error('Failed to get all objects'));
+      };
+    });
+  }
+
+  public async deleteAll(): Promise<void> {
+    if (!this.db) await this.openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const objectStore = transaction.objectStore(this.objectStoreName);
+      const request = objectStore.clear();
+      request.onerror = () => {
+        reject(new Error('Failed to clear object store'));
+      };
+      request.onsuccess = () => {
+        resolve();
+      };
+    });
+  }
+
+  public async exportData(): Promise<string> {
+    if (!this.db) await this.openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([this.objectStoreName]);
+      const objectStore = transaction.objectStore(this.objectStoreName);
+      const request = objectStore.getAll();
+      request.onerror = () => {
+        reject(new Error(`Failed to get all objects from object store ${this.objectStoreName}`));
+      };
+      request.onsuccess = () => {
+        const data = request.result;
+        const jsonData = JSON.stringify(data);
+        resolve(jsonData);
+      };
+    });
+  }
+
+  public async importData(jsonData: string): Promise<void> {
+    if (!this.db) await this.openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const objectStore = transaction.objectStore(this.objectStoreName);
+      const data = JSON.parse(jsonData);
+      const clearRequest = objectStore.clear();
+      clearRequest.onerror = () => {
+        reject(new Error(`Failed to clear object store ${this.objectStoreName}`));
+      };
+      clearRequest.onsuccess = () => {
+        data.forEach((obj: any) => {
+          const putRequest = objectStore.put(obj);
+          putRequest.onerror = () => {
+            reject(new Error(`Failed to put object with key ${obj.key}`));
+          };
+          putRequest.onsuccess = () => {
+            resolve();
+          };
+        });
+      };
+    });
+  }
+
 }
