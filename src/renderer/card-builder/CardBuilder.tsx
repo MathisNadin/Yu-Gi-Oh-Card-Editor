@@ -219,26 +219,28 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertNameToImg() {
-    const container = document.querySelector('.card-name-container') as HTMLDivElement;
-    if (!container) return;
-    const name = container.querySelector('.card-name') as HTMLDivElement;
-    if (!name) return;
+    if (this.props.card.name) {
+      const container = document.querySelector('.card-name-container') as HTMLDivElement;
+      if (!container) return;
+      const name = container.querySelector('.card-name') as HTMLDivElement;
+      if (!name) return;
 
-    if (this.props.card.frame === 'skill') {
-      name.style.width = `${name.scrollWidth + 6}px`;
-      name.style.height = `${name.scrollHeight + 3}px`;
-    } else {
-      name.style.width = '';
-      name.style.height = '';
-    }
+      if (this.props.card.frame === 'skill') {
+        name.style.width = `${name.scrollWidth + 6}px`;
+        name.style.height = `${name.scrollHeight + 3}px`;
+      } else {
+        name.style.width = '';
+        name.style.height = '';
+      }
 
-    const canvas = await html2canvas(name, { backgroundColor: null });
-    canvas.className = 'html2canvas-name';
-    const existingCanvas = container.querySelector('.html2canvas-name');
-    if (existingCanvas) {
-      container.replaceChild(canvas, existingCanvas);
-    } else {
-      container.appendChild(canvas);
+      const canvas = await html2canvas(name, { backgroundColor: null });
+      canvas.className = 'html2canvas-name';
+      const existingCanvas = container.querySelector('.html2canvas-name');
+      if (existingCanvas) {
+        container.replaceChild(canvas, existingCanvas);
+      } else {
+        container.appendChild(canvas);
+      }
     }
     this.setState({ adjustState: 'atk' });
   }
@@ -251,7 +253,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       if (!atk) return;
 
       const canvas = await html2canvas(atk, { backgroundColor: null });
-      canvas.className = 'html2canvas-atk';
+      canvas.className = 'html2canvas html2canvas-atk';
       const existingCanvas = container.querySelector('.html2canvas-atk');
       if (existingCanvas) {
         container.replaceChild(canvas, existingCanvas);
@@ -270,7 +272,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       if (!def) return;
 
       const canvas = await html2canvas(def, { backgroundColor: null });
-      canvas.className = 'html2canvas-def';
+      canvas.className = 'html2canvas html2canvas-def';
       const existingCanvas = container.querySelector('.html2canvas-def');
       if (existingCanvas) {
         container.replaceChild(canvas, existingCanvas);
@@ -505,6 +507,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     let text = this.props.card.abilities.join(' / ');
     const upperCaseIndexes = text.split('').map((char, index) => char === char.toUpperCase() ? index : -1).filter(i => i !== -1);
     const lowerCaseText = text.toLowerCase();
+    let firstIndexLowerCase: boolean;
+    if (!upperCaseIndexes.includes(0)) {
+      upperCaseIndexes.unshift(0);
+      firstIndexLowerCase = true;
+    }
 
     let containerClass = 'card-layer card-abilities';
     if (hasPendulumFrame(this.props.card) && this.props.card.frame === 'link') containerClass = `${containerClass} on-pendulum-link`;
@@ -514,7 +521,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       <p style={{}} className={`abilities-text black-text abilities`}>
         {upperCaseIndexes.map((index, i) => (
           <Fragment key={`uppercase-index-${i}`}>
-            <span className='uppercase'>
+            <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
               {text.slice(index, index+1)}
             </span>
             <span className='lowercase'>

@@ -559,7 +559,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
         {this.state.card.frame !== 'link' && <HorizontalStack className='card-stats card-def card-input-container'>
           <p className='editor-label def-label'>DEF</p>
-          <input readOnly={this.state.lockPend} type='number' min={0} max={999999} className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
+          <input type='number' min={0} max={999999} className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
         </HorizontalStack>}
       </HorizontalStack>
     </VerticalStack>, 'card-editor-section abilities-section');

@@ -303,11 +303,12 @@
 
         .abilities-list {
           border: 1px solid #318ce7;
-          gap: 5px;
-          padding: 3px 0;
+          // gap: 5px;
+          // padding: 3px 0;
           background-color: white;
           font-size: 13px;
           color: black;
+          min-height: 63px;
 
           .ability-input {
             border: none;
@@ -315,7 +316,7 @@
             height: 15px;
 
             &.selected {
-              background-color: lightblue;
+              background-color: #ADCAF9;
             }
 
             .inplace-edit-div {

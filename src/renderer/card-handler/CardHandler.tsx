@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable global-require */
@@ -35,11 +36,15 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
 
   public constructor(props: ICardHandlerProps) {
     super(props);
+    this.state = { loaded: false } as ICardHandlerState;
+    app.$errorManager.handlePromise(this.load());
+  }
 
-    this.state = {
-      loaded: true,
-      card: {
-        name: 'Dragon Pare-Feu',
+  private async load() {
+    let card = await app.$indexedDB.get<ICard>('current-card');
+    if (!card) {
+      card = {
+        name: '',
         nameStyle: 'default',
         tcgAt: true,
         artwork: {
@@ -50,46 +55,59 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
           width: 0
         },
         frame: 'effect',
-        stType: 'link',
-        attribute: 'light',
-        abilities: ['Cyberse', 'Lien', 'Effet'],
-        level: 4,
-        atk: 2500,
-        def: 2500,
-        description: `2+ monstres nombre de monstres co-liés à cette carte ; renvoyez-les à la main. Si un monstre pointé par cette carte est détruit au combat ou envoyé au Cimetière : vous pouvez Invoquer Spécialement 1 monstre Cyberse depuis votre main. Vous ne pouvez utiliser chaque effet de "Dragon Pare-Feu" qu'une fois par tour.`,
+        stType: 'normal',
+        attribute: 'dark',
+        abilities: [],
+        level: 0,
+        atk: 0,
+        def: 0,
+        description: '',
         pendulum: false,
-        pendEffect: `2+ monstres nombre de monstres co-liés à cette carte ; renvoyez-les à la main. Si un monstre pointé par cette carte est détruit au combat ou envoyé au Cimetière : vous pouvez Invoquer Spécialement 1 monstre Cyberse depuis votre main. Vous ne pouvez utiliser chaque effet de "Dragon Pare-Feu" qu'une fois par tour.`,
+        pendEffect: '',
         scales: {
-          left: 10,
-          right: 1
+          left: 0,
+          right: 0
         },
         linkArrows: {
-          top: true,
-          bottom: true,
-          left: true,
-          right: true,
+          top: false,
+          bottom: false,
+          left: false,
+          right: false,
           topLeft: false,
           topRight: false,
           bottomLeft: false,
           bottomRight: false
         },
-        edition: 'limited',
-        cardSet: 'COTD-FR045',
-        passcode: '91875164',
-        sticker: 'silver',
-        hasCopyright: true,
+        edition: 'unlimited',
+        cardSet: '',
+        passcode: '',
+        sticker: 'none',
+        hasCopyright: false,
         oldCopyright: false,
         speed: false,
         rush: false,
         legend: false,
         atkMax: 0
-      }
+      };
+
+      await this.saveCurrentCard(card);
     }
+    this.setState({ loaded: true, card });
+  }
+
+  private onCardChange(card: ICard) {
+    this.setState({ card });
+    app.$errorManager.handlePromise(this.saveCurrentCard(card));
+  }
+
+  private async saveCurrentCard(card: ICard) {
+    await app.$indexedDB.save('current-card', card);
   }
 
   public render() {
+    if (!this.state?.loaded) return <div></div>;
     return this.renderAttributes(<HorizontalStack gutter>
-      <CardEditor card={this.state.card} onCardChange={card => this.setState({ card })} />
+      <CardEditor card={this.state.card} onCardChange={card => this.onCardChange(card)} />
       <CardPreview card={this.state.card} />
       <BatchDisplay />
     </HorizontalStack>, 'card-handler');

@@ -182,7 +182,7 @@
     &.atk-def {
       // top: 87.81%;
       top: 1078.4px;
-      width: 74px;
+      min-width: 74px;
       font-family: fontAtkDef;
       // font-size: 24.5px;
       font-size: 37px;
@@ -190,10 +190,12 @@
       text-shadow: 0 0 black;
 
       &.atk {
+        right: 230px;
         left: 512px;
       }
 
       &.def {
+        right: 66px;
         left: 673px;
       }
 
@@ -201,10 +203,11 @@
         margin: 0;
         position: absolute;
         z-index: -1;
+        min-width: 74px;
       }
 
       canvas {
-        max-width: 100%;
+        max-width: 74px;
       }
     }
 

@@ -78,7 +78,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
           onChange={e => this.tempValue = e.target.value}
           onBlur={() => this.onBlur()} />
         : <div className='inplace-edit-value inplace-edit-div' onClick={e => this.onSingleClick(e)} onDoubleClick={() => this.onDoubleClick()}>
-          {this.tempValue}
+          {this.tempValue || '<vide>'}
         </div>
       }
     </VerticalStack>;
