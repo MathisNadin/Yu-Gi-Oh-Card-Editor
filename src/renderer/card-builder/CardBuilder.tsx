@@ -34,7 +34,7 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
+import { classNames, getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
 
 interface ICardBuilderProps extends IContainableProps {
   card: ICard;
@@ -284,7 +284,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertAbilitiesToImg() {
-    if (!hasAbilities(this.props.card)) {
+    if (!hasAbilities(this.props.card) || !this.props.card.abilities.length) {
       this.setState({ adjustState: 'desc' });
       return;
     }
@@ -461,13 +461,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       </p>
 
       {hasAbilities(this.props.card) && this.props.card.frame !== 'skill'
-        && <Container className='card-layer atk-def atk'>
+        && <Container className={classNames('card-layer', 'atk-def', 'atk', this.props.card.atk === '?' ? 'question-mark' : '')}>
           <p className={`stat-text atk-text black-text`}>{this.props.card.atk}</p>
         </Container>
       }
 
       {hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link'
-        && <Container className='card-layer atk-def def'>
+        && <Container className={classNames('card-layer', 'atk-def', 'def', this.props.card.def === '?' ? 'question-mark' : '')}>
           <p className={`stat-text def-text black-text`}>{this.props.card.def}</p>
         </Container>
       }

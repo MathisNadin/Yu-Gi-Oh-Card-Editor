@@ -172,19 +172,17 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   }
 
   public onAtkChange(atk: string) {
-    if (isUndefined(atk)) return;
-    const atkNumber = integer(atk);
-    if (atkNumber > 999999) return;
-    this.state.card.atk = atkNumber;
+    if (isUndefined(atk) || atk.length > 6) return;
+    if (atk && atk !== '?' && integer(atk) === 0) atk = '0';
+    this.state.card.atk = atk;
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
 
   public onDefChange(def: string) {
-    if (isUndefined(def)) return;
-    const defNumber = integer(def);
-    if (defNumber > 999999) return;
-    this.state.card.def = defNumber;
+    if (isUndefined(def) || def.length > 6) return;
+    if (def && def !== '?' && integer(def) === 0) def = '0';
+    this.state.card.def = def;
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
@@ -552,14 +550,14 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section atk-def-section'>
         <HorizontalStack className='card-stats card-atk card-input-container'>
           <p className='editor-label atk-label'>ATK</p>
-          <input type='number' min={0} max={999999} className='atk-input card-input' value={this.state.card.atk} onInput={e => this.onAtkChange((e.target as EventTargetWithValue).value)} />
+          <input type='text' className='atk-input card-input' value={this.state.card.atk} onInput={e => this.onAtkChange((e.target as EventTargetWithValue).value)} />
         </HorizontalStack>
 
         <VerticalStack className='separator-container' fill />
 
         {this.state.card.frame !== 'link' && <HorizontalStack className='card-stats card-def card-input-container'>
           <p className='editor-label def-label'>DEF</p>
-          <input type='number' min={0} max={999999} className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
+          <input type='text' className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
         </HorizontalStack>}
       </HorizontalStack>
     </VerticalStack>, 'card-editor-section abilities-section');

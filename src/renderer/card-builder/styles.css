@@ -149,6 +149,10 @@
   right: 66px;
   left: 673px; }
 
+.card-builder .card-layer.atk-def.question-mark {
+  font-size: 53px;
+  top: 1067px; }
+
 .card-builder .card-layer.atk-def .stat-text {
   margin: 0;
   position: absolute;

@@ -35,8 +35,8 @@ export interface ICard {
   attribute: TAttribute;
   abilities: string[];
   level: number;
-  atk: number;
-  def: number;
+  atk: string;
+  def: string;
   description: string;
   pendulum: boolean;
   pendEffect: string;
