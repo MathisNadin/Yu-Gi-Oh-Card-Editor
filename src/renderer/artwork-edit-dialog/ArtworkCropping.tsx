@@ -22,6 +22,7 @@ import { Container } from 'mn-toolkit/container/Container';
 import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/src/ReactCrop.scss'
 import './styles.css';
+import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;
@@ -84,7 +85,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   }
 
   public render() {
-    if (!this.state?.loaded) return <div></div>;
+    if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<Container>
       {!!this.props.artworkBase64.length && <ReactCrop
         className={`cropping-interface ${this.state.higher ? 'higher' : ''}`}

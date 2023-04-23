@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
@@ -25,6 +26,7 @@ import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
 import './styles.css';
+import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface IArtworkEditDialogProps extends IContainableProps {
   artworkURL: string;
@@ -89,7 +91,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   }
 
   public render() {
-    if (!this.state?.loaded) return <div></div>;
+    if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<HorizontalStack>
       <ArtworkCropping
         artworkBase64={this.state.artworkBase64}

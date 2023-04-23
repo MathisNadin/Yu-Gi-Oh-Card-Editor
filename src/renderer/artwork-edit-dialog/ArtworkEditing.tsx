@@ -26,6 +26,7 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import './styles.css';
 import { getCroppedArtworkBase64, integer } from 'mn-toolkit/tools';
+import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface IArtworkEditingProps extends IContainableProps {
   artworkURL: string;
@@ -117,14 +118,19 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
 
+  private async doSelectImgPath() {
+    const path = await window.electron.ipcRenderer.getFilePath();
+    if (!path) return;
+    this.onArtworkURLChange(path);
+  }
+
   public render() {
-    if (!this.state?.loaded) return <div></div>;
+    if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<VerticalStack fill scroll>
         <HorizontalStack className='artwork-path'>
           <p className='path-label'>Chemin :</p>
           <input type='text' className='path-text-input' value={this.state.artworkURL} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
-          <button type='button' className='path-btn' onClick={() => document.getElementById('path-hidden-input')?.click()}>...</button>
-          <input type='file' accept='image/*' id='path-hidden-input' className='path-hidden-input' onChange={e => this.onArtworkURLChange((e.target.files as FileList)[0]?.path)} />
+          <button type='button' className='path-btn' onClick={() => app.$errorManager.handlePromise(this.doSelectImgPath())}>...</button>
         </HorizontalStack>
 
         {this.state.croppedArtworkBase64?.length

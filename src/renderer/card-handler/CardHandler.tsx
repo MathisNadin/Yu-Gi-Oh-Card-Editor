@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable no-undef */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable lines-between-class-members */
@@ -23,7 +24,8 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { BatchDisplay } from 'renderer/batch-display/BatchDisplay';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
 import { CardPreview } from 'renderer/card-preview/CardPreview';
-import { ICard } from './ICard';
+import { ICard, ICardListener } from '../card/CardService';
+import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface ICardHandlerProps extends IContainableProps {
 }
@@ -32,80 +34,32 @@ interface ICardHandlerState extends IContainableState {
   card: ICard;
 }
 
-export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> {
+export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> implements Partial<ICardListener> {
 
   public constructor(props: ICardHandlerProps) {
     super(props);
+    app.$card.addListener(this);
     this.state = { loaded: false } as ICardHandlerState;
-    app.$errorManager.handlePromise(this.load());
   }
 
-  private async load() {
-    let card = await app.$indexedDB.get<ICard>('current-card');
-    if (!card) {
-      card = {
-        name: '',
-        nameStyle: 'default',
-        tcgAt: true,
-        artwork: {
-          url: '',
-          x: 0,
-          y: 0,
-          height: 0,
-          width: 0
-        },
-        frame: 'effect',
-        stType: 'normal',
-        attribute: 'dark',
-        abilities: [],
-        level: 0,
-        atk: '',
-        def: '',
-        description: '',
-        pendulum: false,
-        pendEffect: '',
-        scales: {
-          left: 0,
-          right: 0
-        },
-        linkArrows: {
-          top: false,
-          bottom: false,
-          left: false,
-          right: false,
-          topLeft: false,
-          topRight: false,
-          bottomLeft: false,
-          bottomRight: false
-        },
-        edition: 'unlimited',
-        cardSet: '',
-        passcode: '',
-        sticker: 'none',
-        hasCopyright: false,
-        oldCopyright: false,
-        speed: false,
-        rush: false,
-        legend: false,
-        atkMax: 0
-      };
+  public componentWillUnmount() {
+    app.$card.removeListener(this);
+  }
 
-      await this.saveCurrentCard(card);
-    }
-    this.setState({ loaded: true, card });
+  public currentCardLoaded(currentCard: ICard) {
+    this.setState({ loaded: true, card: currentCard });
+  }
+
+  public currentCardUpdated(currentCard: ICard) {
+    this.setState({ card: currentCard });
   }
 
   private onCardChange(card: ICard) {
-    this.setState({ card });
-    app.$errorManager.handlePromise(this.saveCurrentCard(card));
-  }
-
-  private async saveCurrentCard(card: ICard) {
-    await app.$indexedDB.save('current-card', card);
+    app.$errorManager.handlePromise(app.$card.saveCurrentCard(card));
   }
 
   public render() {
-    if (!this.state?.loaded) return <div></div>;
+    if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<HorizontalStack gutter>
       <CardEditor card={this.state.card} onCardChange={card => this.onCardChange(card)} />
       <CardPreview card={this.state.card} />

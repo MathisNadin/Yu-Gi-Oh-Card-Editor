@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-param-reassign */
@@ -23,7 +24,7 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker, hasAbilities, hasLinkArrows, hasPendulumFrame } from 'renderer/card-handler/ICard';
+import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/CardService';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
@@ -358,9 +359,9 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
-      {hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
-      {hasPendulumFrame(this.state.card) && this.renderPendulumCardDetails()}
-      {hasLinkArrows(this.state.card) && this.renderLinkArrows()}
+      {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
+      {app.$card.hasPendulumFrame(this.state.card) && this.renderPendulumCardDetails()}
+      {app.$card.hasLinkArrows(this.state.card) && this.renderLinkArrows()}
       {this.renderMiscDetails()}
     </VerticalStack>, 'card-editor');
   }
@@ -424,7 +425,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
               width: this.state.card.artwork.width,
               unit: '%'
             }}
-            hasPendulumFrame={hasPendulumFrame(this.state.card)}
+            hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
             hasLinkFrame={this.state.card.frame === 'link'}
             onValidate={(url, crop) => this.onArtworkInfoChange(url, crop)} />}
         />}

@@ -28,9 +28,10 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
-import { ICard } from 'renderer/card-handler/ICard';
+import { ICard } from 'renderer/card/CardService';
 import { toPng } from 'html-to-image';
 import { CardBuilder } from 'renderer/card-builder/CardBuilder';
+import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface ICardPreviewProps extends IContainableProps {
   card: ICard;
@@ -79,7 +80,8 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       <CardBuilder card={this.props.card} onCardReady={() => this.onCardReady()} />
       <Container className='cover' />
       <img className='card-preview-img img-render' src={this.state.cardPlaceholder} alt='cardPreview' />
-      <img className='card-preview-img rendering' src={this.state.rendering} alt='cardPreview' />
+      <Spinner className='card-preview-img rendering' />
+      {/* <img className='card-preview-img rendering' src={this.state.rendering} alt='cardPreview' /> */}
     </Container>, 'card-preview');
   }
 }

@@ -2,16 +2,32 @@
 /* eslint-disable lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
-export class IndexedDBService {
+import { Observable } from "mn-toolkit/observable/Observable";
+
+export interface IIndexedDBListener {
+  allDeleted: () => void;
+  dataImported: () => void;
+}
+
+export class IndexedDBService extends Observable<IIndexedDBListener> {
   private dbName: string;
   private dbVersion: number;
   private objectStoreName: string;
   private db: IDBDatabase | null = null;
 
   public constructor() {
+    super();
     this.dbName = 'card-editor-db';
     this.dbVersion = 1;
     this.objectStoreName = 'card-editor-object-store';
+  }
+
+  public fireAllDeleted() {
+    this.dispatch('allDeleted');
+  }
+
+  private fireDataImported() {
+    this.dispatch('dataImported');
   }
 
   private async openDB(): Promise<void> {
@@ -125,6 +141,7 @@ export class IndexedDBService {
       };
       request.onsuccess = () => {
         resolve();
+        this.fireAllDeleted();
       };
     });
   }
@@ -166,6 +183,7 @@ export class IndexedDBService {
             resolve();
           };
         });
+        this.fireDataImported();
       };
     });
   }

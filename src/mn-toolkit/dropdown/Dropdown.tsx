@@ -44,9 +44,9 @@ export class Dropdown<T extends string> extends Containable<DropdownProps<T>, Dr
 
   public render() {
     return this.renderAttributes(<VerticalStack>
-      <select onChange={e => this.onChange(e.target.value as T)}>
+      <select defaultValue={this.props.defaultOption} onChange={e => this.onChange(e.target.value as T)}>
         {this.props.options.map((option, iOption) => {
-          return <option key={iOption} defaultValue={option} value={option} selected={option === this.props.defaultOption}>
+          return <option key={iOption} defaultValue={option} value={option}>
             {this.props.optionsLabel ? this.props.optionsLabel[iOption] : option}
           </option>;
         })}

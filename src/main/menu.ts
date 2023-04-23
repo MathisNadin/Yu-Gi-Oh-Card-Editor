@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   app,
   Menu,
@@ -12,13 +13,13 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 }
 
 export default class MenuBuilder {
-  mainWindow: BrowserWindow;
+  private mainWindow: BrowserWindow;
 
-  constructor(mainWindow: BrowserWindow) {
+  public constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
   }
 
-  buildMenu(): Menu {
+  public buildMenu(): Menu {
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
@@ -195,14 +196,24 @@ export default class MenuBuilder {
   buildDefaultTemplate() {
     const templateDefault = [
       {
-        label: '&File',
+        label: '&Fichier',
         submenu: [
           {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
+            label: '&Faire le rendu',
+            accelerator: 'Ctrl+R',
+            click: () => {
+              this.mainWindow.webContents.send('render-current-card');
+            },
           },
           {
-            label: '&Close',
+            label: '&Sauvegarder la carte',
+            accelerator: 'Ctrl+S',
+            click: () => {
+              this.mainWindow.webContents.send('save-current-to-local');
+            },
+          },
+          {
+            label: '&Fermer',
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close();
@@ -211,20 +222,20 @@ export default class MenuBuilder {
         ],
       },
       {
-        label: '&View',
+        label: '&Affichage',
         submenu:
           process.env.NODE_ENV === 'development' ||
           process.env.DEBUG_PROD === 'true'
             ? [
                 {
-                  label: '&Reload',
+                  label: '&Recharger',
                   accelerator: 'Ctrl+R',
                   click: () => {
                     this.mainWindow.webContents.reload();
                   },
                 },
                 {
-                  label: 'Toggle &Full Screen',
+                  label: '&Plein écran',
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
@@ -232,17 +243,10 @@ export default class MenuBuilder {
                     );
                   },
                 },
-                {
-                  label: 'Toggle &Developer Tools',
-                  accelerator: 'Alt+Ctrl+I',
-                  click: () => {
-                    this.mainWindow.webContents.toggleDevTools();
-                  },
-                },
               ]
             : [
                 {
-                  label: 'Toggle &Full Screen',
+                  label: '&Plein écran',
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
@@ -252,7 +256,7 @@ export default class MenuBuilder {
                 },
               ],
       },
-      {
+/*       {
         label: 'Help',
         submenu: [
           {
@@ -282,8 +286,30 @@ export default class MenuBuilder {
             },
           },
         ],
-      },
+      }, */
     ];
+
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+      templateDefault.push({
+        label: '&Développement',
+        submenu: [
+          {
+            label: '&Outils de développement',
+            accelerator: 'Alt+Ctrl+I',
+            click: () => {
+              this.mainWindow.webContents.toggleDevTools();
+            },
+          },
+          {
+            label: '&Supprimer les données locales',
+            accelerator: 'Alt+Ctrl+D',
+            click: () => {
+              this.mainWindow.webContents.send('delete-local-db');
+            }
+          },
+        ]
+      });
+    }
 
     return templateDefault;
   }

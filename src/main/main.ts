@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 /* eslint global-require: off, no-console: off, promise/always-return: off */
@@ -11,10 +13,10 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFile } from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -31,6 +33,36 @@ let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, _arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('get-file-path', async () => {
+  const directoryPath = await dialog.showOpenDialog({
+    properties: ['openFile'],
+  });
+  if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
+  return directoryPath.filePaths[0];
+});
+
+ipcMain.handle('get-directory-path', async () => {
+  const directoryPath = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  });
+  if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
+  return directoryPath.filePaths[0];
+});
+
+ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64: string) => {
+  const result = await dialog.showSaveDialog({
+    defaultPath: `${defaultFileName}.png`
+  });
+  if (!result.canceled && result.filePath) {
+    const filePath = result.filePath.endsWith('.png') ? result.filePath : `${result.filePath}.png`;
+    const buffer = Buffer.from(base64, 'base64');
+    writeFile(filePath, buffer, (err) => {
+      if (!err) return filePath;
+    });
+  }
+  return undefined;
 });
 
 ipcMain.handle('check-file-exists', async (_event, filePath: string) => {

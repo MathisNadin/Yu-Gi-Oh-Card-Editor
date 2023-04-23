@@ -1,0 +1,52 @@
+/* @mixin themeSpinner {
+  // @include fill-all;
+  // @include bg(1);
+  // z-index: $z-index-overall;
+  z-index: 12;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .mn-spinner-block {
+    text-align: center;
+    .mn-donnut {
+      animation: mn-spin 1200ms infinite linear;
+    }
+    .mn-spinner-message {
+      margin-top: 10px;
+      // @include fg(1);
+    }
+  }
+  &.mn-fullscreen {
+    position: fixed;
+    // z-index: $z-index-overall;
+    z-index: 12;
+  }
+  &.mn-spinner-overlay {
+    @include bg(2);
+  }
+}
+
+.mn-spinner {
+  @include themeSpinner();
+}
+ */
+.mn-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%; }
+
+.spinner-circle {
+  width: 33%;
+  height: 0;
+  padding-bottom: 33%;
+  border-radius: 50%;
+  border: 7px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #000;
+  animation: spinner-animation 1200ms linear infinite; }
+
+@keyframes spinner-animation {
+  to {
+    transform: rotate(360deg); } }
