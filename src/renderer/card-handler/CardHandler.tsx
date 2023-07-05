@@ -21,7 +21,7 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { BatchDisplay } from 'renderer/batch-display/BatchDisplay';
+import { LocalCardsDisplay } from 'renderer/local-cards-display/LocalCardsDisplay';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
 import { CardPreview } from 'renderer/card-preview/CardPreview';
 import { ICard, ICardListener } from '../card/CardService';
@@ -63,7 +63,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
     return this.renderAttributes(<HorizontalStack gutter>
       <CardEditor card={this.state.card} onCardChange={card => this.onCardChange(card)} />
       <CardPreview card={this.state.card} />
-      <BatchDisplay />
+      <LocalCardsDisplay />
     </HorizontalStack>, 'card-handler');
   }
 }

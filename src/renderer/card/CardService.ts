@@ -70,6 +70,8 @@ export interface ICard {
   atkMax: number;
 }
 
+export type CardStorageKey = 'current-card' | 'local-cards';
+
 export interface ICardListener {
   currentCardLoaded: (currentCard: ICard) => void;
   currentCardUpdated: (currentCard: ICard) => void;
@@ -116,10 +118,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   private async load(initial: boolean) {
-    this._localCards = await app.$indexedDB.get<ICard[]>('local-cards');
+    this._localCards = await app.$indexedDB.get<ICard[], CardStorageKey>('local-cards');
     if (!this._localCards) this._localCards = [];
 
-    this._currentCard = await app.$indexedDB.get<ICard>('current-card');
+    this._currentCard = await app.$indexedDB.get<ICard, CardStorageKey>('current-card');
     if (!this._currentCard) {
       this._currentCard = {
         name: '',
@@ -167,7 +169,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         legend: false,
         atkMax: 0
       };
-      await app.$indexedDB.save<ICard>('current-card', this._currentCard);
+      await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
     }
 
     if (initial) {
@@ -195,19 +197,42 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public async saveCurrentCard(card: ICard) {
     this._currentCard = card;
-    await app.$indexedDB.save<ICard>('current-card', this._currentCard);
+    await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
     this.fireCurrentCardUpdated();
   }
 
   public async saveCurrentToLocal() {
-    const currentCard = await app.$indexedDB.get<ICard>('current-card');
+    const currentCard = await app.$indexedDB.get<ICard, CardStorageKey>('current-card');
     const now = new Date();
     currentCard.created = now;
     currentCard.modified = now;
     currentCard.uuid = uuid();
     this._localCards.push(currentCard);
-    await app.$indexedDB.save<ICard[]>('local-cards', this._localCards);
+    await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
     this.fireLocalCardsUpdated();
+  }
+
+  public getFrameName(frame: TFrame) {
+    switch (frame) {
+      case 'normal': return 'Normal';
+      case 'effect': return 'Effet';
+      case 'ritual': return 'Rituel';
+      case 'fusion': return 'Fusion';
+      case 'synchro': return 'Synchro';
+      case 'darkSynchro': return 'Synchro des Ténèbres';
+      case 'xyz': return 'Xyz';
+      case 'link': return 'Lien';
+      case 'spell': return 'Magie';
+      case 'trap': return 'Piège';
+      case 'token': return 'Jeton';
+      case 'monsterToken': return 'Jeton Monstre';
+      case 'skill': return 'Compétence';
+      case 'obelisk': return 'Obelisk';
+      case 'slifer': return 'Slifer';
+      case 'ra': return 'Ra';
+      case 'legendaryDragon': return 'Dragon Légendaire';
+      default: return 'Inconnu';
+    }
   }
 
   public hasLinkArrows(card: ICard): boolean {

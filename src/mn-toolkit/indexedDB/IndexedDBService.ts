@@ -47,7 +47,7 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
     });
   }
 
-  public async get<T>(key: string): Promise<T> {
+  public async get<T, K extends string>(key: K): Promise<T> {
     if (!this.db) await this.openDB();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName]);
@@ -62,7 +62,7 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
     });
   }
 
-  public async save<T>(key: string, value: T): Promise<void> {
+  public async save<K extends string, T>(key: K, value: T): Promise<void> {
     if (!this.db) await this.openDB();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
@@ -77,7 +77,7 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
     });
   }
 
-  public async delete(key: string): Promise<void> {
+  public async delete<K extends string>(key: K): Promise<void> {
     if (!this.db) await this.openDB();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');

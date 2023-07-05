@@ -1,105 +1,85 @@
 .mn-popup-header {
   background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%); }
-
-.mn-popup-header .mn-popup-title {
-  color: white !important; }
+  .mn-popup-header .mn-popup-title {
+    color: white !important; }
 
 .artwork-edit-dialog {
   position: relative;
   width: 100%;
   height: 100%; }
-
-.artwork-edit-dialog .artwork-cropping {
-  width: 50%;
-  align-items: center;
-  justify-content: center; }
-
-.artwork-edit-dialog .artwork-cropping .cropping-interface.higher {
-  height: 100%; }
-
-.artwork-edit-dialog .artwork-cropping .cropping-interface.higher .ReactCrop__child-wrapper {
-  height: 100%; }
-
-.artwork-edit-dialog .artwork-cropping .cropping-interface.higher .ReactCrop__child-wrapper .artwork-img {
-  height: 100%; }
-
-.artwork-edit-dialog .artwork-editing {
-  flex: 1;
-  margin: 0 16px;
-  gap: 16px; }
-
-.artwork-edit-dialog .artwork-editing .artwork-path {
-  align-items: center; }
-
-.artwork-edit-dialog .artwork-editing .artwork-path .path-label {
-  color: black;
-  margin: 5px 0;
-  font-size: 13px;
-  text-align: end; }
-
-.artwork-edit-dialog .artwork-editing .artwork-path .path-text-input {
-  width: 75%;
-  height: 19px; }
-
-.artwork-edit-dialog .artwork-editing .artwork-path .path-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px;
-  margin-left: 2%;
-  border: 1px outset lightgray;
-  border-radius: 4px;
-  cursor: pointer;
-  width: auto;
-  height: 25px;
-  width: 33px;
-  background-color: lightgrey; }
-
-.artwork-edit-dialog .artwork-editing .cropped-img {
-  align-self: center;
-  width: 70%;
-  aspect-ratio: 1 / 1; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column {
-  gap: 16px; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-1 {
-  width: 35%; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-2 {
-  width: 65%; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-2 .ratio-crop-data {
-  justify-content: end; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data {
-  align-items: center;
-  justify-content: start;
-  height: 20px; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data.ratio-x, .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data.ratio-y {
-  margin-right: 5px; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data .ratio-label {
-  color: black;
-  font-size: 13px;
-  max-width: 35%;
-  padding: 0;
-  margin-right: 5px; }
-
-.artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data .ratio-input {
-  width: 70%; }
-
-.artwork-edit-dialog .artwork-editing .validate-btn {
-  display: flex;
-  align-self: center;
-  align-items: center;
-  justify-content: center;
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  height: 40px;
-  width: 50px;
-  border: 1px outset lightgray;
-  background-color: lightgrey; }
+  .artwork-edit-dialog .artwork-cropping {
+    width: 50%;
+    align-items: center;
+    justify-content: center; }
+    .artwork-edit-dialog .artwork-cropping .cropping-interface.higher {
+      height: 100%; }
+      .artwork-edit-dialog .artwork-cropping .cropping-interface.higher .ReactCrop__child-wrapper {
+        height: 100%; }
+        .artwork-edit-dialog .artwork-cropping .cropping-interface.higher .ReactCrop__child-wrapper .artwork-img {
+          height: 100%; }
+  .artwork-edit-dialog .artwork-editing {
+    flex: 1;
+    margin: 0 16px;
+    gap: 16px; }
+    .artwork-edit-dialog .artwork-editing .artwork-path {
+      align-items: center; }
+      .artwork-edit-dialog .artwork-editing .artwork-path .path-label {
+        color: black;
+        margin: 5px 0;
+        font-size: 13px;
+        text-align: end; }
+      .artwork-edit-dialog .artwork-editing .artwork-path .path-text-input {
+        width: 75%;
+        height: 19px; }
+      .artwork-edit-dialog .artwork-editing .artwork-path .path-btn {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        padding: 8px;
+        margin-left: 2%;
+        border: 1px outset lightgray;
+        border-radius: 4px;
+        cursor: pointer;
+        width: auto;
+        height: 25px;
+        width: 33px;
+        background-color: lightgrey; }
+    .artwork-edit-dialog .artwork-editing .cropped-img {
+      align-self: center;
+      width: 70%;
+      aspect-ratio: 1 / 1; }
+    .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column {
+      gap: 16px; }
+      .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-1 {
+        width: 35%; }
+      .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-2 {
+        width: 65%; }
+        .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-2 .ratio-crop-data {
+          justify-content: end; }
+      .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data {
+        align-items: center;
+        justify-content: start;
+        height: 20px; }
+        .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data.ratio-x, .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data.ratio-y {
+          margin-right: 5px; }
+        .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data .ratio-label {
+          color: black;
+          font-size: 13px;
+          max-width: 35%;
+          padding: 0;
+          margin-right: 5px; }
+        .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column .ratio-crop-data .ratio-input {
+          width: 70%; }
+    .artwork-edit-dialog .artwork-editing .validate-btn {
+      display: flex;
+      align-self: center;
+      align-items: center;
+      justify-content: center;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      height: 40px;
+      width: 50px;
+      border: 1px outset lightgray;
+      background-color: lightgrey; }
