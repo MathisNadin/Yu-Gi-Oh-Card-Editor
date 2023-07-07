@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable import/order */
 /* eslint-disable no-undef */
 /* eslint-disable import/no-dynamic-require */
@@ -31,7 +32,8 @@ interface ICardHandlerProps extends IContainableProps {
 }
 
 interface ICardHandlerState extends IContainableState {
-  card: ICard;
+  currentCard: ICard;
+  tempCurrentCard: ICard;
 }
 
 export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> implements Partial<ICardListener> {
@@ -47,22 +49,35 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public currentCardLoaded(currentCard: ICard) {
-    this.setState({ loaded: true, card: currentCard });
+    this.setState({ loaded: true, currentCard });
   }
 
   public currentCardUpdated(currentCard: ICard) {
-    this.setState({ card: currentCard });
+    this.setState({ currentCard });
   }
 
-  private onCardChange(card: ICard) {
-    app.$errorManager.handlePromise(app.$card.saveCurrentCard(card));
+  public tempCurrentCardLoaded(tempCurrentCard: ICard) {
+    this.setState({ loaded: true, tempCurrentCard });
+  }
+
+  public tempCurrentCardUpdated(tempCurrentCard: ICard) {
+    this.setState({ tempCurrentCard });
+  }
+
+  private async onCardChange(card: ICard) {
+    if (this.state.tempCurrentCard) {
+      await app.$card.saveTempCurrentCard(card)
+    } else {
+      await app.$card.saveCurrentCard(card);
+    }
   }
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;
+    const card = this.state.tempCurrentCard || this.state.currentCard;
     return this.renderAttributes(<HorizontalStack gutter>
-      <CardEditor card={this.state.card} onCardChange={card => this.onCardChange(card)} />
-      <CardPreview card={this.state.card} />
+      <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
+      <CardPreview card={card} />
       <LocalCardsDisplay />
     </HorizontalStack>, 'card-handler');
   }

@@ -1,3 +1,6 @@
+/* eslint-disable import/order */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable prefer-const */
@@ -17,20 +20,27 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
+import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { ICard, ICardListener, TFrame } from 'renderer/card/CardService';
+import { classNames, deepClone, uuid } from 'mn-toolkit/tools';
+import { MouseEvent } from 'react';
+import check from '../resources/pictures/check.svg';
+import edit from '../resources/pictures/edit.svg';
+import cross from '../resources/pictures/cross.svg';
+import trash from '../resources/pictures/trash.svg';
 
-export type CardSortOptions = 'name' | 'frame' | 'created' | 'modified';
+export type CardSortOptions = 'name' | 'frame' | 'created' | 'created-reverse' | 'modified' | 'modified-reverse';
 
-interface ILocalCardsDisplayProps extends IContainableProps {
-}
+interface ILocalCardsDisplayProps extends IContainableProps {}
 
 interface ILocalCardsDisplayState extends IContainableState {
   localCards: ICard[];
   sortOption: CardSortOptions;
   frameOrder: TFrame[];
+  current: string;
+  edited: string;
 }
 
 export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILocalCardsDisplayState> implements Partial<ICardListener> {
@@ -39,7 +49,9 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     super(props);
     this.state = {
       loaded: true,
-      sortOption: 'created',
+      current: '',
+      edited: '',
+      sortOption: 'modified',
       localCards: app.$card.localCards,
       frameOrder: [
         'obelisk',
@@ -61,7 +73,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         'skill'
       ]
     };
-    this.setLocalCards();
+    this.sort();
     app.$card.addListener(this);
   }
 
@@ -70,18 +82,17 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
   }
 
   public localCardsLoaded(localCards: ICard[]) {
-    this.setState({ localCards });
-    this.setLocalCards();
+    this.sort(localCards);
   }
 
   public localCardsUpdated(localCards: ICard[]) {
-    this.setState({ localCards });
-    this.setLocalCards();
+    this.sort(localCards);
   }
 
-  private setLocalCards() {
-    let localCards = this.state.localCards;
-    switch (this.state?.sortOption) {
+  private sort(localCards?: ICard[], sortOption?: CardSortOptions) {
+    sortOption = sortOption || this.state?.sortOption;
+    localCards = localCards || this.state?.localCards;
+    switch (sortOption) {
       case 'name':
         localCards.sort((a, b) => a.name.localeCompare(b.name));
         break;
@@ -94,25 +105,29 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         localCards.sort((a, b) => (a.created as Date).getTime() - (b.created as Date).getTime());
         break;
 
+      case 'created-reverse':
+        localCards.sort((a, b) => (b.created as Date).getTime() - (a.created as Date).getTime());
+        break;
+
       case 'modified':
         localCards.sort((a, b) => (a.modified as Date).getTime() - (b.modified as Date).getTime());
+        break;
+
+      case 'modified-reverse':
+        localCards.sort((a, b) => (b.modified as Date).getTime() - (a.modified as Date).getTime());
         break;
 
       default:
         break;
     }
-    this.setState({ localCards });
-  }
-
-  private sort(sortOption: CardSortOptions) {
-    this.setState({ sortOption });
-    this.setLocalCards();
+    this.setState({ sortOption, localCards });
+    this.forceUpdate();
   }
 
   private formatDate(date: Date | undefined) {
     if (!date) return 'Inconnu';
 
-    let day = `${date.getDay()}`;
+    let day = `${date.getDate()}`;
     if (day.length < 2) {
       day = `0${day}`;
     }
@@ -135,6 +150,29 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     return `${day}/${month}/${date.getFullYear()} ${hours}h${minutes}`;
   }
 
+  private async saveEdit(event: MouseEvent) {
+    event.stopPropagation();
+    this.setState({ edited: '', current: '' });
+    await app.$card.saveTempCurrentToLocal();
+  }
+
+  private async startEdit(event: MouseEvent, card: ICard) {
+    event.stopPropagation();
+    this.setState({ edited: card.uuid as string, current: card.uuid as string });
+    await app.$card.saveTempCurrentCard(deepClone(card));
+  }
+
+  private async abordEdit(event: MouseEvent) {
+    event.stopPropagation();
+    this.setState({ edited: '', current: '' });
+    await app.$card.saveTempCurrentCard(undefined);
+  }
+
+  private async deleteCard(event: MouseEvent, card: ICard) {
+    event.stopPropagation();
+    await app.$card.deleteLocalCard(card);
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack>
       <VerticalStack scroll fill className='local-cards-listing'>
@@ -142,21 +180,41 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         <table className='table'>
           <thead>
             <tr>
-              <th onClick={() => this.sort('name')}>Nom</th>
-              <th onClick={() => this.sort('frame')}>Type</th>
-              <th onClick={() => this.sort('created')}>Créée le</th>
-              <th onClick={() => this.sort('modified')}>Modifiée le</th>
+              <th onClick={() => this.sort(this.state.localCards, 'name')}>Nom</th>
+              <th onClick={() => this.sort(this.state.localCards, 'frame')}>Type</th>
+              <th
+                className={classNames({ 'sorted-asc': this.state.sortOption === 'created' }, { 'sorted-desc': this.state.sortOption === 'created-reverse' })}
+                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'created' ? 'created-reverse' : 'created')}>Créée</th>
+              <th
+                className={classNames({ 'sorted-asc': this.state.sortOption === 'modified' }, { 'sorted-desc': this.state.sortOption === 'modified-reverse' })}
+                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'modified' ? 'modified-reverse' : 'modified')}>Modifiée</th>
+              <th className='empty empty-1'> </th>
+              <th className='empty empty-2'> </th>
             </tr>
           </thead>
           <tbody>
-            {this.state?.localCards?.map((card, index) => (
-              <tr key={index}>
+            {this.state?.localCards?.map(card => {
+              const isEdited = this.state.edited === card.uuid;
+              const isCurrent = this.state.current === card.uuid;
+              return <tr
+                key={uuid()}
+                className={classNames('local-card-row', { 'current': isCurrent })}
+                onClick={() => this.setState({ current: isCurrent ? '' : card.uuid as string })}>
+
                 <td>{card.name}</td>
                 <td>{app.$card.getFrameName(card.frame)}</td>
                 <td>{this.formatDate(card.created)}</td>
                 <td>{this.formatDate(card.modified)}</td>
-              </tr>
-            ))}
+                <td className={classNames('with-icon', { 'current': isCurrent })}>{isEdited
+                  ? <img src={check} alt='check' className='check' onClick={e => app.$errorManager.handlePromise(this.saveEdit(e))} />
+                  : <img src={edit} alt='edit' className='edit' onClick={e => app.$errorManager.handlePromise(this.startEdit(e, card))} />
+                }</td>
+                <td className={classNames('with-icon', { 'current': isCurrent })}>{isEdited
+                  ? <img src={cross} alt='cross' className='cross' onClick={e => app.$errorManager.handlePromise(this.abordEdit(e))} />
+                  : <img src={trash} alt='trash' className='trash' onClick={e => app.$errorManager.handlePromise(this.deleteCard(e, card))} />
+                }</td>
+              </tr>;
+            })}
           </tbody>
         </table>
       </VerticalStack>

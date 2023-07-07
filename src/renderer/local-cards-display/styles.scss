@@ -3,10 +3,13 @@
   height: 100%;
   width: 30%;
   max-width: 30%;
+  border-left: 3px solid rgba(#0052a3, 0.5);
 
   .local-cards-listing {
-    margin: 10px 16px 16px 16px;
+    margin: 10px 8px 16px 8px;
     align-self: center;
+    min-width: 95%;
+    max-width: 98%;
 
     .local-cards-label {
       margin-top: 0;
@@ -28,7 +31,6 @@
       td {
         padding: 0.5rem;
         text-align: left;
-        border: 1px solid #0052a3;
       }
 
       th {
@@ -39,6 +41,19 @@
           #70afee 51.77%,
           #318ce7 129.35%
         );
+        border: 1px solid #0052a3;
+
+        &.empty {
+          background: aliceblue;
+          border-top: aliceblue;
+          border-bottom: aliceblue;
+          border-right: aliceblue;
+
+          &.empty-2 {
+            background: aliceblue;
+            border-left: aliceblue;
+          }
+        }
 
         &:hover {
           background-color: #f5f5f5;
@@ -54,7 +69,39 @@
       }
 
       td {
-        color: black;
+        color: #0052a3;
+        font-size: small;
+
+        &.with-icon {
+          background: aliceblue;
+
+          &.current {
+            background: rgba(#70afee, 0.0);
+          }
+        }
+
+        img {
+          height: 16px;
+          width: 16px;
+          padding: 5px;
+          border-radius: 20%;
+
+          &:hover {
+            background-color: rgba(#0052a3, 0.4);
+          }
+        }
+      }
+
+      tr {
+        cursor: pointer;
+
+        &:nth-child(odd) {
+          background-color: white;
+        }
+
+        &.current {
+          background-color: rgba(#70afee, 0.6);
+        }
       }
     }
   }
