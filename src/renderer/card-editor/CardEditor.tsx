@@ -24,14 +24,12 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/CardService';
+import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
 import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
-import { Popup } from 'mn-toolkit/popup/Popup';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
-import { ArtworkEditDialog } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
-import { Crop } from 'react-image-crop';
+import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
@@ -48,7 +46,6 @@ interface ICardEditorProps extends IContainableProps {
 
 interface ICardEditorState extends IContainableState {
   import: string;
-  showArtworkPopup: boolean;
   lockPend: boolean;
   card: ICard;
   cardFrames: {
@@ -77,7 +74,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.state = {
       loaded: true,
       import: '',
-      showArtworkPopup: false,
       lockPend: props.card.scales.left === props.card.scales.right,
       card: props.card,
       cardFrames: [
@@ -259,16 +255,17 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
-  private onArtworkInfoChange(url: string, crop: Crop) {
-    if (isEmpty(url)) return;
+  private onArtworkInfoChange(infos: IArtworkEditDialogResult) {
+    if (isEmpty(infos?.url)) return;
     this.state.card.artwork = {
-      url,
-      x: crop.x,
-      y: crop.y,
-      height: crop.height,
-      width: crop.width
+      url: infos.url,
+      x: infos.crop?.x,
+      y: infos.crop?.y,
+      height: infos.crop?.height,
+      width: infos.crop?.width,
+      pendulum: false
     }
-    this.setState({ card: this.state.card, showArtworkPopup: false });
+    this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
 
@@ -279,7 +276,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       x: 0,
       y: 0,
       height: 100,
-      width: 100
+      width: 100,
+      pendulum: false
     }
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
@@ -369,6 +367,27 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     }
   }
 
+  private async showArtworkPopup() {
+    let result = await app.$popup.show<IArtworkEditDialogResult>({
+      id: 'edit-popup',
+      title: "Édition de l'image",
+      innerHeight: '70%',
+      innerWidth: '70%',
+      content: <ArtworkEditDialog
+        artworkURL={this.state.card.artwork.url}
+        crop={{
+          x: this.state.card.artwork.x,
+          y: this.state.card.artwork.y,
+          height: this.state.card.artwork.height,
+          width: this.state.card.artwork.width,
+          unit: '%'
+        }}
+        hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
+        hasLinkFrame={this.state.card.frame === 'link'} />
+    });
+    if (result) this.onArtworkInfoChange(result);
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
@@ -429,25 +448,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack className='card-editor-sub-section card-artwork card-input-container'>
         <p className='editor-label artwork-label'>Image</p>
         <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
-        <button type='button' className='artwork-btn' onClick={() => this.setState({ showArtworkPopup: true })}>...</button>
-        {this.state.showArtworkPopup && <Popup
-          title="Édition de l'image"
-          innerHeight='70%'
-          innerWidth='70%'
-          onClosePopup={() => this.setState({ showArtworkPopup: false })}
-          content={<ArtworkEditDialog
-            artworkURL={this.state.card.artwork.url}
-            crop={{
-              x: this.state.card.artwork.x,
-              y: this.state.card.artwork.y,
-              height: this.state.card.artwork.height,
-              width: this.state.card.artwork.width,
-              unit: '%'
-            }}
-            hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
-            hasLinkFrame={this.state.card.frame === 'link'}
-            onValidate={(url, crop) => this.onArtworkInfoChange(url, crop)} />}
-        />}
+        <button type='button' className='artwork-btn' onClick={() => this.showArtworkPopup()}>...</button>
       </HorizontalStack>
 
       <VerticalStack className='card-editor-sub-section card-description card-textarea'>

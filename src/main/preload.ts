@@ -39,8 +39,8 @@ const electronHandler = {
     createImgFromPath(path: string): Promise<string> {
       return ipcRenderer.invoke('create-img-from-path', path);
     },
-    writePngFile(defaultFileName: string, base64: string): Promise<void> {
-      return ipcRenderer.invoke('write-png-file', defaultFileName, base64);
+    writePngFile(defaultFileName: string, base64: string, filePath?: string): Promise<void> {
+      return ipcRenderer.invoke('write-png-file', defaultFileName, base64, filePath);
     },
     renderCurrentCard(): Promise<void> {
       return app.$card.renderCurrentCard();

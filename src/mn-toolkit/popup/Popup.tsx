@@ -1,3 +1,6 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-undef */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-return-assign */
@@ -14,29 +17,31 @@ import { ReactElement } from 'react';
 import cross from '../assets/cross.svg';
 import './styles.css';
 
-interface PopupProps extends IContainerProps {
+export interface IPopupProps extends IContainerProps {
+  id: string;
   title: string;
   content: ReactElement;
   innerHeight?: string| number;
   innerWidth?: string| number;
-  onClosePopup: () => void;
 }
 
-interface PopupState extends IContainerState {
-}
+interface IPopupState extends IContainerState {}
 
-export class Popup extends Container<PopupProps, PopupState> {
+export class Popup<RESULT> extends Container<IPopupProps, IPopupState> {
+  private resolve: (result: RESULT) => void = undefined as unknown as (result: RESULT) => void;
 
-  public constructor(props: PopupProps) {
+  public constructor(props: IPopupProps, resolve: (result: RESULT) => void) {
     super(props);
+    this.resolve = resolve;
 
     this.state = {
       loaded: true,
     };
   }
 
-  public onClosePopup() {
-    if (this.props.onClosePopup) this.props.onClosePopup();
+  public close(result?: RESULT) {
+    app.$popup.remove(this.props.id);
+    if (this.resolve) this.resolve(result as RESULT);
   }
 
   public render() {
@@ -44,7 +49,7 @@ export class Popup extends Container<PopupProps, PopupState> {
       <VerticalStack className='mn-popup-inner' height={this.props.innerHeight} width={this.props.innerWidth} >
         <HorizontalStack className='mn-popup-header'>
           <p className='mn-popup-title'>{this.props.title}</p>
-          <img className='mn-popup-close' src={cross} alt='cross' onClick={() => this.onClosePopup()} />
+          <img className='mn-popup-close' src={cross} alt='cross' onClick={() => this.close()} />
         </HorizontalStack>
         {this.renderAttributes(this.props.content, 'mn-popup-content')}
       </VerticalStack>

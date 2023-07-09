@@ -1,3 +1,5 @@
+/* eslint-disable no-loop-func */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable prefer-const */
 /* eslint-disable no-else-return */
 /* eslint-disable lines-between-class-members */
@@ -12,67 +14,9 @@ import { toPng } from "html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
 import { uuid } from "mn-toolkit/tools";
-
-export type TFrame =
-  'normal' | 'effect' | 'ritual' | 'fusion' |
-  'synchro' | 'darkSynchro' | 'xyz' | 'link' |
-  'spell' | 'trap' | 'token' | 'monsterToken' |
-  'skill' | 'obelisk' | 'slifer' | 'ra' | 'legendaryDragon';
-
-export type TAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine' | 'spell' | 'trap';
-
-export type TStIcon = 'normal' | 'ritual' | 'quickplay' | 'field' | 'continuous' | 'equip' | 'counter' | 'link';
-
-export type TNameStyle = 'default' | 'white' | 'black' | 'yellow' | 'gold' | 'silver' | 'rare' | 'ultra' | 'secret';
-
-export type TEdition = 'unlimited' | 'firstEdition' | 'limited' | 'forbidden' | 'duelTerminal' | 'anime';
-
-export type TSticker = 'none' | 'silver' | 'gold' | 'grey' | 'white' | 'lightBlue' | 'skyBlue' | 'cyan' | 'aqua' | 'green';
-
-export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
-
-export interface ICard {
-  uuid?: string;
-  created?: Date,
-  modified?: Date,
-  name: string;
-  nameStyle: TNameStyle;
-  tcgAt: boolean;
-  artwork: {
-    url: string;
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-  };
-  frame: TFrame;
-  stType: TStIcon;
-  attribute: TAttribute;
-  abilities: string[];
-  level: number;
-  atk: string;
-  def: string;
-  description: string;
-  pendulum: boolean;
-  pendEffect: string;
-  scales: {
-    left: number;
-    right: number;
-  };
-  linkArrows: { [key in TLinkArrows]: boolean };
-  edition: TEdition;
-  cardSet: string;
-  passcode: string;
-  sticker: TSticker;
-  hasCopyright: boolean;
-  oldCopyright: boolean;
-  speed: boolean;
-  rush: boolean;
-  legend: boolean;
-  atkMax: number;
-}
-
-export type CardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards';
+import { createRoot } from "react-dom/client";
+import { CardBuilder } from "renderer/card-builder/CardBuilder";
+import { ICard, CardStorageKey, TFrame } from "./card-interfaces";
 
 export interface ICardListener {
   currentCardLoaded: (currentCard: ICard) => void;
@@ -156,7 +100,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
           x: 0,
           y: 0,
           height: 0,
-          width: 0
+          width: 0,
+          pendulum: false
         },
         frame: 'effect',
         stType: 'normal',
@@ -206,12 +151,37 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async renderCurrentCard() {
-    const element = document.querySelector('.card-builder') as HTMLElement;
+    let name = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
+    await this.writeCardFile('main-card-builder', name);
+  }
+
+  public async renderCards(cards: ICard[]) {
+    const path = await window.electron.ipcRenderer.getDirectoryPath();
+    if (!path) return;
+
+    for (let card of cards) {
+      let cardBuilder = new CardBuilder({
+        forRender: true,
+        id: card.uuid as string,
+        card,
+        onCardReady: () => app.$errorManager.handlePromise(this.writeCardFile(card.uuid as string, card.name, path)),
+      });
+      const rootElement = document.querySelector('.card-preview') as HTMLElement;
+      const popupContainer = document.createElement('div');
+      popupContainer.className = 'mn-render-container';
+      rootElement.appendChild(popupContainer);
+      createRoot(popupContainer).render(cardBuilder.render());
+    }
+  }
+
+  private async writeCardFile(id: string, name: string, filePath?: string) {
+    const element = document.getElementById(id) as HTMLElement;
+    console.log(id, name, filePath, element);
     if (element) {
       try {
         const dataUrl = await toPng(element);
         if (!dataUrl) return;
-        await window.electron.ipcRenderer.writePngFile(app.$card._currentCard.name || 'Sans nom', dataUrl.replace(/^data:image\/\w+;base64,/, ''));
+        await window.electron.ipcRenderer.writePngFile(name || 'Sans nom', dataUrl.replace(/^data:image\/\w+;base64,/, ''), filePath);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -288,7 +258,6 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       newCard.modified = now;
       newCard.uuid = uuid();
       this._localCards.push(newCard);
-      console.log(newCard);
       await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
       this.fireLocalCardsUpdated();
 
@@ -351,7 +320,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         x: 0,
         y: 0,
         height: 0,
-        width: 0
+        width: 0,
+        pendulum: false
       },
       frame: 'normal',
       stType: 'normal',
@@ -381,7 +351,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       cardSet: '',
       passcode: '',
       sticker: 'silver',
-      hasCopyright: false,
+      hasCopyright: true,
       oldCopyright: false,
       speed: false,
       rush: false,

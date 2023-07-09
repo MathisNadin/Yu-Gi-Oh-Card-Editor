@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable consistent-return */
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
@@ -51,15 +52,21 @@ ipcMain.handle('get-directory-path', async () => {
   return directoryPath.filePaths[0];
 });
 
-ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64: string) => {
-  const result = await dialog.showSaveDialog({
-    defaultPath: `${defaultFileName}.png`
-  });
-  if (!result.canceled && result.filePath) {
-    const filePath = result.filePath.endsWith('.png') ? result.filePath : `${result.filePath}.png`;
+ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64: string, filePath?: string) => {
+  let canceled = false;
+  if (!filePath) {
+    const result = await dialog.showSaveDialog({
+      defaultPath: `${defaultFileName}.png`
+    });
+    filePath = result?.filePath;
+    canceled = result?.canceled;
+  }
+
+  if (!canceled && filePath) {
+    const finalFilePath = filePath.endsWith('.png') ? filePath : `${filePath}.png`;
     const buffer = Buffer.from(base64, 'base64');
-    writeFile(filePath, buffer, (err) => {
-      if (!err) return filePath;
+    writeFile(finalFilePath, buffer, (err) => {
+      if (!err) return finalFilePath;
     });
   }
   return undefined;

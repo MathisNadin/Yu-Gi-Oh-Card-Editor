@@ -29,15 +29,17 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
-import { ICard } from 'renderer/card/CardService';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { classNames, getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { ICard } from 'renderer/card/card-interfaces';
 
 interface ICardBuilderProps extends IContainableProps {
+  forRender?: boolean;
+  id: string;
   card: ICard;
   onCardReady: () => void;
 }
@@ -92,29 +94,27 @@ interface ICardBuilderState extends IContainableState {
 }
 
 export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderState> {
+  private ref: HTMLDivElement | undefined;
 
   public constructor(props: ICardBuilderProps) {
     super(props);
-    this.handleResize = this.handleResize.bind(this);
-    app.$errorManager.handlePromise(this.refreshState(props.card, false));
+    if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
   public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
     this.setState({ adjustState: 'waiting' });
-    app.$errorManager.handlePromise(this.refreshState(nextProps.card, true));
+    app.$errorManager.handlePromise(this.refreshState(nextProps.card));
   }
 
-  private async refreshState(card: ICard, setState: boolean) {
+  private async refreshState(card: ICard) {
     const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${card.frame === 'xyz' || card.frame === 'skill' ? 'white' : 'black'}`;
     const usePendulumFrame = app.$card.hasPendulumFrame(card);
 
     const artworkBg = require(`../resources/pictures/whiteArtwork${usePendulumFrame ? `Pendulum${card.frame === 'link' ? 'Link' : ''}` : '' }.png`);
     let croppedArtworkBase64: string;
 
-    let needForceUpdate = false;
     let artworkExists = false;
     if (!isEmpty(card.artwork.url)) {
-      needForceUpdate = true;
       artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
     }
 
@@ -180,17 +180,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       edition: require(`../resources/pictures/limitations/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
     };
 
-    if (setState) {
-      this.setState(state);
-    } else {
-      this.state = state;
-      if (needForceUpdate) this.forceUpdate();
-    }
+    this.setState(state);
   }
 
   public componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
-    setTimeout(() => app.$errorManager.handlePromise(this.adjustAllFontSizes()), 1000);
+    if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
+    app.$errorManager.handlePromise(this.refreshState(this.props.card));
   }
 
   public componentDidUpdate() {
@@ -198,7 +193,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
+    if (!this.props.forRender) window.removeEventListener('resize', this.handleResize);
   }
 
   private handleResize() {
@@ -206,7 +201,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private async adjustAllFontSizes() {
-    switch (this.state.adjustState) {
+    switch (this.state?.adjustState) {
       case 'todo': this.setState({ adjustState: 'name' }); break;
       case 'name': await this.convertNameToImg(); break;
       case 'atk': this.convertAtkToImg(); break;
@@ -221,7 +216,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public async convertNameToImg() {
     if (this.props.card.name) {
-      const container = document.querySelector('.card-name-container') as HTMLDivElement;
+      const container = this.ref?.querySelector('.card-name-container') as HTMLDivElement;
       if (!container) return;
       const name = container.querySelector('.card-name') as HTMLDivElement;
       if (!name) return;
@@ -247,8 +242,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertAtkToImg() {
-    if (this.props.card.atk && app.$card.hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link') {
-      const container = document.querySelector('.atk') as HTMLDivElement;
+    if (this.props.card.atk && app.$card.hasAbilities(this.props.card) && this.props.card.frame !== 'skill') {
+      const container = this.ref?.querySelector('.atk') as HTMLDivElement;
       if (!container) return;
       const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
       if (!atk) return;
@@ -267,7 +262,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public async convertDefToImg() {
     if (this.props.card.def && app.$card.hasAbilities(this.props.card) && this.props.card.frame !== 'skill' && this.props.card.frame !== 'link') {
-      const container = document.querySelector('.def') as HTMLDivElement;
+      const container = this.ref?.querySelector('.def') as HTMLDivElement;
       if (!container) return;
       const def = container.querySelector('.def-text') as HTMLParagraphElement;
       if (!def) return;
@@ -290,7 +285,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       return;
     }
 
-    const container = document.querySelector('.card-abilities') as HTMLDivElement;
+    const container = this.ref?.querySelector('.card-abilities') as HTMLDivElement;
     if (!container) return;
     const rightBracket = container.querySelector('.right-bracket') as HTMLDivElement;
     const abilities = container.querySelector('.abilities') as HTMLDivElement;
@@ -313,8 +308,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       return;
     }
 
-    const container = document.querySelector('.card-pendulum-effect-holder') as HTMLDivElement;
-    const texts = document.querySelectorAll('.pendulum-effect-text') as NodeListOf<HTMLDivElement>;
+    const container = this.ref?.querySelector('.card-pendulum-effect-holder') as HTMLDivElement;
+    const texts = this.ref?.querySelectorAll('.pendulum-effect-text') as NodeListOf<HTMLDivElement>;
     if (!container || !texts?.length || this.state.pendFontSize === 0) {
       this.setState({ adjustState: 'abilities' });
       return;
@@ -358,7 +353,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         if (newFontSize <= 30) {
           this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooSmall' });
         } else {
-          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+          this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
         }
       }
     }
@@ -368,8 +363,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public adjustDescFontSize() {
-    const container = document.querySelector('.card-description-holder') as HTMLDivElement;
-    const texts = document.querySelectorAll('.description-text') as NodeListOf<HTMLDivElement>;
+    const container = this.ref?.querySelector('.card-description-holder') as HTMLDivElement;
+    const texts = this.ref?.querySelectorAll('.description-text') as NodeListOf<HTMLDivElement>;
     if (!container || !texts?.length || this.state.descFontSize === 0) {
       this.setState({ adjustState: 'done' });
       return;
@@ -432,9 +427,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       } else {
         artworkClass = `${artworkClass} artwork-pendulum`;
       }
+
+      if (this.props.card.artwork.pendulum) {
+        artworkClass = `${artworkClass} in-pendulum-effect`;
+      }
     }
 
-    return this.renderAttributes(<Container>
+    return this.renderAttributes(<Container id={this.props.id} ref={() => this.ref = document.getElementById(this.props.id) as HTMLDivElement}>
       <img className='card-layer border' src={this.state.border} alt='border' />
 
       {this.state.usePendulumFrame && <img className='card-layer card-frame' src={this.state.cardFrame} alt='cardFrame' />}

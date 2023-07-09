@@ -23,13 +23,14 @@
 import './styles.css';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { ICard, ICardListener, TFrame } from 'renderer/card/CardService';
+import { ICardListener } from 'renderer/card/CardService';
 import { classNames, deepClone, uuid } from 'mn-toolkit/tools';
 import { MouseEvent } from 'react';
 import check from '../resources/pictures/check.svg';
 import edit from '../resources/pictures/edit.svg';
 import cross from '../resources/pictures/cross.svg';
 import trash from '../resources/pictures/trash.svg';
+import { ICard, TFrame } from 'renderer/card/card-interfaces';
 
 export type CardSortOptions = 'name' | 'frame' | 'created' | 'created-reverse' | 'modified' | 'modified-reverse';
 
@@ -168,6 +169,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     if (event) event.stopPropagation();
     this.setState({ edited: card.uuid as string, current: card.uuid as string });
     await app.$card.saveTempCurrentCard(deepClone(card));
+    await app.$card.renderCards([card]);
   }
 
   private async abordEdit(event: MouseEvent) {

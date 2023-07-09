@@ -28,7 +28,7 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
-import { ICard } from 'renderer/card/CardService';
+import { ICard } from 'renderer/card/card-interfaces';
 import { toPng } from 'html-to-image';
 import { CardBuilder } from 'renderer/card-builder/CardBuilder';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
@@ -59,7 +59,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   private async onCardReady() {
-    const element = document.querySelector('.card-builder') as HTMLElement;
+    const element = document.getElementById('main-card-builder') as HTMLElement;
     if (element) {
       try {
         const dataUrl = await toPng(element);
@@ -75,13 +75,16 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     }
   }
 
+  private async onPlaceholderCardReady() {
+  }
+
   public render() {
     return this.renderAttributes(<Container>
-      <CardBuilder card={this.props.card} onCardReady={() => this.onCardReady()} />
+      <CardBuilder forRender card={this.props.card} onCardReady={() => this.onPlaceholderCardReady()} id='placeholder-card-builder' />
+      <CardBuilder card={this.props.card} onCardReady={() => this.onCardReady()} id='main-card-builder' />
       <Container className='cover' />
       <img className='card-preview-img img-render' src={this.state.cardPlaceholder} alt='cardPreview' />
       <Spinner className='card-preview-img rendering' />
-      {/* <img className='card-preview-img rendering' src={this.state.rendering} alt='cardPreview' /> */}
     </Container>, 'card-preview');
   }
 }

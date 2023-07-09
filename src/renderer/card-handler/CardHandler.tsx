@@ -25,8 +25,9 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { LocalCardsDisplay } from 'renderer/local-cards-display/LocalCardsDisplay';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
 import { CardPreview } from 'renderer/card-preview/CardPreview';
-import { ICard, ICardListener } from '../card/CardService';
+import { ICardListener } from '../card/CardService';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { ICard } from 'renderer/card/card-interfaces';
 
 interface ICardHandlerProps extends IContainableProps {
 }

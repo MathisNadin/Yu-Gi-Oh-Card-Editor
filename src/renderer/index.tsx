@@ -10,6 +10,7 @@ import { IndexedDBService } from 'mn-toolkit/indexedDB/IndexedDBService';
 import { CardService } from './card/CardService';
 import { ApiService } from 'mn-toolkit/api/ApiService';
 import { MediaWikiService } from 'mn-toolkit/media-wiki/MediaWikiService';
+import { PopupService } from 'mn-toolkit/popup/PopupService';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
@@ -26,6 +27,7 @@ window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
 window.app = new Application() as IApp;
 
 app.service('$errorManager', ErrorManagerService);
+app.service('$popup', PopupService);
 app.service('$indexedDB', IndexedDBService);
 app.service('$api', ApiService);
 app.service('$mediaWiki', MediaWikiService);

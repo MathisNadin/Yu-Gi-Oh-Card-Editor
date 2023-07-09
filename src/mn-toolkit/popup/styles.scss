@@ -1,3 +1,14 @@
+@keyframes scaleIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
 .mn-popup {
   position: fixed;
   width: 100%;
@@ -19,6 +30,8 @@
     min-height: 100px;
     min-width: 100px;
     border: 1px solid #0052a3;
+    animation-duration: 0.2s;
+    animation-name: scaleIn;
 
     .mn-popup-header {
       height: 40px;

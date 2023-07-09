@@ -27,13 +27,18 @@ import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
 import './styles.css';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { IDialogProps } from 'mn-toolkit/popup/PopupService';
 
-interface IArtworkEditDialogProps extends IContainableProps {
+export interface IArtworkEditDialogResult {
+  url: string;
+  crop: Crop;
+}
+
+interface IArtworkEditDialogProps extends IDialogProps<IArtworkEditDialogResult> {
   artworkURL: string;
   hasPendulumFrame: boolean;
   hasLinkFrame: boolean;
   crop: Crop;
-  onValidate: (url: string, crop: Crop) => void;
 }
 
 interface IArtworkEditDialogState extends IContainableState {
@@ -90,6 +95,15 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     }
   }
 
+  private onValidate(url: string, crop: Crop) {
+    if (this.props.popupId) {
+      app.$popup.remove(this.props.popupId);
+    }
+    if (this.props.resolve) {
+      this.props.resolve({ url, crop });
+    }
+  }
+
   public render() {
     if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<HorizontalStack>
@@ -108,7 +122,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
         crop={this.state.crop}
         onCroppingChange={crop => this.setState({ crop })}
         onArtworkURLChange={url => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
-        onValidate={(url, crop) => this.props.onValidate(url, crop)}/>
+        onValidate={(url, crop) => this.onValidate(url, crop)}/>
     </HorizontalStack>, 'artwork-edit-dialog');
   }
 }
