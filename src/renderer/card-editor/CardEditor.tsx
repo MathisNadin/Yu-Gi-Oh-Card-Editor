@@ -47,6 +47,7 @@ interface ICardEditorProps extends IContainableProps {
 }
 
 interface ICardEditorState extends IContainableState {
+  import: string;
   showArtworkPopup: boolean;
   lockPend: boolean;
   card: ICard;
@@ -75,6 +76,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
     this.state = {
       loaded: true,
+      import: '',
       showArtworkPopup: false,
       lockPend: props.card.scales.left === props.card.scales.right,
       card: props.card,
@@ -356,6 +358,17 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.props.onCardChange(this.state.card);
   }
 
+  private async doImport() {
+    if (this.state.import.length) {
+      let splitImport = this.state.import.split('/');
+      this.setState({ import: '' });
+      let newCard = await app.$mediaWiki.getCardInfo(splitImport[splitImport.length-1]);
+      if (newCard) {
+        await app.$card.importCard(newCard);
+      }
+    }
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
@@ -368,6 +381,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private renderBasicCardDetails() {
     return this.renderAttributes(<VerticalStack>
+      <HorizontalStack className='card-editor-sub-section card-import card-input-container'>
+        <p className='editor-label import-label'>Importer</p>
+        <input type='text' className='import-input card-input' value={this.state.import} onInput={e => this.setState({ import: (e.target as EventTargetWithValue).value })} />
+        <button type='button' className='import-btn' onClick={() => app.$errorManager.handlePromise(this.doImport())}>...</button>
+      </HorizontalStack>
+
       <VerticalStack className='section-header'>
         <p className='section-header-title'>Bases de la Carte</p>
       </VerticalStack>

@@ -5,76 +5,58 @@
   width: 30%;
   max-width: 30%;
   border-left: 3px solid rgba(0, 82, 163, 0.5); }
-
-.local-cards-display .local-cards-listing {
-  margin: 10px 8px 16px 8px;
-  align-self: center;
-  min-width: 95%;
-  max-width: 98%; }
-
-.local-cards-display .local-cards-listing .local-cards-label {
-  margin-top: 0;
-  margin-bottom: 8px;
-  padding: 8px;
-  border: 1px solid #0052a3;
-  background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%); }
-
-.local-cards-display .local-cards-listing .table {
-  border-collapse: collapse; }
-
-.local-cards-display .local-cards-listing .table th,
-.local-cards-display .local-cards-listing .table td {
-  padding: 0.5rem;
-  text-align: left; }
-
-.local-cards-display .local-cards-listing .table th {
-  cursor: pointer;
-  background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
-  border: 1px solid #0052a3; }
-
-.local-cards-display .local-cards-listing .table th.empty {
-  background: aliceblue;
-  border-top: aliceblue;
-  border-bottom: aliceblue;
-  border-right: aliceblue; }
-
-.local-cards-display .local-cards-listing .table th.empty.empty-2 {
-  background: aliceblue;
-  border-left: aliceblue; }
-
-.local-cards-display .local-cards-listing .table th:hover {
-  background-color: #f5f5f5; }
-
-.local-cards-display .local-cards-listing .table th.sorted-asc::after {
-  content: ' ▲'; }
-
-.local-cards-display .local-cards-listing .table th.sorted-desc::after {
-  content: ' ▼'; }
-
-.local-cards-display .local-cards-listing .table td {
-  color: #0052a3;
-  font-size: small; }
-
-.local-cards-display .local-cards-listing .table td.with-icon {
-  background: aliceblue; }
-
-.local-cards-display .local-cards-listing .table td.with-icon.current {
-  background: rgba(112, 175, 238, 0); }
-
-.local-cards-display .local-cards-listing .table td img {
-  height: 16px;
-  width: 16px;
-  padding: 5px;
-  border-radius: 20%; }
-
-.local-cards-display .local-cards-listing .table td img:hover {
-  background-color: rgba(0, 82, 163, 0.4); }
-
-.local-cards-display .local-cards-listing .table tr {
-  cursor: pointer; }
-
-.local-cards-display .local-cards-listing .table tr:nth-child(odd) {
-  background-color: white; }
-
-.local-cards-display .local-cards-listing .table tr.current {
-  background-color: rgba(112, 175, 238, 0.6); }
+  .local-cards-display .local-cards-listing {
+    margin: 10px 8px 16px 8px;
+    align-self: center;
+    min-width: 95%;
+    max-width: 98%; }
+    .local-cards-display .local-cards-listing .local-cards-label {
+      margin-top: 0;
+      margin-bottom: 8px;
+      padding: 8px;
+      border: 1px solid #0052a3;
+      background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%); }
+    .local-cards-display .local-cards-listing .table {
+      border-collapse: collapse; }
+      .local-cards-display .local-cards-listing .table th,
+      .local-cards-display .local-cards-listing .table td {
+        padding: 0.5rem;
+        text-align: left; }
+      .local-cards-display .local-cards-listing .table th {
+        background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
+        border: 1px solid #0052a3; }
+        .local-cards-display .local-cards-listing .table th.cursor-pointer {
+          cursor: pointer; }
+        .local-cards-display .local-cards-listing .table th.empty {
+          background: aliceblue;
+          border-top: aliceblue;
+          border-bottom: aliceblue;
+          border-right: aliceblue; }
+          .local-cards-display .local-cards-listing .table th.empty.empty-2 {
+            background: aliceblue;
+            border-left: aliceblue; }
+        .local-cards-display .local-cards-listing .table th:hover {
+          background-color: #f5f5f5; }
+        .local-cards-display .local-cards-listing .table th.sorted-asc::after {
+          content: ' ▲'; }
+        .local-cards-display .local-cards-listing .table th.sorted-desc::after {
+          content: ' ▼'; }
+      .local-cards-display .local-cards-listing .table td {
+        color: #0052a3;
+        font-size: small; }
+        .local-cards-display .local-cards-listing .table td.with-icon {
+          background: aliceblue;
+          cursor: pointer; }
+          .local-cards-display .local-cards-listing .table td.with-icon.current {
+            background: rgba(112, 175, 238, 0); }
+        .local-cards-display .local-cards-listing .table td img {
+          height: 16px;
+          width: 16px;
+          padding: 5px;
+          border-radius: 20%; }
+          .local-cards-display .local-cards-listing .table td img:hover {
+            background-color: rgba(0, 82, 163, 0.4); }
+      .local-cards-display .local-cards-listing .table tr:nth-child(odd) {
+        background-color: white; }
+      .local-cards-display .local-cards-listing .table tr.current {
+        background-color: rgba(112, 175, 238, 0.6); }

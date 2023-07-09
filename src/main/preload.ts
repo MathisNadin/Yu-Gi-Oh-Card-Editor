@@ -5,7 +5,7 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels =
   'ipc-example' | 'check-file-exists' | 'create-img-from-path' |
-  'render-current-card' | 'save-current-to-local' | 'delete-local-db';
+  'render-current-card' | 'save-current-or-temp-to-local' | 'delete-local-db';
 
 const electronHandler = {
   ipcRenderer: {

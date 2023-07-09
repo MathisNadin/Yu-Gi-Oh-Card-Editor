@@ -29,6 +29,7 @@ declare global {
 
   interface Window {
     vendors: IVendors;
+    app: IApp;
   }
 
   interface EventTarget {

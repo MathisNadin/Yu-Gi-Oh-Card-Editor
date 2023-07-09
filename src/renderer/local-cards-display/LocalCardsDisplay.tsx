@@ -89,6 +89,14 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     this.sort(localCards);
   }
 
+  public tempCurrentCardLoaded(tempCurrentCard: ICard) {
+    this.setState({ edited: tempCurrentCard.uuid as string, current: tempCurrentCard.uuid as string });
+  }
+
+  public menuSaveTempToLocal() {
+    this.setState({ edited: '', current: '' });
+  }
+
   private sort(localCards?: ICard[], sortOption?: CardSortOptions) {
     sortOption = sortOption || this.state?.sortOption;
     localCards = localCards || this.state?.localCards;
@@ -151,25 +159,25 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
   }
 
   private async saveEdit(event: MouseEvent) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
     await app.$card.saveTempCurrentToLocal();
   }
 
   private async startEdit(event: MouseEvent, card: ICard) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     this.setState({ edited: card.uuid as string, current: card.uuid as string });
     await app.$card.saveTempCurrentCard(deepClone(card));
   }
 
   private async abordEdit(event: MouseEvent) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
     await app.$card.saveTempCurrentCard(undefined);
   }
 
   private async deleteCard(event: MouseEvent, card: ICard) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     await app.$card.deleteLocalCard(card);
   }
 
@@ -180,13 +188,13 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         <table className='table'>
           <thead>
             <tr>
-              <th onClick={() => this.sort(this.state.localCards, 'name')}>Nom</th>
-              <th onClick={() => this.sort(this.state.localCards, 'frame')}>Type</th>
+              <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'name')}>Nom</th>
+              <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'frame')}>Type</th>
               <th
-                className={classNames({ 'sorted-asc': this.state.sortOption === 'created' }, { 'sorted-desc': this.state.sortOption === 'created-reverse' })}
+                className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'created' }, { 'sorted-desc': this.state.sortOption === 'created-reverse' })}
                 onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'created' ? 'created-reverse' : 'created')}>Créée</th>
               <th
-                className={classNames({ 'sorted-asc': this.state.sortOption === 'modified' }, { 'sorted-desc': this.state.sortOption === 'modified-reverse' })}
+                className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'modified' }, { 'sorted-desc': this.state.sortOption === 'modified-reverse' })}
                 onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'modified' ? 'modified-reverse' : 'modified')}>Modifiée</th>
               <th className='empty empty-1'> </th>
               <th className='empty empty-2'> </th>
@@ -196,11 +204,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
             {this.state?.localCards?.map(card => {
               const isEdited = this.state.edited === card.uuid;
               const isCurrent = this.state.current === card.uuid;
-              return <tr
-                key={uuid()}
-                className={classNames('local-card-row', { 'current': isCurrent })}
-                onClick={() => this.setState({ current: isCurrent ? '' : card.uuid as string })}>
-
+              return <tr key={uuid()} className={classNames('local-card-row', { 'current': isCurrent })}>
                 <td>{card.name}</td>
                 <td>{app.$card.getFrameName(card.frame)}</td>
                 <td>{this.formatDate(card.created)}</td>

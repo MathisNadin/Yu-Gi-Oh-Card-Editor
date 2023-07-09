@@ -34,7 +34,6 @@
       }
 
       th {
-        cursor: pointer;
         background: linear-gradient(
           200.96deg,
           white -29.09%,
@@ -42,6 +41,10 @@
           #318ce7 129.35%
         );
         border: 1px solid #0052a3;
+
+        &.cursor-pointer {
+          cursor: pointer;
+        }
 
         &.empty {
           background: aliceblue;
@@ -74,6 +77,7 @@
 
         &.with-icon {
           background: aliceblue;
+          cursor: pointer;
 
           &.current {
             background: rgba(#70afee, 0.0);
@@ -93,8 +97,6 @@
       }
 
       tr {
-        cursor: pointer;
-
         &:nth-child(odd) {
           background-color: white;
         }

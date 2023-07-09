@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-else-return */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable no-underscore-dangle */
@@ -76,10 +77,11 @@ export type CardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards
 export interface ICardListener {
   currentCardLoaded: (currentCard: ICard) => void;
   currentCardUpdated: (currentCard: ICard) => void;
-  tempCurrentCardLoaded: (currentCard: ICard) => void;
-  tempCurrentCardUpdated: (currentCard: ICard) => void;
+  tempCurrentCardLoaded: (tempCurrentCard: ICard) => void;
+  tempCurrentCardUpdated: (tempCurrentCard: ICard) => void;
   localCardsLoaded: (localCards: ICard[]) => void;
   localCardsUpdated: (localCards: ICard[]) => void;
+  menuSaveTempToLocal: () => void;
 }
 
 export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener> {
@@ -131,6 +133,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   private fireLocalCardsUpdated() {
     this.dispatch('localCardsUpdated', this.localCards);
+  }
+
+  public fireMenuSaveTempToLocal() {
+    this.dispatch('menuSaveTempToLocal');
   }
 
   private async load(initial: boolean) {
@@ -225,6 +231,15 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.fireTempCurrentCardUpdated();
   }
 
+  public async saveCurrentOrTempToLocal() {
+    if (this._tempCurrentCard) {
+      await this.saveTempCurrentToLocal();
+      this.fireMenuSaveTempToLocal();
+    } else {
+      await this.saveCurrentToLocal();
+    }
+  }
+
   public async saveCurrentToLocal() {
     const currentCard = await app.$indexedDB.get<ICard, CardStorageKey>('current-card');
     const now = new Date();
@@ -258,6 +273,29 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this._localCards = this._localCards.filter(c => c.uuid !== card.uuid);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
     this.fireLocalCardsUpdated();
+  }
+
+  public async importCard(newCard: ICard) {
+    const now = new Date();
+    if (this._tempCurrentCard) {
+      newCard.created = this._tempCurrentCard.created;
+      newCard.modified = this._tempCurrentCard.created;
+      newCard.uuid = this._tempCurrentCard.uuid;
+      await this.saveTempCurrentCard(newCard);
+    }
+    else {
+      newCard.created = now;
+      newCard.modified = now;
+      newCard.uuid = uuid();
+      this._localCards.push(newCard);
+      console.log(newCard);
+      await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
+      this.fireLocalCardsUpdated();
+
+      this._tempCurrentCard = newCard;
+      await app.$indexedDB.save<CardStorageKey, (ICard | undefined)>('temp-current-card', this._tempCurrentCard);
+      this.fireTempCurrentCardLoaded();
+    }
   }
 
   public getFrameName(frame: TFrame) {
@@ -301,5 +339,54 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       && card.frame !== 'spell'
       && card.frame !== 'trap'
       && card.frame !== 'legendaryDragon';
+  }
+
+  public getNewCard(): ICard {
+    return {
+      name: '',
+      nameStyle: 'default',
+      tcgAt: false,
+      artwork: {
+        url: '',
+        x: 0,
+        y: 0,
+        height: 0,
+        width: 0
+      },
+      frame: 'normal',
+      stType: 'normal',
+      attribute: 'spell',
+      abilities: [],
+      level: 0,
+      atk: '',
+      def: '',
+      description: '',
+      pendulum: false,
+      pendEffect: '',
+      scales: {
+        left: 0,
+        right: 0
+      },
+      linkArrows: {
+        top: false,
+        bottom: false,
+        left: false,
+        right: false,
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false
+      },
+      edition: 'firstEdition',
+      cardSet: '',
+      passcode: '',
+      sticker: 'silver',
+      hasCopyright: false,
+      oldCopyright: false,
+      speed: false,
+      rush: false,
+      legend: false,
+      atkMax: 0
+    };
   }
 }

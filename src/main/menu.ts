@@ -209,7 +209,7 @@ export default class MenuBuilder {
             label: '&Sauvegarder la carte',
             accelerator: 'Ctrl+S',
             click: () => {
-              this.mainWindow.webContents.send('save-current-to-local');
+              this.mainWindow.webContents.send('save-current-or-temp-to-local');
             },
           },
           {
