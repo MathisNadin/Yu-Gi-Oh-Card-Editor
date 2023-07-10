@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable import/order */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable no-param-reassign */
@@ -42,6 +43,7 @@ interface ILocalCardsDisplayState extends IContainableState {
   frameOrder: TFrame[];
   current: string;
   edited: string;
+  selectedCards: { [cardUuid: string]: boolean };
 }
 
 export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILocalCardsDisplayState> implements Partial<ICardListener> {
@@ -54,6 +56,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
       edited: '',
       sortOption: 'modified',
       localCards: app.$card.localCards,
+      selectedCards: {},
       frameOrder: [
         'obelisk',
         'slifer',
@@ -169,7 +172,6 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     if (event) event.stopPropagation();
     this.setState({ edited: card.uuid as string, current: card.uuid as string });
     await app.$card.saveTempCurrentCard(deepClone(card));
-    await app.$card.renderCards([card]);
   }
 
   private async abordEdit(event: MouseEvent) {
@@ -183,10 +185,27 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     await app.$card.deleteLocalCard(card);
   }
 
+  private async renderSelectedCards() {
+    if (this.state.edited) return;
+
+    let cards = this.state.localCards.filter(c => this.state.selectedCards[c.uuid as string]);
+    if (!cards.length) return;
+
+    await app.$card.renderCards(cards);
+    this.setState({ selectedCards: {} });
+  }
+
+  private toggleSelectCard(cardUuid: string) {
+    let selectedCards = this.state.selectedCards;
+    selectedCards[cardUuid] = !selectedCards[cardUuid];
+    this.setState({ selectedCards });
+  }
+
   public render() {
     return this.renderAttributes(<VerticalStack>
       <VerticalStack scroll fill className='local-cards-listing'>
         <p className='local-cards-label'>Cartes locales</p>
+
         <table className='table'>
           <thead>
             <tr>
@@ -206,11 +225,11 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
             {this.state?.localCards?.map(card => {
               const isEdited = this.state.edited === card.uuid;
               const isCurrent = this.state.current === card.uuid;
-              return <tr key={uuid()} className={classNames('local-card-row', { 'current': isCurrent })}>
-                <td>{card.name}</td>
-                <td>{app.$card.getFrameName(card.frame)}</td>
-                <td>{this.formatDate(card.created)}</td>
-                <td>{this.formatDate(card.modified)}</td>
+              return <tr key={uuid()} className={classNames('local-card-row', { 'selected': this.state.selectedCards[card.uuid as string] }, { 'current': isCurrent })}>
+                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.name}</td>
+                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{app.$card.getFrameName(card.frame)}</td>
+                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.created)}</td>
+                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.modified)}</td>
                 <td className={classNames('with-icon', { 'current': isCurrent })}>{isEdited
                   ? <img src={check} alt='check' className='check' onClick={e => app.$errorManager.handlePromise(this.saveEdit(e))} />
                   : <img src={edit} alt='edit' className='edit' onClick={e => app.$errorManager.handlePromise(this.startEdit(e, card))} />
@@ -224,6 +243,12 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
           </tbody>
         </table>
       </VerticalStack>
+
+      <button
+        type='button'
+        className={classNames('render-cards-btn', { 'disabled': this.state.edited })}
+        onClick={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
+      >Faire le rendu des cartes</button>
     </VerticalStack>, 'local-cards-display');
   }
 };

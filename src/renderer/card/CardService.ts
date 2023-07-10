@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable prefer-const */
@@ -14,8 +16,6 @@ import { toPng } from "html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
 import { uuid } from "mn-toolkit/tools";
-import { createRoot } from "react-dom/client";
-import { CardBuilder } from "renderer/card-builder/CardBuilder";
 import { ICard, CardStorageKey, TFrame } from "./card-interfaces";
 
 export interface ICardListener {
@@ -25,13 +25,17 @@ export interface ICardListener {
   tempCurrentCardUpdated: (tempCurrentCard: ICard) => void;
   localCardsLoaded: (localCards: ICard[]) => void;
   localCardsUpdated: (localCards: ICard[]) => void;
+  renderCardChanged: (renderCard: ICard) => void;
   menuSaveTempToLocal: () => void;
 }
 
 export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener> {
   private _currentCard = {} as ICard;
   private _tempCurrentCard: ICard | undefined = undefined;
+  private _renderCard: ICard | undefined = undefined;
+  private _renderCardsQueue: ICard[] = [];
   private _localCards: ICard[] = [];
+  private _renderPath: string | undefined = undefined;
 
   public get currentCard() {
     return this._currentCard;
@@ -79,6 +83,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.dispatch('localCardsUpdated', this.localCards);
   }
 
+  public fireRenderCardChanged() {
+    this.dispatch('renderCardChanged', this._renderCard);
+  }
+
   public fireMenuSaveTempToLocal() {
     this.dispatch('menuSaveTempToLocal');
   }
@@ -101,7 +109,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
           y: 0,
           height: 0,
           width: 0,
-          pendulum: false
+          pendulum: false,
+          keepRatio: false
         },
         frame: 'effect',
         stType: 'normal',
@@ -151,40 +160,47 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async renderCurrentCard() {
-    let name = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
-    await this.writeCardFile('main-card-builder', name);
+    const cardUuid = (this._tempCurrentCard ? this._tempCurrentCard.uuid : this._currentCard.uuid) as string;
+    const cardName = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
+    await this.writeCardFile('main-card-builder', cardUuid, cardName);
+  }
+
+  private setRenderCard() {
+    this._renderCard = this._renderCardsQueue[0];
+    this.fireRenderCardChanged();
   }
 
   public async renderCards(cards: ICard[]) {
-    const path = await window.electron.ipcRenderer.getDirectoryPath();
-    if (!path) return;
+    if (!cards?.length) return;
 
-    for (let card of cards) {
-      let cardBuilder = new CardBuilder({
-        forRender: true,
-        id: card.uuid as string,
-        card,
-        onCardReady: () => app.$errorManager.handlePromise(this.writeCardFile(card.uuid as string, card.name, path)),
-      });
-      const rootElement = document.querySelector('.card-preview') as HTMLElement;
-      const popupContainer = document.createElement('div');
-      popupContainer.className = 'mn-render-container';
-      rootElement.appendChild(popupContainer);
-      createRoot(popupContainer).render(cardBuilder.render());
-    }
+    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath();
+    if (!this._renderPath) return;
+
+    this._renderCardsQueue.push(...cards);
+    this.setRenderCard();
   }
 
-  private async writeCardFile(id: string, name: string, filePath?: string) {
+  public async writeCardFile(id: string, cardUuid: string, cardName: string) {
     const element = document.getElementById(id) as HTMLElement;
-    console.log(id, name, filePath, element);
     if (element) {
       try {
         const dataUrl = await toPng(element);
         if (!dataUrl) return;
-        await window.electron.ipcRenderer.writePngFile(name || 'Sans nom', dataUrl.replace(/^data:image\/\w+;base64,/, ''), filePath);
+        await window.electron.ipcRenderer.writePngFile(
+          cardName.replace(/[\\/:"*?<>|]/g, '') || 'Sans nom',
+          dataUrl.replace(/^data:image\/\w+;base64,/, ''),
+          this._renderPath
+        );
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
+      }
+    }
+
+    if (this._renderCardsQueue.length) {
+      this._renderCardsQueue = this._renderCardsQueue.filter(c => c.uuid !== cardUuid);
+      if (this._renderCardsQueue.length) {
+        this.setRenderCard();
       }
     }
   }
@@ -321,7 +337,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         y: 0,
         height: 0,
         width: 0,
-        pendulum: false
+        pendulum: false,
+        keepRatio: false
       },
       frame: 'normal',
       stType: 'normal',

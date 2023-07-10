@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-undef */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
@@ -25,18 +26,21 @@ import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import './styles.css';
-import { getCroppedArtworkBase64, integer } from 'mn-toolkit/tools';
+import { classNames, getCroppedArtworkBase64, integer } from 'mn-toolkit/tools';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface IArtworkEditingProps extends IContainableProps {
   artworkURL: string;
   artworkBase64: string;
+  keepRatio: boolean;
+  pendulumRatio: boolean;
   hasPendulumFrame: boolean;
   hasLinkFrame: boolean;
   crop: Crop;
+  onKeepRatioChange: (keepRatio: boolean) => void;
   onCroppingChange: (crop: Crop) => void;
   onArtworkURLChange: (url: string) => void;
-  onValidate: (url: string, crop: Crop) => void;
+  onValidate: (url: string, crop: Crop, keepRatio: boolean) => void;
 }
 
 interface IArtworkEditingState extends IContainableState {
@@ -55,7 +59,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       artworkURL: props.artworkURL,
       crop: props.crop,
       croppedArtworkBase64: '',
-      keepRatio: false
+      keepRatio: props.keepRatio
     }
     app.$errorManager.handlePromise(this.load(props));
   }
@@ -69,7 +73,8 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     this.setState({
       crop: props.crop,
       artworkURL: props.artworkURL,
-      croppedArtworkBase64
+      croppedArtworkBase64,
+      keepRatio: props.keepRatio
     });
   }
 
@@ -106,6 +111,9 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (width < 1) width = 1;
     const crop = this.state.crop;
     crop.width = width;
+    if (this.state.keepRatio && crop.width !== crop.height) {
+      crop.height = width;
+    }
     this.setState({ crop });
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
@@ -114,6 +122,9 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (height < 1) height = 1;
     const crop = this.state.crop;
     crop.height = height;
+    if (this.state.keepRatio && crop.height !== crop.width) {
+      crop.width = height;
+    }
     this.setState({ crop });
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
@@ -122,6 +133,21 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     const path = await window.electron.ipcRenderer.getFilePath();
     if (!path) return;
     this.onArtworkURLChange(path);
+  }
+
+  private switchKeepRatio() {
+    let keepRatio = !this.state.keepRatio;
+    this.setState({ keepRatio });
+    if (this.props.onKeepRatioChange) this.props.onKeepRatioChange(keepRatio);
+
+    if (keepRatio) {
+      if (this.state.crop.height > this.state.crop.width) {
+        this.onCropHeightChange(this.state.crop.width);
+      }
+      else if (this.state.crop.height < this.state.crop.width) {
+        this.onCropWidthChange(this.state.crop.height);
+      }
+    }
   }
 
   public render() {
@@ -134,12 +160,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
         </HorizontalStack>
 
         {this.state.croppedArtworkBase64?.length
-          ? <img src={this.state.croppedArtworkBase64} className='cropped-img' alt='cropped-img' />
+          ? <img src={this.state.croppedArtworkBase64} className={classNames('cropped-img', { 'pendulum-ratio': this.props.pendulumRatio })} alt='cropped-img' />
           : <div className='cropped-img' />
         }
 
         <HorizontalStack className='ratio-checkbox'>
-          <input type='checkbox' className='ratio-input' defaultChecked={this.state.keepRatio} onInput={() => this.setState({ keepRatio: !this.state.keepRatio })} />
+          <input type='checkbox' className='ratio-input' defaultChecked={this.state.keepRatio} onInput={() => this.switchKeepRatio()} />
           <p className='editor-label pendulum-label'>Conserver le ratio</p>
         </HorizontalStack>
 
@@ -169,7 +195,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
           </VerticalStack>
         </HorizontalStack>
 
-        <button type='button' className='validate-btn' onClick={() => this.props.onValidate(this.state.artworkURL, this.state.crop)}>OK</button>
+        <button type='button' className='validate-btn' onClick={() => this.props.onValidate(this.state.artworkURL, this.state.crop, this.state.keepRatio)}>OK</button>
     </VerticalStack>, 'artwork-editing');
   }
 }

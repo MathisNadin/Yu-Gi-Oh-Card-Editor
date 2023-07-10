@@ -76,6 +76,18 @@
       align-self: center;
       width: 70%;
       aspect-ratio: 1 / 1;
+
+      &.pendulum-ratio {
+        aspect-ratio: 703 / 526;
+      }
+    }
+
+    .ratio-checkbox {
+      .pendulum-label {
+        color: black;
+        font-size: 13px;
+        margin-left: 3px;
+      }
     }
 
     .ratio-section {

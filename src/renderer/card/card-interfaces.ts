@@ -35,6 +35,7 @@ export interface ICard {
     height: number;
     width: number;
     pendulum: boolean;
+    keepRatio: boolean;
   };
   frame: TFrame;
   stType: TStIcon;

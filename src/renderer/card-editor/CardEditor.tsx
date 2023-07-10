@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable react/no-array-index-key */
@@ -206,6 +207,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onArtworkPendChange() {
+    this.state.card.artwork.pendulum = !this.state.card.artwork.pendulum;
+    this.setState({ card: this.state.card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private onPendLockChange() {
     const lockPend = !this.state.lockPend;
     this.setState({ lockPend });
@@ -263,7 +270,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       y: infos.crop?.y,
       height: infos.crop?.height,
       width: infos.crop?.width,
-      pendulum: false
+      pendulum: this.state.card.artwork.pendulum,
+      keepRatio: infos.keepRatio
     }
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
@@ -277,7 +285,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       y: 0,
       height: 100,
       width: 100,
-      pendulum: false
+      pendulum: false,
+      keepRatio: false
     }
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
@@ -382,6 +391,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           width: this.state.card.artwork.width,
           unit: '%'
         }}
+        keepRatio={this.state.card.artwork.keepRatio}
+        pendulumRatio={!this.state.card.artwork.pendulum}
         hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
         hasLinkFrame={this.state.card.frame === 'link'} />
     });
@@ -450,6 +461,11 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
         <button type='button' className='artwork-btn' onClick={() => this.showArtworkPopup()}>...</button>
       </HorizontalStack>
+
+      {this.state.card.pendulum && <HorizontalStack className='card-pendulum-ratio card-input-container'>
+        <input type='checkbox' className='pendulum-ratio-input card-input' defaultChecked={this.state.card.artwork.pendulum} onInput={() => this.onArtworkPendChange()} />
+        <p className='editor-label pendulum-ratio-label'>Format d'artwork pendule</p>
+      </HorizontalStack>}
 
       <VerticalStack className='card-editor-sub-section card-description card-textarea'>
         <p className='editor-label description-label label-with-separator'>Description</p>

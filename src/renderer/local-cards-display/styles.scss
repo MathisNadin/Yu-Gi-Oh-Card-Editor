@@ -101,10 +101,33 @@
           background-color: white;
         }
 
+        &.selected {
+          background: rgba(lawngreen, 0.6);
+        }
+
         &.current {
           background-color: rgba(#70afee, 0.6);
         }
       }
+    }
+  }
+
+  .render-cards-btn {
+    align-self: center;
+    width: 97%;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: rgba(#70afee, 0.5);
+
+    &.disabled {
+      pointer-events: none;
+      background-color: grey;
+    }
+
+    &:hover {
+      transform: none;
     }
   }
 }

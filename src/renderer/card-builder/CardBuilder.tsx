@@ -107,6 +107,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private async refreshState(card: ICard) {
+    if (!card) return;
+
     const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${card.frame === 'xyz' || card.frame === 'skill' ? 'white' : 'black'}`;
     const usePendulumFrame = app.$card.hasPendulumFrame(card);
 
@@ -418,6 +420,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public render() {
+    if (!this.props.card) return <div></div>;
+
     if (!this.state?.loaded) return <Spinner />;
 
     let artworkClass = 'card-layer artwork-container';

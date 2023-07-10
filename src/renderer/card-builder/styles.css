@@ -44,12 +44,7 @@
 .card-builder .card-layer {
   position: absolute;
   width: 100%;
-  object-fit: cover;
-  /*     &.copyright {
-    }
-
-    &.edition {
-    } */ }
+  object-fit: cover; }
 
 .card-builder .card-layer.hidden {
   visibility: hidden; }
@@ -61,16 +56,22 @@
   left: 99px; }
 
 .card-builder .card-layer.artwork-container.artwork-pendulum {
-  height: 665px;
+  height: 526px;
   width: 703px;
   top: 211px;
   left: 55px; }
 
+.card-builder .card-layer.artwork-container.artwork-pendulum.in-pendulum-effect {
+  height: 665px; }
+
 .card-builder .card-layer.artwork-container.artwork-pendulum-link {
-  height: 661px;
+  height: 522px;
   width: 657px;
   top: 211px;
   left: 77px; }
+
+.card-builder .card-layer.artwork-container.artwork-pendulum-link.in-pendulum-effect {
+  height: 661px; }
 
 .card-builder .card-layer.artwork-container .artwork {
   width: 100%;
@@ -139,7 +140,8 @@
   font-family: fontAtkDef;
   font-size: 37px;
   text-align: end;
-  text-shadow: 0 0 black; }
+  text-shadow: 0 0 black;
+  width: fit-content; }
 
 .card-builder .card-layer.atk-def.atk {
   right: 230px;

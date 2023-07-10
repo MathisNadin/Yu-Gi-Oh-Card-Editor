@@ -13,7 +13,7 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
+import path, { join } from 'path';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -60,6 +60,9 @@ ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64:
     });
     filePath = result?.filePath;
     canceled = result?.canceled;
+  }
+  else {
+    filePath = join(filePath, `${defaultFileName}.png`);
   }
 
   if (!canceled && filePath) {
