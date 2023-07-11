@@ -224,29 +224,22 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const name = container.querySelector('.card-name') as HTMLDivElement;
     if (!name) return;
 
+    if (this.props.card.frames.includes('skill')) {
+      name.style.width = `${name.scrollWidth + 6}px`;
+      name.style.height = `${name.scrollHeight + 3}px`;
+    } else {
+      name.style.width = '';
+      name.style.height = '';
+    }
+
+    const canvas = await html2canvas(name, { backgroundColor: null });
+    canvas.className = 'html2canvas-name';
     const existingCanvas = container.querySelector('.html2canvas-name');
-
-    if (this.props.card.name) {
-      if (this.props.card.frames.includes('skill')) {
-        name.style.width = `${name.scrollWidth + 6}px`;
-        name.style.height = `${name.scrollHeight + 3}px`;
-      } else {
-        name.style.width = '';
-        name.style.height = '';
-      }
-
-      const canvas = await html2canvas(name, { backgroundColor: null });
-      canvas.className = 'html2canvas-name';
-      if (existingCanvas) {
-        container.replaceChild(canvas, existingCanvas);
-      } else {
-        container.appendChild(canvas);
-      }
+    if (existingCanvas) {
+      container.replaceChild(canvas, existingCanvas);
+    } else {
+      container.appendChild(canvas);
     }
-    else if (existingCanvas) {
-      container.removeChild(existingCanvas);
-    }
-
     this.setState({ adjustState: 'atk' });
   }
 
@@ -424,6 +417,52 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     else {
       this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
     }
+  }
+
+  private getFramesStylesArray(num: number): string[] {
+    const array: number[] = [];
+    let sum = 0;
+    let middleIndex: number;
+
+    if (num % 2 === 0) {
+      middleIndex = num / 2;
+      for (let i = 1; i <= middleIndex; i++) {
+        const distanceFromMiddle = i - 0.5;
+        const multiplier = 1.4 ** (middleIndex - distanceFromMiddle);
+        const value = multiplier * 100 / ((1.4 ** middleIndex) * 2 - 1);
+        array.unshift(value); // Ajouter à gauche
+        array.push(value); // Ajouter à droite
+        sum += 2 * value;
+      }
+    } else {
+      middleIndex = Math.floor(num / 2);
+      for (let i = 0; i < num; i++) {
+        let value: number;
+        if (i === middleIndex) {
+          value = 1;
+        } else {
+          const distanceFromMiddle = Math.abs(i - middleIndex);
+          value = 1 / (1.4 ** distanceFromMiddle);
+        }
+
+        array.push(value);
+        sum += value;
+      }
+    }
+
+    const scaleFactor = 100 / sum;
+    let add = 0;
+    const scaledArray = array.map((value, index) => {
+      let stringValue: string;
+      if (!index) {
+        stringValue = `0%`;
+      } else {
+        stringValue = `${add * scaleFactor}%`;
+      }
+      add+=value;
+      return stringValue;
+    });
+    return scaledArray;
   }
 
   public render() {

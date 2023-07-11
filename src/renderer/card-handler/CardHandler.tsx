@@ -140,53 +140,6 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
 
-  private generateArray(num: number): string[] {
-    const array: number[] = [];
-    let sum = 0;
-    let middleIndex: number;
-
-    if (num % 2 === 0) {
-      middleIndex = num / 2;
-      for (let i = 1; i <= middleIndex; i++) {
-        const distanceFromMiddle = i - 0.5;
-        const multiplier = 1.4 ** (middleIndex - distanceFromMiddle);
-        const value = multiplier * 100 / ((1.4 ** middleIndex) * 2 - 1);
-        array.unshift(value); // Ajouter à gauche
-        array.push(value); // Ajouter à droite
-        sum += 2 * value;
-      }
-    } else {
-      middleIndex = Math.floor(num / 2);
-      for (let i = 0; i < num; i++) {
-        let value: number;
-        if (i === middleIndex) {
-          value = 1;
-        } else {
-          const distanceFromMiddle = Math.abs(i - middleIndex);
-          value = 1 / (1.4 ** distanceFromMiddle);
-        }
-
-        array.push(value);
-        sum += value;
-      }
-    }
-
-    const scaleFactor = 100 / sum;
-    let add = 0;
-    const scaledArray = array.map((value, index) => {
-      let stringValue: string;
-      if (!index) {
-        stringValue = `0%`;
-      } else {
-        stringValue = `${add * scaleFactor}%`;
-      }
-      add+=value;
-      return stringValue;
-    });
-    return scaledArray;
-  }
-
-
 /*   public render() {
     if (!this.state?.loaded) return <Spinner />;
     const styleArray = this.generateArray(this.frames.length);
