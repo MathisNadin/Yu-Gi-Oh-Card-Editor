@@ -220,25 +220,33 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   public async convertNameToImg() {
     const container = this.ref?.querySelector('.card-name-container') as HTMLDivElement;
     if (!container) return;
+
     const name = container.querySelector('.card-name') as HTMLDivElement;
     if (!name) return;
 
-    if (this.props.card.frames.includes('skill')) {
-      name.style.width = `${name.scrollWidth + 6}px`;
-      name.style.height = `${name.scrollHeight + 3}px`;
-    } else {
-      name.style.width = '';
-      name.style.height = '';
+    const existingCanvas = container.querySelector('.html2canvas-name');
+
+    if (this.props.card.name) {
+      if (this.props.card.frames.includes('skill')) {
+        name.style.width = `${name.scrollWidth + 6}px`;
+        name.style.height = `${name.scrollHeight + 3}px`;
+      } else {
+        name.style.width = '';
+        name.style.height = '';
+      }
+
+      const canvas = await html2canvas(name, { backgroundColor: null });
+      canvas.className = 'html2canvas-name';
+      if (existingCanvas) {
+        container.replaceChild(canvas, existingCanvas);
+      } else {
+        container.appendChild(canvas);
+      }
+    }
+    else if (existingCanvas) {
+      container.removeChild(existingCanvas);
     }
 
-    const canvas = await html2canvas(name, { backgroundColor: null });
-    canvas.className = 'html2canvas-name';
-    const existingCanvas = container.querySelector('.html2canvas-name');
-    if (existingCanvas) {
-      container.replaceChild(canvas, existingCanvas);
-    } else {
-      container.appendChild(canvas);
-    }
     this.setState({ adjustState: 'atk' });
   }
 
@@ -521,7 +529,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     return this.renderAttributes(<HorizontalStack>
       <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
-      <p style={{}} className={`abilities-text black-text abilities`}>
+      <p className={`abilities-text black-text abilities`}>
         {upperCaseIndexes.map((index, i) => (
           <Fragment key={`uppercase-index-${i}`}>
             <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
@@ -533,7 +541,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           </Fragment>
         ))}
       </p>
-      <p style={{}} className={`abilities-text black-text abilities-bracket right-bracket`}>{']'}</p>
+      <p className={`abilities-text black-text abilities-bracket right-bracket`}>{']'}</p>
     </HorizontalStack>, containerClass);
   }
 
