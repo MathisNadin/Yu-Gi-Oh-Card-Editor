@@ -110,7 +110,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         break;
 
       case 'frame':
-        localCards.sort((a, b) => this.state.frameOrder.indexOf(a.frame) - this.state.frameOrder.indexOf(b.frame));
+        localCards.sort((a, b) => this.state.frameOrder.indexOf(a.frames[0]) - this.state.frameOrder.indexOf(b.frames[0]));
         break;
 
       case 'created':
@@ -227,7 +227,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
               const isCurrent = this.state.current === card.uuid;
               return <tr key={uuid()} className={classNames('local-card-row', { 'selected': this.state.selectedCards[card.uuid as string] }, { 'current': isCurrent })}>
                 <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.name}</td>
-                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{app.$card.getFrameName(card.frame)}</td>
+                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{app.$card.getFramesNames(card.frames)}</td>
                 <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.created)}</td>
                 <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.modified)}</td>
                 <td className={classNames('with-icon', { 'current': isCurrent })}>{isEdited
@@ -246,7 +246,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
 
       <button
         type='button'
-        className={classNames('render-cards-btn', { 'disabled': this.state.edited })}
+        className={classNames('render-cards-btn', { 'disabled': this.state.edited || !Object.values(this.state.selectedCards).filter(s => !!s).length })}
         onClick={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
       >Faire le rendu des cartes</button>
     </VerticalStack>, 'local-cards-display');

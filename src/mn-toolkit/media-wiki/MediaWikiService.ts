@@ -11,7 +11,7 @@
 /* eslint-disable prettier/prettier */
 
 import { integer } from "mn-toolkit/tools";
-import { ICard } from "renderer/card/CardService";
+import { ICard } from "renderer/card/card-interfaces";
 
 interface YugipediaApiResponse {
   batchcomplete: string;
@@ -100,27 +100,27 @@ export class MediaWikiService {
       else if (t.includes('| card_type')) {
         let cardType = t.slice(t.indexOf('= ')+1, t.length).trim();
         switch (cardType) {
-          case 'Trap': card.frame = 'trap'; break;
-          default: card.frame = 'spell'; break;
+          case 'Trap': card.frames.push('trap'); break;
+          default: card.frames.push('spell'); break;
         }
       }
       else if (t.includes('| types')) {
         let types = t.slice(t.indexOf('= ')+1, t.length).trim();
 
         if (types.includes('Ritual')) {
-          card.frame = 'ritual';
+          card.frames.push('ritual');
         } else if (types.includes('Fusion')) {
-          card.frame = 'fusion';
+          card.frames.push('fusion');
         } else if (types.includes('Synchro')) {
-          card.frame = 'synchro';
+          card.frames.push('synchro');
         } else if (types.includes('Dark Synchro')) {
-          card.frame = 'darkSynchro';
+          card.frames.push('darkSynchro');
         } else if (types.includes('Link')) {
-          card.frame = 'link';
+          card.frames.push('link');
         } else if (types.includes('Skill')) {
-          card.frame = 'skill';
+          card.frames.push('skill');
         } else if (types.includes('Effect')) {
-          card.frame = 'effect';
+          card.frames.push('effect');
         }
 
         if (types.includes('Pendulum')) {

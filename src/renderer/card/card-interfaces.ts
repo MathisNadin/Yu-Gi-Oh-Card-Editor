@@ -37,7 +37,8 @@ export interface ICard {
     pendulum: boolean;
     keepRatio: boolean;
   };
-  frame: TFrame;
+  frames: TFrame[];
+  multipleFrames: boolean;
   stType: TStIcon;
   attribute: TAttribute;
   abilities: string[];

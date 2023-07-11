@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
@@ -61,7 +62,6 @@ interface ICardEditorState extends IContainableState {
     id: TStIcon;
     file: string;
   }[];
-  selectedFrame: TFrame;
   selectedAbility: number;
 }
 
@@ -116,7 +116,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'counter', file: require(`../resources/pictures/icons/stIconCounter.png`) },
         { id: 'link', file: require(`../resources/pictures/icons/stIconLink.png`) },
       ],
-      selectedFrame: props.card.frame,
       selectedAbility: -1,
     }
   }
@@ -125,23 +124,47 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.setState({ card: nextProps.card });
   }
 
-  public onFrameChange(frame: TFrame) {
-    this.state.card.frame = frame;
+  private onMultipleFramesChange() {
+    let card = this.state.card;
+    card.multipleFrames = !card.multipleFrames;
+    if (card.frames.length > 1) {
+      card.frames = [card.frames[0]];
+    }
+    this.setState({ card });
+    this.props.onCardChange(this.state.card);
+  }
 
-    if (frame === 'spell') {
-      this.state.card.attribute = 'spell';
-    } else if (frame === 'trap') {
-      this.state.card.attribute = 'trap';
-    } else {
-      if (this.state.card.attribute === 'spell' || this.state.card.attribute === 'trap') {
-        this.state.card.attribute = 'dark';
-      }
-      if (this.state.card.level > 8 && frame === 'link') {
-        this.state.card.level = 8;
+  public onFrameChange(frame: TFrame) {
+    if (this.state.card.frames.includes(frame)) {
+      if (this.state.card.frames.length > 1) {
+        this.state.card.frames = this.state.card.frames.filter(f => f !== frame);
+        this.setState({ card: this.state.card });
+        this.props.onCardChange(this.state.card);
       }
     }
-    this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    else {
+      if (this.state.card.multipleFrames) {
+        this.state.card.frames.push(frame);
+      } else {
+        this.state.card.frames = [frame];
+      }
+
+      if (frame === 'spell') {
+        this.state.card.attribute = 'spell';
+      } else if (frame === 'trap') {
+        this.state.card.attribute = 'trap';
+      } else {
+        if (this.state.card.attribute === 'spell' || this.state.card.attribute === 'trap') {
+          this.state.card.attribute = 'dark';
+        }
+        if (this.state.card.level > 8 && frame === 'link') {
+          this.state.card.level = 8;
+        }
+      }
+
+      this.setState({ card: this.state.card });
+      this.props.onCardChange(this.state.card);
+    }
   }
 
   public onAttributeChange(attribute: TAttribute) {
@@ -394,7 +417,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         keepRatio={this.state.card.artwork.keepRatio}
         pendulumRatio={!this.state.card.artwork.pendulum}
         hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
-        hasLinkFrame={this.state.card.frame === 'link'} />
+        hasLinkFrame={this.state.card.frames.includes('link')} />
     });
     if (result) this.onArtworkInfoChange(result);
   }
@@ -486,7 +509,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
       </VerticalStack>
 
-      {(this.state.card.frame === 'spell' || this.state.card.frame === 'trap') && <VerticalStack className='card-editor-sub-section card-st-icons'>
+      {(this.state.card.frames.includes('spell') || this.state.card.frames.includes('trap')) && <VerticalStack className='card-editor-sub-section card-st-icons'>
         <p className='editor-label st-icons-label label-with-separator'>Type de Magie/Piège</p>
         <HorizontalStack className='card-items card-st-icons-icons'>
           {this.state.cardStTypes.map(stType =>
@@ -502,15 +525,21 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
       <VerticalStack className='card-editor-sub-section card-frames'>
         <p className='editor-label frames-label label-with-separator'>Types de carte</p>
+
         <HorizontalStack className='card-items card-frames-icons'>
           {this.state.cardFrames.map(frame =>
             <HorizontalStack className='item-container card-frame-container'>
               <img src={frame.file}
                 alt={`frame-${frame.id}`}
-                className={`card-frame${this.state.card.frame === frame.id ? ' selected' : ''}`}
+                className={`card-frame${this.state.card.frames.includes(frame.id) ? ' selected' : ''}`}
                 onClick={() => this.onFrameChange(frame.id)} />
             </HorizontalStack>
           )}
+        </HorizontalStack>
+
+        <HorizontalStack className='card-multiple-frames card-input-container'>
+          <input type='checkbox' className='multiple-frames-input card-input' defaultChecked={this.state.card.multipleFrames} onInput={() => this.onMultipleFramesChange()} />
+          <p className='editor-label multiple-frames-label'>Cumuler les types de cartes</p>
         </HorizontalStack>
       </VerticalStack>
     </VerticalStack>, 'card-editor-section basic-section');
@@ -520,16 +549,16 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     let levelLabel: string;
     let max: number;
     // let levels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    if (this.state.card.frame === 'link') {
+    if (this.state.card.frames.includes('link')) {
       levelLabel = 'Classification Lien';
       max = 8
     } else {
       // levels = levels.concat([9, 10, 11, 12, 13]);
       max = 13;
 
-      if (this.state.card.frame === 'xyz') {
+      if (this.state.card.frames.includes('xyz')) {
         levelLabel = 'Rang';
-      } else if (this.state.card.frame === 'darkSynchro') {
+      } else if (this.state.card.frames.includes('darkSynchro')) {
         levelLabel = 'Niveau Négatif';
       } else {
         levelLabel = 'Niveau';
@@ -592,7 +621,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
         <VerticalStack className='separator-container' fill />
 
-        {this.state.card.frame !== 'link' && <HorizontalStack className='card-stats card-def card-input-container'>
+        {!this.state.card.frames.includes('link') && <HorizontalStack className='card-stats card-def card-input-container'>
           <p className='editor-label def-label'>DEF</p>
           <input type='text' className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
         </HorizontalStack>}

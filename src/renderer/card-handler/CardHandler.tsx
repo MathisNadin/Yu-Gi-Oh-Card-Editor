@@ -1,3 +1,6 @@
+/* eslint-disable no-else-return */
+/* eslint-disable no-plusplus */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable prefer-const */
 /* eslint-disable import/order */
 /* eslint-disable no-undef */
@@ -28,6 +31,8 @@ import { CardPreview } from 'renderer/card-preview/CardPreview';
 import { ICardListener } from '../card/CardService';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
+import { classNames } from 'mn-toolkit/tools';
+import { CSSProperties } from 'react';
 
 interface ICardHandlerProps extends IContainableProps {
 }
@@ -38,6 +43,15 @@ interface ICardHandlerState extends IContainableState {
 }
 
 export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> implements Partial<ICardListener> {
+  private border = require('../resources/pictures/squareBorders.png');
+  private frames = [
+    require(`../resources/pictures/card-frames/effect.png`),
+    // require(`../resources/pictures/card-frames/ritual.png`),
+    require(`../resources/pictures/card-frames/fusion.png`),
+    require(`../resources/pictures/card-frames/synchro.png`),
+    require(`../resources/pictures/card-frames/xyz.png`),
+    // require(`../resources/pictures/card-frames/link.png`),
+  ];
 
   public constructor(props: ICardHandlerProps) {
     super(props);
@@ -72,6 +86,127 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
       await app.$card.saveCurrentCard(card);
     }
   }
+
+  private generateArrayOdd(num: number): number[] {
+    if (num <= 0 || num % 2 === 0) {
+      throw new Error("Le nombre doit être un nombre impair positif.");
+    }
+
+    const array: number[] = [];
+    let sum = 0;
+    let middleIndex: number;
+
+    middleIndex = Math.floor(num / 2);
+    for (let i = 0; i < num; i++) {
+      let value: number;
+      if (i === middleIndex) {
+        value = 1;
+      } else {
+        const distanceFromMiddle = Math.abs(i - middleIndex);
+        value = 1 / (1.4 ** distanceFromMiddle);
+      }
+
+      array.push(value);
+      sum += value;
+    }
+
+    const scaleFactor = 100 / sum;
+    const scaledArray = array.map(value => value * scaleFactor);
+    return scaledArray;
+  }
+
+  private generateArrayEven(num: number): number[] {
+    if (num <= 0 || num % 2 !== 0) {
+      throw new Error("Le nombre doit être un nombre pair positif.");
+    }
+
+    const array: number[] = [];
+    let sum = 0;
+    let middleIndex: number;
+
+    middleIndex = num / 2;
+    for (let i = 1; i <= middleIndex; i++) {
+      const distanceFromMiddle = i - 0.5;
+      const multiplier = 1.4 ** (middleIndex - distanceFromMiddle);
+      const value = multiplier * 100 / ((1.4 ** middleIndex) * 2 - 1);
+      array.unshift(value); // Ajouter à gauche
+      array.push(value); // Ajouter à droite
+      sum += 2 * value;
+    }
+
+    const scaleFactor = 100 / sum;
+    const scaledArray = array.map(value => value * scaleFactor);
+    return scaledArray;
+  }
+
+
+  private generateArray(num: number): string[] {
+    const array: number[] = [];
+    let sum = 0;
+    let middleIndex: number;
+
+    if (num % 2 === 0) {
+      middleIndex = num / 2;
+      for (let i = 1; i <= middleIndex; i++) {
+        const distanceFromMiddle = i - 0.5;
+        const multiplier = 1.4 ** (middleIndex - distanceFromMiddle);
+        const value = multiplier * 100 / ((1.4 ** middleIndex) * 2 - 1);
+        array.unshift(value); // Ajouter à gauche
+        array.push(value); // Ajouter à droite
+        sum += 2 * value;
+      }
+    } else {
+      middleIndex = Math.floor(num / 2);
+      for (let i = 0; i < num; i++) {
+        let value: number;
+        if (i === middleIndex) {
+          value = 1;
+        } else {
+          const distanceFromMiddle = Math.abs(i - middleIndex);
+          value = 1 / (1.4 ** distanceFromMiddle);
+        }
+
+        array.push(value);
+        sum += value;
+      }
+    }
+
+    const scaleFactor = 100 / sum;
+    let add = 0;
+    const scaledArray = array.map((value, index) => {
+      let stringValue: string;
+      if (!index) {
+        stringValue = `0%`;
+      } else {
+        stringValue = `${add * scaleFactor}%`;
+      }
+      add+=value;
+      return stringValue;
+    });
+    return scaledArray;
+  }
+
+
+/*   public render() {
+    if (!this.state?.loaded) return <Spinner />;
+    const styleArray = this.generateArray(this.frames.length);
+    console.log(styleArray);
+    const card = this.state.tempCurrentCard || this.state.currentCard;
+    return this.renderAttributes(<HorizontalStack gutter>
+      <HorizontalStack className='frames-stack'>
+        {this.frames.map((image, index) => {
+        const style: CSSProperties = {};
+        if (index) style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
+        console.log(styleArray[index], style.clipPath);
+          return <div className="image-wrapper" key={index}>
+            <img style={style} className={classNames('card-frame', 'card-frame-test', `frame-${index}`)} src={image} alt='frame' />
+          </div>;
+        })}
+        <img className={classNames('card-frame', 'card-border-test')} src={this.border} alt='borders' />
+      </HorizontalStack>
+    </HorizontalStack>, 'card-handler');
+  } */
+
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;

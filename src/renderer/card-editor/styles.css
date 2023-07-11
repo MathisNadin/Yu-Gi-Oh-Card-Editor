@@ -291,6 +291,9 @@
   border-radius: 3px;
   margin: -2px; }
 
+.card-editor .card-editor-section .card-editor-sub-section.card-frames .card-multiple-frames {
+  margin-top: 10px; }
+
 .card-editor .card-editor-section .card-editor-sub-section.card-levels .card-levels-icons .card-level-container {
   width: 30px;
   height: 30px;

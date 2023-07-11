@@ -26,6 +26,7 @@ export interface ICardListener {
   localCardsLoaded: (localCards: ICard[]) => void;
   localCardsUpdated: (localCards: ICard[]) => void;
   renderCardChanged: (renderCard: ICard) => void;
+  renderCardDone: () => void;
   menuSaveTempToLocal: () => void;
 }
 
@@ -87,6 +88,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.dispatch('renderCardChanged', this._renderCard);
   }
 
+  public fireRenderCardDone() {
+    this.dispatch('renderCardDone');
+  }
+
   public fireMenuSaveTempToLocal() {
     this.dispatch('menuSaveTempToLocal');
   }
@@ -112,7 +117,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
           pendulum: false,
           keepRatio: false
         },
-        frame: 'effect',
+        frames: ['effect'],
+        multipleFrames: false,
         stType: 'normal',
         attribute: 'dark',
         abilities: [],
@@ -199,6 +205,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
     if (this._renderCardsQueue.length) {
       this._renderCardsQueue = this._renderCardsQueue.filter(c => c.uuid !== cardUuid);
+      this.fireRenderCardDone();
       if (this._renderCardsQueue.length) {
         this.setRenderCard();
       }
@@ -306,24 +313,32 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
+  public getFramesNames(frames: TFrame[]) {
+    let names: string[] = [];
+    for (let frame of frames) {
+      names.push(this.getFrameName(frame));
+    }
+    return names.join(' / ');
+  }
+
   public hasLinkArrows(card: ICard): boolean {
-    return card.frame === 'link' || ((card.frame === 'spell' || card.frame === 'trap') && card.stType === 'link');
+    return card.frames.includes('link') || ((card.frames.includes('spell') || card.frames.includes('trap')) && card.stType === 'link');
   }
 
   public hasPendulumFrame(card: ICard): boolean {
     return card.pendulum
-      && card.frame !== 'token'
-      && card.frame !== 'spell'
-      && card.frame !== 'trap'
-      && card.frame !== 'skill'
-      && card.frame !== 'legendaryDragon';
+      && !card.frames.includes('token')
+      && !card.frames.includes('spell')
+      && !card.frames.includes('trap')
+      && !card.frames.includes('skill')
+      && !card.frames.includes('legendaryDragon');
   }
 
   public hasAbilities(card: ICard): boolean {
-    return card.frame !== 'token'
-      && card.frame !== 'spell'
-      && card.frame !== 'trap'
-      && card.frame !== 'legendaryDragon';
+    return !card.frames.includes('token')
+      && !card.frames.includes('spell')
+      && !card.frames.includes('trap')
+      && !card.frames.includes('legendaryDragon');
   }
 
   public getNewCard(): ICard {
@@ -340,7 +355,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         pendulum: false,
         keepRatio: false
       },
-      frame: 'normal',
+      frames: ['normal'],
+      multipleFrames: false,
       stType: 'normal',
       attribute: 'spell',
       abilities: [],

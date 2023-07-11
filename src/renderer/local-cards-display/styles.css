@@ -93,7 +93,8 @@
 
 .local-cards-display .render-cards-btn.disabled {
   pointer-events: none;
-  background-color: grey; }
+  background-color: rgba(128, 128, 128, 0.3);
+  color: rgba(128, 128, 128, 0.7); }
 
 .local-cards-display .render-cards-btn:hover {
   transform: none; }
