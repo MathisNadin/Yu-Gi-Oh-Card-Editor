@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-lonely-if */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-undef */
@@ -556,12 +557,24 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       // levels = levels.concat([9, 10, 11, 12, 13]);
       max = 13;
 
-      if (this.state.card.frames.includes('xyz')) {
-        levelLabel = 'Rang';
-      } else if (this.state.card.frames.includes('darkSynchro')) {
+      let includesOther = false;
+      let includesDarkSynchro = false;
+      for (let frame of this.state.card.frames) {
+        if (frame !== 'xyz') {
+          if (frame === 'darkSynchro') {
+            includesDarkSynchro = true;
+          } else {
+            includesOther = true;
+          }
+        }
+      }
+
+      if (includesOther) {
+        levelLabel = 'Niveau';
+      } else if (includesDarkSynchro) {
         levelLabel = 'Niveau Négatif';
       } else {
-        levelLabel = 'Niveau';
+        levelLabel = 'Rang';
       }
     }
 

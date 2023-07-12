@@ -110,6 +110,19 @@
           color: #d3fcfc; }
       .card-builder .card-layer.card-name-container .html2canvas-name {
         max-width: 100%; }
+    .card-builder .card-layer.card-frames-container {
+      width: 100%;
+      height: 100%; }
+      .card-builder .card-layer.card-frames-container .card-frame {
+        position: absolute;
+        /*         &.regular-frame {
+        }
+
+        &.cover-frame {
+        }
+
+        &.pendulum-frame {
+        } */ }
     .card-builder .card-layer.atk-def {
       top: 1077px;
       min-width: 74px;

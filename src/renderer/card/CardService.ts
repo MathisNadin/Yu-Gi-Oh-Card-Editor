@@ -341,7 +341,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       && !card.frames.includes('legendaryDragon');
   }
 
-  public getNewCard(): ICard {
+  public getDefaultImportCard(): ICard {
     return {
       name: '',
       nameStyle: 'default',
@@ -355,7 +355,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         pendulum: false,
         keepRatio: false
       },
-      frames: ['normal'],
+      frames: [],
       multipleFrames: false,
       stType: 'normal',
       attribute: 'spell',

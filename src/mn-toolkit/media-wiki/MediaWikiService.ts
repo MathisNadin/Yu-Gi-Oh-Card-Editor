@@ -45,7 +45,7 @@ export class MediaWikiService {
   }
 
   public async getCardInfo(titles: string): Promise<ICard> {
-    let card = app.$card.getNewCard();
+    let card = app.$card.getDefaultImportCard();
 
     let data = await app.$api.get(`${this.baseApiUrl}${titles}`) as YugipediaApiResponse;
     if (!data) return card;
@@ -204,6 +204,12 @@ export class MediaWikiService {
         jpSet = firstJpSet.slice(0, firstJpSet.indexOf(';'));
       }
     });
+
+    if (!card.frames.length) {
+      card.frames.push('effect');
+    } else if (card.frames.length > 1) {
+      card.multipleFrames = true;
+    }
 
     enName = (name || enName || title) as string;
     if (useFr) {
