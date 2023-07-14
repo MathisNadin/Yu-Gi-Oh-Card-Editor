@@ -25,7 +25,10 @@
     margin: 10px 0 5px 10px;
     border: 1px solid #0052a3;
     border-radius: 0 0 8px 8px;
-    padding-bottom: 4px; }
+    padding-bottom: 4px;
+    /*     &.misc-section {
+      margin-bottom: 40px;
+    } */ }
     .card-editor .card-editor-section .section-header {
       width: 100%;
       background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
