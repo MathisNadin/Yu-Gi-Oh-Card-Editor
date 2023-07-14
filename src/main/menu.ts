@@ -200,16 +200,9 @@ export default class MenuBuilder {
         submenu: [
           {
             label: '&Faire le rendu',
-            accelerator: 'Ctrl+R',
+            accelerator: 'F1',
             click: () => {
               this.mainWindow.webContents.send('render-current-card');
-            },
-          },
-          {
-            label: '&Sauvegarder la carte',
-            accelerator: 'Ctrl+S',
-            click: () => {
-              this.mainWindow.webContents.send('save-current-or-temp-to-local');
             },
           },
           {
@@ -217,6 +210,39 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close();
+            },
+          },
+        ],
+      },
+      {
+        label: '&Édition',
+        submenu: [
+          {
+            label: '&Sauvegarder la carte',
+            accelerator: 'F2',
+            click: () => {
+              this.mainWindow.webContents.send('save-current-or-temp-to-local');
+            },
+          },
+          {
+            label: '&Importer depuis Yugipedia',
+            accelerator: 'F3',
+            click: () => {
+              this.mainWindow.webContents.send('import-cards');
+            },
+          },
+          {
+            label: '&Importer des données',
+            accelerator: 'F7',
+            click: () => {
+              this.mainWindow.webContents.send('import-data');
+            },
+          },
+          {
+            label: '&Exporter les données',
+            accelerator: 'F8',
+            click: () => {
+              this.mainWindow.webContents.send('export-data');
             },
           },
         ],

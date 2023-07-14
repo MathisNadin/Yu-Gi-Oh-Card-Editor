@@ -13,6 +13,11 @@
 import { integer } from "mn-toolkit/tools";
 import { ICard } from "renderer/card/card-interfaces";
 
+export interface IReplaceMatrix {
+  toReplace: string;
+  newString: string;
+}
+
 interface YugipediaApiResponse {
   batchcomplete: string;
   query: {
@@ -44,25 +49,25 @@ export class MediaWikiService {
     this.baseArtworkUrl = "F:\\Vidéos Joeri_sama\\Artworks\\";
   }
 
-  public async getCardInfo(titles: string): Promise<ICard> {
+  public async getCardInfo(titles: string, useFr: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
     let card = app.$card.getDefaultImportCard();
 
     let data = await app.$api.get(`${this.baseApiUrl}${titles}`) as YugipediaApiResponse;
-    if (!data) return card;
+    if (!data?.query?.pages) return card;
 
-    let pageKeys = Object.keys(data.query?.pages) as unknown as number[];
+    let pageKeys = Object.keys(data.query.pages) as unknown as number[];
     if (!pageKeys?.length) return card;
 
     let pageInfo = data.query?.pages[pageKeys[0]];
-    if (!pageInfo) return card;
+    if (!pageInfo?.revisions?.length) return card;
 
     let wikitext = pageInfo.revisions[0]["*"];
     if (!wikitext) return card;
 
-    return this.wikitextToCard(card, pageInfo.title, wikitext, false);
+    return this.wikitextToCard(card, pageInfo.title, wikitext, useFr, replaceMatrixes);
   }
 
-  public async wikitextToCard(card: ICard, title: string, wikitext: string, useFr: boolean): Promise<ICard> {
+  public async wikitextToCard(card: ICard, title: string, wikitext: string, useFr: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
     let name: string | undefined;
     let enName: string | undefined;
     let frName: string | undefined;
@@ -222,6 +227,15 @@ export class MediaWikiService {
       card.description = lore as string;
       card.pendEffect = pendEffect as string;
       card.cardSet = (enSet || jpSet) as string;
+    }
+
+    if (replaceMatrixes.length) {
+      for (let replaceMatrix of replaceMatrixes) {
+        if (enName) enName = enName.replace(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (card.name) card.name = card.name.replace(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (card.description) card.description = card.description.replace(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (card.pendEffect) card.pendEffect = card.pendEffect.replace(replaceMatrix.toReplace, replaceMatrix.newString);
+      }
     }
 
     let artworkDefaultPath = `${this.baseArtworkUrl}${enName} Artwork`;

@@ -14,7 +14,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path, { join } from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { existsSync, readFileSync, writeFile } from 'fs';
@@ -34,6 +34,15 @@ let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, _arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('read-file-utf-8', async (_event, filters: FileFilter[]) => {
+  const directoryPath = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters
+  });
+  if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
+  return readFileSync(directoryPath.filePaths[0], 'utf-8');
 });
 
 ipcMain.handle('get-file-path', async () => {
@@ -56,7 +65,8 @@ ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64:
   let canceled = false;
   if (!filePath) {
     const result = await dialog.showSaveDialog({
-      defaultPath: `${defaultFileName}.png`
+      defaultPath: `${defaultFileName}.png`,
+      filters: [{ extensions: ['png'], name: 'PNG Image' }]
     });
     filePath = result?.filePath;
     canceled = result?.canceled;
@@ -69,6 +79,29 @@ ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64:
     const finalFilePath = filePath.endsWith('.png') ? filePath : `${filePath}.png`;
     const buffer = Buffer.from(base64, 'base64');
     writeFile(finalFilePath, buffer, (err) => {
+      if (!err) return finalFilePath;
+    });
+  }
+  return undefined;
+});
+
+ipcMain.handle('write-json-file', async (_event, defaultFileName: string, jsonData: string, filePath?: string) => {
+  let canceled = false;
+  if (!filePath) {
+    const result = await dialog.showSaveDialog({
+      defaultPath: `${defaultFileName}.json`,
+      filters: [{ extensions: ['json'], name: 'JSON File' }]
+    });
+    filePath = result?.filePath;
+    canceled = result?.canceled;
+  }
+  else {
+    filePath = join(filePath, `${defaultFileName}.json`);
+  }
+
+  if (!canceled && filePath) {
+    const finalFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
+    writeFile(finalFilePath, jsonData, (err) => {
       if (!err) return finalFilePath;
     });
   }

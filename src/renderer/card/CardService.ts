@@ -1,3 +1,5 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-loop-func */
@@ -15,8 +17,14 @@
 import { toPng } from "html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
-import { uuid } from "mn-toolkit/tools";
+import { deepClone, uuid } from "mn-toolkit/tools";
 import { ICard, CardStorageKey, TFrame } from "./card-interfaces";
+
+interface IExportData {
+  'current-card': ICard,
+  'temp-current-card': ICard,
+  'local-cards': ICard[],
+}
 
 export interface ICardListener {
   currentCardLoaded: (currentCard: ICard) => void;
@@ -165,6 +173,41 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
+  public async importData() {
+    let buffer = await window.electron.ipcRenderer.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
+    if (!buffer) return;
+
+    let data = JSON.parse(buffer.toString()) as IExportData;
+    if (!data) return;
+
+    if (data['local-cards']) {
+      this._localCards = deepClone(data['local-cards']);
+      await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
+      this.fireLocalCardsUpdated();
+    }
+
+    if (data['current-card']) {
+      this._currentCard = deepClone(data['current-card']);
+      await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
+      this.fireCurrentCardUpdated();
+    }
+
+    if (data['temp-current-card']) {
+      this._tempCurrentCard = deepClone(data['temp-current-card']);
+      await app.$indexedDB.save<CardStorageKey, ICard>('temp-current-card', this._tempCurrentCard);
+      this.fireTempCurrentCardUpdated();
+    }
+  }
+
+  public async exportData() {
+    let data: IExportData = {
+      "current-card": this._currentCard,
+      "temp-current-card": this._tempCurrentCard as ICard,
+      "local-cards": this._localCards
+    };
+    await window.electron.ipcRenderer.writeJsonFile('card_editor_data.json', JSON.stringify(data));
+  }
+
   public async renderCurrentCard() {
     const cardUuid = (this._tempCurrentCard ? this._tempCurrentCard.uuid : this._currentCard.uuid) as string;
     const cardName = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
@@ -268,22 +311,29 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.fireLocalCardsUpdated();
   }
 
-  public async importCard(newCard: ICard) {
-    const now = new Date();
-    if (this._tempCurrentCard) {
-      newCard.created = this._tempCurrentCard.created;
-      newCard.modified = this._tempCurrentCard.created;
-      newCard.uuid = this._tempCurrentCard.uuid;
-      await this.saveTempCurrentCard(newCard);
+  public async importCards(newCards: ICard[]) {
+    let index = 0;
+    for (let newCard of newCards) {
+      index++;
+      await this.importCard(newCard, index === newCards.length);
     }
-    else {
-      newCard.created = now;
-      newCard.modified = now;
-      newCard.uuid = uuid();
-      this._localCards.push(newCard);
-      await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-      this.fireLocalCardsUpdated();
+  }
 
+  public async importCard(newCard: ICard, updateTempCurrentCard: boolean) {
+    if (this._tempCurrentCard) {
+      await this.saveTempCurrentToLocal();
+      this.fireMenuSaveTempToLocal();
+    }
+
+    const now = new Date();
+    newCard.created = now;
+    newCard.modified = now;
+    newCard.uuid = uuid();
+    this._localCards.push(newCard);
+    await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
+    this.fireLocalCardsUpdated();
+
+    if (updateTempCurrentCard) {
       this._tempCurrentCard = newCard;
       await app.$indexedDB.save<CardStorageKey, (ICard | undefined)>('temp-current-card', this._tempCurrentCard);
       this.fireTempCurrentCardLoaded();

@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-lonely-if */
 /* eslint-disable react/no-unescaped-entities */
@@ -33,6 +34,7 @@ import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
+import { ICardImportDialogResult, CardImportDialog } from 'renderer/card-import-dialog/CardImportDialog';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
@@ -389,17 +391,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.props.onCardChange(this.state.card);
   }
 
-  private async doImport() {
-    if (this.state.import.length) {
-      let splitImport = this.state.import.split('/');
-      this.setState({ import: '' });
-      let newCard = await app.$mediaWiki.getCardInfo(splitImport[splitImport.length-1]);
-      if (newCard) {
-        await app.$card.importCard(newCard);
-      }
-    }
-  }
-
   private async showArtworkPopup() {
     let result = await app.$popup.show<IArtworkEditDialogResult>({
       id: 'edit-popup',
@@ -435,12 +426,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private renderBasicCardDetails() {
     return this.renderAttributes(<VerticalStack>
-      <HorizontalStack className='card-editor-sub-section card-import card-input-container'>
-        <p className='editor-label import-label'>Importer</p>
-        <input type='text' className='import-input card-input' value={this.state.import} onInput={e => this.setState({ import: (e.target as EventTargetWithValue).value })} />
-        <button type='button' className='import-btn' onClick={() => app.$errorManager.handlePromise(this.doImport())}>...</button>
-      </HorizontalStack>
-
       <VerticalStack className='section-header'>
         <p className='section-header-title'>Bases de la Carte</p>
       </VerticalStack>
@@ -487,7 +472,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       </HorizontalStack>
 
       {this.state.card.pendulum && <HorizontalStack className='card-pendulum-ratio card-input-container'>
-        <input type='checkbox' className='pendulum-ratio-input card-input' defaultChecked={this.state.card.artwork.pendulum} onInput={() => this.onArtworkPendChange()} />
+        <input type='checkbox' className='pendulum-ratio-input card-input' checked={this.state.card.artwork.pendulum} onChange={() => this.onArtworkPendChange()} />
         <p className='editor-label pendulum-ratio-label'>Format d'artwork pendule</p>
       </HorizontalStack>}
 
@@ -539,7 +524,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
 
         <HorizontalStack className='card-multiple-frames card-input-container'>
-          <input type='checkbox' className='multiple-frames-input card-input' defaultChecked={this.state.card.multipleFrames} onInput={() => this.onMultipleFramesChange()} />
+          <input type='checkbox' className='multiple-frames-input card-input' checked={this.state.card.multipleFrames} onChange={() => this.onMultipleFramesChange()} />
           <p className='editor-label multiple-frames-label'>Cumuler les types de cartes</p>
         </HorizontalStack>
       </VerticalStack>
@@ -590,7 +575,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
 
         <HorizontalStack className='card-pendulum card-input-container'>
-          <input type='checkbox' className='pendulum-input card-input' defaultChecked={this.state.card.pendulum} onInput={() => this.onPendChange()} />
+          <input type='checkbox' className='pendulum-input card-input' checked={this.state.card.pendulum} onChange={() => this.onPendChange()} />
           <p className='editor-label pendulum-label'>Pendule</p>
         </HorizontalStack>
       </HorizontalStack>
@@ -805,12 +790,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
       <HorizontalStack className='card-editor-sub-section copyright-section'>
         <HorizontalStack className='card-copyright card-input-container'>
-          <input type='checkbox' className='copyright-input card-input' defaultChecked={this.state.card.hasCopyright} onInput={() => this.onCopyrightChange()} />
+          <input type='checkbox' className='copyright-input card-input' checked={this.state.card.hasCopyright} onChange={() => this.onCopyrightChange()} />
           <p className='editor-label copyright-label'>Copyright</p>
         </HorizontalStack>
 
         <HorizontalStack className='card-copyright-old card-input-container'>
-          <input type='checkbox' className='copyright-old-input card-input' defaultChecked={this.state.card.oldCopyright} onInput={() => this.onOldCopyrightChange()} />
+          <input type='checkbox' className='copyright-old-input card-input' checked={this.state.card.oldCopyright} onChange={() => this.onOldCopyrightChange()} />
           <p className='editor-label copyright-old-label'>1996</p>
         </HorizontalStack>
       </HorizontalStack>

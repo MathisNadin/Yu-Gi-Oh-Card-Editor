@@ -21,8 +21,8 @@ export interface IPopupProps extends IContainerProps {
   id: string;
   title: string;
   content: ReactElement;
-  innerHeight?: string| number;
-  innerWidth?: string| number;
+  innerHeight?: string;
+  innerWidth?: string;
 }
 
 interface IPopupState extends IContainerState {}

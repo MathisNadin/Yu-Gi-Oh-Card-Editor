@@ -165,7 +165,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
         }
 
         <HorizontalStack className='ratio-checkbox'>
-          <input type='checkbox' className='ratio-input' defaultChecked={this.state.keepRatio} onInput={() => this.switchKeepRatio()} />
+          <input type='checkbox' className='ratio-input' checked={this.state.keepRatio} onChange={() => this.switchKeepRatio()} />
           <p className='editor-label pendulum-label'>Conserver le ratio</p>
         </HorizontalStack>
 

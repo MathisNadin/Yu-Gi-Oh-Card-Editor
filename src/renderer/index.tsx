@@ -11,6 +11,7 @@ import { CardService } from './card/CardService';
 import { ApiService } from 'mn-toolkit/api/ApiService';
 import { MediaWikiService } from 'mn-toolkit/media-wiki/MediaWikiService';
 import { PopupService } from 'mn-toolkit/popup/PopupService';
+import { ICardImportDialogResult, CardImportDialog } from './card-import-dialog/CardImportDialog';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
@@ -41,6 +42,24 @@ window.electron.ipcRenderer.on('render-current-card', async () => {
 
 window.electron.ipcRenderer.on('save-current-or-temp-to-local', async () => {
   await app.$card.saveCurrentOrTempToLocal();
+});
+
+window.electron.ipcRenderer.on('import-cards', async () => {
+  await app.$popup.show<ICardImportDialogResult>({
+    id: 'import-popup',
+    title: "Importez une carte",
+    innerHeight: 'auto',
+    innerWidth: '70%',
+    content: <CardImportDialog />
+  });
+});
+
+window.electron.ipcRenderer.on('import-data', async () => {
+  await app.$card.importData();
+});
+
+window.electron.ipcRenderer.on('export-data', async () => {
+  await app.$card.exportData();
 });
 
 window.electron.ipcRenderer.on('delete-local-db', async () => {
