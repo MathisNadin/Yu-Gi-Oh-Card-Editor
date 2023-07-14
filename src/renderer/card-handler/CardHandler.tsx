@@ -31,8 +31,6 @@ import { CardPreview } from 'renderer/card-preview/CardPreview';
 import { ICardListener } from '../card/CardService';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
-import { classNames } from 'mn-toolkit/tools';
-import { CSSProperties } from 'react';
 
 interface ICardHandlerProps extends IContainableProps {
 }
@@ -43,15 +41,6 @@ interface ICardHandlerState extends IContainableState {
 }
 
 export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> implements Partial<ICardListener> {
-  private border = require('../resources/pictures/squareBorders.png');
-  private frames = [
-    require(`../resources/pictures/card-frames/effect.png`),
-    // require(`../resources/pictures/card-frames/ritual.png`),
-    require(`../resources/pictures/card-frames/fusion.png`),
-    require(`../resources/pictures/card-frames/synchro.png`),
-    require(`../resources/pictures/card-frames/xyz.png`),
-    // require(`../resources/pictures/card-frames/link.png`),
-  ];
 
   public constructor(props: ICardHandlerProps) {
     super(props);
@@ -89,34 +78,6 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
     } else {
       await app.$card.saveCurrentCard(card);
     }
-  }
-
-  private generateArrayOdd(num: number): number[] {
-    if (num <= 0 || num % 2 === 0) {
-      throw new Error("Le nombre doit être un nombre impair positif.");
-    }
-
-    const array: number[] = [];
-    let sum = 0;
-    let middleIndex: number;
-
-    middleIndex = Math.floor(num / 2);
-    for (let i = 0; i < num; i++) {
-      let value: number;
-      if (i === middleIndex) {
-        value = 1;
-      } else {
-        const distanceFromMiddle = Math.abs(i - middleIndex);
-        value = 1 / (1.4 ** distanceFromMiddle);
-      }
-
-      array.push(value);
-      sum += value;
-    }
-
-    const scaleFactor = 100 / sum;
-    const scaledArray = array.map(value => value * scaleFactor);
-    return scaledArray;
   }
 
   public render() {

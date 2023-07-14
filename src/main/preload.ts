@@ -7,7 +7,7 @@ export type Channels =
   'ipc-example' | 'check-file-exists' | 'create-img-from-path' |
   'render-current-card' | 'save-current-or-temp-to-local' |
   'delete-local-db' | 'import-cards' | 'import-data' | 'export-data' |
-  'read-file-utf-8';
+  'read-file-utf-8' | 'get-app-version';
 
 const electronHandler = {
   ipcRenderer: {
@@ -31,6 +31,10 @@ const electronHandler = {
 
     invoke(channel: Channels, ...args: unknown[]): Promise<unknown> {
       return ipcRenderer.invoke(channel, ...args);
+    },
+
+    getAppVersion(): Promise<string> {
+      return ipcRenderer.invoke('get-app-version');
     },
 
     readFileUtf8(filters?: FileFilter[]): Promise<Buffer> {

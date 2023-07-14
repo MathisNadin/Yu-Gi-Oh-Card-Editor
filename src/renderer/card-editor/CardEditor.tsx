@@ -24,17 +24,16 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
+import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
-import { integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
+import { debounce, integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
-import { ICardImportDialogResult, CardImportDialog } from 'renderer/card-import-dialog/CardImportDialog';
 import lockOpen from '../resources/pictures/lock-open.svg';
 import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
@@ -66,6 +65,7 @@ interface ICardEditorState extends IContainableState {
     file: string;
   }[];
   selectedAbility: number;
+  appVersion: string;
 }
 
 export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> {
@@ -73,7 +73,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   public constructor(props: ICardEditorProps) {
     super(props);
-    this.debouncedOnCardChange = (card: ICard) => setTimeout(() => this.props.onCardChange(card), 500);
+    this.debouncedOnCardChange = debounce((card: ICard) => this.props.onCardChange(card), 100);
 
     this.state = {
       loaded: true,
@@ -120,7 +120,17 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'link', file: require(`../resources/pictures/icons/stIconLink.png`) },
       ],
       selectedAbility: -1,
-    }
+      appVersion: '',
+    };
+
+    app.$errorManager.handlePromise(this.setAppVersion());
+  }
+
+  private async setAppVersion() {
+    const appVersion = await window.electron.ipcRenderer.getAppVersion();
+    console.log(appVersion, await window.electron.ipcRenderer.getAppVersion());
+    this.setState({ appVersion: `v. ${appVersion}` });
+    setTimeout(() => console.log(this.state), 500);
   }
 
   public componentWillReceiveProps(nextProps: ICardEditorProps, _prevState: ICardEditorState) {
@@ -421,6 +431,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       {app.$card.hasPendulumFrame(this.state.card) && this.renderPendulumCardDetails()}
       {app.$card.hasLinkArrows(this.state.card) && this.renderLinkArrows()}
       {this.renderMiscDetails()}
+      <p className='app-version'>{this.state.appVersion}</p>
     </VerticalStack>, 'card-editor');
   }
 

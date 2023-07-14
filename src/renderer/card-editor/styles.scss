@@ -5,6 +5,13 @@
   align-items: flex-start;
   font-size: 17px;
 
+  .app-version {
+    color: black;
+    font-size: 11px;
+    align-self: end;
+    margin-right: 8px;
+  }
+
   .editor-label {
     color: black;
     margin: 5px 0;
@@ -32,7 +39,7 @@
     padding-bottom: 4px;
 
     &.misc-section {
-      margin-bottom: 40px;
+      // margin-bottom: 40px;
     }
 
     .section-header {

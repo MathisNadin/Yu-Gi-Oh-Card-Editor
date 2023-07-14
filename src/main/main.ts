@@ -36,6 +36,10 @@ ipcMain.on('ipc-example', async (event, _arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
+ipcMain.handle('get-app-version', async (_event) => {
+  return app.getVersion();
+});
+
 ipcMain.handle('read-file-utf-8', async (_event, filters: FileFilter[]) => {
   const directoryPath = await dialog.showOpenDialog({
     properties: ['openFile'],

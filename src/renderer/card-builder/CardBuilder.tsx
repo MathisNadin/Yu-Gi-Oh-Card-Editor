@@ -34,7 +34,7 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { classNames, getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
+import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
 
@@ -97,21 +97,23 @@ interface ICardBuilderState extends IContainableState {
 
 export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderState> {
   private ref: HTMLDivElement | undefined;
+  private debouncedRefreshState: (card: ICard) => void;
 
   public constructor(props: ICardBuilderProps) {
     super(props);
     this.state = {} as ICardBuilderState;
+    this.debouncedRefreshState = debounce((card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)), 500);
     if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
   public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
     this.setState({ adjustState: 'waiting' });
-    app.$errorManager.handlePromise(this.refreshState(nextProps.card));
+    app.$errorManager.handlePromise(this.debouncedRefreshState(nextProps.card));
   }
 
   public componentDidMount() {
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
-    app.$errorManager.handlePromise(this.refreshState(this.props.card));
+    app.$errorManager.handlePromise(this.debouncedRefreshState(this.props.card));
   }
 
   public componentDidUpdate() {

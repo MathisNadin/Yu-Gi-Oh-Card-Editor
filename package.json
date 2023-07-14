@@ -1,7 +1,7 @@
 {
   "name": "yu-gi-oh-card-editor",
   "displayName": "Yu-Gi-Oh! Card Editor",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Un éditeur de cartes Yu-Gi-Oh",
   "keywords": [
     "electron",
@@ -237,12 +237,9 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "MathisNadin",
+      "repo": "Yu-Gi-Oh-Card-Editor"
     }
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
   "devEngines": {
     "node": ">=14.x",

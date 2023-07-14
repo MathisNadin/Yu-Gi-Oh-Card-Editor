@@ -4,6 +4,11 @@
   margin-left: 10px;
   align-items: flex-start;
   font-size: 17px; }
+  .card-editor .app-version {
+    color: black;
+    font-size: 11px;
+    align-self: end;
+    margin-right: 8px; }
   .card-editor .editor-label {
     color: black;
     margin: 5px 0;
@@ -21,8 +26,6 @@
     border: 1px solid #0052a3;
     border-radius: 0 0 8px 8px;
     padding-bottom: 4px; }
-    .card-editor .card-editor-section.misc-section {
-      margin-bottom: 40px; }
     .card-editor .card-editor-section .section-header {
       width: 100%;
       background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
