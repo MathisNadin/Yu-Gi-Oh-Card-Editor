@@ -128,9 +128,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private async setAppVersion() {
     const appVersion = await window.electron.ipcRenderer.getAppVersion();
-    console.log(appVersion, await window.electron.ipcRenderer.getAppVersion());
     this.setState({ appVersion: `v. ${appVersion}` });
-    setTimeout(() => console.log(this.state), 500);
   }
 
   public componentWillReceiveProps(nextProps: ICardEditorProps, _prevState: ICardEditorState) {
