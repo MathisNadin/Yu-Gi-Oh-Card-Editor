@@ -211,6 +211,8 @@
           border-radius: 17px;
           margin: -3px;
           padding: 1px; }
+      .card-editor .card-editor-section .card-editor-sub-section.card-attributes .card-no-text-attribute {
+        margin-top: 7px; }
       .card-editor .card-editor-section .card-editor-sub-section.card-st-icons .card-st-icons-icons .card-st-icon-container {
         height: 30px; }
         .card-editor .card-editor-section .card-editor-sub-section.card-st-icons .card-st-icons-icons .card-st-icon-container .card-st-icon {

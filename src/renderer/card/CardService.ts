@@ -104,15 +104,81 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.dispatch('menuSaveTempToLocal');
   }
 
+  public correct(card: ICard) {
+    card.language = card.language || 'fr';
+    card.name = card.name || '';
+    card.nameStyle = card.nameStyle || 'default';
+    card.tcgAt = card.tcgAt || false;
+    card.artwork = card.artwork || {
+      url: '',
+      x: 0,
+      y: 0,
+      height: 100,
+      width: 100,
+      pendulum: false,
+      keepRatio: false,
+    };
+    card.frames = card.frames || ['effect'];
+    card.multipleFrames = card.multipleFrames || false;
+    card.stType = card.stType || 'normal';
+    card.attribute = card.attribute || 'spell';
+    card.abilities = card.abilities || [];
+    card.noTextAttribute = card.noTextAttribute || false;
+    card.level = card.level || 0;
+    card.atk = card.atk || '';
+    card.def = card.def || '';
+    card.description = card.description || '';
+    card.pendulum = card.pendulum || false;
+    card.pendEffect = card.pendEffect || '';
+    card.scales = card.scales || {
+      left: 0,
+      right: 0
+    };
+    card.linkArrows = card.linkArrows || {
+      top: false,
+      bottom: false,
+      left: false,
+      right: false,
+      topLeft: false,
+      topRight: false,
+      bottomLeft: false,
+      bottomRight: false
+    };
+    card.edition = card.edition || 'firstEdition';
+    card.cardSet = card.cardSet || '';
+    card.passcode = card.passcode || '';
+    card.sticker = card.sticker || 'silver';
+    card.hasCopyright = card.hasCopyright || true;
+    card.oldCopyright = card.oldCopyright || false;
+    card.speed = card.speed || false;
+    card.rush = card.rush || false;
+    card.legend = card.legend || false;
+    card.atkMax = card.atkMax || 0;
+  }
+
   private async load(initial: boolean) {
     this._localCards = await app.$indexedDB.get<ICard[], CardStorageKey>('local-cards');
-    if (!this._localCards) this._localCards = [];
+    if (this._localCards?.length) {
+      for (let localCard of this._localCards) {
+        this.correct(localCard);
+      }
+      await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
+    } else {
+      this._localCards = [];
+    }
 
     this._tempCurrentCard = await app.$indexedDB.get<ICard, CardStorageKey>('temp-current-card');
+    if (this._tempCurrentCard) {
+      this.correct(this._tempCurrentCard);
+      await app.$indexedDB.save<CardStorageKey, ICard>('temp-current-card', this._tempCurrentCard);
+    }
 
     this._currentCard = await app.$indexedDB.get<ICard, CardStorageKey>('current-card');
-    if (!this._currentCard) {
+    if (this._currentCard) {
+      this.correct(this._currentCard);
+    } else {
       this._currentCard = {
+        language: 'fr',
         name: '',
         nameStyle: 'default',
         tcgAt: true,
@@ -129,6 +195,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         multipleFrames: false,
         stType: 'normal',
         attribute: 'dark',
+        noTextAttribute: false,
         abilities: [],
         level: 0,
         atk: '',
@@ -161,15 +228,17 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         legend: false,
         atkMax: 0
       };
-      await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
     }
+    await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
 
     if (initial) {
-      this.fireCurrentCardLoaded();
       this.fireLocalCardsLoaded();
+      this.fireCurrentCardLoaded();
+      this.fireTempCurrentCardLoaded();
     } else {
-      this.fireCurrentCardUpdated();
       this.fireLocalCardsUpdated();
+      this.fireCurrentCardUpdated();
+      this.fireTempCurrentCardUpdated();
     }
   }
 
@@ -182,18 +251,29 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
     if (data['local-cards']) {
       this._localCards = deepClone(data['local-cards']);
+      if (this._localCards?.length) {
+        for (let localCard of this._localCards) {
+          this.correct(localCard);
+        }
+      }
       await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
       this.fireLocalCardsUpdated();
     }
 
     if (data['current-card']) {
       this._currentCard = deepClone(data['current-card']);
+      if (this._currentCard) {
+        this.correct(this._currentCard);
+      }
       await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
       this.fireCurrentCardUpdated();
     }
 
     if (data['temp-current-card']) {
       this._tempCurrentCard = deepClone(data['temp-current-card']);
+      if (this._tempCurrentCard) {
+        this.correct(this._tempCurrentCard);
+      }
       await app.$indexedDB.save<CardStorageKey, ICard>('temp-current-card', this._tempCurrentCard);
       this.fireTempCurrentCardUpdated();
     }
@@ -205,7 +285,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       "temp-current-card": this._tempCurrentCard as ICard,
       "local-cards": this._localCards
     };
-    await window.electron.ipcRenderer.writeJsonFile('card_editor_data.json', JSON.stringify(data));
+    await window.electron.ipcRenderer.writeJsonFile('card_editor_data', JSON.stringify(data));
   }
 
   public async renderCurrentCard() {
@@ -393,6 +473,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public getDefaultImportCard(): ICard {
     return {
+      language: 'en',
       name: '',
       nameStyle: 'default',
       tcgAt: false,
@@ -409,6 +490,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       multipleFrames: false,
       stType: 'normal',
       attribute: 'spell',
+      noTextAttribute: false,
       abilities: [],
       level: 0,
       atk: '',

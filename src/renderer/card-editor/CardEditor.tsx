@@ -28,7 +28,7 @@ import './styles.css';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
+import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
 import { debounce, integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
@@ -100,24 +100,24 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'skill', file: require(`../resources/pictures/card-frames/skill.png`) },
       ],
       cardAttributes: [
-        { id: 'light', file: require(`../resources/pictures/icons/attributeLight.png`) },
-        { id: 'dark', file: require(`../resources/pictures/icons/attributeDark.png`) },
-        { id: 'water', file: require(`../resources/pictures/icons/attributeWater.png`) },
-        { id: 'fire', file: require(`../resources/pictures/icons/attributeFire.png`) },
-        { id: 'earth', file: require(`../resources/pictures/icons/attributeEarth.png`) },
-        { id: 'wind', file: require(`../resources/pictures/icons/attributeWind.png`) },
-        { id: 'divine', file: require(`../resources/pictures/icons/attributeDivine.png`) },
-        { id: 'spell', file: require(`../resources/pictures/icons/attributeSpell.png`) },
-        { id: 'trap', file: require(`../resources/pictures/icons/attributeTrap.png`) },
+        { id: 'light', file: require(`../resources/pictures/icons/vanilla/attributeLight.png`) },
+        { id: 'dark', file: require(`../resources/pictures/icons/vanilla/attributeDark.png`) },
+        { id: 'water', file: require(`../resources/pictures/icons/vanilla/attributeWater.png`) },
+        { id: 'fire', file: require(`../resources/pictures/icons/vanilla/attributeFire.png`) },
+        { id: 'earth', file: require(`../resources/pictures/icons/vanilla/attributeEarth.png`) },
+        { id: 'wind', file: require(`../resources/pictures/icons/vanilla/attributeWind.png`) },
+        { id: 'divine', file: require(`../resources/pictures/icons/vanilla/attributeDivine.png`) },
+        { id: 'spell', file: require(`../resources/pictures/icons/vanilla/attributeSpell.png`) },
+        { id: 'trap', file: require(`../resources/pictures/icons/vanilla/attributeTrap.png`) },
       ],
       cardStTypes: [
-        { id: 'normal', file: require(`../resources/pictures/icons/stIconNormal.png`) },
-        { id: 'ritual', file: require(`../resources/pictures/icons/stIconRitual.png`) },
-        { id: 'quickplay', file: require(`../resources/pictures/icons/stIconQuickplay.png`) },
-        { id: 'continuous', file: require(`../resources/pictures/icons/stIconContinuous.png`) },
-        { id: 'equip', file: require(`../resources/pictures/icons/stIconEquip.png`) },
-        { id: 'counter', file: require(`../resources/pictures/icons/stIconCounter.png`) },
-        { id: 'link', file: require(`../resources/pictures/icons/stIconLink.png`) },
+        { id: 'normal', file: require(`../resources/pictures/icons/st/normal.png`) },
+        { id: 'ritual', file: require(`../resources/pictures/icons/st/ritual.png`) },
+        { id: 'quickplay', file: require(`../resources/pictures/icons/st/quickplay.png`) },
+        { id: 'continuous', file: require(`../resources/pictures/icons/st/continuous.png`) },
+        { id: 'equip', file: require(`../resources/pictures/icons/st/equip.png`) },
+        { id: 'counter', file: require(`../resources/pictures/icons/st/counter.png`) },
+        { id: 'link', file: require(`../resources/pictures/icons/st/link.png`) },
       ],
       selectedAbility: -1,
       appVersion: '',
@@ -135,6 +135,20 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.setState({ card: nextProps.card });
   }
 
+  private onLanguageChange(language: TCardLanguage) {
+    let card = this.state.card;
+    card.language = language;
+    this.setState({ card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onNoTextAttributeChange() {
+    let card = this.state.card;
+    card.noTextAttribute = !card.noTextAttribute;
+    this.setState({ card });
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private onMultipleFramesChange() {
     let card = this.state.card;
     card.multipleFrames = !card.multipleFrames;
@@ -142,7 +156,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       card.frames = [card.frames[0]];
     }
     this.setState({ card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   public onFrameChange(frame: TFrame) {
@@ -150,7 +164,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       if (this.state.card.frames.length > 1) {
         this.state.card.frames = this.state.card.frames.filter(f => f !== frame);
         this.setState({ card: this.state.card });
-        this.props.onCardChange(this.state.card);
+        this.debouncedOnCardChange(this.state.card);
       }
     }
     else {
@@ -174,26 +188,26 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       }
 
       this.setState({ card: this.state.card });
-      this.props.onCardChange(this.state.card);
+      this.debouncedOnCardChange(this.state.card);
     }
   }
 
   public onAttributeChange(attribute: TAttribute) {
     this.state.card.attribute = attribute;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onNameStyleChange(nameStyle: TNameStyle) {
     this.state.card.nameStyle = nameStyle;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   public onStTypeChange(stType: TStIcon) {
     this.state.card.stType = stType;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   public onLevelChange(level: string, max: number) {
@@ -253,7 +267,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     if (lockPend && this.state.card.scales.left !== this.state.card.scales.right) {
       this.state.card.scales.right = this.state.card.scales.left;
       this.setState({ card: this.state.card });
-      this.props.onCardChange(this.state.card);
+      this.debouncedOnCardChange(this.state.card);
     }
   }
 
@@ -335,7 +349,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   private onLinkArrowChange(arrow: TLinkArrows) {
     this.state.card.linkArrows[arrow] = !this.state.card.linkArrows[arrow];
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onAddAbility() {
@@ -345,14 +359,14 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       this.state.card.abilities.splice(this.state.selectedAbility + 1, 0, '');
     }
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onRemoveAbility() {
     if (this.state.selectedAbility === -1) return;
     this.state.card.abilities.splice(this.state.selectedAbility, 1);
     this.setState({ card: this.state.card, selectedAbility: -1 });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onMoveAbilityUp() {
@@ -362,7 +376,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.state.card.abilities.splice(this.state.selectedAbility, 1);
     this.state.card.abilities.splice(newIndex, 0, element);
     this.setState({ card: this.state.card, selectedAbility: newIndex });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onMoveAbilityDown() {
@@ -372,31 +386,31 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.state.card.abilities.splice(this.state.selectedAbility, 1);
     this.state.card.abilities.splice(newIndex, 0, element);
     this.setState({ card: this.state.card, selectedAbility: newIndex });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onEditionChange(edition: TEdition) {
     this.state.card.edition = edition;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onStickerChange(sticker: TSticker) {
     this.state.card.sticker = sticker;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onCopyrightChange() {
     this.state.card.hasCopyright = !this.state.card.hasCopyright;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private onOldCopyrightChange() {
     this.state.card.oldCopyright = !this.state.card.oldCopyright;
     this.setState({ card: this.state.card });
-    this.props.onCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card);
   }
 
   private async showArtworkPopup() {
@@ -438,6 +452,22 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <VerticalStack className='section-header'>
         <p className='section-header-title'>Bases de la Carte</p>
       </VerticalStack>
+
+      <HorizontalStack className='card-editor-sub-section card-language card-input-container'>
+        <p className='editor-label card-language-label'>Langue</p>
+        <Dropdown<TCardLanguage>
+          className='card-language-dropdown'
+          options={[
+            'fr',
+            'en'
+          ]}
+          optionsLabel={[
+            'Français',
+            'Anglais'
+          ]}
+          defaultOption={this.state.card.language}
+          onSelect={value => this.onLanguageChange(value)} />
+      </HorizontalStack>
 
       <HorizontalStack className='card-editor-sub-section card-name card-input-container'>
         <p className='editor-label name-label'>Nom</p>
@@ -501,6 +531,11 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
                 onClick={() => this.onAttributeChange(attribute.id)} />
             </HorizontalStack>
           )}
+        </HorizontalStack>
+
+        <HorizontalStack className='card-no-text-attribute card-input-container'>
+          <input type='checkbox' className='no-text-attribute-input card-input' checked={this.state.card.noTextAttribute} onChange={() => this.onNoTextAttributeChange()} />
+          <p className='editor-label no-text-attribute-label'>Icone sans texte</p>
         </HorizontalStack>
       </VerticalStack>
 
@@ -746,10 +781,10 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           optionsLabel={[
             'Aucune',
             '1ère Édition',
-            'Limitée',
+            'Édition Limitée',
             'Interdite',
             'Duel Terminal',
-            'Anime'
+            'Édition Anime'
           ]}
           defaultOption={this.state.card.edition}
           onSelect={value => this.onEditionChange(value)} />

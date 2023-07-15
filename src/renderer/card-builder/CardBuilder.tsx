@@ -212,22 +212,22 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       pendFontSize: 30,
       pendLineHeight: 1.2,
 
-      attribute: require(`../resources/pictures/attributes/${card.attribute}.png`),
+      attribute: require(`../resources/pictures/attributes/${card.noTextAttribute ? 'vanilla' : card.language}/${card.attribute}.png`),
       level: require(`../resources/pictures/levels/${card.level}.png`),
       negativeLevel: require(`../resources/pictures/negative-levels/${card.level}.png`),
       rank: require(`../resources/pictures/ranks/${card.level}.png`),
       linkRating: require(`../resources/pictures/link-ratings/${card.level}.png`),
-      spellPlus: require(`../resources/pictures/st/spell+.png`),
-      trapPlus: require(`../resources/pictures/st/trap+.png`),
-      stIcon: require(`../resources/pictures/st/${card.stType}${card.stType === 'normal' ? card.frames.includes('spell') ? '-spell' : '-trap' : '' }.png`),
+      spellPlus: require(`../resources/pictures/st/${card.language}/spell+.png`),
+      trapPlus: require(`../resources/pictures/st/${card.language}/trap+.png`),
+      stIcon: require(`../resources/pictures/st/${card.language}/${card.stType}${card.stType === 'normal' ? card.frames.includes('spell') ? '-spell' : '-trap' : '' }.png`),
       leftScale: require(`../resources/pictures/pendulum-scales/${card.frames.includes('link') ? 'L_' : ''}G_${card.scales.left}.png`),
       rightScale: require(`../resources/pictures/pendulum-scales/${card.frames.includes('link') ? 'L_' : ''}D_${card.scales.right}.png`),
 
       atkDefLine: require(`../resources/pictures/atkDefLine.png`),
       atkLinkLine: require(`../resources/pictures/atkLinkLine.png`),
       sticker: require(`../resources/pictures/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
-      copyright: require(`../resources/pictures/limitations/${copyrightPath}/copyright.png`),
-      edition: require(`../resources/pictures/limitations/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
+      copyright: require(`../resources/pictures/limitations/${card.language}/${copyrightPath}/copyright.png`),
+      edition: require(`../resources/pictures/limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
     };
 
     this.setState(state);

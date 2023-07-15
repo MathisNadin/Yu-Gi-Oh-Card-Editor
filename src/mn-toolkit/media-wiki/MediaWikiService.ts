@@ -64,7 +64,7 @@ export class MediaWikiService {
     let wikitext = pageInfo.revisions[0]["*"];
     if (!wikitext) return card;
 
-    return this.wikitextToCard(card, pageInfo.title, wikitext, useFr, replaceMatrixes);
+    return this.wikitextToCard(card, pageInfo.title.replace(' (card)', ''), wikitext, useFr, replaceMatrixes);
   }
 
   public async wikitextToCard(card: ICard, title: string, wikitext: string, useFr: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
@@ -82,13 +82,13 @@ export class MediaWikiService {
     let wikitextArray = wikitext.split('\n');
     wikitextArray.forEach((t, i) => {
       if (t.includes('| name')) {
-        name = t.slice(t.indexOf('= ')+1, t.length).trim();
+        name = t.slice(t.indexOf('= ')+1, t.length).trim().replace(' (card)', '');
       }
       else if (t.includes('| fr_name')) {
-        frName = t.slice(t.indexOf('= ')+1, t.length).trim();
+        frName = t.slice(t.indexOf('= ')+1, t.length).trim().replace(' (card)', '');
       }
       else if (t.includes('| en_name')) {
-        enName = t.slice(t.indexOf('= ')+1, t.length).trim();
+        enName = t.slice(t.indexOf('= ')+1, t.length).trim().replace(' (card)', '');
       }
       else if (t.includes('| attribute')) {
         let attribute = t.slice(t.indexOf('= ')+1, t.length).trim();
@@ -105,8 +105,15 @@ export class MediaWikiService {
       else if (t.includes('| card_type')) {
         let cardType = t.slice(t.indexOf('= ')+1, t.length).trim();
         switch (cardType) {
-          case 'Trap': card.frames.push('trap'); break;
-          default: card.frames.push('spell'); break;
+          case 'Trap':
+            card.frames.push('trap');
+            card.attribute = 'trap';
+          break;
+
+          default:
+            card.frames.push('spell');
+            card.attribute = 'spell';
+          break;
         }
       }
       else if (t.includes('| types')) {
@@ -218,6 +225,7 @@ export class MediaWikiService {
 
     enName = (name || enName || title) as string;
     if (useFr) {
+      card.language = 'fr';
       card.name = frName as string;
       card.description = frLore as string;
       card.pendEffect = frPendEffect as string;

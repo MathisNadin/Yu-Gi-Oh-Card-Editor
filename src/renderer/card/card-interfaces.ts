@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 
+export type TCardLanguage = 'fr' | 'en';
+
 export type TFrame =
   'normal' | 'effect' | 'ritual' | 'fusion' |
   'synchro' | 'darkSynchro' | 'xyz' | 'link' |
@@ -25,6 +27,7 @@ export interface ICard {
   uuid?: string;
   created?: Date,
   modified?: Date,
+  language: TCardLanguage;
   name: string;
   nameStyle: TNameStyle;
   tcgAt: boolean;
@@ -41,6 +44,7 @@ export interface ICard {
   multipleFrames: boolean;
   stType: TStIcon;
   attribute: TAttribute;
+  noTextAttribute: boolean;
   abilities: string[];
   level: number;
   atk: string;
