@@ -18,7 +18,7 @@ import { toPng } from "html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
 import { deepClone, uuid } from "mn-toolkit/tools";
-import { ICard, CardStorageKey, TFrame } from "./card-interfaces";
+import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon } from "./card-interfaces";
 
 interface IExportData {
   'current-card': ICard,
@@ -177,57 +177,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     if (this._currentCard) {
       this.correct(this._currentCard);
     } else {
-      this._currentCard = {
-        language: 'fr',
-        name: '',
-        nameStyle: 'default',
-        tcgAt: true,
-        artwork: {
-          url: '',
-          x: 0,
-          y: 0,
-          height: 0,
-          width: 0,
-          pendulum: false,
-          keepRatio: false
-        },
-        frames: ['effect'],
-        multipleFrames: false,
-        stType: 'normal',
-        attribute: 'dark',
-        noTextAttribute: false,
-        abilities: [],
-        level: 0,
-        atk: '',
-        def: '',
-        description: '',
-        pendulum: false,
-        pendEffect: '',
-        scales: {
-          left: 0,
-          right: 0
-        },
-        linkArrows: {
-          top: false,
-          bottom: false,
-          left: false,
-          right: false,
-          topLeft: false,
-          topRight: false,
-          bottomLeft: false,
-          bottomRight: false
-        },
-        edition: 'unlimited',
-        cardSet: '',
-        passcode: '',
-        sticker: 'none',
-        hasCopyright: false,
-        oldCopyright: false,
-        speed: false,
-        rush: false,
-        legend: false,
-        atkMax: 0
-      };
+      this._currentCard = this.getDefaultCurrentCard();
     }
     await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
 
@@ -335,6 +285,12 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
+  public async resetCurrentCard() {
+    this._currentCard = this.getDefaultCurrentCard();
+    await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
+    this.fireCurrentCardUpdated();
+  }
+
   public async saveCurrentCard(card: ICard) {
     this._currentCard = card;
     await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
@@ -420,6 +376,35 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
+  public getStIconName(icon: TStIcon) {
+    switch (icon) {
+      case 'normal': return 'Normal';
+      case 'continuous': return 'Continu';
+      case 'counter': return 'Contre';
+      case 'equip': return 'Équipement';
+      case 'field': return 'Terrain';
+      case 'link': return 'Lien';
+      case 'quickplay': return 'Jeu-Rapide';
+      case 'ritual': return 'Rituel';
+      default: return 'Inconnu';
+    }
+  }
+
+  public getAttributeName(attribute: TAttribute) {
+    switch (attribute) {
+      case 'dark': return 'TÉNÈBRES';
+      case 'light': return 'LUMIÈRE';
+      case 'water': return 'EAU';
+      case 'earth': return 'TERRE';
+      case 'wind': return 'VENT';
+      case 'fire': return 'FEU';
+      case 'divine': return 'DIVIN';
+      case 'spell': return 'MAGIE';
+      case 'trap': return 'PIÈGE';
+      default: return 'INCONNU';
+    }
+  }
+
   public getFrameName(frame: TFrame) {
     switch (frame) {
       case 'normal': return 'Normal';
@@ -469,6 +454,60 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       && !card.frames.includes('spell')
       && !card.frames.includes('trap')
       && !card.frames.includes('legendaryDragon');
+  }
+
+  private getDefaultCurrentCard(): ICard {
+    return {
+      language: 'fr',
+      name: '',
+      nameStyle: 'default',
+      tcgAt: true,
+      artwork: {
+        url: '',
+        x: 0,
+        y: 0,
+        height: 0,
+        width: 0,
+        pendulum: false,
+        keepRatio: false
+      },
+      frames: ['effect'],
+      multipleFrames: false,
+      stType: 'normal',
+      attribute: 'dark',
+      noTextAttribute: false,
+      abilities: [],
+      level: 0,
+      atk: '',
+      def: '',
+      description: '',
+      pendulum: false,
+      pendEffect: '',
+      scales: {
+        left: 0,
+        right: 0
+      },
+      linkArrows: {
+        top: false,
+        bottom: false,
+        left: false,
+        right: false,
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false
+      },
+      edition: 'unlimited',
+      cardSet: '',
+      passcode: '',
+      sticker: 'none',
+      hasCopyright: false,
+      oldCopyright: false,
+      speed: false,
+      rush: false,
+      legend: false,
+      atkMax: 0
+    };
   }
 
   public getDefaultImportCard(): ICard {

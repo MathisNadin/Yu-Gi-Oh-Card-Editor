@@ -449,9 +449,10 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private renderBasicCardDetails() {
     return this.renderAttributes(<VerticalStack>
-      <VerticalStack className='section-header'>
+      <HorizontalStack className='section-header'>
         <p className='section-header-title'>Bases de la Carte</p>
-      </VerticalStack>
+        {!app.$card.tempCurrentCard && <p className='reset-current-card-btn' onClick={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}>Réinitialiser</p>}
+      </HorizontalStack>
 
       <HorizontalStack className='card-editor-sub-section card-language card-input-container'>
         <p className='editor-label card-language-label'>Langue</p>
@@ -515,11 +516,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         <p className='editor-label pendulum-ratio-label'>Format d'artwork pendule</p>
       </HorizontalStack>}
 
-      <VerticalStack className='card-editor-sub-section card-description card-textarea'>
-        <p className='editor-label description-label label-with-separator'>Description</p>
-        <textarea className='description-input textarea-input' value={this.state.card.description} onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)} />
-      </VerticalStack>
-
       <VerticalStack className='card-editor-sub-section card-attributes'>
         <p className='editor-label attributes-label label-with-separator'>Icones</p>
         <HorizontalStack className='card-items card-attributes-icons'>
@@ -527,6 +523,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             <HorizontalStack className='item-container card-attribute-container'>
               <img src={attribute.file}
                 alt={`attribute-${attribute.id}`}
+                title={app.$card.getAttributeName(attribute.id)}
                 className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`}
                 onClick={() => this.onAttributeChange(attribute.id)} />
             </HorizontalStack>
@@ -546,6 +543,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             <HorizontalStack className='item-container card-st-icon-container'>
               <img src={stType.file}
                 alt={`st-icon-${stType.id}`}
+                title={app.$card.getStIconName(stType.id)}
                 className={`card-st-icon${this.state.card.stType === stType.id ? ' selected' : ''}`}
                 onClick={() => this.onStTypeChange(stType.id)} />
             </HorizontalStack>
@@ -561,6 +559,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             <HorizontalStack className='item-container card-frame-container'>
               <img src={frame.file}
                 alt={`frame-${frame.id}`}
+                title={app.$card.getFrameName(frame.id)}
                 className={`card-frame${this.state.card.frames.includes(frame.id) ? ' selected' : ''}`}
                 onClick={() => this.onFrameChange(frame.id)} />
             </HorizontalStack>
@@ -571,6 +570,11 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           <input type='checkbox' className='multiple-frames-input card-input' checked={this.state.card.multipleFrames} onChange={() => this.onMultipleFramesChange()} />
           <p className='editor-label multiple-frames-label'>Cumuler les types de cartes</p>
         </HorizontalStack>
+      </VerticalStack>
+
+      <VerticalStack className='card-editor-sub-section card-description card-textarea'>
+        <p className='editor-label description-label label-with-separator'>Description</p>
+        <textarea spellCheck={false} className='description-input textarea-input' value={this.state.card.description} onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)} />
       </VerticalStack>
     </VerticalStack>, 'card-editor-section basic-section');
   }
@@ -707,7 +711,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
       <VerticalStack className='card-editor-sub-section card-pendulum-effect card-textarea'>
         <p className='editor-label pendulum-effect-label label-with-separator'>Effet Pendule</p>
-        <textarea className='pendulum-effect-input textarea-input' value={this.state.card.pendEffect} onInput={e => this.onPendEffChange((e.target as EventTargetWithValue).value)} />
+        <textarea spellCheck={false} className='pendulum-effect-input textarea-input' value={this.state.card.pendEffect} onInput={e => this.onPendEffChange((e.target as EventTargetWithValue).value)} />
       </VerticalStack>
     </VerticalStack>, 'card-editor-section pendulum-section');
   }

@@ -57,6 +57,18 @@
         margin: 8px;
         color: white;
         font-size: 15px;
+        flex: 1;
+      }
+
+      .reset-current-card-btn {
+        color: white;
+        font-size: 15px;
+        margin: 4px 8px 0 0;
+        cursor: pointer;
+        height: 17px;
+        background-color: rgba(red, 0.3);
+        padding: 4px 8px;
+        border-radius: 4px;
       }
     }
 
@@ -142,6 +154,12 @@
 
         select {
           height: 25px;
+        }
+      }
+
+      &.card-description.card-textarea {
+        .description-input.textarea-input {
+          height: 150px;
         }
       }
 
@@ -353,11 +371,14 @@
             height: 30px;
 
             .card-attribute {
+              opacity: 50%;
+
               &.selected {
-                border: 2px solid black;
-                border-radius: 17px;
-                margin: -3px;
-                padding: 1px;
+                opacity: 100%;
+                // border: 2px solid black;
+                // border-radius: 17px;
+                // margin: -3px;
+                // padding: 1px;
               }
             }
           }
@@ -376,12 +397,14 @@
             .card-st-icon {
               height: 30px;
               width: 30px;
+              opacity: 50%;
 
               &.selected {
-                border: 2px solid black;
-                border-radius: 17px;
-                margin: -3px;
-                padding: 1px;
+                opacity: 100%;
+                // border: 2px solid black;
+                // border-radius: 17px;
+                // margin: -3px;
+                // padding: 1px;
               }
             }
           }
@@ -394,10 +417,13 @@
             height: 50px;
 
             .card-frame {
+              opacity: 50%;
+
               &.selected {
-                border: 2px solid black;
-                border-radius: 3px;
-                margin: -2px;
+                opacity: 100%;
+                // border: 2px solid black;
+                // border-radius: 3px;
+                // margin: -2px;
               }
             }
           }
@@ -408,7 +434,7 @@
         }
       }
 
-      &.card-levels {
+/*       &.card-levels {
         .card-levels-icons {
           .card-level-container {
             width: 30px;
@@ -433,7 +459,7 @@
             }
           }
         }
-      }
+      } */
 
       &.card-input-container {
         &.card-artwork {

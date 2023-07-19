@@ -114,7 +114,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         </HorizontalStack>
       </HorizontalStack>
 
-      <textarea className='import-input' value={this.state.import} onInput={e => this.setState({ import: (e.target as EventTargetWithValue).value })} />
+      <textarea spellCheck={false} className='import-input' value={this.state.import} onInput={e => this.setState({ import: (e.target as EventTargetWithValue).value })} />
 
       {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
         <HorizontalStack className='replace-matrix'>
