@@ -26,7 +26,7 @@ import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import './styles.css';
-import { classNames, getCroppedArtworkBase64, integer } from 'mn-toolkit/tools';
+import { classNames, getCroppedArtworkBase64 } from 'mn-toolkit/tools';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface IArtworkEditingProps extends IContainableProps {
@@ -92,7 +92,11 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private onCropXChange(x: number) {
-    if (x < 0) x = 0;
+    if (x > 100) {
+      x = 100;
+    } else if (x < 0) {
+      x = 0;
+    }
     const crop = this.state.crop;
     crop.x = x;
     this.setState({ crop });
@@ -100,7 +104,11 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private onCropYChange(y: number) {
-    if (y < 0) y = 0;
+    if (y > 100) {
+      y = 100;
+    } else if (y < 0) {
+      y = 0;
+    }
     const crop = this.state.crop;
     crop.y = y;
     this.setState({ crop });
@@ -108,7 +116,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private onCropWidthChange(width: number) {
-    if (width < 1) width = 1;
+/*     if (width > 100) {
+      width = 100;
+    } else */
+    if (width < 1) {
+      width = 1;
+    }
     const crop = this.state.crop;
     crop.width = width;
     if (this.state.keepRatio && crop.width !== crop.height) {
@@ -119,7 +132,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private onCropHeightChange(height: number) {
-    if (height < 1) height = 1;
+/*     if (height > 100) {
+      height = 100;
+    } else */
+    if (height < 1) {
+      height = 1;
+    }
     const crop = this.state.crop;
     crop.height = height;
     if (this.state.keepRatio && crop.height !== crop.width) {
@@ -150,6 +168,30 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     }
   }
 
+  private setFullCardPreset() {
+    let crop: Crop = {
+      x: 12.45,
+      y: 18.35,
+      width: 75.3,
+      height: 51.85,
+      unit: '%'
+    };
+    this.setState({ crop });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+  }
+
+  private setFullPendulumCardPreset() {
+    let crop: Crop = {
+      x: 7.15,
+      y: 18.25,
+      width: 85.75,
+      height: 44,
+      unit: '%'
+    };
+    this.setState({ crop });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+  }
+
   public render() {
     if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<VerticalStack fill scroll>
@@ -167,30 +209,32 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
         <HorizontalStack className='ratio-checkbox'>
           <input type='checkbox' className='ratio-input' checked={this.state.keepRatio} onChange={() => this.switchKeepRatio()} />
           <p className='editor-label pendulum-label'>Conserver le ratio</p>
+          <button type='button' className='preset-btn full-card-preset-btn' onClick={() => this.setFullCardPreset()}>Preset carte entière</button>
+          <button type='button' className='preset-btn full-pendulum-card-preset-btn' onClick={() => this.setFullPendulumCardPreset()}>Preset Carte Pendule entière</button>
         </HorizontalStack>
 
         <HorizontalStack className='ratio-section'>
           <VerticalStack className='ratio-column ratio-column-1'>
             <HorizontalStack className='ratio-crop-data ratio-x'>
               <p className='ratio-label ratio-x-label'>X</p>
-              <input type='number' className='ratio-input ratio-x-input' value={this.state.crop.x} onInput={e => this.onCropXChange(integer((e.target as EventTargetWithValue).value))} />
+              <input type='number' className='ratio-input ratio-x-input' value={this.state.crop.x} onInput={e => this.onCropXChange(parseFloat((e.target as EventTargetWithValue).value))} />
             </HorizontalStack>
 
             <HorizontalStack className='ratio-crop-data ratio-y'>
               <p className='ratio-label ratio-y-label'>Y</p>
-              <input type='number' className='ratio-input ratio-y-input' value={this.state.crop.y} onInput={e => this.onCropYChange(integer((e.target as EventTargetWithValue).value))} />
+              <input type='number' className='ratio-input ratio-y-input' value={this.state.crop.y} onInput={e => this.onCropYChange(parseFloat((e.target as EventTargetWithValue).value))} />
             </HorizontalStack>
           </VerticalStack>
 
           <VerticalStack className='ratio-column ratio-column-2'>
             <HorizontalStack className='ratio-crop-data ratio-width'>
               <p className='ratio-label ratio-width-label'>Largeur</p>
-              <input type='number' className='ratio-input ratio-width-input' value={this.state.crop.width} onInput={e => this.onCropWidthChange(integer((e.target as EventTargetWithValue).value))} />
+              <input type='number' className='ratio-input ratio-width-input' value={this.state.crop.width} onInput={e => this.onCropWidthChange(parseFloat((e.target as EventTargetWithValue).value))} />
             </HorizontalStack>
 
             <HorizontalStack className='ratio-crop-data ratio-height'>
               <p className='ratio-label ratio-height-label'>Hauteur</p>
-              <input type='number' className='ratio-input ratio-height-input' value={this.state.crop.height} onInput={e => this.onCropHeightChange(integer((e.target as EventTargetWithValue).value))} />
+              <input type='number' className='ratio-input ratio-height-input' value={this.state.crop.height} onInput={e => this.onCropHeightChange(parseFloat((e.target as EventTargetWithValue).value))} />
             </HorizontalStack>
           </VerticalStack>
         </HorizontalStack>

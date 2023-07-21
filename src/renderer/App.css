@@ -24,7 +24,8 @@ body {
   overflow-y: hidden;
   display: flex;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  overflow-x: hidden; }
 
 button {
   background-color: white;

@@ -52,8 +52,8 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     super(props);
     this.state = {
       loaded: true,
-      current: '',
-      edited: '',
+      current: app.$card.tempCurrentCard?.uuid as string,
+      edited: app.$card.tempCurrentCard?.uuid as string,
       sortOption: 'modified',
       localCards: app.$card.localCards,
       selectedCards: {},

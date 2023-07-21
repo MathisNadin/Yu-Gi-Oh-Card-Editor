@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable lines-between-class-members */
@@ -43,9 +44,10 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   public constructor(props: IArtworkCroppingProps) {
     super(props);
 
+    const higher = this.isHigher(props);
     this.state = {
       loaded: true,
-      higher: false,
+      higher,
       croppedArtworkBase64: '',
       crop: {
         x: 0,
@@ -55,31 +57,26 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
         unit: '%'
       }
     }
-    this.load(props);
   }
 
   public componentWillReceiveProps(nextProps: IArtworkCroppingProps, _prevState: IArtworkCroppingState) {
-    this.load(nextProps);
+    const higher = this.isHigher(nextProps);
+    this.setState({ higher, crop: nextProps.crop })
   }
 
-  private load(props: IArtworkCroppingProps) {
+  private isHigher(props: IArtworkCroppingProps) {
     let higher = false;
     const image = new Image();
     image.src = props.artworkBase64;
     higher = image.height > image.width;
-
-    this.setState({
-      loaded: true,
-      higher,
-      crop: props.crop
-    });
+    return higher;
   }
 
   private onCroppingChange(crop: Crop) {
-    crop.x = Math.round(crop.x);
-    crop.y = Math.round(crop.y);
-    crop.height = Math.round(crop.height);
-    crop.width = Math.round(crop.width);
+    crop.x = Math.round(crop.x * 100) / 100;
+    crop.y = Math.round(crop.y * 100) / 100;
+    crop.height = Math.round(crop.height * 100) / 100;
+    crop.width = Math.round(crop.width * 100) / 100;
     this.setState({ crop });
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }

@@ -25,7 +25,7 @@
       align-items: center; }
       .artwork-edit-dialog .artwork-editing .artwork-path .path-label {
         color: black;
-        margin: 5px 0;
+        margin: 5px 5px 5px 0;
         font-size: 13px;
         text-align: end; }
       .artwork-edit-dialog .artwork-editing .artwork-path .path-text-input {
@@ -53,7 +53,23 @@
     .artwork-edit-dialog .artwork-editing .ratio-checkbox .pendulum-label {
       color: black;
       font-size: 13px;
-      margin-left: 3px; }
+      margin-left: 3px;
+      flex: 1; }
+    .artwork-edit-dialog .artwork-editing .ratio-checkbox .preset-btn {
+      align-self: center;
+      color: white;
+      font-size: 12px;
+      margin: 4px 8px 0 0;
+      cursor: pointer;
+      height: 27px;
+      padding: 4px 8px;
+      border-radius: 4px; }
+      .artwork-edit-dialog .artwork-editing .ratio-checkbox .preset-btn.full-card-preset-btn {
+        background: #DEB887; }
+      .artwork-edit-dialog .artwork-editing .ratio-checkbox .preset-btn.full-pendulum-card-preset-btn {
+        background: linear-gradient(250deg, green -29%, aquamarine 35%, #DEB887 82%); }
+      .artwork-edit-dialog .artwork-editing .ratio-checkbox .preset-btn:hover {
+        transform: none; }
     .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column {
       gap: 16px; }
       .artwork-edit-dialog .artwork-editing .ratio-section .ratio-column.ratio-column-1 {
@@ -88,4 +104,4 @@
       height: 40px;
       width: 50px;
       border: 1px outset lightgray;
-      background-color: lightgrey; }
+      background-color: rgba(0, 128, 0, 0.6); }

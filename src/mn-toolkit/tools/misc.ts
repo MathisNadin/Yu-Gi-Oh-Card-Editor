@@ -37,7 +37,7 @@ export async function getCroppedArtworkBase64(src: string, crop: Crop) {
   ctx.drawImage(
     image,
     image.width * crop.x / 100,
-    image.width * crop.y / 100,
+    image.height * crop.y / 100,
     canvas.width, canvas.height,
     0, 0, canvas.width, canvas.height
   );

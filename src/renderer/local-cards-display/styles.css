@@ -10,7 +10,8 @@
     margin: 10px 8px 16px 8px;
     align-self: center;
     min-width: 95%;
-    max-width: 98%; }
+    max-width: 98%;
+    overflow-x: auto; }
     .local-cards-display .local-cards-listing .local-cards-label {
       margin-top: 0;
       margin-bottom: 8px;

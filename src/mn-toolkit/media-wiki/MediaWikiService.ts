@@ -127,12 +127,16 @@ export class MediaWikiService {
           card.frames.push('synchro');
         } else if (types.includes('Dark Synchro')) {
           card.frames.push('darkSynchro');
+        } else if (types.includes('Xyz')) {
+          card.frames.push('xyz');
         } else if (types.includes('Link')) {
           card.frames.push('link');
         } else if (types.includes('Skill')) {
           card.frames.push('skill');
         } else if (types.includes('Effect')) {
           card.frames.push('effect');
+        } else if (types.includes('Normal')) {
+          card.frames.push('normal');
         }
 
         if (types.includes('Pendulum')) {
@@ -218,7 +222,7 @@ export class MediaWikiService {
     });
 
     if (!card.frames.length) {
-      card.frames.push('effect');
+      card.frames.push('normal');
     } else if (card.frames.length > 1) {
       card.multipleFrames = true;
     }
