@@ -116,6 +116,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'quickplay', file: require(`../resources/pictures/icons/st/quickplay.png`) },
         { id: 'continuous', file: require(`../resources/pictures/icons/st/continuous.png`) },
         { id: 'equip', file: require(`../resources/pictures/icons/st/equip.png`) },
+        { id: 'field', file: require(`../resources/pictures/icons/st/field.png`) },
         { id: 'counter', file: require(`../resources/pictures/icons/st/counter.png`) },
         { id: 'link', file: require(`../resources/pictures/icons/st/link.png`) },
       ],
