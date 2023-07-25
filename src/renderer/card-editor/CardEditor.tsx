@@ -450,75 +450,89 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private renderBasicCardDetails() {
     return this.renderAttributes(<VerticalStack>
-      <HorizontalStack className='section-header'>
-        <p className='section-header-title'>Bases de la Carte</p>
+      <HorizontalStack className='card-editor-full-width-section'>
+        <VerticalStack className='card-editor-vertical-section card-name card-input-container'>
+          <p className='editor-label name-label'>Nom</p>
+          <input type='text' className='name-input card-input' value={this.state.card.name} onInput={e => this.onNameChange((e.target as EventTargetWithValue).value)} />
+        </VerticalStack>
+
         {!app.$card.tempCurrentCard && <p className='reset-current-card-btn' onClick={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}>Réinitialiser</p>}
       </HorizontalStack>
 
-      <HorizontalStack className='card-editor-sub-section card-language card-input-container'>
-        <p className='editor-label card-language-label'>Langue</p>
-        <Dropdown<TCardLanguage>
-          className='card-language-dropdown'
-          options={[
-            'fr',
-            'en'
-          ]}
-          optionsLabel={[
-            'Français',
-            'Anglais'
-          ]}
-          defaultOption={this.state.card.language}
-          onSelect={value => this.onLanguageChange(value)} />
+      <HorizontalStack className='card-editor-full-width-section'>
+        <VerticalStack className='card-editor-vertical-section card-name-style card-input-container'>
+          <p className='editor-label card-name-style-label'>Édition</p>
+          <Dropdown<TNameStyle>
+            className='card-name-style-dropdown'
+            options={[
+              'default',
+              'white',
+              'black',
+              'yellow',
+              'gold',
+              'silver',
+              'rare',
+              'ultra',
+              'secret'
+            ]}
+            optionsLabel={[
+              'Par défaut',
+              'Blanc',
+              'Noir',
+              'Jaune',
+              'Or',
+              'Argent',
+              'Rare',
+              'Ultra Rare',
+              'Secret Rare'
+            ]}
+            defaultOption={this.state.card.nameStyle}
+            onSelect={value => this.onNameStyleChange(value)} />
+        </VerticalStack>
+
+        <VerticalStack className='card-editor-vertical-section card-language card-input-container'>
+          <p className='editor-label card-language-label'>Langue</p>
+          <Dropdown<TCardLanguage>
+            className='card-language-dropdown'
+            options={[
+              'fr',
+              'en'
+            ]}
+            optionsLabel={[
+              'Français',
+              'Anglais'
+            ]}
+            defaultOption={this.state.card.language}
+            onSelect={value => this.onLanguageChange(value)} />
+        </VerticalStack>
       </HorizontalStack>
 
-      <HorizontalStack className='card-editor-sub-section card-name card-input-container'>
-        <p className='editor-label name-label'>Nom</p>
-        <input type='text' className='name-input card-input' value={this.state.card.name} onInput={e => this.onNameChange((e.target as EventTargetWithValue).value)} />
-      </HorizontalStack>
+      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
+        <HorizontalStack className='card-artwork-labels'>
+          <p className='editor-label artwork-label'>Image</p>
 
-      <HorizontalStack className='card-editor-sub-section card-name-style card-input-container'>
-        <p className='editor-label card-name-style-label'>Édition</p>
-        <Dropdown<TNameStyle>
-          className='card-name-style-dropdown'
-          options={[
-            'default',
-            'white',
-            'black',
-            'yellow',
-            'gold',
-            'silver',
-            'rare',
-            'ultra',
-            'secret'
-          ]}
-          optionsLabel={[
-            'Par défaut',
-            'Blanc',
-            'Noir',
-            'Jaune',
-            'Or',
-            'Argent',
-            'Rare',
-            'Ultra Rare',
-            'Secret Rare'
-          ]}
-          defaultOption={this.state.card.nameStyle}
-          onSelect={value => this.onNameStyleChange(value)} />
-      </HorizontalStack>
+          {this.state.card.pendulum && <HorizontalStack className='card-pendulum-ratio card-input-container'>
+            <input type='checkbox' className='pendulum-ratio-input card-input' checked={this.state.card.artwork.pendulum} onChange={() => this.onArtworkPendChange()} />
+            <p className='editor-sub-label pendulum-ratio-label'>Format pendule</p>
+          </HorizontalStack>}
+        </HorizontalStack>
 
-      <HorizontalStack className='card-editor-sub-section card-artwork card-input-container'>
-        <p className='editor-label artwork-label'>Image</p>
-        <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
-        <button type='button' className='artwork-btn' onClick={() => this.showArtworkPopup()}>...</button>
-      </HorizontalStack>
+        <HorizontalStack>
+          <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
+          <button type='button' className='artwork-btn' onClick={() => this.showArtworkPopup()}>...</button>
+        </HorizontalStack>
+      </VerticalStack>
 
-      {this.state.card.pendulum && <HorizontalStack className='card-pendulum-ratio card-input-container'>
-        <input type='checkbox' className='pendulum-ratio-input card-input' checked={this.state.card.artwork.pendulum} onChange={() => this.onArtworkPendChange()} />
-        <p className='editor-label pendulum-ratio-label'>Format d'artwork pendule</p>
-      </HorizontalStack>}
+      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
+        <HorizontalStack className='card-attributes-labels with-label-separator'>
+          <p className='editor-label attributes-label'>Icones</p>
 
-      <VerticalStack className='card-editor-sub-section card-attributes'>
-        <p className='editor-label attributes-label label-with-separator'>Icones</p>
+          <HorizontalStack className='card-no-text-attribute card-input-container'>
+            <input type='checkbox' className='no-text-attribute-input card-input' checked={this.state.card.noTextAttribute} onChange={() => this.onNoTextAttributeChange()} />
+            <p className='editor-sub-label no-text-attribute-label'>Sans texte</p>
+          </HorizontalStack>
+        </HorizontalStack>
+
         <HorizontalStack className='card-items card-attributes-icons'>
           {this.state.cardAttributes.map(attribute =>
             <HorizontalStack className='item-container card-attribute-container'>
@@ -530,30 +544,34 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             </HorizontalStack>
           )}
         </HorizontalStack>
-
-        <HorizontalStack className='card-no-text-attribute card-input-container'>
-          <input type='checkbox' className='no-text-attribute-input card-input' checked={this.state.card.noTextAttribute} onChange={() => this.onNoTextAttributeChange()} />
-          <p className='editor-label no-text-attribute-label'>Icone sans texte</p>
-        </HorizontalStack>
       </VerticalStack>
 
-      {(this.state.card.frames.includes('spell') || this.state.card.frames.includes('trap')) && <VerticalStack className='card-editor-sub-section card-st-icons'>
-        <p className='editor-label st-icons-label label-with-separator'>Type de Magie/Piège</p>
-        <HorizontalStack className='card-items card-st-icons-icons'>
-          {this.state.cardStTypes.map(stType =>
-            <HorizontalStack className='item-container card-st-icon-container'>
-              <img src={stType.file}
-                alt={`st-icon-${stType.id}`}
-                title={app.$card.getStIconName(stType.id)}
-                className={`card-st-icon${this.state.card.stType === stType.id ? ' selected' : ''}`}
-                onClick={() => this.onStTypeChange(stType.id)} />
-            </HorizontalStack>
-          )}
-        </HorizontalStack>
+      {(this.state.card.frames.includes('spell') || this.state.card.frames.includes('trap')) &&
+        <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
+          <p className='editor-label st-icons-label label-with-separator with-label-separator'>Type de Magie/Piège</p>
+
+          <HorizontalStack className='card-items card-st-icons-icons'>
+            {this.state.cardStTypes.map(stType =>
+              <HorizontalStack className='item-container card-st-icon-container'>
+                <img src={stType.file}
+                  alt={`st-icon-${stType.id}`}
+                  title={app.$card.getStIconName(stType.id)}
+                  className={`card-st-icon${this.state.card.stType === stType.id ? ' selected' : ''}`}
+                  onClick={() => this.onStTypeChange(stType.id)} />
+              </HorizontalStack>
+            )}
+          </HorizontalStack>
       </VerticalStack>}
 
-      <VerticalStack className='card-editor-sub-section card-frames'>
-        <p className='editor-label frames-label label-with-separator'>Types de carte</p>
+      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
+        <HorizontalStack className='card-attributes-labels with-label-separator'>
+          <p className='editor-label frames-label'>Types de carte</p>
+
+          <HorizontalStack className='card-multiple-frames card-input-container'>
+            <input type='checkbox' className='multiple-frames-input card-input' checked={this.state.card.multipleFrames} onChange={() => this.onMultipleFramesChange()} />
+            <p className='editor-sub-label multiple-frames-label'>Cumuler</p>
+          </HorizontalStack>
+        </HorizontalStack>
 
         <HorizontalStack className='card-items card-frames-icons'>
           {this.state.cardFrames.map(frame =>
@@ -566,14 +584,9 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             </HorizontalStack>
           )}
         </HorizontalStack>
-
-        <HorizontalStack className='card-multiple-frames card-input-container'>
-          <input type='checkbox' className='multiple-frames-input card-input' checked={this.state.card.multipleFrames} onChange={() => this.onMultipleFramesChange()} />
-          <p className='editor-label multiple-frames-label'>Cumuler les types de cartes</p>
-        </HorizontalStack>
       </VerticalStack>
 
-      <VerticalStack className='card-editor-sub-section card-description card-textarea'>
+      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
         <p className='editor-label description-label label-with-separator'>Description</p>
         <textarea spellCheck={false} className='description-input textarea-input' value={this.state.card.description} onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)} />
       </VerticalStack>
@@ -613,9 +626,9 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     }
 
     return this.renderAttributes(<VerticalStack>
-      <VerticalStack className='section-header'>
+{/*       <VerticalStack className='section-header'>
         <p className='section-header-title'>Détails de la Carte Monstre</p>
-      </VerticalStack>
+      </VerticalStack> */}
 
       <HorizontalStack className='card-editor-sub-section level-and-pend-section'>
         <HorizontalStack className='card-level card-input-container'>
@@ -688,9 +701,9 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     }
 
     return this.renderAttributes(<VerticalStack>
-      <VerticalStack className='section-header'>
+{/*       <VerticalStack className='section-header'>
         <p className='section-header-title'>Détails de la Carte Pendule</p>
-      </VerticalStack>
+      </VerticalStack> */}
 
       <HorizontalStack className='card-editor-sub-section scales-section'>
         <HorizontalStack className='card-scale card-left-scale card-input-container'>
@@ -767,9 +780,9 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private renderMiscDetails() {
     return this.renderAttributes(<VerticalStack>
-      <VerticalStack className='section-header'>
+{/*       <VerticalStack className='section-header'>
         <p className='section-header-title'>Détails Divers</p>
-      </VerticalStack>
+      </VerticalStack> */}
 
       <HorizontalStack className='card-editor-sub-section card-edition card-input-container'>
         <p className='editor-label card-edition-label'>Édition</p>
