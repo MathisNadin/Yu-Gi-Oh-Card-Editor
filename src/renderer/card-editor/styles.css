@@ -223,7 +223,404 @@
 .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container .card-frame {
   opacity: 50%; }
 
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container .card-frame.selected {
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-1::after {
+  content: "1";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d96226;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-1 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-2::after {
+  content: "2";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d99d26;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-2 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-3::after {
+  content: "3";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d9d926;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-3 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-4::after {
+  content: "4";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #9dd926;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-4 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-5::after {
+  content: "5";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #62d926;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-5 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-6::after {
+  content: "6";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #26d926;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-6 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-7::after {
+  content: "7";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #26d962;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-7 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-8::after {
+  content: "8";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #26d99d;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-8 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-9::after {
+  content: "9";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #26d9d9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-9 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-10::after {
+  content: "10";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #269dd9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-10 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-11::after {
+  content: "11";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #2662d9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-11 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-12::after {
+  content: "12";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #2626d9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-12 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-13::after {
+  content: "13";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #6226d9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-13 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-14::after {
+  content: "14";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #9d26d9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-14 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-15::after {
+  content: "15";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d926d9;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-15 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-16::after {
+  content: "16";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d9269d;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-16 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-17::after {
+  content: "17";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d92662;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-17 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-18::after {
+  content: "18";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d92626;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-18 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-19::after {
+  content: "19";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d96226;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-19 .card-frame {
+  opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-20::after {
+  content: "20";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 12px;
+  font-size: 12px;
+  background-color: #d99d26;
+  color: #fff; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-20 .card-frame {
   opacity: 100%; }
 
 .card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container {
@@ -236,6 +633,79 @@
 
 .card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
   opacity: 100%; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-edit-buttons {
+  gap: 10px; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-edit-buttons .abilities-edit-btn {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px;
+  border: 1px outset #318ce7;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: transparent; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-edit-buttons .abilities-edit-btn img {
+  height: 16px;
+  width: 16px; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
+  background-color: rgba(222, 25, 60, 0.6); }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
+  background-color: rgba(0, 100, 170, 0.6); }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-edit-buttons .abilities-edit-btn:hover {
+  background-color: rgba(185, 200, 205, 0.6); }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-list {
+  margin-top: 5px;
+  border: 1px solid #318ce7;
+  background-color: white;
+  font-size: 13px;
+  color: black;
+  min-height: 84px; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input {
+  border: none;
+  padding: 3px;
+  height: 15px; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input.selected {
+  background-color: #ADCAF9; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-div {
+  height: 15px; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input {
+  padding: 0;
+  margin: -2px; }
+
+.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
+  outline: none; }
+
+.card-editor .card-editor-section .pendulum-details {
+  width: 95%;
+  margin-bottom: 8px; }
+
+.card-editor .card-editor-section .pendulum-details.opened {
+  border: 1px solid black;
+  border-radius: 5px;
+  top: 14px; }
+
+.card-editor .card-editor-section .pendulum-details.opened .card-pendulum {
+  position: absolute;
+  top: -14px;
+  background: aliceblue; }
+
+.card-editor .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
+  top: 5px; }
+
+.card-editor .card-editor-section .pendulum-details .card-pendulum {
+  left: 14px;
+  top: 1px; }
 
 .card-editor .card-editor-section .card-editor-sub-section {
   width: 95%;

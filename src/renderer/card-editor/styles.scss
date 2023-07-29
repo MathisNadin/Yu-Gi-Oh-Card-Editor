@@ -304,9 +304,33 @@
 
           .card-frame {
             opacity: 50%;
+          }
 
-            &.selected {
-              opacity: 100%;
+          @for $i from 1 through 20 {
+            &.selected-#{$i} {
+              &::after {
+                $size: 16px;
+                $fontSize: 12px;
+                content: "#{$i}";
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: $size;
+                height: $size;
+                border-radius: 50%;
+                text-align: center;
+                line-height: $fontSize;
+                font-size: $fontSize;
+                background-color: adjust-hue(hsl(0, 70%, 50%), 20 * $i);
+                color: #fff;
+              }
+
+              .card-frame {
+                opacity: 100%;
+              }
             }
           }
         }
@@ -326,6 +350,98 @@
             }
           }
         }
+      }
+
+      .abilities-edit-buttons {
+        gap: 10px;
+
+        .abilities-edit-btn {
+          display: flex;
+          align-items: center;
+          width: fit-content;
+          padding: 5px;
+          border: 1px outset #318ce7;
+          border-radius: 4px;
+          cursor: pointer;
+          background-color: transparent;
+
+          img {
+            height: 16px;
+            width: 16px;
+          }
+
+          &.lock-opened {
+            background-color: rgba(222, 25, 60, 0.6);
+          }
+
+          &.lock-closed {
+            background-color: rgba(0, 100, 170, 0.6);
+          }
+
+          &:hover {
+            background-color: rgba(185, 200, 205, 0.6);
+          }
+        }
+      }
+
+      .abilities-list {
+        margin-top: 5px;
+        border: 1px solid #318ce7;
+        background-color: white;
+        font-size: 13px;
+        color: black;
+        min-height: 84px;
+
+        .ability-input {
+          border: none;
+          padding: 3px;
+          height: 15px;
+
+          &.selected {
+            background-color: #ADCAF9;
+          }
+
+          .inplace-edit-div {
+            height: 15px;
+          }
+
+          .inplace-edit-input {
+            padding: 0;
+            margin: -2px;
+
+            &:focus-visible {
+              outline: none;
+            }
+          }
+        }
+      }
+    }
+
+    .pendulum-details {
+      width: 95%;
+      margin-bottom: 8px;
+
+      &.opened {
+        border: 1px solid black;
+        border-radius: 5px;
+        top: 14px;
+
+        .card-pendulum {
+          position: absolute;
+          top: -14px;
+          background: aliceblue;
+        }
+
+        .pendulum-section {
+          .scales-section {
+            top: 5px;
+          }
+        }
+      }
+
+      .card-pendulum {
+        left: 14px;
+        top: 1px;
       }
     }
 
