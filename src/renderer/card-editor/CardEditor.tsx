@@ -405,6 +405,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private generatePasscode() {
+    this.state.card.passcode = app.$card.generatePasscode();
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private async showArtworkPopup() {
     let result = await app.$popup.show<IArtworkEditDialogResult>({
       id: 'edit-popup',
@@ -820,20 +826,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           />
         </VerticalStack>
 
-        <VerticalStack className='card-editor-vertical-section card-passcode card-input-container'>
-          <p className='editor-label passcode-label'>Code</p>
-          <input
-            type='text'
-            pattern='\d*'
-            maxLength={8}
-            className='passcode-input card-input'
-            value={this.state.card.passcode}
-            onInput={e => this.onPasscodeChange((e.target as EventTargetWithValue).value)}
-          />
-        </VerticalStack>
-      </HorizontalStack>
-
-      <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-edition card-input-container'>
           <p className='editor-label card-edition-label'>Édition</p>
           <Dropdown<TEdition>
@@ -857,7 +849,25 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             defaultOption={this.state.card.edition}
             onSelect={value => this.onEditionChange(value)} />
         </VerticalStack>
+      </HorizontalStack>
 
+      <HorizontalStack className='card-editor-full-width-section'>
+        <VerticalStack className='card-editor-vertical-section card-passcode card-input-container'>
+          <p className='editor-label passcode-label'>Code</p>
+          <input
+            type='text'
+            pattern='\d*'
+            maxLength={8}
+            className='passcode-input card-input'
+            value={this.state.card.passcode}
+            onInput={e => this.onPasscodeChange((e.target as EventTargetWithValue).value)}
+          />
+        </VerticalStack>
+
+        <p className='generate-passcode-btn' onClick={() => this.generatePasscode()}>Générer</p>
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-sticker card-input-container'>
           <p className='editor-label card-edition-label'>Sticker</p>
           <Dropdown<TSticker>
@@ -889,9 +899,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             defaultOption={this.state.card.sticker}
             onSelect={value => this.onStickerChange(value)} />
         </VerticalStack>
-      </HorizontalStack>
 
-      <HorizontalStack className='card-editor-full-width-section'>
         <HorizontalStack className='card-copyright card-copyright-new card-input-container'>
           <input type='checkbox' className='copyright-input card-input' checked={this.state.card.hasCopyright} onChange={() => this.onCopyrightChange()} />
           <p className='editor-label copyright-label'>Copyright</p>

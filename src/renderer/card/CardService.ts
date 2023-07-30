@@ -484,6 +484,14 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     };
   }
 
+  public generatePasscode() {
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+      result = `${result}${Math.floor(Math.random() * 10)}`;
+    }
+    return result;
+  }
+
   public getStIconName(icon: TStIcon) {
     switch (icon) {
       case 'normal': return 'Normal';

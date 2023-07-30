@@ -637,6 +637,21 @@
   left: 14px;
   top: 1px; }
 
+.card-editor .card-editor-section.misc-section .generate-passcode-btn {
+  color: white;
+  font-size: 15px;
+  margin: 0;
+  cursor: pointer;
+  height: 17px;
+  background-color: rgba(0, 0, 255, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  align-self: end; }
+
+.card-editor .card-editor-section.misc-section .card-copyright {
+  align-self: end;
+  justify-content: center; }
+
 .card-editor .card-editor-section .card-editor-sub-section {
   width: 95%;
   padding: 2%; }
@@ -655,66 +670,6 @@
 
 .card-editor .card-editor-section .card-editor-sub-section .mn-dropdown select {
   height: 25px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-description.card-textarea .description-input.textarea-input {
-  height: 150px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.atk-def-section .card-stats {
-  width: 48%;
-  justify-content: center;
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.atk-def-section .card-stats .editor-label {
-  width: 20%; }
-
-.card-editor .card-editor-section .card-editor-sub-section.atk-def-section .card-stats .card-input {
-  width: 80%; }
-
-.card-editor .card-editor-section .card-editor-sub-section.copyright-section .card-copyright {
-  width: 50%;
-  justify-content: center;
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.copyright-section .card-copyright .copyright-input {
-  width: fit-content; }
-
-.card-editor .card-editor-section .card-editor-sub-section.copyright-section .card-copyright .copyright-label {
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-sub-section.copyright-section .card-copyright-old {
-  width: 50%;
-  justify-content: center;
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.copyright-section .card-copyright-old .copyright-old-input {
-  width: fit-content; }
-
-.card-editor .card-editor-section .card-editor-sub-section.copyright-section .card-copyright-old .copyright-old-label {
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-sub-section.level-and-pend-section .card-level {
-  width: 65%;
-  justify-content: center;
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.level-and-pend-section .card-level .level-label {
-  width: fit-content; }
-
-.card-editor .card-editor-section .card-editor-sub-section.level-and-pend-section .card-level .level-input {
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-sub-section.level-and-pend-section .card-pendulum {
-  width: 30%;
-  margin-left: 5%;
-  justify-content: center;
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.level-and-pend-section .card-pendulum .pendulum-input {
-  width: fit-content;
-  margin-right: 5px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.level-and-pend-section .card-pendulum .pendulum-label {
-  flex: 1; }
 
 .card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale {
   width: 40%;

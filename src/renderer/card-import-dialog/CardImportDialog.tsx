@@ -45,6 +45,7 @@ interface ICardImportDialogState extends IContainableState {
   import: string;
   importing: boolean;
   useFr: boolean;
+  generatePasscode: boolean;
   replaceMatrixes: IReplaceMatrix[];
 }
 
@@ -57,6 +58,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       import: '',
       importing: false,
       useFr: false,
+      generatePasscode: false,
       replaceMatrixes: [],
     }
   }
@@ -86,7 +88,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       let newCards: ICard[] = [];
       for (let importLink of importLinks) {
         const splitImport = importLink.split('/');
-        const newCard = await app.$mediaWiki.getCardInfo(splitImport[splitImport.length-1], this.state.useFr, this.state.replaceMatrixes);
+        const newCard = await app.$mediaWiki.getCardInfo(splitImport[splitImport.length-1], this.state.useFr, this.state.generatePasscode, this.state.replaceMatrixes);
         if (newCard) {
           newCards.push(newCard);
         }
@@ -105,16 +107,31 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   public render() {
     if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<VerticalStack>
-      <HorizontalStack className='label-and-use-fr'>
-        <p className='import-label'>Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)</p>
-
-        <HorizontalStack className='use-fr'>
-          <input type='checkbox' className='use-fr-input' checked={this.state.useFr} onChange={() => this.setState({ useFr: !this.state.useFr })} />
-          <p className='use-fr-label'>Textes français</p>
-        </HorizontalStack>
-      </HorizontalStack>
+      <p className='import-label'>Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)</p>
 
       <textarea spellCheck={false} className='import-input' value={this.state.import} onInput={e => this.setState({ import: (e.target as EventTargetWithValue).value })} />
+
+      <HorizontalStack className='import-options'>
+        <HorizontalStack className='import-option use-fr'>
+          <input
+            type='checkbox'
+            className='import-option-input use-fr-input'
+            checked={this.state.useFr}
+            onChange={() => this.setState({ useFr: !this.state.useFr })}
+          />
+          <p className='import-option-label use-fr-label'>Textes français</p>
+        </HorizontalStack>
+
+        <HorizontalStack className='import-option generate-passcode'>
+          <input
+            type='checkbox'
+            className='import-option-input generate-passcode-input'
+            checked={this.state.generatePasscode}
+            onChange={() => this.setState({ generatePasscode: !this.state.generatePasscode })}
+          />
+          <p className='import-option-label generate-passcode-label'>Si absent, générer un code</p>
+        </HorizontalStack>
+      </HorizontalStack>
 
       {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
         <HorizontalStack className='replace-matrix'>

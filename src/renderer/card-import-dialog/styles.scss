@@ -17,26 +17,10 @@
   height: 100%;
   gap: 16px;
 
-  .label-and-use-fr {
-    .import-label {
-      flex: 1;
-      margin: 0;
-      color: black;
-    }
-
-    .use-fr {
-      gap: 4px;
-
-      .use-fr-input {
-        margin: 0;
-        color: black;
-      }
-
-      .use-fr-label {
-        margin: 0;
-        color: black;
-      }
-    }
+  .import-label {
+    flex: 1;
+    margin: 0;
+    color: black;
   }
 
   .import-input {
@@ -44,7 +28,26 @@
     height: 150px;
     border: 0.5px solid black;
     border-radius: 3px;
+  }
+
+  .import-options {
+    justify-content: end;
     margin-bottom: 16px;
+
+    .import-option {
+      margin-right: 16px;
+      gap: 4px;
+
+      .import-option-input {
+        margin: 0;
+        color: black;
+      }
+
+      .import-option-label {
+        margin: 0;
+        color: black;
+      }
+    }
   }
 
   .replace-matrix {

@@ -49,7 +49,7 @@ export class MediaWikiService {
     this.baseArtworkUrl = "F:\\Vidéos Joeri_sama\\Artworks\\";
   }
 
-  public async getCardInfo(titles: string, useFr: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
+  public async getCardInfo(titles: string, useFr: boolean, generatePasscode: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
     let card = app.$card.getDefaultImportCard();
 
     let data = await app.$api.get(`${this.baseApiUrl}${titles}`) as YugipediaApiResponse;
@@ -64,10 +64,10 @@ export class MediaWikiService {
     let wikitext = pageInfo.revisions[0]["*"];
     if (!wikitext) return card;
 
-    return this.wikitextToCard(card, pageInfo.title.replace(' (card)', ''), wikitext, useFr, replaceMatrixes);
+    return this.wikitextToCard(card, pageInfo.title.replace(' (card)', ''), wikitext, useFr, generatePasscode, replaceMatrixes);
   }
 
-  public async wikitextToCard(card: ICard, title: string, wikitext: string, useFr: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
+  public async wikitextToCard(card: ICard, title: string, wikitext: string, useFr: boolean, generatePasscode: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
     let name: string | undefined;
     let enName: string | undefined;
     let frName: string | undefined;
@@ -263,6 +263,10 @@ export class MediaWikiService {
     if (card.artwork.url) {
       card.artwork.height = 100;
       card.artwork.width = 100;
+    }
+
+    if (generatePasscode && !card.passcode) {
+      card.passcode = app.$card.generatePasscode();
     }
 
     return card;

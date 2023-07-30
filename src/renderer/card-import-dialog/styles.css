@@ -1,72 +1,91 @@
 .mn-popup-header {
   background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%); }
-  .mn-popup-header .mn-popup-title {
-    color: white !important; }
+
+.mn-popup-header .mn-popup-title {
+  color: white !important; }
 
 .card-import-dialog {
   position: relative;
   width: 100%;
   height: 100%;
   gap: 16px; }
-  .card-import-dialog .label-and-use-fr .import-label {
-    flex: 1;
-    margin: 0;
-    color: black; }
-  .card-import-dialog .label-and-use-fr .use-fr {
-    gap: 4px; }
-    .card-import-dialog .label-and-use-fr .use-fr .use-fr-input {
-      margin: 0;
-      color: black; }
-    .card-import-dialog .label-and-use-fr .use-fr .use-fr-label {
-      margin: 0;
-      color: black; }
-  .card-import-dialog .import-input {
-    resize: none;
-    height: 150px;
-    border: 0.5px solid black;
-    border-radius: 3px;
-    margin-bottom: 16px; }
-  .card-import-dialog .replace-matrix {
-    height: 25px;
-    width: 85%;
-    gap: 16px;
-    align-self: center; }
-    .card-import-dialog .replace-matrix .replace-matrix-input {
-      border: 0.5px solid grey;
-      border-radius: 3px;
-      flex: 1; }
-    .card-import-dialog .replace-matrix .remove-replace-matrix-btn {
-      align-self: center;
-      width: 27px;
-      font-size: 15px;
-      padding: 5px;
-      border-radius: 4px;
-      cursor: pointer;
-      background-color: rgba(255, 0, 0, 0.4); }
-      .card-import-dialog .replace-matrix .remove-replace-matrix-btn:hover {
-        transform: none; }
-  .card-import-dialog .add-replace-matrix-btn {
-    align-self: center;
-    width: 50%;
-    font-size: 15px;
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: rgba(34, 139, 34, 0.4); }
-    .card-import-dialog .add-replace-matrix-btn:hover {
-      transform: none; }
-  .card-import-dialog .import-btn {
-    margin-top: 16px;
-    align-self: end;
-    width: auto;
-    padding: 5px 10px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: rgba(112, 175, 238, 0.5); }
-    .card-import-dialog .import-btn.disabled {
-      pointer-events: none;
-      background-color: rgba(128, 128, 128, 0.3);
-      color: rgba(128, 128, 128, 0.7); }
-    .card-import-dialog .import-btn:hover {
-      transform: none; }
+
+.card-import-dialog .import-label {
+  flex: 1;
+  margin: 0;
+  color: black; }
+
+.card-import-dialog .import-input {
+  resize: none;
+  height: 150px;
+  border: 0.5px solid black;
+  border-radius: 3px; }
+
+.card-import-dialog .import-options {
+  justify-content: end;
+  margin-bottom: 16px; }
+
+.card-import-dialog .import-options .import-option {
+  margin-right: 16px;
+  gap: 4px; }
+
+.card-import-dialog .import-options .import-option .import-option-input {
+  margin: 0;
+  color: black; }
+
+.card-import-dialog .import-options .import-option .import-option-label {
+  margin: 0;
+  color: black; }
+
+.card-import-dialog .replace-matrix {
+  height: 25px;
+  width: 85%;
+  gap: 16px;
+  align-self: center; }
+
+.card-import-dialog .replace-matrix .replace-matrix-input {
+  border: 0.5px solid grey;
+  border-radius: 3px;
+  flex: 1; }
+
+.card-import-dialog .replace-matrix .remove-replace-matrix-btn {
+  align-self: center;
+  width: 27px;
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(255, 0, 0, 0.4); }
+
+.card-import-dialog .replace-matrix .remove-replace-matrix-btn:hover {
+  transform: none; }
+
+.card-import-dialog .add-replace-matrix-btn {
+  align-self: center;
+  width: 50%;
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(34, 139, 34, 0.4); }
+
+.card-import-dialog .add-replace-matrix-btn:hover {
+  transform: none; }
+
+.card-import-dialog .import-btn {
+  margin-top: 16px;
+  align-self: end;
+  width: auto;
+  padding: 5px 10px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(112, 175, 238, 0.5); }
+
+.card-import-dialog .import-btn.disabled {
+  pointer-events: none;
+  background-color: rgba(128, 128, 128, 0.3);
+  color: rgba(128, 128, 128, 0.7); }
+
+.card-import-dialog .import-btn:hover {
+  transform: none; }
