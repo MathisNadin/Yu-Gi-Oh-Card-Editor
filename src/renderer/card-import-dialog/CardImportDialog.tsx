@@ -118,8 +118,20 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
       {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
         <HorizontalStack className='replace-matrix'>
-          <input type='text' className='replace-matrix-input to-replace-input' value={m.toReplace} onInput={e => this.updateReplaceMatrix(i, (e.target as EventTargetWithValue).value, m.newString)} />
-          <input type='text' className='replace-matrix-input new-string-input' value={m.newString} onInput={e => this.updateReplaceMatrix(i, m.toReplace, (e.target as EventTargetWithValue).value)} />
+          <input
+            type='text'
+            className='replace-matrix-input to-replace-input'
+            value={m.toReplace}
+            onInput={e => this.updateReplaceMatrix(i, (e.target as EventTargetWithValue).value, m.newString)}
+          />
+
+          <input
+            type='text'
+            className='replace-matrix-input new-string-input'
+            value={m.newString}
+            onInput={e => this.updateReplaceMatrix(i, m.toReplace, (e.target as EventTargetWithValue).value)}
+          />
+
           <button type='button' className='remove-replace-matrix-btn' onClick={() => this.removeReplaceMatrix(i)}>-</button>
         </HorizontalStack>
       )}

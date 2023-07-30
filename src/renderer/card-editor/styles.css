@@ -1,26 +1,14 @@
+@font-face {
+  font-family: fontAbilities;
+  src: url(../resources/fonts/itcStoneSerifBold.ttf); }
+
 .card-editor {
   height: 100%;
   width: 30%;
   padding-left: 10px;
   align-items: flex-start;
   font-size: 17px;
-  background-color: aliceblue;
-  /*   .editor-label {
-    color: black;
-    margin: 5px 0;
-    font-size: 13px;
-
-    &.label-with-separator {
-      border-bottom: 1px solid darkgray;
-      padding-bottom: 5px;
-    }
-  } */
-  /*   .horizontal-stack {
-    p {
-      min-width: 15%;
-      padding-right: 10px;
-    }
-  } */ }
+  background-color: aliceblue; }
 
 .card-editor .app-version {
   color: black;
@@ -32,42 +20,7 @@
   width: 100%;
   align-items: center;
   gap: 5px;
-  padding-bottom: 8px;
-  /*     &.misc-section {
-      margin-bottom: 40px;
-    } */
-  /*   .editor-label {
-    color: black;
-    margin: 5px 0;
-    font-size: 13px;
-
-    &.label-with-separator {
-      border-bottom: 1px solid darkgray;
-      padding-bottom: 5px;
-    }
-  } */ }
-
-.card-editor .card-editor-section .section-header {
-  width: 100%;
-  background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
-  border-bottom: 1px solid #0052a3;
-  margin-bottom: 3px;
-  /*       .reset-current-card-btn {
-        color: white;
-        font-size: 15px;
-        margin: 4px 8px 0 0;
-        cursor: pointer;
-        height: 17px;
-        background-color: rgba(red, 0.3);
-        padding: 4px 8px;
-        border-radius: 4px;
-      } */ }
-
-.card-editor .card-editor-section .section-header .section-header-title {
-  margin: 8px;
-  color: white;
-  font-size: 15px;
-  flex: 1; }
+  padding-bottom: 8px; }
 
 .card-editor .card-editor-section.link-arrow-section {
   width: 95%;
@@ -129,11 +82,6 @@
 .card-editor .card-editor-section .card-pendulum-ratio {
   width: 95%;
   justify-content: flex-end; }
-
-@font-face {
-  .card-editor .card-editor-section {
-    font-family: fontAbilities;
-    src: url(../resources/fonts/itcStoneSerifBold.ttf); } }
 
 .card-editor .card-editor-section .card-editor-full-width-section {
   width: 95%;
@@ -682,7 +630,8 @@
   background: aliceblue; }
 
 .card-editor .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
-  top: 5px; }
+  top: 5px;
+  align-items: center; }
 
 .card-editor .card-editor-section .pendulum-details .card-pendulum {
   left: 14px;
@@ -690,99 +639,7 @@
 
 .card-editor .card-editor-section .card-editor-sub-section {
   width: 95%;
-  padding: 2%;
-  /*       &.card-attributes {
-        .card-attributes-icons {
-          .card-attribute-container {
-            height: 30px;
-
-            .card-attribute {
-              opacity: 50%;
-
-              &.selected {
-                opacity: 100%;
-                // border: 2px solid black;
-                // border-radius: 17px;
-                // margin: -3px;
-                // padding: 1px;
-              }
-            }
-          }
-        }
-
-        .card-no-text-attribute {
-          margin-top: 7px;
-        }
-      } */
-  /*       &.card-st-icons {
-        .card-st-icons-icons {
-          .card-st-icon-container {
-            height: 30px;
-
-            .card-st-icon {
-              height: 30px;
-              width: 30px;
-              opacity: 50%;
-
-              &.selected {
-                opacity: 100%;
-                // border: 2px solid black;
-                // border-radius: 17px;
-                // margin: -3px;
-                // padding: 1px;
-              }
-            }
-          }
-        }
-      } */
-  /*       &.card-frames {
-        .card-frames-icons {
-          .card-frame-container {
-            height: 50px;
-
-            .card-frame {
-              opacity: 50%;
-
-              &.selected {
-                opacity: 100%;
-                // border: 2px solid black;
-                // border-radius: 3px;
-                // margin: -2px;
-              }
-            }
-          }
-        }
-
-        .card-multiple-frames {
-          margin-top: 10px;
-        }
-      } */
-  /*       &.card-levels {
-        .card-levels-icons {
-          .card-level-container {
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-
-            .card-level {
-              margin: 0;
-              width: 30px;
-              height: 30px;
-              line-height: 30px;
-              color: black;
-              font-size: 13px;
-              text-align: center;
-              background-color: lightgray;
-              border-radius: 3px;
-
-              &.selected {
-                border: 2px solid black;
-                margin: -2px;
-              }
-            }
-          }
-        }
-      } */ }
+  padding: 2%; }
 
 .card-editor .card-editor-section .card-editor-sub-section .card-items {
   max-width: 100%;

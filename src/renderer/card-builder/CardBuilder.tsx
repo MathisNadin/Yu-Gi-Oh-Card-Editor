@@ -53,7 +53,6 @@ interface ICardBuilderState extends IContainableState {
 
   usePendulumFrame: boolean;
   withLinkArrows: boolean;
-  // defaultTextColor: 'black' | 'white';
 
   border: string;
   artworkBg: string;
@@ -188,7 +187,6 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       usePendulumFrame,
       withLinkArrows: app.$card.hasLinkArrows(card),
-      // defaultTextColor: card.frames.includes( 'xyz') || card.frames.includes('link') ? 'white' : 'black',
 
       border: require('../resources/pictures/squareBorders.png'),
       artworkBg,
@@ -220,8 +218,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       spellPlus: require(`../resources/pictures/st/${card.language}/spell+.png`),
       trapPlus: require(`../resources/pictures/st/${card.language}/trap+.png`),
       stIcon: require(`../resources/pictures/st/${card.language}/${card.stType}${card.stType === 'normal' ? card.frames.includes('spell') ? '-spell' : '-trap' : '' }.png`),
-      leftScale: require(`../resources/pictures/pendulum-scales/${card.frames.includes('link') ? 'L_' : ''}G_${card.scales.left}.png`),
-      rightScale: require(`../resources/pictures/pendulum-scales/${card.frames.includes('link') ? 'L_' : ''}D_${card.scales.right}.png`),
+      leftScale: require(`../resources/pictures/pendulum-scales/${includesLink ? 'L_' : ''}G_${card.scales.left}.png`),
+      rightScale: require(`../resources/pictures/pendulum-scales/${includesLink ? 'L_' : ''}D_${card.scales.right}.png`),
 
       atkDefLine: require(`../resources/pictures/atkDefLine.png`),
       atkLinkLine: require(`../resources/pictures/atkLinkLine.png`),
@@ -542,13 +540,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       </p>
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')
-        && <Container className={classNames('card-layer', 'atk-def', 'atk', this.props.card.atk === '?' ? 'question-mark' : '')}>
+        && <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
           <p className={`stat-text atk-text black-text`}>{this.props.card.atk}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')
-        && <Container className={classNames('card-layer', 'atk-def', 'def', this.props.card.def === '?' ? 'question-mark' : '')}>
+        && <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
           <p className={`stat-text def-text black-text`}>{this.props.card.def}</p>
         </Container>
       }
@@ -573,7 +571,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       pClassName = `${pClassName} white-text skill-name`;
       hStackClassName = `${hStackClassName} skill-name-container`;
     } else {
-      pClassName = `${pClassName} ${this.props.card.frames.includes('xyz') || this.props.card.frames.includes('link') || this.props.card.frames.includes('spell') || this.props.card.frames.includes('trap') ? 'white' : 'black'}-text`;
+      pClassName = `${pClassName} ${this.props.card.frames.includes('xyz') || this.props.card.frames.includes('link') || app.$card.isBackrow(this.props.card) ? 'white' : 'black'}-text`;
       if (this.props.card.frames.includes('link')) {
         pClassName = `${pClassName} on-link`;
       }
@@ -666,34 +664,34 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderStPlus() {
-    if ((this.props.card.frames.includes('spell') || this.props.card.frames.includes('trap')) && this.props.card.stType !== 'normal' && this.props.card.stType !== 'link') {
+    if (app.$card.isBackrow(this.props.card) && this.props.card.stType !== 'normal' && this.props.card.stType !== 'link') {
       return <img className='card-layer st-plus' src={this.props.card.frames.includes('spell') ? this.state.spellPlus : this.state.trapPlus} alt='stPlus' />;
     }
     return null;
   }
 
   private renderLevelOrStIcon() {
-    let isBackrow = false;
     let includesOther = false;
     let includesXyz = false;
     let includesDarkSynchro = false;
     let includesLink = false;
+
     for (let frame of this.props.card.frames) {
-      if (frame === 'xyz') {
+      if (frame === 'spell' || frame === 'trap') {
+        return <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />;
+      } else if (frame === 'link') {
+        includesLink = true;
+      } else if (frame === 'xyz') {
         includesXyz = true;
       } else if (frame === 'darkSynchro') {
         includesDarkSynchro = true;
-      } else if (frame === 'link') {
-        includesLink = true;
-      } else if (frame === 'spell' || frame === 'trap') {
-        isBackrow = true;
       } else {
         includesOther = true;
       }
     }
 
-    if (isBackrow) {
-      return <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />;
+    if (includesLink) {
+      return <img className='card-layer link-rating' src={this.state.linkRating} alt='linkRating' />;
     }
     else if (includesOther) {
       return <img className='card-layer level' src={this.state.level} alt='level' />;
@@ -704,12 +702,6 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     else if (includesXyz) {
       return <img className='card-layer rank' src={this.state.rank} alt='rank' />;
     }
-    else if (includesLink) {
-      return <img className='card-layer link-rating' src={this.state.linkRating} alt='linkRating' />;
-    }
-/*     else if (!this.props.card.frames.includes('skill') && !this.props.card.frames.includes('token') && !this.props.card.frames.includes('legendaryDragon')) {
-      return <img className='card-layer level' src={this.state.level} alt='level' />;
-    } */
     return null;
   }
 

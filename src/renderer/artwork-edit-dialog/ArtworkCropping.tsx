@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable prefer-const */
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-dynamic-require */
@@ -43,33 +44,35 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
 
   public constructor(props: IArtworkCroppingProps) {
     super(props);
-
-    const higher = this.isHigher(props);
     this.state = {
-      loaded: true,
-      higher,
+      loaded: false,
+      higher: false,
       croppedArtworkBase64: '',
-      crop: {
-        x: 0,
-        y: 0,
-        height: 100,
-        width: 100,
-        unit: '%'
-      }
+      crop: props.crop
     }
+    this.loadHigher(props);
   }
 
   public componentWillReceiveProps(nextProps: IArtworkCroppingProps, _prevState: IArtworkCroppingState) {
-    const higher = this.isHigher(nextProps);
-    this.setState({ higher, crop: nextProps.crop })
+    this.loadHigher(nextProps);
   }
 
-  private isHigher(props: IArtworkCroppingProps) {
-    let higher = false;
-    const image = new Image();
-    image.src = props.artworkBase64;
-    higher = image.height > image.width;
-    return higher;
+  private loadHigher(props: IArtworkCroppingProps) {
+    if (!props.artworkBase64) {
+      this.setState({
+        loaded: true,
+        higher: false,
+        crop: props.crop
+      });
+    } else {
+      const image = new Image();
+      image.src = props.artworkBase64;
+      image.onload = () => this.setState({
+        loaded: true,
+        higher: image.height > image.width,
+        crop: props.crop
+      })
+    }
   }
 
   private onCroppingChange(crop: Crop) {

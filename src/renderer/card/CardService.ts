@@ -376,6 +376,114 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
+  private getDefaultCurrentCard(): ICard {
+    return {
+      language: 'fr',
+      name: '',
+      nameStyle: 'default',
+      tcgAt: true,
+      artwork: {
+        url: '',
+        x: 0,
+        y: 0,
+        height: 100,
+        width: 100,
+        pendulum: false,
+        keepRatio: false
+      },
+      frames: ['effect'],
+      multipleFrames: false,
+      stType: 'normal',
+      attribute: 'dark',
+      noTextAttribute: false,
+      abilities: [],
+      level: 0,
+      atk: '',
+      def: '',
+      description: '',
+      pendulum: false,
+      pendEffect: '',
+      scales: {
+        left: 0,
+        right: 0
+      },
+      linkArrows: {
+        top: false,
+        bottom: false,
+        left: false,
+        right: false,
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false
+      },
+      edition: 'unlimited',
+      cardSet: '',
+      passcode: '',
+      sticker: 'none',
+      hasCopyright: false,
+      oldCopyright: false,
+      speed: false,
+      rush: false,
+      legend: false,
+      atkMax: 0
+    };
+  }
+
+  public getDefaultImportCard(): ICard {
+    return {
+      language: 'en',
+      name: '',
+      nameStyle: 'default',
+      tcgAt: false,
+      artwork: {
+        url: '',
+        x: 0,
+        y: 0,
+        height: 100,
+        width: 100,
+        pendulum: false,
+        keepRatio: false
+      },
+      frames: [],
+      multipleFrames: false,
+      stType: 'normal',
+      attribute: 'spell',
+      noTextAttribute: false,
+      abilities: [],
+      level: 0,
+      atk: '',
+      def: '',
+      description: '',
+      pendulum: false,
+      pendEffect: '',
+      scales: {
+        left: 0,
+        right: 0
+      },
+      linkArrows: {
+        top: false,
+        bottom: false,
+        left: false,
+        right: false,
+        topLeft: false,
+        topRight: false,
+        bottomLeft: false,
+        bottomRight: false
+      },
+      edition: 'firstEdition',
+      cardSet: '',
+      passcode: '',
+      sticker: 'silver',
+      hasCopyright: true,
+      oldCopyright: false,
+      speed: false,
+      rush: false,
+      legend: false,
+      atkMax: 0
+    };
+  }
+
   public getStIconName(icon: TStIcon) {
     switch (icon) {
       case 'normal': return 'Normal';
@@ -437,134 +545,75 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public hasLinkArrows(card: ICard): boolean {
-    return card.frames.includes('link') || ((card.frames.includes('spell') || card.frames.includes('trap')) && card.stType === 'link');
+    for (let frame of card.frames) {
+      if (frame === 'link') {
+        return true;
+      } else if (frame === 'spell' && card.stType === 'link') {
+        return true;
+      } else if (frame === 'trap' && card.stType === 'link') {
+        return true;
+      }
+    }
+    return false;
   }
 
   public hasPendulumFrame(card: ICard): boolean {
-    return card.pendulum
-      && !card.frames.includes('token')
-      && !card.frames.includes('spell')
-      && !card.frames.includes('trap')
-      && !card.frames.includes('skill')
-      && !card.frames.includes('legendaryDragon');
+    if (!card.pendulum) return false;
+
+    let includesSpell = false;
+    let includesTrap = false;
+    let includesToken = false;
+    let includesSkill = false;
+    let includesLegendaryDragon = false;
+
+    for (let frame of card.frames) {
+      if (frame === 'spell') {
+        includesSpell = true;
+      } else if (frame === 'trap') {
+        includesTrap = true;
+      } else if (frame === 'token') {
+        includesToken = true;
+      } else if (frame === 'skill') {
+        includesSkill = true;
+      } else if (frame === 'legendaryDragon') {
+        includesLegendaryDragon = true;
+      }
+    }
+
+    return !includesSpell && !includesTrap && !includesToken && !includesSkill && !includesLegendaryDragon;
   }
 
   public hasAbilities(card: ICard): boolean {
-    return !card.frames.includes('token')
-      && !card.frames.includes('spell')
-      && !card.frames.includes('trap')
-      && !card.frames.includes('legendaryDragon');
+    let includesSpell = false;
+    let includesTrap = false;
+    let includesToken = false;
+    let includesLegendaryDragon = false;
+
+    for (let frame of card.frames) {
+      if (frame === 'spell') {
+        includesSpell = true;
+      } else if (frame === 'trap') {
+        includesTrap = true;
+      } else if (frame === 'token') {
+        includesToken = true;
+      } else if (frame === 'legendaryDragon') {
+        includesLegendaryDragon = true;
+      }
+    }
+
+    return !includesSpell && !includesTrap && !includesToken && !includesLegendaryDragon;
+  }
+
+  public isBackrow(card: ICard) {
+    for (let frame of card.frames) {
+      if (frame === 'spell' || frame === 'trap') {
+        return true;
+      }
+    }
+    return false;
   }
 
   public isOnlySkill(card: ICard) {
     return card.frames.length === 1 && card.frames.includes('skill');
-  }
-
-  private getDefaultCurrentCard(): ICard {
-    return {
-      language: 'fr',
-      name: '',
-      nameStyle: 'default',
-      tcgAt: true,
-      artwork: {
-        url: '',
-        x: 0,
-        y: 0,
-        height: 0,
-        width: 0,
-        pendulum: false,
-        keepRatio: false
-      },
-      frames: ['effect'],
-      multipleFrames: false,
-      stType: 'normal',
-      attribute: 'dark',
-      noTextAttribute: false,
-      abilities: [],
-      level: 0,
-      atk: '',
-      def: '',
-      description: '',
-      pendulum: false,
-      pendEffect: '',
-      scales: {
-        left: 0,
-        right: 0
-      },
-      linkArrows: {
-        top: false,
-        bottom: false,
-        left: false,
-        right: false,
-        topLeft: false,
-        topRight: false,
-        bottomLeft: false,
-        bottomRight: false
-      },
-      edition: 'unlimited',
-      cardSet: '',
-      passcode: '',
-      sticker: 'none',
-      hasCopyright: false,
-      oldCopyright: false,
-      speed: false,
-      rush: false,
-      legend: false,
-      atkMax: 0
-    };
-  }
-
-  public getDefaultImportCard(): ICard {
-    return {
-      language: 'en',
-      name: '',
-      nameStyle: 'default',
-      tcgAt: false,
-      artwork: {
-        url: '',
-        x: 0,
-        y: 0,
-        height: 0,
-        width: 0,
-        pendulum: false,
-        keepRatio: false
-      },
-      frames: [],
-      multipleFrames: false,
-      stType: 'normal',
-      attribute: 'spell',
-      noTextAttribute: false,
-      abilities: [],
-      level: 0,
-      atk: '',
-      def: '',
-      description: '',
-      pendulum: false,
-      pendEffect: '',
-      scales: {
-        left: 0,
-        right: 0
-      },
-      linkArrows: {
-        top: false,
-        bottom: false,
-        left: false,
-        right: false,
-        topLeft: false,
-        topRight: false,
-        bottomLeft: false,
-        bottomRight: false
-      },
-      edition: 'firstEdition',
-      cardSet: '',
-      passcode: '',
-      sticker: 'silver',
-      hasCopyright: true,
-      oldCopyright: false,
-      speed: false,
-      rush: false,
-      legend: false,
-      atkMax: 0
-    };
   }
 }
