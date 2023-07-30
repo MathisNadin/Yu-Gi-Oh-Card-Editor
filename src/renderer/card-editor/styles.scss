@@ -1,12 +1,15 @@
 .card-editor {
+  $backgroundColor: aliceblue;
+  $labelColor: black;
   height: 100%;
   width: 30%;
-  margin-left: 10px;
+  padding-left: 10px;
   align-items: flex-start;
   font-size: 17px;
+  background-color: $backgroundColor;
 
   .app-version {
-    color: black;
+    color: $labelColor;
     font-size: 11px;
     align-self: end;
     margin-right: 8px;
@@ -87,56 +90,73 @@
     }
 
     &.link-arrow-section {
-      .link-arrow-line {
-        width: 95%;
-        justify-content: center;
-        gap: 8px;
+      width: 95%;
+      margin-right: 2.5%;
+      margin-left: 2.5%;
+      align-items: start;
 
-        .link-arrow-btn {
-          height: 50px;
-          width: 20%;
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-          background-color: transparent;
-          box-shadow: none;
-          transition: none;
-          padding: 0;
+      .link-arrow-label {
+        padding-bottom: 5px;
+        text-align: center;
+      }
 
-          &.hidden {
-            cursor: auto;
-          }
+      .link-arrow-lines {
+        // border: 1px solid black;
+        border-radius: 5px;
+        background: radial-gradient(circle, rgba(#1D68C0, 0.95) 0%, rgba(#1D68C0, 0.85) 30%, rgba(#1D68C0, 0.6) 80%, rgba(#1D68C0, 0.5) 100%);
+        // background-color: rgba(#1D68C0, 0.8);
+        // box-shadow: 0 0 10px 3px #1D68C0;
 
-          img {
-            height: 100%;
-            width: 100%;
+        .link-arrow-line {
+          justify-content: center;
+          gap: 8px;
 
-            &.top-left-img {
-              transform: rotate(-45deg);
+          .link-arrow-btn {
+            height: 50px;
+            width: 60px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            background-color: transparent;
+            box-shadow: none;
+            transition: none;
+            padding: 0;
+
+            &.hidden {
+              cursor: auto;
             }
 
-            &.top-right-img {
-              transform: rotate(45deg);
-            }
+            img {
+              height: 100%;
+              width: 100%;
 
-            &.left-img {
-              transform: rotate(-90deg);
-            }
+              &.top-left-img {
+                transform: rotate(-45deg);
+              }
 
-            &.right-img {
-              transform: rotate(90deg);
-            }
+              &.top-right-img {
+                transform: rotate(45deg);
+              }
 
-            &.bottom-left-img {
-              transform: rotate(225deg);
-            }
+              &.left-img {
+                transform: rotate(-90deg);
+              }
 
-            &.bottom-img {
-              transform: rotate(180deg);
-            }
+              &.right-img {
+                transform: rotate(90deg);
+              }
 
-            &.bottom-right-img {
-              transform: rotate(-225deg);
+              &.bottom-left-img {
+                transform: rotate(225deg);
+              }
+
+              &.bottom-img {
+                transform: rotate(180deg);
+              }
+
+              &.bottom-right-img {
+                transform: rotate(-225deg);
+              }
             }
           }
         }
@@ -201,7 +221,7 @@
     }
 
     .with-label-separator {
-      border-bottom: 1px solid darkgray;
+      border-bottom: 1px solid $labelColor;
       margin-bottom: 7px;
     }
 
@@ -213,7 +233,7 @@
     }
 
     .editor-label {
-      color: black;
+      color: $labelColor;
       margin: 5px 0;
       font-size: 13px;
       font-family: fontAbilities;
@@ -227,7 +247,7 @@
 
     .editor-sub-label {
       align-self: center;
-      color: black;
+      color: $labelColor;
       margin: 0 0 0 4px;
       font-size: 11px;
       font-variant: petite-caps;
@@ -242,6 +262,10 @@
 
           &.artwork-input {
             flex: 1;
+          }
+
+          &.level-input, &.atk-input, &.def-input {
+            width: 95%;
           }
         }
 
@@ -301,9 +325,16 @@
       .card-frames-icons {
         .card-frame-container {
           height: 50px;
+          background-color: white;
 
           .card-frame {
             opacity: 50%;
+          }
+
+          &.selected {
+            .card-frame {
+              opacity: 100%;
+            }
           }
 
           @for $i from 1 through 20 {
@@ -327,10 +358,6 @@
                 background-color: adjust-hue(hsl(0, 70%, 50%), 20 * $i);
                 color: #fff;
               }
-
-              .card-frame {
-                opacity: 100%;
-              }
             }
           }
         }
@@ -352,34 +379,61 @@
         }
       }
 
-      .abilities-edit-buttons {
-        gap: 10px;
+      .ability-btn {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: transparent;
 
-        .abilities-edit-btn {
-          display: flex;
-          align-items: center;
-          width: fit-content;
-          padding: 5px;
+        &.ability-add-btn {
           border: 1px outset #318ce7;
-          border-radius: 4px;
-          cursor: pointer;
-          background-color: transparent;
-
-          img {
-            height: 16px;
-            width: 16px;
-          }
-
-          &.lock-opened {
-            background-color: rgba(222, 25, 60, 0.6);
-          }
-
-          &.lock-closed {
-            background-color: rgba(0, 100, 170, 0.6);
-          }
+          margin: 4px;
+          padding: 4px;
 
           &:hover {
-            background-color: rgba(185, 200, 205, 0.6);
+            background-color: rgba(green, 0.6);
+            border: 1px outset transparent;
+          }
+        }
+
+        &.lock-opened {
+          background-color: rgba(222, 25, 60, 0.6);
+        }
+
+        &.lock-closed {
+          background-color: rgba(0, 100, 170, 0.6);
+        }
+
+        img {
+          height: 15px;
+          width: 15px;
+        }
+      }
+
+      .ability-edit-buttons {
+        position: absolute;
+        right: 5px;
+        gap: 5px;
+
+        .ability-edit-btn {
+          padding: 0;
+
+          &.delete-btn {
+            &:hover {
+              background-color: rgba(red, 0.6);
+            }
+          }
+
+          &.up-btn, &.down-btn {
+            &:hover {
+              background-color: rgba(185, 200, 205, 0.6);
+            }
+          }
+
+          img {
+            padding: 3px;
           }
         }
       }
@@ -396,13 +450,14 @@
           border: none;
           padding: 3px;
           height: 15px;
-
-          &.selected {
-            background-color: #ADCAF9;
-          }
+          width: calc(100% - 85px);
 
           .inplace-edit-div {
             height: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: text;
           }
 
           .inplace-edit-input {
@@ -429,7 +484,7 @@
         .card-pendulum {
           position: absolute;
           top: -14px;
-          background: aliceblue;
+          background: $backgroundColor;
         }
 
         .pendulum-section {

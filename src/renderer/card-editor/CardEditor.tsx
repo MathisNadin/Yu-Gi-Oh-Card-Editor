@@ -64,7 +64,6 @@ interface ICardEditorState extends IContainableState {
     id: TStIcon;
     file: string;
   }[];
-  selectedAbility: number;
   appVersion: string;
 }
 
@@ -120,7 +119,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'counter', file: require(`../resources/pictures/icons/st/counter.png`) },
         { id: 'link', file: require(`../resources/pictures/icons/st/link.png`) },
       ],
-      selectedAbility: -1,
       appVersion: '',
     };
 
@@ -354,39 +352,34 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   }
 
   private onAddAbility() {
-    if (this.state.selectedAbility === -1) {
-      this.state.card.abilities.push('');
-    } else {
-      this.state.card.abilities.splice(this.state.selectedAbility + 1, 0, '');
-    }
+    this.state.card.abilities.push('');
     this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
 
-  private onRemoveAbility() {
-    if (this.state.selectedAbility === -1) return;
-    this.state.card.abilities.splice(this.state.selectedAbility, 1);
-    this.setState({ card: this.state.card, selectedAbility: -1 });
+  private onRemoveAbility(index: number) {
+    this.state.card.abilities.splice(index, 1);
+    this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
 
-  private onMoveAbilityUp() {
-    if (this.state.selectedAbility < 1) return;
-    const newIndex = this.state.selectedAbility - 1;
-    let element = this.state.card.abilities[this.state.selectedAbility];
-    this.state.card.abilities.splice(this.state.selectedAbility, 1);
+  private onMoveAbilityUp(index: number) {
+    if (index === 0) return;
+    const newIndex = index - 1;
+    let element = this.state.card.abilities[index];
+    this.state.card.abilities.splice(index, 1);
     this.state.card.abilities.splice(newIndex, 0, element);
-    this.setState({ card: this.state.card, selectedAbility: newIndex });
+    this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
 
-  private onMoveAbilityDown() {
-    if (this.state.selectedAbility === -1 || this.state.selectedAbility > this.state.card.attribute.length) return;
-    const newIndex = this.state.selectedAbility + 1;
-    let element = this.state.card.abilities[this.state.selectedAbility];
-    this.state.card.abilities.splice(this.state.selectedAbility, 1);
+  private onMoveAbilityDown(index: number) {
+    if (index === this.state.card.abilities.length-1) return;
+    const newIndex = index + 1;
+    let element = this.state.card.abilities[index];
+    this.state.card.abilities.splice(index, 1);
     this.state.card.abilities.splice(newIndex, 0, element);
-    this.setState({ card: this.state.card, selectedAbility: newIndex });
+    this.setState({ card: this.state.card });
     this.debouncedOnCardChange(this.state.card);
   }
 
@@ -440,9 +433,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   public render() {
     return this.renderAttributes(<VerticalStack scroll>
       {this.renderBasicCardDetails()}
-      {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
-      {/* {app.$card.hasPendulumFrame(this.state.card) && this.renderPendulumCardDetails()} */}
       {app.$card.hasLinkArrows(this.state.card) && this.renderLinkArrows()}
+      {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
       {this.renderMiscDetails()}
       <p className='app-version'>{this.state.appVersion}</p>
     </VerticalStack>, 'card-editor');
@@ -523,7 +515,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
       </VerticalStack>
 
-      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-attributes card-input-container'>
+      {!app.$card.isOnlySkill(this.state.card) && <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-attributes card-input-container'>
         <HorizontalStack className='card-attributes-labels with-label-separator'>
           <p className='editor-label attributes-label'>Icones</p>
 
@@ -544,7 +536,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             </HorizontalStack>
           )}
         </HorizontalStack>
-      </VerticalStack>
+      </VerticalStack>}
 
       {(this.state.card.frames.includes('spell') || this.state.card.frames.includes('trap')) &&
         <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-st-icons card-input-container'>
@@ -578,7 +570,10 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             let className = 'item-container card-frame-container';
             let frameIndex = this.state.card.frames.indexOf(frame.id);
             if (frameIndex >= 0) {
-              className = `${className} selected-${frameIndex+1}`;
+              className = `${className} selected`;
+              if (this.state.card.multipleFrames) {
+                className = `${className} selected-${frameIndex+1}`;
+              }
             }
             return <HorizontalStack className={className}>
               <img src={frame.file}
@@ -602,12 +597,10 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   private renderMonsterCardDetails() {
     let levelLabel: string;
     let max: number;
-    // let levels = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     if (this.state.card.frames.includes('link')) {
       levelLabel = 'Classification Lien';
       max = 8
     } else {
-      // levels = levels.concat([9, 10, 11, 12, 13]);
       max = 13;
 
       let includesOther = false;
@@ -634,10 +627,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     const hasPendulumFrame = app.$card.hasPendulumFrame(this.state.card);
 
     return this.renderAttributes(<VerticalStack>
-{/*       <VerticalStack className='section-header'>
-        <p className='section-header-title'>Détails de la Carte Monstre</p>
-      </VerticalStack> */}
-
       <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-level card-input-container'>
           <p className='editor-label level-label'>{levelLabel}</p>
@@ -657,37 +646,38 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       </HorizontalStack>
 
       <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-abilities card-input-container'>
-        <HorizontalStack className='card-abilities-menus'>
-          <p className='editor-label abilities-label'>Sous-types</p>
-
-          <HorizontalStack className='abilities-edit-buttons'>
-            <button type='button' className='abilities-edit-btn add-btn' onClick={() => this.onAddAbility()}>
-              <img src={plus} alt='lock' />
-            </button>
-
-            <button type='button' className='abilities-edit-btn delete-btn' onClick={() => this.onRemoveAbility()}>
-              <img src={cross} alt='lock' />
-            </button>
-
-            <button type='button' className='abilities-edit-btn up-btn' onClick={() => this.onMoveAbilityUp()}>
-              <img src={upArrow} alt='lock' />
-            </button>
-
-            <button type='button' className='abilities-edit-btn down-btn' onClick={() => this.onMoveAbilityDown()}>
-              <img src={downArrow} alt='lock' />
-            </button>
-          </HorizontalStack>
-        </HorizontalStack>
+        <p className='editor-label abilities-label'>Sous-types</p>
 
         <VerticalStack className='abilities-list'>
           {this.state.card.abilities.map((ability, iAbility) => {
-            return <InplaceEdit
-              key={`${iAbility}-${ability}`}
-              className={`ability-input card-input ${iAbility === this.state.selectedAbility ? 'selected' : ''}`}
-              value={ability}
-              onSingleClick={() => this.setState({ selectedAbility: iAbility === this.state.selectedAbility ? -1 : iAbility })}
-              onChange={newValue => this.onAbilityChange(newValue, iAbility)} />
+            return <HorizontalStack className='ability-line'>
+              <InplaceEdit
+                focusOnSingleClick
+                key={`${iAbility}-${ability}`}
+                className='ability-input card-input'
+                value={ability}
+                onChange={newValue => this.onAbilityChange(newValue, iAbility)}
+              />
+
+              <HorizontalStack className='ability-edit-buttons'>
+                <button type='button' className='ability-btn ability-edit-btn delete-btn' onClick={() => this.onRemoveAbility(iAbility)}>
+                  <img src={cross} alt='lock' />
+                </button>
+
+                <button type='button' className='ability-btn ability-edit-btn up-btn' onClick={() => this.onMoveAbilityUp(iAbility)}>
+                  <img src={upArrow} alt='lock' />
+                </button>
+
+                <button type='button' className='ability-btn ability-edit-btn down-btn' onClick={() => this.onMoveAbilityDown(iAbility)}>
+                  <img src={downArrow} alt='lock' />
+                </button>
+              </HorizontalStack>
+            </HorizontalStack>
           })}
+
+          <button type='button' className='ability-btn ability-add-btn' onClick={() => this.onAddAbility()}>
+            <img src={plus} alt='lock' />
+          </button>
         </VerticalStack>
       </VerticalStack>
 
@@ -699,69 +689,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
         {hasPendulumFrame && this.renderPendulumCardDetails()}
       </VerticalStack>
-
-
-
-
-
-
-
-{/*       <HorizontalStack className='card-editor-sub-section level-and-pend-section'>
-        <HorizontalStack className='card-level card-input-container'>
-          <p className='editor-label level-label'>{levelLabel}</p>
-          <input type='number' min={0} max={max} className='level-input card-input' value={this.state.card.level} onInput={e => this.onLevelChange((e.target as EventTargetWithValue).value, max)} />
-        </HorizontalStack>
-
-        <HorizontalStack className='card-pendulum card-input-container'>
-          <input type='checkbox' className='pendulum-input card-input' checked={this.state.card.pendulum} onChange={() => this.onPendChange()} />
-          <p className='editor-label pendulum-label'>Pendule</p>
-        </HorizontalStack>
-      </HorizontalStack> */}
-
-{/*       <VerticalStack className='card-editor-sub-section abilities-section'>
-        <HorizontalStack className='abilities-edit-buttons'>
-          <button type='button' className='abilities-edit-btn add-btn' onClick={() => this.onAddAbility()}>
-            <img src={plus} alt='lock' />
-          </button>
-
-          <button type='button' className='abilities-edit-btn delete-btn' onClick={() => this.onRemoveAbility()}>
-            <img src={cross} alt='lock' />
-          </button>
-
-          <button type='button' className='abilities-edit-btn up-btn' onClick={() => this.onMoveAbilityUp()}>
-            <img src={upArrow} alt='lock' />
-          </button>
-
-          <button type='button' className='abilities-edit-btn down-btn' onClick={() => this.onMoveAbilityDown()}>
-            <img src={downArrow} alt='lock' />
-          </button>
-        </HorizontalStack>
-
-        <VerticalStack className='abilities-list'>
-          {this.state.card.abilities.map((ability, iAbility) => {
-            return <InplaceEdit
-              key={`${iAbility}-${ability}`}
-              className={`ability-input card-input ${iAbility === this.state.selectedAbility ? 'selected' : ''}`}
-              value={ability}
-              onSingleClick={() => this.setState({ selectedAbility: iAbility === this.state.selectedAbility ? -1 : iAbility })}
-              onChange={newValue => this.onAbilityChange(newValue, iAbility)} />
-          })}
-        </VerticalStack>
-      </VerticalStack>
-
-      <HorizontalStack className='card-editor-sub-section atk-def-section'>
-        <HorizontalStack className='card-stats card-atk card-input-container'>
-          <p className='editor-label atk-label'>ATK</p>
-          <input type='text' className='atk-input card-input' value={this.state.card.atk} onInput={e => this.onAtkChange((e.target as EventTargetWithValue).value)} />
-        </HorizontalStack>
-
-        <VerticalStack className='separator-container' fill />
-
-        {!this.state.card.frames.includes('link') && <HorizontalStack className='card-stats card-def card-input-container'>
-          <p className='editor-label def-label'>DEF</p>
-          <input type='text' className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
-        </HorizontalStack>}
-      </HorizontalStack> */}
     </VerticalStack>, 'card-editor-section abilities-section');
   }
 
@@ -777,10 +704,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     }
 
     return this.renderAttributes(<VerticalStack>
-{/*       <VerticalStack className='section-header'>
-        <p className='section-header-title'>Détails de la Carte Pendule</p>
-      </VerticalStack> */}
-
       <HorizontalStack className='card-editor-sub-section scales-section'>
         <HorizontalStack className='card-scale card-left-scale card-input-container'>
           <p className='editor-label scale-label'>Échelle Gauche</p>
@@ -808,58 +731,54 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private renderLinkArrows() {
     return this.renderAttributes(<VerticalStack>
-      <VerticalStack className='section-header'>
-        <p className='section-header-title'>Flèches Lien</p>
+      <p className='editor-label link-arrow-label'>Flèches Lien</p>
+
+      <VerticalStack className='link-arrow-lines'>
+        <HorizontalStack className='link-arrow-line'>
+          <button type='button' className='link-arrow-btn top-left-btn' onClick={() => this.onLinkArrowChange('topLeft')}>
+            <img className='link-arrow-img top-left-img' src={this.state.card.linkArrows.topLeft ? triangleRed : triangle} alt='lock' />
+          </button>
+
+          <button type='button' className='link-arrow-btn top-btn' onClick={() => this.onLinkArrowChange('top')}>
+            <img className='link-arrow-img top-img' src={this.state.card.linkArrows.top ? triangleRed : triangle} alt='lock' />
+          </button>
+
+          <button type='button' className='link-arrow-btn top-right-btn' onClick={() => this.onLinkArrowChange('topRight')}>
+            <img className='link-arrow-img top-right-img' src={this.state.card.linkArrows.topRight ? triangleRed : triangle} alt='lock' />
+          </button>
+        </HorizontalStack>
+
+        <HorizontalStack className='link-arrow-line'>
+          <button type='button' className='link-arrow-btn left-btn' onClick={() => this.onLinkArrowChange('left')}>
+            <img className='link-arrow-img left-img' src={this.state.card.linkArrows.left ? triangleRed : triangle} alt='lock' />
+          </button>
+
+          <div className='link-arrow-btn hidden'></div>
+
+          <button type='button' className='link-arrow-btn right-btn' onClick={() => this.onLinkArrowChange('right')}>
+            <img className='link-arrow-img right-img' src={this.state.card.linkArrows.right ? triangleRed : triangle} alt='lock' />
+          </button>
+        </HorizontalStack>
+
+        <HorizontalStack className='link-arrow-line'>
+          <button type='button' className='link-arrow-btn bottom-left-btn' onClick={() => this.onLinkArrowChange('bottomLeft')}>
+            <img className='link-arrow-img bottom-left-img' src={this.state.card.linkArrows.bottomLeft ? triangleRed : triangle} alt='lock' />
+          </button>
+
+          <button type='button' className='link-arrow-btn bottom-btn' onClick={() => this.onLinkArrowChange('bottom')}>
+            <img className='link-arrow-img bottom-img' src={this.state.card.linkArrows.bottom ? triangleRed : triangle} alt='lock' />
+          </button>
+
+          <button type='button' className='link-arrow-btn bottom-right-btn' onClick={() => this.onLinkArrowChange('bottomRight')}>
+            <img className='link-arrow-img bottom-right-img' src={this.state.card.linkArrows.bottomRight ? triangleRed : triangle} alt='lock' />
+          </button>
+        </HorizontalStack>
       </VerticalStack>
-
-      <HorizontalStack className='link-arrow-line'>
-        <button type='button' className='link-arrow-btn top-left-btn' onClick={() => this.onLinkArrowChange('topLeft')}>
-          <img className='link-arrow-img top-left-img' src={this.state.card.linkArrows.topLeft ? triangleRed : triangle} alt='lock' />
-        </button>
-
-        <button type='button' className='link-arrow-btn top-btn' onClick={() => this.onLinkArrowChange('top')}>
-          <img className='link-arrow-img top-img' src={this.state.card.linkArrows.top ? triangleRed : triangle} alt='lock' />
-        </button>
-
-        <button type='button' className='link-arrow-btn top-right-btn' onClick={() => this.onLinkArrowChange('topRight')}>
-          <img className='link-arrow-img top-right-img' src={this.state.card.linkArrows.topRight ? triangleRed : triangle} alt='lock' />
-        </button>
-      </HorizontalStack>
-
-      <HorizontalStack className='link-arrow-line'>
-        <button type='button' className='link-arrow-btn left-btn' onClick={() => this.onLinkArrowChange('left')}>
-          <img className='link-arrow-img left-img' src={this.state.card.linkArrows.left ? triangleRed : triangle} alt='lock' />
-        </button>
-
-        <div className='link-arrow-btn hidden'></div>
-
-        <button type='button' className='link-arrow-btn right-btn' onClick={() => this.onLinkArrowChange('right')}>
-          <img className='link-arrow-img right-img' src={this.state.card.linkArrows.right ? triangleRed : triangle} alt='lock' />
-        </button>
-      </HorizontalStack>
-
-      <HorizontalStack className='link-arrow-line'>
-        <button type='button' className='link-arrow-btn bottom-left-btn' onClick={() => this.onLinkArrowChange('bottomLeft')}>
-          <img className='link-arrow-img bottom-left-img' src={this.state.card.linkArrows.bottomLeft ? triangleRed : triangle} alt='lock' />
-        </button>
-
-        <button type='button' className='link-arrow-btn bottom-btn' onClick={() => this.onLinkArrowChange('bottom')}>
-          <img className='link-arrow-img bottom-img' src={this.state.card.linkArrows.bottom ? triangleRed : triangle} alt='lock' />
-        </button>
-
-        <button type='button' className='link-arrow-btn bottom-right-btn' onClick={() => this.onLinkArrowChange('bottomRight')}>
-          <img className='link-arrow-img bottom-right-img' src={this.state.card.linkArrows.bottomRight ? triangleRed : triangle} alt='lock' />
-        </button>
-      </HorizontalStack>
     </VerticalStack>, 'card-editor-section link-arrow-section');
   }
 
   private renderMiscDetails() {
     return this.renderAttributes(<VerticalStack>
-{/*       <VerticalStack className='section-header'>
-        <p className='section-header-title'>Détails Divers</p>
-      </VerticalStack> */}
-
       <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-set card-input-container'>
           <p className='editor-label card-set-label'>Set</p>

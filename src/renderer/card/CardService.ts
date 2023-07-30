@@ -456,6 +456,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       && !card.frames.includes('legendaryDragon');
   }
 
+  public isOnlySkill(card: ICard) {
+    return card.frames.length === 1 && card.frames.includes('skill');
+  }
+
   private getDefaultCurrentCard(): ICard {
     return {
       language: 'fr',

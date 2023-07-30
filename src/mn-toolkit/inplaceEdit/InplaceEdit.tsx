@@ -10,12 +10,14 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { classNames } from 'mn-toolkit/tools';
-import { ChangeEvent, MouseEvent, createRef } from 'react';
+import { MouseEvent, createRef } from 'react';
 
 interface InplaceEditProps extends IContainableProps {
   value: string;
+  focusOnSingleClick?: boolean;
   onChange?: (newValue: string) => void;
   onSingleClick?: (e: MouseEvent) => void;
+  onDoubleClick?: (e: MouseEvent) => void;
 }
 
 interface InplaceEditState extends IContainableState {
@@ -49,22 +51,28 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
     if (this.props.onChange) this.props.onChange(this.tempValue);
   }
 
+  private doFocus() {
+    this.setState({ isFocused: true }, () => {
+      if (this.inputRef.current) {
+        this.inputRef.current.focus();
+      }
+    });
+  }
+
   private onSingleClick(e: MouseEvent) {
     if (this.clickTimer) return;
+    if (this.props.focusOnSingleClick) this.doFocus();
     this.clickTimer = setTimeout(() => {
       if (this.props.onSingleClick) this.props.onSingleClick(e);
       this.clickTimer = undefined;
     }, 200);
   }
 
-  private onDoubleClick() {
+  private onDoubleClick(e: MouseEvent) {
     clearTimeout(this.clickTimer);
-    this.setState({ isFocused: true }, () => {
-      if (this.inputRef.current) {
-        this.inputRef.current.focus();
-      }
-    });
+    if (!this.props.focusOnSingleClick) this.doFocus();
     this.clickTimer = undefined;
+    if (this.props.onDoubleClick) this.props.onDoubleClick(e);
   }
 
   public render() {
@@ -77,7 +85,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
           defaultValue={this.tempValue}
           onChange={e => this.tempValue = e.target.value}
           onBlur={() => this.onBlur()} />
-        : <div className='inplace-edit-value inplace-edit-div' onClick={e => this.onSingleClick(e)} onDoubleClick={() => this.onDoubleClick()}>
+        : <div className='inplace-edit-value inplace-edit-div' onClick={e => this.onSingleClick(e)} onDoubleClick={e => this.onDoubleClick(e)}>
           {this.tempValue || '<vide>'}
         </div>
       }
