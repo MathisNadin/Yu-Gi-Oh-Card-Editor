@@ -9,794 +9,673 @@
   align-items: flex-start;
   font-size: 17px;
   background-color: aliceblue; }
-
-.card-editor .app-version {
-  color: black;
-  font-size: 11px;
-  align-self: end;
-  margin-right: 8px; }
-
-.card-editor .card-editor-section {
-  width: 100%;
-  align-items: center;
-  gap: 5px;
-  padding-bottom: 8px; }
-
-.card-editor .card-editor-section.link-arrow-section {
-  width: 95%;
-  margin-right: 2.5%;
-  margin-left: 2.5%;
-  align-items: start; }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-label {
-  padding-bottom: 5px;
-  text-align: center; }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines {
-  border-radius: 5px;
-  background: radial-gradient(circle, rgba(29, 104, 192, 0.95) 0%, rgba(29, 104, 192, 0.85) 30%, rgba(29, 104, 192, 0.6) 80%, rgba(29, 104, 192, 0.5) 100%); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line {
-  justify-content: center;
-  gap: 8px; }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn {
-  height: 50px;
-  width: 60px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  background-color: transparent;
-  box-shadow: none;
-  transition: none;
-  padding: 0; }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn.hidden {
-  cursor: auto; }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img {
-  height: 100%;
-  width: 100%; }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-left-img {
-  transform: rotate(-45deg); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-right-img {
-  transform: rotate(45deg); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.left-img {
-  transform: rotate(-90deg); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.right-img {
-  transform: rotate(90deg); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-left-img {
-  transform: rotate(225deg); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-img {
-  transform: rotate(180deg); }
-
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-right-img {
-  transform: rotate(-225deg); }
-
-.card-editor .card-editor-section .card-pendulum-ratio {
-  width: 95%;
-  justify-content: flex-end; }
-
-.card-editor .card-editor-section .card-editor-full-width-section {
-  width: 95%;
-  padding: 1%; }
-
-.card-editor .card-editor-section .card-editor-full-width-section.horizontal-stack {
-  gap: 8px; }
-
-.card-editor .card-editor-section .reset-current-card-btn {
-  color: white;
-  font-size: 15px;
-  margin: 0;
-  cursor: pointer;
-  height: 17px;
-  background-color: rgba(255, 0, 0, 0.3);
-  padding: 4px 8px;
-  border-radius: 4px;
-  align-self: end; }
-
-.card-editor .card-editor-section .with-label-separator {
-  border-bottom: 1px solid black;
-  margin-bottom: 7px; }
-
-.card-editor .card-editor-section .textarea-input {
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: justify;
-  resize: none;
-  height: 150px; }
-
-.card-editor .card-editor-section .editor-label {
-  color: black;
-  margin: 5px 0;
-  font-size: 13px;
-  font-family: fontAbilities;
-  text-transform: uppercase;
-  flex: 1; }
-
-.card-editor .card-editor-section .editor-label.label-with-separator {
-  padding-bottom: 5px; }
-
-.card-editor .card-editor-section .editor-sub-label {
-  align-self: center;
-  color: black;
-  margin: 0 0 0 4px;
-  font-size: 11px;
-  font-variant: petite-caps; }
-
-.card-editor .card-editor-section .card-editor-vertical-section {
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input {
-  height: 19px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.artwork-input {
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.level-input, .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.atk-input, .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.def-input {
-  width: 95%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .artwork-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px;
-  margin-left: 2%;
-  border: 1px outset lightgray;
-  border-radius: 4px;
-  cursor: pointer;
-  width: auto;
-  height: 25px;
-  width: 33px;
-  background-color: lightgrey; }
-
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .artwork-hidden-input {
-  display: none; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .mn-dropdown {
-  justify-content: center;
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .mn-dropdown select {
-  height: 25px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-items {
-  max-width: 100%;
-  flex-wrap: wrap; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-items .item-container {
-  margin: 4px 10px 4px 0;
-  cursor: pointer; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container {
-  height: 30px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute {
-  opacity: 50%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute.selected {
-  opacity: 100%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container {
-  height: 50px;
-  background-color: white; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container .card-frame {
-  opacity: 50%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected .card-frame {
-  opacity: 100%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-1::after {
-  content: "1";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d96226;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-2::after {
-  content: "2";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d99d26;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-3::after {
-  content: "3";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d9d926;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-4::after {
-  content: "4";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #9dd926;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-5::after {
-  content: "5";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #62d926;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-6::after {
-  content: "6";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #26d926;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-7::after {
-  content: "7";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #26d962;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-8::after {
-  content: "8";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #26d99d;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-9::after {
-  content: "9";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #26d9d9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-10::after {
-  content: "10";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #269dd9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-11::after {
-  content: "11";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #2662d9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-12::after {
-  content: "12";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #2626d9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-13::after {
-  content: "13";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #6226d9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-14::after {
-  content: "14";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #9d26d9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-15::after {
-  content: "15";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d926d9;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-16::after {
-  content: "16";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d9269d;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-17::after {
-  content: "17";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d92662;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-18::after {
-  content: "18";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d92626;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-19::after {
-  content: "19";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d96226;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-20::after {
-  content: "20";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 12px;
-  font-size: 12px;
-  background-color: #d99d26;
-  color: #fff; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container {
-  height: 30px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon {
-  height: 30px;
-  width: 30px;
-  opacity: 50%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
-  opacity: 100%; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: transparent; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn {
-  border: 1px outset #318ce7;
-  margin: 4px;
-  padding: 4px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn:hover {
-  background-color: rgba(0, 128, 0, 0.6);
-  border: 1px outset transparent; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.lock-opened {
-  background-color: rgba(222, 25, 60, 0.6); }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.lock-closed {
-  background-color: rgba(0, 100, 170, 0.6); }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn img {
-  height: 15px;
-  width: 15px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons {
-  position: absolute;
-  right: 5px;
-  gap: 5px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn {
-  padding: 0; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.delete-btn:hover {
-  background-color: rgba(255, 0, 0, 0.6); }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.up-btn:hover, .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.down-btn:hover {
-  background-color: rgba(185, 200, 205, 0.6); }
-
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn img {
-  padding: 3px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list {
-  margin-top: 5px;
-  border: 1px solid #318ce7;
-  background-color: white;
-  font-size: 13px;
-  color: black;
-  min-height: 84px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input {
-  border: none;
-  padding: 3px;
-  height: 15px;
-  width: calc(100% - 85px); }
-
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-div {
-  height: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: text; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input {
-  padding: 0;
-  margin: -2px; }
-
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
-  outline: none; }
-
-.card-editor .card-editor-section .pendulum-details {
-  width: 95%;
-  margin-bottom: 8px; }
-
-.card-editor .card-editor-section .pendulum-details.opened {
-  border: 1px solid black;
-  border-radius: 5px;
-  top: 14px; }
-
-.card-editor .card-editor-section .pendulum-details.opened .card-pendulum {
-  position: absolute;
-  top: -14px;
-  background: aliceblue; }
-
-.card-editor .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
-  top: 5px;
-  align-items: center; }
-
-.card-editor .card-editor-section .pendulum-details .card-pendulum {
-  left: 14px;
-  top: 1px; }
-
-.card-editor .card-editor-section.misc-section .generate-passcode-btn {
-  color: white;
-  font-size: 15px;
-  margin: 0;
-  cursor: pointer;
-  height: 17px;
-  background-color: rgba(0, 0, 255, 0.3);
-  padding: 4px 8px;
-  border-radius: 4px;
-  align-self: end; }
-
-.card-editor .card-editor-section.misc-section .card-copyright {
-  align-self: end;
-  justify-content: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section {
-  width: 95%;
-  padding: 2%; }
-
-.card-editor .card-editor-section .card-editor-sub-section .card-items {
-  max-width: 100%;
-  flex-wrap: wrap; }
-
-.card-editor .card-editor-section .card-editor-sub-section .card-items .item-container {
-  margin: 4px 10px 4px 0;
-  cursor: pointer; }
-
-.card-editor .card-editor-section .card-editor-sub-section .mn-dropdown {
-  justify-content: center;
-  flex: 1; }
-
-.card-editor .card-editor-section .card-editor-sub-section .mn-dropdown select {
-  height: 25px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale {
-  width: 40%;
-  justify-content: center;
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-label {
-  width: 75%; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-input {
-  width: 25%; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale input[readOnly] {
-  color: #999;
-  background-color: #f7f7f7;
-  border-color: #ddd;
-  cursor: not-allowed; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container {
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px;
-  margin: 0 8px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock img {
-  height: 16px;
-  width: 16px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-opened {
-  background-color: rgba(222, 25, 60, 0.6); }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-closed {
-  background-color: rgba(0, 100, 170, 0.6); }
-
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock:hover {
-  background-color: rgba(185, 200, 205, 0.6); }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section {
-  gap: 6px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons {
-  gap: 10px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 5px;
-  border: 1px outset #318ce7;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: transparent; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn img {
-  height: 16px;
-  width: 16px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
-  background-color: rgba(222, 25, 60, 0.6); }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
-  background-color: rgba(0, 100, 170, 0.6); }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn:hover {
-  background-color: rgba(185, 200, 205, 0.6); }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list {
-  border: 1px solid #318ce7;
-  background-color: white;
-  font-size: 13px;
-  color: black;
-  min-height: 63px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input {
-  border: none;
-  padding: 3px;
-  height: 15px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input.selected {
-  background-color: #ADCAF9; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-div {
-  height: 15px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input {
-  padding: 0;
-  margin: -2px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
-  outline: none; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container.card-artwork {
-  align-items: center; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .card-input {
-  width: 85%; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .card-input.artwork-input {
-  width: 75%;
-  height: 19px; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .artwork-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px;
-  margin-left: 2%;
-  border: 1px outset lightgray;
-  border-radius: 4px;
-  cursor: pointer;
-  width: auto;
-  height: 25px;
-  width: 33px;
-  background-color: lightgrey; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .artwork-hidden-input {
-  display: none; }
-
-.card-editor .card-editor-section .card-editor-sub-section.card-textarea .textarea-input {
-  font-family: Arial, Helvetica, sans-serif;
-  text-align: justify;
-  resize: none;
-  height: 115px; }
+  .card-editor .app-version {
+    color: black;
+    font-size: 11px;
+    align-self: end;
+    margin-right: 8px; }
+  .card-editor .card-editor-section {
+    width: 100%;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 8px; }
+    .card-editor .card-editor-section.link-arrow-section {
+      width: 95%;
+      margin-right: 2.5%;
+      margin-left: 2.5%;
+      align-items: start; }
+      .card-editor .card-editor-section.link-arrow-section .link-arrow-label {
+        padding-bottom: 5px;
+        text-align: center; }
+      .card-editor .card-editor-section.link-arrow-section .link-arrow-lines {
+        border-radius: 5px;
+        background: radial-gradient(circle, rgba(29, 104, 192, 0.95) 0%, rgba(29, 104, 192, 0.85) 30%, rgba(29, 104, 192, 0.6) 80%, rgba(29, 104, 192, 0.5) 100%); }
+        .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line {
+          justify-content: center;
+          gap: 8px; }
+          .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn {
+            height: 50px;
+            width: 60px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            background-color: transparent;
+            box-shadow: none;
+            transition: none;
+            padding: 0; }
+            .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn.hidden {
+              cursor: auto; }
+            .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img {
+              height: 100%;
+              width: 100%; }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-left-img {
+                transform: rotate(-45deg); }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-right-img {
+                transform: rotate(45deg); }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.left-img {
+                transform: rotate(-90deg); }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.right-img {
+                transform: rotate(90deg); }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-left-img {
+                transform: rotate(225deg); }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-img {
+                transform: rotate(180deg); }
+              .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-right-img {
+                transform: rotate(-225deg); }
+    .card-editor .card-editor-section .card-pendulum-ratio {
+      width: 95%;
+      justify-content: flex-end; }
+    .card-editor .card-editor-section .card-editor-full-width-section {
+      width: 95%;
+      padding: 1%; }
+      .card-editor .card-editor-section .card-editor-full-width-section.horizontal-stack {
+        gap: 8px; }
+    .card-editor .card-editor-section .reset-current-card-btn {
+      color: white;
+      font-size: 15px;
+      margin: 0;
+      cursor: pointer;
+      height: 17px;
+      background-color: rgba(255, 0, 0, 0.3);
+      padding: 4px 8px;
+      border-radius: 4px;
+      align-self: end; }
+    .card-editor .card-editor-section .with-label-separator {
+      border-bottom: 1px solid black;
+      margin-bottom: 7px; }
+    .card-editor .card-editor-section .textarea-input {
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: justify;
+      resize: none;
+      height: 150px; }
+    .card-editor .card-editor-section .editor-label {
+      color: black;
+      margin: 5px 0;
+      font-size: 13px;
+      font-family: fontAbilities;
+      text-transform: uppercase;
+      flex: 1; }
+      .card-editor .card-editor-section .editor-label.label-with-separator {
+        padding-bottom: 5px; }
+    .card-editor .card-editor-section .editor-sub-label {
+      align-self: center;
+      color: black;
+      margin: 0 0 0 4px;
+      font-size: 11px;
+      font-variant: petite-caps; }
+    .card-editor .card-editor-section .card-editor-vertical-section {
+      flex: 1; }
+      .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input {
+        height: 19px; }
+        .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.artwork-input {
+          flex: 1; }
+        .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.level-input, .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.atk-input, .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.def-input {
+          width: 95%; }
+      .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .artwork-btn {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        padding: 8px;
+        margin-left: 2%;
+        border: 1px outset lightgray;
+        border-radius: 4px;
+        cursor: pointer;
+        width: auto;
+        height: 25px;
+        width: 33px;
+        background-color: lightgrey; }
+      .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .artwork-hidden-input {
+        display: none; }
+      .card-editor .card-editor-section .card-editor-vertical-section .mn-dropdown {
+        justify-content: center;
+        flex: 1; }
+        .card-editor .card-editor-section .card-editor-vertical-section .mn-dropdown select {
+          height: 25px; }
+      .card-editor .card-editor-section .card-editor-vertical-section .card-items {
+        max-width: 100%;
+        flex-wrap: wrap; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-items .item-container {
+          margin: 4px 10px 4px 0;
+          cursor: pointer; }
+      .card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container {
+        height: 30px; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute {
+          opacity: 50%; }
+          .card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute.selected {
+            opacity: 100%; }
+      .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container {
+        height: 50px;
+        background-color: white; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container .card-frame {
+          opacity: 50%; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected .card-frame {
+          opacity: 100%; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-1::after {
+          content: "1";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d96226;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-2::after {
+          content: "2";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d99d26;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-3::after {
+          content: "3";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d9d926;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-4::after {
+          content: "4";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #9dd926;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-5::after {
+          content: "5";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #62d926;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-6::after {
+          content: "6";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #26d926;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-7::after {
+          content: "7";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #26d962;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-8::after {
+          content: "8";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #26d99d;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-9::after {
+          content: "9";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #26d9d9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-10::after {
+          content: "10";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #269dd9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-11::after {
+          content: "11";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #2662d9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-12::after {
+          content: "12";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #2626d9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-13::after {
+          content: "13";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #6226d9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-14::after {
+          content: "14";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #9d26d9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-15::after {
+          content: "15";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d926d9;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-16::after {
+          content: "16";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d9269d;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-17::after {
+          content: "17";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d92662;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-18::after {
+          content: "18";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d92626;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-19::after {
+          content: "19";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d96226;
+          color: #fff; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-20::after {
+          content: "20";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 12px;
+          font-size: 12px;
+          background-color: #d99d26;
+          color: #fff; }
+      .card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container {
+        height: 30px; }
+        .card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon {
+          height: 30px;
+          width: 30px;
+          opacity: 50%; }
+          .card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
+            opacity: 100%; }
+      .card-editor .card-editor-section .card-editor-vertical-section .ability-btn {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: transparent; }
+        .card-editor .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn {
+          border: 1px outset #318ce7;
+          margin: 4px;
+          padding: 4px; }
+          .card-editor .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn:hover {
+            background-color: rgba(0, 128, 0, 0.6);
+            border: 1px outset transparent; }
+        .card-editor .card-editor-section .card-editor-vertical-section .ability-btn.lock-opened {
+          background-color: rgba(222, 25, 60, 0.6); }
+        .card-editor .card-editor-section .card-editor-vertical-section .ability-btn.lock-closed {
+          background-color: rgba(0, 100, 170, 0.6); }
+        .card-editor .card-editor-section .card-editor-vertical-section .ability-btn img {
+          height: 15px;
+          width: 15px; }
+      .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons {
+        position: absolute;
+        right: 5px;
+        gap: 5px; }
+        .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn {
+          padding: 0; }
+          .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.delete-btn:hover {
+            background-color: rgba(255, 0, 0, 0.6); }
+          .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.up-btn:hover, .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.down-btn:hover {
+            background-color: rgba(185, 200, 205, 0.6); }
+          .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn img {
+            padding: 3px; }
+      .card-editor .card-editor-section .card-editor-vertical-section .abilities-list {
+        margin-top: 5px;
+        border: 1px solid #318ce7;
+        background-color: white;
+        font-size: 13px;
+        color: black;
+        min-height: 84px; }
+        .card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input {
+          border: none;
+          padding: 3px;
+          height: 15px;
+          width: calc(100% - 85px); }
+          .card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-div {
+            height: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: text; }
+          .card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input {
+            padding: 0;
+            margin: -2px; }
+            .card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
+              outline: none; }
+    .card-editor .card-editor-section .pendulum-details {
+      width: 95%;
+      margin-bottom: 8px; }
+      .card-editor .card-editor-section .pendulum-details.opened {
+        border: 1px solid black;
+        border-radius: 5px;
+        top: 14px; }
+        .card-editor .card-editor-section .pendulum-details.opened .card-pendulum {
+          position: absolute;
+          top: -14px;
+          background: aliceblue; }
+        .card-editor .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
+          top: 5px;
+          align-items: center; }
+      .card-editor .card-editor-section .pendulum-details .card-pendulum {
+        left: 14px;
+        top: 1px; }
+    .card-editor .card-editor-section.misc-section .generate-passcode-btn {
+      color: white;
+      font-size: 15px;
+      margin: 0;
+      cursor: pointer;
+      height: 17px;
+      background-color: rgba(0, 0, 255, 0.3);
+      padding: 4px 8px;
+      border-radius: 4px;
+      align-self: end; }
+    .card-editor .card-editor-section.misc-section .card-copyright {
+      align-self: end;
+      justify-content: center; }
+    .card-editor .card-editor-section .card-editor-sub-section {
+      width: 95%;
+      padding: 2%; }
+      .card-editor .card-editor-section .card-editor-sub-section .card-items {
+        max-width: 100%;
+        flex-wrap: wrap; }
+        .card-editor .card-editor-section .card-editor-sub-section .card-items .item-container {
+          margin: 4px 10px 4px 0;
+          cursor: pointer; }
+      .card-editor .card-editor-section .card-editor-sub-section .mn-dropdown {
+        justify-content: center;
+        flex: 1; }
+        .card-editor .card-editor-section .card-editor-sub-section .mn-dropdown select {
+          height: 25px; }
+      .card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale {
+        width: 40%;
+        justify-content: center;
+        align-items: center; }
+        .card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-label {
+          width: 75%; }
+        .card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-input {
+          width: 25%; }
+        .card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale input[readOnly] {
+          color: #999;
+          background-color: #f7f7f7;
+          border-color: #ddd;
+          cursor: not-allowed; }
+      .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container {
+        align-items: center; }
+        .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock {
+          display: flex;
+          align-items: center;
+          width: fit-content;
+          padding: 8px;
+          margin: 0 8px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer; }
+          .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock img {
+            height: 16px;
+            width: 16px; }
+          .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-opened {
+            background-color: rgba(222, 25, 60, 0.6); }
+          .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-closed {
+            background-color: rgba(0, 100, 170, 0.6); }
+          .card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock:hover {
+            background-color: rgba(185, 200, 205, 0.6); }
+      .card-editor .card-editor-section .card-editor-sub-section.abilities-section {
+        gap: 6px; }
+        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons {
+          gap: 10px; }
+          .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn {
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            padding: 5px;
+            border: 1px outset #318ce7;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: transparent; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn img {
+              height: 16px;
+              width: 16px; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
+              background-color: rgba(222, 25, 60, 0.6); }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
+              background-color: rgba(0, 100, 170, 0.6); }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn:hover {
+              background-color: rgba(185, 200, 205, 0.6); }
+        .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list {
+          border: 1px solid #318ce7;
+          background-color: white;
+          font-size: 13px;
+          color: black;
+          min-height: 63px; }
+          .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input {
+            border: none;
+            padding: 3px;
+            height: 15px; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input.selected {
+              background-color: #ADCAF9; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-div {
+              height: 15px; }
+            .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input {
+              padding: 0;
+              margin: -2px; }
+              .card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
+                outline: none; }
+      .card-editor .card-editor-section .card-editor-sub-section.card-input-container.card-artwork {
+        align-items: center; }
+      .card-editor .card-editor-section .card-editor-sub-section.card-input-container .card-input {
+        width: 85%; }
+        .card-editor .card-editor-section .card-editor-sub-section.card-input-container .card-input.artwork-input {
+          width: 75%;
+          height: 19px; }
+      .card-editor .card-editor-section .card-editor-sub-section.card-input-container .artwork-btn {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        padding: 8px;
+        margin-left: 2%;
+        border: 1px outset lightgray;
+        border-radius: 4px;
+        cursor: pointer;
+        width: auto;
+        height: 25px;
+        width: 33px;
+        background-color: lightgrey; }
+      .card-editor .card-editor-section .card-editor-sub-section.card-input-container .artwork-hidden-input {
+        display: none; }
+      .card-editor .card-editor-section .card-editor-sub-section.card-textarea .textarea-input {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: justify;
+        resize: none;
+        height: 115px; }
