@@ -223,7 +223,7 @@
     &.card-set {
       // top: 69.445%;
       // right: -71.2%;
-      top: 825px;
+      top: 823px;
       // right: -581px;
       right: 83px;
       text-align: end;
@@ -360,6 +360,20 @@
         max-width: 100%;
         text-align: justify;
         text-shadow: 0 0 black;
+
+        &.with-bullet-point {
+          &::before {
+            $bulletSize: 0.8rem;
+            display: inline-block;
+            content: '';
+            height: $bulletSize;
+            width: $bulletSize;
+            border-radius: $bulletSize / 2;
+            margin-right: $bulletSize / 2;
+            margin-bottom: (1rem - $bulletSize) / 2;
+            background-color: black;
+          }
+        }
       }
     }
 

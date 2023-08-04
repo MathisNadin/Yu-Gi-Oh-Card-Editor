@@ -653,13 +653,20 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const description = this.props.card.description.split('\n');
 
     return this.renderAttributes(<VerticalStack>
-      {description.map(d => {return <p
-        className='description-text black-text'
-        style={{
-          fontSize: `${this.state.descFontSize}px`,
-          lineHeight: this.state.descLineHeight,
-          marginBottom: this.state.descLineHeight / 2
-        }}>{d}</p>})}
+      {description.map(d => {
+        let withBulletPoint = false;
+        if (d.startsWith('●')) {
+          withBulletPoint = true;
+          d = d.replace(/^●\s*/, '');
+        }
+        return <p
+          className={classNames('description-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
+          style={{
+            fontSize: `${this.state.descFontSize}px`,
+            lineHeight: this.state.descLineHeight,
+            marginBottom: this.state.descLineHeight / 2
+          }}>{d}</p>;
+        })}
     </VerticalStack>, containerClass);
   }
 

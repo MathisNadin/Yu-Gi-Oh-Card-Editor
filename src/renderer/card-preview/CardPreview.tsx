@@ -30,10 +30,10 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
 import { ICard } from 'renderer/card/card-interfaces';
-import { toPng } from 'html-to-image';
 import { CardBuilder } from 'renderer/card-builder/CardBuilder';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { ICardListener } from 'renderer/card/CardService';
+import { toPng } from 'mn-html-to-image';
 
 interface ICardPreviewProps extends IContainableProps {
   card: ICard;
