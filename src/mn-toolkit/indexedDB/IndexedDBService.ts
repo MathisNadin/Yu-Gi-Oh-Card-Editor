@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable prettier/prettier */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
@@ -17,9 +18,9 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
 
   public constructor() {
     super();
-    this.dbName = 'card-editor-db';
+    this.dbName = app.settings.dbName;
     this.dbVersion = 1;
-    this.objectStoreName = 'card-editor-object-store';
+    this.objectStoreName = app.settings.objectStoreName;
   }
 
   public fireAllDeleted() {

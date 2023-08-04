@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 /* eslint-disable import/order */
 /* eslint-disable prettier/prettier */
@@ -13,6 +14,17 @@ import { MediaWikiService } from 'mn-toolkit/media-wiki/MediaWikiService';
 import { PopupService } from 'mn-toolkit/popup/PopupService';
 import { ICardImportDialogResult, CardImportDialog } from './card-import-dialog/CardImportDialog';
 
+interface IAppSettings {
+  dbName: string;
+  objectStoreName: string;
+}
+
+declare global {
+  interface IApp {
+    settings: IAppSettings;
+  }
+}
+
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(<App />);
@@ -26,6 +38,11 @@ window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
 
 
 window.app = new Application() as IApp;
+
+app.settings = {
+  dbName: 'card-editor-db',
+  objectStoreName: 'card-editor-object-store',
+}
 
 app.service('$errorManager', ErrorManagerService);
 app.service('$popup', PopupService);
