@@ -243,10 +243,10 @@ export class MediaWikiService {
 
     if (replaceMatrixes.length) {
       for (let replaceMatrix of replaceMatrixes) {
-        if (enName) enName = enName.replace(replaceMatrix.toReplace, replaceMatrix.newString);
-        if (card.name) card.name = card.name.replace(replaceMatrix.toReplace, replaceMatrix.newString);
-        if (card.description) card.description = card.description.replace(replaceMatrix.toReplace, replaceMatrix.newString);
-        if (card.pendEffect) card.pendEffect = card.pendEffect.replace(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (enName) enName = enName.replaceAll(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (card.name) card.name = card.name.replaceAll(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (card.description) card.description = card.description.replaceAll(replaceMatrix.toReplace, replaceMatrix.newString);
+        if (card.pendEffect) card.pendEffect = card.pendEffect.replaceAll(replaceMatrix.toReplace, replaceMatrix.newString);
       }
     }
 

@@ -33,7 +33,7 @@ import { IDialogProps } from 'mn-toolkit/popup/PopupService';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { classNames } from 'mn-toolkit/tools';
 import { ICard } from 'renderer/card/card-interfaces';
-import { IReplaceMatrix } from 'mn-toolkit/media-wiki/MediaWikiService';
+import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 
 export interface ICardImportDialogResult {}
