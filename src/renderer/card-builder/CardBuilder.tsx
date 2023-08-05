@@ -628,13 +628,20 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const pendEffect = this.props.card.pendEffect.split('\n');
 
     return this.renderAttributes(<VerticalStack>
-      {pendEffect.map(text => {return <p
-        className='pendulum-effect-text black-text'
-        style={{
-          fontSize: `${this.state.pendFontSize}px`,
-          lineHeight: this.state.pendLineHeight,
-          marginBottom: this.state.pendLineHeight / 2
-        }}>{text}</p>})}
+      {pendEffect.map(text => {
+        let withBulletPoint = false;
+        if (text.startsWith('●')) {
+          withBulletPoint = true;
+          text = text.replace(/^●\s*/, '');
+        }
+        return <p
+          className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
+          style={{
+            fontSize: `${this.state.pendFontSize}px`,
+            lineHeight: this.state.pendLineHeight,
+            marginBottom: this.state.pendLineHeight / 2
+          }}>{text}</p>;
+        })}
     </VerticalStack>, `card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`);
   }
 

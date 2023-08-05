@@ -308,3 +308,13 @@
   max-width: 100%;
   text-align: justify;
   text-shadow: 0 0 black; }
+
+.card-builder .card-layer.card-pendulum-effect-holder .pendulum-effect-text.with-bullet-point::before {
+  display: inline-block;
+  content: '';
+  height: 0.8rem;
+  width: 0.8rem;
+  border-radius: 0.4rem;
+  margin-right: 0.4rem;
+  margin-bottom: 0.1rem;
+  background-color: black; }
