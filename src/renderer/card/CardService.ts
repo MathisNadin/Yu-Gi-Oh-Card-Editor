@@ -14,7 +14,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 
-import { toPng } from "html-to-image";
+import { toPng } from "mn-html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
 import { deepClone, uuid } from "mn-toolkit/tools";
