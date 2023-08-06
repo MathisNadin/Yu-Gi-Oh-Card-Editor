@@ -117,18 +117,7 @@ export class YuginewsService {
     }
 
     if (cards?.length && cards.length > 1) {
-      cards.sort((a, b) => {
-        const themeA = (a.theme || '').toUpperCase();
-        const themeB = (b.theme || '').toUpperCase();
-
-        if (themeA < themeB) {
-          return -1;
-        }
-        if (themeA > themeB) {
-          return 1;
-        }
-        return (a.id as number) - (b.id as number);
-      });
+      cards.sort((a, b) => ((a.theme) as string || '').localeCompare(((b.theme) as string || '')) || (a.id as number) - (b.id as number));
     }
 
     // console.log(cards);

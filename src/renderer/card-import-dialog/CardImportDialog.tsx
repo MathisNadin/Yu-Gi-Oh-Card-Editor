@@ -44,6 +44,10 @@ import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
 
 type TTabIndex = 'yugipedia' | 'yuginews';
 
+type TCardsDataSortOption =
+  'theme' | 'id' | 'name' |
+  'theme-reverse' | 'id-reverse' | 'name-reverse';
+
 export interface ICardImportDialogResult {}
 
 interface ICardImportDialogProps extends IDialogProps<ICardImportDialogResult> {
@@ -59,6 +63,7 @@ interface ICardImportDialogState extends IContainableState {
   yuginewsUrl: string;
   cardsData: IYuginewsCardData[];
   selectedCards: { [cardUuid: string]: boolean };
+  cardsDataSortOption: TCardsDataSortOption;
 }
 
 export class CardImportDialog extends Containable<ICardImportDialogProps, ICardImportDialogState> {
@@ -76,6 +81,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       yuginewsUrl: '',
       cardsData: [],
       selectedCards: {},
+      cardsDataSortOption: 'theme',
     }
   }
 
@@ -146,6 +152,41 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     let selectedCards = this.state.selectedCards;
     selectedCards[cardUuid] = !selectedCards[cardUuid];
     this.setState({ selectedCards });
+  }
+
+  private sortCardsData(cardsData: IYuginewsCardData[], cardsDataSortOption: TCardsDataSortOption) {
+    cardsDataSortOption = cardsDataSortOption || this.state?.cardsDataSortOption;
+    cardsData = cardsData || this.state?.cardsData;
+    switch (cardsDataSortOption) {
+      case 'theme':
+        cardsData.sort((a, b) => ((a.theme) as string || '').localeCompare(((b.theme) as string || '')) || (a.id as number) - (b.id as number));
+        break;
+
+      case 'theme-reverse':
+        cardsData.sort((a, b) => ((b.theme) as string || '').localeCompare(((a.theme) as string || '')) || (a.id as number) - (b.id as number));
+        break;
+
+      case 'id':
+        cardsData.sort((a, b) => ((a.id as number) ||0) - ((b.id as number) ||0));
+        break;
+
+      case 'id-reverse':
+        cardsData.sort((a, b) => ((b.id as number) ||0) - ((a.id as number) ||0));
+        break;
+
+      case 'name':
+        cardsData.sort((a, b) => ((a.nameFR) as string || '').localeCompare(((b.nameFR) as string || '')));
+        break;
+
+      case 'name-reverse':
+        cardsData.sort((a, b) => ((b.nameFR) as string || '').localeCompare(((a.nameFR) as string || '')));
+        break;
+
+      default:
+        break;
+    }
+    this.setState({ cardsData, cardsDataSortOption });
+    this.forceUpdate();
   }
 
   public render() {
@@ -238,14 +279,34 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         <table className='table'>
           <thead>
             <tr>
-              <th className='cursor-pointer card-theme' /* onClick={() => this.sort(this.state.localCards, 'name')} */>Thème</th>
-              <th className='cursor-pointer card-name' /* onClick={() => this.sort(this.state.localCards, 'name')} */>Nom</th>
+              <th
+                className={classNames('card-theme', 'cursor-pointer', {
+                  'sorted-asc': this.state.cardsDataSortOption === 'theme',
+                  'sorted-desc': this.state.cardsDataSortOption === 'theme-reverse'
+                })}
+                onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'theme' ? 'theme-reverse' : 'theme')}
+              >Thème</th>
+              <th
+                className={classNames('card-id', 'cursor-pointer', {
+                  'sorted-asc': this.state.cardsDataSortOption === 'id',
+                  'sorted-desc': this.state.cardsDataSortOption === 'id-reverse'
+                })}
+                onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'id' ? 'id-reverse' : 'id')}
+              >ID</th>
+              <th
+                className={classNames('card-name', 'cursor-pointer', {
+                  'sorted-asc': this.state.cardsDataSortOption === 'name',
+                  'sorted-desc': this.state.cardsDataSortOption === 'name-reverse'
+                })}
+                onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'name' ? 'name-reverse' : 'name')}
+              >Nom</th>
             </tr>
           </thead>
           <tbody>
             {this.state.cardsData.map(card => {
               return <tr key={card.uuid} className={classNames('yuginews-card-row', this.getCardDataStyle(card), { 'selected': this.state.selectedCards[card.uuid as string] })}>
                 <td className='card-theme' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.theme}</td>
+                <td className='card-id' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.id}</td>
                 <td className='card-name' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.nameFR}</td>
               </tr>;
             })}

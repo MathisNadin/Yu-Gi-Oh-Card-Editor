@@ -53,6 +53,12 @@ $legendaryDragon: #82B8D4;
   }
 }
 
+.card-import-dialog {
+  .mn-tab-panes {
+    min-height: 400px;
+  }
+}
+
 .card-import-dialog-content {
   position: relative;
   width: 100%;
@@ -196,6 +202,7 @@ $legendaryDragon: #82B8D4;
 
       tbody {
         overflow: auto;
+        // border: 1px solid #0052a3;
       }
 
       th,
@@ -211,22 +218,6 @@ $legendaryDragon: #82B8D4;
           cursor: pointer;
         }
 
-        &.empty {
-          background: aliceblue;
-          border-top: aliceblue;
-          border-bottom: aliceblue;
-          border-right: aliceblue;
-
-          &.empty-2 {
-            background: aliceblue;
-            border-left: aliceblue;
-          }
-        }
-
-        &:hover {
-          background-color: #f5f5f5;
-        }
-
         &.sorted-asc::after {
           content: ' ▲';
         }
@@ -237,35 +228,12 @@ $legendaryDragon: #82B8D4;
       }
 
       td {
-        color: #0052a3;
+        color: black;
         font-size: small;
-
-        &.with-icon {
-          background: aliceblue;
-          cursor: pointer;
-
-          &.current {
-            background: rgba(#70afee, 0.0);
-          }
-        }
-
-        img {
-          height: 16px;
-          width: 16px;
-          padding: 5px;
-          border-radius: 20%;
-
-          &:hover {
-            background-color: rgba(#0052a3, 0.4);
-          }
-        }
+        border: 1px solid #0052a3;
       }
 
       tr {
-        &:nth-child(odd) {
-          background-color: white;
-        }
-
         @each $class, $color in (
           Normal: $normal,
           Effet: $effect,
@@ -279,17 +247,34 @@ $legendaryDragon: #82B8D4;
           Jeton: $token
         ) {
           &.#{$class} {
-            background-color: $color;
+            background: $color;
+
+            &.Pendule {
+              background: linear-gradient(
+                250deg,
+                green -29%,
+                aquamarine 35%,
+                $color 82%
+              );
+            }
           }
         }
 
         &.selected {
           background: rgba(lawngreen, 0.6);
         }
+      }
 
-        &.current {
-          background-color: rgba(#70afee, 0.6);
-        }
+      .card-theme {
+        width: 20%;
+      }
+
+      .card-id {
+        width: 10%;
+      }
+
+      .card-name {
+        width: 70%;
       }
     }
   }
