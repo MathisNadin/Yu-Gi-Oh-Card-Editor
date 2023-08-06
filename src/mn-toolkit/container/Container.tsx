@@ -15,12 +15,14 @@
 import './styles.css';
 import { Containable, IContainableProps, IContainableState } from 'mn-toolkit/containable/Containable';
 
+export type TContainerLayout = 'vertical' | 'horizontal';
+
 export interface EventTargetWithValue extends EventTarget {
   value: string;
 }
 
 export interface IContainerProps extends IContainableProps {
-  layout?: 'vertical' | 'horizontal';
+  layout?: TContainerLayout;
   gutter?: boolean;
   margin?: boolean;
   scroll?: boolean;

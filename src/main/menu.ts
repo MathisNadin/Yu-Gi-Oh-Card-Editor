@@ -225,7 +225,7 @@ export default class MenuBuilder {
             },
           },
           {
-            label: '&Importer depuis Yugipedia',
+            label: '&Importer depuis un site',
             accelerator: 'F3',
             click: () => {
               this.mainWindow.webContents.send('import-cards');

@@ -17,6 +17,7 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+
 import './styles.css';
 import { Component, MouseEvent, PropsWithChildren, ReactElement, cloneElement } from 'react';
 import { classNames, isDefined, isNumber } from 'mn-toolkit/tools';
@@ -29,6 +30,7 @@ export type ZIndex = 'content' | 'title-bar' | 'pane' |
                      'popup' | 'popover' | 'toaster' | 'overall';
 
 export interface IContainableProps extends PropsWithChildren {
+  nodeId?: string;
   className?: string;
   mainClassName?: string,
   name?: string;

@@ -66,5 +66,5 @@ export interface ICard {
   speed: boolean;
   rush: boolean;
   legend: boolean;
-  atkMax: number;
+  atkMax: string;
 }

@@ -1,75 +1,246 @@
+@charset "UTF-8";
+/*
+$normal: #C4AA75;
+$effect: #BA693A;
+$ritual: #5E80BE;
+$fusion: #8C4695;
+$synchro: #EEECEA;
+$darkSynchro: #564A4A;
+$xyz: #000000;
+$pendulum: #1d9e74;
+$link: #00639D;
+$spell: #008674;
+$trap: #AD377A;
+$tokenColor: #7D7270;
+$monsterToken: $tokenColor;
+$token: $tokenColor;
+$skill: #0180C1;
+$obelisk: #4F4FB4;
+$slifer: #BF5541;
+$ra: #B6A331;
+$legendaryDragon: #4A9CBF;
+*/
 .mn-popup-header {
   background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%); }
-  .mn-popup-header .mn-popup-title {
-    color: white !important; }
 
-.card-import-dialog {
+.mn-popup-header .mn-popup-title {
+  color: white !important; }
+
+.card-import-dialog-content {
   position: relative;
   width: 100%;
-  height: 100%;
-  gap: 16px; }
-  .card-import-dialog .import-label {
-    flex: 1;
-    margin: 0;
-    color: black; }
-  .card-import-dialog .import-input {
-    resize: none;
-    height: 150px;
-    border: 0.5px solid black;
-    border-radius: 3px; }
-  .card-import-dialog .import-options {
-    justify-content: end;
-    margin-bottom: 16px; }
-    .card-import-dialog .import-options .import-option {
-      margin-right: 16px;
-      gap: 4px; }
-      .card-import-dialog .import-options .import-option .import-option-input {
-        margin: 0;
-        color: black; }
-      .card-import-dialog .import-options .import-option .import-option-label {
-        margin: 0;
-        color: black; }
-  .card-import-dialog .replace-matrix {
-    height: 25px;
-    width: 85%;
-    gap: 16px;
-    align-self: center; }
-    .card-import-dialog .replace-matrix .replace-matrix-input {
-      border: 0.5px solid grey;
-      border-radius: 3px;
-      flex: 1; }
-    .card-import-dialog .replace-matrix .remove-replace-matrix-btn {
-      align-self: center;
-      width: 27px;
-      font-size: 15px;
-      padding: 5px;
-      border-radius: 4px;
-      cursor: pointer;
-      background-color: rgba(255, 0, 0, 0.4); }
-      .card-import-dialog .replace-matrix .remove-replace-matrix-btn:hover {
-        transform: none; }
-  .card-import-dialog .add-replace-matrix-btn {
-    align-self: center;
-    width: 50%;
-    font-size: 15px;
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: rgba(34, 139, 34, 0.4); }
-    .card-import-dialog .add-replace-matrix-btn:hover {
-      transform: none; }
-  .card-import-dialog .import-btn {
-    margin-top: 16px;
-    align-self: end;
-    width: auto;
-    padding: 5px 10px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: rgba(112, 175, 238, 0.5); }
-    .card-import-dialog .import-btn.disabled {
-      pointer-events: none;
-      background-color: rgba(128, 128, 128, 0.3);
-      color: rgba(128, 128, 128, 0.7); }
-    .card-import-dialog .import-btn:hover {
-      transform: none; }
+  height: 100% !important;
+  gap: 16px;
+  display: flex; }
+
+.card-import-dialog-content p {
+  color: black;
+  margin: 0; }
+
+.card-import-dialog-content.yugipedia .import-label {
+  flex: 1;
+  margin: 0;
+  color: black; }
+
+.card-import-dialog-content.yugipedia .import-input {
+  resize: none;
+  height: 150px;
+  border: 0.5px solid black;
+  border-radius: 3px; }
+
+.card-import-dialog-content.yugipedia .import-options {
+  justify-content: end;
+  margin-bottom: 16px; }
+
+.card-import-dialog-content.yugipedia .import-options .import-option {
+  margin-right: 16px;
+  gap: 4px; }
+
+.card-import-dialog-content.yugipedia .import-options .import-option .import-option-input {
+  margin: 0;
+  color: black; }
+
+.card-import-dialog-content.yugipedia .import-options .import-option .import-option-label {
+  margin: 0;
+  color: black; }
+
+.card-import-dialog-content.yugipedia .replace-matrix {
+  height: 25px;
+  width: 85%;
+  gap: 16px;
+  align-self: center; }
+
+.card-import-dialog-content.yugipedia .replace-matrix .replace-matrix-input {
+  border: 0.5px solid grey;
+  border-radius: 3px;
+  flex: 1; }
+
+.card-import-dialog-content.yugipedia .replace-matrix .remove-replace-matrix-btn {
+  align-self: center;
+  width: 27px;
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(255, 0, 0, 0.4); }
+
+.card-import-dialog-content.yugipedia .replace-matrix .remove-replace-matrix-btn:hover {
+  transform: none; }
+
+.card-import-dialog-content.yugipedia .add-replace-matrix-btn {
+  align-self: center;
+  width: 50%;
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(34, 139, 34, 0.4); }
+
+.card-import-dialog-content.yugipedia .add-replace-matrix-btn:hover {
+  transform: none; }
+
+.card-import-dialog-content.yuginews .yuginews-url .yuginews-url-import {
+  height: auto;
+  align-items: center;
+  justify-content: center; }
+
+.card-import-dialog-content.yuginews .yuginews-url .yuginews-url-import .yuginews-url-import-input {
+  height: 20px;
+  flex: 1;
+  border: 1px solid black; }
+
+.card-import-dialog-content.yuginews .yuginews-url .yuginews-url-import .yuginews-url-import-btn {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding: 8px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 10px;
+  border: 1px outset rgba(0, 255, 255, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  height: 25px;
+  font-size: 13px;
+  background-color: rgba(0, 255, 255, 0.5); }
+
+.card-import-dialog-content.yuginews .table-container {
+  height: 500px;
+  min-height: 500px;
+  max-height: 500px; }
+
+.card-import-dialog-content.yuginews .table {
+  border-collapse: collapse; }
+
+.card-import-dialog-content.yuginews .table thead tr {
+  background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%); }
+
+.card-import-dialog-content.yuginews .table tbody {
+  overflow: auto; }
+
+.card-import-dialog-content.yuginews .table th,
+.card-import-dialog-content.yuginews .table td {
+  padding: 0.5rem;
+  text-align: left; }
+
+.card-import-dialog-content.yuginews .table th {
+  border: 1px solid #0052a3; }
+
+.card-import-dialog-content.yuginews .table th.cursor-pointer {
+  cursor: pointer; }
+
+.card-import-dialog-content.yuginews .table th.empty {
+  background: aliceblue;
+  border-top: aliceblue;
+  border-bottom: aliceblue;
+  border-right: aliceblue; }
+
+.card-import-dialog-content.yuginews .table th.empty.empty-2 {
+  background: aliceblue;
+  border-left: aliceblue; }
+
+.card-import-dialog-content.yuginews .table th:hover {
+  background-color: #f5f5f5; }
+
+.card-import-dialog-content.yuginews .table th.sorted-asc::after {
+  content: ' ▲'; }
+
+.card-import-dialog-content.yuginews .table th.sorted-desc::after {
+  content: ' ▼'; }
+
+.card-import-dialog-content.yuginews .table td {
+  color: #0052a3;
+  font-size: small; }
+
+.card-import-dialog-content.yuginews .table td.with-icon {
+  background: aliceblue;
+  cursor: pointer; }
+
+.card-import-dialog-content.yuginews .table td.with-icon.current {
+  background: rgba(112, 175, 238, 0); }
+
+.card-import-dialog-content.yuginews .table td img {
+  height: 16px;
+  width: 16px;
+  padding: 5px;
+  border-radius: 20%; }
+
+.card-import-dialog-content.yuginews .table td img:hover {
+  background-color: rgba(0, 82, 163, 0.4); }
+
+.card-import-dialog-content.yuginews .table tr:nth-child(odd) {
+  background-color: white; }
+
+.card-import-dialog-content.yuginews .table tr.Normal {
+  background-color: #E7D8A0; }
+
+.card-import-dialog-content.yuginews .table tr.Effet {
+  background-color: #E08151; }
+
+.card-import-dialog-content.yuginews .table tr.Rituel {
+  background-color: #82A9D6; }
+
+.card-import-dialog-content.yuginews .table tr.Fusion {
+  background-color: #B66CAE; }
+
+.card-import-dialog-content.yuginews .table tr.Synchro {
+  background-color: #F0EEEC; }
+
+.card-import-dialog-content.yuginews .table tr.Xyz {
+  background-color: #666666; }
+
+.card-import-dialog-content.yuginews .table tr.Lien {
+  background-color: #2E7FAC; }
+
+.card-import-dialog-content.yuginews .table tr.Magie {
+  background-color: #00A88E; }
+
+.card-import-dialog-content.yuginews .table tr.Piège {
+  background-color: #C35891; }
+
+.card-import-dialog-content.yuginews .table tr.Jeton {
+  background-color: #978D8B; }
+
+.card-import-dialog-content.yuginews .table tr.selected {
+  background: rgba(124, 252, 0, 0.6); }
+
+.card-import-dialog-content.yuginews .table tr.current {
+  background-color: rgba(112, 175, 238, 0.6); }
+
+.card-import-dialog-content .import-btn {
+  margin-top: 16px;
+  align-self: end;
+  width: auto;
+  padding: 5px 10px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(112, 175, 238, 0.5); }
+
+.card-import-dialog-content .import-btn.disabled {
+  pointer-events: none;
+  background-color: rgba(128, 128, 128, 0.3);
+  color: rgba(128, 128, 128, 0.7); }
+
+.card-import-dialog-content .import-btn:hover {
+  transform: none; }

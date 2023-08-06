@@ -1,3 +1,5 @@
+/* eslint-disable no-else-return */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
@@ -25,6 +27,7 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+
 import './styles.css';
 import { IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
@@ -35,6 +38,11 @@ import { classNames } from 'mn-toolkit/tools';
 import { ICard } from 'renderer/card/card-interfaces';
 import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
+import { TabbedPane } from 'mn-toolkit/tabs/TabbedPane';
+import { TabPane } from 'mn-toolkit/tabs/TabPane';
+import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
+
+type TTabIndex = 'yugipedia' | 'yuginews';
 
 export interface ICardImportDialogResult {}
 
@@ -42,11 +50,15 @@ interface ICardImportDialogProps extends IDialogProps<ICardImportDialogResult> {
 }
 
 interface ICardImportDialogState extends IContainableState {
+  tabIndex: TTabIndex;
   import: string;
   importing: boolean;
   useFr: boolean;
   generatePasscode: boolean;
   replaceMatrixes: IReplaceMatrix[];
+  yuginewsUrl: string;
+  cardsData: IYuginewsCardData[];
+  selectedCards: { [cardUuid: string]: boolean };
 }
 
 export class CardImportDialog extends Containable<ICardImportDialogProps, ICardImportDialogState> {
@@ -60,6 +72,10 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       useFr: false,
       generatePasscode: false,
       replaceMatrixes: [],
+      tabIndex: 'yugipedia',
+      yuginewsUrl: '',
+      cardsData: [],
+      selectedCards: {},
     }
   }
 
@@ -81,7 +97,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     this.setState({ replaceMatrixes });
   }
 
-  private async doImport() {
+  private async doYugipediaImport() {
     if (!this.state.importing && this.state.import) {
       this.setState({ importing: true });
       const importLinks = this.state.import.split('\n');
@@ -104,8 +120,55 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     }
   }
 
+  private async getYuginewsCards() {
+    if (!this.state.yuginewsUrl) return;
+    let cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
+    this.setState({ cardsData });
+  }
+
+  private async doYuginewsImport() {
+    let selectedCards = this.state.cardsData.filter(c => this.state.selectedCards[c.uuid as string]);
+    if (!selectedCards?.length) return;
+
+    this.setState({ importing: true, selectedCards: {} });
+    let newCards = await app.$yuginews.importFromCardData(selectedCards);
+    if (newCards.length) {
+      await app.$card.importCards(newCards);
+      if (this.props.popupId) {
+        app.$popup.remove(this.props.popupId);
+      }
+    } else {
+      this.setState({ importing: false });
+    }
+  }
+
+  private toggleSelectCard(cardUuid: string) {
+    let selectedCards = this.state.selectedCards;
+    selectedCards[cardUuid] = !selectedCards[cardUuid];
+    this.setState({ selectedCards });
+  }
+
   public render() {
     if (!this.state?.loaded) return <Spinner />;
+    return this.renderAttributes(
+      <TabbedPane
+        tabPosition='top'
+        defaultValue={this.state.tabIndex}
+        onChange={value => this.setState({ tabIndex: value as TTabIndex })}
+      >
+
+        <TabPane id='yugipedia' fill={false} label='Yugipedia' gutter>
+          {this.renderYugipediaTab()}
+        </TabPane>
+
+        <TabPane id='yuginews' fill={false} label='YugiNews' gutter>
+          {this.renderYuginewsTab()}
+        </TabPane>
+
+    </TabbedPane>, 'card-import-dialog');
+  }
+
+  public renderYugipediaTab() {
     return this.renderAttributes(<VerticalStack>
       <p className='import-label'>Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)</p>
 
@@ -154,9 +217,59 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       )}
       <button type='button' className='add-replace-matrix-btn' onClick={() => this.addReplaceMatrix()}>Ajouter un terme à remplacer dans les textes de la carte</button>
 
-      <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doImport())}>
+      <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doYugipediaImport())}>
         {this.state.importing ? 'Import en cours...' : 'Importer'}
       </button>
-    </VerticalStack>, 'card-import-dialog');
+    </VerticalStack>, 'card-import-dialog-content yugipedia');
   }
+
+  public renderYuginewsTab() {
+    return this.renderAttributes(<VerticalStack>
+      <VerticalStack className='yuginews-url' gutter>
+        <p className='yuginews-url-label'>Entrez le lien de l'article</p>
+
+        <HorizontalStack className='yuginews-url-import'>
+          <input type='text' className='yuginews-url-import-input' value={this.state.yuginewsUrl} onInput={e => this.setState({ yuginewsUrl: (e.target as EventTargetWithValue).value })} />
+          <button type='button' className='yuginews-url-import-btn' onClick={() => app.$errorManager.handlePromise(this.getYuginewsCards())}>Valider</button>
+        </HorizontalStack>
+      </VerticalStack>
+
+      {!!this.state.cardsData?.length && <VerticalStack fill scroll className='table-container'>
+        <table className='table'>
+          <thead>
+            <tr>
+              <th className='cursor-pointer card-theme' /* onClick={() => this.sort(this.state.localCards, 'name')} */>Thème</th>
+              <th className='cursor-pointer card-name' /* onClick={() => this.sort(this.state.localCards, 'name')} */>Nom</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.cardsData.map(card => {
+              return <tr key={card.uuid} className={classNames('yuginews-card-row', this.getCardDataStyle(card), { 'selected': this.state.selectedCards[card.uuid as string] })}>
+                <td className='card-theme' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.theme}</td>
+                <td className='card-name' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.nameFR}</td>
+              </tr>;
+            })}
+          </tbody>
+        </table>
+      </VerticalStack>}
+
+      {!!this.state.cardsData?.length && <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doYuginewsImport())}>
+        {this.state.importing ? 'Import en cours...' : 'Importer'}
+      </button>}
+    </VerticalStack>, 'card-import-dialog-content yuginews');
+  }
+
+  private getCardDataStyle(cardsData: IYuginewsCardData): string {
+    if (cardsData.cardType) {
+      if (cardsData.cardType === '2') {
+        return 'Magie';
+      } else if (cardsData.cardType === '3') {
+        return 'Piège';
+      } else if (cardsData.abilities?.length) {
+        return cardsData.abilities.join(' ');
+      }
+    }
+    return '';
+  }
+
 }

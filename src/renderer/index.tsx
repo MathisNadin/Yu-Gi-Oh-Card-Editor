@@ -13,6 +13,7 @@ import { ApiService } from 'mn-toolkit/api/ApiService';
 import { MediaWikiService } from 'renderer/media-wiki/MediaWikiService';
 import { PopupService } from 'mn-toolkit/popup/PopupService';
 import { ICardImportDialogResult, CardImportDialog } from './card-import-dialog/CardImportDialog';
+import { YuginewsService } from './yuginews/YuginewsService';
 
 interface IAppSettings {
   dbName: string;
@@ -50,6 +51,7 @@ app.service('$indexedDB', IndexedDBService);
 app.service('$api', ApiService);
 app.service('$mediaWiki', MediaWikiService);
 app.service('$card', CardService);
+app.service('$yuginews', YuginewsService);
 
 app.bootstrap();
 

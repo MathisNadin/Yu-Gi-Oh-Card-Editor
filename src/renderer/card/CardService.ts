@@ -148,12 +148,12 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     card.cardSet = card.cardSet || '';
     card.passcode = card.passcode || '';
     card.sticker = card.sticker || 'silver';
-    card.hasCopyright = card.hasCopyright || true;
+    card.hasCopyright = card.hasCopyright || false;
     card.oldCopyright = card.oldCopyright || false;
     card.speed = card.speed || false;
     card.rush = card.rush || false;
     card.legend = card.legend || false;
-    card.atkMax = card.atkMax || 0;
+    card.atkMax = typeof card.atkMax === 'number' ? '' : card.atkMax || '';
   }
 
   private async load(initial: boolean) {
@@ -426,7 +426,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       speed: false,
       rush: false,
       legend: false,
-      atkMax: 0
+      atkMax: ''
     };
   }
 
@@ -480,7 +480,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       speed: false,
       rush: false,
       legend: false,
-      atkMax: 0
+      atkMax: ''
     };
   }
 
@@ -550,6 +550,24 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       names.push(this.getFrameName(frame));
     }
     return names.join(' / ');
+  }
+
+  public hasMaterials(card: ICard): boolean {
+    if (!card.frames?.length) return false;
+
+    for (let frame of card.frames) {
+      if (
+        frame === 'fusion' ||
+        frame === 'synchro' ||
+        frame === 'darkSynchro' ||
+        frame === 'xyz' ||
+        frame === 'link'
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   public hasLinkArrows(card: ICard): boolean {

@@ -1,3 +1,45 @@
+/*
+$normal: #C4AA75;
+$effect: #BA693A;
+$ritual: #5E80BE;
+$fusion: #8C4695;
+$synchro: #EEECEA;
+$darkSynchro: #564A4A;
+$xyz: #000000;
+$pendulum: #1d9e74;
+$link: #00639D;
+$spell: #008674;
+$trap: #AD377A;
+$tokenColor: #7D7270;
+$monsterToken: $tokenColor;
+$token: $tokenColor;
+$skill: #0180C1;
+$obelisk: #4F4FB4;
+$slifer: #BF5541;
+$ra: #B6A331;
+$legendaryDragon: #4A9CBF;
+*/
+
+$normal: #E7D8A0;
+$effect: #E08151;
+$ritual: #82A9D6;
+$fusion: #B66CAE;
+$synchro: #F0EEEC;
+$darkSynchro: #5E5555;
+$xyz: #666666;
+$pendulum: #2CAE88;
+$link: #2E7FAC;
+$spell: #00A88E;
+$trap: #C35891;
+$tokenColor: #978D8B;
+$monsterToken: $tokenColor;
+$token: $tokenColor;
+$skill: #1A9AE0;
+$obelisk: #667AAB;
+$slifer: #D9654B;
+$ra: #D4B055;
+$legendaryDragon: #82B8D4;
+
 .mn-popup-header {
   background: linear-gradient(
     200.96deg,
@@ -11,65 +53,88 @@
   }
 }
 
-.card-import-dialog {
+.card-import-dialog-content {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100% !important;
   gap: 16px;
+  display: flex;
+  // padding-top: 0px !important;
 
-  .import-label {
-    flex: 1;
-    margin: 0;
+  p {
     color: black;
+    margin: 0;
   }
 
-  .import-input {
-    resize: none;
-    height: 150px;
-    border: 0.5px solid black;
-    border-radius: 3px;
-  }
-
-  .import-options {
-    justify-content: end;
-    margin-bottom: 16px;
-
-    .import-option {
-      margin-right: 16px;
-      gap: 4px;
-
-      .import-option-input {
-        margin: 0;
-        color: black;
-      }
-
-      .import-option-label {
-        margin: 0;
-        color: black;
-      }
-    }
-  }
-
-  .replace-matrix {
-    height: 25px;
-    width: 85%;
-    gap: 16px;
-    align-self: center;
-
-    .replace-matrix-input {
-      border: 0.5px solid grey;
-      border-radius: 3px;
+  &.yugipedia {
+    .import-label {
       flex: 1;
+      margin: 0;
+      color: black;
     }
 
-    .remove-replace-matrix-btn {
+    .import-input {
+      resize: none;
+      height: 150px;
+      border: 0.5px solid black;
+      border-radius: 3px;
+    }
+
+    .import-options {
+      justify-content: end;
+      margin-bottom: 16px;
+
+      .import-option {
+        margin-right: 16px;
+        gap: 4px;
+
+        .import-option-input {
+          margin: 0;
+          color: black;
+        }
+
+        .import-option-label {
+          margin: 0;
+          color: black;
+        }
+      }
+    }
+
+    .replace-matrix {
+      height: 25px;
+      width: 85%;
+      gap: 16px;
       align-self: center;
-      width: 27px;
+
+      .replace-matrix-input {
+        border: 0.5px solid grey;
+        border-radius: 3px;
+        flex: 1;
+      }
+
+      .remove-replace-matrix-btn {
+        align-self: center;
+        width: 27px;
+        font-size: 15px;
+        padding: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: rgba(red, 0.4);
+
+        &:hover {
+          transform: none;
+        }
+      }
+    }
+
+    .add-replace-matrix-btn {
+      align-self: center;
+      width: 50%;
       font-size: 15px;
       padding: 5px;
       border-radius: 4px;
       cursor: pointer;
-      background-color: rgba(red, 0.4);
+      background-color: rgba(forestgreen, 0.4);
 
       &:hover {
         transform: none;
@@ -77,17 +142,155 @@
     }
   }
 
-  .add-replace-matrix-btn {
-    align-self: center;
-    width: 50%;
-    font-size: 15px;
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: rgba(forestgreen, 0.4);
+  &.yuginews {
+    .yuginews-url {
+      .yuginews-url-import {
+        height: auto;
+        align-items: center;
+        justify-content: center;
 
-    &:hover {
-      transform: none;
+        .yuginews-url-import-input {
+          height: 20px;
+          flex: 1;
+          border: 1px solid black;
+        }
+
+        .yuginews-url-import-btn {
+          display: flex;
+          align-items: center;
+          width: fit-content;
+          padding: 8px;
+          margin-top: auto;
+          margin-bottom: auto;
+          margin-left: 10px;
+          border: 1px outset rgba(cyan, 0.5);
+          border-radius: 4px;
+          cursor: pointer;
+          height: 25px;
+          font-size: 13px;
+          background-color: rgba(cyan, 0.5);
+        }
+      }
+    }
+
+    .table-container {
+      $tableHeight: 500px;
+      height: $tableHeight;
+      min-height: $tableHeight;
+      max-height: $tableHeight;
+    }
+
+    .table {
+      border-collapse: collapse;
+
+      thead {
+        tr {
+          background: linear-gradient(
+            200.96deg,
+            white -29.09%,
+            #70afee 51.77%,
+            #318ce7 129.35%
+          );
+        }
+      }
+
+      tbody {
+        overflow: auto;
+      }
+
+      th,
+      td {
+        padding: 0.5rem;
+        text-align: left;
+      }
+
+      th {
+        border: 1px solid #0052a3;
+
+        &.cursor-pointer {
+          cursor: pointer;
+        }
+
+        &.empty {
+          background: aliceblue;
+          border-top: aliceblue;
+          border-bottom: aliceblue;
+          border-right: aliceblue;
+
+          &.empty-2 {
+            background: aliceblue;
+            border-left: aliceblue;
+          }
+        }
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        &.sorted-asc::after {
+          content: ' ▲';
+        }
+
+        &.sorted-desc::after {
+          content: ' ▼';
+        }
+      }
+
+      td {
+        color: #0052a3;
+        font-size: small;
+
+        &.with-icon {
+          background: aliceblue;
+          cursor: pointer;
+
+          &.current {
+            background: rgba(#70afee, 0.0);
+          }
+        }
+
+        img {
+          height: 16px;
+          width: 16px;
+          padding: 5px;
+          border-radius: 20%;
+
+          &:hover {
+            background-color: rgba(#0052a3, 0.4);
+          }
+        }
+      }
+
+      tr {
+        &:nth-child(odd) {
+          background-color: white;
+        }
+
+        @each $class, $color in (
+          Normal: $normal,
+          Effet: $effect,
+          Rituel: $ritual,
+          Fusion: $fusion,
+          Synchro: $synchro,
+          Xyz: $xyz,
+          Lien: $link,
+          Magie: $spell,
+          Piège: $trap,
+          Jeton: $token
+        ) {
+          &.#{$class} {
+            background-color: $color;
+          }
+        }
+
+        &.selected {
+          background: rgba(lawngreen, 0.6);
+        }
+
+        &.current {
+          background-color: rgba(#70afee, 0.6);
+        }
+      }
     }
   }
 
