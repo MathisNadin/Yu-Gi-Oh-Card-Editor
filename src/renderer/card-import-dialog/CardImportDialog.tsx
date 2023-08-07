@@ -128,8 +128,9 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
   private async getYuginewsCards() {
     if (!this.state.yuginewsUrl) return;
+    this.setState({ importing: true });
     let cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
-    this.setState({ cardsData });
+    this.setState({ cardsData, importing: false });
   }
 
   private async doYuginewsImport() {
@@ -275,6 +276,8 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         </HorizontalStack>
       </VerticalStack>
 
+      {this.state.importing && <Spinner />}
+
       {!!this.state.cardsData?.length && <VerticalStack fill scroll className='table-container'>
         <table className='table'>
           <thead>
@@ -314,9 +317,11 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         </table>
       </VerticalStack>}
 
-      {!!this.state.cardsData?.length && <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doYuginewsImport())}>
-        {this.state.importing ? 'Import en cours...' : 'Importer'}
-      </button>}
+      {!!this.state.cardsData?.length &&
+        <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doYuginewsImport())}>
+          {this.state.importing ? 'Import en cours...' : 'Importer'}
+        </button>
+      }
     </VerticalStack>, 'card-import-dialog-content yuginews');
   }
 

@@ -12,6 +12,7 @@
 
 import { integer, uuid } from "mn-toolkit/tools";
 import { ICard, TAttribute, TFrame, TStIcon } from "renderer/card/card-interfaces";
+// import { load, Cheerio } from 'cheerio';
 
 export interface IYuginewsCardData {
   uuid?: string;
@@ -113,6 +114,29 @@ export class YuginewsService {
             }
           }
         }
+      } else {
+/*         const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+        const sections = doc.querySelectorAll('section.elementor-section.elementor-inner-section.elementor-element.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default');
+        sections.forEach((section, sectionIndex) => {
+          if (sectionIndex !== 3) return;
+
+          let subSections = section.querySelectorAll('div.elementor-column.elementor-col-50.elementor-inner-column.elementor-element');
+          subSections.forEach((subSection, index) => {
+            if (!index) return;
+            let subSubSections = subSection.querySelectorAll('div.elementor-element.elementor-widget.elementor-widget-text-editor');
+            subSubSections.forEach((s, sIndex) => {
+              const $ = load(s.innerHTML);
+              if (!sIndex) {
+                let ps = $('p');
+                ps.each(i => console.log(ps.eq(i).html()?.split('<br>')));
+              } else {
+                let ps = $('p');
+                ps.each(i => console.log(ps.eq(i).text()));
+              }
+            });
+          });
+        }); */
       }
     }
 
