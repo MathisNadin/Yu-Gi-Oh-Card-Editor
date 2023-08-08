@@ -261,7 +261,7 @@ $legendaryDragon: #82B8D4;
         }
 
         &.selected {
-          background: rgba(lawngreen, 0.6);
+          background: rgba(lawngreen, 0.6) !important;
         }
       }
 
@@ -269,12 +269,16 @@ $legendaryDragon: #82B8D4;
         width: 20%;
       }
 
+      .card-set {
+        width: 10%;
+      }
+
       .card-id {
         width: 10%;
       }
 
       .card-name {
-        width: 70%;
+        width: 60%;
       }
     }
   }

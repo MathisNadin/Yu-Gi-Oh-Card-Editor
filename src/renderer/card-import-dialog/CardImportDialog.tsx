@@ -45,8 +45,8 @@ import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
 type TTabIndex = 'yugipedia' | 'yuginews';
 
 type TCardsDataSortOption =
-  'theme' | 'id' | 'name' |
-  'theme-reverse' | 'id-reverse' | 'name-reverse';
+  'theme' | 'id' | 'name' | 'set' |
+  'theme-reverse' | 'id-reverse' | 'name-reverse' | 'set-reverse';
 
 export interface ICardImportDialogResult {}
 
@@ -128,9 +128,20 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
   private async getYuginewsCards() {
     if (!this.state.yuginewsUrl) return;
-    this.setState({ importing: true });
+    this.setState({ cardsData: [], importing: true });
     let cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
-    this.setState({ cardsData, importing: false });
+
+    let cardsDataSortOption = this.state.cardsDataSortOption;
+    if (cardsData.length) {
+      if (cardsDataSortOption === 'theme' || cardsDataSortOption === 'theme-reverse' && !cardsData[0].theme?.length) {
+        cardsDataSortOption = 'id';
+      } else if (cardsDataSortOption === 'set' || cardsDataSortOption === 'set-reverse' && cardsData[0].theme?.length) {
+        cardsDataSortOption = 'theme';
+      }
+    }
+
+    this.sortCardsData(cardsData, cardsDataSortOption);
+    this.setState({ importing: false });
   }
 
   private async doYuginewsImport() {
@@ -168,11 +179,35 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         break;
 
       case 'id':
-        cardsData.sort((a, b) => ((a.id as number) ||0) - ((b.id as number) ||0));
+        cardsData.sort((a, b) => {
+          const aIsString = typeof a.id === 'string';
+          const bIsString = typeof b.id === 'string';
+          if (aIsString && bIsString) {
+            return (a.id as string).localeCompare(((b.id) as string));
+          } else if (aIsString && !bIsString) {
+            return 1;
+          } else if (!aIsString && bIsString) {
+            return -1;
+          } else {
+            return ((a.id as number) || 0) - ((b.id as number) || 0);
+          }
+        });
         break;
 
       case 'id-reverse':
-        cardsData.sort((a, b) => ((b.id as number) ||0) - ((a.id as number) ||0));
+        cardsData.sort((a, b) => {
+          const aIsString = typeof a.id === 'string';
+          const bIsString = typeof b.id === 'string';
+          if (aIsString && bIsString) {
+            return (b.id as string).localeCompare(((a.id) as string));
+          } else if (aIsString && !bIsString) {
+            return -1;
+          } else if (!aIsString && bIsString) {
+            return 1;
+          } else {
+            return ((b.id as number) || 0) - ((a.id as number) || 0);
+          }
+        });
         break;
 
       case 'name':
@@ -181,6 +216,14 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
       case 'name-reverse':
         cardsData.sort((a, b) => ((b.nameFR) as string || '').localeCompare(((a.nameFR) as string || '')));
+        break;
+
+      case 'set':
+        cardsData.sort((a, b) => ((a.setId) as string || '').localeCompare(((b.setId) as string || '')));
+        break;
+
+      case 'set-reverse':
+        cardsData.sort((a, b) => ((b.setId) as string || '').localeCompare(((a.setId) as string || '')));
         break;
 
       default:
@@ -282,13 +325,22 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         <table className='table'>
           <thead>
             <tr>
-              <th
-                className={classNames('card-theme', 'cursor-pointer', {
-                  'sorted-asc': this.state.cardsDataSortOption === 'theme',
-                  'sorted-desc': this.state.cardsDataSortOption === 'theme-reverse'
-                })}
-                onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'theme' ? 'theme-reverse' : 'theme')}
-              >Thème</th>
+              {this.state.cardsData[0].theme?.length
+                ? <th
+                  className={classNames('card-theme', 'cursor-pointer', {
+                    'sorted-asc': this.state.cardsDataSortOption === 'theme',
+                    'sorted-desc': this.state.cardsDataSortOption === 'theme-reverse'
+                  })}
+                  onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'theme' ? 'theme-reverse' : 'theme')}
+                >Thème</th>
+                : <th
+                  className={classNames('card-set', 'cursor-pointer', {
+                    'sorted-asc': this.state.cardsDataSortOption === 'set',
+                    'sorted-desc': this.state.cardsDataSortOption === 'set-reverse'
+                  })}
+                  onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'set' ? 'set-reverse' : 'set')}
+                >Set</th>
+              }
               <th
                 className={classNames('card-id', 'cursor-pointer', {
                   'sorted-asc': this.state.cardsDataSortOption === 'id',
@@ -308,7 +360,10 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
           <tbody>
             {this.state.cardsData.map(card => {
               return <tr key={card.uuid} className={classNames('yuginews-card-row', this.getCardDataStyle(card), { 'selected': this.state.selectedCards[card.uuid as string] })}>
-                <td className='card-theme' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.theme}</td>
+              {this.state.cardsData[0].theme?.length
+                ? <td className='card-theme' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.theme}</td>
+                : <td className='card-set' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.setId}</td>
+              }
                 <td className='card-id' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.id}</td>
                 <td className='card-name' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.nameFR}</td>
               </tr>;

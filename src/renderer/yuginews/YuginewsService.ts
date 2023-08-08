@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-undef */
@@ -12,11 +13,11 @@
 
 import { integer, uuid } from "mn-toolkit/tools";
 import { ICard, TAttribute, TFrame, TStIcon } from "renderer/card/card-interfaces";
-// import { load, Cheerio } from 'cheerio';
+import { load } from 'cheerio';
 
 export interface IYuginewsCardData {
   uuid?: string;
-  id?: number;
+  id?: number | string;
   added?: Date;
   setId?: string;
   picture?: string;
@@ -66,7 +67,7 @@ export class YuginewsService {
     const slug = urlParts[urlParts.length - 2];
     if (!slug) return cards;
 
-    let response = await app.$api.get(`${this.basePostsRequestUrl}?slug=${slug}`);
+    let response = await app.$api.get(`${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`);
     const htmlContent = response[0]?.content?.rendered as string;
     if (htmlContent) {
       const renderedContent = (response[0].content.rendered as string);
@@ -108,44 +109,137 @@ export class YuginewsService {
             }
             if (Object.keys(parsedCardData)?.length) {
               if (!parsedCardData.setId && setId) parsedCardData.setId = setId;
-              if (parsedCardData.id) parsedCardData.id = integer(parsedCardData.id);
+              if (parsedCardData.id && !/\D/g.test(`${parsedCardData.id}`)) parsedCardData.id = integer(parsedCardData.id);
               parsedCardData.uuid = uuid();
               cards.push(parsedCardData);
             }
           }
         }
       } else {
-/*         const parser = new DOMParser();
+        const parser = new DOMParser();
         const doc = parser.parseFromString(htmlContent, 'text/html');
         const sections = doc.querySelectorAll('section.elementor-section.elementor-inner-section.elementor-element.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default');
-        sections.forEach((section, sectionIndex) => {
-          if (sectionIndex !== 3) return;
-
+        sections.forEach(section => {
           let subSections = section.querySelectorAll('div.elementor-column.elementor-col-50.elementor-inner-column.elementor-element');
           subSections.forEach((subSection, index) => {
             if (!index) return;
             let subSubSections = subSection.querySelectorAll('div.elementor-element.elementor-widget.elementor-widget-text-editor');
+            const parsedCardData: IYuginewsCardData = {};
             subSubSections.forEach((s, sIndex) => {
               const $ = load(s.innerHTML);
+              let lines: string[];
               if (!sIndex) {
                 let ps = $('p');
-                ps.each(i => console.log(ps.eq(i).html()?.split('<br>')));
+                ps.each(i => {
+                  lines = ps.eq(i).html()?.split('<br>') as string[];
+                  if (lines?.length) {
+                    lines.forEach((line, iLine) => {
+                      if (!i) {
+                        if (iLine) {
+                          const setIdMatch = line.match(/^([^-]+)/);
+                          const idMatch = line.match(/-(.*?)\s*\(JAP/);
+                          const nameENMatch = line.match(/EN\s*:\s*<em>(.*?)<\/em>/);
+
+                          if (setIdMatch && idMatch) {
+                            parsedCardData.setId = setIdMatch[1].trim();
+                            parsedCardData.id = integer(idMatch[1].slice(-3).replace(/\D/g, '').trim());
+                            parsedCardData.nameEN = nameENMatch ? nameENMatch[1].trim() : '';
+                        }
+                        } else {
+                          parsedCardData.nameFR = line
+                            .replaceAll('<strong>', '')
+                            .replaceAll('</strong>', '')
+                            .replaceAll('<b>', '')
+                            .replaceAll('</b>', '')
+                            .trim();
+                        }
+                      } else {
+                        if (line.includes(' / ')) {
+                          parsedCardData.abilities = line.split(' / ');
+                        } else if (line.includes('LEGEND')) {
+                          parsedCardData.legend = true;
+                        } else if (line.includes('Niveau')) {
+                          parsedCardData.level = line.replaceAll('Niveau ', '').trim();
+                        } else if (line.includes('Rang')) {
+                          parsedCardData.level = line.replaceAll('Rang ', '').trim();
+                        } else if (line.includes('Link-')) {
+                          parsedCardData.level = line.replaceAll('Link-', '').trim();
+                        } else if (line.includes('ATK MAXIMUM')) {
+                          parsedCardData.atkMAX = line.replaceAll(' ATK MAXIMUM', '').trim();
+                        } else if (line.includes('ATK')) {
+                          parsedCardData.atk = line.replaceAll(' ATK', '').trim();
+                        } else if (line.includes('DEF')) {
+                          parsedCardData.def = line.replaceAll(' DEF', '').trim();
+                        } else if (line.includes('Échelle')) {
+                          parsedCardData.scale = line.replaceAll('Échelle Pendule : ', '').trim();
+                        } else if (line.includes('Flèche')) {
+                          parsedCardData.linkArrows = line
+                            .replaceAll('Flèche Lien : ', '')
+                            .replaceAll('Flèches Lien : ', '')
+                            .trim()
+                            .split(' / ');
+                        } else if (line.includes('Magie')) {
+                          parsedCardData.cardType = '2';
+                          parsedCardData.stType = this.getStTypeFromLine(line);
+                        } else if (line.includes('Piège')) {
+                          parsedCardData.cardType = '3';
+                          parsedCardData.stType = this.getStTypeFromLine(line);
+                        } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line.trim())) {
+                          parsedCardData.attribute = this.getAttributeFromLine(line);
+                        }
+                      }
+                    });
+                  }
+                });
               } else {
                 let ps = $('p');
-                ps.each(i => console.log(ps.eq(i).text()));
+                let effects: string[] = [];
+                ps.each(i => { effects.push(ps.eq(i).text()); });
+                if (effects.length) {
+                  if (effects[0].startsWith('Effet Pendule :')) {
+                    parsedCardData.pendulumEffects = effects.slice(1);
+                  } else if (effects[0].startsWith('Effet de Monstre :')) {
+                    parsedCardData.effects = effects.slice(1);
+                  } else {
+                    parsedCardData.effects = effects;
+                  }
+                }
               }
             });
+
+            if (Object.keys(parsedCardData)?.length) {
+              if (!parsedCardData.cardType) parsedCardData.cardType = '1';
+              parsedCardData.uuid = uuid();
+              cards.push(parsedCardData);
+            }
           });
-        }); */
+        });
       }
     }
 
-    if (cards?.length && cards.length > 1) {
-      cards.sort((a, b) => ((a.theme) as string || '').localeCompare(((b.theme) as string || '')) || (a.id as number) - (b.id as number));
-    }
-
-    // console.log(cards);
     return cards;
+  }
+
+  private getAttributeFromLine(line: string) {
+    if (line.includes('TÉNÈBRES')) return 'dark';
+    if (line.includes('LUMIÈRE')) return 'light';
+    if (line.includes('EAU')) return 'water';
+    if (line.includes('FEU')) return 'fire';
+    if (line.includes('TERRE')) return 'earth';
+    if (line.includes('VENT')) return 'wind';
+    if (line.includes('DIVIN')) return 'divine';
+    return undefined;
+  }
+
+  private getStTypeFromLine(line: string) {
+    if (line.includes('Normal')) return 'normal';
+    if (line.includes('Rituelle')) return 'ritual';
+    if (line.includes('Jeu-Rapide')) return 'quickplay';
+    if (line.includes('de Terrain')) return 'field';
+    if (line.includes('Continu')) return 'continuous';
+    if (line.includes('Équipement')) return 'equip';
+    if (line.includes('Contre-')) return 'counter';
+    return undefined;
   }
 
   public async importFromCardData(cardsData: IYuginewsCardData[]) {
@@ -217,6 +311,8 @@ export class YuginewsService {
       effects.forEach((eff, i) => {
         if (!i) {
           description = eff;
+        } else if (!lastHasLineBreak && eff.startsWith('●')) {
+          description = `${description}\n${eff}`;
         } else {
           description = `${description}${lastHasLineBreak ? '' : ' '}${eff}`;
         }
