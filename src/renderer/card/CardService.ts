@@ -290,7 +290,6 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async resetCurrentCard() {
-    await app.$card.importArtwork('https://ms.yugipedia.com//0/06/SupremeCelestialKingOddEyesArcRayDragon-AGOV-JP-UR.png');
     this._currentCard = this.getDefaultCurrentCard();
     await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
     this.fireCurrentCardUpdated();

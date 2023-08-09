@@ -414,7 +414,13 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       <p className='import-option-label artwork-importer-label'>Importer les images</p>
 
       {this.state.importArtwork && <HorizontalStack className='artwork-path'>
-        <input type='text' className='path-text-input' value={this.state.artworkSaveDirPath} onInput={e => this.setState({ artworkSaveDirPath: (e.target as EventTargetWithValue).value })} />
+        <input
+          type='text'
+          className='path-text-input'
+          value={this.state.artworkSaveDirPath}
+          placeholder='Choisissez un dossier où enregistrer les images'
+          onInput={e => this.setState({ artworkSaveDirPath: (e.target as EventTargetWithValue).value })}
+        />
         <button type='button' className='path-btn' onClick={() => app.$errorManager.handlePromise(this.selectartworkSaveDirPath())}>...</button>
       </HorizontalStack>}
     </HorizontalStack>;
