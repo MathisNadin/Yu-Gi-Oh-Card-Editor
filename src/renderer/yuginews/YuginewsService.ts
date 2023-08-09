@@ -1,3 +1,6 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-lonely-if */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable prefer-destructuring */
@@ -11,11 +14,12 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable prettier/prettier */
 
-import { integer, uuid } from "mn-toolkit/tools";
+import { extend, integer, uuid } from "mn-toolkit/tools";
 import { ICard, TAttribute, TFrame, TStIcon } from "renderer/card/card-interfaces";
 import { load } from 'cheerio';
 
 export interface IYuginewsCardData {
+  artworkUrl?: string;
   uuid?: string;
   id?: number | string;
   added?: Date;
@@ -71,8 +75,15 @@ export class YuginewsService {
     const htmlContent = response[0]?.content?.rendered as string;
     if (htmlContent) {
       const renderedContent = (response[0].content.rendered as string);
+
       let setIdMatches = renderedContent.match(/var setId = `([A-Za-z0-9]+)`;/);
       let setId = setIdMatches?.length ? setIdMatches[1] : undefined;
+
+      let useFinalPictures = false;
+      let useFinalPicturesMatches = renderedContent.match(/var useFinalPictures = ([A-Za-z0-9]+);/);
+      if (useFinalPicturesMatches?.length && useFinalPicturesMatches[1] && useFinalPicturesMatches[1] === 'true') {
+        useFinalPictures = true;
+      }
 
       const matches = renderedContent.match(/var cards = (.*?];)/s);
       if (matches?.length && matches[1]) {
@@ -111,6 +122,10 @@ export class YuginewsService {
               if (!parsedCardData.setId && setId) parsedCardData.setId = setId;
               if (parsedCardData.id && !/\D/g.test(`${parsedCardData.id}`)) parsedCardData.id = integer(parsedCardData.id);
               parsedCardData.uuid = uuid();
+              parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
+              let isRush = !!parsedCardData.effectType || !!parsedCardData.normalText;
+              let picture = parsedCardData.picture ?? `${this.formatPictureString(parsedCardData.nameEN || '')}-${isRush ? 'RD' : ''}${parsedCardData.setId ?? setId}-JP${useFinalPictures ? '' : '-OP'}`;
+              if (picture) parsedCardData.artworkUrl = `https://yuginews.fr/wp-content/uploads/${parsedCardData.pictureDate}/${picture}.png`;
               cards.push(parsedCardData);
             }
           }
@@ -120,6 +135,7 @@ export class YuginewsService {
         const doc = parser.parseFromString(htmlContent, 'text/html');
         const sections = doc.querySelectorAll('section.elementor-section.elementor-inner-section.elementor-element.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default');
         sections.forEach(section => {
+          let artworkUrl = section.querySelector('img')?.src;
           let subSections = section.querySelectorAll('div.elementor-column.elementor-col-50.elementor-inner-column.elementor-element');
           subSections.forEach((subSection, index) => {
             if (!index) return;
@@ -210,6 +226,7 @@ export class YuginewsService {
             if (Object.keys(parsedCardData)?.length) {
               if (!parsedCardData.cardType) parsedCardData.cardType = '1';
               parsedCardData.uuid = uuid();
+              if (artworkUrl) parsedCardData.artworkUrl = artworkUrl;
               cards.push(parsedCardData);
             }
           });
@@ -218,6 +235,30 @@ export class YuginewsService {
     }
 
     return cards;
+  }
+
+  private formatPictureString(str: string) {
+    if (!str) return str;
+    // Remplacer les caractères non autorisés dans une URL ou un nom de fichier
+    str = str.replace(/[^\w\s\-+.!\/'()=%\\*\?"<>|\u00E0\u00E2\u00E4\u00E7\u00E8\u00E9\u00EA\u00EB\u00EE\u00EF\u00F4\u00F6\u00F9\u00FB\u00FC]/g, '').replace(/[\s?!]/g, '').replace(/:/g, '');
+    // Remplacer les caractères accentués
+    const accents = [
+      /[\300-\306]/g, /[\340-\346]/g, // A, a
+      /[\310-\313]/g, /[\350-\353]/g, // E, e
+      /[\314-\317]/g, /[\354-\357]/g, // I, i
+      /[\322-\330]/g, /[\362-\370]/g, // O, o
+      /[\331-\334]/g, /[\371-\374]/g, // U, u
+      /[\321]/g, /[\361]/g, // N, n
+      /[\307]/g, /[\347]/g // C, c
+    ];
+    const noAccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
+    for (let i = 0; i < accents.length; i++) {
+      str = str.replace(accents[i], noAccent[i]);
+    }
+    // Remplacer les /, -, ", ', :, !, ?, et les .
+    str = str.replace(/[\/\\\-"'()=:!?\.]/g, '');
+    // Retourner la chaîne de caractères modifiée
+    return str;
   }
 
   private getAttributeFromLine(line: string) {
@@ -242,7 +283,7 @@ export class YuginewsService {
     return undefined;
   }
 
-  public async importFromCardData(cardsData: IYuginewsCardData[]) {
+  public async importFromCardData(cardsData: IYuginewsCardData[], importArtworks: boolean, artworkDirectoryPath: string) {
     let cards: ICard[] = [];
     let now = new Date();
 
@@ -289,10 +330,21 @@ export class YuginewsService {
         sticker: 'none',
         legend: cardData.legend,
         atkMax: cardData.atkMAX
-      } as Partial<ICard>;
+      } as ICard;
 
       app.$card.correct(card as ICard);
       card.description = this.getDescription(card as ICard, cardData);
+
+      if (importArtworks && cardData.artworkUrl?.length && artworkDirectoryPath?.length) {
+        card.artwork.url = await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath) || '';
+        if (card.artwork.url) {
+          if (card.pendulum) {
+            extend(card.artwork, app.$card.getFullPendulumCardPreset());
+          } else {
+            extend(card.artwork, app.$card.getFullCardPreset());
+          }
+        }
+      }
 
       cards.push(card as ICard);
     }

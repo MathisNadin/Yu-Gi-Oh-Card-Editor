@@ -427,7 +427,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           unit: '%'
         }}
         keepRatio={this.state.card.artwork.keepRatio}
-        pendulumRatio={!this.state.card.artwork.pendulum}
+        pendulumRatio={this.state.card.pendulum && !this.state.card.artwork.pendulum}
         hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
         hasLinkFrame={this.state.card.frames.includes('link')} />
     });

@@ -61,10 +61,12 @@ interface ICardImportDialogState extends IContainableState {
   generatePasscode: boolean;
   replaceMatrixes: IReplaceMatrix[];
   importArtwork: boolean;
+  yuginewsImporting: boolean;
   yuginewsUrl: string;
   cardsData: IYuginewsCardData[];
   selectedCards: { [cardUuid: string]: boolean };
   cardsDataSortOption: TCardsDataSortOption;
+  artworkSaveDirPath: string;
 }
 
 export class CardImportDialog extends Containable<ICardImportDialogProps, ICardImportDialogState> {
@@ -84,6 +86,8 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       cardsData: [],
       selectedCards: {},
       cardsDataSortOption: 'theme',
+      artworkSaveDirPath: '',
+      yuginewsImporting: false,
     }
   }
 
@@ -106,38 +110,38 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   }
 
   private async doYugipediaImport() {
-    if (!this.state.importing && this.state.import) {
-      this.setState({ importing: true });
-      const importLinks = this.state.import.split('\n');
-      let newCards: ICard[] = [];
-      for (let importLink of importLinks) {
-        const splitImport = importLink.split('/');
-        const newCard = await app.$mediaWiki.getCardInfo(
-          splitImport[splitImport.length-1],
-          this.state.useFr,
-          this.state.generatePasscode,
-          this.state.replaceMatrixes,
-          this.state.importArtwork
-        );
+    if (this.state.importing || !this.state.import) return;
+    this.setState({ importing: true });
+    const importLinks = this.state.import.split('\n');
+    let newCards: ICard[] = [];
+    for (let importLink of importLinks) {
+      const splitImport = importLink.split('/');
+      const newCard = await app.$mediaWiki.getCardInfo(
+        splitImport[splitImport.length-1],
+        this.state.useFr,
+        this.state.generatePasscode,
+        this.state.replaceMatrixes,
+        this.state.importArtwork,
+        this.state.artworkSaveDirPath
+      );
 
-        if (newCard) {
-          newCards.push(newCard);
-        }
+      if (newCard) {
+        newCards.push(newCard);
       }
-      if (newCards.length) {
-        await app.$card.importCards(newCards);
-        if (this.props.popupId) {
-          app.$popup.remove(this.props.popupId);
-        }
-      } else {
-        this.setState({ importing: false, import: '' });
+    }
+    if (newCards.length) {
+      await app.$card.importCards(newCards);
+      if (this.props.popupId) {
+        app.$popup.remove(this.props.popupId);
       }
+    } else {
+      this.setState({ importing: false, import: '' });
     }
   }
 
   private async getYuginewsCards() {
     if (!this.state.yuginewsUrl) return;
-    this.setState({ cardsData: [], importing: true });
+    this.setState({ cardsData: [], yuginewsImporting: true });
     let cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
 
     let cardsDataSortOption = this.state.cardsDataSortOption;
@@ -150,7 +154,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     }
 
     this.sortCardsData(cardsData, cardsDataSortOption);
-    this.setState({ importing: false });
+    this.setState({ yuginewsImporting: false });
   }
 
   private async doYuginewsImport() {
@@ -158,7 +162,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     if (!selectedCards?.length) return;
 
     this.setState({ importing: true, selectedCards: {} });
-    let newCards = await app.$yuginews.importFromCardData(selectedCards);
+    let newCards = await app.$yuginews.importFromCardData(selectedCards, this.state.importArtwork, this.state.artworkSaveDirPath);
     if (newCards.length) {
       await app.$card.importCards(newCards);
       if (this.props.popupId) {
@@ -242,6 +246,12 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     this.forceUpdate();
   }
 
+  private async selectartworkSaveDirPath() {
+    const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath();
+    if (!artworkSaveDirPath) return;
+    this.setState({ artworkSaveDirPath });
+  }
+
   public render() {
     if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(
@@ -262,7 +272,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     </TabbedPane>, 'card-import-dialog');
   }
 
-  public renderYugipediaTab() {
+  private renderYugipediaTab() {
     return this.renderAttributes(<VerticalStack>
       <p className='import-label'>Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)</p>
 
@@ -288,6 +298,8 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
           />
           <p className='import-option-label generate-passcode-label'>Si absent, générer un code</p>
         </HorizontalStack>
+
+        {this.renderUrlImporter('yugipedia')}
       </HorizontalStack>
 
       {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
@@ -317,8 +329,10 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     </VerticalStack>, 'card-import-dialog-content yugipedia');
   }
 
-  public renderYuginewsTab() {
+  private renderYuginewsTab() {
     return this.renderAttributes(<VerticalStack>
+      {this.renderUrlImporter('yuginews')}
+
       <VerticalStack className='yuginews-url' gutter>
         <p className='yuginews-url-label'>Entrez le lien de l'article</p>
 
@@ -328,7 +342,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         </HorizontalStack>
       </VerticalStack>
 
-      {this.state.importing && <Spinner />}
+      {this.state.yuginewsImporting && <Spinner />}
 
       {!!this.state.cardsData?.length && <VerticalStack fill scroll className='table-container'>
         <table className='table'>
@@ -387,6 +401,23 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         </button>
       }
     </VerticalStack>, 'card-import-dialog-content yuginews');
+  }
+
+  private renderUrlImporter(origin: string) {
+    return <HorizontalStack className={classNames('import-option', 'artwork-importer', origin)}>
+      <input
+        type='checkbox'
+        className='import-option-input artwork-importer-input'
+        checked={this.state.importArtwork}
+        onChange={() => this.setState({ importArtwork: !this.state.importArtwork })}
+      />
+      <p className='import-option-label artwork-importer-label'>Importer les images</p>
+
+      {this.state.importArtwork && <HorizontalStack className='artwork-path'>
+        <input type='text' className='path-text-input' value={this.state.artworkSaveDirPath} onInput={e => this.setState({ artworkSaveDirPath: (e.target as EventTargetWithValue).value })} />
+        <button type='button' className='path-btn' onClick={() => app.$errorManager.handlePromise(this.selectartworkSaveDirPath())}>...</button>
+      </HorizontalStack>}
+    </HorizontalStack>;
   }
 
   private getCardDataStyle(cardsData: IYuginewsCardData): string {

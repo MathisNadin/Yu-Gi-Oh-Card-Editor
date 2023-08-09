@@ -85,7 +85,7 @@ export class MediaWikiService {
     generatePasscode: boolean,
     replaceMatrixes: IReplaceMatrix[],
     importArtworks: boolean,
-    artworkDirectoryPath?: string
+    artworkDirectoryPath: string
     ) {
 
     let card = app.$card.getDefaultImportCard();
@@ -119,7 +119,7 @@ export class MediaWikiService {
       replaceMatrixes,
       titles,
       importArtworks,
-      artworkDirectoryPath as string
+      artworkDirectoryPath
     );
   }
 
@@ -326,7 +326,7 @@ export class MediaWikiService {
     else if (await window.electron.ipcRenderer.checkFileExists(defaultJpg)) {
       card.artwork.url = defaultJpg;
     }
-    else if (!importArtworks && !artworkDirectoryPath?.length && enName?.length) {
+    else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
       let artworkName = this.getArtworkName(enName);
       if (artworkName) {
         let imgData: YugipediaGetCardPageImgApiResponse = await app.$api.get(this.baseApiUrl, {
