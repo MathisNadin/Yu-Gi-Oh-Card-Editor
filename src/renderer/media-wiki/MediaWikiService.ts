@@ -1,3 +1,6 @@
+/* eslint-disable no-return-await */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-plusplus */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-undef */
@@ -10,7 +13,7 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable prettier/prettier */
 
-import { integer } from "mn-toolkit/tools";
+import { extend, integer } from "mn-toolkit/tools";
 import { ICard } from "renderer/card/card-interfaces";
 
 export interface IReplaceMatrix {
@@ -18,7 +21,34 @@ export interface IReplaceMatrix {
   newString: string;
 }
 
-interface YugipediaApiResponse {
+interface YugipediaGetCardImgApiResponse {
+  batchcomplete: string;
+  query: {
+    pages: {
+      [pageid: string]: {
+        pageid: number;
+        ns: number;
+        title: string;
+        imagerepository: string;
+        imageinfo: {
+          url: string;
+          descriptionurl: string;
+          descriptionshorturl: string;
+        }[];
+      };
+    }
+  }
+}
+
+interface YugipediaGetCardPageImgApiResponse {
+  parse: {
+    pageid: number;
+    title: string;
+    images: string[];
+  }
+}
+
+interface YugipediaGetCardPageApiResponse {
   batchcomplete: string;
   query: {
     normalized: {
@@ -45,14 +75,30 @@ export class MediaWikiService {
   private baseArtworkUrl: string;
 
   public constructor() {
-    this.baseApiUrl = 'https://yugipedia.com/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=';
+    this.baseApiUrl = 'https://yugipedia.com/api.php';
     this.baseArtworkUrl = "F:\\Vidéos Joeri_sama\\Artworks\\";
   }
 
-  public async getCardInfo(titles: string, useFr: boolean, generatePasscode: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
+  public async getCardInfo(
+    titles: string,
+    useFr: boolean,
+    generatePasscode: boolean,
+    replaceMatrixes: IReplaceMatrix[],
+    importArtworks: boolean,
+    artworkDirectoryPath?: string
+    ) {
+
     let card = app.$card.getDefaultImportCard();
 
-    let data = await app.$api.get(`${this.baseApiUrl}${titles}`) as YugipediaApiResponse;
+    let data: YugipediaGetCardPageApiResponse = await app.$api.get(this.baseApiUrl, {
+      params: {
+        action: 'query',
+        prop: 'revisions',
+        rvprop: 'content',
+        format: 'json',
+        titles
+      }
+    });
     if (!data?.query?.pages) return card;
 
     let pageKeys = Object.keys(data.query.pages) as unknown as number[];
@@ -64,10 +110,31 @@ export class MediaWikiService {
     let wikitext = pageInfo.revisions[0]["*"];
     if (!wikitext) return card;
 
-    return this.wikitextToCard(card, pageInfo.title.replace(' (card)', ''), wikitext, useFr, generatePasscode, replaceMatrixes);
+    return await this.wikitextToCard(
+      card,
+      pageInfo.title.replace(' (card)', ''),
+      wikitext,
+      useFr,
+      generatePasscode,
+      replaceMatrixes,
+      titles,
+      importArtworks,
+      artworkDirectoryPath as string
+    );
   }
 
-  public async wikitextToCard(card: ICard, title: string, wikitext: string, useFr: boolean, generatePasscode: boolean, replaceMatrixes: IReplaceMatrix[]): Promise<ICard> {
+  public async wikitextToCard(
+    card: ICard,
+    title: string,
+    wikitext: string,
+    useFr: boolean,
+    generatePasscode: boolean,
+    replaceMatrixes: IReplaceMatrix[],
+    titles: string,
+    importArtworks: boolean,
+    artworkDirectoryPath: string
+    ): Promise<ICard> {
+
     let name: string | undefined;
     let enName: string | undefined;
     let frName: string | undefined;
@@ -259,10 +326,50 @@ export class MediaWikiService {
     else if (await window.electron.ipcRenderer.checkFileExists(defaultJpg)) {
       card.artwork.url = defaultJpg;
     }
+    else if (!importArtworks && !artworkDirectoryPath?.length && enName?.length) {
+      let artworkName = this.getArtworkName(enName);
+      if (artworkName) {
+        let imgData: YugipediaGetCardPageImgApiResponse = await app.$api.get(this.baseApiUrl, {
+          params: {
+            action: 'parse',
+            page: titles,
+            prop: 'images',
+            format: 'json'
+          }
+        });
 
-    if (card.artwork.url) {
-      card.artwork.height = 100;
-      card.artwork.width = 100;
+        if (imgData?.parse?.images?.length) {
+          let fileName = imgData.parse.images.find(image => image.includes(artworkName));
+          if (fileName) {
+            let artworkData: YugipediaGetCardImgApiResponse = await app.$api.get(this.baseApiUrl, {
+              params: {
+                action: 'query',
+                titles: `File:${fileName}`,
+                prop: 'imageinfo',
+                iiprop: 'url',
+                format: 'json'
+              }
+            });
+
+            if (artworkData?.query?.pages) {
+              let keys = Object.keys(artworkData?.query?.pages);
+              if (keys?.length) {
+                let pageInfo = artworkData?.query?.pages[keys[0]];
+                if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
+                  card.artwork.url = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath) || '';
+                  if (card.artwork.url) {
+                    if (card.pendulum) {
+                      extend(card.artwork, app.$card.getFullPendulumCardPreset());
+                    } else {
+                      extend(card.artwork, app.$card.getFullCardPreset());
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     if (generatePasscode && !card.passcode) {
@@ -296,5 +403,28 @@ export class MediaWikiService {
     text = text.replace(/<br \/>/g, '\n');
 
     return text.trim();
+  }
+
+  private getArtworkName(str: string) {
+    // Remplacer les caractères non autorisés dans une URL ou un nom de fichier
+    str = str.replace(/[^\w\s\-+.!\/'()=%\\*\?"<>|\u00E0\u00E2\u00E4\u00E7\u00E8\u00E9\u00EA\u00EB\u00EE\u00EF\u00F4\u00F6\u00F9\u00FB\u00FC]/g, '').replace(/[\s?!]/g, '').replace(/:/g, '');
+    // Remplacer les caractères accentués
+    const accents = [
+      /[\300-\306]/g, /[\340-\346]/g, // A, a
+      /[\310-\313]/g, /[\350-\353]/g, // E, e
+      /[\314-\317]/g, /[\354-\357]/g, // I, i
+      /[\322-\330]/g, /[\362-\370]/g, // O, o
+      /[\331-\334]/g, /[\371-\374]/g, // U, u
+      /[\321]/g, /[\361]/g, // N, n
+      /[\307]/g, /[\347]/g // C, c
+    ];
+    const noAccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
+    for (let i = 0; i < accents.length; i++) {
+      str = str.replace(accents[i], noAccent[i]);
+    }
+    // Remplacer les /, -, ", ', :, !, ?, et les .
+    str = str.replace(/[\/\\\-"'()=:!?\.]/g, '');
+    // Retourner la chaîne de caractères modifiée
+    return str;
   }
 }

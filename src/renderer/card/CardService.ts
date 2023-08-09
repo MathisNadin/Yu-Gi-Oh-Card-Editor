@@ -1,3 +1,6 @@
+/* eslint-disable import/order */
+/* eslint-disable no-return-await */
+/* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
@@ -19,6 +22,7 @@ import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
 import { deepClone, uuid } from "mn-toolkit/tools";
 import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon } from "./card-interfaces";
+import { Crop } from "react-image-crop";
 
 interface IExportData {
   'current-card': ICard,
@@ -286,6 +290,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async resetCurrentCard() {
+    await app.$card.importArtwork('https://ms.yugipedia.com//0/06/SupremeCelestialKingOddEyesArcRayDragon-AGOV-JP-UR.png');
     this._currentCard = this.getDefaultCurrentCard();
     await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
     this.fireCurrentCardUpdated();
@@ -374,6 +379,12 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       await app.$indexedDB.save<CardStorageKey, (ICard | undefined)>('temp-current-card', this._tempCurrentCard);
       this.fireTempCurrentCardLoaded();
     }
+  }
+
+  public async importArtwork(url: string, path?: string) {
+    path = path || await window.electron.ipcRenderer.getDirectoryPath();
+    if (!path) return;
+    return await window.electron.ipcRenderer.download(path, url);
   }
 
   private getDefaultCurrentCard(): ICard {
@@ -481,6 +492,26 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       rush: false,
       legend: false,
       atkMax: ''
+    };
+  }
+
+  public getFullCardPreset(): Crop {
+    return {
+      x: 12.45,
+      y: 18.5,
+      width: 75.3,
+      height: 51.85,
+      unit: '%'
+    };
+  }
+
+  public getFullPendulumCardPreset(): Crop {
+    return {
+      x: 7.15,
+      y: 18.25,
+      width: 85.75,
+      height: 44,
+      unit: '%'
     };
   }
 

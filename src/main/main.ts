@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable prefer-const */
 /* eslint-disable consistent-return */
 /* eslint-disable prettier/prettier */
@@ -20,6 +21,7 @@ import log from 'electron-log';
 import { existsSync, readFileSync, writeFile } from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { download } from 'electron-dl';
 
 class AppUpdater {
   constructor() {
@@ -34,6 +36,12 @@ let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, _arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('download', async (_event, directory: string, url: string) => {
+  const win = BrowserWindow.getFocusedWindow() as BrowserWindow;
+  let file = await download(win, url, { directory });
+  return file.getSavePath();
 });
 
 ipcMain.handle('get-app-version', async (_event) => {

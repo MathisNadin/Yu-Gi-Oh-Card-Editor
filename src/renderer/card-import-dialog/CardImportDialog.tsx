@@ -60,6 +60,7 @@ interface ICardImportDialogState extends IContainableState {
   useFr: boolean;
   generatePasscode: boolean;
   replaceMatrixes: IReplaceMatrix[];
+  importArtwork: boolean;
   yuginewsUrl: string;
   cardsData: IYuginewsCardData[];
   selectedCards: { [cardUuid: string]: boolean };
@@ -78,6 +79,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       generatePasscode: false,
       replaceMatrixes: [],
       tabIndex: 'yugipedia',
+      importArtwork: false,
       yuginewsUrl: '',
       cardsData: [],
       selectedCards: {},
@@ -110,7 +112,14 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       let newCards: ICard[] = [];
       for (let importLink of importLinks) {
         const splitImport = importLink.split('/');
-        const newCard = await app.$mediaWiki.getCardInfo(splitImport[splitImport.length-1], this.state.useFr, this.state.generatePasscode, this.state.replaceMatrixes);
+        const newCard = await app.$mediaWiki.getCardInfo(
+          splitImport[splitImport.length-1],
+          this.state.useFr,
+          this.state.generatePasscode,
+          this.state.replaceMatrixes,
+          this.state.importArtwork
+        );
+
         if (newCard) {
           newCards.push(newCard);
         }

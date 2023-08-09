@@ -169,25 +169,13 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private setFullCardPreset() {
-    let crop: Crop = {
-      x: 12.45,
-      y: 18.35,
-      width: 75.3,
-      height: 51.85,
-      unit: '%'
-    };
+    let crop = app.$card.getFullCardPreset();
     this.setState({ crop });
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
 
   private setFullPendulumCardPreset() {
-    let crop: Crop = {
-      x: 7.15,
-      y: 18.25,
-      width: 85.75,
-      height: 44,
-      unit: '%'
-    };
+    let crop = app.$card.getFullPendulumCardPreset();
     this.setState({ crop });
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
