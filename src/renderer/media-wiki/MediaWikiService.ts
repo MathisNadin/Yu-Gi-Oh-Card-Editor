@@ -376,6 +376,10 @@ export class MediaWikiService {
       card.passcode = app.$card.generatePasscode();
     }
 
+    if (useFr && card.abilities?.length) {
+      card.abilities = card.abilities.map(ability => this.getFrenchAbility(ability.trim()));
+    }
+
     return card;
   }
 
@@ -426,5 +430,112 @@ export class MediaWikiService {
     str = str.replace(/[\/\\\-"'()=:!?\.]/g, '');
     // Retourner la chaîne de caractères modifiée
     return str;
+  }
+
+  private getFrenchAbility(ability: string): string {
+    switch (ability) {
+        case 'Normal':
+            return 'Normal';
+        case 'Effect':
+            return 'Effet';
+        case 'Pendulum':
+            return 'Pendule';
+        case 'Ritual':
+            return 'Rituel';
+        case 'Fusion':
+            return 'Fusion';
+        case 'Synchro':
+            return 'Synchro';
+        case 'Xyz':
+            return 'Xyz';
+        case 'Link':
+            return 'Lien';
+        case 'Dark Synchro':
+            return 'Synchro des Ténèbres';
+        case 'Tuner':
+            return 'Syntoniseur';
+        case 'Special Summon':
+            return 'Invocation Spéciale';
+        case 'Maximum':
+            return 'Maximum';
+        case 'Toon':
+            return 'Toon';
+        case 'Spirit':
+            return 'Spirit';
+        case 'Union':
+            return 'Union';
+        case 'Flip':
+            return 'Flip';
+        case 'Gemini':
+            return 'Gémeau';
+        case 'Aqua':
+            return 'Aqua';
+        case 'Beast':
+            return 'Bête';
+        case 'Beast-Warrior':
+            return 'Bête-Guerrier';
+        case 'Creator God':
+            return 'Dieu Créateur';
+        case 'Cyberse':
+            return 'Cyberse';
+        case 'Dinosaur':
+            return 'Dinosaure';
+        case 'Divine-Beast':
+            return 'Bête Divine';
+        case 'Dragon':
+            return 'Dragon';
+        case 'Fairy':
+            return 'Elfe';
+        case 'Fiend':
+            return 'Démon';
+        case 'Fish':
+            return 'Poisson';
+        case 'Illusion':
+            return 'Illusion';
+        case 'Insect':
+            return 'Insecte';
+        case 'Machine':
+            return 'Machine';
+        case 'Plant':
+            return 'Plante';
+        case 'Psychic':
+            return 'Psychique';
+        case 'Pyro':
+            return 'Pyro';
+        case 'Reptile':
+            return 'Reptile';
+        case 'Rock':
+            return 'Rocher';
+        case 'Sea Serpent':
+            return 'Serpent de Mer';
+        case 'Spellcaster':
+            return 'Magicien';
+        case 'Thunder':
+            return 'Tonnerre';
+        case 'Warrior':
+            return 'Guerrier';
+        case 'Winged Beast':
+            return 'Bête Ailée';
+        case 'Wyrm':
+            return 'Wyrm';
+        case 'Zombie':
+            return 'Zombie';
+        case 'Yokai':
+            return 'Yokai';
+        case 'Cyborg':
+            return 'Cyborg';
+        case 'Magical Knight':
+            return 'Chevalier Magique';
+        case 'High Dragon':
+            return 'Grand Dragon';
+        case 'Omega Psychic':
+            return 'Psychique Oméga';
+        case 'Celestial Warrior':
+            return 'Guerrier Céleste';
+        case 'Galaxy':
+            return 'Galactique';
+        default:
+            return ability;
+    }
   }
 }

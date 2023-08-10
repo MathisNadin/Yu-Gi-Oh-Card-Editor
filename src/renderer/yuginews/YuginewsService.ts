@@ -89,12 +89,13 @@ export class YuginewsService {
       if (matches?.length && matches[1]) {
         const extractedData = matches[1]
           .replaceAll('<!-- [et_pb_line_break_holder] -->', '')
+          .replaceAll('<!–- [et_pb_br_holder] -–>', '\n')
           .replaceAll('<!\u2013- [et_pb_br_holder] -\u2013>', '\n');
         let cardsData = extractedData.split('},{');
 
         if (cardsData?.length) {
           for (let cardData of cardsData) {
-            let inputString = cardData.replace(/\s+/g, ' ');
+            let inputString = cardData.replace(/[ \t]+/g, ' ').replace(/\n/g, '\\n');
 
             // eslint-disable-next-line no-useless-escape
             const regex = /"([^"]+)":\s*("[^"]+"|\[[^\]]+\]|\`[^`]+\`)/g;
