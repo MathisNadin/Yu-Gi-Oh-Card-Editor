@@ -669,6 +669,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
             return <HorizontalStack className='ability-line'>
               <InplaceEdit
                 focusOnSingleClick
+                validateOnEnter
                 key={`${iAbility}-${ability}`}
                 className='ability-input card-input'
                 value={ability}

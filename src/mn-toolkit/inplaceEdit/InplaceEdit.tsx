@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-return-assign */
 /* eslint-disable lines-between-class-members */
 /* eslint-disable no-unused-vars */
@@ -10,11 +11,12 @@
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { classNames } from 'mn-toolkit/tools';
-import { MouseEvent, createRef } from 'react';
+import { KeyboardEvent, MouseEvent, createRef } from 'react';
 
 interface InplaceEditProps extends IContainableProps {
   value: string;
   focusOnSingleClick?: boolean;
+  validateOnEnter?: boolean;
   onChange?: (newValue: string) => void;
   onSingleClick?: (e: MouseEvent) => void;
   onDoubleClick?: (e: MouseEvent) => void;
@@ -45,7 +47,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
     }, 100);
   }
 
-  private onBlur() {
+  private doBlur() {
     this.clickTimer = undefined;
     this.setState({ isFocused: false });
     if (this.props.onChange) this.props.onChange(this.tempValue);
@@ -75,6 +77,12 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
     if (this.props.onDoubleClick) this.props.onDoubleClick(e);
   }
 
+  private onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (this.props.validateOnEnter && e.key === 'Enter') {
+      this.doBlur();
+    }
+  }
+
   public render() {
     return <VerticalStack className={classNames('inplace-edit-container', this.props.className)}>
       {this.state.isFocused
@@ -84,7 +92,8 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
           ref={this.inputRef}
           defaultValue={this.tempValue}
           onChange={e => this.tempValue = e.target.value}
-          onBlur={() => this.onBlur()} />
+          onKeyDown={e => this.onKeyDown(e)}
+          onBlur={() => this.doBlur()} />
         : <div className='inplace-edit-value inplace-edit-div' onClick={e => this.onSingleClick(e)} onDoubleClick={e => this.onDoubleClick(e)}>
           {this.tempValue || '<vide>'}
         </div>
