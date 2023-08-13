@@ -21,6 +21,8 @@ export type TSticker = 'none' | 'silver' | 'gold' | 'grey' | 'white' | 'lightBlu
 
 export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
+export type TLegendType = 'gold' | 'goldFoil' | 'silver' | 'silverFoil';
+
 export type CardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards';
 
 export interface ICard {
@@ -65,6 +67,9 @@ export interface ICard {
   oldCopyright: boolean;
   speed: boolean;
   rush: boolean;
+  dontCoverRushArt: boolean;
   legend: boolean;
+  legendType: TLegendType;
+  maximum: boolean;
   atkMax: string;
 }

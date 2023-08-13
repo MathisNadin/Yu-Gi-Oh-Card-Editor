@@ -33,7 +33,7 @@ import cross from '../resources/pictures/cross.svg';
 import trash from '../resources/pictures/trash.svg';
 import { ICard, TFrame } from 'renderer/card/card-interfaces';
 
-export type CardSortOptions = 'name' | 'frame' | 'created' | 'created-reverse' | 'modified' | 'modified-reverse';
+export type CardSortOptions = 'name' | 'frame' | 'created' | 'created-reverse' | 'modified' | 'modified-reverse' | 'game' | 'game-reverse';
 
 interface ILocalCardsDisplayProps extends IContainableProps {}
 
@@ -129,6 +129,22 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         localCards.sort((a, b) => (b.modified as Date).getTime() - (a.modified as Date).getTime());
         break;
 
+      case 'game':
+        localCards.sort((a, b) => {
+          let aScore = a.rush ? 0 : 1;
+          let bScore = b.rush ? 0 : 1;
+          return aScore - bScore;
+        });
+        break;
+
+      case 'game-reverse':
+        localCards.sort((a, b) => {
+          let aScore = a.rush ? 1 : 0;
+          let bScore = b.rush ? 1 : 0;
+          return aScore - bScore;
+        });
+        break;
+
       default:
         break;
     }
@@ -209,14 +225,20 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         <table className='table'>
           <thead>
             <tr>
+              <th
+                className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'game' }, { 'sorted-desc': this.state.sortOption === 'game-reverse' })}
+                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'game' ? 'game-reverse' : 'game')}
+              >Créée</th>
               <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'name')}>Nom</th>
               <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'frame')}>Type</th>
               <th
                 className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'created' }, { 'sorted-desc': this.state.sortOption === 'created-reverse' })}
-                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'created' ? 'created-reverse' : 'created')}>Créée</th>
+                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'created' ? 'created-reverse' : 'created')}
+              >Créée</th>
               <th
                 className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'modified' }, { 'sorted-desc': this.state.sortOption === 'modified-reverse' })}
-                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'modified' ? 'modified-reverse' : 'modified')}>Modifiée</th>
+                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'modified' ? 'modified-reverse' : 'modified')}
+              >Modifiée</th>
               <th className='empty empty-1'> </th>
               <th className='empty empty-2'> </th>
             </tr>
@@ -226,6 +248,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
               const isEdited = this.state.edited === card.uuid;
               const isCurrent = this.state.current === card.uuid;
               return <tr key={uuid()} className={classNames('local-card-row', { 'selected': this.state.selectedCards[card.uuid as string] }, { 'current': isCurrent })}>
+                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.rush ? 'Rush' : 'Master'}</td>
                 <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.name}</td>
                 <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{app.$card.getFramesNames(card.frames)}</td>
                 <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.created)}</td>

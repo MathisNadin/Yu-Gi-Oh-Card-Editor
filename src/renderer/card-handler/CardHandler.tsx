@@ -31,11 +31,18 @@ import { CardPreview } from 'renderer/card-preview/CardPreview';
 import { ICardListener } from '../card/CardService';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
+import { RushCardPreview } from 'renderer/card-preview/RushCardPreview';
+import { RushCardEditor } from 'renderer/card-editor/RushCardEditor';
+import { TabbedPane } from 'mn-toolkit/tabs/TabbedPane';
+import { TabPane } from 'mn-toolkit/tabs/TabPane';
+
+type TTabIndex = 'master' | 'rush';
 
 interface ICardHandlerProps extends IContainableProps {
 }
 
 interface ICardHandlerState extends IContainableState {
+  tabIndex: TTabIndex;
   currentCard: ICard;
   tempCurrentCard: ICard;
 }
@@ -45,7 +52,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   public constructor(props: ICardHandlerProps) {
     super(props);
     app.$card.addListener(this);
-    this.state = { loaded: false } as ICardHandlerState;
+    this.state = { tabIndex: 'master', loaded: false } as ICardHandlerState;
   }
 
   public componentWillUnmount() {
@@ -53,19 +60,19 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public currentCardLoaded(currentCard: ICard) {
-    this.setState({ loaded: true, currentCard });
+    this.setState({ loaded: true, currentCard, tabIndex: currentCard.rush ? 'rush' : 'master' });
   }
 
   public currentCardUpdated(currentCard: ICard) {
-    this.setState({ currentCard });
+    this.setState({ currentCard, tabIndex: currentCard.rush ? 'rush' : 'master' });
   }
 
   public tempCurrentCardLoaded(tempCurrentCard: ICard) {
-    this.setState({ loaded: true, tempCurrentCard });
+    this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
   }
 
   public tempCurrentCardUpdated(tempCurrentCard: ICard) {
-    this.setState({ tempCurrentCard });
+    this.setState({ tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
   }
 
   public localCardsUpdated() {
@@ -84,8 +91,22 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
     if (!this.state?.loaded) return <Spinner />;
     const card = this.state.tempCurrentCard || this.state.currentCard;
     return this.renderAttributes(<HorizontalStack gutter>
-      <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
-      <CardPreview card={card} />
+      <TabbedPane
+        tabPosition='top'
+        className='editor-tabbed-pane'
+        defaultValue={this.state.tabIndex}
+        onChange={value => this.setState({ tabIndex: value as TTabIndex })}
+      >
+
+        <TabPane id='master' fill={false} label='Master' gutter>
+          <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
+        </TabPane>
+
+        <TabPane id='rush' fill={false} label='Rush' gutter>
+          <RushCardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
+        </TabPane>
+      </TabbedPane>
+      {card.rush ? <RushCardPreview card={card} /> : <CardPreview card={card} />}
       {!!app.$card.localCards?.length && <LocalCardsDisplay />}
     </HorizontalStack>, 'card-handler');
   }

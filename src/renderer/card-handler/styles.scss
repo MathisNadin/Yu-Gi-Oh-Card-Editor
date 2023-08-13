@@ -6,6 +6,12 @@
   height: 100%;
   width: 100%;
 
+  .editor-tabbed-pane {
+    height: 100%;
+    width: 30%;
+    background-color: aliceblue;
+  }
+
   .frames-stack {
     position: relative;
     width: 400px; // Largeur souhaitée du conteneur

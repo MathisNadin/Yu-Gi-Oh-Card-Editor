@@ -43,7 +43,7 @@ $decay: 4px;
     }
 
     .mn-indicators {
-      margin: 0 $themeDefaultSpacing/2;
+      margin: 0 calc($themeDefaultSpacing / 2);
       display: flex;
     }
 

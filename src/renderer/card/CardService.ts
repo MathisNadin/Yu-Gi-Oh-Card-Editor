@@ -156,8 +156,11 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     card.oldCopyright = card.oldCopyright || false;
     card.speed = card.speed || false;
     card.rush = card.rush || false;
+    card.dontCoverRushArt = card.dontCoverRushArt || false;
     card.legend = card.legend || false;
+    card.legendType = card.legendType || 'gold';
     card.atkMax = typeof card.atkMax === 'number' ? '' : card.atkMax || '';
+    card.maximum = card.maximum || false;
   }
 
   private async load(initial: boolean) {
@@ -435,8 +438,11 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       oldCopyright: false,
       speed: false,
       rush: false,
+      dontCoverRushArt: false,
+      legendType: 'gold',
       legend: false,
-      atkMax: ''
+      atkMax: '',
+      maximum: false,
     };
   }
 
@@ -489,8 +495,11 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       oldCopyright: false,
       speed: false,
       rush: false,
+      dontCoverRushArt: false,
+      legendType: 'gold',
       legend: false,
-      atkMax: ''
+      atkMax: '',
+      maximum: false,
     };
   }
 
