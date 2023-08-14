@@ -239,13 +239,6 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     this.debouncedOnCardChange(this.state.card);
   }
 
-  private onPasscodeChange(passcode: string) {
-    if (isUndefined(passcode)) return;
-    this.state.card.passcode = passcode;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
-  }
-
   private onArtworkInfoChange(infos: IArtworkEditDialogResult) {
     if (isEmpty(infos?.url)) return;
     this.state.card.artwork = {
@@ -334,12 +327,6 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
   private onOldCopyrightChange() {
     this.state.card.oldCopyright = !this.state.card.oldCopyright;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
-  }
-
-  private generatePasscode() {
-    this.state.card.passcode = app.$card.generatePasscode();
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -654,22 +641,6 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             defaultOption={this.state.card.edition}
             onSelect={value => this.onEditionChange(value)} />
         </VerticalStack>
-      </HorizontalStack>
-
-      <HorizontalStack className='card-editor-full-width-section'>
-        <VerticalStack className='card-editor-vertical-section card-passcode card-input-container'>
-          <p className='editor-label passcode-label'>Code</p>
-          <input
-            type='text'
-            pattern='\d*'
-            maxLength={8}
-            className='passcode-input card-input'
-            value={this.state.card.passcode}
-            onInput={e => this.onPasscodeChange((e.target as EventTargetWithValue).value)}
-          />
-        </VerticalStack>
-
-        <p className='generate-passcode-btn' onClick={() => this.generatePasscode()}>Générer</p>
       </HorizontalStack>
 
       <HorizontalStack className='card-editor-full-width-section'>

@@ -324,7 +324,7 @@
   background-color: black;
 }
 .card-builder.rush-card-builder .card-name-container {
-  top: 20px;
+  top: 17px;
   left: 38px;
 }
 .card-builder.rush-card-builder .card-abilities {
@@ -334,14 +334,15 @@
 }
 .card-builder.rush-card-builder .atk-def {
   font-family: fontRushAtkDef;
-  top: 779.5px;
+  top: 781.5px;
   min-width: 150px;
   font-size: 38px;
   text-align: start;
   color: white;
   -webkit-text-fill-color: white;
-  -webkit-text-stroke: black 2px;
-  letter-spacing: -2px;
+  -webkit-text-stroke: white 2px;
+  transform: scaleY(0.87);
+  text-shadow: 4px 4px 0 black, -4px -4px 0 black, 4px -4px 0 black, -4px 4px 0 black;
 }
 .card-builder.rush-card-builder .atk-def.atk {
   left: 284px;
@@ -355,6 +356,10 @@
 }
 .card-builder.rush-card-builder .atk-def .stat-text {
   min-width: 150px;
+  padding: 0 2px 0 2px;
+}
+.card-builder.rush-card-builder .atk-def .stat-text.hidden {
+  visibility: hidden;
 }
 .card-builder.rush-card-builder .atk-def canvas {
   max-width: 150px;
@@ -370,6 +375,10 @@
   width: 728px;
   top: 119px;
   left: 42px;
+}
+.card-builder.rush-card-builder .card-set {
+  top: 1089px;
+  right: 79px;
 }
 
 /*# sourceMappingURL=styles.css.map */

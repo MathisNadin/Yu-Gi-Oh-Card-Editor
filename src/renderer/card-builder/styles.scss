@@ -226,20 +226,14 @@
     }
 
     &.card-set {
-      // top: 69.445%;
-      // right: -71.2%;
       top: 823px;
-      // right: -581px;
       right: 83px;
       text-align: end;
       font-family: fontCardSet;
-      // font-size: 16px;
       font-size: 24px;
       text-shadow: 0 0 black;
 
       &.with-arrows {
-        // right: -520px;
-        // right: -63.4%;
         right: 147px;
       }
 
@@ -247,8 +241,6 @@
         text-align: start;
         top: 1057px;
         right: -68px;
-        // top: 89.2%;
-        // right: -9%;
       }
     }
 
@@ -433,7 +425,7 @@
   &.rush-card-builder {
 
     .card-name-container {
-      top: 20px;
+      top: 17px;
       left: 38px;
     }
 
@@ -445,14 +437,19 @@
 
     .atk-def {
       font-family: fontRushAtkDef;
-      top: 779.5px;
+      top: 781.5px;
       min-width: 150px;
       font-size: 38px;
       text-align: start;
       color: white;
       -webkit-text-fill-color: white;
-      -webkit-text-stroke: black 2px;
-      letter-spacing: -2px;
+      -webkit-text-stroke: white 2px;
+      transform: scaleY(0.87);
+      text-shadow:
+        4px 4px 0 black,
+        -4px -4px 0 black,
+        4px -4px 0 black,
+        -4px 4px 0 black;
 
       &.atk {
         left: 284px;
@@ -469,6 +466,11 @@
 
       .stat-text {
         min-width: 150px;
+        padding: 0 2px 0 2px;
+
+        &.hidden {
+          visibility: hidden;
+        }
       }
 
       canvas {
@@ -488,6 +490,11 @@
       width: 728px;
       top: 119px;
       left: 42px;
+    }
+
+    .card-set {
+      top: 1089px;
+      right: 79px;
     }
   }
 }

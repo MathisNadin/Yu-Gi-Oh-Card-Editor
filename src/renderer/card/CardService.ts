@@ -157,6 +157,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     card.speed = card.speed || false;
     card.rush = card.rush || false;
     card.dontCoverRushArt = card.dontCoverRushArt || false;
+    card.rushTextMode = card.rushTextMode || 'regular';
+    card.rushCondition = card.rushCondition || '';
+    card.rushEffect = card.rushEffect || '';
+    card.rushChoiceEffects = card.rushChoiceEffects || [];
     card.legend = card.legend || false;
     card.legendType = card.legendType || 'gold';
     card.atkMax = typeof card.atkMax === 'number' ? '' : card.atkMax || '';
@@ -461,6 +465,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       speed: false,
       rush: false,
       dontCoverRushArt: false,
+      rushTextMode: 'regular',
+      rushCondition: '',
+      rushEffect: '',
+      rushChoiceEffects: [],
       legendType: 'gold',
       legend: false,
       atkMax: '',
@@ -518,6 +526,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       speed: false,
       rush: false,
       dontCoverRushArt: false,
+      rushTextMode: 'regular',
+      rushCondition: '',
+      rushEffect: '',
+      rushChoiceEffects: [],
       legendType: 'gold',
       legend: false,
       atkMax: '',

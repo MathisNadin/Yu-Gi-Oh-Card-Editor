@@ -220,6 +220,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       if (!container) return;
       const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
       if (!atk) return;
+      atk.classList.remove('hidden');
 
       const canvas = await html2canvas(atk, { backgroundColor: null });
       canvas.className = 'html2canvas html2canvas-atk';
@@ -229,6 +230,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       } else {
         container.appendChild(canvas);
       }
+      atk.classList.add('hidden');
     }
     this.setState({ adjustState: 'def' });
   }
@@ -239,6 +241,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       if (!container) return;
       const def = container.querySelector('.def-text') as HTMLParagraphElement;
       if (!def) return;
+      def.classList.remove('hidden');
 
       const canvas = await html2canvas(def, { backgroundColor: null });
       canvas.className = 'html2canvas html2canvas-def';
@@ -248,6 +251,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       } else {
         container.appendChild(canvas);
       }
+      def.classList.add('hidden');
     }
     this.setState({ adjustState: 'abilities' });
   }
@@ -420,27 +424,24 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {specificties.st && <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />}
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
-      {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
 
-      <p className={`card-layer card-set ${(this.props.card.frames.includes('xyz')) ? 'white' : 'black'}-text`}>
-        {this.props.card.cardSet}
-      </p>
+      <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>
 
       {this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'atk-max', { 'question-mark': this.props.card.atkMax === '?' })}>
-          <p className={`stat-text atk-max-text white-text`}>{this.props.card.atkMax}</p>
+          <p className={`stat-text atk-max-text white-text hidden`}>{this.props.card.atkMax}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
-          <p className={`stat-text atk-text white-text`}>{this.props.card.atk}</p>
+          <p className={`stat-text atk-text white-text hidden`}>{this.props.card.atk}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
-          <p className={`stat-text def-text white-text`}>{this.props.card.def}</p>
+          <p className={`stat-text def-text white-text hidden`}>{this.props.card.def}</p>
         </Container>
       }
 
