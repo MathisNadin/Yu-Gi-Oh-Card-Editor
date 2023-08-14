@@ -28,6 +28,11 @@
   src: url(../resources/fonts/matrixBoldSmallCaps.ttf);
 }
 
+@font-face {
+  font-family: fontRushAtkDef;
+  src: url(../resources/fonts/RoGSanSrfStd-Bd.otf);
+}
+
 .card-builder {
   $width: 813px;
   $height: 1185px;
@@ -416,6 +421,73 @@
           }
         }
       }
+    }
+  }
+
+
+
+
+
+
+
+  &.rush-card-builder {
+
+    .card-name-container {
+      top: 20px;
+      left: 38px;
+    }
+
+    .card-abilities {
+      top: 855px;
+      left: 56px;
+      width: 590px;
+    }
+
+    .atk-def {
+      font-family: fontRushAtkDef;
+      top: 779.5px;
+      min-width: 150px;
+      font-size: 38px;
+      text-align: start;
+      color: white;
+      -webkit-text-fill-color: white;
+      -webkit-text-stroke: black 2px;
+      letter-spacing: -2px;
+
+      &.atk {
+        left: 284px;
+      }
+
+      &.def {
+        left: 536px;
+      }
+
+      &.question-mark {
+        font-size: 53px;
+        top: 1067px;
+      }
+
+      .stat-text {
+        min-width: 150px;
+      }
+
+      canvas {
+        max-width: 150px;
+      }
+    }
+
+    .card-description-holder {
+      top: 902px;
+      left: 56px;
+      width: 700px;
+      height: 195px;
+    }
+
+    .artwork-container {
+      height: 733px;
+      width: 728px;
+      top: 119px;
+      left: 42px;
     }
   }
 }

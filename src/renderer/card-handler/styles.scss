@@ -10,6 +10,48 @@
     height: 100%;
     width: 30%;
     background-color: aliceblue;
+    display: flex;
+
+    .mn-tab-panes {
+      background-color: transparent;;
+    }
+
+    .mn-tabset {
+      .item {
+
+        &#mn-tab-button-master {
+          &:hover {
+            background-color: rgba(yellow, 0.5);
+          }
+
+          &.selected {
+            background-color: rgba(yellow, 0.2);
+          }
+        }
+
+        &#mn-tab-button-rush {
+          &:hover {
+            background-color: rgba(red, 0.5);
+          }
+
+          &.selected {
+            background-color: rgba(red, 0.2);
+          }
+        }
+      }
+    }
+
+    .mn-tab-pane {
+      overflow-x: hidden;
+
+      &#master {
+        background-color: rgba(yellow, 0.2);
+      }
+
+      &#rush {
+        background-color: rgba(red, 0.2);
+      }
+    }
   }
 
   .frames-stack {

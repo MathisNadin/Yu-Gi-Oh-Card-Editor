@@ -63,7 +63,9 @@ interface IRushCardBuilderState extends IContainableState {
 
   legend: string;
   attribute: string;
+  levelStar: string;
   level: string;
+  rankStar: string;
   rank: string;
   stIcon: string;
 
@@ -112,7 +114,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${(!card.pendulum && card.frames.includes('xyz')) || card.frames.includes('skill') ? 'white' : 'black'}`;
 
-    const artworkBg = require(`../resources/pictures/whiteArtwork.png`);
+    const artworkBg = require(`../resources/pictures/rdWhiteArtwork.png`);
     let croppedArtworkBase64: string;
 
     let artworkExists = false;
@@ -137,7 +139,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let cardFrames: string[] = [];
 
     for (let frame of card.frames) {
-      cardFrames.push(require(`../resources/pictures/card-frames/${frame}.png`));
+      cardFrames.push(require(`../resources/pictures/rd-card-frames/${frame}.png`));
     }
 
     const state: IRushCardBuilderState = {
@@ -157,7 +159,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       legend: require(`../resources/pictures/rd-legend/${card.legendType}.png`),
       attribute: require(`../resources/pictures/rd-attributes/${card.attribute}.png`),
+      levelStar: require(`../resources/pictures/rd-levels/star.png`),
       level: require(`../resources/pictures/rd-levels/${card.level}.png`),
+      rankStar: require(`../resources/pictures/rd-ranks/star.png`),
       rank: require(`../resources/pictures/rd-ranks/${card.level}.png`),
       stIcon: require(`../resources/pictures/rd-icons/st/${card.stType}.png`),
 
@@ -390,6 +394,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
     }
 
+    const specificties = this.getSpecifities();
+
     return this.renderAttributes(<Container id={this.props.id} ref={() => this.ref = document.getElementById(this.props.id) as HTMLDivElement}>
       <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
       {this.renderAttributes(<div><img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' /></div>, artworkClass)}
@@ -397,7 +403,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {this.renderFrames(this.state.cardFrames, 'card-frame')}
 
       {<img className='card-layer attribute' src={this.state.attribute} alt='attribute' />}
-      {this.renderLevelOrStIcon()}
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt && this.props.card.maximum &&
         <img className='card-layer atk-max-line' src={this.state.atkMaxLine} alt='atkMaxLine' />
@@ -406,6 +411,14 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />
       }
 
+      {specificties.lv && <img className='card-layer level-star' src={this.state.levelStar} alt='levelStar' />}
+      {specificties.lv && <img className='card-layer level' src={this.state.level} alt='level' />}
+
+      {specificties.rk && <img className='card-layer rank-star' src={this.state.rankStar} alt='rankStar' />}
+      {specificties.rk && <img className='card-layer rank' src={this.state.rank} alt='rank' />}
+
+      {specificties.st && <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />}
+
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
       {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
 
@@ -413,15 +426,21 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         {this.props.card.cardSet}
       </p>
 
+      {this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
+        <Container className={classNames('card-layer', 'atk-def', 'atk-max', { 'question-mark': this.props.card.atkMax === '?' })}>
+          <p className={`stat-text atk-max-text white-text`}>{this.props.card.atkMax}</p>
+        </Container>
+      }
+
       {app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
-          <p className={`stat-text atk-text black-text`}>{this.props.card.atk}</p>
+          <p className={`stat-text atk-text white-text`}>{this.props.card.atk}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
-          <p className={`stat-text def-text black-text`}>{this.props.card.def}</p>
+          <p className={`stat-text def-text white-text`}>{this.props.card.def}</p>
         </Container>
       }
 
@@ -432,7 +451,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {this.renderDescription()}
       {this.renderName()}
 
-    </Container>, 'card-builder');
+    </Container>, 'card-builder rush-card-builder');
   }
 
   private renderName() {
@@ -518,13 +537,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
   private renderDescription() {
     let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
-    if (app.$card.hasAbilities(this.props.card)) {
-      containerClass = `${containerClass} with-abilities`;
-
-      if (this.props.card.frames.includes('skill')) {
-        containerClass = `${containerClass} on-skill`;
-      }
-    }
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
     if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
 
@@ -548,21 +560,21 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     </VerticalStack>, containerClass);
   }
 
-  private renderLevelOrStIcon() {
+  private getSpecifities(): { lv: boolean, rk: boolean, st: boolean } {
     let includesXyz = false;
 
     for (let frame of this.props.card.frames) {
       if (frame === 'spell' || frame === 'trap') {
-        return <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />;
+        return { lv: false, rk: false, st: true };
       } else if (frame === 'xyz') {
         includesXyz = true;
       }
     }
 
     if (includesXyz) {
-      return <img className='card-layer rank' src={this.state.rank} alt='rank' />;
+      return { lv: false, rk: true, st: false };
     } else {
-      return <img className='card-layer level' src={this.state.level} alt='level' />;
+      return { lv: true, rk: false, st: false };
     }
   }
 }

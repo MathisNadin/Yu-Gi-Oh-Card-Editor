@@ -298,6 +298,28 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.fireCurrentCardUpdated();
   }
 
+  public async convertCurrentCard() {
+    if (!this._currentCard) return;
+    this._currentCard = this.convertCard(this._currentCard);
+    await this.saveCurrentCard(this._currentCard);
+  }
+
+  public async convertTempCurrentCard() {
+    if (!this._tempCurrentCard) return;
+    this._tempCurrentCard = this.convertCard(this._tempCurrentCard);
+    await this.saveCurrentCard(this._tempCurrentCard);
+  }
+
+  private convertCard(card: ICard) {
+    if (card.rush) {
+      card.rush = false;
+      return card;
+    } else {
+      card.rush = true;
+      return card;
+    }
+  }
+
   public async saveCurrentCard(card: ICard) {
     this._currentCard = card;
     await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);

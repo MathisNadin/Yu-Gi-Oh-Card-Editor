@@ -81,9 +81,18 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
 
   private async onCardChange(card: ICard) {
     if (this.state.tempCurrentCard) {
-      await app.$card.saveTempCurrentCard(card)
+      await app.$card.saveTempCurrentCard(card);
     } else {
       await app.$card.saveCurrentCard(card);
+    }
+  }
+
+  private async onTabChange(tabIndex: TTabIndex) {
+    this.setState({ tabIndex });
+    if (this.state.tempCurrentCard) {
+      await app.$card.convertTempCurrentCard();
+    } else {
+      await app.$card.convertCurrentCard();
     }
   }
 
@@ -95,14 +104,14 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
         tabPosition='top'
         className='editor-tabbed-pane'
         defaultValue={this.state.tabIndex}
-        onChange={value => this.setState({ tabIndex: value as TTabIndex })}
+        onChange={tabIndex => this.onTabChange(tabIndex as TTabIndex)}
       >
 
-        <TabPane id='master' fill={false} label='Master' gutter>
+        <TabPane id='master' scroll label='Master' gutter>
           <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
         </TabPane>
 
-        <TabPane id='rush' fill={false} label='Rush' gutter>
+        <TabPane id='rush' scroll label='Rush' gutter>
           <RushCardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
         </TabPane>
       </TabbedPane>

@@ -1,17 +1,20 @@
 .mn-container.vertical-stack {
-  flex-direction: column; }
-
+  flex-direction: column;
+}
 .mn-container.horizontal-stack {
-  flex-direction: row; }
-
+  flex-direction: row;
+}
 .mn-container.mn-gutter {
-  gap: 16px; }
-
+  gap: 16px;
+}
 .mn-container.mn-margin {
-  margin: 16px; }
-
+  margin: 16px;
+}
 .mn-container.mn-scroll {
-  overflow-y: auto; }
-
+  overflow-y: auto;
+}
 .mn-container.mn-scrollX {
-  overflow-x: auto; }
+  overflow-x: auto;
+}
+
+/*# sourceMappingURL=styles.css.map */
