@@ -194,6 +194,12 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onMaximumChange() {
+    this.state.card.maximum = !this.state.card.maximum;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   public onAtkMaxChange(atkMax: string) {
     if (isUndefined(atkMax) || atkMax.length > 6) return;
     if (atkMax && atkMax !== '?' && integer(atkMax) === 0) atkMax = '0';
@@ -559,11 +565,16 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           <input type='text' className='atk-input card-input' value={this.state.card.atk} onInput={e => this.onAtkChange((e.target as EventTargetWithValue).value)} />
         </VerticalStack>
 
-        {!this.state.card.frames.includes('link') &&
-          <VerticalStack className='card-editor-vertical-section card-stats card-def card-input-container'>
+        <VerticalStack className='card-editor-vertical-section card-stats card-def card-input-container'>
             <p className='editor-label def-label'>DEF</p>
             <input type='text' className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
-        </VerticalStack>}
+        </VerticalStack>
+      </HorizontalStack>
+
+      <HorizontalStack className='card-editor-full-width-section'>
+        <input type='checkbox' className='maximum-input card-input' checked={this.state.card.maximum} onChange={() => this.onMaximumChange()} />
+        <p className='editor-label atk-max-label'>ATK MAX</p>
+        {this.state.card.maximum && <input type='text' className='atk-max-input card-input' value={this.state.card.atkMax} onInput={e => this.onAtkMaxChange((e.target as EventTargetWithValue).value)} />}
       </HorizontalStack>
 
       <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-abilities card-input-container'>

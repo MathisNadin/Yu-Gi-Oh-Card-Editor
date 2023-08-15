@@ -45,7 +45,7 @@ interface IRushCardBuilderProps extends IContainableProps {
   onCardReady: () => void;
 }
 
-type TAdjustState = 'waiting' | 'todo' | 'name' | 'atk' | 'def' | 'abilities' | 'desc' | 'done';
+type TAdjustState = 'waiting' | 'todo' | 'name' | 'atkMax' | 'atk' | 'def' | 'abilities' | 'desc' | 'done';
 
 interface IRushCardBuilderState extends IContainableState {
   adjustState: TAdjustState;
@@ -179,6 +179,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     switch (this.state?.adjustState) {
       case 'todo': this.setState({ adjustState: 'name' }); break;
       case 'name': await this.convertNameToImg(); break;
+      case 'atkMax': this.convertAtkMaxToImg(); break;
       case 'atk': this.convertAtkToImg(); break;
       case 'def': this.convertDefToImg(); break;
       case 'abilities': await this.convertAbilitiesToImg(); break;
@@ -211,6 +212,31 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     } else {
       container.appendChild(canvas);
     }
+    this.setState({ adjustState: 'atkMax' });
+  }
+
+  public async convertAtkMaxToImg() {
+    if (app.$card.hasAbilities(this.props.card) && this.props.card.maximum) {
+      const container = this.ref?.querySelector('.atk-max') as HTMLDivElement;
+      if (!container) return;
+      const atkMax = container.querySelector('.atk-max-text') as HTMLParagraphElement;
+      if (!atkMax) return;
+      atkMax.classList.remove('hidden');
+
+      const canvas = await html2canvas(atkMax, { backgroundColor: null });
+      canvas.className = 'html2canvas html2canvas-atk-max';
+      if (container.classList.contains('compressed')) {
+        canvas.classList.add('compressed');
+      }
+
+      const existingCanvas = container.querySelector('.html2canvas-atk-max');
+      if (existingCanvas) {
+        container.replaceChild(canvas, existingCanvas);
+      } else {
+        container.appendChild(canvas);
+      }
+      atkMax.classList.add('hidden');
+    }
     this.setState({ adjustState: 'atk' });
   }
 
@@ -224,6 +250,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       const canvas = await html2canvas(atk, { backgroundColor: null });
       canvas.className = 'html2canvas html2canvas-atk';
+      if (container.classList.contains('compressed')) {
+        canvas.classList.add('compressed');
+      }
+
       const existingCanvas = container.querySelector('.html2canvas-atk');
       if (existingCanvas) {
         container.replaceChild(canvas, existingCanvas);
@@ -245,6 +275,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       const canvas = await html2canvas(def, { backgroundColor: null });
       canvas.className = 'html2canvas html2canvas-def';
+      if (container.classList.contains('compressed')) {
+        canvas.classList.add('compressed');
+      }
+
       const existingCanvas = container.querySelector('.html2canvas-def');
       if (existingCanvas) {
         container.replaceChild(canvas, existingCanvas);
@@ -428,19 +462,28 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>
 
       {this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
-        <Container className={classNames('card-layer', 'atk-def', 'atk-max', { 'question-mark': this.props.card.atkMax === '?' })}>
+        <Container className={classNames('card-layer', 'atk-def', 'atk-max', {
+          'question-mark': this.props.card.atkMax === '?',
+          'compressed': this.props.card.atkMax?.length > 4,
+        })}>
           <p className={`stat-text atk-max-text white-text hidden`}>{this.props.card.atkMax}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) &&
-        <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
+        <Container className={classNames('card-layer', 'atk-def', 'atk', {
+          'question-mark': this.props.card.atk === '?',
+          'compressed': this.props.card.atk?.length > 4,
+        })}>
           <p className={`stat-text atk-text white-text hidden`}>{this.props.card.atk}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) &&
-        <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
+        <Container className={classNames('card-layer', 'atk-def', 'def', {
+          'question-mark': this.props.card.def === '?',
+          'compressed': this.props.card.def?.length > 4,
+        })}>
           <p className={`stat-text def-text white-text hidden`}>{this.props.card.def}</p>
         </Container>
       }

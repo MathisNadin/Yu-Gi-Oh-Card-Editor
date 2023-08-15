@@ -188,11 +188,9 @@
     }
 
     &.atk-def {
-      // top: 87.81%;
       top: 1077px;
       min-width: 74px;
       font-family: fontAtkDef;
-      // font-size: 24.5px;
       font-size: 37px;
       text-align: end;
       text-shadow: 0 0 black;
@@ -423,7 +421,6 @@
 
 
   &.rush-card-builder {
-
     .card-name-container {
       top: 17px;
       left: 38px;
@@ -437,10 +434,10 @@
 
     .atk-def {
       font-family: fontRushAtkDef;
-      top: 781.5px;
-      min-width: 150px;
+      top: 782px;
+      min-width: 122px;
       font-size: 38px;
-      text-align: start;
+      text-align: end;
       color: white;
       -webkit-text-fill-color: white;
       -webkit-text-stroke: white 2px;
@@ -451,12 +448,21 @@
         4px -4px 0 black,
         -4px 4px 0 black;
 
+      &.compressed {
+        min-width: 155px;
+      }
+
+      &.atk-max {
+        top: 723.5px;
+        left: 521px;
+      }
+
       &.atk {
-        left: 284px;
+        left: 280px;
       }
 
       &.def {
-        left: 536px;
+        left: 532px;
       }
 
       &.question-mark {
@@ -465,7 +471,7 @@
       }
 
       .stat-text {
-        min-width: 150px;
+        min-width: 122px;
         padding: 0 2px 0 2px;
 
         &.hidden {
@@ -474,7 +480,11 @@
       }
 
       canvas {
-        max-width: 150px;
+        max-width: 122px;
+
+        &.compressed {
+          max-width: 155px;
+        }
       }
     }
 

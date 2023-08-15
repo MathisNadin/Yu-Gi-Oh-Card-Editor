@@ -147,6 +147,10 @@
       &.label-with-separator {
         padding-bottom: 5px;
       }
+
+      &.atk-max-label {
+        flex: none;
+      }
     }
 
     .editor-sub-label {
@@ -155,6 +159,10 @@
       margin: 0 0 0 4px;
       font-size: 11px;
       font-variant: petite-caps;
+    }
+
+    .atk-max-input {
+      flex: 1;
     }
 
     .card-editor-vertical-section {

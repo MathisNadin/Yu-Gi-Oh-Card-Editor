@@ -121,12 +121,18 @@
 .card-editor .card-editor-section .editor-label.label-with-separator {
   padding-bottom: 5px;
 }
+.card-editor .card-editor-section .editor-label.atk-max-label {
+  flex: none;
+}
 .card-editor .card-editor-section .editor-sub-label {
   align-self: center;
   color: black;
   margin: 0 0 0 4px;
   font-size: 11px;
   font-variant: petite-caps;
+}
+.card-editor .card-editor-section .atk-max-input {
+  flex: 1;
 }
 .card-editor .card-editor-section .card-editor-vertical-section {
   flex: 1;

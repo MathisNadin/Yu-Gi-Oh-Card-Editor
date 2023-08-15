@@ -334,35 +334,45 @@
 }
 .card-builder.rush-card-builder .atk-def {
   font-family: fontRushAtkDef;
-  top: 781.5px;
-  min-width: 150px;
+  top: 782px;
+  min-width: 122px;
   font-size: 38px;
-  text-align: start;
+  text-align: end;
   color: white;
   -webkit-text-fill-color: white;
   -webkit-text-stroke: white 2px;
   transform: scaleY(0.87);
   text-shadow: 4px 4px 0 black, -4px -4px 0 black, 4px -4px 0 black, -4px 4px 0 black;
 }
+.card-builder.rush-card-builder .atk-def.compressed {
+  min-width: 155px;
+}
+.card-builder.rush-card-builder .atk-def.atk-max {
+  top: 723.5px;
+  left: 521px;
+}
 .card-builder.rush-card-builder .atk-def.atk {
-  left: 284px;
+  left: 280px;
 }
 .card-builder.rush-card-builder .atk-def.def {
-  left: 536px;
+  left: 532px;
 }
 .card-builder.rush-card-builder .atk-def.question-mark {
   font-size: 53px;
   top: 1067px;
 }
 .card-builder.rush-card-builder .atk-def .stat-text {
-  min-width: 150px;
+  min-width: 122px;
   padding: 0 2px 0 2px;
 }
 .card-builder.rush-card-builder .atk-def .stat-text.hidden {
   visibility: hidden;
 }
 .card-builder.rush-card-builder .atk-def canvas {
-  max-width: 150px;
+  max-width: 122px;
+}
+.card-builder.rush-card-builder .atk-def canvas.compressed {
+  max-width: 155px;
 }
 .card-builder.rush-card-builder .card-description-holder {
   top: 902px;
