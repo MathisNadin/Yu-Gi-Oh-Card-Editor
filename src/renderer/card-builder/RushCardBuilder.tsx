@@ -112,8 +112,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   private async refreshState(card: ICard) {
     if (!card) return;
 
-    const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${(!card.pendulum && card.frames.includes('xyz')) || card.frames.includes('skill') ? 'white' : 'black'}`;
-
     const artworkBg = require(`../resources/pictures/rdWhiteArtwork.png`);
     let croppedArtworkBase64: string;
 
@@ -142,6 +140,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       cardFrames.push(require(`../resources/pictures/rd-card-frames/${frame}.png`));
     }
 
+    const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}`;
+
     const state: IRushCardBuilderState = {
       loaded: true,
       adjustState: 'todo',
@@ -158,7 +158,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       pendLineHeight: 1.2,
 
       legend: require(`../resources/pictures/rd-legend/${card.legendType}.png`),
-      attribute: require(`../resources/pictures/rd-attributes/${card.attribute}.png`),
+      attribute: require(`../resources/pictures/rd-attributes/${card.language}/${card.attribute}.png`),
       levelStar: require(`../resources/pictures/rd-levels/star.png`),
       level: require(`../resources/pictures/rd-levels/${card.level}.png`),
       rankStar: require(`../resources/pictures/rd-ranks/star.png`),
@@ -168,8 +168,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       atkDefLine: require(`../resources/pictures/rdAtkDefLine.png`),
       atkMaxLine: require(`../resources/pictures/rdAtkMaxLine.png`),
       sticker: require(`../resources/pictures/rd-stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
-      copyright: require(`../resources/pictures/limitations/${card.language}/${copyrightPath}/copyright.png`),
-      edition: require(`../resources/pictures/limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
+      copyright: require(`../resources/pictures/rd-limitations/${card.language}/${copyrightPath}/copyright.png`),
+      edition: require(`../resources/pictures/rd-limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
     };
 
     this.setState(state);
@@ -459,7 +459,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
 
-      <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>
+      {this.props.card.edition === 'unlimited' && <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>}
 
       {this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'atk-max', {

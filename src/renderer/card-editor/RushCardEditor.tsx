@@ -28,20 +28,16 @@ import './styles.css';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
+import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLegendType, TNameStyle, TRushTextMode, TStIcon, TSticker } from 'renderer/card/card-interfaces';
 import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
-import lockOpen from '../resources/pictures/lock-open.svg';
-import lockClosed from '../resources/pictures/lock-closed.svg';
 import plus from '../resources/pictures/plus.svg';
 import cross from '../resources/pictures/cross.svg';
 import upArrow from '../resources/pictures/up-arrow.svg';
 import downArrow from '../resources/pictures/down-arrow.svg';
-import triangle from '../resources/pictures/triangle.svg';
-import triangleRed from '../resources/pictures/triangle-red.svg';
 
 interface IRushCardEditorProps extends IContainableProps {
   card: ICard;
@@ -238,6 +234,51 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onDontCoverRushArtChange() {
+    this.state.card.dontCoverRushArt = !this.state.card.dontCoverRushArt;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onLegendChange() {
+    this.state.card.legend = !this.state.card.legend;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onLegendTypeChange(legendType: TLegendType) {
+    this.state.card.legendType = legendType;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onRushTextModeChange(rushTextMode: TRushTextMode) {
+    this.state.card.rushTextMode = rushTextMode;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onRushOtherEffectsChange(rushOtherEffects: string) {
+    if (isUndefined(rushOtherEffects)) return;
+    this.state.card.rushOtherEffects = rushOtherEffects;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onRushConditionChange(rushCondition: string) {
+    if (isUndefined(rushCondition)) return;
+    this.state.card.rushCondition = rushCondition;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onRushEffectChange(rushEffect: string) {
+    if (isUndefined(rushEffect)) return;
+    this.state.card.rushEffect = rushEffect;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private onCardSetChange(cardSet: string) {
     if (isUndefined(cardSet)) return;
     this.state.card.cardSet = cardSet;
@@ -271,6 +312,12 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       pendulum: false,
       keepRatio: false
     }
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onRushChoiceEffectsChange(newValue: string, iChoiceEffect: number) {
+    this.state.card.rushChoiceEffects[iChoiceEffect] = newValue;
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -544,10 +591,38 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       }
     }
 
-    const hasPendulumFrame = app.$card.hasPendulumFrame(this.state.card);
-
     return this.renderAttributes(<VerticalStack>
       <HorizontalStack className='card-editor-full-width-section'>
+        <input type='checkbox' className='dont-coder-rush-art-input card-input' checked={this.state.card.dontCoverRushArt} onChange={() => this.onDontCoverRushArtChange()} />
+        <p className='editor-label dont-coder-rush-art-label'>Ne pas couvrir l'artwork</p>
+      </HorizontalStack>
+
+      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
+        <input type='checkbox' className='legend-input card-input' checked={this.state.card.legend} onChange={() => this.onLegendChange()} />
+        <p className='editor-label legend-label'>LEGEND</p>
+
+        {this.state.card.legend && <VerticalStack className='card-editor-vertical-section card-legend-type card-input-container'>
+          <p className='editor-label card-legend-type-label'>Type de LEGEND</p>
+          <Dropdown<TLegendType>
+            className='card-legend-type-dropdown'
+            options={[
+              'gold',
+              'goldFoil',
+              'silver',
+              'silverFoil'
+            ]}
+            optionsLabel={[
+              'Or',
+              'Or Foil',
+              'Argent',
+              'Argent Foil'
+            ]}
+            defaultOption={this.state.card.legendType}
+            onSelect={value => this.onLegendTypeChange(value)} />
+        </VerticalStack>}
+      </HorizontalStack>}
+
+      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-level card-input-container'>
           <p className='editor-label level-label'>{levelLabel}</p>
           <input
@@ -566,16 +641,16 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         </VerticalStack>
 
         <VerticalStack className='card-editor-vertical-section card-stats card-def card-input-container'>
-            <p className='editor-label def-label'>DEF</p>
-            <input type='text' className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
+           <p className='editor-label def-label'>DEF</p>
+          <input type='text' className='def-input card-input' value={this.state.card.def} onInput={e => this.onDefChange((e.target as EventTargetWithValue).value)} />
         </VerticalStack>
-      </HorizontalStack>
+      </HorizontalStack>}
 
-      <HorizontalStack className='card-editor-full-width-section'>
+      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
         <input type='checkbox' className='maximum-input card-input' checked={this.state.card.maximum} onChange={() => this.onMaximumChange()} />
         <p className='editor-label atk-max-label'>ATK MAX</p>
         {this.state.card.maximum && <input type='text' className='atk-max-input card-input' value={this.state.card.atkMax} onInput={e => this.onAtkMaxChange((e.target as EventTargetWithValue).value)} />}
-      </HorizontalStack>
+      </HorizontalStack>}
 
       <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-abilities card-input-container'>
         <p className='editor-label abilities-label'>Types</p>

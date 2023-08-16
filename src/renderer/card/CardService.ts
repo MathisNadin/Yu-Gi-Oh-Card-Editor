@@ -158,6 +158,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     card.rush = card.rush || false;
     card.dontCoverRushArt = card.dontCoverRushArt || false;
     card.rushTextMode = card.rushTextMode || 'regular';
+    card.rushOtherEffects = card.rushOtherEffects || '';
     card.rushCondition = card.rushCondition || '';
     card.rushEffect = card.rushEffect || '';
     card.rushChoiceEffects = card.rushChoiceEffects || [];
@@ -466,6 +467,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       rush: false,
       dontCoverRushArt: false,
       rushTextMode: 'regular',
+      rushOtherEffects: '',
       rushCondition: '',
       rushEffect: '',
       rushChoiceEffects: [],
@@ -527,6 +529,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       rush: false,
       dontCoverRushArt: false,
       rushTextMode: 'regular',
+      rushOtherEffects: '',
       rushCondition: '',
       rushEffect: '',
       rushChoiceEffects: [],

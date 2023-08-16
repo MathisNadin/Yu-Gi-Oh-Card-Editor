@@ -71,6 +71,7 @@ export interface ICard {
   rush: boolean;
   dontCoverRushArt: boolean;
   rushTextMode: TRushTextMode;
+  rushOtherEffects: string;
   rushCondition: string;
   rushEffect: string;
   rushChoiceEffects: string[];
