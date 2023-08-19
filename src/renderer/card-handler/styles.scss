@@ -7,9 +7,13 @@
   width: 100%;
 
   .editor-tabbed-pane {
+    $defaultColor: aliceblue;
+    $masterColor: #FFFFB2;
+    $rushColor: #FFB2B2;
+
     height: 100%;
     width: 30%;
-    background-color: aliceblue;
+    background-color: $defaultColor;
     display: flex;
 
     .mn-tab-panes {
@@ -18,24 +22,23 @@
 
     .mn-tabset {
       .item {
-
         &#mn-tab-button-master {
           &:hover {
-            background-color: rgba(yellow, 0.5);
+            background-color: $masterColor;
           }
 
           &.selected {
-            background-color: rgba(yellow, 0.2);
+            background-color: $masterColor;
           }
         }
 
         &#mn-tab-button-rush {
           &:hover {
-            background-color: rgba(red, 0.5);
+            background-color: $rushColor;
           }
 
           &.selected {
-            background-color: rgba(red, 0.2);
+            background-color: $rushColor;
           }
         }
       }
@@ -45,11 +48,19 @@
       overflow-x: hidden;
 
       &#master {
-        background-color: rgba(yellow, 0.2);
+        background-color: $masterColor;
+
+        .pendulum-details {
+          &.opened {
+            .card-pendulum {
+              background-color: $masterColor;
+            }
+          }
+        }
       }
 
       &#rush {
-        background-color: rgba(red, 0.2);
+        background-color: $rushColor;
       }
     }
   }

@@ -216,7 +216,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertAtkMaxToImg() {
-    if (app.$card.hasAbilities(this.props.card) && this.props.card.maximum) {
+    if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && this.props.card.maximum) {
       const container = this.ref?.querySelector('.atk-max') as HTMLDivElement;
       if (!container) return;
       const atkMax = container.querySelector('.atk-max-text') as HTMLParagraphElement;
@@ -241,7 +241,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertAtkToImg() {
-    if (app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')) {
+    if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card)) {
       const container = this.ref?.querySelector('.atk') as HTMLDivElement;
       if (!container) return;
       const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
@@ -266,7 +266,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertDefToImg() {
-    if (app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')) {
+    if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card)) {
       const container = this.ref?.querySelector('.def') as HTMLDivElement;
       if (!container) return;
       const def = container.querySelector('.def-text') as HTMLParagraphElement;
@@ -439,6 +439,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {this.renderAttributes(<div><img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' /></div>, artworkClass)}
 
       {this.renderFrames(this.state.cardFrames, 'card-frame')}
+
+      {!this.props.card.dontCoverRushArt && this.props.card.legend && <img className='card-layer legend' src={this.state.legend} alt='legend' />}
 
       {<img className='card-layer attribute' src={this.state.attribute} alt='attribute' />}
 
@@ -615,10 +617,14 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
     }
 
-    if (includesXyz) {
-      return { lv: false, rk: true, st: false };
+    if (!this.props.card.dontCoverRushArt) {
+      if (includesXyz) {
+        return { lv: false, rk: true, st: false };
+      } else {
+        return { lv: true, rk: false, st: false };
+      }
     } else {
-      return { lv: true, rk: false, st: false };
+      return { lv: false, rk: false, st: false };
     }
   }
 }

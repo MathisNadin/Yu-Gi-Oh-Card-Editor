@@ -4,7 +4,7 @@
 }
 
 .card-editor {
-  $backgroundColor: aliceblue;
+  // $backgroundColor: aliceblue;
   $labelColor: black;
   height: 100%;
   width: 100%;
@@ -112,6 +112,15 @@
       }
     }
 
+    .card-legend-type-dropdown {
+      justify-content: center;
+      flex: 1;
+
+      select {
+        height: 25px;
+      }
+    }
+
     .reset-current-card-btn {
       color: white;
       font-size: 15px;
@@ -148,7 +157,7 @@
         padding-bottom: 5px;
       }
 
-      &.atk-max-label {
+      &.atk-max-label, &.legend-label {
         flex: none;
       }
     }
@@ -396,7 +405,7 @@
         .card-pendulum {
           position: absolute;
           top: -14px;
-          background: $backgroundColor;
+          // background: $backgroundColor;
         }
 
         .pendulum-section {

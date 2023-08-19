@@ -73,8 +73,10 @@ interface ICardBuilderState extends IContainableState {
 
   descFontSize: number;
   descLineHeight: number;
+  description: JSX.Element[][];
   pendFontSize: number;
   pendLineHeight: number;
+  pendEffect: JSX.Element[][];
 
   attribute: string;
   level: string;
@@ -207,8 +209,10 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       descFontSize: 30,
       descLineHeight: 1.2,
+      description: card.description.split('\n').map(d => this.getProcessedText(d)),
       pendFontSize: 30,
       pendLineHeight: 1.2,
+      pendEffect: card.pendEffect.split('\n').map(d => this.getProcessedText(d)),
 
       attribute: require(`../resources/pictures/attributes/${card.noTextAttribute ? 'vanilla' : card.language}/${card.attribute}.png`),
       level: require(`../resources/pictures/levels/${card.level}.png`),
@@ -229,6 +233,25 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     };
 
     this.setState(state);
+  }
+
+  private getProcessedText(text: string) {
+    const parts = text.split(/(●|•)/).map(part => part.trim());
+    if (parts.length && !parts[0]) parts.shift();
+
+    let nextHasBullet = false;
+    const processedText: JSX.Element[] = [];
+    parts.forEach((part, i) => {
+      if (part === '●' || part === '•') {
+        nextHasBullet = true;
+      } else {
+        let classes = classNames('span-text', { 'with-bullet-point': nextHasBullet, 'in-middle': i > 1 });
+        nextHasBullet = false;
+        processedText.push(<span className={classes}>{part}</span>);
+      }
+    });
+
+    return processedText;
   }
 
   private async adjustAllFontSizes() {
@@ -625,17 +648,10 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderPendulum() {
-    const pendEffect = this.props.card.pendEffect.split('\n');
-
     return this.renderAttributes(<VerticalStack>
-      {pendEffect.map(text => {
-        let withBulletPoint = false;
-        if (text.startsWith('●')) {
-          withBulletPoint = true;
-          text = text.replace(/^●\s*/, '');
-        }
+      {this.state.pendEffect.map(text => {
         return <p
-          className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
+          className='pendulum-effect-text black-text'
           style={{
             fontSize: `${this.state.pendFontSize}px`,
             lineHeight: this.state.pendLineHeight,
@@ -657,17 +673,10 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
     if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
 
-    const description = this.props.card.description.split('\n');
-
     return this.renderAttributes(<VerticalStack>
-      {description.map(d => {
-        let withBulletPoint = false;
-        if (d.startsWith('●')) {
-          withBulletPoint = true;
-          d = d.replace(/^●\s*/, '');
-        }
+      {this.state.description.map(d => {
         return <p
-          className={classNames('description-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
+          className='description-text black-text'
           style={{
             fontSize: `${this.state.descFontSize}px`,
             lineHeight: this.state.descLineHeight,

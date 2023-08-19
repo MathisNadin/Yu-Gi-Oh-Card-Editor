@@ -260,21 +260,21 @@
   top: 892px;
   left: 65px;
   width: 680px;
-  height: 216px;
+  height: 214px;
 }
 .card-builder .card-layer.card-description-holder.normal-text {
   font-style: italic;
 }
 .card-builder .card-layer.card-description-holder.with-abilities {
-  top: 923px;
-  height: 150px;
+  top: 924px;
+  height: 147px;
 }
 .card-builder .card-layer.card-description-holder.with-abilities.on-skill {
-  height: 180px;
+  height: 178px;
 }
 .card-builder .card-layer.card-description-holder.on-pendulum-link {
   top: 957px;
-  height: 117px;
+  height: 115px;
 }
 .card-builder .card-layer.card-description-holder .description-text {
   margin: 0;
@@ -282,15 +282,17 @@
   text-align: justify;
   text-shadow: 0 0 black;
 }
-.card-builder .card-layer.card-description-holder .description-text.with-bullet-point::before {
+.card-builder .card-layer.card-description-holder .description-text .with-bullet-point::before {
   display: inline-block;
   content: "";
-  height: 0.8rem;
-  width: 0.8rem;
-  border-radius: 0.4rem;
-  margin-right: 0.4rem;
-  margin-bottom: 0.1rem;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 0.5rem;
+  margin-right: 0.3333333333rem;
   background-color: black;
+}
+.card-builder .card-layer.card-description-holder .description-text .with-bullet-point.in-middle::before {
+  margin-left: 0.3333333333rem;
 }
 .card-builder .card-layer.card-pendulum-effect-holder {
   font-family: fontDesc;
@@ -298,7 +300,7 @@
   align-items: flex-start;
   justify-content: flex-start;
   width: 556px;
-  height: 127px;
+  height: 124px;
   top: 746px;
   left: 127px;
 }

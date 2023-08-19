@@ -323,7 +323,7 @@
       top: 892px;
       left: 65px;
       width: 680px;
-      height: 216px;
+      height: 214px;
       // width: 84%;
       // top: 75%;
       // height: 18.4%;
@@ -333,19 +333,19 @@
       }
 
       &.with-abilities {
-        top: 923px;
-        height: 150px;
+        top: 924px;
+        height: 147px;
         // top: 78%;
         // height: 12.5%;
 
         &.on-skill {
-          height: 180px;
+          height: 178px;
         }
       }
 
       &.on-pendulum-link {
         top: 957px;
-        height: 117px;
+        height: 115px;
         // top: 80.5%;
         // height: 9.5%;
       }
@@ -356,17 +356,24 @@
         text-align: justify;
         text-shadow: 0 0 black;
 
-        &.with-bullet-point {
+        .with-bullet-point {
+          $bulletSize: 1rem;
+          $margin: calc($bulletSize / 3);
+
           &::before {
-            $bulletSize: 0.8rem;
             display: inline-block;
             content: '';
             height: $bulletSize;
             width: $bulletSize;
             border-radius: calc($bulletSize / 2);
-            margin-right: calc($bulletSize / 2);
-            margin-bottom: calc((1rem - $bulletSize) / 2);
+            margin-right: $margin;
             background-color: black;
+          }
+
+          &.in-middle {
+            &::before {
+              margin-left: $margin;
+            }
           }
         }
       }
@@ -378,7 +385,7 @@
       align-items: flex-start;
       justify-content: flex-start;
       width: 556px;
-      height: 127px;
+      height: 124px;
       top: 746px;
       left: 127px;
       // width: 68%;

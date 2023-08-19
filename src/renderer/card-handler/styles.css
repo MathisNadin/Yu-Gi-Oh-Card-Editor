@@ -16,25 +16,28 @@
   background-color: transparent;
 }
 .card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-master:hover {
-  background-color: rgba(255, 255, 0, 0.5);
+  background-color: #FFFFB2;
 }
 .card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-master.selected {
-  background-color: rgba(255, 255, 0, 0.2);
+  background-color: #FFFFB2;
 }
 .card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush:hover {
-  background-color: rgba(255, 0, 0, 0.5);
+  background-color: #FFB2B2;
 }
 .card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush.selected {
-  background-color: rgba(255, 0, 0, 0.2);
+  background-color: #FFB2B2;
 }
 .card-handler .editor-tabbed-pane .mn-tab-pane {
   overflow-x: hidden;
 }
 .card-handler .editor-tabbed-pane .mn-tab-pane#master {
-  background-color: rgba(255, 255, 0, 0.2);
+  background-color: #FFFFB2;
+}
+.card-handler .editor-tabbed-pane .mn-tab-pane#master .pendulum-details.opened .card-pendulum {
+  background-color: #FFFFB2;
 }
 .card-handler .editor-tabbed-pane .mn-tab-pane#rush {
-  background-color: rgba(255, 0, 0, 0.2);
+  background-color: #FFB2B2;
 }
 .card-handler .frames-stack {
   position: relative;

@@ -89,6 +89,13 @@
 .card-editor .card-editor-section .card-editor-full-width-section.horizontal-stack {
   gap: 8px;
 }
+.card-editor .card-editor-section .card-legend-type-dropdown {
+  justify-content: center;
+  flex: 1;
+}
+.card-editor .card-editor-section .card-legend-type-dropdown select {
+  height: 25px;
+}
 .card-editor .card-editor-section .reset-current-card-btn {
   color: white;
   font-size: 15px;
@@ -121,7 +128,7 @@
 .card-editor .card-editor-section .editor-label.label-with-separator {
   padding-bottom: 5px;
 }
-.card-editor .card-editor-section .editor-label.atk-max-label {
+.card-editor .card-editor-section .editor-label.atk-max-label, .card-editor .card-editor-section .editor-label.legend-label {
   flex: none;
 }
 .card-editor .card-editor-section .editor-sub-label {
@@ -632,7 +639,6 @@
 .card-editor .card-editor-section .pendulum-details.opened .card-pendulum {
   position: absolute;
   top: -14px;
-  background: aliceblue;
 }
 .card-editor .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
   top: 5px;
