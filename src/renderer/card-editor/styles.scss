@@ -98,6 +98,41 @@
       }
     }
 
+    .mn-tabbed-pane {
+      $rushColor: rgba(red, 0.5);
+      width: calc(100% - 10px);
+      margin-right: 10px;
+
+      .mn-tab-panes {
+        background-color: transparent;
+      }
+
+      .mn-tabset {
+        .item {
+          &:hover {
+            background-color: $rushColor;
+          }
+
+          &.selected {
+            background-color: $rushColor;
+          }
+
+          .label {
+            color: $labelColor;
+            font-size: 11px;
+            font-family: fontAbilities;
+            text-transform: uppercase;
+            flex: 1;
+          }
+        }
+      }
+
+      .mn-tab-pane {
+        background-color: $rushColor;
+        padding: 0 0 10px 5px;
+      }
+    }
+
     .card-pendulum-ratio {
       width: 95%;
       justify-content: flex-end;
@@ -109,6 +144,18 @@
 
       &.horizontal-stack {
         gap: 8px;
+      }
+    }
+
+    .card-rush-effect-type-dropdown {
+      justify-content: center;
+      flex: 1;
+      width: 95%;
+      padding: 0 1%;
+      margin-top: -12px;
+
+      select {
+        height: 25px;
       }
     }
 
@@ -296,6 +343,100 @@
             &.selected {
               opacity: 100%;
             }
+          }
+        }
+      }
+
+      .choice-effect-btn {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: transparent;
+
+        &.add-btn {
+          border: 1px outset #318ce7;
+          margin: 4px;
+          padding: 4px;
+
+          &:hover {
+            background-color: rgba(green, 0.6);
+            border: 1px outset transparent;
+          }
+        }
+
+        &.lock-opened {
+          background-color: rgba(222, 25, 60, 0.6);
+        }
+
+        &.lock-closed {
+          background-color: rgba(0, 100, 170, 0.6);
+        }
+
+        img {
+          height: 15px;
+          width: 15px;
+        }
+      }
+
+      &.card-rush-other-effects {
+        .textarea-input {
+          height: 75px;
+        }
+      }
+
+      &.card-rush-condition {
+        margin-top: -16px;
+
+        .textarea-input {
+          height: 75px;
+        }
+      }
+
+      &.card-rush-effect {
+        margin-top: -16px;
+
+        .textarea-input {
+          height: 75px;
+        }
+      }
+
+      &.card-choice-effects-header {
+        margin-top: -16px;
+        margin-bottom: -8px;
+      }
+
+      &.card-choice-effect {
+        margin-top: -16px;
+
+        .textarea-input {
+          height: 75px;
+        }
+      }
+
+      .card-choice-effect-btns {
+        position: absolute;
+        right: 5px;
+        gap: 5px;
+
+        .choice-effect-btn {
+          padding: 0;
+
+          &.delete-btn {
+            &:hover {
+              background-color: rgba(red, 0.6);
+            }
+          }
+
+          &.up-btn, &.down-btn {
+            &:hover {
+              background-color: rgba(185, 200, 205, 0.6);
+            }
+          }
+
+          img {
+            padding: 3px;
           }
         }
       }

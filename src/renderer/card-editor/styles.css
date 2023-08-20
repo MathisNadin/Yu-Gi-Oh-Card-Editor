@@ -78,6 +78,30 @@
 .card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-right-img {
   transform: rotate(-225deg);
 }
+.card-editor .card-editor-section .mn-tabbed-pane {
+  width: calc(100% - 10px);
+  margin-right: 10px;
+}
+.card-editor .card-editor-section .mn-tabbed-pane .mn-tab-panes {
+  background-color: transparent;
+}
+.card-editor .card-editor-section .mn-tabbed-pane .mn-tabset .item:hover {
+  background-color: rgba(255, 0, 0, 0.5);
+}
+.card-editor .card-editor-section .mn-tabbed-pane .mn-tabset .item.selected {
+  background-color: rgba(255, 0, 0, 0.5);
+}
+.card-editor .card-editor-section .mn-tabbed-pane .mn-tabset .item .label {
+  color: black;
+  font-size: 11px;
+  font-family: fontAbilities;
+  text-transform: uppercase;
+  flex: 1;
+}
+.card-editor .card-editor-section .mn-tabbed-pane .mn-tab-pane {
+  background-color: rgba(255, 0, 0, 0.5);
+  padding: 0 0 10px 5px;
+}
 .card-editor .card-editor-section .card-pendulum-ratio {
   width: 95%;
   justify-content: flex-end;
@@ -88,6 +112,16 @@
 }
 .card-editor .card-editor-section .card-editor-full-width-section.horizontal-stack {
   gap: 8px;
+}
+.card-editor .card-editor-section .card-rush-effect-type-dropdown {
+  justify-content: center;
+  flex: 1;
+  width: 95%;
+  padding: 0 1%;
+  margin-top: -12px;
+}
+.card-editor .card-editor-section .card-rush-effect-type-dropdown select {
+  height: 25px;
 }
 .card-editor .card-editor-section .card-legend-type-dropdown {
   justify-content: center;
@@ -554,6 +588,75 @@
 }
 .card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
   opacity: 100%;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: transparent;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.add-btn {
+  border: 1px outset #318ce7;
+  margin: 4px;
+  padding: 4px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.add-btn:hover {
+  background-color: rgba(0, 128, 0, 0.6);
+  border: 1px outset transparent;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.lock-opened {
+  background-color: rgba(222, 25, 60, 0.6);
+}
+.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.lock-closed {
+  background-color: rgba(0, 100, 170, 0.6);
+}
+.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn img {
+  height: 15px;
+  width: 15px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-rush-other-effects .textarea-input {
+  height: 75px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-rush-condition {
+  margin-top: -16px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-rush-condition .textarea-input {
+  height: 75px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-rush-effect {
+  margin-top: -16px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-rush-effect .textarea-input {
+  height: 75px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-choice-effects-header {
+  margin-top: -16px;
+  margin-bottom: -8px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-choice-effect {
+  margin-top: -16px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section.card-choice-effect .textarea-input {
+  height: 75px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns {
+  position: absolute;
+  right: 5px;
+  gap: 5px;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn {
+  padding: 0;
+}
+.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.delete-btn:hover {
+  background-color: rgba(255, 0, 0, 0.6);
+}
+.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.up-btn:hover, .card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.down-btn:hover {
+  background-color: rgba(185, 200, 205, 0.6);
+}
+.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn img {
+  padding: 3px;
 }
 .card-editor .card-editor-section .card-editor-vertical-section .ability-btn {
   display: flex;

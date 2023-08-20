@@ -1,3 +1,7 @@
+@font-face {
+  font-family: fontAbilities;
+  src: url(../resources/fonts/itcStoneSerifBold.ttf);
+}
 .card-handler {
   display: flex;
   align-items: center;
@@ -26,6 +30,10 @@
 }
 .card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush.selected {
   background-color: #FFB2B2;
+}
+.card-handler .editor-tabbed-pane .mn-tabset .item .label {
+  font-family: fontAbilities;
+  text-transform: uppercase;
 }
 .card-handler .editor-tabbed-pane .mn-tab-pane {
   overflow-x: hidden;

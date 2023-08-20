@@ -252,6 +252,17 @@
             &.right-bracket {
             } */
 }
+.card-builder .card-layer.card-abilities .abilities-text.with-st-icon {
+  padding-right: 4px;
+}
+.card-builder .card-layer.card-abilities .rush-st-icon {
+  height: 37px;
+  width: auto;
+  position: relative;
+  top: 1px;
+  margin-left: -2px;
+  margin-right: -1px;
+}
 .card-builder .card-layer.card-description-holder {
   font-family: fontDesc;
   display: flex;
@@ -281,6 +292,10 @@
   max-width: 100%;
   text-align: justify;
   text-shadow: 0 0 black;
+}
+.card-builder .card-layer.card-description-holder .description-text .span-text.rush-label {
+  text-transform: uppercase;
+  font-weight: bold;
 }
 .card-builder .card-layer.card-description-holder .description-text .with-bullet-point::before {
   display: inline-block;
@@ -377,10 +392,10 @@
   max-width: 155px;
 }
 .card-builder.rush-card-builder .card-description-holder {
-  top: 902px;
+  top: 903px;
   left: 56px;
   width: 700px;
-  height: 195px;
+  height: 194px;
 }
 .card-builder.rush-card-builder .artwork-container {
   height: 733px;

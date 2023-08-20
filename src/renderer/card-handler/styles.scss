@@ -1,3 +1,8 @@
+@font-face {
+  font-family: fontAbilities;
+  src: url(../resources/fonts/itcStoneSerifBold.ttf);
+}
+
 .card-handler {
   display: flex;
   align-items: center;
@@ -17,7 +22,7 @@
     display: flex;
 
     .mn-tab-panes {
-      background-color: transparent;;
+      background-color: transparent;
     }
 
     .mn-tabset {
@@ -40,6 +45,11 @@
           &.selected {
             background-color: $rushColor;
           }
+        }
+
+        .label {
+          font-family: fontAbilities;
+          text-transform: uppercase;
         }
       }
     }

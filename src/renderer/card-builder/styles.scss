@@ -312,6 +312,19 @@
           &.right-bracket {
           } */
         }
+
+        &.with-st-icon {
+          padding-right: 4px;
+        }
+      }
+
+      .rush-st-icon {
+        height: 37px;
+        width: auto;
+        position: relative;
+        top: 1px;
+        margin-left: -2px;
+        margin-right: -1px;
       }
     }
 
@@ -355,6 +368,13 @@
         max-width: 100%;
         text-align: justify;
         text-shadow: 0 0 black;
+
+        .span-text {
+          &.rush-label {
+            text-transform: uppercase;
+            font-weight: bold;
+          }
+        }
 
         .with-bullet-point {
           $bulletSize: 1rem;
@@ -496,10 +516,10 @@
     }
 
     .card-description-holder {
-      top: 902px;
+      top: 903px;
       left: 56px;
       width: 700px;
-      height: 195px;
+      height: 194px;
     }
 
     .artwork-container {

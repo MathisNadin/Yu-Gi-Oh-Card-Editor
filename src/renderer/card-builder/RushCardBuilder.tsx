@@ -1,3 +1,5 @@
+/* eslint-disable no-empty */
+/* eslint-disable no-case-declarations */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-undef */
 /* eslint-disable react/no-array-index-key */
@@ -55,9 +57,12 @@ interface IRushCardBuilderState extends IContainableState {
   croppedArtworkBase64: string;
 
   cardFrames: string[];
+  abilities: string[];
+  hasStIcon: boolean;
 
   descFontSize: number;
   descLineHeight: number;
+  description: JSX.Element[][];
   pendFontSize: number;
   pendLineHeight: number;
 
@@ -136,11 +141,89 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     let cardFrames: string[] = [];
 
+    let includesSpell = false;
+    let includesOther = false;
     for (let frame of card.frames) {
+      switch (frame) {
+        case 'spell':
+          includesSpell = true;
+          break;
+
+        case 'trap':
+          break;
+
+        default:
+          includesOther = true;
+          break;
+      }
       cardFrames.push(require(`../resources/pictures/rd-card-frames/${frame}.png`));
     }
 
+    let hasStIcon = false;
+    let abilities: string[] = [];
+    if (includesOther) {
+      abilities = card.abilities;
+    } else if (includesSpell) {
+      abilities.push(card.language === 'fr' ? 'Carte Magie' : 'Spell Card');
+      if (card.stType !== 'normal') {
+        hasStIcon = true;
+        abilities.push(app.$card.getStTypeName(card.stType, card.language, true));
+      }
+    } else {
+      abilities.push(card.language === 'fr' ? 'Carte Piège' : 'Trap Card');
+      if (card.stType !== 'normal') {
+        hasStIcon = true;
+        abilities.push(app.$card.getStTypeName(card.stType, card.language, true));
+      }
+    }
+
     const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}`;
+
+    let description: JSX.Element[][] = [];
+    switch (card.rushTextMode) {
+      case 'vanilla':
+        description = card.description.split('\n').map(d => this.getProcessedText(d));
+        break;
+
+      case 'regular':
+        let effectLabel = '';
+        switch (card.rushEffectType) {
+          case 'effect':
+            effectLabel = '[Effet] ';
+            break;
+
+          case 'continuous':
+            effectLabel = '[Effet Continu] ';
+            break;
+
+          default:
+            break;
+        }
+        if (card.rushOtherEffects) {
+          description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
+        }
+        description.push(
+          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
+          [<span className='span-text rush-label effect'>{effectLabel}</span>].concat(...card.rushEffect.split('\n').map(d => this.getProcessedText(d))),
+        );
+        break;
+
+      case 'choice':
+        if (card.rushOtherEffects) {
+          description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
+        }
+        description.push(
+          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
+          [<span className='span-text rush-label effect'>{'[Effet à Choix]'}</span>],
+        );
+        for (let choice of card.rushChoiceEffects) {
+          description.push(...choice.split('\n').map(d => this.getProcessedText(d, true)));
+        }
+        break;
+
+      default:
+        break;
+    }
 
     const state: IRushCardBuilderState = {
       loaded: true,
@@ -151,9 +234,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       croppedArtworkBase64,
 
       cardFrames,
+      abilities,
+      hasStIcon,
 
       descFontSize: 30,
       descLineHeight: 1.2,
+      description,
       pendFontSize: 30,
       pendLineHeight: 1.2,
 
@@ -173,6 +259,30 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     };
 
     this.setState(state);
+  }
+
+  private getProcessedText(text: string, forceBulletAtStart?: boolean) {
+    const parts = text.split(/(●|•)/).map(part => part.trim());
+    if (parts.length && !parts[0]) parts.shift();
+
+    let nextHasBullet = false;
+    const processedText: JSX.Element[] = [];
+    parts.forEach((part, i) => {
+      if (part === '●' || part === '•') {
+        nextHasBullet = true;
+      } else {
+        let classes = classNames(
+          'span-text', {
+            'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
+            'in-middle': i > 1
+          }
+        );
+        nextHasBullet = false;
+        processedText.push(<span className={classes}>{part}</span>);
+      }
+    });
+
+    return processedText;
   }
 
   private async adjustAllFontSizes() {
@@ -291,11 +401,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertAbilitiesToImg() {
-    if (!app.$card.hasAbilities(this.props.card)) {
-      this.setState({ adjustState: 'desc' });
-      return;
-    }
-
     const container = this.ref?.querySelector('.card-abilities') as HTMLDivElement;
     if (!container) return;
     const rightBracket = container.querySelector('.right-bracket') as HTMLDivElement;
@@ -304,11 +409,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     const canvas = await html2canvas(abilities, { backgroundColor: null });
     canvas.className = 'html2canvas-abilities';
+    if (abilities.classList.contains('with-st-icon')) {
+      canvas.classList.add('with-st-icon');
+    }
+
     const existingCanvas = container.querySelector('.html2canvas-abilities');
     if (existingCanvas) {
       container.replaceChild(canvas, existingCanvas);
     } else {
-      container.insertBefore(canvas, rightBracket);
+      const rushStIcon = container.querySelector('.rush-st-icon') as HTMLDivElement;
+      container.insertBefore(canvas, rushStIcon || rightBracket);
     }
     this.setState({ adjustState: 'desc' });
   }
@@ -457,8 +567,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {specificties.rk && <img className='card-layer rank-star' src={this.state.rankStar} alt='rankStar' />}
       {specificties.rk && <img className='card-layer rank' src={this.state.rank} alt='rank' />}
 
-      {specificties.st && <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />}
-
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
 
       {this.props.card.edition === 'unlimited' && <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>}
@@ -493,8 +601,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {this.props.card.hasCopyright && <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />}
       {this.props.card.edition !== 'unlimited' && <img className='card-layer edition' src={this.state.edition} alt='edition' />}
 
-      {app.$card.hasAbilities(this.props.card) && this.renderAbilities()}
+      {this.renderAbilities()}
+
       {this.renderDescription()}
+
       {this.renderName()}
 
     </Container>, 'card-builder rush-card-builder');
@@ -530,7 +640,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private renderAbilities() {
-    let text = this.props.card.abilities.join(' / ');
+    let text = this.state.abilities.join(' / ');
     const upperCaseIndexes = text.split('').map((char, index) => char === char.toUpperCase() ? index : -1).filter(i => i !== -1);
     const lowerCaseText = text.toLowerCase();
     let firstIndexLowerCase: boolean;
@@ -539,12 +649,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       firstIndexLowerCase = true;
     }
 
-    let containerClass = 'card-layer card-abilities';
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
-
     return this.renderAttributes(<HorizontalStack>
       <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
-      <p className={`abilities-text black-text abilities`}>
+      <p className={classNames('abilities-text', 'black-text', 'abilities', { 'with-st-icon': this.state.hasStIcon })}>
         {upperCaseIndexes.map((index, i) => (
           <Fragment key={`uppercase-index-${i}`}>
             <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
@@ -556,8 +663,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           </Fragment>
         ))}
       </p>
+      {this.state.hasStIcon && <img className='rush-st-icon' src={this.state.stIcon} alt='stIcon' />}
       <p className={`abilities-text black-text abilities-bracket right-bracket`}>{']'}</p>
-    </HorizontalStack>, containerClass);
+    </HorizontalStack>, 'card-layer card-abilities');
   }
 
   private renderPendulum() {
@@ -586,17 +694,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
     if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
 
-    const description = this.props.card.description.split('\n');
-
     return this.renderAttributes(<VerticalStack>
-      {description.map(d => {
-        let withBulletPoint = false;
-        if (d.startsWith('●')) {
-          withBulletPoint = true;
-          d = d.replace(/^●\s*/, '');
-        }
+      {this.state.description.map(d => {
         return <p
-          className={classNames('description-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
+          className='description-text black-text'
           style={{
             fontSize: `${this.state.descFontSize}px`,
             lineHeight: this.state.descLineHeight,
@@ -606,12 +707,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     </VerticalStack>, containerClass);
   }
 
-  private getSpecifities(): { lv: boolean, rk: boolean, st: boolean } {
+  private getSpecifities(): { lv: boolean, rk: boolean } {
     let includesXyz = false;
 
     for (let frame of this.props.card.frames) {
       if (frame === 'spell' || frame === 'trap') {
-        return { lv: false, rk: false, st: true };
+        return { lv: false, rk: false };
       } else if (frame === 'xyz') {
         includesXyz = true;
       }
@@ -619,12 +720,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     if (!this.props.card.dontCoverRushArt) {
       if (includesXyz) {
-        return { lv: false, rk: true, st: false };
+        return { lv: false, rk: true };
       } else {
-        return { lv: true, rk: false, st: false };
+        return { lv: true, rk: false };
       }
     } else {
-      return { lv: false, rk: false, st: false };
+      return { lv: false, rk: false };
     }
   }
 }

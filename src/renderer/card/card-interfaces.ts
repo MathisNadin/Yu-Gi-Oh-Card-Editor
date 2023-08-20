@@ -23,7 +23,9 @@ export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'top
 
 export type TLegendType = 'gold' | 'goldFoil' | 'silver' | 'silverFoil';
 
-export type TRushTextMode = 'normal' | 'regular' | 'choice';
+export type TRushTextMode = 'vanilla' | 'regular' | 'choice';
+
+export type TRushEffectType = 'effect' | 'continuous';
 
 export type CardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards';
 
@@ -74,6 +76,7 @@ export interface ICard {
   rushOtherEffects: string;
   rushCondition: string;
   rushEffect: string;
+  rushEffectType: TRushEffectType;
   rushChoiceEffects: string[];
   legend: boolean;
   legendType: TLegendType;

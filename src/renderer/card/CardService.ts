@@ -21,7 +21,7 @@ import { toPng } from "mn-html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
 import { deepClone, uuid } from "mn-toolkit/tools";
-import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon } from "./card-interfaces";
+import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
 import { Crop } from "react-image-crop";
 
 interface IExportData {
@@ -161,7 +161,15 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     card.rushOtherEffects = card.rushOtherEffects || '';
     card.rushCondition = card.rushCondition || '';
     card.rushEffect = card.rushEffect || '';
-    card.rushChoiceEffects = card.rushChoiceEffects || [];
+
+    if (!card.rushChoiceEffects?.length) {
+      card.rushChoiceEffects = ['', ''];
+    }
+    else if (card.rushChoiceEffects.length === 1) {
+      card.rushChoiceEffects = [card.rushChoiceEffects[0], ''];
+    }
+
+    card.rushEffectType = card.rushEffectType || 'effect';
     card.legend = card.legend || false;
     card.legendType = card.legendType || 'gold';
     card.atkMax = typeof card.atkMax === 'number' ? '' : card.atkMax || '';
@@ -470,7 +478,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       rushOtherEffects: '',
       rushCondition: '',
       rushEffect: '',
-      rushChoiceEffects: [],
+      rushEffectType: 'effect',
+      rushChoiceEffects: ['', ''],
       legendType: 'gold',
       legend: false,
       atkMax: '',
@@ -532,7 +541,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       rushOtherEffects: '',
       rushCondition: '',
       rushEffect: '',
-      rushChoiceEffects: [],
+      rushEffectType: 'effect',
+      rushChoiceEffects: ['', ''],
       legendType: 'gold',
       legend: false,
       atkMax: '',
@@ -579,6 +589,73 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       case 'quickplay': return 'Jeu-Rapide';
       case 'ritual': return 'Rituel';
       default: return 'Inconnu';
+    }
+  }
+
+  public getStTypeName(stType: TStIcon, language: TCardLanguage, feminine: boolean) {
+    switch (stType) {
+      case 'normal':
+        if (language === 'fr') {
+          return feminine ? 'Normale' : 'Normal';
+        } else {
+          return 'Normal';
+        }
+
+      case 'continuous':
+        if (language === 'fr') {
+          return feminine ? 'Continue' : 'Continu';
+        } else {
+          return 'Continuous';
+        }
+
+      case 'counter':
+        if (language === 'fr') {
+          return 'Contre';
+        } else {
+          return 'Counter';
+        }
+
+      case 'equip':
+        if (language === 'fr') {
+          return 'Équipement';
+        } else {
+          return 'Equip';
+        }
+
+      case 'field':
+        if (language === 'fr') {
+          return 'Terrain';
+        } else {
+          return 'Field';
+        }
+
+      case 'link':
+        if (language === 'fr') {
+          return 'Lien';
+        } else {
+          return 'Link';
+        }
+
+      case 'quickplay':
+        if (language === 'fr') {
+          return 'Jeu-Rapide';
+        } else {
+          return 'Quick-Play';
+        }
+
+      case 'ritual':
+        if (language === 'fr') {
+          return feminine ? 'Rituelle' : 'Ritual';
+        } else {
+          return 'Ritual';
+        }
+
+      default:
+        if (language === 'fr') {
+          return feminine ? 'Inconnue' : 'Inconnu';
+        } else {
+          return 'Unknown';
+        }
     }
   }
 

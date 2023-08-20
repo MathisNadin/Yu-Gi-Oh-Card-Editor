@@ -28,7 +28,7 @@ import './styles.css';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLegendType, TNameStyle, TRushTextMode, TStIcon, TSticker } from 'renderer/card/card-interfaces';
+import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLegendType, TNameStyle, TRushEffectType, TRushTextMode, TStIcon, TSticker } from 'renderer/card/card-interfaces';
 import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
@@ -38,6 +38,8 @@ import plus from '../resources/pictures/plus.svg';
 import cross from '../resources/pictures/cross.svg';
 import upArrow from '../resources/pictures/up-arrow.svg';
 import downArrow from '../resources/pictures/down-arrow.svg';
+import { TabbedPane } from 'mn-toolkit/tabs/TabbedPane';
+import { TabPane } from 'mn-toolkit/tabs/TabPane';
 
 interface IRushCardEditorProps extends IContainableProps {
   card: ICard;
@@ -252,6 +254,12 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onRushEffectTypeChange(rushEffectType: TRushEffectType) {
+    this.state.card.rushEffectType = rushEffectType;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private onRushTextModeChange(rushTextMode: TRushTextMode) {
     this.state.card.rushTextMode = rushTextMode;
     this.forceUpdate();
@@ -328,6 +336,38 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     this.debouncedOnCardChange(this.state.card);
   }
 
+  private onAddChoiceEffect() {
+    this.state.card.rushChoiceEffects.push('');
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onRemoveChoiceEffect(index: number) {
+    this.state.card.rushChoiceEffects.splice(index, 1);
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onMoveChoiceEffectUp(index: number) {
+    if (!index) return;
+    const newIndex = index - 1;
+    let element = this.state.card.rushChoiceEffects[index];
+    this.state.card.rushChoiceEffects.splice(index, 1);
+    this.state.card.rushChoiceEffects.splice(newIndex, 0, element);
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
+  private onMoveChoiceEffectDown(index: number) {
+    if (index === this.state.card.rushChoiceEffects.length-1) return;
+    const newIndex = index + 1;
+    let element = this.state.card.rushChoiceEffects[index];
+    this.state.card.rushChoiceEffects.splice(index, 1);
+    this.state.card.rushChoiceEffects.splice(newIndex, 0, element);
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private onAddAbility() {
     this.state.card.abilities.push('');
     this.forceUpdate();
@@ -341,7 +381,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   }
 
   private onMoveAbilityUp(index: number) {
-    if (index === 0) return;
+    if (!index) return;
     const newIndex = index - 1;
     let element = this.state.card.abilities[index];
     this.state.card.abilities.splice(index, 1);
@@ -549,15 +589,135 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           </HorizontalStack>
       </VerticalStack>}
 
-      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-description card-input-container'>
-        <p className='editor-label description-label label-with-separator'>Description</p>
-        <textarea
-          spellCheck={false}
-          className='description-input textarea-input'
-          value={this.state.card.description}
-          onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)}
-        />
-      </VerticalStack>
+      <TabbedPane
+        tabPosition='top'
+        defaultValue={this.state.card.rushTextMode}
+        onChange={rushTextMode => this.onRushTextModeChange(rushTextMode as TRushTextMode)}
+      >
+
+        <TabPane id='vanilla' fill={false} label='Entier' gutter>
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-description card-input-container'>
+            <p className='editor-label description-label label-with-separator'>Description</p>
+            <textarea
+              spellCheck={false}
+              className='description-input textarea-input'
+              value={this.state.card.description}
+              onInput={e => this.onDescChange((e.target as EventTargetWithValue).value)}
+            />
+          </VerticalStack>
+        </TabPane>
+
+        <TabPane id='regular' fill={false} label='Condition / Effet' gutter>
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-rush-other-effects card-input-container'>
+            <p className='editor-label rush-other-effects-label label-with-separator'>Autres</p>
+            <textarea
+              spellCheck={false}
+              className='rush-other-effects-input textarea-input'
+              value={this.state.card.rushOtherEffects}
+              onInput={e => this.onRushOtherEffectsChange((e.target as EventTargetWithValue).value)}
+            />
+          </VerticalStack>
+
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-rush-condition card-input-container'>
+            <p className='editor-label rush-condition-label label-with-separator'>Condition</p>
+            <textarea
+              spellCheck={false}
+              className='rush-condition-input textarea-input'
+              value={this.state.card.rushCondition}
+              onInput={e => this.onRushConditionChange((e.target as EventTargetWithValue).value)}
+            />
+          </VerticalStack>
+
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-rush-effect card-input-container'>
+            <p className='editor-label rush-effect-label label-with-separator'>Effet</p>
+            <textarea
+              spellCheck={false}
+              className='rush-effect-input textarea-input'
+              value={this.state.card.rushEffect}
+              onInput={e => this.onRushEffectChange((e.target as EventTargetWithValue).value)}
+            />
+          </VerticalStack>
+
+          <Dropdown<TRushEffectType>
+            className='card-rush-effect-type-dropdown'
+            options={[
+              'effect',
+              'continuous',
+            ]}
+            optionsLabel={[
+              'Effet',
+              'Effet Continu',
+            ]}
+            defaultOption={this.state.card.rushEffectType}
+            onSelect={value => this.onRushEffectTypeChange(value)}
+          />
+        </TabPane>
+
+        <TabPane id='choice' fill={false} label='Effet à Choix' gutter>
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-rush-other-effects card-input-container'>
+            <p className='editor-label rush-other-effects-label label-with-separator'>Autres</p>
+            <textarea
+              spellCheck={false}
+              className='rush-other-effects-input textarea-input'
+              value={this.state.card.rushOtherEffects}
+              onInput={e => this.onRushOtherEffectsChange((e.target as EventTargetWithValue).value)}
+            />
+          </VerticalStack>
+
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-rush-condition card-input-container'>
+            <p className='editor-label rush-condition-label label-with-separator'>Condition</p>
+            <textarea
+              spellCheck={false}
+              className='rush-condition-input textarea-input'
+              value={this.state.card.rushCondition}
+              onInput={e => this.onRushConditionChange((e.target as EventTargetWithValue).value)}
+            />
+          </VerticalStack>
+
+          <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-choice-effects-header card-input-container'>
+            <HorizontalStack className='card-choice-effect-label'>
+              <p className='editor-label choice-effect-label'>Choix</p>
+
+              <HorizontalStack className='card-choice-effect-btns card-input-container'>
+                <button type='button' className='choice-effect-btn add' onClick={() => this.onAddChoiceEffect()}>
+                  <img src={plus} alt='lock' />
+                </button>
+              </HorizontalStack>
+            </HorizontalStack>
+          </VerticalStack>
+
+          {this.state.card.rushChoiceEffects.map((eff, i) => {
+            return <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-choice-effect card-input-container'>
+              <HorizontalStack className='card-choice-effect-label'>
+                <p className='editor-label choice-effect-label'>{`• ${i+1}`}</p>
+
+                <HorizontalStack className='card-choice-effect-btns card-input-container'>
+                  {this.state.card.rushChoiceEffects.length > 2 &&
+                    <button type='button' className='choice-effect-btn delete' onClick={() => this.onRemoveChoiceEffect(i)}>
+                      <img src={cross} alt='lock' />
+                    </button>
+                  }
+
+                  <button type='button' className='choice-effect-btn up' onClick={() => this.onMoveChoiceEffectUp(i)}>
+                    <img src={upArrow} alt='lock' />
+                  </button>
+
+                  <button type='button' className='choice-effect-btn down' onClick={() => this.onMoveChoiceEffectDown(i)}>
+                    <img src={downArrow} alt='lock' />
+                  </button>
+                </HorizontalStack>
+              </HorizontalStack>
+
+              <textarea
+                spellCheck={false}
+                className='rush-choice-effect-input textarea-input'
+                value={eff}
+                onInput={e => this.onRushChoiceEffectsChange((e.target as EventTargetWithValue).value, i)}
+              />
+            </VerticalStack>;
+          })}
+        </TabPane>
+      </TabbedPane>
     </VerticalStack>, 'card-editor-section basic-section');
   }
 
