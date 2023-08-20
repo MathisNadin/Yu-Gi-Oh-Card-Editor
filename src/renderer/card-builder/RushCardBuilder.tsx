@@ -571,7 +571,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       {this.props.card.edition === 'unlimited' && <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>}
 
-      {this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
+      {!this.props.card.dontCoverRushArt && this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'atk-max', {
           'question-mark': this.props.card.atkMax === '?',
           'compressed': this.props.card.atkMax?.length > 4,
@@ -580,7 +580,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         </Container>
       }
 
-      {app.$card.hasAbilities(this.props.card) &&
+      {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'atk', {
           'question-mark': this.props.card.atk === '?',
           'compressed': this.props.card.atk?.length > 4,
@@ -589,7 +589,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         </Container>
       }
 
-      {app.$card.hasAbilities(this.props.card) &&
+      {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) &&
         <Container className={classNames('card-layer', 'atk-def', 'def', {
           'question-mark': this.props.card.def === '?',
           'compressed': this.props.card.def?.length > 4,

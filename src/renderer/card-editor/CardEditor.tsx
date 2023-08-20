@@ -418,6 +418,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       innerHeight: '70%',
       innerWidth: '70%',
       content: <ArtworkEditDialog
+        isRush={false}
         artworkURL={this.state.card.artwork.url}
         crop={{
           x: this.state.card.artwork.x,
@@ -429,7 +430,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         keepRatio={this.state.card.artwork.keepRatio}
         pendulumRatio={this.state.card.pendulum && !this.state.card.artwork.pendulum}
         hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
-        hasLinkFrame={this.state.card.frames.includes('link')} />
+        hasLinkFrame={this.state.card.frames.includes('link')}
+      />
     });
     if (result) this.onArtworkInfoChange(result);
   }

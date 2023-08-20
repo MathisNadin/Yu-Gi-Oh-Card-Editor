@@ -40,6 +40,7 @@ interface IArtworkEditDialogProps extends IDialogProps<IArtworkEditDialogResult>
   pendulumRatio: boolean;
   hasPendulumFrame: boolean;
   hasLinkFrame: boolean;
+  isRush: boolean;
   crop: Crop;
   keepRatio: boolean;
 }
@@ -139,6 +140,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
         pendulumRatio={this.props.pendulumRatio}
         hasPendulumFrame={this.props.hasPendulumFrame}
         hasLinkFrame={this.props.hasLinkFrame}
+        isRush={this.props.isRush}
         crop={this.state.crop}
         onKeepRatioChange={keepRatio => this.setState({ keepRatio })}
         onCroppingChange={crop => this.setState({ crop })}

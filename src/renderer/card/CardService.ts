@@ -570,6 +570,16 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     };
   }
 
+  public getFullRushCardPreset(): Crop {
+    return {
+      x: 5.3,
+      y: 10,
+      width: 89.4,
+      height: 61.9,
+      unit: '%'
+    };
+  }
+
   public generatePasscode() {
     let result = '';
     for (let i = 0; i < 8; i++) {

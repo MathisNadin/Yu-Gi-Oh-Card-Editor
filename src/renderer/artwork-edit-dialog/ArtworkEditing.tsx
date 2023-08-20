@@ -36,6 +36,7 @@ interface IArtworkEditingProps extends IContainableProps {
   pendulumRatio: boolean;
   hasPendulumFrame: boolean;
   hasLinkFrame: boolean;
+  isRush: boolean;
   crop: Crop;
   onKeepRatioChange: (keepRatio: boolean) => void;
   onCroppingChange: (crop: Crop) => void;
@@ -180,6 +181,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
   }
 
+  private setFullRushCardPreset() {
+    let crop = app.$card.getFullRushCardPreset();
+    this.setState({ crop });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+  }
+
   public render() {
     if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<VerticalStack fill scroll>
@@ -197,8 +204,15 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
         <HorizontalStack className='ratio-checkbox'>
           <input type='checkbox' className='ratio-input' checked={this.state.keepRatio} onChange={() => this.switchKeepRatio()} />
           <p className='editor-label pendulum-label'>Conserver le ratio</p>
-          <button type='button' className='preset-btn full-card-preset-btn' onClick={() => this.setFullCardPreset()}>Preset carte entière</button>
-          <button type='button' className='preset-btn full-pendulum-card-preset-btn' onClick={() => this.setFullPendulumCardPreset()}>Preset Carte Pendule entière</button>
+
+          {this.props.isRush &&
+            <button type='button' className='preset-btn full-card-preset-btn' onClick={() => this.setFullRushCardPreset()}>Preset carte entière</button>}
+
+          {!this.props.isRush &&
+            <button type='button' className='preset-btn full-card-preset-btn' onClick={() => this.setFullCardPreset()}>Preset carte entière</button>}
+
+          {!this.props.isRush &&
+            <button type='button' className='preset-btn full-pendulum-card-preset-btn' onClick={() => this.setFullPendulumCardPreset()}>Preset Carte Pendule entière</button>}
         </HorizontalStack>
 
         <HorizontalStack className='ratio-section'>
