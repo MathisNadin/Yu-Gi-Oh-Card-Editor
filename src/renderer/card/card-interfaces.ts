@@ -15,7 +15,7 @@ export type TStIcon = 'normal' | 'ritual' | 'quickplay' | 'field' | 'continuous'
 
 export type TNameStyle = 'default' | 'white' | 'black' | 'yellow' | 'gold' | 'silver' | 'rare' | 'ultra' | 'secret';
 
-export type TEdition = 'unlimited' | 'firstEdition' | 'limited' | 'forbidden' | 'duelTerminal' | 'anime';
+export type TEdition = 'unlimited' | 'firstEdition' | 'limited' | 'forbidden' | 'forbiddenDeck' | 'duelTerminal' | 'anime';
 
 export type TSticker = 'none' | 'silver' | 'gold' | 'grey' | 'white' | 'lightBlue' | 'skyBlue' | 'cyan' | 'aqua' | 'green';
 

@@ -718,6 +718,34 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           })}
         </TabPane>
       </TabbedPane>
+
+      <HorizontalStack className='card-editor-full-width-section'>
+        <input type='checkbox' className='dont-coder-rush-art-input card-input' checked={this.state.card.dontCoverRushArt} onChange={() => this.onDontCoverRushArtChange()} />
+        <p className='editor-label dont-coder-rush-art-label'>Ne pas couvrir l'artwork</p>
+      </HorizontalStack>
+
+      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
+        <input type='checkbox' className='legend-input card-input' checked={this.state.card.legend} onChange={() => this.onLegendChange()} />
+        <p className='editor-label legend-label'>LEGEND</p>
+
+        {this.state.card.legend && <Dropdown<TLegendType>
+          className='card-legend-type-dropdown'
+          options={[
+            'gold',
+            'goldFoil',
+            'silver',
+            'silverFoil'
+          ]}
+          optionsLabel={[
+            'Or',
+            'Or Foil',
+            'Argent',
+            'Argent Foil'
+          ]}
+          defaultOption={this.state.card.legendType}
+          onSelect={value => this.onLegendTypeChange(value)}
+        />}
+      </HorizontalStack>}
     </VerticalStack>, 'card-editor-section basic-section');
   }
 
@@ -752,34 +780,6 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     }
 
     return this.renderAttributes(<VerticalStack>
-      <HorizontalStack className='card-editor-full-width-section'>
-        <input type='checkbox' className='dont-coder-rush-art-input card-input' checked={this.state.card.dontCoverRushArt} onChange={() => this.onDontCoverRushArtChange()} />
-        <p className='editor-label dont-coder-rush-art-label'>Ne pas couvrir l'artwork</p>
-      </HorizontalStack>
-
-      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
-        <input type='checkbox' className='legend-input card-input' checked={this.state.card.legend} onChange={() => this.onLegendChange()} />
-        <p className='editor-label legend-label'>LEGEND</p>
-
-        {this.state.card.legend && <Dropdown<TLegendType>
-          className='card-legend-type-dropdown'
-          options={[
-            'gold',
-            'goldFoil',
-            'silver',
-            'silverFoil'
-          ]}
-          optionsLabel={[
-            'Or',
-            'Or Foil',
-            'Argent',
-            'Argent Foil'
-          ]}
-          defaultOption={this.state.card.legendType}
-          onSelect={value => this.onLegendTypeChange(value)}
-        />}
-      </HorizontalStack>}
-
       {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-level card-input-container'>
           <p className='editor-label level-label'>{levelLabel}</p>
@@ -871,6 +871,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
               'firstEdition',
               'limited',
               'forbidden',
+              'forbiddenDeck',
               'duelTerminal',
               'anime'
             ]}
@@ -879,6 +880,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
               '1ère Édition',
               'Édition Limitée',
               'Interdite',
+              'Interdite dans un Deck',
               'Duel Terminal',
               'Édition Anime'
             ]}

@@ -649,9 +649,28 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       firstIndexLowerCase = true;
     }
 
+    let useWhiteText = this.props.card.frames.includes('xyz');
+
     return this.renderAttributes(<HorizontalStack>
-      <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
-      <p className={classNames('abilities-text', 'black-text', 'abilities', { 'with-st-icon': this.state.hasStIcon })}>
+      <p className={classNames(
+        'abilities-text',
+        'abilities-bracket',
+        'left-bracket',
+        {
+          'black-text': !useWhiteText,
+          'white-text': useWhiteText,
+        }
+      )}>{'['}</p>
+
+      <p className={classNames(
+        'abilities-text',
+        'abilities',
+        {
+          'with-st-icon': this.state.hasStIcon,
+          'black-text': !useWhiteText,
+          'white-text': useWhiteText,
+        }
+      )}>
         {upperCaseIndexes.map((index, i) => (
           <Fragment key={`uppercase-index-${i}`}>
             <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
@@ -663,8 +682,18 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           </Fragment>
         ))}
       </p>
+
       {this.state.hasStIcon && <img className='rush-st-icon' src={this.state.stIcon} alt='stIcon' />}
-      <p className={`abilities-text black-text abilities-bracket right-bracket`}>{']'}</p>
+
+      <p className={classNames(
+        'abilities-text',
+        'abilities-bracket',
+        'right-bracket',
+        {
+          'black-text': !useWhiteText,
+          'white-text': useWhiteText,
+        }
+      )}>{']'}</p>
     </HorizontalStack>, 'card-layer card-abilities');
   }
 
@@ -711,7 +740,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let includesXyz = false;
 
     for (let frame of this.props.card.frames) {
-      if (frame === 'spell' || frame === 'trap') {
+      if (frame === 'spell' || frame === 'trap' || frame === 'token') {
         return { lv: false, rk: false };
       } else if (frame === 'xyz') {
         includesXyz = true;

@@ -836,6 +836,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
               'firstEdition',
               'limited',
               'forbidden',
+              'forbiddenDeck',
               'duelTerminal',
               'anime'
             ]}
@@ -844,6 +845,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
               '1ère Édition',
               'Édition Limitée',
               'Interdite',
+              'Interdite dans un Deck',
               'Duel Terminal',
               'Édition Anime'
             ]}
