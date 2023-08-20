@@ -112,7 +112,7 @@ export class MediaWikiService {
 
     return await this.wikitextToCard(
       card,
-      pageInfo.title.replace(' (card)', ''),
+      pageInfo.title.replaceAll(' (card)', '').replaceAll(' (Rush Duel)', ''),
       wikitext,
       useFr,
       generatePasscode,
@@ -139,6 +139,10 @@ export class MediaWikiService {
     let enName: string | undefined;
     let frName: string | undefined;
     let lore: string | undefined;
+    let rushCondition: string | undefined;
+    let rushFrCondition: string | undefined;
+    let rushOtherEffects: string | undefined;
+    let rushFrOtherEffects: string | undefined;
     let frLore: string | undefined;
     let pendEffect: string | undefined;
     let frPendEffect: string | undefined;
@@ -148,14 +152,17 @@ export class MediaWikiService {
 
     let wikitextArray = wikitext.split('\n');
     wikitextArray.forEach((t, i) => {
-      if (t.includes('| name')) {
-        name = t.slice(t.indexOf('= ')+1, t.length).trim().replace(' (card)', '');
+      if (t.includes('| rush_duel') && t.includes('true')) {
+        card.rush = true;
+      }
+      else if (t.includes('| name')) {
+        name = t.slice(t.indexOf('= ')+1, t.length).trim().replaceAll(' (card)', '');
       }
       else if (t.includes('| fr_name')) {
-        frName = t.slice(t.indexOf('= ')+1, t.length).trim().replace(' (card)', '');
+        frName = t.slice(t.indexOf('= ')+1, t.length).trim().replaceAll(' (card)', '');
       }
       else if (t.includes('| en_name')) {
-        enName = t.slice(t.indexOf('= ')+1, t.length).trim().replace(' (card)', '');
+        enName = t.slice(t.indexOf('= ')+1, t.length).trim().replaceAll(' (card)', '');
       }
       else if (t.includes('| attribute')) {
         let attribute = t.slice(t.indexOf('= ')+1, t.length).trim();
@@ -249,11 +256,38 @@ export class MediaWikiService {
           }
         }
       }
+      else if (t.includes('| materials')) {
+        let parsedText = this.parseWikitextLore(t);
+        if (rushOtherEffects) {
+          rushOtherEffects = `${parsedText}\n${rushOtherEffects}`;
+        } else {
+          rushOtherEffects = parsedText;
+        }
+      }
+      else if (t.includes('| fr_materials')) {
+        if (rushFrOtherEffects) {
+          rushFrOtherEffects = `\n${rushFrOtherEffects}`;
+        } else {
+          rushFrOtherEffects = this.parseWikitextLore(t);
+        }
+      }
+      else if (t.includes('| maximum_atk')) {
+        card.rush = true;
+        card.maximum = true;
+        card.atkMax = t.slice(t.indexOf('= ')+1, t.length).trim();
+      }
       else if (t.includes('| atk')) {
         card.atk = t.slice(t.indexOf('= ')+1, t.length).trim();
       }
       else if (t.includes('| def')) {
         card.def = t.slice(t.indexOf('= ')+1, t.length).trim();
+      }
+      else if (t.includes('| effect_types')) {
+        if (t.includes('Continuous')) {
+          card.rushEffectType = 'continuous';
+        } else if (t.includes('Multi-Choice')) {
+          card.rushTextMode = 'choice';
+        }
       }
       else if (t.includes('| pendulum_scale')) {
         let scale = integer(t.slice(t.indexOf('= ')+1, t.length).trim());
@@ -262,17 +296,35 @@ export class MediaWikiService {
       else if (t.includes('| password')) {
         card.passcode = t.slice(t.indexOf('= ')+1, t.length).trim();
       }
-      else if (t.includes('| pendulum_effect')) {
-        pendEffect = this.parseWikitextLore(t);
+      else if (t.includes('| requirement')) {
+        card.rush = true;
+        rushCondition = this.parseWikitextLore(t);
+      }
+      else if (t.includes('| fr_requirement')) {
+        rushFrCondition = this.parseWikitextLore(t);
+      }
+      else if (t.includes('| summoning_condition')) {
+        let parsedText = this.parseWikitextLore(t);
+        if (rushOtherEffects) {
+          rushOtherEffects = `${rushOtherEffects}\n${parsedText}`;
+        } else {
+          rushOtherEffects = parsedText;
+        }
+      }
+      else if (t.includes('| fr_summoning_condition')) {
+        rushFrOtherEffects = this.parseWikitextLore(t);
       }
       else if (t.includes('| lore')) {
         lore = this.parseWikitextLore(t);
       }
-      else if (t.includes('| fr_pendulum_effect')) {
-        frPendEffect = this.parseWikitextLore(t);
-      }
       else if (t.includes('| fr_lore')) {
         frLore = this.parseWikitextLore(t);
+      }
+      else if (t.includes('| pendulum_effect')) {
+        pendEffect = this.parseWikitextLore(t);
+      }
+      else if (t.includes('| fr_pendulum_effect')) {
+        frPendEffect = this.parseWikitextLore(t);
       }
       else if (t.includes('| fr_sets')) {
         let firstFrSet = wikitextArray[i+1];
@@ -286,6 +338,9 @@ export class MediaWikiService {
         let firstJpSet = wikitextArray[i+1];
         jpSet = firstJpSet.slice(0, firstJpSet.indexOf(';'));
       }
+      else if (t.includes('| misc') && t.includes('Legend Card')) {
+        card.legend = true;
+      }
     });
 
     if (!card.frames.length) {
@@ -296,16 +351,53 @@ export class MediaWikiService {
 
     enName = (name || enName || title) as string;
     if (useFr) {
+      card.cardSet = frSet as string;
+      if (!card.rush && card.cardSet.startsWith('RD/')) {
+        card.rush = true;
+      }
+
+      if (card.rush) {
+        if (card.rushTextMode === 'choice' && frLore) {
+          card.rushChoiceEffects = frLore
+            .split(/(●|•)/)
+            .map(part => part.trim())
+            .filter(part => part && part !== '●' && part !== '•');
+        } else {
+          card.rushEffect = frLore as string;
+        }
+      } else {
+        card.description = frLore as string;
+      }
+
       card.language = 'fr';
       card.name = frName as string;
-      card.description = frLore as string;
       card.pendEffect = frPendEffect as string;
-      card.cardSet = frSet as string;
-    } else {
-      card.name = enName
-      card.description = lore as string;
-      card.pendEffect = pendEffect as string;
+      card.rushCondition = rushFrCondition as string;
+      card.rushOtherEffects = rushFrOtherEffects as string;
+    }
+    else {
       card.cardSet = (enSet || jpSet) as string;
+      if (!card.rush && card.cardSet.startsWith('RD/')) {
+        card.rush = true;
+      }
+
+      if (card.rush) {
+        if (card.rushTextMode === 'choice' && lore) {
+          card.rushChoiceEffects = lore
+            .split(/(●|•)/)
+            .map(part => part.trim())
+            .filter(part => part && part !== '●' && part !== '•');
+        } else {
+          card.rushEffect = lore as string;
+        }
+      } else {
+        card.description = lore as string;
+      }
+
+      card.name = enName;
+      card.pendEffect = pendEffect as string;
+      card.rushCondition = rushCondition as string;
+      card.rushOtherEffects = rushOtherEffects as string;
     }
 
     if (replaceMatrixes.length) {
@@ -358,7 +450,10 @@ export class MediaWikiService {
                 if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
                   card.artwork.url = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath) || '';
                   if (card.artwork.url) {
-                    if (card.pendulum) {
+                    if (card.rush) {
+                      card.dontCoverRushArt = true;
+                      extend(card.artwork, app.$card.getFullRushCardPreset());
+                    } else if (card.pendulum) {
                       extend(card.artwork, app.$card.getFullPendulumCardPreset());
                     } else {
                       extend(card.artwork, app.$card.getFullCardPreset());
@@ -380,13 +475,19 @@ export class MediaWikiService {
       card.abilities = card.abilities.map(ability => this.getFrenchAbility(ability.trim()));
     }
 
+    if (card.rush) {
+      card.edition = 'unlimited';
+    }
+
+    app.$card.correct(card);
+
     return card;
   }
 
   private parseWikitextLore(text: string): string {
     text = text.slice(text.indexOf('= ')+1, text.length);
     // Remplacer les liens internes [[...]] par le contenu après le dernier |
-    text = text.replace(/\[\[([^\]]+)\]\]/g, (_, content) => {
+    text = text.replaceAll(/\[\[([^\]]+)\]\]/g, (_, content) => {
       const lastIndex = content.lastIndexOf('|');
       if (lastIndex !== -1) {
         return content.substring(lastIndex + 1);
@@ -395,23 +496,25 @@ export class MediaWikiService {
     });
 
     // Retirer les doubles crochets restants
-    text = text.replace(/\[\[|\]\]/g, '');
+    text = text.replaceAll(/\[\[|\]\]/g, '');
 
     // Retirer les caractères en double ou triples (exemple: [[face-up]] -> face-up)
-    text = text.replace(/(\[\[?\w+)(?:\|[\w\s-]+)?(\]\]?)/g, (_, before, after) => before + after);
+    text = text.replaceAll(/(\[\[?\w+)(?:\|[\w\s-]+)?(\]\]?)/g, (_, before, after) => before + after);
 
     // Retirer les espaces en double
-    text = text.replace(/\s+/g, ' ');
+    text = text.replaceAll(/\s+/g, ' ');
 
     // Remplacer les balises <br /> par un saut de ligne
-    text = text.replace(/<br \/>/g, '\n');
+    text = text.replaceAll(/<br \/>/g, '\n');
+
+    text = text.replaceAll("''", '');
 
     return text.trim();
   }
 
   private getArtworkName(str: string) {
     // Remplacer les caractères non autorisés dans une URL ou un nom de fichier
-    str = str.replace(/[^\w\s\-+.!\/'()=%\\*\?"<>|\u00E0\u00E2\u00E4\u00E7\u00E8\u00E9\u00EA\u00EB\u00EE\u00EF\u00F4\u00F6\u00F9\u00FB\u00FC]/g, '').replace(/[\s?!]/g, '').replace(/:/g, '');
+    str = str.replaceAll(/[^\w\s\-+.!\/'()=%\\*\?"<>|\u00E0\u00E2\u00E4\u00E7\u00E8\u00E9\u00EA\u00EB\u00EE\u00EF\u00F4\u00F6\u00F9\u00FB\u00FC]/g, '').replaceAll(/[\s?!]/g, '').replaceAll(/:/g, '');
     // Remplacer les caractères accentués
     const accents = [
       /[\300-\306]/g, /[\340-\346]/g, // A, a
@@ -424,10 +527,10 @@ export class MediaWikiService {
     ];
     const noAccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
     for (let i = 0; i < accents.length; i++) {
-      str = str.replace(accents[i], noAccent[i]);
+      str = str.replaceAll(accents[i], noAccent[i]);
     }
     // Remplacer les /, -, ", ', :, !, ?, et les .
-    str = str.replace(/[\/\\\-"'()=:!?\.]/g, '');
+    str = str.replaceAll(/[\/\\\-"'()=:!?\.]/g, '');
     // Retourner la chaîne de caractères modifiée
     return str;
   }

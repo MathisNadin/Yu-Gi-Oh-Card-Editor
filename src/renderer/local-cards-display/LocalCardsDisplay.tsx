@@ -228,7 +228,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
               <th
                 className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'game' }, { 'sorted-desc': this.state.sortOption === 'game-reverse' })}
                 onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'game' ? 'game-reverse' : 'game')}
-              >Créée</th>
+              >Format</th>
               <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'name')}>Nom</th>
               <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'frame')}>Type</th>
               <th

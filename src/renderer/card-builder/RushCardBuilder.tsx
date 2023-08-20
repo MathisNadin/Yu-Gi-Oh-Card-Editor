@@ -189,11 +189,11 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         let effectLabel = '';
         switch (card.rushEffectType) {
           case 'effect':
-            effectLabel = '[Effet] ';
+            effectLabel = card.language === 'fr' ? '[Effet] ' : '[Effect] ';
             break;
 
           case 'continuous':
-            effectLabel = '[Effet Continu] ';
+            effectLabel = card.language === 'fr' ? '[Effet Continu] ' : '[Continuous Effect] ';
             break;
 
           default:
@@ -212,9 +212,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         if (card.rushOtherEffects) {
           description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
         }
+        let choiceEffectsLabel = card.language === 'fr' ? '[Effet à Choix] ' : '[Multi-Choice Effect] ';
         description.push(
           [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
-          [<span className='span-text rush-label effect'>{'[Effet à Choix]'}</span>],
+          [<span className='span-text rush-label effect'>{choiceEffectsLabel}</span>],
         );
         for (let choice of card.rushChoiceEffects) {
           description.push(...choice.split('\n').map(d => this.getProcessedText(d, true)));

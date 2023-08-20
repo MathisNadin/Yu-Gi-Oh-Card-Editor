@@ -575,7 +575,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       x: 5.3,
       y: 10,
       width: 89.4,
-      height: 61.9,
+      height: 62,
       unit: '%'
     };
   }

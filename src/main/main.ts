@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable import/order */
 /* eslint-disable prefer-const */
 /* eslint-disable consistent-return */
@@ -39,7 +40,13 @@ ipcMain.on('ipc-example', async (event, _arg) => {
 });
 
 ipcMain.handle('download', async (_event, directory: string, url: string) => {
-  const win = BrowserWindow.getFocusedWindow() as BrowserWindow;
+  let win = BrowserWindow.getFocusedWindow() as BrowserWindow;
+  if (!win) {
+    let allWindows = BrowserWindow.getAllWindows();
+    if (allWindows?.length) {
+      win = allWindows[0];
+    }
+  }
   let file = await download(win, url, { directory });
   return file.getSavePath();
 });
