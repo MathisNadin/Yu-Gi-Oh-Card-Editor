@@ -42,6 +42,19 @@ export interface ICardListener {
   menuSaveTempToLocal: () => void;
 }
 
+const COMMON_FRAMES: TFrame[] = [
+  'normal',
+  'effect',
+  'ritual',
+  'fusion',
+  'synchro',
+  'xyz',
+  'spell',
+  'trap',
+  'token',
+  'monsterToken',
+];
+
 export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener> {
   private _currentCard = {} as ICard;
   private _tempCurrentCard: ICard | undefined = undefined;
@@ -329,6 +342,24 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       return card;
     } else {
       card.rush = true;
+      if (card.attribute === 'divine') card.attribute = 'dark';
+      if (card.stType === 'link') card.stType = 'normal';
+
+      let includesNormal = false;
+      let frames: TFrame[] = [];
+      for (let frame of card.frames) {
+        if (frame === 'normal') includesNormal = true;
+        if (COMMON_FRAMES.includes(frame)) frames.push(frame);
+      }
+      if (!frames.length) frames = ['effect'];
+      card.frames = frames;
+
+      if (card.frames.length === 1 && includesNormal && card.rushTextMode !== 'vanilla') {
+        card.rushTextMode = 'vanilla';
+      } else if ((!includesNormal || card.frames.length > 1) && card.rushTextMode === 'vanilla') {
+        card.rushTextMode = 'regular';
+      }
+
       return card;
     }
   }
