@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable no-empty */
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-restricted-syntax */
@@ -624,8 +625,21 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
     }
 
+    const specialCharsRegex = /([\[\]])/; // Recherche les [ et ]
+    const parts = this.props.card.name.split(specialCharsRegex);
+
+    let processedText = parts.map(part =>
+      specialCharsRegex.test(part) ? (
+        <span className='special-char-span'>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+
     return this.renderAttributes(<HorizontalStack>
-      <p className={pClassName}>{this.props.card.name}</p>
+      <p className={pClassName}>{processedText}</p>
     </HorizontalStack>, hStackClassName);
   }
 

@@ -109,6 +109,11 @@
       display: flex;
       justify-content: start;
 
+      .special-char-span {
+        font-family: fontDesc;
+        font-size: 66px;
+      }
+
       &.skill-name-container {
         width: 690px;
         font-family: Arial, Helvetica, sans-serif;
@@ -461,7 +466,7 @@
 
     .atk-def {
       font-family: fontRushAtkDef;
-      top: 782px;
+      top: 781px;
       min-width: 122px;
       font-size: 38px;
       text-align: end;
@@ -480,7 +485,7 @@
       }
 
       &.atk-max {
-        top: 723.5px;
+        top: 723px;
         left: 521px;
       }
 

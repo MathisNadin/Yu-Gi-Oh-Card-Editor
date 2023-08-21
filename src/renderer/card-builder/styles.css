@@ -91,6 +91,10 @@
   display: flex;
   justify-content: start;
 }
+.card-builder .card-layer.card-name-container .special-char-span {
+  font-family: fontDesc;
+  font-size: 66px;
+}
 .card-builder .card-layer.card-name-container.skill-name-container {
   width: 690px;
   font-family: Arial, Helvetica, sans-serif;
@@ -351,7 +355,7 @@
 }
 .card-builder.rush-card-builder .atk-def {
   font-family: fontRushAtkDef;
-  top: 782px;
+  top: 781px;
   min-width: 122px;
   font-size: 38px;
   text-align: end;
@@ -365,7 +369,7 @@
   min-width: 155px;
 }
 .card-builder.rush-card-builder .atk-def.atk-max {
-  top: 723.5px;
+  top: 723px;
   left: 521px;
 }
 .card-builder.rush-card-builder .atk-def.atk {
