@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-await-in-loop */
@@ -15,7 +16,7 @@
 /* eslint-disable prettier/prettier */
 
 import { extend, integer, uuid } from "mn-toolkit/tools";
-import { ICard, TAttribute, TFrame, TStIcon } from "renderer/card/card-interfaces";
+import { ICard, TAttribute, TFrame, TRushEffectType, TRushTextMode, TStIcon } from "renderer/card/card-interfaces";
 import { load } from 'cheerio';
 
 export interface IYuginewsCardData {
@@ -54,6 +55,7 @@ export interface IYuginewsCardData {
   effect?: string;
   choiceEffects?: string[] | undefined;
   [key: string]: string | string[] | number | boolean | Date | undefined;
+  isRush?: boolean;
 }
 
 export class YuginewsService {
@@ -95,7 +97,11 @@ export class YuginewsService {
 
         if (cardsData?.length) {
           for (let cardData of cardsData) {
-            let inputString = cardData.replace(/[ \t]+/g, ' ').replace(/\n/g, '\\n');
+            let inputString = cardData
+              .replaceAll('[L]', '(L)')
+              .replaceAll('[R]', '(R)')
+              .replaceAll(/[ \t]+/g, ' ')
+              .replaceAll(/\n/g, '\\n');
 
             // eslint-disable-next-line no-useless-escape
             const regex = /"([^"]+)":\s*("[^"]+"|\[[^\]]+\]|\`[^`]+\`)/g;
@@ -109,7 +115,12 @@ export class YuginewsService {
 
               // Si la valeur est un tableau encadré par des crochets, l'analyser en tant que tableau
               if (value.startsWith("[") && value.endsWith("]")) {
-                let cleanValue = value.replaceAll(', ]', ']').replaceAll('"', '\\"').replaceAll('`', '"');
+                let cleanValue = value
+                  .replaceAll(', ]', ']')
+                  .replaceAll('"', '\\"')
+                  .replaceAll('`', '"')
+                  .replaceAll('(L)', '[L]')
+                  .replaceAll('(R)', '[R]');
                 value = JSON.parse(cleanValue) as string[];
                 // value = array.map(t => t.replaceAll('\\\\"', '"'));
               }
@@ -124,9 +135,21 @@ export class YuginewsService {
               if (parsedCardData.id && !/\D/g.test(`${parsedCardData.id}`)) parsedCardData.id = integer(parsedCardData.id);
               parsedCardData.uuid = uuid();
               parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
-              let isRush = !!parsedCardData.effectType || !!parsedCardData.normalText;
-              let picture = parsedCardData.picture ?? `${this.formatPictureString(parsedCardData.nameEN || '')}-${isRush ? 'RD' : ''}${parsedCardData.setId ?? setId}-JP${useFinalPictures ? '' : '-OP'}`;
+
+              parsedCardData.isRush = 'effectType' in parsedCardData || 'normalText' in parsedCardData;
+              let picture = parsedCardData.picture ?? `${this.formatPictureString(parsedCardData.nameEN || '')}-${parsedCardData.isRush ? 'RD' : ''}${parsedCardData.setId ?? setId}-JP${useFinalPictures ? '' : '-OP'}`;
               if (picture) parsedCardData.artworkUrl = `https://yuginews.fr/wp-content/uploads/${parsedCardData.pictureDate}/${picture}.png`;
+
+              if (parsedCardData.isRush) {
+                if (parsedCardData.nameFR) parsedCardData.nameFR = parsedCardData.nameFR.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                if (parsedCardData.nameEN) parsedCardData.nameEN = parsedCardData.nameEN.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                if (parsedCardData.nameJP) parsedCardData.nameJP = parsedCardData.nameJP.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                if (parsedCardData.normalText) parsedCardData.normalText = parsedCardData.normalText.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                if (parsedCardData.condition) parsedCardData.condition = parsedCardData.condition.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                if (parsedCardData.effect) parsedCardData.effect = parsedCardData.effect.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                if (parsedCardData.setId) parsedCardData.setId = `RD/${parsedCardData.setId}`;
+              }
+
               cards.push(parsedCardData);
             }
           }
@@ -158,9 +181,10 @@ export class YuginewsService {
                           const nameENMatch = line.match(/EN\s*:\s*<em>(.*?)<\/em>/);
 
                           if (setIdMatch && idMatch) {
-                            parsedCardData.setId = setIdMatch[1].trim();
-                            parsedCardData.id = integer(idMatch[1].slice(-3).replace(/\D/g, '').trim());
-                            parsedCardData.nameEN = nameENMatch ? nameENMatch[1].trim() : '';
+                            parsedCardData.setId = setIdMatch[1].replaceAll('&nbsp;', ' ').trim();
+                            if (parsedCardData.setId && parsedCardData.setId.startsWith('RD/')) parsedCardData.isRush = true;
+                            parsedCardData.id = integer(idMatch[1].slice(-3).replace(/\D/g, '').replaceAll('&nbsp;', ' ').trim());
+                            parsedCardData.nameEN = nameENMatch ? nameENMatch[1].replaceAll('&nbsp;', ' ').trim() : '';
                         }
                         } else {
                           parsedCardData.nameFR = line
@@ -168,6 +192,7 @@ export class YuginewsService {
                             .replaceAll('</strong>', '')
                             .replaceAll('<b>', '')
                             .replaceAll('</b>', '')
+                            .replaceAll('&nbsp;', ' ')
                             .trim();
                         }
                       } else {
@@ -176,21 +201,22 @@ export class YuginewsService {
                         } else if (line.includes('LEGEND')) {
                           parsedCardData.legend = true;
                         } else if (line.includes('Niveau')) {
-                          parsedCardData.level = line.replaceAll('Niveau ', '').trim();
+                          parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Niveau ', '').trim();
                         } else if (line.includes('Rang')) {
-                          parsedCardData.level = line.replaceAll('Rang ', '').trim();
+                          parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Rang ', '').trim();
                         } else if (line.includes('Link-')) {
-                          parsedCardData.level = line.replaceAll('Link-', '').trim();
+                          parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Link-', '').trim();
                         } else if (line.includes('ATK MAXIMUM')) {
-                          parsedCardData.atkMAX = line.replaceAll(' ATK MAXIMUM', '').trim();
+                          parsedCardData.atkMAX = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK MAXIMUM', '').trim();
                         } else if (line.includes('ATK')) {
-                          parsedCardData.atk = line.replaceAll(' ATK', '').trim();
+                          parsedCardData.atk = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK', '').trim();
                         } else if (line.includes('DEF')) {
-                          parsedCardData.def = line.replaceAll(' DEF', '').trim();
+                          parsedCardData.def = line.replaceAll('&nbsp;', ' ').replaceAll(' DEF', '').trim();
                         } else if (line.includes('Échelle')) {
-                          parsedCardData.scale = line.replaceAll('Échelle Pendule : ', '').trim();
+                          parsedCardData.scale = line.replaceAll('&nbsp;', ' ').replaceAll('Échelle Pendule : ', '').trim();
                         } else if (line.includes('Flèche')) {
                           parsedCardData.linkArrows = line
+                            .replaceAll('&nbsp;', ' ')
                             .replaceAll('Flèche Lien : ', '')
                             .replaceAll('Flèches Lien : ', '')
                             .trim()
@@ -201,7 +227,7 @@ export class YuginewsService {
                         } else if (line.includes('Piège')) {
                           parsedCardData.cardType = '3';
                           parsedCardData.stType = this.getStTypeFromLine(line);
-                        } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line.trim())) {
+                        } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line.replaceAll('&nbsp;', ' ').trim())) {
                           parsedCardData.attribute = this.getAttributeFromLine(line);
                         }
                       }
@@ -213,12 +239,44 @@ export class YuginewsService {
                 let effects: string[] = [];
                 ps.each(i => { effects.push(ps.eq(i).text()); });
                 if (effects.length) {
-                  if (effects[0].startsWith('Effet Pendule :')) {
-                    parsedCardData.pendulumEffects = effects.slice(1);
-                  } else if (effects[0].startsWith('Effet de Monstre :')) {
-                    parsedCardData.effects = effects.slice(1);
+                  if (parsedCardData.isRush) {
+                    for (let effect of effects) {
+                      if (effect.startsWith('[CONDITION]')) {
+                        parsedCardData.condition = effect.replaceAll('&nbsp;', ' ').replace('[CONDITION] ', '');
+                      }
+                      else if (effect.startsWith('[EFFET]')) {
+                        parsedCardData.effectType = '1';
+                        parsedCardData.effect = effect.replaceAll('&nbsp;', ' ').replace('[EFFET] ', '');
+                      }
+                      else if (effect.startsWith('[EFFET CONTINU]')) {
+                        parsedCardData.effectType = '2';
+                        parsedCardData.condition = effect.replaceAll('&nbsp;', ' ').replace('[EFFET CONTINU] ', '');
+                      }
+                      else if (effect.startsWith('[EFFET AU CHOIX]')) {
+                        parsedCardData.effectType = '3';
+                        parsedCardData.choiceEffects = [effect.replaceAll('&nbsp;', ' ').replace('[EFFET AU CHOIX] ', '').replace('● ', '').replace('• ', '')];
+                      }
+                      else if (effect.startsWith('●') || effect.startsWith('•') && parsedCardData.choiceEffects) {
+                        parsedCardData.choiceEffects?.push(effect.replaceAll('&nbsp;', ' ').replace('● ', '').replace('• ', ''));
+                      }
+                      else if (parsedCardData.abilities && parsedCardData.abilities.includes('Normal')) {
+                        parsedCardData.normalText = effect.replaceAll('&nbsp;', ' ');
+                      }
+                      else {
+                        if (!parsedCardData.otherEffectTexts) parsedCardData.otherEffectTexts = [];
+                        parsedCardData.otherEffectTexts?.push(effect.replaceAll('&nbsp;', ' '));
+                      }
+                    }
                   } else {
-                    parsedCardData.effects = effects;
+                    if (effects[0].startsWith('Effet Pendule :')) {
+                      parsedCardData.pendulumEffects = effects.slice(1);
+                    }
+                    else if (effects[0].startsWith('Effet de Monstre :')) {
+                      parsedCardData.effects = effects.slice(1);
+                    }
+                    else {
+                      parsedCardData.effects = effects;
+                    }
                   }
                 }
               }
@@ -317,7 +375,6 @@ export class YuginewsService {
         level: integer(cardData.level || cardData.rank || cardData.linkRating || '0'),
         atk: cardData.atk,
         def: cardData.def,
-        // description: this.getDescription(cardData),
         pendulum: (cardData.abilities as string[])?.includes('Pendule'),
         pendEffect: (cardData.pendulumEffects as string[])?.join(' '),
         scales: {
@@ -329,8 +386,16 @@ export class YuginewsService {
         cardSet: this.getCardSet(cardData),
         hasCopyright: true,
         sticker: 'none',
+        rush: cardData.isRush,
         legend: cardData.legend,
-        atkMax: cardData.atkMAX
+        atkMax: cardData.atkMAX,
+        maximum: !!cardData.atkMAX,
+        rushEffectType: this.getRushEffectType(cardData.effectType as string),
+        rushTextMode: this.getRushTextMode(cardData),
+        rushOtherEffects: cardData.otherEffectTexts?.join('\n'),
+        rushCondition: cardData.condition,
+        rushEffect: cardData.effect,
+        rushChoiceEffects: cardData.choiceEffects,
       } as ICard;
 
       app.$card.correct(card as ICard);
@@ -339,7 +404,10 @@ export class YuginewsService {
       if (importArtworks && cardData.artworkUrl?.length && artworkDirectoryPath?.length) {
         card.artwork.url = await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath) || '';
         if (card.artwork.url) {
-          if (card.pendulum) {
+          if (card.rush) {
+            card.dontCoverRushArt = true;
+            extend(card.artwork, app.$card.getFullRushCardPreset());
+          } else if (card.pendulum) {
             extend(card.artwork, app.$card.getFullPendulumCardPreset());
           } else {
             extend(card.artwork, app.$card.getFullCardPreset());
@@ -351,6 +419,24 @@ export class YuginewsService {
     }
 
     return cards;
+  }
+
+  private getRushTextMode(cardData: IYuginewsCardData): TRushTextMode {
+    if ('choiceEffects' in cardData) {
+      return 'choice';
+    } else if ('normalText' in cardData) {
+      return 'vanilla';
+    } else {
+      return 'regular';
+    }
+  }
+
+  private getRushEffectType(effectType: string): TRushEffectType {
+    switch (effectType) {
+      case '1': return 'effect';
+      case '2': return 'continuous';
+      default: return 'effect';
+    }
   }
 
   private getDescription(card: ICard, cardData: IYuginewsCardData): string {

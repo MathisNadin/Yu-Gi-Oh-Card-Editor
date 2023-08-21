@@ -655,7 +655,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           />
         </TabPane>
 
-        <TabPane id='choice' fill={false} label='Effet à Choix' gutter>
+        <TabPane id='choice' fill={false} label='Effet au Choix' gutter>
           <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-rush-other-effects card-input-container'>
             <p className='editor-label rush-other-effects-label label-with-separator'>Autres</p>
             <textarea

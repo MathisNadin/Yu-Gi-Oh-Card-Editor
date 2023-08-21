@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-else-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable react/no-array-index-key */
@@ -72,7 +73,7 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public tempCurrentCardUpdated(tempCurrentCard: ICard) {
-    this.setState({ tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+    this.setState({ tempCurrentCard, tabIndex: tempCurrentCard ? tempCurrentCard.rush ? 'rush' : 'master' : this.state.tabIndex });
   }
 
   public localCardsUpdated() {

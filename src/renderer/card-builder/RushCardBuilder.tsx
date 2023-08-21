@@ -212,7 +212,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         if (card.rushOtherEffects) {
           description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
         }
-        let choiceEffectsLabel = card.language === 'fr' ? '[Effet à Choix] ' : '[Multi-Choice Effect] ';
+        let choiceEffectsLabel = card.language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ';
         description.push(
           [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
           [<span className='span-text rush-label effect'>{choiceEffectsLabel}</span>],
