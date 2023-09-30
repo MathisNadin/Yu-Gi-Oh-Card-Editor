@@ -1,10 +1,6 @@
 .mn-containable {
   display: flex;
-  position: relative;
-}
-.mn-containable.mn-fill {
-  flex: 1;
-  overflow: hidden;
-}
-
-/*# sourceMappingURL=styles.css.map */
+  position: relative; }
+  .mn-containable.mn-fill {
+    flex: 1;
+    overflow: hidden; }

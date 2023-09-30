@@ -1,20 +1,17 @@
 .mn-container.vertical-stack {
-  flex-direction: column;
-}
-.mn-container.horizontal-stack {
-  flex-direction: row;
-}
-.mn-container.mn-gutter {
-  gap: 16px;
-}
-.mn-container.mn-margin {
-  margin: 16px;
-}
-.mn-container.mn-scroll {
-  overflow-y: auto;
-}
-.mn-container.mn-scrollX {
-  overflow-x: auto;
-}
+  flex-direction: column; }
 
-/*# sourceMappingURL=styles.css.map */
+.mn-container.horizontal-stack {
+  flex-direction: row; }
+
+.mn-container.mn-gutter {
+  gap: 16px; }
+
+.mn-container.mn-margin {
+  margin: 16px; }
+
+.mn-container.mn-scroll {
+  overflow-y: auto; }
+
+.mn-container.mn-scrollX {
+  overflow-x: auto; }
