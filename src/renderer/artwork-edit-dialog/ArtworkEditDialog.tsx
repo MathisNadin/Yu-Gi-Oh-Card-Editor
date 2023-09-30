@@ -1,12 +1,12 @@
-import {  IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { isEmpty } from 'mn-tools';
+import {  IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+import { isEmpty } from 'libraries/mn-tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
 import './styles.css';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
-import { IDialogProps } from 'mn-toolkit/popup/PopupService';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
+import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
 
 export interface IArtworkEditDialogResult {
   url: string;

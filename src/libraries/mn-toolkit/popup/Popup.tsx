@@ -1,6 +1,6 @@
-import { IContainerProps, IContainerState, Container } from 'mn-toolkit/container/Container';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
+import { IContainerProps, IContainerState, Container } from 'libraries/mn-toolkit/container/Container';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { ReactElement } from 'react';
 import cross from '../assets/cross.svg';
 import './styles.css';

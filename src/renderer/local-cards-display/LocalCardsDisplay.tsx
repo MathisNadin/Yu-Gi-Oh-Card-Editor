@@ -1,8 +1,8 @@
 import './styles.css';
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { ICardListener } from 'renderer/card/CardService';
-import { classNames, deepClone, uuid } from 'mn-tools';
+import { classNames, deepClone, uuid } from 'libraries/mn-tools';
 import { MouseEvent } from 'react';
 import check from '../resources/pictures/check.svg';
 import edit from '../resources/pictures/edit.svg';

@@ -1,5 +1,5 @@
 import './styles.css';
-import { Containable, IContainableProps, IContainableState } from "mn-toolkit/containable/Containable";
+import { Containable, IContainableProps, IContainableState } from "libraries/mn-toolkit/containable/Containable";
 
 interface ISpinnerProps extends IContainableProps {
 }

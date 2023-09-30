@@ -1,4 +1,4 @@
-import { isArray, monkeyPatch } from "mn-tools";
+import { isArray, monkeyPatch } from "..";
 
 let prototype: { [name: string]: Function } = {};
 

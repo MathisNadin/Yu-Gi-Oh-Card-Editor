@@ -1,19 +1,19 @@
 import './styles.css';
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLegendType, TNameStyle, TRushEffectType, TRushTextMode, TStIcon, TSticker } from 'renderer/card/card-interfaces';
-import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-tools';
-import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
-import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
-import { EventTargetWithValue } from 'mn-toolkit/container/Container';
+import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/mn-tools';
+import { InplaceEdit } from 'libraries/mn-toolkit/inplaceEdit/InplaceEdit';
+import { Dropdown } from 'libraries/mn-toolkit/dropdown/Dropdown';
+import { EventTargetWithValue } from 'libraries/mn-toolkit/container/Container';
 import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
 import plus from '../resources/pictures/plus.svg';
 import cross from '../resources/pictures/cross.svg';
 import upArrow from '../resources/pictures/up-arrow.svg';
 import downArrow from '../resources/pictures/down-arrow.svg';
-import { TabbedPane } from 'mn-toolkit/tabs/TabbedPane';
-import { TabPane } from 'mn-toolkit/tabs/TabPane';
+import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
+import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
 
 interface IRushCardEditorProps extends IContainableProps {
   card: ICard;

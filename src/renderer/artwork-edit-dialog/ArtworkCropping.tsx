@@ -1,9 +1,9 @@
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { Container } from 'mn-toolkit/container/Container';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import { Container } from 'libraries/mn-toolkit/container/Container';
 import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/src/ReactCrop.scss'
 import './styles.css';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;

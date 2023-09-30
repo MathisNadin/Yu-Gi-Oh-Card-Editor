@@ -1,6 +1,6 @@
 import './styles.css';
-import { IContainerProps, IContainerState, Container } from "mn-toolkit/container/Container";
-import { classNames } from "mn-tools";
+import { IContainerProps, IContainerState, Container } from "libraries/mn-toolkit/container/Container";
+import { classNames } from "libraries/mn-tools";
 import { ITabItem, TabPosition } from "./TabSet";
 
 interface ITabPaneProps extends IContainerProps, ITabItem {

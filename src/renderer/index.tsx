@@ -1,15 +1,15 @@
 import { createRoot } from 'react-dom/client';
-import { Application } from 'mn-toolkit/bootstrap';
+import { Application } from 'libraries/mn-toolkit/bootstrap';
 import App from './App';
-import { ErrorManagerService } from 'mn-toolkit/error-manager';
-import { IndexedDBService } from 'mn-toolkit/indexedDB/IndexedDBService';
+import { ErrorManagerService } from 'libraries/mn-toolkit/error-manager';
+import { IndexedDBService } from 'libraries/mn-toolkit/indexedDB/IndexedDBService';
 import { CardService } from './card/CardService';
-import { ApiService } from 'mn-toolkit/api/ApiService';
+import { ApiService } from 'libraries/mn-toolkit/api/ApiService';
 import { MediaWikiService } from 'renderer/media-wiki/MediaWikiService';
-import { PopupService } from 'mn-toolkit/popup/PopupService';
+import { PopupService } from 'libraries/mn-toolkit/popup/PopupService';
 import { ICardImportDialogResult, CardImportDialog } from './card-import-dialog/CardImportDialog';
 import { YuginewsService } from './yuginews/YuginewsService';
-import { extendNativeObjects } from 'mn-toolkit/patch';
+import { extendNativeObjects } from 'libraries/mn-tools/patch';
 
 extendNativeObjects();
 

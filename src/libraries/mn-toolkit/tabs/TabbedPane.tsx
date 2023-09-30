@@ -1,9 +1,9 @@
 import './styles.css';
-import { IContainerProps, IContainerState, Container } from "mn-toolkit/container/Container";
-import { classNames } from "mn-tools";
+import { IContainerProps, IContainerState, Container } from "libraries/mn-toolkit/container/Container";
+import { classNames } from "libraries/mn-tools";
 import { ITabSetProps, TabPosition, TabSet, ITabItem } from "./TabSet";
 import { ReactNode } from "react";
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 
 type INodeWithProps = ReactNode & {
   props: any;

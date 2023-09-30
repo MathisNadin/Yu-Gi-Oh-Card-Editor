@@ -1,4 +1,4 @@
-import { each, sortDependencies } from "mn-tools";
+import { each, sortDependencies } from "libraries/mn-tools";
 
 export interface IApplicationConfig {
   name: string;

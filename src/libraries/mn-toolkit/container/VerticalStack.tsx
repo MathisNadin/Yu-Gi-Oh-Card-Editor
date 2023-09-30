@@ -1,5 +1,5 @@
 import './styles.css';
-import { IContainerProps, IContainerState, Container } from 'mn-toolkit/container/Container';
+import { IContainerProps, IContainerState, Container } from 'libraries/mn-toolkit/container/Container';
 
 interface IVerticalStackProps extends IContainerProps {}
 interface IVerticalStackState extends IContainerState {}

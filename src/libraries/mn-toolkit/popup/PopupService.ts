@@ -1,4 +1,4 @@
-import { IContainerProps } from "mn-toolkit/container/Container";
+import { IContainerProps } from "libraries/mn-toolkit/container/Container";
 import { IPopupProps, Popup } from "./Popup";
 import { createRoot } from "react-dom/client";
 

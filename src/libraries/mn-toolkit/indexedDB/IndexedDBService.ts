@@ -1,4 +1,4 @@
-import { Observable } from "mn-toolkit/observable/Observable";
+import { Observable } from "libraries/mn-toolkit/observable/Observable";
 
 export interface IIndexedDBListener {
   allDeleted: () => void;

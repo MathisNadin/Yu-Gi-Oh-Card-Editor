@@ -1,4 +1,4 @@
-import { extend, integer, uuid } from "mn-tools";
+import { extend, integer, uuid } from "libraries/mn-tools";
 import { ICard, TAttribute, TFrame, TRushEffectType, TRushTextMode, TStIcon } from "renderer/card/card-interfaces";
 import { load } from 'cheerio';
 

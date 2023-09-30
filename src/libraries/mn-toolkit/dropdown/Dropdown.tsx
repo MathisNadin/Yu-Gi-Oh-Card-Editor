@@ -1,5 +1,5 @@
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import './styles.css';
 
 interface DropdownProps<T extends string> extends IContainableProps {

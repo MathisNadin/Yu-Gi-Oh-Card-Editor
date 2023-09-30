@@ -1,11 +1,11 @@
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { Crop } from 'react-image-crop';
-import { EventTargetWithValue } from 'mn-toolkit/container/Container';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
+import { EventTargetWithValue } from 'libraries/mn-toolkit/container/Container';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import './styles.css';
-import { classNames, getCroppedArtworkBase64 } from 'mn-tools';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { classNames, getCroppedArtworkBase64 } from 'libraries/mn-tools';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 
 interface IArtworkEditingProps extends IContainableProps {
   artworkURL: string;

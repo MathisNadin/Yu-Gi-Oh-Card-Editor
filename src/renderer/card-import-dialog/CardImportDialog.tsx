@@ -1,15 +1,15 @@
 import './styles.css';
-import { IContainableState, Containable } from 'mn-toolkit/containable/Containable';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
-import { IDialogProps } from 'mn-toolkit/popup/PopupService';
-import { EventTargetWithValue } from 'mn-toolkit/container/Container';
-import { classNames } from 'mn-tools';
+import { IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
+import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
+import { EventTargetWithValue } from 'libraries/mn-toolkit/container/Container';
+import { classNames } from 'libraries/mn-tools';
 import { ICard } from 'renderer/card/card-interfaces';
 import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { TabbedPane } from 'mn-toolkit/tabs/TabbedPane';
-import { TabPane } from 'mn-toolkit/tabs/TabPane';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
+import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
 import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
 
 type TTabIndex = 'yugipedia' | 'yuginews';

@@ -1,12 +1,12 @@
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import './styles.css';
-import { Container } from 'mn-toolkit/container/Container';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
+import { Container } from 'libraries/mn-toolkit/container/Container';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
-import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-tools';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
+import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'libraries/mn-tools';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
 
 interface IRushCardBuilderProps extends IContainableProps {

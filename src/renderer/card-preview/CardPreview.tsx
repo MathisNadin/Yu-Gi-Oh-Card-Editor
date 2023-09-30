@@ -1,11 +1,11 @@
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import './styles.css';
-import { Container } from 'mn-toolkit/container/Container';
+import { Container } from 'libraries/mn-toolkit/container/Container';
 import { ICard } from 'renderer/card/card-interfaces';
 import { CardBuilder } from 'renderer/card-builder/CardBuilder';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { ICardListener } from 'renderer/card/CardService';
-import { toPng } from 'mn-html-to-image';
+import { toPng } from 'libraries/mn-html-to-image';
 
 interface ICardPreviewProps extends IContainableProps {
   card: ICard;

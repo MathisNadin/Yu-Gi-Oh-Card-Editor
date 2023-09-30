@@ -1,7 +1,7 @@
-import { toPng } from "mn-html-to-image";
-import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
-import { Observable } from "mn-toolkit/observable/Observable";
-import { deepClone, uuid } from "mn-tools";
+import { toPng } from "libraries/mn-html-to-image";
+import { IIndexedDBListener } from "libraries/mn-toolkit/indexedDB/IndexedDBService";
+import { Observable } from "libraries/mn-toolkit/observable/Observable";
+import { deepClone, uuid } from "libraries/mn-tools";
 import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
 import { Crop } from "react-image-crop";
 

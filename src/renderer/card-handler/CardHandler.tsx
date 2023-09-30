@@ -1,16 +1,16 @@
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import './styles.css';
-import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { LocalCardsDisplay } from 'renderer/local-cards-display/LocalCardsDisplay';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
 import { CardPreview } from 'renderer/card-preview/CardPreview';
 import { ICardListener } from '../card/CardService';
-import { Spinner } from 'mn-toolkit/spinner/Spinner';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
 import { RushCardPreview } from 'renderer/card-preview/RushCardPreview';
 import { RushCardEditor } from 'renderer/card-editor/RushCardEditor';
-import { TabbedPane } from 'mn-toolkit/tabs/TabbedPane';
-import { TabPane } from 'mn-toolkit/tabs/TabPane';
+import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
+import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
 
 type TTabIndex = 'master' | 'rush';
 
