@@ -1,6 +1,6 @@
 import {  IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
-import { isEmpty } from 'mn-toolkit/tools';
+import { isEmpty } from 'mn-tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';

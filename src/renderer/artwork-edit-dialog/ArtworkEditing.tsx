@@ -4,7 +4,7 @@ import { EventTargetWithValue } from 'mn-toolkit/container/Container';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import './styles.css';
-import { classNames, getCroppedArtworkBase64 } from 'mn-toolkit/tools';
+import { classNames, getCroppedArtworkBase64 } from 'mn-tools';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 
 interface IArtworkEditingProps extends IContainableProps {

@@ -2,7 +2,6 @@ import { Crop } from "react-image-crop";
 import { isEmpty, isBoolean, isString, isArray, isObject } from "./is";
 import { each } from "./objects";
 
-
 export async function getCroppedArtworkBase64(src: string, crop: Crop) {
   if (!src?.length) return '';
   const image = new Image();

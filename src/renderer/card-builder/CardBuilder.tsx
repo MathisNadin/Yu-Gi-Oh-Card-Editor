@@ -5,7 +5,7 @@ import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
-import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-toolkit/tools';
+import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-tools';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
 

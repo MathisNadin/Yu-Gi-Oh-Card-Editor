@@ -1,8 +1,6 @@
-import { isArray, monkeyPatch } from "mn-toolkit/tools";
-
+import { isArray, monkeyPatch } from "mn-tools";
 
 let prototype: { [name: string]: Function } = {};
-
 
 prototype.toCamelCase = function (this: string) {
   return this.replace(/([^a-z][a-z])/g, ($1) => {

@@ -4,7 +4,7 @@ import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
 import { IDialogProps } from 'mn-toolkit/popup/PopupService';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';
-import { classNames } from 'mn-toolkit/tools';
+import { classNames } from 'mn-tools';
 import { ICard } from 'renderer/card/card-interfaces';
 import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';

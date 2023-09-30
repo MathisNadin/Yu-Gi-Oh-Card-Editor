@@ -1,4 +1,4 @@
-import { extend, integer } from "mn-toolkit/tools";
+import { extend, integer } from "mn-tools";
 import { ICard } from "renderer/card/card-interfaces";
 
 export interface IReplaceMatrix {

@@ -1,4 +1,4 @@
-import { monkeyPatch, monkeyPatchGet } from "mn-toolkit/tools";
+import { monkeyPatch, monkeyPatchGet } from "mn-tools";
 
 let firstDayOfWeek = 1;
 

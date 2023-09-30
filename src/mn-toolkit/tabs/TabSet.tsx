@@ -1,6 +1,6 @@
 import './styles.css';
 import { Containable, IContainableProps } from "mn-toolkit/containable/Containable";
-import { classNames } from "mn-toolkit/tools";
+import { classNames } from "mn-tools";
 import { ReactNode } from "react";
 
 export type TabPosition = 'top' | 'bottom' | 'left' | 'right';

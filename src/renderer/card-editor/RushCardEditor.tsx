@@ -3,7 +3,7 @@ import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/co
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLegendType, TNameStyle, TRushEffectType, TRushTextMode, TStIcon, TSticker } from 'renderer/card/card-interfaces';
-import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-toolkit/tools';
+import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-tools';
 import { InplaceEdit } from 'mn-toolkit/inplaceEdit/InplaceEdit';
 import { Dropdown } from 'mn-toolkit/dropdown/Dropdown';
 import { EventTargetWithValue } from 'mn-toolkit/container/Container';

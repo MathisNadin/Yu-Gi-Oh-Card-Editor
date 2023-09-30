@@ -1,6 +1,6 @@
 import './styles.css';
 import { Component, MouseEvent, PropsWithChildren, ReactElement, cloneElement } from 'react';
-import { classNames, isDefined, isNumber } from 'mn-toolkit/tools';
+import { classNames, isDefined, isNumber } from 'mn-tools';
 
 export type FloatPosition = 'none' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'middle-left' | 'middle-right';
 

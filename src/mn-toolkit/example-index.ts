@@ -1,8 +1,4 @@
 /*
-import { extendNativeObjects } from "./patch";
-
-extendNativeObjects();
-
 (window as any).app = new Application();
 
 app.service('$errorManager', ErrorManagerService);

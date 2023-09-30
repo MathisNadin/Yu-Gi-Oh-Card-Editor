@@ -1,6 +1,6 @@
 import './styles.css';
 import { IContainerProps, IContainerState, Container } from "mn-toolkit/container/Container";
-import { classNames } from "mn-toolkit/tools";
+import { classNames } from "mn-tools";
 import { ITabSetProps, TabPosition, TabSet, ITabItem } from "./TabSet";
 import { ReactNode } from "react";
 import { Spinner } from 'mn-toolkit/spinner/Spinner';
