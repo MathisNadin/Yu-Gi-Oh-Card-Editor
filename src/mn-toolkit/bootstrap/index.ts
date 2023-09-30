@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
 import { Application } from './Application';
 
 /* export interface IApplicationListener {

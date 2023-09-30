@@ -1,20 +1,3 @@
-/* eslint-disable no-else-return */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-lonely-if */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-undef */
-/* eslint-disable no-empty */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-const */
-/* eslint-disable no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable prettier/prettier */
-
 import { extend, integer, uuid } from "mn-toolkit/tools";
 import { ICard, TAttribute, TFrame, TRushEffectType, TRushTextMode, TStIcon } from "renderer/card/card-interfaces";
 import { load } from 'cheerio';
@@ -195,41 +178,39 @@ export class YuginewsService {
                             .replaceAll('&nbsp;', ' ')
                             .trim();
                         }
-                      } else {
-                        if (line.includes(' / ')) {
-                          parsedCardData.abilities = line.split(' / ');
-                        } else if (line.includes('LEGEND')) {
-                          parsedCardData.legend = true;
-                        } else if (line.includes('Niveau')) {
-                          parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Niveau ', '').trim();
-                        } else if (line.includes('Rang')) {
-                          parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Rang ', '').trim();
-                        } else if (line.includes('Link-')) {
-                          parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Link-', '').trim();
-                        } else if (line.includes('ATK MAXIMUM')) {
-                          parsedCardData.atkMAX = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK MAXIMUM', '').trim();
-                        } else if (line.includes('ATK')) {
-                          parsedCardData.atk = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK', '').trim();
-                        } else if (line.includes('DEF')) {
-                          parsedCardData.def = line.replaceAll('&nbsp;', ' ').replaceAll(' DEF', '').trim();
-                        } else if (line.includes('Échelle')) {
-                          parsedCardData.scale = line.replaceAll('&nbsp;', ' ').replaceAll('Échelle Pendule : ', '').trim();
-                        } else if (line.includes('Flèche')) {
-                          parsedCardData.linkArrows = line
-                            .replaceAll('&nbsp;', ' ')
-                            .replaceAll('Flèche Lien : ', '')
-                            .replaceAll('Flèches Lien : ', '')
-                            .trim()
-                            .split(' / ');
-                        } else if (line.includes('Magie')) {
-                          parsedCardData.cardType = '2';
-                          parsedCardData.stType = this.getStTypeFromLine(line);
-                        } else if (line.includes('Piège')) {
-                          parsedCardData.cardType = '3';
-                          parsedCardData.stType = this.getStTypeFromLine(line);
-                        } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line.replaceAll('&nbsp;', ' ').trim())) {
-                          parsedCardData.attribute = this.getAttributeFromLine(line);
-                        }
+                      } else if (line.includes(' / ')) {
+                        parsedCardData.abilities = line.split(' / ');
+                      } else if (line.includes('LEGEND')) {
+                        parsedCardData.legend = true;
+                      } else if (line.includes('Niveau')) {
+                        parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Niveau ', '').trim();
+                      } else if (line.includes('Rang')) {
+                        parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Rang ', '').trim();
+                      } else if (line.includes('Link-')) {
+                        parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Link-', '').trim();
+                      } else if (line.includes('ATK MAXIMUM')) {
+                        parsedCardData.atkMAX = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK MAXIMUM', '').trim();
+                      } else if (line.includes('ATK')) {
+                        parsedCardData.atk = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK', '').trim();
+                      } else if (line.includes('DEF')) {
+                        parsedCardData.def = line.replaceAll('&nbsp;', ' ').replaceAll(' DEF', '').trim();
+                      } else if (line.includes('Échelle')) {
+                        parsedCardData.scale = line.replaceAll('&nbsp;', ' ').replaceAll('Échelle Pendule : ', '').trim();
+                      } else if (line.includes('Flèche')) {
+                        parsedCardData.linkArrows = line
+                          .replaceAll('&nbsp;', ' ')
+                          .replaceAll('Flèche Lien : ', '')
+                          .replaceAll('Flèches Lien : ', '')
+                          .trim()
+                          .split(' / ');
+                      } else if (line.includes('Magie')) {
+                        parsedCardData.cardType = '2';
+                        parsedCardData.stType = this.getStTypeFromLine(line);
+                      } else if (line.includes('Piège')) {
+                        parsedCardData.cardType = '3';
+                        parsedCardData.stType = this.getStTypeFromLine(line);
+                      } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line.replaceAll('&nbsp;', ' ').trim())) {
+                        parsedCardData.attribute = this.getAttributeFromLine(line);
                       }
                     });
                   }
@@ -267,16 +248,14 @@ export class YuginewsService {
                         parsedCardData.otherEffectTexts?.push(effect.replaceAll('&nbsp;', ' '));
                       }
                     }
-                  } else {
-                    if (effects[0].startsWith('Effet Pendule :')) {
-                      parsedCardData.pendulumEffects = effects.slice(1);
-                    }
-                    else if (effects[0].startsWith('Effet de Monstre :')) {
-                      parsedCardData.effects = effects.slice(1);
-                    }
-                    else {
-                      parsedCardData.effects = effects;
-                    }
+                  } else if (effects[0].startsWith('Effet Pendule :')) {
+                    parsedCardData.pendulumEffects = effects.slice(1);
+                  }
+                  else if (effects[0].startsWith('Effet de Monstre :')) {
+                    parsedCardData.effects = effects.slice(1);
+                  }
+                  else {
+                    parsedCardData.effects = effects;
                   }
                 }
               }

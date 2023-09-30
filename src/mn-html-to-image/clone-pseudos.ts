@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { uuid, toArray } from './util';
 
 type Pseudo = ':before' | ':after';

@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 import type { Options } from './types';
 
 export function resolveUrl(url: string, baseUrl: string | null): string {

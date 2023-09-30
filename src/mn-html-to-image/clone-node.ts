@@ -1,9 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable promise/always-return */
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-plusplus */
-/* eslint-disable import/prefer-default-export */
 import type { Options, ICloneCSSStyleOptions } from './types';
 import { clonePseudoElements } from './clone-pseudos';
 import { createImage, toArray, isInstanceOfElement } from './util';
@@ -106,6 +100,7 @@ async function cloneChildren<T extends HTMLElement>(
       deferred
         .then(() => cloneNode(child, options, cloneCSSStyleOptions))
         .then((clonedChild: HTMLElement | null) => {
+          // eslint-disable-next-line promise/always-return
           if (clonedChild) {
             clonedNode.appendChild(clonedChild);
           }

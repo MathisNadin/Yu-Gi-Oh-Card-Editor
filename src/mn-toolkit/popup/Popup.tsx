@@ -1,15 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-undef */
-/* eslint-disable react/self-closing-comp */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-return-assign */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable prettier/prettier */
-/* eslint-disable import/prefer-default-export */
 import { IContainerProps, IContainerState, Container } from 'mn-toolkit/container/Container';
 import { HorizontalStack } from 'mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';

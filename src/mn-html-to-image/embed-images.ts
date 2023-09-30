@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable import/prefer-default-export */
 import { Options } from './types';
 import { embedResources } from './embed-resources';
 import { toArray, isInstanceOfElement } from './util';

@@ -1,7 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-unused-vars */
-
 import { ErrorManagerService } from './ErrorManagerService';
 
 export * from './ErrorManagerService';

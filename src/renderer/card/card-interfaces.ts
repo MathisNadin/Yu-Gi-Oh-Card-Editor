@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
-
 export type TCardLanguage = 'fr' | 'en';
 
 export type TFrame =

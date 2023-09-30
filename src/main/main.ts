@@ -1,10 +1,3 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/order */
-/* eslint-disable prefer-const */
-/* eslint-disable consistent-return */
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-param-reassign */
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 /**
@@ -97,6 +90,7 @@ ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64:
   if (!canceled && filePath) {
     const finalFilePath = filePath.endsWith('.png') ? filePath : `${filePath}.png`;
     const buffer = Buffer.from(base64, 'base64');
+    // eslint-disable-next-line consistent-return
     writeFile(finalFilePath, buffer, (err) => {
       if (!err) return finalFilePath;
     });
@@ -120,6 +114,7 @@ ipcMain.handle('write-json-file', async (_event, defaultFileName: string, jsonDa
 
   if (!canceled && filePath) {
     const finalFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
+    // eslint-disable-next-line consistent-return
     writeFile(finalFilePath, jsonData, (err) => {
       if (!err) return finalFilePath;
     });

@@ -1,18 +1,3 @@
-/* eslint-disable no-return-await */
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-plusplus */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-undef */
-/* eslint-disable no-empty */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-const */
-/* eslint-disable no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable prettier/prettier */
-
 import { extend, integer } from "mn-toolkit/tools";
 import { ICard } from "renderer/card/card-interfaces";
 

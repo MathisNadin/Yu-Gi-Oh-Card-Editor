@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Options } from './types';
 
 function getContentFromDataUrl(dataURL: string) {

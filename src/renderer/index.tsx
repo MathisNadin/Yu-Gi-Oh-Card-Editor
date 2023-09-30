@@ -1,8 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-/* eslint-disable import/order */
-/* eslint-disable prettier/prettier */
-
 import { createRoot } from 'react-dom/client';
 import { Application } from 'mn-toolkit/bootstrap';
 import App from './App';
@@ -14,6 +9,9 @@ import { MediaWikiService } from 'renderer/media-wiki/MediaWikiService';
 import { PopupService } from 'mn-toolkit/popup/PopupService';
 import { ICardImportDialogResult, CardImportDialog } from './card-import-dialog/CardImportDialog';
 import { YuginewsService } from './yuginews/YuginewsService';
+import { extendNativeObjects } from 'mn-toolkit/patch';
+
+extendNativeObjects();
 
 interface IAppSettings {
   dbName: string;

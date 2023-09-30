@@ -1,22 +1,3 @@
-/* eslint-disable import/order */
-/* eslint-disable no-return-await */
-/* eslint-disable consistent-return */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-loop-func */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable prefer-const */
-/* eslint-disable no-else-return */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable no-undef */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
-
 import { toPng } from "mn-html-to-image";
 import { IIndexedDBListener } from "mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "mn-toolkit/observable/Observable";
@@ -449,9 +430,9 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
-  public async importArtwork(url: string, path?: string) {
+  public async importArtwork(url: string, path?: string): Promise<string> {
     path = path || await window.electron.ipcRenderer.getDirectoryPath();
-    if (!path) return;
+    if (!path) return '';
     return await window.electron.ipcRenderer.download(path, url);
   }
 

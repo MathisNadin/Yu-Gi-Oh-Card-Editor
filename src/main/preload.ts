@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable prettier/prettier */
-/* eslint no-unused-vars: off */
 import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels =

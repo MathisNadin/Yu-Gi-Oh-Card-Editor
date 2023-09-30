@@ -1,9 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable prettier/prettier */
-
 import { each, sortDependencies } from "mn-toolkit/tools";
 
 export interface IApplicationConfig {

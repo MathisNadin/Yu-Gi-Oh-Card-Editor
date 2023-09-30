@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 export interface ICloneCSSStyleOptions {
   shrinkFontSize: boolean;
   shrinkValue: number;

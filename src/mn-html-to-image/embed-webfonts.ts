@@ -1,6 +1,4 @@
-/* eslint-disable no-nested-ternary */
 /* eslint-disable no-console */
-/* eslint-disable prefer-destructuring */
 import type { Options } from './types';
 import { toArray } from './util';
 import { fetchAsDataURL } from './dataurl';

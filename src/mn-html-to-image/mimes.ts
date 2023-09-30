@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 const WOFF = 'application/font-woff';
 const JPEG = 'image/jpeg';
 const mimes: { [key: string]: string } = {

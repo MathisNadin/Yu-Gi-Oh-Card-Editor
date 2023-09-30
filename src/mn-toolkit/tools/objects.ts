@@ -1,15 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-void */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-prototype-builtins */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-shadow */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable prefer-const */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable prettier/prettier */
 import { isArray, isObject } from "./is";
 
 const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;

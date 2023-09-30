@@ -1,8 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable prettier/prettier */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable import/prefer-default-export */
-
 import { Observable } from "mn-toolkit/observable/Observable";
 
 export interface IIndexedDBListener {

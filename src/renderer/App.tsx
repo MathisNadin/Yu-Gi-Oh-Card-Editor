@@ -1,5 +1,3 @@
-/* eslint-disable import/order */
-/* eslint-disable prettier/prettier */
 import './App.css';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { CardHandler } from './card-handler/CardHandler';

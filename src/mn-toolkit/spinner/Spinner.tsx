@@ -1,6 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable prettier/prettier */
-
 import './styles.css';
 import { Containable, IContainableProps, IContainableState } from "mn-toolkit/containable/Containable";
 

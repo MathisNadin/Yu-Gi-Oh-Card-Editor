@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { ICloneCSSStyleOptions, Options } from './types';
 import { cloneNode } from './clone-node';
 import { embedImages } from './embed-images';

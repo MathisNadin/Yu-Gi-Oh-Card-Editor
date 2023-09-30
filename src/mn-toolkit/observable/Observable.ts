@@ -1,7 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable import/prefer-default-export */
-
 export class Observable<T> {
   private listeners: Partial<T>[] = [];
 

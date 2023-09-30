@@ -1,21 +1,3 @@
-/* eslint-disable func-names */
-/* eslint-disable no-shadow */
-/* eslint-disable operator-assignment */
-/* eslint-disable no-extra-boolean-cast */
-/* eslint-disable no-continue */
-/* eslint-disable no-lonely-if */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-else-return */
-/* eslint-disable no-param-reassign */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-bitwise */
-/* eslint-disable prefer-const */
-/* eslint-disable prettier/prettier */
-
 import { Crop } from "react-image-crop";
 import { isEmpty, isBoolean, isString, isArray, isObject } from "./is";
 import { each } from "./objects";
@@ -569,11 +551,9 @@ export function imageResizer(options: ImageResizerOptions, cb: (error: Error | u
         canvas.width = options.width;
         canvas.height = image.naturalHeight * options.width / image.naturalWidth;
       }
-    } else {
-      if (options.height && image.naturalHeight > options.height) {
-        canvas.width = image.naturalWidth * options.height / image.naturalHeight;
-        canvas.height = options.height;
-      }
+    } else if (options.height && image.naturalHeight > options.height) {
+      canvas.width = image.naturalWidth * options.height / image.naturalHeight;
+      canvas.height = options.height;
     }
     let context = canvas.getContext('2d');
     if (!context) throw new Error('Unable to create 2D Context');

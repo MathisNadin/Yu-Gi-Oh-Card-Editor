@@ -1,10 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable import/order */
-/* eslint-disable prefer-const */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable prettier/prettier */
-/* eslint-disable import/prefer-default-export */
-
 import { IContainerProps } from "mn-toolkit/container/Container";
 import { IPopupProps, Popup } from "./Popup";
 import { createRoot } from "react-dom/client";

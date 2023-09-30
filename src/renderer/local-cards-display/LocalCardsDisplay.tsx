@@ -1,26 +1,3 @@
-/* eslint-disable no-else-return */
-/* eslint-disable import/order */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable no-param-reassign */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable prefer-const */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-undef */
-/* eslint-disable react/self-closing-comp */
-/* eslint-disable react/default-props-match-prop-types */
-/* eslint-disable react/sort-comp */
-/* eslint-disable react/static-property-placement */
-/* eslint-disable no-use-before-define */
-/* eslint-disable react/require-default-props */
-/* eslint-disable no-useless-constructor */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/prefer-stateless-function */
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
 import './styles.css';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import { VerticalStack } from 'mn-toolkit/container/VerticalStack';

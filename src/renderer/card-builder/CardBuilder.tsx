@@ -1,33 +1,3 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-undef */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-const */
-/* eslint-disable no-return-assign */
-/* eslint-disable react/jsx-curly-brace-presence */
-/* eslint-disable no-else-return */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable lines-between-class-members */
-/* eslint-disable global-require */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable react/self-closing-comp */
-/* eslint-disable react/default-props-match-prop-types */
-/* eslint-disable react/sort-comp */
-/* eslint-disable react/static-property-placement */
-/* eslint-disable no-use-before-define */
-/* eslint-disable react/require-default-props */
-/* eslint-disable no-useless-constructor */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/prefer-stateless-function */
-/* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit/containable/Containable';
 import './styles.css';
 import { Container } from 'mn-toolkit/container/Container';
@@ -565,13 +535,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')
         && <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
-          <p className={`stat-text atk-text black-text`}>{this.props.card.atk}</p>
+          <p className="stat-text atk-text black-text">{this.props.card.atk}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')
         && <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
-          <p className={`stat-text def-text black-text`}>{this.props.card.def}</p>
+          <p className="stat-text def-text black-text">{this.props.card.def}</p>
         </Container>
       }
 
@@ -644,8 +614,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
 
     return this.renderAttributes(<HorizontalStack>
-      <p className={`abilities-text black-text abilities-bracket left-bracket`}>{'['}</p>
-      <p className={`abilities-text black-text abilities`}>
+      <p className="abilities-text black-text abilities-bracket left-bracket">[</p>
+      <p className="abilities-text black-text abilities">
         {upperCaseIndexes.map((index, i) => (
           <Fragment key={`uppercase-index-${i}`}>
             <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
@@ -657,7 +627,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           </Fragment>
         ))}
       </p>
-      <p className={`abilities-text black-text abilities-bracket right-bracket`}>{']'}</p>
+      <p className="abilities-text black-text abilities-bracket right-bracket">]</p>
     </HorizontalStack>, containerClass);
   }
 
