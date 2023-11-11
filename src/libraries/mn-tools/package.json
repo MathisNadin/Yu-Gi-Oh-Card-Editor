@@ -1,0 +1,14 @@
+{
+  "name": "mn-toolkit",
+  "displayName": "MN Toolkit",
+  "version": "1.0.1",
+  "description": "Bibliothèque Typescript pour des fonctions utilitaires",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisNadin/mn-tools.git"
+  },
+  "author": {
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
+  }
+}

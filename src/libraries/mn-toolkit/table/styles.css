@@ -1,0 +1,323 @@
+.mn-bg-1 {
+  background-color: #ffffff;
+}
+.mn-dark-theme .mn-bg-1 {
+  background-color: #181818;
+}
+
+.mn-bg-2 {
+  background-color: #F6F8F9;
+}
+.mn-dark-theme .mn-bg-2 {
+  background-color: #414141;
+}
+
+.mn-bg-3 {
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .mn-bg-3 {
+  background-color: #555555;
+}
+
+.mn-bg-4 {
+  background-color: #E5E9EB;
+}
+.mn-dark-theme .mn-bg-4 {
+  background-color: #9d9d9d;
+}
+
+.mn-bg-primary {
+  background-color: #886aea;
+}
+
+.mn-bg-secondary {
+  background-color: #11c1f3;
+}
+
+.mn-bg-positive {
+  background-color: #387ef5;
+}
+
+.mn-bg-calm {
+  background-color: #11c1f3;
+}
+
+.mn-bg-balanced {
+  background-color: #33cd5f;
+}
+
+.mn-bg-energized {
+  background-color: #ffc900;
+}
+
+.mn-bg-assertive {
+  background-color: #ef473a;
+}
+
+.mn-bg-royal {
+  background-color: #886aea;
+}
+
+.mn-zindex-content {
+  z-index: 0;
+}
+
+.mn-zindex-view {
+  z-index: 1;
+}
+
+.mn-zindex-notifications {
+  z-index: 2;
+}
+
+.mn-zindex-view-below {
+  z-index: 2;
+}
+
+.mn-zindex-view-above {
+  z-index: 3;
+}
+
+.mn-zindex-drawer {
+  z-index: 7;
+}
+
+.mn-zindex-overlay {
+  z-index: 6;
+}
+
+.mn-zindex-popup {
+  z-index: 7;
+}
+
+.mn-zindex-popover {
+  z-index: 9;
+}
+
+.mn-zindex-toaster {
+  z-index: 7;
+}
+
+.mn-zindex-overall {
+  z-index: 100;
+}
+
+.mn-table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.mn-table .mn-table-head .mn-table-row {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  will-change: background-color;
+  transition: background-color 0.2s ease;
+  background-color: #F6F8F9;
+}
+.mn-dark-theme .mn-table .mn-table-head .mn-table-row {
+  background-color: #414141;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell {
+  color: #474747;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 8px;
+  flex: 1;
+  display: flex;
+  font-size: 14px;
+  position: relative;
+  justify-content: left;
+  margin-top: 0;
+}
+.mn-dark-theme .mn-table .mn-table-head .mn-table-row .mn-table-cell {
+  color: rgba(0, 0, 0, 0.7);
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.no-padding .mn-table-cell-wrapper {
+  left: 0;
+  right: 0;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.outside-cell {
+  background-color: transparent;
+  border: none;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.mn-align-left .mn-table-cell-wrapper {
+  justify-content: flex-start;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.mn-align-right .mn-table-cell-wrapper {
+  justify-content: flex-end;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.mn-align-center .mn-table-cell-wrapper {
+  justify-content: center;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.mn-vertical-align-top .mn-table-cell-wrapper {
+  align-items: flex-start;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.mn-vertical-align-center .mn-table-cell-wrapper {
+  align-items: center;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell.mn-vertical-align-bottom .mn-table-cell-wrapper {
+  align-items: flex-end;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell > .mn-table-cell-wrapper {
+  left: 8px;
+  right: 8px;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  overflow: hidden;
+  line-height: 130%;
+  display: flex;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell .mn-table-header-label {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+}
+.mn-table .mn-table-head .mn-table-row .mn-table-cell .mn-table-header-label .mn-table-header-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 130%;
+  flex: 1;
+}
+.mn-table .mn-table-body {
+  flex-shrink: 1;
+  flex-grow: 1;
+  flex-basis: auto;
+  overflow: auto;
+}
+.mn-table .mn-table-body .mn-table-row {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  will-change: background-color;
+  transition: background-color 0.2s ease;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-toggle-sub-rows {
+  align-self: center;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell {
+  will-change: background-color;
+  transition: background-color 0.2s ease;
+  user-select: text;
+  overflow: hidden;
+  min-height: 32px;
+  padding: 0 8px;
+  flex: 1;
+  display: flex;
+  font-size: 14px;
+  position: relative;
+  color: #474747;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.no-padding .mn-table-cell-wrapper {
+  left: 0;
+  right: 0;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.outside-cell {
+  background-color: transparent;
+  border: none;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.mn-align-left .mn-table-cell-wrapper {
+  justify-content: flex-start;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.mn-align-right .mn-table-cell-wrapper {
+  justify-content: flex-end;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.mn-align-center .mn-table-cell-wrapper {
+  justify-content: center;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.mn-vertical-align-top .mn-table-cell-wrapper {
+  align-items: flex-start;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.mn-vertical-align-center .mn-table-cell-wrapper {
+  align-items: center;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell.mn-vertical-align-bottom .mn-table-cell-wrapper {
+  align-items: flex-end;
+}
+.mn-table .mn-table-body .mn-table-row .mn-table-cell > .mn-table-cell-wrapper {
+  left: 8px;
+  right: 8px;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  overflow: hidden;
+  line-height: 130%;
+  display: flex;
+}
+.mn-table .mn-table-body .mn-table-row.mn-table-row-selected {
+  background-color: pink;
+  border-color: #8a8a8a;
+}
+.mn-dark-theme .mn-table .mn-table-body .mn-table-row.mn-table-row-selected {
+  border-color: #b8b8b8;
+}
+.mn-table .mn-table-body .mn-table-row:not(.mn-table-row-selected):hover {
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .mn-table .mn-table-body .mn-table-row:not(.mn-table-row-selected):hover {
+  background-color: #555555;
+}
+.mn-table .mn-table-footer {
+  padding: 16px;
+  flex-direction: row;
+  align-items: center;
+  height: auto;
+}
+.mn-table .mn-table-footer > .mn-pager {
+  height: 40px;
+}
+.mn-table.mn-table-scroll .mn-table-body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.mn-table .mn-table-body-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.mn-table.mn-containable-item-fill-scroll {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+.mn-table.mn-containable-item-fill-scroll .mn-table-head {
+  position: relative;
+  z-index: 2;
+}
+.mn-table.mn-containable-item-fill-scroll .mn-table-head .mn-table-row {
+  background-color: #ffffff;
+}
+.mn-dark-theme .mn-table.mn-containable-item-fill-scroll .mn-table-head .mn-table-row {
+  background-color: #181818;
+}
+.mn-table.mn-containable-item-fill-scroll .mn-table-body {
+  height: calc(100% - 56px);
+}
+.mn-table.mn-containable-item-fill-scroll .mn-table-cell-0 {
+  position: relative;
+  background-color: #ffffff;
+  z-index: 1;
+}
+.mn-dark-theme .mn-table.mn-containable-item-fill-scroll .mn-table-cell-0 {
+  background-color: #181818;
+}
+.mn-table.mn-containable-item-fill-scroll .mn-table-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  background-color: #ffffff;
+}
+.mn-dark-theme .mn-table.mn-containable-item-fill-scroll .mn-table-footer {
+  background-color: #181818;
+}
+
+/*# sourceMappingURL=styles.css.map */

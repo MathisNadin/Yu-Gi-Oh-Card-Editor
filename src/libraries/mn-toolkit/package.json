@@ -1,0 +1,14 @@
+{
+  "name": "mn-toolkit",
+  "displayName": "MN Toolkit",
+  "version": "1.0.1",
+  "description": "Bibliothèque React Typescript pour des fonctions et composants réutilisables",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisNadin/mn-toolkit.git"
+  },
+  "author": {
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
+  }
+}
