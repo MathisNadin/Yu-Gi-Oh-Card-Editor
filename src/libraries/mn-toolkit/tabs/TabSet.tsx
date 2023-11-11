@@ -3,10 +3,12 @@ import { Containable, IContainableProps } from "libraries/mn-toolkit/containable
 import { classNames } from "libraries/mn-tools";
 import { ReactNode } from "react";
 
+export type TAbstractTabIndex = string | undefined;
+
 export type TabPosition = 'top' | 'bottom' | 'left' | 'right';
 
-export interface ITabItem {
-  id?: string;
+export interface ITabItem<TAbstractTabIndex> {
+  id?: TAbstractTabIndex;
   label: string | ReactNode;
   // icon?: IconId;
   // iconColor?: ForegroundColor;
@@ -20,20 +22,20 @@ export interface ITabItem {
   // selectedBg?: BackgroundColor;
 }
 
-export interface ITabSetProps extends IContainableProps {
-  items: ITabItem[];
+export interface ITabSetProps<TAbstractTabIndex> extends IContainableProps {
+  items: ITabItem<TAbstractTabIndex>[];
   tabPosition?: TabPosition;
-  defaultValue: string;
-  onChange?: (value: string) => Promise<void> | void;
+  defaultValue: TAbstractTabIndex;
+  onChange?: (value: TAbstractTabIndex) => Promise<void> | void;
   onClose?: (id: string) => Promise<void> | void;
   // addButton?: boolean;
   // onAdd?: () => Promise<void> | void;
   // legend?: string;
 }
 
-interface ITabSetState {
-  value: string;
-  items: ITabItem[];
+interface ITabSetState<TAbstractTabIndex> {
+  value: TAbstractTabIndex;
+  items: ITabItem<TAbstractTabIndex>[];
   loaded: boolean;
 }
 
@@ -47,9 +49,9 @@ interface ITabSetState {
  * - ?disabled
  * - ?onChange
  */
-export class TabSet extends Containable<ITabSetProps, ITabSetState> {
+export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstractTabIndex>, ITabSetState<TAbstractTabIndex>> {
 
-  public constructor(props: ITabSetProps) {
+  public constructor(props: ITabSetProps<TAbstractTabIndex>) {
     super(props);
     this.state = {
       loaded: true,
@@ -69,11 +71,11 @@ export class TabSet extends Containable<ITabSetProps, ITabSetState> {
     };
   }
 
-  public get tabIndex() {
+  public get tabIndex(): TAbstractTabIndex {
     return this.state.value;
   }
 
-  public set tabIndex(value: string) {
+  public set tabIndex(value: TAbstractTabIndex) {
     this.setState({ value });
     if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
   }
@@ -83,15 +85,15 @@ export class TabSet extends Containable<ITabSetProps, ITabSetState> {
     this.setState({ value: props.defaultValue, items: props.items });
   } */
 
-  public componentWillReceiveProps(props: ITabSetProps) {
+  public componentWillReceiveProps(props: ITabSetProps<TAbstractTabIndex>) {
     this.setState({ value: props.defaultValue, items: props.items });
   }
 
   private getListItems() {
-    let result: ITabItem[] = [];
-    let first: ITabItem;
+    let result: ITabItem<TAbstractTabIndex>[] = [];
+    let first: ITabItem<TAbstractTabIndex>;
     this.state.items.forEach((item) => {
-      let listItem : ITabItem = {
+      let listItem : ITabItem<TAbstractTabIndex> = {
         id: item.id,
         label: item.label,
         selected: this.state.value === item.id,
@@ -101,7 +103,7 @@ export class TabSet extends Containable<ITabSetProps, ITabSetState> {
         disabled: item.disabled,
         closable: item.closable,
         // selectedBg: item.selectedBg
-      } as ITabItem;
+      } as ITabItem<TAbstractTabIndex>;
       listItem.onTap = ((x) => () => this.selectItem(x))(listItem);
       if (!first) first = listItem;
       result.push(listItem);
@@ -109,8 +111,8 @@ export class TabSet extends Containable<ITabSetProps, ITabSetState> {
     return result;
   }
 
-  public selectItem(item: ITabItem) {
-    this.tabIndex = item.id as string;
+  public selectItem(item: ITabItem<TAbstractTabIndex>) {
+    this.tabIndex = item.id as TAbstractTabIndex;
   }
 
   public renderClasses(name?: string): { [name: string]: boolean; } {

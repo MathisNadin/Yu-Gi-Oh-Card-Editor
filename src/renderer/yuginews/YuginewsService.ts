@@ -56,6 +56,9 @@ export class YuginewsService {
     const slug = urlParts[urlParts.length - 2];
     if (!slug) return cards;
 
+    const forceRush = slug.includes('cartes-rd-');
+    let foundRush = false;
+
     let response = await app.$api.get(`${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`);
     const htmlContent = response[0]?.content?.rendered as string;
     if (htmlContent) {
@@ -119,11 +122,25 @@ export class YuginewsService {
               parsedCardData.uuid = uuid();
               parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
 
-              parsedCardData.isRush = 'effectType' in parsedCardData || 'normalText' in parsedCardData;
+              // parsedCardData.isRush = 'effectType' in parsedCardData || 'normalText' in parsedCardData;
+              parsedCardData.isRush = forceRush || foundRush || 'effectType' in parsedCardData;
               let picture = parsedCardData.picture ?? `${this.formatPictureString(parsedCardData.nameEN || '')}-${parsedCardData.isRush ? 'RD' : ''}${parsedCardData.setId ?? setId}-JP${useFinalPictures ? '' : '-OP'}`;
               if (picture) parsedCardData.artworkUrl = `https://yuginews.fr/wp-content/uploads/${parsedCardData.pictureDate}/${picture}.png`;
 
               if (parsedCardData.isRush) {
+                if (!forceRush && !foundRush) {
+                  foundRush = true;
+                  for (const card of cards) {
+                    card.isRush = true;
+                    if (card.nameFR) card.nameFR = card.nameFR.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                    if (card.nameEN) card.nameEN = card.nameEN.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                    if (card.nameJP) card.nameJP = card.nameJP.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                    if (card.normalText) card.normalText = card.normalText.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                    if (card.condition) card.condition = card.condition.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                    if (card.effect) card.effect = card.effect.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+                    if (card.setId) card.setId = `RD/${card.setId}`;
+                  }
+                }
                 if (parsedCardData.nameFR) parsedCardData.nameFR = parsedCardData.nameFR.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
                 if (parsedCardData.nameEN) parsedCardData.nameEN = parsedCardData.nameEN.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
                 if (parsedCardData.nameJP) parsedCardData.nameJP = parsedCardData.nameJP.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
@@ -178,6 +195,13 @@ export class YuginewsService {
                             .replaceAll('&nbsp;', ' ')
                             .trim();
                         }
+                      } else if (line.includes('Flèche')) {
+                        parsedCardData.linkArrows = line
+                          .replaceAll('&nbsp;', ' ')
+                          .replaceAll('Flèche Lien : ', '')
+                          .replaceAll('Flèches Lien : ', '')
+                          .trim()
+                          .split(' / ');
                       } else if (line.includes(' / ')) {
                         parsedCardData.abilities = line.split(' / ');
                       } else if (line.includes('LEGEND')) {
@@ -196,13 +220,6 @@ export class YuginewsService {
                         parsedCardData.def = line.replaceAll('&nbsp;', ' ').replaceAll(' DEF', '').trim();
                       } else if (line.includes('Échelle')) {
                         parsedCardData.scale = line.replaceAll('&nbsp;', ' ').replaceAll('Échelle Pendule : ', '').trim();
-                      } else if (line.includes('Flèche')) {
-                        parsedCardData.linkArrows = line
-                          .replaceAll('&nbsp;', ' ')
-                          .replaceAll('Flèche Lien : ', '')
-                          .replaceAll('Flèches Lien : ', '')
-                          .trim()
-                          .split(' / ');
                       } else if (line.includes('Magie')) {
                         parsedCardData.cardType = '2';
                         parsedCardData.stType = this.getStTypeFromLine(line);

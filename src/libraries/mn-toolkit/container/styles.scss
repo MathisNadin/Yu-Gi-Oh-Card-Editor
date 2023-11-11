@@ -1,4 +1,6 @@
 .mn-container {
+  display: flex;
+
   &.vertical-stack {
     flex-direction: column;
   }

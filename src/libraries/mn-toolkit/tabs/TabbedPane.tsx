@@ -9,12 +9,12 @@ type INodeWithProps = ReactNode & {
   props: any;
 }
 
-interface ITabbedPaneProps extends IContainerProps, ITabSetProps {
+interface ITabbedPaneProps<TAbstractTabIndex> extends IContainerProps, ITabSetProps<TAbstractTabIndex> {
   tabPosition?: TabPosition;
 }
 
-interface ITabbedPaneState extends IContainerState {
-  value: string;
+interface ITabbedPaneState<TAbstractTabIndex> extends IContainerState {
+  value: TAbstractTabIndex;
 }
 
 /** Create a TabSet.
@@ -26,9 +26,9 @@ interface ITabbedPaneState extends IContainerState {
  * - ?disabled
  * - ?onChange
  */
-export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
+export class TabbedPane<TAbstractTabIndex> extends Container<ITabbedPaneProps<TAbstractTabIndex>, ITabbedPaneState<TAbstractTabIndex>> {
 
-  public constructor(props: ITabbedPaneProps) {
+  public constructor(props: ITabbedPaneProps<TAbstractTabIndex>) {
     super(props);
     this.state = {
       loaded: true,
@@ -36,7 +36,7 @@ export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
     };
   }
 
-  public static get defaultProps(): Partial<ITabbedPaneProps> {
+  public static get defaultProps(): Partial<ITabbedPaneProps<string>> {
     return {
       ...super.defaultProps,
       // name: '',
@@ -52,7 +52,7 @@ export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
     return this.state.value;
   }
 
-  public componentWillReceiveProps(props: ITabbedPaneProps) {
+  public componentWillReceiveProps(props: ITabbedPaneProps<TAbstractTabIndex>) {
     this.setState({ value: props.defaultValue });
   }
 
@@ -69,9 +69,10 @@ export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
       return (node as INodeWithProps).props.id === this.state.value;
     });
 
-    return <div
+    return <Container
       id={this.props.nodeId}
-      // name={this.props.name as string}
+      name={this.props.name as string}
+      layout={['left', 'right'].includes(this.props.tabPosition as string) ? 'horizontal' : 'vertical'}
       className={classNames(
         this.renderClasses('mn-tabbed-pane'),
         { 'mn-disable': this.props.disabled },
@@ -79,17 +80,17 @@ export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
       <TabSet
         items={(this.props.children as ReactNode[]).filter(node => !!node && !(node as INodeWithProps).props.hidden).map(node => {
           return {
-            id: ((node as INodeWithProps).props as ITabItem).id,
-            label: ((node as INodeWithProps).props as ITabItem).label,
-            // icon: ((node as INodeWithProps).props as ITabItem).icon,
-            // iconColor: ((node as INodeWithProps).props as ITabItem).iconColor,
-            stateIcon: ((node as INodeWithProps).props as ITabItem).stateIcon,
-            stateIconColor: ((node as INodeWithProps).props as ITabItem).stateIconColor,
-            badge: ((node as INodeWithProps).props as ITabItem).badge,
-            onTap: ((node as INodeWithProps).props as ITabItem).onTap,
-            selected: ((node as INodeWithProps).props as ITabItem).selected,
-            disabled: ((node as INodeWithProps).props as ITabItem).disabled,
-            closable: ((node as INodeWithProps).props as ITabItem).closable,
+            id: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).id,
+            label: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).label,
+            // icon: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).icon,
+            // iconColor: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).iconColor,
+            stateIcon: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).stateIcon,
+            stateIconColor: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).stateIconColor,
+            badge: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).badge,
+            onTap: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).onTap,
+            selected: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).selected,
+            disabled: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).disabled,
+            closable: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).closable,
             // selectedBg: this.props.bg,
           };
         })}
@@ -100,12 +101,12 @@ export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
         onClose={(id: string) => this.onClose(id)}
         // addButton={this.props.addButton}
         // onAdd={() => this.onAdd()}
-        onChange={(value: string) => this.onChange(value)}
+        onChange={(value: TAbstractTabIndex) => this.onChange(value)}
       />
       <Container className="mn-tab-panes" fill>
         {x}
       </Container>
-    </div>;
+    </Container>;
   }
 
 
@@ -117,7 +118,7 @@ export class TabbedPane extends Container<ITabbedPaneProps, ITabbedPaneState> {
     if (this.props.onClose) app.$errorManager.handlePromise(this.props.onClose(id));
   }
 
-  public onChange(value: string) {
+  public onChange(value: TAbstractTabIndex) {
     this.setState({ value });
     if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
   }
