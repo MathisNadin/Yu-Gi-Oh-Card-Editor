@@ -571,7 +571,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       }
     }
 
-    const specialCharsRegex = /([\[\]])/; // Recherche les [ et ]
+    const specialCharsRegex = /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
     const parts = this.props.card.name.split(specialCharsRegex);
 
     let processedText = parts.map((part, index) =>

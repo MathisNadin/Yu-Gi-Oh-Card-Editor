@@ -88,12 +88,14 @@
   left: 62px;
   font-family: fontName;
   font-size: 95px;
+  line-height: 95px;
   display: flex;
   justify-content: start;
 }
 .card-builder .card-layer.card-name-container .special-char-span {
   font-family: fontDesc;
   font-size: 66px;
+  font-weight: bold;
 }
 .card-builder .card-layer.card-name-container.skill-name-container {
   width: 690px;

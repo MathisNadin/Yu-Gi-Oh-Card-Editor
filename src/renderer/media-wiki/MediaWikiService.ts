@@ -433,8 +433,9 @@ export class MediaWikiService {
               if (keys?.length) {
                 let pageInfo = artworkData?.query?.pages[keys[0]];
                 if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
-                  card.artwork.url = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath) || '';
-                  if (card.artwork.url) {
+                  const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath) || '';
+                  if (filePath) {
+                    card.artwork.url = filePath;
                     if (card.rush) {
                       card.dontCoverRushArt = true;
                       extend(card.artwork, app.$card.getFullRushCardPreset());

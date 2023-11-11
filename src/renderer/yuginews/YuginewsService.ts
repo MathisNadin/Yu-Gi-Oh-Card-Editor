@@ -398,8 +398,9 @@ export class YuginewsService {
       card.description = this.getDescription(card as ICard, cardData);
 
       if (importArtworks && cardData.artworkUrl?.length && artworkDirectoryPath?.length) {
-        card.artwork.url = await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath) || '';
-        if (card.artwork.url) {
+        const filePath = await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath) || '';
+        if (filePath) {
+          card.artwork.url = filePath;
           if (card.rush) {
             card.dontCoverRushArt = true;
             extend(card.artwork, app.$card.getFullRushCardPreset());

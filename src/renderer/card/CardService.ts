@@ -433,7 +433,14 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async importArtwork(url: string, path?: string): Promise<string> {
     path = path || await window.electron.ipcRenderer.getDirectoryPath();
     if (!path) return '';
-    return await window.electron.ipcRenderer.download(path, url);
+    let filePath!: string;
+    try {
+      filePath = await window.electron.ipcRenderer.download(path, url);
+    } catch(error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+    return filePath;
   }
 
   private getDefaultCurrentCard(): ICard {
