@@ -1,4 +1,20 @@
 import { each, sortDependencies } from "libraries/mn-tools";
+import { Observable } from "../observable/Observable";
+
+export interface IAppSettings {
+  dbName: string;
+  objectStoreName: string;
+}
+
+declare global {
+  interface IApp {
+    settings: IAppSettings;
+  }
+}
+
+export interface IApplicationListener {
+  applicationReady(): void;
+}
 
 export interface IApplicationConfig {
   name: string;
@@ -26,7 +42,7 @@ export interface IBootstrapOptions {
  *
  */
 export class Application
-  // extends Observable<IApplicationListener>
+  extends Observable<IApplicationListener>
   // implements IApplicationListener
 {
   private configurationCallBack: () => void = () => {};
@@ -37,11 +53,11 @@ export class Application
   /**
    * Default constructor.
    */
-/*   public constructor() {
+  public constructor() {
     super();
     // this.patchPreact();
-    this.addListener(this);
-  } */
+    // this.addListener(this);
+  }
 
   public static initialize(conf: IApplicationConfig): Application {
     app._conf = conf;
@@ -64,17 +80,19 @@ export class Application
     return this._conf.displayName;
   }
 
-/*   private fireReady() {
+  private fireReady() {
     this.dispatch('applicationReady');
-  } */
+  }
 
   /**
    * main function.
    */
   public bootstrap() {
     this.bootstrapConfig();
-    // eslint-disable-next-line no-console
-    this.bootstrapServices().catch((e: Error) => console.error(e));
+    this.bootstrapServices()
+      .then(() => this.fireReady())
+      // eslint-disable-next-line no-console
+      .catch((e: Error) => console.error(e));
 /*     this.bootstrapDOM()
       .then(() => this.bootstrapServices())
       .then(() => this.fireReady())

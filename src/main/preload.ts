@@ -1,7 +1,7 @@
 import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels =
-  'ipc-example' | 'check-file-exists' | 'create-img-from-path' |
+  'open-link' | 'check-file-exists' | 'create-img-from-path' |
   'render-current-card' | 'save-current-or-temp-to-local' |
   'delete-local-db' | 'import-cards' | 'import-data' | 'export-data' |
   'read-file-utf-8' | 'get-app-version' | 'download';
@@ -28,6 +28,10 @@ const electronHandler = {
 
     invoke(channel: Channels, ...args: unknown[]): Promise<unknown> {
       return ipcRenderer.invoke(channel, ...args);
+    },
+
+    openLink(link: string) {
+      return ipcRenderer.invoke('open-link', link);
     },
 
     download(directoryPath: string, url :string): Promise<string> {

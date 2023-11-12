@@ -1,5 +1,5 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import './styles.css';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { LocalCardsDisplay } from 'renderer/local-cards-display/LocalCardsDisplay';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
@@ -11,6 +11,16 @@ import { RushCardPreview } from 'renderer/card-preview/RushCardPreview';
 import { RushCardEditor } from 'renderer/card-editor/RushCardEditor';
 import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
 import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
+import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
+import { Typography } from 'libraries/mn-toolkit/typography/Typography';
+import { IDeviceListener } from 'libraries/mn-toolkit/device';
+import { Button } from 'libraries/mn-toolkit/button/Button';
+
+interface IVersionInfos {
+  version: string;
+  link: string;
+  note: string;
+}
 
 type TTabIndex = 'master' | 'rush';
 
@@ -21,18 +31,50 @@ interface ICardHandlerState extends IContainableState {
   tabIndex: TTabIndex;
   currentCard: ICard;
   tempCurrentCard: ICard;
+  needUpdate: boolean;
+  versionInfos: IVersionInfos;
 }
 
-export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> implements Partial<ICardListener> {
+export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerState> implements Partial<ICardListener>, Partial<IDeviceListener> {
 
   public constructor(props: ICardHandlerProps) {
     super(props);
     app.$card.addListener(this);
+    app.$device.addListener(this);
     this.state = { tabIndex: 'master', loaded: false } as ICardHandlerState;
+    if (app.$device.isConnected()) {
+      app.$errorManager.handlePromise(this.checkUpdate());
+    }
   }
 
   public componentWillUnmount() {
     app.$card.removeListener(this);
+    app.$device.removeListener(this);
+  }
+
+  public deviceOnline() {
+    if (this.state?.versionInfos) return;
+    app.$errorManager.handlePromise(this.checkUpdate());
+  }
+
+  private async checkUpdate() {
+    try {
+      const versionInfos = await app.$api.get(
+        "https://gist.githubusercontent.com/MathisNadin/e12c2c1494081ff24fbc5463f7c49470/raw/",
+        {
+          params: {
+            timestamp: new Date().getTime()
+          }
+        }
+      ) as IVersionInfos;
+      if (versionInfos?.version) {
+        const currentVersion = await window.electron.ipcRenderer.getAppVersion();
+        this.setState({ versionInfos, needUpdate: currentVersion !== versionInfos.version });
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   public currentCardLoaded(currentCard: ICard) {
@@ -44,11 +86,19 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public tempCurrentCardLoaded(tempCurrentCard: ICard) {
-    this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+    if (tempCurrentCard) {
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+    } else {
+      this.setState({ loaded: true, tempCurrentCard });
+    }
   }
 
   public tempCurrentCardUpdated(tempCurrentCard: ICard) {
-    this.setState({ tempCurrentCard, tabIndex: tempCurrentCard ? tempCurrentCard.rush ? 'rush' : 'master' : this.state.tabIndex });
+    if (tempCurrentCard) {
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+    } else {
+      this.setState({ loaded: true, tempCurrentCard });
+    }
   }
 
   public localCardsUpdated() {
@@ -84,15 +134,26 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
       >
 
         <TabPane id='master' scroll label='Master' gutter>
+          {this.renderUpdate()}
           <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
         </TabPane>
 
         <TabPane id='rush' scroll label='Rush' gutter>
+          {this.renderUpdate()}
           <RushCardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
         </TabPane>
       </TabbedPane>
       {card.rush ? <RushCardPreview card={card} /> : <CardPreview card={card} />}
       {!!app.$card.localCards?.length && <LocalCardsDisplay />}
     </HorizontalStack>, 'card-handler');
+  }
+
+  private renderUpdate() {
+    if (!this.state.needUpdate) return null;
+    return <VerticalStack className='new-version' margin padding gutter itemAlignment='center'>
+      {!!this.state.versionInfos.version && <Typography variant='label' content={`Nouvelle version disponible : ${this.state.versionInfos.version}`} />}
+      {!!this.state.versionInfos.note && <Typography variant='help' content={this.state.versionInfos.note} />}
+      {!!this.state.versionInfos.link && <Button label='Installer' color='balanced' onTap={() => window.electron.ipcRenderer.openLink(this.state.versionInfos.link)} />}
+    </VerticalStack>;
   }
 }

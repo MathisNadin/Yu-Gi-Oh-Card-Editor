@@ -2,6 +2,10 @@
   font-family: fontAbilities;
   src: url(../resources/fonts/itcStoneSerifBold.ttf);
 }
+.mn-zindex-content {
+  z-index: inherit !important;
+}
+
 .card-handler {
   display: flex;
   align-items: center;
@@ -9,6 +13,14 @@
   margin: 0;
   height: 100%;
   width: 100%;
+}
+.card-handler .new-version {
+  border: 1px solid black;
+  border-radius: 6px;
+  background-color: #387ef5;
+}
+.card-handler .new-version .mn-typography {
+  color: white !important;
 }
 .card-handler .editor-tabbed-pane {
   height: 100%;

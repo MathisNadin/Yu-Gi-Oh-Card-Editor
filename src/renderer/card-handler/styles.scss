@@ -1,6 +1,13 @@
+@import "../../libraries/mn-toolkit/index.scss";
+
 @font-face {
   font-family: fontAbilities;
   src: url(../resources/fonts/itcStoneSerifBold.ttf);
+}
+
+// Vraiment parce que c'est plus simple de hacker comme ça
+.mn-zindex-content {
+  z-index: inherit !important;
 }
 
 .card-handler {
@@ -10,6 +17,16 @@
   margin: 0;
   height: 100%;
   width: 100%;
+
+  .new-version {
+    border: 1px solid black;
+    border-radius: $themeDefaultBorderRadius;
+    background-color: $positive;
+
+    .mn-typography {
+      color: white !important;
+    }
+  }
 
   .editor-tabbed-pane {
     $defaultColor: aliceblue;

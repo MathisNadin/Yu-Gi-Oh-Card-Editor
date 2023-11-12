@@ -27,9 +27,8 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, _arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  event.reply('ipc-example', msgTemplate('pong'));
+ipcMain.handle('open-link', async (_event, link: string) => {
+  shell.openExternal(link);
 });
 
 ipcMain.handle('download', async (_event, directory: string, url: string) => {

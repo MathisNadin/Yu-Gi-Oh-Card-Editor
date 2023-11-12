@@ -176,7 +176,7 @@
   flex: 1;
 }
 .card-editor .card-editor-section .card-editor-vertical-section {
-  flex: 1;
+  width: 95%;
 }
 .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input {
   height: 19px;

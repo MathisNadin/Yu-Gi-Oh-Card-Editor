@@ -1,3 +1,5 @@
+@import '../index.scss';
+
 @keyframes scaleIn {
   0% {
     transform: translate(-50%, -50%) scale(0.3);
@@ -19,7 +21,7 @@
   bottom: 0;
   margin: auto;
   background-color: rgba(0,0,0, 0.5);
-  z-index: 10;
+  z-index: 7 !important;
 
   .mn-popup-inner {
     position: fixed;
@@ -55,7 +57,7 @@
 
     .mn-popup-content {
       width: 97%;
-      padding: 16px;
+      padding: $themeDefaultSpacing;
       align-self: center;
       height: calc(100% - 88px);
     }

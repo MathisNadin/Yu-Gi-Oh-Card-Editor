@@ -1,9 +1,5 @@
 import { Application } from './Application';
 
-/* export interface IApplicationListener {
-  applicationReady(): void;
-} */
-
 // declare module 'an-react' {
 //   export interface VNode<P = {}> {
 //     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,108 +1,4 @@
 @charset "UTF-8";
-.mn-bg-1 {
-  background-color: #ffffff;
-}
-.mn-dark-theme .mn-bg-1 {
-  background-color: #181818;
-}
-
-.mn-bg-2 {
-  background-color: #F6F8F9;
-}
-.mn-dark-theme .mn-bg-2 {
-  background-color: #414141;
-}
-
-.mn-bg-3 {
-  background-color: #EEF0F2;
-}
-.mn-dark-theme .mn-bg-3 {
-  background-color: #555555;
-}
-
-.mn-bg-4 {
-  background-color: #E5E9EB;
-}
-.mn-dark-theme .mn-bg-4 {
-  background-color: #9d9d9d;
-}
-
-.mn-bg-primary {
-  background-color: #886aea;
-}
-
-.mn-bg-secondary {
-  background-color: #11c1f3;
-}
-
-.mn-bg-positive {
-  background-color: #387ef5;
-}
-
-.mn-bg-calm {
-  background-color: #11c1f3;
-}
-
-.mn-bg-balanced {
-  background-color: #33cd5f;
-}
-
-.mn-bg-energized {
-  background-color: #ffc900;
-}
-
-.mn-bg-assertive {
-  background-color: #ef473a;
-}
-
-.mn-bg-royal {
-  background-color: #886aea;
-}
-
-.mn-zindex-content {
-  z-index: 0;
-}
-
-.mn-zindex-view {
-  z-index: 1;
-}
-
-.mn-zindex-notifications {
-  z-index: 2;
-}
-
-.mn-zindex-view-below {
-  z-index: 2;
-}
-
-.mn-zindex-view-above {
-  z-index: 3;
-}
-
-.mn-zindex-drawer {
-  z-index: 7;
-}
-
-.mn-zindex-overlay {
-  z-index: 6;
-}
-
-.mn-zindex-popup {
-  z-index: 7;
-}
-
-.mn-zindex-popover {
-  z-index: 9;
-}
-
-.mn-zindex-toaster {
-  z-index: 7;
-}
-
-.mn-zindex-overall {
-  z-index: 100;
-}
-
 .mn-typography-right {
   text-align: right;
 }
@@ -564,7 +460,7 @@
   color: #886aea;
 }
 .mn-dark-theme .mn-typography-label a {
-  color: white(0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 .mn-typography-label a:hover {
   text-decoration: underline;

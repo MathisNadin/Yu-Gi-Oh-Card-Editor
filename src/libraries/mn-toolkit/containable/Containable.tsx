@@ -83,6 +83,7 @@ export class Containable<
 
   public constructor(props: PROPS) {
     super(props);
+    this.state = {} as STATE;
   }
 
   public renderClasses(name?: string) {
@@ -98,8 +99,7 @@ export class Containable<
     classes['mn-disable'] = !!this.props.disabled;
     classes['mn-draggable'] = !!this.props.draggable;
     if (this.props.zIndex) classes[`mn-zindex-${this.props.zIndex}`] = true;
-    if (this.props.floatPosition)
-      classes[`mn-float-${this.props.floatPosition}`] = true;
+    if (this.props.floatPosition) classes[`mn-float-${this.props.floatPosition}`] = true;
     return classes;
   }
 

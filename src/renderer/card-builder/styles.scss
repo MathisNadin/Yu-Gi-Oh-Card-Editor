@@ -106,7 +106,6 @@
       left: 62px;
       font-family: fontName;
       font-size: 95px;
-      line-height: 95px;
       display: flex;
       justify-content: start;
 
@@ -223,6 +222,12 @@
         position: absolute;
         z-index: -1;
         min-width: 74px;
+
+        &.infinity {
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 70px;
+          line-height: 37px;
+        }
       }
 
       canvas {
@@ -507,6 +512,10 @@
       .stat-text {
         min-width: 122px;
         padding: 0 2px 0 2px;
+
+        &.infinity {
+          font-family: Arial, Helvetica, sans-serif;
+        }
 
         &.hidden {
           visibility: hidden;

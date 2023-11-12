@@ -88,7 +88,6 @@
   left: 62px;
   font-family: fontName;
   font-size: 95px;
-  line-height: 95px;
   display: flex;
   justify-content: start;
 }
@@ -185,6 +184,11 @@
   position: absolute;
   z-index: -1;
   min-width: 74px;
+}
+.card-builder .card-layer.atk-def .stat-text.infinity {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 70px;
+  line-height: 37px;
 }
 .card-builder .card-layer.atk-def canvas {
   max-width: 74px;
@@ -387,6 +391,9 @@
 .card-builder.rush-card-builder .atk-def .stat-text {
   min-width: 122px;
   padding: 0 2px 0 2px;
+}
+.card-builder.rush-card-builder .atk-def .stat-text.infinity {
+  font-family: Arial, Helvetica, sans-serif;
 }
 .card-builder.rush-card-builder .atk-def .stat-text.hidden {
   visibility: hidden;

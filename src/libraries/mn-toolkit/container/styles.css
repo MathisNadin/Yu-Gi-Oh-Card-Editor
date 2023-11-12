@@ -7,17 +7,41 @@
 .mn-container.horizontal-stack {
   flex-direction: row;
 }
-.mn-container.mn-gutter {
+.mn-container.mn-layout-gutter {
   gap: 16px;
 }
-.mn-container.mn-margin {
+.mn-container.mn-layout-margin {
   margin: 16px;
+}
+.mn-container .mn-layout-padding {
+  padding: 16px;
 }
 .mn-container.mn-scroll {
   overflow-y: auto;
 }
 .mn-container.mn-scrollX {
   overflow-x: auto;
+}
+.mn-container.mn-layout-item-align-left {
+  align-items: flex-start;
+  justify-content: initial;
+}
+.mn-container.mn-layout-item-align-center {
+  align-items: center;
+  justify-content: initial;
+}
+.mn-container.mn-layout-item-align-right {
+  align-items: flex-end;
+  justify-content: initial;
+}
+.mn-container.mn-layout-item-valign-top {
+  justify-content: flex-start;
+}
+.mn-container.mn-layout-item-valign-middle {
+  justify-content: center;
+}
+.mn-container.mn-layout-item-valign-bottom {
+  justify-content: flex-end;
 }
 
 /*# sourceMappingURL=styles.css.map */

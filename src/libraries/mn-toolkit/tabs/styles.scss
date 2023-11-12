@@ -1,8 +1,6 @@
-$tabs-selector-height: 4px;
+@import '../index.scss';
 
-$themeDefaultSpacing: 16px;
-$themeDefaultBorderRadius: 6px;
-$themeDefaultItemHeight: 32px;
+$tabs-selector-height: 4px;
 
 $themePaneBg: rgba(lightgrey, 0.3);
 
@@ -43,7 +41,7 @@ $decay: 4px;
     }
 
     .mn-indicators {
-      margin: 0 calc($themeDefaultSpacing / 2);
+      margin: 0 calc($themeDefaultSpacing/2);
       display: flex;
     }
 

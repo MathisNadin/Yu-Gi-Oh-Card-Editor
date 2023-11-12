@@ -535,13 +535,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')
         && <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
-          <p className="stat-text atk-text black-text">{this.props.card.atk}</p>
+          <p className={classNames('stat-text', 'atk-text', 'black-text', { 'infinity': this.props.card.atk === '∞' })}>{this.props.card.atk}</p>
         </Container>
       }
 
       {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')
         && <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
-          <p className="stat-text def-text black-text">{this.props.card.def}</p>
+          <p className={classNames('stat-text', 'def-text', 'black-text', { 'infinity': this.props.card.def === '∞' })}>{this.props.card.def}</p>
         </Container>
       }
 

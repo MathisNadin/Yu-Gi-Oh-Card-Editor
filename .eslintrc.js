@@ -41,6 +41,8 @@ module.exports = {
     'import/no-dynamic-require': 'off',
     'global-require': 'off',
     'react/self-closing-comp': 'off',
+    'react/jsx-curly-brace-presence': 'off',
+    'import/first': 'off',
     'no-extra-boolean-cast': 'off',
     'guard-for-in': 'off',
     'func-names': 'off',

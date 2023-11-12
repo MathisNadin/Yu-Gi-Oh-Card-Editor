@@ -256,7 +256,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private async adjustAllFontSizes() {
-    switch (this.state?.adjustState) {
+    switch (this.state.adjustState) {
       case 'todo': this.setState({ adjustState: 'name' }); break;
       case 'name': await this.convertNameToImg(); break;
       case 'atkMax': this.convertAtkMaxToImg(); break;
@@ -546,7 +546,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           'question-mark': this.props.card.atkMax === '?',
           'compressed': this.props.card.atkMax?.length > 4,
         })}>
-          <p className="stat-text atk-max-text white-text hidden">{this.props.card.atkMax}</p>
+          <p className={classNames('stat-text', 'atk-max-text', 'white-text', 'hidden', { 'infinity': this.props.card.atkMax === '∞' })}>{this.props.card.atkMax}</p>
         </Container>
       }
 
@@ -555,7 +555,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           'question-mark': this.props.card.atk === '?',
           'compressed': this.props.card.atk?.length > 4,
         })}>
-          <p className="stat-text atk-text white-text hidden">{this.props.card.atk}</p>
+          <p className={classNames('stat-text', 'atk-text', 'white-text', 'hidden', { 'infinity': this.props.card.atk === '∞' })}>{this.props.card.atk}</p>
         </Container>
       }
 
@@ -564,7 +564,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           'question-mark': this.props.card.def === '?',
           'compressed': this.props.card.def?.length > 4,
         })}>
-          <p className="stat-text def-text white-text hidden">{this.props.card.def}</p>
+          <p className={classNames('stat-text', 'def-text', 'white-text', 'hidden', { 'infinity': this.props.card.def === '∞' })}>{this.props.card.def}</p>
         </Container>
       }
 

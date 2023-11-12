@@ -1,3 +1,5 @@
+@import '../index.scss';
+
 .mn-container {
   display: flex;
 
@@ -9,12 +11,16 @@
     flex-direction: row;
   }
 
-  &.mn-gutter {
-    gap: 16px;
+  &.mn-layout-gutter {
+    gap: $themeDefaultSpacing;
   }
 
-  &.mn-margin {
-    margin: 16px;
+  &.mn-layout-margin {
+    margin: $themeDefaultSpacing;
+  }
+
+  .mn-layout-padding {
+    padding: $themeDefaultSpacing;
   }
 
   &.mn-scroll {
@@ -23,5 +29,32 @@
 
   &.mn-scrollX {
     overflow-x: auto;
+  }
+
+  &.mn-layout-item-align-left {
+    align-items: flex-start;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-align-center {
+    align-items: center;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-align-right {
+    align-items: flex-end;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-valign-top {
+    justify-content: flex-start;
+  }
+
+  &.mn-layout-item-valign-middle {
+    justify-content: center;
+  }
+
+  &.mn-layout-item-valign-bottom {
+    justify-content: flex-end;
   }
 }

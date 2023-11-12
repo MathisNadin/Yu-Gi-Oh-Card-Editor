@@ -192,7 +192,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   public onAtkChange(atk: string) {
     if (isUndefined(atk) || atk.length > 6) return;
-    if (atk && atk !== '?' && integer(atk) === 0) atk = '0';
+    if (atk && atk !== '?' && atk !=='∞' && !atk.startsWith('X') && integer(atk) === 0) atk = '0';
     this.state.card.atk = atk;
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
@@ -200,7 +200,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   public onDefChange(def: string) {
     if (isUndefined(def) || def.length > 6) return;
-    if (def && def !== '?' && integer(def) === 0) def = '0';
+    if (def && def !== '?' && def !=='∞' &&  !def.startsWith('X') && integer(def) === 0) def = '0';
     this.state.card.def = def;
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
@@ -389,8 +389,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     let result = await app.$popup.show<IArtworkEditDialogResult>({
       id: 'edit-popup',
       title: "Édition de l'image",
-      innerHeight: '70%',
-      innerWidth: '70%',
+      innerHeight: '85%',
+      innerWidth: '80%',
       content: <ArtworkEditDialog
         isRush={false}
         artworkURL={this.state.card.artwork.url}

@@ -27,7 +27,7 @@
 }
 .card-preview .card-preview-img.rendering {
   position: absolute;
-  z-index: 2;
+  z-index: 2 !important;
   width: 100%;
   height: 100%;
   background-color: rgba(240, 248, 255, 0.5);

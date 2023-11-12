@@ -11,7 +11,7 @@ export interface ITabItem<TAbstractTabIndex> {
   id?: TAbstractTabIndex;
   label: string | ReactNode;
   // icon?: IconId;
-  // iconColor?: ForegroundColor;
+  // iconColor?: TForegroundColor;
   stateIcon?: string;
   stateIconColor?: string;
   badge?: string | number;
@@ -19,7 +19,7 @@ export interface ITabItem<TAbstractTabIndex> {
   selected?: boolean;
   disabled?: boolean;
   closable?: boolean;
-  // selectedBg?: BackgroundColor;
+  // selectedBg?: TBackgroundColor;
 }
 
 export interface ITabSetProps<TAbstractTabIndex> extends IContainableProps {
