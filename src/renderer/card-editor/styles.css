@@ -3,43 +3,58 @@
   src: url(../resources/fonts/itcStoneSerifBold.ttf);
 }
 .card-editor {
+  background-color: white;
+}
+.card-editor .card-editor-section.basic-section .top-options .mn-button {
+  font-size: 14px;
+}
+.card-editor .card-editor-section .mn-text-input {
+  border: 0;
+  border-bottom: 1px solid rgba(56, 126, 245, 0.5);
+}
+.card-editor .card-editor-section .mn-text-input:focus-visible {
+  outline: none;
+  border-color: #387ef5;
+}
+
+.card-editor-old {
   height: 100%;
   width: 100%;
   padding-left: 10px;
   align-items: flex-start;
   font-size: 17px;
 }
-.card-editor .app-version {
+.card-editor-old .app-version {
   color: black;
   font-size: 11px;
   align-self: end;
   margin-right: 8px;
 }
-.card-editor .card-editor-section {
+.card-editor-old .card-editor-section {
   width: 100%;
   align-items: center;
   gap: 5px;
   padding-bottom: 8px;
 }
-.card-editor .card-editor-section.link-arrow-section {
+.card-editor-old .card-editor-section.link-arrow-section {
   width: 95%;
   margin-right: 2.5%;
   margin-left: 2.5%;
   align-items: start;
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-label {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-label {
   padding-bottom: 5px;
   text-align: center;
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines {
   border-radius: 5px;
   background: radial-gradient(circle, rgba(29, 104, 192, 0.95) 0%, rgba(29, 104, 192, 0.85) 30%, rgba(29, 104, 192, 0.6) 80%, rgba(29, 104, 192, 0.5) 100%);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line {
   justify-content: center;
   gap: 8px;
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn {
   height: 50px;
   width: 60px;
   display: flex;
@@ -50,87 +65,87 @@
   transition: none;
   padding: 0;
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn.hidden {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn.hidden {
   cursor: auto;
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img {
   height: 100%;
   width: 100%;
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-left-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-left-img {
   transform: rotate(-45deg);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-right-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.top-right-img {
   transform: rotate(45deg);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.left-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.left-img {
   transform: rotate(-90deg);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.right-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.right-img {
   transform: rotate(90deg);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-left-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-left-img {
   transform: rotate(225deg);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-img {
   transform: rotate(180deg);
 }
-.card-editor .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-right-img {
+.card-editor-old .card-editor-section.link-arrow-section .link-arrow-lines .link-arrow-line .link-arrow-btn img.bottom-right-img {
   transform: rotate(-225deg);
 }
-.card-editor .card-editor-section .mn-tabbed-pane {
+.card-editor-old .card-editor-section .mn-tabbed-pane {
   width: calc(100% - 10px);
   margin-right: 10px;
 }
-.card-editor .card-editor-section .mn-tabbed-pane .mn-tab-panes {
+.card-editor-old .card-editor-section .mn-tabbed-pane .mn-tab-panes {
   background-color: transparent;
 }
-.card-editor .card-editor-section .mn-tabbed-pane .mn-tabset .item:hover {
+.card-editor-old .card-editor-section .mn-tabbed-pane .mn-tabset .item:hover {
   background-color: rgba(255, 0, 0, 0.5);
 }
-.card-editor .card-editor-section .mn-tabbed-pane .mn-tabset .item.selected {
+.card-editor-old .card-editor-section .mn-tabbed-pane .mn-tabset .item.selected {
   background-color: rgba(255, 0, 0, 0.5);
 }
-.card-editor .card-editor-section .mn-tabbed-pane .mn-tabset .item .label {
+.card-editor-old .card-editor-section .mn-tabbed-pane .mn-tabset .item .label {
   color: black;
   font-size: 11px;
   font-family: fontAbilities;
   text-transform: uppercase;
   flex: 1;
 }
-.card-editor .card-editor-section .mn-tabbed-pane .mn-tab-pane {
+.card-editor-old .card-editor-section .mn-tabbed-pane .mn-tab-pane {
   background-color: rgba(255, 0, 0, 0.5);
   padding: 0 0 10px 5px;
 }
-.card-editor .card-editor-section .card-pendulum-ratio {
+.card-editor-old .card-editor-section .card-pendulum-ratio {
   width: 95%;
   justify-content: flex-end;
 }
-.card-editor .card-editor-section .card-editor-full-width-section {
+.card-editor-old .card-editor-section .card-editor-full-width-section {
   width: 95%;
   padding: 1%;
 }
-.card-editor .card-editor-section .card-editor-full-width-section.horizontal-stack {
+.card-editor-old .card-editor-section .card-editor-full-width-section.horizontal-stack {
   gap: 8px;
 }
-.card-editor .card-editor-section .card-rush-effect-type-dropdown {
+.card-editor-old .card-editor-section .card-rush-effect-type-dropdown {
   justify-content: center;
   flex: 1;
   width: 95%;
   padding: 0 1%;
   margin-top: -12px;
 }
-.card-editor .card-editor-section .card-rush-effect-type-dropdown select {
+.card-editor-old .card-editor-section .card-rush-effect-type-dropdown select {
   height: 25px;
 }
-.card-editor .card-editor-section .card-legend-type-dropdown {
+.card-editor-old .card-editor-section .card-legend-type-dropdown {
   justify-content: center;
   flex: 1;
 }
-.card-editor .card-editor-section .card-legend-type-dropdown select {
+.card-editor-old .card-editor-section .card-legend-type-dropdown select {
   height: 25px;
 }
-.card-editor .card-editor-section .reset-current-card-btn {
+.card-editor-old .card-editor-section .reset-current-card-btn {
   color: white;
   font-size: 15px;
   margin: 0;
@@ -141,17 +156,17 @@
   border-radius: 4px;
   align-self: end;
 }
-.card-editor .card-editor-section .with-label-separator {
+.card-editor-old .card-editor-section .with-label-separator {
   border-bottom: 1px solid black;
   margin-bottom: 7px;
 }
-.card-editor .card-editor-section .textarea-input {
+.card-editor-old .card-editor-section .textarea-input {
   font-family: Arial, Helvetica, sans-serif;
   text-align: justify;
   resize: none;
   height: 150px;
 }
-.card-editor .card-editor-section .editor-label {
+.card-editor-old .card-editor-section .editor-label {
   color: black;
   margin: 5px 0;
   font-size: 13px;
@@ -159,35 +174,35 @@
   text-transform: uppercase;
   flex: 1;
 }
-.card-editor .card-editor-section .editor-label.label-with-separator {
+.card-editor-old .card-editor-section .editor-label.label-with-separator {
   padding-bottom: 5px;
 }
-.card-editor .card-editor-section .editor-label.atk-max-label, .card-editor .card-editor-section .editor-label.legend-label {
+.card-editor-old .card-editor-section .editor-label.atk-max-label, .card-editor-old .card-editor-section .editor-label.legend-label {
   flex: none;
 }
-.card-editor .card-editor-section .editor-sub-label {
+.card-editor-old .card-editor-section .editor-sub-label {
   align-self: center;
   color: black;
   margin: 0 0 0 4px;
   font-size: 11px;
   font-variant: petite-caps;
 }
-.card-editor .card-editor-section .atk-max-input {
+.card-editor-old .card-editor-section .atk-max-input {
   flex: 1;
 }
-.card-editor .card-editor-section .card-editor-vertical-section {
+.card-editor-old .card-editor-section .card-editor-vertical-section {
   width: 95%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .card-input {
   height: 19px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.artwork-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .card-input.artwork-input {
   flex: 1;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.level-input, .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.atk-input, .card-editor .card-editor-section .card-editor-vertical-section.card-input-container .card-input.def-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .card-input.level-input, .card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .card-input.atk-input, .card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .card-input.def-input {
   width: 95%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .artwork-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .artwork-btn {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -201,44 +216,44 @@
   width: 33px;
   background-color: lightgrey;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-input-container .artwork-hidden-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-input-container .artwork-hidden-input {
   display: none;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .mn-dropdown {
+.card-editor-old .card-editor-section .card-editor-vertical-section .mn-dropdown {
   justify-content: center;
   flex: 1;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .mn-dropdown select {
+.card-editor-old .card-editor-section .card-editor-vertical-section .mn-dropdown select {
   height: 25px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-items {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-items {
   max-width: 100%;
   flex-wrap: wrap;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-items .item-container {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-items .item-container {
   margin: 4px 10px 4px 0;
   cursor: pointer;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container {
   height: 30px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute {
   opacity: 50%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute.selected {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-attributes-icons .card-attribute-container .card-attribute.selected {
   opacity: 100%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container {
   height: 50px;
   background-color: white;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container .card-frame {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container .card-frame {
   opacity: 50%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected .card-frame {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected .card-frame {
   opacity: 100%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-1::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-1::after {
   content: "1";
   position: absolute;
   bottom: 0;
@@ -255,7 +270,7 @@
   background-color: #d96226;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-2::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-2::after {
   content: "2";
   position: absolute;
   bottom: 0;
@@ -272,7 +287,7 @@
   background-color: #d99d26;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-3::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-3::after {
   content: "3";
   position: absolute;
   bottom: 0;
@@ -289,7 +304,7 @@
   background-color: #d9d926;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-4::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-4::after {
   content: "4";
   position: absolute;
   bottom: 0;
@@ -306,7 +321,7 @@
   background-color: #9dd926;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-5::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-5::after {
   content: "5";
   position: absolute;
   bottom: 0;
@@ -323,7 +338,7 @@
   background-color: #62d926;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-6::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-6::after {
   content: "6";
   position: absolute;
   bottom: 0;
@@ -340,7 +355,7 @@
   background-color: #26d926;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-7::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-7::after {
   content: "7";
   position: absolute;
   bottom: 0;
@@ -357,7 +372,7 @@
   background-color: #26d962;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-8::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-8::after {
   content: "8";
   position: absolute;
   bottom: 0;
@@ -374,7 +389,7 @@
   background-color: #26d99d;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-9::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-9::after {
   content: "9";
   position: absolute;
   bottom: 0;
@@ -391,7 +406,7 @@
   background-color: #26d9d9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-10::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-10::after {
   content: "10";
   position: absolute;
   bottom: 0;
@@ -408,7 +423,7 @@
   background-color: #269dd9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-11::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-11::after {
   content: "11";
   position: absolute;
   bottom: 0;
@@ -425,7 +440,7 @@
   background-color: #2662d9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-12::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-12::after {
   content: "12";
   position: absolute;
   bottom: 0;
@@ -442,7 +457,7 @@
   background-color: #2626d9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-13::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-13::after {
   content: "13";
   position: absolute;
   bottom: 0;
@@ -459,7 +474,7 @@
   background-color: #6226d9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-14::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-14::after {
   content: "14";
   position: absolute;
   bottom: 0;
@@ -476,7 +491,7 @@
   background-color: #9d26d9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-15::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-15::after {
   content: "15";
   position: absolute;
   bottom: 0;
@@ -493,7 +508,7 @@
   background-color: #d926d9;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-16::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-16::after {
   content: "16";
   position: absolute;
   bottom: 0;
@@ -510,7 +525,7 @@
   background-color: #d9269d;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-17::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-17::after {
   content: "17";
   position: absolute;
   bottom: 0;
@@ -527,7 +542,7 @@
   background-color: #d92662;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-18::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-18::after {
   content: "18";
   position: absolute;
   bottom: 0;
@@ -544,7 +559,7 @@
   background-color: #d92626;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-19::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-19::after {
   content: "19";
   position: absolute;
   bottom: 0;
@@ -561,7 +576,7 @@
   background-color: #d96226;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-20::after {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-frames-icons .card-frame-container.selected-20::after {
   content: "20";
   position: absolute;
   bottom: 0;
@@ -578,18 +593,18 @@
   background-color: #d99d26;
   color: #fff;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container {
   height: 30px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon {
   height: 30px;
   width: 30px;
   opacity: 50%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-st-icons-icons .card-st-icon-container .card-st-icon.selected {
   opacity: 100%;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section .choice-effect-btn {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -597,68 +612,68 @@
   cursor: pointer;
   background-color: transparent;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.add-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section .choice-effect-btn.add-btn {
   border: 1px outset #318ce7;
   margin: 4px;
   padding: 4px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.add-btn:hover {
+.card-editor-old .card-editor-section .card-editor-vertical-section .choice-effect-btn.add-btn:hover {
   background-color: rgba(0, 128, 0, 0.6);
   border: 1px outset transparent;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.lock-opened {
+.card-editor-old .card-editor-section .card-editor-vertical-section .choice-effect-btn.lock-opened {
   background-color: rgba(222, 25, 60, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn.lock-closed {
+.card-editor-old .card-editor-section .card-editor-vertical-section .choice-effect-btn.lock-closed {
   background-color: rgba(0, 100, 170, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .choice-effect-btn img {
+.card-editor-old .card-editor-section .card-editor-vertical-section .choice-effect-btn img {
   height: 15px;
   width: 15px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-rush-other-effects .textarea-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-rush-other-effects .textarea-input {
   height: 75px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-rush-condition {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-rush-condition {
   margin-top: -16px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-rush-condition .textarea-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-rush-condition .textarea-input {
   height: 75px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-rush-effect {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-rush-effect {
   margin-top: -16px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-rush-effect .textarea-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-rush-effect .textarea-input {
   height: 75px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-choice-effects-header {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-choice-effects-header {
   margin-top: -16px;
   margin-bottom: -8px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-choice-effect {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-choice-effect {
   margin-top: -16px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section.card-choice-effect .textarea-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section.card-choice-effect .textarea-input {
   height: 75px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-choice-effect-btns {
   position: absolute;
   right: 5px;
   gap: 5px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn {
   padding: 0;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.delete-btn:hover {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.delete-btn:hover {
   background-color: rgba(255, 0, 0, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.up-btn:hover, .card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.down-btn:hover {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.up-btn:hover, .card-editor-old .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn.down-btn:hover {
   background-color: rgba(185, 200, 205, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn img {
+.card-editor-old .card-editor-section .card-editor-vertical-section .card-choice-effect-btns .choice-effect-btn img {
   padding: 3px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-btn {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -666,43 +681,43 @@
   cursor: pointer;
   background-color: transparent;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn {
   border: 1px outset #318ce7;
   margin: 4px;
   padding: 4px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn:hover {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-btn.ability-add-btn:hover {
   background-color: rgba(0, 128, 0, 0.6);
   border: 1px outset transparent;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.lock-opened {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-btn.lock-opened {
   background-color: rgba(222, 25, 60, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn.lock-closed {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-btn.lock-closed {
   background-color: rgba(0, 100, 170, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-btn img {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-btn img {
   height: 15px;
   width: 15px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-edit-buttons {
   position: absolute;
   right: 5px;
   gap: 5px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn {
   padding: 0;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.delete-btn:hover {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.delete-btn:hover {
   background-color: rgba(255, 0, 0, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.up-btn:hover, .card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.down-btn:hover {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.up-btn:hover, .card-editor-old .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn.down-btn:hover {
   background-color: rgba(185, 200, 205, 0.6);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn img {
+.card-editor-old .card-editor-section .card-editor-vertical-section .ability-edit-buttons .ability-edit-btn img {
   padding: 3px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list {
+.card-editor-old .card-editor-section .card-editor-vertical-section .abilities-list {
   margin-top: 5px;
   border: 1px solid #318ce7;
   background-color: white;
@@ -710,48 +725,48 @@
   color: black;
   min-height: 84px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section .abilities-list .ability-input {
   border: none;
   padding: 3px;
   height: 15px;
   width: calc(100% - 85px);
 }
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-div {
+.card-editor-old .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-div {
   height: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: text;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input {
+.card-editor-old .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input {
   padding: 0;
   margin: -2px;
 }
-.card-editor .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
+.card-editor-old .card-editor-section .card-editor-vertical-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
   outline: none;
 }
-.card-editor .card-editor-section .pendulum-details {
+.card-editor-old .card-editor-section .pendulum-details {
   width: 95%;
   margin-bottom: 8px;
 }
-.card-editor .card-editor-section .pendulum-details.opened {
+.card-editor-old .card-editor-section .pendulum-details.opened {
   border: 1px solid black;
   border-radius: 5px;
   top: 14px;
 }
-.card-editor .card-editor-section .pendulum-details.opened .card-pendulum {
+.card-editor-old .card-editor-section .pendulum-details.opened .card-pendulum {
   position: absolute;
   top: -14px;
 }
-.card-editor .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
+.card-editor-old .card-editor-section .pendulum-details.opened .pendulum-section .scales-section {
   top: 5px;
   align-items: center;
 }
-.card-editor .card-editor-section .pendulum-details .card-pendulum {
+.card-editor-old .card-editor-section .pendulum-details .card-pendulum {
   left: 14px;
   top: 1px;
 }
-.card-editor .card-editor-section.misc-section .generate-passcode-btn {
+.card-editor-old .card-editor-section.misc-section .generate-passcode-btn {
   color: white;
   font-size: 15px;
   margin: 0;
@@ -762,50 +777,50 @@
   border-radius: 4px;
   align-self: end;
 }
-.card-editor .card-editor-section.misc-section .card-copyright {
+.card-editor-old .card-editor-section.misc-section .card-copyright {
   align-self: end;
   justify-content: center;
 }
-.card-editor .card-editor-section .card-editor-sub-section {
+.card-editor-old .card-editor-section .card-editor-sub-section {
   width: 95%;
   padding: 2%;
 }
-.card-editor .card-editor-section .card-editor-sub-section .card-items {
+.card-editor-old .card-editor-section .card-editor-sub-section .card-items {
   max-width: 100%;
   flex-wrap: wrap;
 }
-.card-editor .card-editor-section .card-editor-sub-section .card-items .item-container {
+.card-editor-old .card-editor-section .card-editor-sub-section .card-items .item-container {
   margin: 4px 10px 4px 0;
   cursor: pointer;
 }
-.card-editor .card-editor-section .card-editor-sub-section .mn-dropdown {
+.card-editor-old .card-editor-section .card-editor-sub-section .mn-dropdown {
   justify-content: center;
   flex: 1;
 }
-.card-editor .card-editor-section .card-editor-sub-section .mn-dropdown select {
+.card-editor-old .card-editor-section .card-editor-sub-section .mn-dropdown select {
   height: 25px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .card-scale {
   width: 40%;
   justify-content: center;
   align-items: center;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-label {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-label {
   width: 75%;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .card-scale .scale-input {
   width: 25%;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .card-scale input[readOnly] {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .card-scale input[readOnly] {
   color: #999;
   background-color: #f7f7f7;
   border-color: #ddd;
   cursor: not-allowed;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container {
   align-items: center;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -815,26 +830,26 @@
   border-radius: 4px;
   cursor: pointer;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock img {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock img {
   height: 16px;
   width: 16px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-opened {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-opened {
   background-color: rgba(222, 25, 60, 0.6);
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-closed {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock.lock-closed {
   background-color: rgba(0, 100, 170, 0.6);
 }
-.card-editor .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock:hover {
+.card-editor-old .card-editor-section .card-editor-sub-section.scales-section .pend-lock-container .pend-lock:hover {
   background-color: rgba(185, 200, 205, 0.6);
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section {
   gap: 6px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons {
   gap: 10px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -844,55 +859,55 @@
   cursor: pointer;
   background-color: transparent;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn img {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn img {
   height: 16px;
   width: 16px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-opened {
   background-color: rgba(222, 25, 60, 0.6);
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn.lock-closed {
   background-color: rgba(0, 100, 170, 0.6);
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn:hover {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-edit-buttons .abilities-edit-btn:hover {
   background-color: rgba(185, 200, 205, 0.6);
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-list {
   border: 1px solid #318ce7;
   background-color: white;
   font-size: 13px;
   color: black;
   min-height: 63px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input {
   border: none;
   padding: 3px;
   height: 15px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input.selected {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input.selected {
   background-color: #ADCAF9;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-div {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-div {
   height: 15px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input {
   padding: 0;
   margin: -2px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
+.card-editor-old .card-editor-section .card-editor-sub-section.abilities-section .abilities-list .ability-input .inplace-edit-input:focus-visible {
   outline: none;
 }
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container.card-artwork {
+.card-editor-old .card-editor-section .card-editor-sub-section.card-input-container.card-artwork {
   align-items: center;
 }
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .card-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.card-input-container .card-input {
   width: 85%;
 }
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .card-input.artwork-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.card-input-container .card-input.artwork-input {
   width: 75%;
   height: 19px;
 }
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .artwork-btn {
+.card-editor-old .card-editor-section .card-editor-sub-section.card-input-container .artwork-btn {
   display: flex;
   align-items: center;
   width: fit-content;
@@ -906,10 +921,10 @@
   width: 33px;
   background-color: lightgrey;
 }
-.card-editor .card-editor-section .card-editor-sub-section.card-input-container .artwork-hidden-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.card-input-container .artwork-hidden-input {
   display: none;
 }
-.card-editor .card-editor-section .card-editor-sub-section.card-textarea .textarea-input {
+.card-editor-old .card-editor-section .card-editor-sub-section.card-textarea .textarea-input {
   font-family: Arial, Helvetica, sans-serif;
   text-align: justify;
   resize: none;

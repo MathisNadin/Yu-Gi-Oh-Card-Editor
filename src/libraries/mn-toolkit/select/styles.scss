@@ -1,0 +1,154 @@
+@import '../index.scss';
+
+@mixin themeChipsSelect {
+  .item {
+    display: inline-block;
+    line-height: 26px;
+    padding: 0 12px;
+    border-radius: $themeDefaultBorderRadius;
+    background-color: #E0E0E0;
+    margin: 4px 5px 3px 0;
+    font-size: 14px;
+    &:hover,
+    &.activated {
+      background-color: #AEAEAE;
+    }
+    &.selected {
+      background-color: #38D8EC;
+      color: white;
+    }
+  }
+}
+
+
+@mixin themeButtonsSelect {
+  display: flex;
+  .item {
+    flex: 1;
+    @include themeButton();
+    min-width: auto;
+    padding: 0;
+    text-align: center;
+    border-radius: 0;
+    margin: 0;
+    @include fx(background-color);
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+
+    &:first-of-type {
+      border-radius: 6px 0 0 6px;
+    }
+    &:last-of-type {
+      border-radius: 0 6px 6px 0;
+    }
+    background-color: $primary;
+    &.selected {
+      background-color: darken($primary, 10%);
+      color: white;
+    }
+    &.first-selected {
+      border-left: 1px solid black(0.1);
+    }
+    &.last-selected {
+      border-right: 1px solid black(0.1);
+    }
+  }
+}
+
+@mixin themeSelect {
+  @include mnLayountContainable();
+  display: block;
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  @include border-color(4);
+
+  border-radius: $themeDefaultBorderRadius;
+  height: $themeDefaultItemHeight - 2px;
+  display: flex;
+  align-items: center;
+  .label {
+    cursor: pointer;
+    margin: 0 $themeDefaultSpacing;
+    flex: 1;
+    position: relative;
+    @include text-overflow;
+    line-height: 24px;
+    @include fg(1);
+    font-size: 14px;
+    padding-right: 26px;
+  }
+
+  .drop-icon {
+    @include bg(3);
+    @include fg(1);
+    height: $themeDefaultItemHeight - 2px;
+    width: $themeDefaultItemHeight;
+    cursor: pointer;
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
+    border-left: 1px solid;
+
+    @include border-color(4);
+
+  }
+
+  &.disabled {
+    .label {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+  &.show .items {
+    display: block;
+  }
+  .mn-dark-theme & {
+    .label {
+     color: white;
+    }
+  }
+
+  &:focus,
+  &.activated {
+    padding-bottom: 2px;
+    @include fx(border-color);
+  }
+  &[disabled] {
+    @include fg(3);
+    @include border-color(2);
+  }
+
+  &.mn-search-bar-select {
+    background-color: white;
+    border-radius: 0%;
+    border-right: 1px solid #D5D7F1;
+    margin-left: 2px;
+  }
+}
+
+.mn-select {
+  @include themeSelect();
+}
+
+.mn-form-field.mn-select-field .input-wrapper {
+  padding: 0;
+  overflow: hidden;
+}
+
+.mn-form-field.mn-select-field.error .input-wrapper {
+  .mn-select {
+    border: 1px solid rgba($assertive, 0.2);
+    background-color: rgba($assertive, 0.1);
+
+    .drop-icon {
+      background-color: rgba($assertive, 0.1);
+    }
+  }
+}
+
+.mn-popover.mn-select-popover {
+  border-radius: $themeDefaultBorderRadius;
+  margin-top: calc($themeDefaultSpacing/4);
+}

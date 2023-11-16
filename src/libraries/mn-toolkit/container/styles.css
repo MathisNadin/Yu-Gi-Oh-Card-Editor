@@ -1,11 +1,58 @@
 .mn-container {
   display: flex;
+  position: relative;
+}
+.mn-container.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
+.mn-container.mn-layout-item-valign-top {
+  align-items: flex-start;
+  justify-content: initial;
+}
+.mn-container.mn-layout-item-valign-middle {
+  align-items: center;
+  justify-content: initial;
+}
+.mn-container.mn-layout-item-valign-bottom {
+  align-items: flex-end;
+  justify-content: initial;
+}
+.mn-container.mn-layout-item-align-left {
+  justify-content: flex-start;
+}
+.mn-container.mn-layout-item-align-center {
+  justify-content: center;
+}
+.mn-container.mn-layout-item-align-right {
+  justify-content: flex-end;
+}
+.mn-container.horizontal-stack {
+  flex-direction: row;
 }
 .mn-container.vertical-stack {
   flex-direction: column;
 }
-.mn-container.horizontal-stack {
-  flex-direction: row;
+.mn-container.vertical-stack.mn-layout-item-align-left {
+  align-items: flex-start;
+  justify-content: initial;
+}
+.mn-container.vertical-stack.mn-layout-item-align-center {
+  align-items: center;
+  justify-content: initial;
+}
+.mn-container.vertical-stack.mn-layout-item-align-right {
+  align-items: flex-end;
+  justify-content: initial;
+}
+.mn-container.vertical-stack.mn-layout-item-valign-top {
+  justify-content: flex-start;
+}
+.mn-container.vertical-stack.mn-layout-item-valign-middle {
+  justify-content: center;
+}
+.mn-container.vertical-stack.mn-layout-item-valign-bottom {
+  justify-content: flex-end;
 }
 .mn-container.mn-layout-gutter {
   gap: 16px;
@@ -21,27 +68,6 @@
 }
 .mn-container.mn-scrollX {
   overflow-x: auto;
-}
-.mn-container.mn-layout-item-align-left {
-  align-items: flex-start;
-  justify-content: initial;
-}
-.mn-container.mn-layout-item-align-center {
-  align-items: center;
-  justify-content: initial;
-}
-.mn-container.mn-layout-item-align-right {
-  align-items: flex-end;
-  justify-content: initial;
-}
-.mn-container.mn-layout-item-valign-top {
-  justify-content: flex-start;
-}
-.mn-container.mn-layout-item-valign-middle {
-  justify-content: center;
-}
-.mn-container.mn-layout-item-valign-bottom {
-  justify-content: flex-end;
 }
 
 /*# sourceMappingURL=styles.css.map */

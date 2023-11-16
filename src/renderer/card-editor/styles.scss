@@ -1,9 +1,36 @@
+@import '../../libraries/mn-toolkit/index.scss';
+
 @font-face {
   font-family: fontAbilities;
   src: url(../resources/fonts/itcStoneSerifBold.ttf);
 }
 
 .card-editor {
+  $baseBackgroundColor: mix(#f0f0f0, #fafafa, 50%);
+  background-color: lighten($baseBackgroundColor, 10%);
+
+  .card-editor-section {
+    &.basic-section {
+      .top-options {
+        .mn-button {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .mn-text-input {
+      border: 0;
+      border-bottom: 1px solid rgba($positive, 0.5);
+
+      &:focus-visible {
+        outline: none;
+        border-color: $positive;
+      }
+    }
+  }
+}
+
+.card-editor-old {
   // $backgroundColor: aliceblue;
   $labelColor: black;
   height: 100%;

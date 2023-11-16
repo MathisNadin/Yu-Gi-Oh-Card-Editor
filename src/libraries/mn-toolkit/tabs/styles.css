@@ -10,8 +10,14 @@
 
 .mn-tabset {
   display: flex;
+  position: relative;
+  display: flex;
   padding: 16px;
   gap: 16px;
+}
+.mn-tabset.mn-fill {
+  flex: 1;
+  overflow: hidden;
 }
 .mn-tabset .item {
   padding: 0 16px;

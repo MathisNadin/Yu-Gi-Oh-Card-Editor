@@ -255,6 +255,7 @@
 }
 
 .mn-typography {
+  @include mnLayountContainable();
   color: #474747;
 }
 

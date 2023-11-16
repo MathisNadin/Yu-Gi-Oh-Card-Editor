@@ -1,0 +1,18 @@
+@import '../index.scss';
+
+.mn-text-input {
+  @include mnLayountContainable();
+  line-height: $themeDefaultItemHeight;
+  min-height: $themeDefaultItemHeight;
+
+  @include fg(1);
+  padding: 0 calc($themeDefaultSpacing/2);
+  appearance: textfield;
+  &::placeholder {
+    @include fg(2);
+  }
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

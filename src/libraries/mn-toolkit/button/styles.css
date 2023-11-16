@@ -1,10 +1,13 @@
 .mn-button {
+  display: flex;
+  position: relative;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   border: none;
   width: fit-content;
+  height: fit-content;
   cursor: pointer;
   text-decoration: none;
   user-select: none;
@@ -20,6 +23,10 @@
   background-color: #8a8a8a;
   border: 3px solid rgba(138, 138, 138, 0);
   color: #ffffff;
+}
+.mn-button.mn-fill {
+  flex: 1;
+  overflow: hidden;
 }
 .mn-button .icon {
   display: inline-block;
@@ -273,6 +280,8 @@
 }
 
 .mn-button-outline {
+  display: flex;
+  position: relative;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -293,6 +302,10 @@
   border-style: solid;
   will-change: border-color, background-color;
   transition: border-color, background-color 0.2s ease;
+}
+.mn-button-outline.mn-fill {
+  flex: 1;
+  overflow: hidden;
 }
 .mn-button-outline .label {
   flex: 1;
@@ -577,6 +590,8 @@
 }
 
 .mn-button-link {
+  display: flex;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: right;
@@ -599,6 +614,10 @@
   position: relative;
   border-radius: 6px;
   padding: 0 16px;
+}
+.mn-button-link.mn-fill {
+  flex: 1;
+  overflow: hidden;
 }
 .mn-button-link .label {
   overflow: hidden;
@@ -786,6 +805,26 @@
   opacity: 0.3;
   filter: grayscale(1);
   pointer-events: none;
+}
+
+.mn-ghost {
+  z-index: 1;
+  will-change: opacity, transform !important;
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
+  transform: translate3d(0, -10px, 0);
+  opacity: 0;
+}
+.mn-ghost.mn-button-icon.mn-size-xs {
+  padding: 0 0px;
+  width: 24px;
+  top: 3px;
+  right: 4px;
+  border-radius: 10px;
+}
+
+*:hover > .mn-ghost, *.mn-over > .mn-ghost {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 /*# sourceMappingURL=styles.css.map */

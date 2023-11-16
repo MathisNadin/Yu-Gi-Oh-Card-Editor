@@ -15,6 +15,7 @@ import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { Typography } from 'libraries/mn-toolkit/typography/Typography';
 import { IDeviceListener } from 'libraries/mn-toolkit/device';
 import { Button } from 'libraries/mn-toolkit/button/Button';
+import { classNames } from 'libraries/mn-tools';
 
 interface IVersionInfos {
   version: string;
@@ -123,26 +124,19 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public render() {
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
+    const isMaster = this.state.tabIndex === 'master';
     const card = this.state.tempCurrentCard || this.state.currentCard;
-    return this.renderAttributes(<HorizontalStack gutter>
-      <TabbedPane
-        tabPosition='top'
-        className='editor-tabbed-pane'
-        defaultValue={this.state.tabIndex}
-        onChange={tabIndex => this.onTabChange(tabIndex as TTabIndex)}
-      >
-
-        <TabPane id='master' scroll label='Master' gutter>
-          {this.renderUpdate()}
-          <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
-        </TabPane>
-
-        <TabPane id='rush' scroll label='Rush' gutter>
-          {this.renderUpdate()}
-          <RushCardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
-        </TabPane>
-      </TabbedPane>
+    return this.renderAttributes(<HorizontalStack gutter itemAlignment='center'>
+      <VerticalStack className='editor-tabbed-pane' margin gutter>
+        <HorizontalStack className='mode-tabs' gutter itemAlignment='center'>
+          <Button className={classNames('master-tab', { 'selected': isMaster })} color={isMaster ? 'balanced' : '4'} label='Master' onTap={() => this.onTabChange('master')} />
+          <Button className={classNames('rush-tab', { 'selected': !isMaster })} color={!isMaster ? 'balanced' : '4'} label='Rush' onTap={() => this.onTabChange('rush')} />
+        </HorizontalStack>
+        {this.renderUpdate()}
+        {isMaster && <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}
+        {!isMaster && <RushCardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}
+      </VerticalStack>
       {card.rush ? <RushCardPreview card={card} /> : <CardPreview card={card} />}
       {!!app.$card.localCards?.length && <LocalCardsDisplay />}
     </HorizontalStack>, 'card-handler');

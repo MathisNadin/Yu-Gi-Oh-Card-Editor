@@ -1,4 +1,9 @@
 .local-cards-display {
+  width: 30%;
+  border-left: 3px solid rgba(#0052a3, 0.5);
+}
+
+.local-cards-display-old {
   display: flex;
   height: 100%;
   width: 30%;

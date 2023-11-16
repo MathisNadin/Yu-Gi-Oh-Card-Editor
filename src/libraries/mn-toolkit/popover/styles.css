@@ -1,0 +1,451 @@
+@keyframes mn-popover-effect {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.mn-popover {
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  position: fixed;
+  z-index: 9;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 0.25rem 0px;
+  background-color: white;
+  transform: scale(0);
+  will-change: transform, opacity;
+  padding: 16px;
+}
+.mn-popover .mn-popover-wrapper {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.mn-popover .content .menu .menu-item {
+  padding: 10px 0;
+}
+.mn-popover .buttons {
+  text-align: right;
+}
+.mn-popover .actions {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+.mn-popover .actions .separator {
+  display: flex;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.mn-dark-theme .mn-popover .actions .separator {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.mn-popover .actions .action {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  padding: 0 8px;
+  color: #474747;
+  height: 32px;
+}
+.mn-dark-theme .mn-popover .actions .action {
+  color: #e9e9e9;
+}
+.mn-popover .actions .action.selected {
+  pointer-events: none;
+  color: #9e9e9e;
+}
+.mn-dark-theme .mn-popover .actions .action.selected {
+  color: #696969;
+}
+.mn-popover .actions .action .mn-icon {
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  margin-right: 8px;
+  width: 40px;
+}
+.mn-popover .actions .action .text {
+  flex: 1;
+  height: 32px;
+  line-height: 32px;
+  display: block;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mn-popover .actions .action .text > .text.table {
+  display: flex;
+  justify-content: space-between;
+}
+.mn-popover .actions .action:hover {
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .mn-popover .actions .action:hover {
+  background-color: #555555;
+}
+.mn-popover .actions .action.separator {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.mn-popover .actions .action.disabled {
+  pointer-events: none;
+  color: #9e9e9e;
+}
+.mn-dark-theme .mn-popover .actions .action.disabled {
+  color: #696969;
+}
+.mn-popover .actions .action.title {
+  pointer-events: none;
+  font-weight: bold;
+}
+.mn-popover .actions .action.sub-title {
+  padding-left: 32px;
+}
+.mn-popover .actions .action.mn-color-primary {
+  color: #886aea;
+}
+.mn-popover .actions .action.mn-color-primary .mn-icon {
+  color: #886aea;
+}
+.mn-popover .actions .action.mn-color-positive {
+  color: #387ef5;
+}
+.mn-popover .actions .action.mn-color-positive .mn-icon {
+  color: #387ef5;
+}
+.mn-popover .actions .action.mn-color-calm {
+  color: #11c1f3;
+}
+.mn-popover .actions .action.mn-color-calm .mn-icon {
+  color: #11c1f3;
+}
+.mn-popover .actions .action.mn-color-balanced {
+  color: #33cd5f;
+}
+.mn-popover .actions .action.mn-color-balanced .mn-icon {
+  color: #33cd5f;
+}
+.mn-popover .actions .action.mn-color-energized {
+  color: #ffc900;
+}
+.mn-popover .actions .action.mn-color-energized .mn-icon {
+  color: #ffc900;
+}
+.mn-popover .actions .action.mn-color-assertive {
+  color: #ef473a;
+}
+.mn-popover .actions .action.mn-color-assertive .mn-icon {
+  color: #ef473a;
+}
+.mn-popover .actions .action.mn-color-royal {
+  color: #886aea;
+}
+.mn-popover .actions .action.mn-color-royal .mn-icon {
+  color: #886aea;
+}
+.mn-popover .actions .action.mn-color-1 {
+  color: #474747;
+}
+.mn-popover .actions .action.mn-color-1 .mn-icon {
+  color: #474747;
+}
+.mn-popover .actions .action.mn-color-2 {
+  color: #8a8a8a;
+}
+.mn-popover .actions .action.mn-color-2 .mn-icon {
+  color: #8a8a8a;
+}
+.mn-popover .actions .action.mn-color-3 {
+  color: #9e9e9e;
+}
+.mn-popover .actions .action.mn-color-3 .mn-icon {
+  color: #9e9e9e;
+}
+.mn-popover .actions .action.mn-color-4 {
+  color: #e4e4e4;
+}
+.mn-popover .actions .action.mn-color-4 .mn-icon {
+  color: #e4e4e4;
+}
+.mn-popover .actions:last-child a {
+  border-bottom: none;
+}
+.mn-popover.active {
+  animation-name: mn-popover-effect;
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+  transform-origin: top left;
+}
+.mn-popover.active.bottom {
+  transform-origin: bottom left;
+}
+.mn-popover.active.right {
+  transform-origin: top right;
+}
+.mn-popover.active.right.bottom {
+  transform-origin: bottom right;
+}
+.mn-popover.mn-top-bottom:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-bottom: 15px solid rgba(0, 0, 0, 0.1);
+  border-left: 12.5px solid transparent;
+  border-right: 12.5px solid transparent;
+  top: -15px;
+  left: 50%;
+  margin-left: -12.5px;
+}
+.mn-popover.mn-top-bottom:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-bottom: 14px solid white;
+  border-left: 11.5px solid transparent;
+  border-right: 11.5px solid transparent;
+  top: -13px;
+  left: 50%;
+  margin-left: -11.5px;
+}
+.mn-popover.mn-bottom-top:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-top: 15px solid rgba(0, 0, 0, 0.1);
+  border-left: 12.5px solid transparent;
+  border-right: 12.5px solid transparent;
+  bottom: -15px;
+  left: 50%;
+  margin-left: -12.5px;
+}
+.mn-popover.mn-bottom-top:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-top: 14px solid white;
+  border-left: 11.5px solid transparent;
+  border-right: 11.5px solid transparent;
+  bottom: -13px;
+  left: 50%;
+  margin-left: -11.5px;
+}
+.mn-popover.mn-left-right:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-right: 15px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 12.5px solid transparent;
+  border-top: 12.5px solid transparent;
+  left: -15px;
+  top: 50%;
+  margin-top: -7.5px;
+}
+.mn-popover.mn-left-right:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-right: 14px solid white;
+  border-bottom: 11.5px solid transparent;
+  border-top: 11.5px solid transparent;
+  left: -13px;
+  top: 50%;
+  margin-top: -6.5px;
+}
+.mn-popover.mn-right-left:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-left: 15px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 12.5px solid transparent;
+  border-top: 12.5px solid transparent;
+  right: -15px;
+  top: 50%;
+  margin-top: -7.5px;
+}
+.mn-popover.mn-right-left:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-left: 14px solid white;
+  border-bottom: 11.5px solid transparent;
+  border-top: 11.5px solid transparent;
+  right: -13px;
+  top: 50%;
+  margin-top: -6.5px;
+}
+.mn-popover.mn-type-walktrough {
+  background-color: #11c1f3;
+  color: white;
+}
+.mn-popover.mn-type-walktrough .mn-typography {
+  color: white;
+}
+.mn-popover.mn-type-walktrough .mn-button-link {
+  color: white;
+  font-weight: bold;
+}
+.mn-popover.mn-type-walktrough.mn-top-bottom:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-bottom: 15px solid transparent;
+  border-left: 12.5px solid transparent;
+  border-right: 12.5px solid transparent;
+  top: -15px;
+  left: 50%;
+  margin-left: -12.5px;
+}
+.mn-popover.mn-type-walktrough.mn-top-bottom:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-bottom: 14px solid #11c1f3;
+  border-left: 11.5px solid transparent;
+  border-right: 11.5px solid transparent;
+  top: -13px;
+  left: 50%;
+  margin-left: -11.5px;
+}
+.mn-popover.mn-type-walktrough.mn-bottom-top:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-top: 15px solid transparent;
+  border-left: 12.5px solid transparent;
+  border-right: 12.5px solid transparent;
+  bottom: -15px;
+  left: 50%;
+  margin-left: -12.5px;
+}
+.mn-popover.mn-type-walktrough.mn-bottom-top:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-top: 14px solid #11c1f3;
+  border-left: 11.5px solid transparent;
+  border-right: 11.5px solid transparent;
+  bottom: -13px;
+  left: 50%;
+  margin-left: -11.5px;
+}
+.mn-popover.mn-type-walktrough.mn-left-right:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-right: 15px solid transparent;
+  border-bottom: 12.5px solid transparent;
+  border-top: 12.5px solid transparent;
+  left: -15px;
+  top: 50%;
+  margin-top: -7.5px;
+}
+.mn-popover.mn-type-walktrough.mn-left-right:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-right: 14px solid #11c1f3;
+  border-bottom: 11.5px solid transparent;
+  border-top: 11.5px solid transparent;
+  left: -13px;
+  top: 50%;
+  margin-top: -6.5px;
+}
+.mn-popover.mn-type-walktrough.mn-right-left:before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-left: 15px solid transparent;
+  border-bottom: 12.5px solid transparent;
+  border-top: 12.5px solid transparent;
+  right: -15px;
+  top: 50%;
+  margin-top: -7.5px;
+}
+.mn-popover.mn-type-walktrough.mn-right-left:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  border-left: 14px solid #11c1f3;
+  border-bottom: 11.5px solid transparent;
+  border-top: 11.5px solid transparent;
+  right: -13px;
+  top: 50%;
+  margin-top: -6.5px;
+}
+.mn-popover.mn-no-scroll .mn-popover-wrapper {
+  overflow-y: hidden;
+}
+.mn-popover.search-popover .menu-items > span > .title {
+  font-size: 12px;
+  padding: 0 16px;
+  line-height: 200%;
+}
+.mn-popover.search-popover .menu-items > span div.action > .label {
+  font-size: 14px;
+}
+.mn-popover.search-popover .menu-items > span div.action.keyword > .label {
+  height: auto;
+  line-height: 175%;
+  font-weight: 500;
+  color: #9a9a9a;
+}
+.mn-popover.search-popover .menu-items > span div.action:not(.keyword) > label {
+  font-weight: normal;
+}
+
+.mn-popover-focus {
+  box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  z-index: 8;
+}
+
+.mn-popover-overlay {
+  pointer-events: auto;
+  z-index: 8;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/*# sourceMappingURL=styles.css.map */

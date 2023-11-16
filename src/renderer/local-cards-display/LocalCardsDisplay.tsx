@@ -54,8 +54,11 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         'skill'
       ]
     };
-    this.sort();
     app.$card.addListener(this);
+  }
+
+  public componentDidMount() {
+    this.sort();
   }
 
   public componentWillUnmount() {
@@ -196,6 +199,11 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
 
   public render() {
     return this.renderAttributes(<VerticalStack>
+    </VerticalStack>, 'local-cards-display');
+  }
+
+  public render2() {
+    return this.renderAttributes(<VerticalStack>
       <VerticalStack scroll fill className='local-cards-listing'>
         <p className='local-cards-label'>Cartes locales</p>
 
@@ -249,6 +257,6 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
         className={classNames('render-cards-btn', { 'disabled': this.state.edited || !Object.values(this.state.selectedCards).filter(s => !!s).length })}
         onClick={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
       >Faire le rendu des cartes</button>
-    </VerticalStack>, 'local-cards-display');
+    </VerticalStack>, 'local-cards-display-old');
   }
 };

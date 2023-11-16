@@ -2,8 +2,8 @@ import { IContainerProps, IContainerState, Container } from 'libraries/mn-toolki
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { ReactElement } from 'react';
-import cross from '../assets/cross.svg';
 import './styles.css';
+import { Icon } from '../icon';
 
 export interface IPopupProps extends IContainerProps {
   id: string;
@@ -37,7 +37,8 @@ export class Popup<RESULT> extends Container<IPopupProps, IPopupState> {
       <VerticalStack className='mn-popup-inner' height={this.props.innerHeight} width={this.props.innerWidth} >
         <HorizontalStack className='mn-popup-header'>
           <p className='mn-popup-title'>{this.props.title}</p>
-          <img className='mn-popup-close' src={cross} alt='cross' onClick={() => this.close()} />
+          <Icon className='mn-popup-close' iconId='toolkit-close' onTap={() => this.close()} />
+          {/* <img className='mn-popup-close' src={crossIcon as string} alt='cross' onClick={() => this.close()} /> */}
         </HorizontalStack>
         {this.renderAttributes(this.props.content, 'mn-popup-content')}
       </VerticalStack>

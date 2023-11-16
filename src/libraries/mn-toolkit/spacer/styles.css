@@ -1,0 +1,10 @@
+.mn-layout-spacer {
+  display: flex;
+  position: relative;
+}
+.mn-layout-spacer.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=styles.css.map */

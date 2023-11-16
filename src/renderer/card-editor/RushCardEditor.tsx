@@ -424,10 +424,10 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   }
 
   public render() {
-    return this.renderAttributes(<VerticalStack scroll>
+    return this.renderAttributes(<VerticalStack scroll fill padding>
       {this.renderBasicCardDetails()}
-      {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
-      {this.renderMiscDetails()}
+      {/* {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()} */}
+      {/* {this.renderMiscDetails()} */}
       <p className='app-version'>{this.state.appVersion}</p>
     </VerticalStack>, 'card-editor');
   }
@@ -443,7 +443,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         {!app.$card.tempCurrentCard && <p className='reset-current-card-btn' onClick={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}>Réinitialiser</p>}
       </HorizontalStack>
 
-      <HorizontalStack className='card-editor-full-width-section'>
+      {/* <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-name-style card-input-container'>
           <p className='editor-label card-name-style-label'>Rareté</p>
           <Dropdown<TNameStyle>
@@ -489,18 +489,18 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             defaultOption={this.state.card.language}
             onSelect={value => this.onLanguageChange(value)} />
         </VerticalStack>
-      </HorizontalStack>
+      </HorizontalStack> */}
 
-      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
+      {/* <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-artwork card-input-container'>
         <p className='editor-label artwork-label'>Image</p>
 
         <HorizontalStack>
           <input type='text' className='artwork-input card-input' value={this.state.card.artwork.url} onInput={e => this.onArtworkURLChange((e.target as EventTargetWithValue).value)} />
           <button type='button' className='artwork-btn' onClick={() => this.showArtworkPopup()}>...</button>
         </HorizontalStack>
-      </VerticalStack>
+      </VerticalStack> */}
 
-      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-frames card-input-container'>
+      {/* <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-frames card-input-container'>
         <HorizontalStack className='card-frames-labels with-label-separator'>
           <p className='editor-label frames-label'>Bordures</p>
 
@@ -530,9 +530,9 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             }
           )}
         </HorizontalStack>
-      </VerticalStack>
+      </VerticalStack> */}
 
-      {!app.$card.isOnlySkill(this.state.card) && <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-attributes card-input-container'>
+      {/* {!app.$card.isOnlySkill(this.state.card) && <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-attributes card-input-container'>
         <p className='editor-label attributes-label'>Icones</p>
 
         <HorizontalStack className='card-items card-attributes-icons'>
@@ -546,9 +546,9 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             </HorizontalStack>
           )}
         </HorizontalStack>
-      </VerticalStack>}
+      </VerticalStack>} */}
 
-      {app.$card.isBackrow(this.state.card) &&
+      {/* {app.$card.isBackrow(this.state.card) &&
         <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-st-icons card-input-container'>
           <p className='editor-label st-icons-label label-with-separator with-label-separator'>Type de Magie/Piège</p>
 
@@ -563,9 +563,9 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
               </HorizontalStack>
             )}
           </HorizontalStack>
-      </VerticalStack>}
+      </VerticalStack>} */}
 
-      <TabbedPane
+      {/* <TabbedPane
         tabPosition='top'
         defaultValue={this.state.card.rushTextMode}
         onChange={rushTextMode => this.onRushTextModeChange(rushTextMode as TRushTextMode)}
@@ -693,14 +693,14 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             </VerticalStack>;
           })}
         </TabPane>
-      </TabbedPane>
+      </TabbedPane> */}
 
-      <HorizontalStack className='card-editor-full-width-section'>
+      {/* <HorizontalStack className='card-editor-full-width-section'>
         <input type='checkbox' className='dont-coder-rush-art-input card-input' checked={this.state.card.dontCoverRushArt} onChange={() => this.onDontCoverRushArtChange()} />
         <p className='editor-label dont-coder-rush-art-label'>Ne pas couvrir l'artwork</p>
-      </HorizontalStack>
+      </HorizontalStack> */}
 
-      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
+      {/* {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
         <input type='checkbox' className='legend-input card-input' checked={this.state.card.legend} onChange={() => this.onLegendChange()} />
         <p className='editor-label legend-label'>LEGEND</p>
 
@@ -721,7 +721,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           defaultOption={this.state.card.legendType}
           onSelect={value => this.onLegendTypeChange(value)}
         />}
-      </HorizontalStack>}
+      </HorizontalStack>} */}
     </VerticalStack>, 'card-editor-section basic-section');
   }
 
@@ -780,13 +780,13 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         </VerticalStack>
       </HorizontalStack>}
 
-      {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
+      {/* {!this.state.card.dontCoverRushArt && <HorizontalStack className='card-editor-full-width-section'>
         <input type='checkbox' className='maximum-input card-input' checked={this.state.card.maximum} onChange={() => this.onMaximumChange()} />
         <p className='editor-label atk-max-label'>ATK MAX</p>
         {this.state.card.maximum && <input type='text' className='atk-max-input card-input' value={this.state.card.atkMax} onInput={e => this.onAtkMaxChange((e.target as EventTargetWithValue).value)} />}
-      </HorizontalStack>}
+      </HorizontalStack>} */}
 
-      <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-abilities card-input-container'>
+      {/* <VerticalStack className='card-editor-full-width-section card-editor-vertical-section card-abilities card-input-container'>
         <p className='editor-label abilities-label'>Types</p>
 
         <VerticalStack className='abilities-list'>
@@ -821,7 +821,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             <img src={plus} alt='lock' />
           </button>
         </VerticalStack>
-      </VerticalStack>
+      </VerticalStack> */}
     </VerticalStack>, 'card-editor-section abilities-section');
   }
 
@@ -865,7 +865,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         </VerticalStack>
       </HorizontalStack>
 
-      <HorizontalStack className='card-editor-full-width-section'>
+      {/* <HorizontalStack className='card-editor-full-width-section'>
         <VerticalStack className='card-editor-vertical-section card-sticker card-input-container'>
           <p className='editor-label card-edition-label'>Sticker</p>
           <Dropdown<TSticker>
@@ -907,7 +907,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           <input type='checkbox' className='copyright-old-input card-input' checked={this.state.card.oldCopyright} onChange={() => this.onOldCopyrightChange()} />
           <p className='editor-label copyright-old-label'>1996</p>
         </HorizontalStack>
-      </HorizontalStack>
+      </HorizontalStack> */}
     </VerticalStack>, 'card-editor-section misc-section');
   }
 };

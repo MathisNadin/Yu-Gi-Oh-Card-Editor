@@ -1,0 +1,11 @@
+@import '../index.scss';
+
+.mn-image {
+  @include mnLayountContainable();
+  overflow: hidden;
+  // border-radius: $themeDefaultBorderRadius;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}

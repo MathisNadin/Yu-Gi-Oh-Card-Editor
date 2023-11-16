@@ -19,12 +19,14 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin themeButton() {
+  @include mnLayountContainable();
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   border: none;
   width: fit-content;
+  height: fit-content;
 
   cursor: pointer;
   text-decoration: none;
@@ -131,7 +133,9 @@ $button-height: $themeDefaultItemHeight;
     background-color: rgba($color, 0.1);
   }
 }
+
 @mixin themeButtonOutline() {
+  @include mnLayountContainable();
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -211,6 +215,7 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin themeButtonLink() {
+  @include mnLayountContainable();
   display: inline-flex;
   align-items: center;
   justify-content: right;
@@ -265,3 +270,101 @@ $button-height: $themeDefaultItemHeight;
 }
 
 .mn-button-link { @include themeButtonLink; }
+
+
+
+
+
+@mixin colorizeButtonIcon($color) {
+  color: lighten($color, 20%);
+  &.mn-button-icon-pressed {
+    background-color: rgba($color, 0.1);
+  }
+  &:hover {
+    color: $primary;
+  }
+}
+
+@mixin buttonIconSize($size: $themeDefaultItemHeight, $padding: $themeDefaultSpacing/3) {
+  height: $size;
+  width: $size;
+  padding: 4px;
+  font-size: $size - 2 * $padding;
+}
+
+@mixin themeButtonIcon {
+  @include mnLayountContainable();
+  cursor: pointer;
+  user-select: none;
+  border-radius: $themeDefaultBorderRadius;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  transition: color .4s ease;
+  @include buttonIconSize();
+  &.mn-size-xs {
+    @include buttonIconSize(16px, 0px);
+  }
+
+  .icon {
+    object-fit: cover;
+    object-position: center;
+    svg {
+      width: 100%;
+      height: 100%;
+      display: inline-block;
+    }
+  }
+
+  position: relative;
+  &.mn-color-primary { @include colorizeButtonIcon($primary); }
+  &.mn-color-positive { @include colorizeButtonIcon($positive); }
+  &.mn-color-calm { @include colorizeButtonIcon($calm); }
+  &.mn-color-balanced { @include colorizeButtonIcon($balanced); }
+  &.mn-color-energized { @include colorizeButtonIcon($energized); }
+  &.mn-color-assertive { @include colorizeButtonIcon($assertive); }
+  &.mn-color-royal { @include colorizeButtonIcon($royal); }
+
+  &.mn-color-neutral { @include colorizeButtonIcon(nth($theme-light-fg, 1)); }
+  &.mn-color-1 { @include colorizeButtonIcon(nth($theme-light-fg, 1)); }
+  &.mn-color-2 { @include colorizeButtonIcon(nth($theme-light-fg, 2)); }
+  &.mn-color-3 { @include colorizeButtonIcon(nth($theme-light-fg, 3)); }
+  &.mn-color-4 { @include colorizeButtonIcon(nth($theme-light-fg, 4)); }
+
+  .mn-dark-theme &.mn-color-neutral { @include colorizeButtonIcon(nth($theme-dark-fg, 1)); }
+  .mn-dark-theme &.mn-color-1 { @include colorizeButtonIcon(nth($theme-dark-fg, 1)); }
+  .mn-dark-theme &.mn-color-2 { @include colorizeButtonIcon(nth($theme-dark-fg, 2)); }
+  .mn-dark-theme &.mn-color-3 { @include colorizeButtonIcon(nth($theme-dark-fg, 3)); }
+  .mn-dark-theme &.mn-color-4 { @include colorizeButtonIcon(nth($theme-dark-fg, 4)); }
+
+  &.mn-control-disable {
+    .mn-icon {
+      @include fg(3);
+    }
+    pointer-events: none;
+  }
+}
+
+.mn-ghost {
+  z-index: $z-index-content + 1;
+  will-change: opacity, transform !important;
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
+  transform: translate3d(0,-10px,0);
+  opacity: 0;
+  &.mn-button-icon {
+    &.mn-size-xs {
+      padding: 0 0px;
+      width: 24px;
+      top: 3px;
+      right: 4px;
+      border-radius: 10px;
+    }
+  }
+}
+
+*:hover,*.mn-over {
+  > .mn-ghost {
+    opacity: 1;
+    transform: translate3d(0,0,0)
+  }
+}

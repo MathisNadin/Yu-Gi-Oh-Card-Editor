@@ -1,7 +1,7 @@
 import './styles.css';
 import { classNames } from "libraries/mn-tools";
 import { IContainableProps, IContainableState, Containable } from "../containable/Containable";
-import { TForegroundColor } from "./Button";
+import { TForegroundColor } from '../themeSettings';
 
 interface IButtonOutlineProps extends IContainableProps {
   /** Set the text in front of the button. */

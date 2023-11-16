@@ -1,0 +1,110 @@
+.mn-select {
+  display: flex;
+  position: relative;
+  display: block;
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #e4e4e4;
+  border-radius: 6px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+.mn-select.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
+.mn-dark-theme .mn-select {
+  border-color: #707070;
+}
+.mn-select .label {
+  cursor: pointer;
+  margin: 0 16px;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 130%;
+  line-height: 24px;
+  color: #474747;
+  font-size: 14px;
+  padding-right: 26px;
+}
+.mn-dark-theme .mn-select .label {
+  color: #e9e9e9;
+}
+.mn-select .drop-icon {
+  background-color: #EEF0F2;
+  color: #474747;
+  height: 30px;
+  width: 32px;
+  cursor: pointer;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  border-radius: 0 6px 6px 0;
+  border-left: 1px solid;
+  border-color: #e4e4e4;
+}
+.mn-dark-theme .mn-select .drop-icon {
+  background-color: #555555;
+}
+.mn-dark-theme .mn-select .drop-icon {
+  color: #e9e9e9;
+}
+.mn-dark-theme .mn-select .drop-icon {
+  border-color: #707070;
+}
+.mn-select.disabled .label {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.mn-select.show .items {
+  display: block;
+}
+.mn-dark-theme .mn-select .label {
+  color: white;
+}
+.mn-select:focus, .mn-select.activated {
+  padding-bottom: 2px;
+  will-change: border-color;
+  transition: border-color 0.2s ease;
+}
+.mn-select[disabled] {
+  color: #9e9e9e;
+  border-color: #8a8a8a;
+}
+.mn-dark-theme .mn-select[disabled] {
+  color: #696969;
+}
+.mn-dark-theme .mn-select[disabled] {
+  border-color: #b8b8b8;
+}
+.mn-select.mn-search-bar-select {
+  background-color: white;
+  border-radius: 0%;
+  border-right: 1px solid #D5D7F1;
+  margin-left: 2px;
+}
+
+.mn-form-field.mn-select-field .input-wrapper {
+  padding: 0;
+  overflow: hidden;
+}
+
+.mn-form-field.mn-select-field.error .input-wrapper .mn-select {
+  border: 1px solid rgba(239, 71, 58, 0.2);
+  background-color: rgba(239, 71, 58, 0.1);
+}
+.mn-form-field.mn-select-field.error .input-wrapper .mn-select .drop-icon {
+  background-color: rgba(239, 71, 58, 0.1);
+}
+
+.mn-popover.mn-select-popover {
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+/*# sourceMappingURL=styles.css.map */

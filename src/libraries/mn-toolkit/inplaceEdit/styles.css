@@ -1,3 +1,10 @@
-
+.inplace-edit-container {
+  display: flex;
+  position: relative;
+}
+.inplace-edit-container.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
 
 /*# sourceMappingURL=styles.css.map */

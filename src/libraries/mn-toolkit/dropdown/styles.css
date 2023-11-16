@@ -1,3 +1,10 @@
-
+.mn-dropdown {
+  display: flex;
+  position: relative;
+}
+.mn-dropdown.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
 
 /*# sourceMappingURL=styles.css.map */

@@ -1,14 +1,68 @@
 @import '../index.scss';
 
 .mn-container {
-  display: flex;
+  @include mnLayountContainable();
 
-  &.vertical-stack {
-    flex-direction: column;
+  &.mn-layout-item-valign-top {
+    align-items: flex-start;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-valign-middle {
+    align-items: center;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-valign-bottom {
+    align-items: flex-end;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-align-left {
+    justify-content: flex-start;
+  }
+
+  &.mn-layout-item-align-center {
+    justify-content: center;
+  }
+
+  &.mn-layout-item-align-right {
+    justify-content: flex-end;
   }
 
   &.horizontal-stack {
     flex-direction: row;
+  }
+
+  &.vertical-stack {
+    flex-direction: column;
+
+    &.mn-layout-item-align-left {
+      align-items: flex-start;
+      justify-content: initial;
+    }
+
+    &.mn-layout-item-align-center {
+      align-items: center;
+      justify-content: initial;
+    }
+
+    &.mn-layout-item-align-right {
+      align-items: flex-end;
+      justify-content: initial;
+    }
+
+    &.mn-layout-item-valign-top {
+      justify-content: flex-start;
+    }
+
+    &.mn-layout-item-valign-middle {
+      justify-content: center;
+    }
+
+    &.mn-layout-item-valign-bottom {
+      justify-content: flex-end;
+    }
   }
 
   &.mn-layout-gutter {
@@ -29,32 +83,5 @@
 
   &.mn-scrollX {
     overflow-x: auto;
-  }
-
-  &.mn-layout-item-align-left {
-    align-items: flex-start;
-    justify-content: initial;
-  }
-
-  &.mn-layout-item-align-center {
-    align-items: center;
-    justify-content: initial;
-  }
-
-  &.mn-layout-item-align-right {
-    align-items: flex-end;
-    justify-content: initial;
-  }
-
-  &.mn-layout-item-valign-top {
-    justify-content: flex-start;
-  }
-
-  &.mn-layout-item-valign-middle {
-    justify-content: center;
-  }
-
-  &.mn-layout-item-valign-bottom {
-    justify-content: flex-end;
   }
 }

@@ -1,7 +1,7 @@
 import './styles.css';
 import { isDefined, classNames } from "libraries/mn-tools";
 import { IContainableProps, IContainableState, Containable } from "../containable/Containable";
-import { TForegroundColor } from "./Button";
+import { TForegroundColor } from '../themeSettings';
 
 interface IButtonLinkProps extends IContainableProps {
   label: string;

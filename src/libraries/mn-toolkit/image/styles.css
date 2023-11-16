@@ -1,0 +1,15 @@
+.mn-image {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+.mn-image.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=styles.css.map */

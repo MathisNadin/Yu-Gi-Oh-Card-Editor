@@ -7,6 +7,22 @@
 }
 
 .card-handler {
+  height: 100%;
+  width: 100%;
+}
+.card-handler .editor-tabbed-pane {
+  height: 100%;
+  width: 30%;
+}
+.card-handler .editor-tabbed-pane .mode-tabs .mn-button {
+  width: 40%;
+  border-radius: 32px;
+}
+.card-handler .editor-tabbed-pane .mode-tabs .mn-button.selected {
+  font-weight: bold;
+}
+
+.card-handler-old {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -14,59 +30,59 @@
   height: 100%;
   width: 100%;
 }
-.card-handler .new-version {
+.card-handler-old .new-version {
   border: 1px solid black;
   border-radius: 6px;
   background-color: #387ef5;
 }
-.card-handler .new-version .mn-typography {
+.card-handler-old .new-version .mn-typography {
   color: white !important;
 }
-.card-handler .editor-tabbed-pane {
+.card-handler-old .editor-tabbed-pane {
   height: 100%;
   width: 30%;
   background-color: aliceblue;
   display: flex;
 }
-.card-handler .editor-tabbed-pane .mn-tab-panes {
+.card-handler-old .editor-tabbed-pane .mn-tab-panes {
   background-color: transparent;
 }
-.card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-master:hover {
+.card-handler-old .editor-tabbed-pane .mn-tabset .item#mn-tab-button-master:hover {
   background-color: #FFFFB2;
 }
-.card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-master.selected {
+.card-handler-old .editor-tabbed-pane .mn-tabset .item#mn-tab-button-master.selected {
   background-color: #FFFFB2;
 }
-.card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush:hover {
+.card-handler-old .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush:hover {
   background-color: #FFB2B2;
 }
-.card-handler .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush.selected {
+.card-handler-old .editor-tabbed-pane .mn-tabset .item#mn-tab-button-rush.selected {
   background-color: #FFB2B2;
 }
-.card-handler .editor-tabbed-pane .mn-tabset .item .label {
+.card-handler-old .editor-tabbed-pane .mn-tabset .item .label {
   font-family: fontAbilities;
   text-transform: uppercase;
 }
-.card-handler .editor-tabbed-pane .mn-tab-pane {
+.card-handler-old .editor-tabbed-pane .mn-tab-pane {
   overflow-x: hidden;
 }
-.card-handler .editor-tabbed-pane .mn-tab-pane#master {
+.card-handler-old .editor-tabbed-pane .mn-tab-pane#master {
   background-color: #FFFFB2;
 }
-.card-handler .editor-tabbed-pane .mn-tab-pane#master .pendulum-details.opened .card-pendulum {
+.card-handler-old .editor-tabbed-pane .mn-tab-pane#master .pendulum-details.opened .card-pendulum {
   background-color: #FFFFB2;
 }
-.card-handler .editor-tabbed-pane .mn-tab-pane#rush {
+.card-handler-old .editor-tabbed-pane .mn-tab-pane#rush {
   background-color: #FFB2B2;
 }
-.card-handler .frames-stack {
+.card-handler-old .frames-stack {
   position: relative;
   width: 400px;
   height: 600px;
   margin: 0 auto;
   overflow: hidden;
 }
-.card-handler .image-wrapper {
+.card-handler-old .image-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -74,16 +90,16 @@
   height: 100%;
   overflow: hidden;
 }
-.card-handler .image-clip {
+.card-handler-old .image-clip {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.card-handler .card-frame {
+.card-handler-old .card-frame {
   width: 100%;
   height: 100%;
 }
-.card-handler .card-frame-test {
+.card-handler-old .card-frame-test {
   position: absolute;
   top: 0;
   left: 0;

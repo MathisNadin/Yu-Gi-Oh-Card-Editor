@@ -1,11 +1,11 @@
 import './styles.css';
 import { IContainableProps, Containable, IContainableState } from "../containable/Containable";
-
-export type TForegroundColor = 'primary' | 'secondary' | 'neutral' | 'positive' | 'calm' | 'balanced' | 'energized' | 'assertive' | 'royal' | '1' | '2' | '3' | '4';
+import { TBackgroundColor, TForegroundColor } from '../themeSettings';
 
 interface IButtonProps extends IContainableProps {
   label: string;
   color?: TForegroundColor;
+  bg?: TBackgroundColor;
   block?: boolean;
 }
 
@@ -31,6 +31,7 @@ export class Button extends Containable<IButtonProps, IButtonState> {
     let classes = super.renderClasses(name);
     if (this.props.block) classes['mn-button-block'] = true;
     if (this.props.color) classes[`mn-button-color-${this.props.color}`] = true;
+    if (this.props.bg) classes[`mn-button-bg-${this.props.bg}`] = true;
     return classes;
   }
 

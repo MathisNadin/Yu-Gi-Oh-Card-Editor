@@ -2,6 +2,11 @@ import './styles.css';
 import { Containable, IContainableProps } from "libraries/mn-toolkit/containable/Containable";
 import { classNames } from "libraries/mn-tools";
 import { ReactNode } from "react";
+import { Typography } from '../typography/Typography';
+import { Spacer } from '../spacer/Spacer';
+import { Icon, TIconId } from '../icon';
+import { ButtonIcon } from '../button';
+import { TForegroundColor, TBackgroundColor } from '../themeSettings';
 
 export type TAbstractTabIndex = string | undefined;
 
@@ -10,8 +15,8 @@ export type TabPosition = 'top' | 'bottom' | 'left' | 'right';
 export interface ITabItem<TAbstractTabIndex> {
   id?: TAbstractTabIndex;
   label: string | ReactNode;
-  // icon?: IconId;
-  // iconColor?: TForegroundColor;
+  icon?: TIconId;
+  iconColor?: TForegroundColor;
   stateIcon?: string;
   stateIconColor?: string;
   badge?: string | number;
@@ -19,7 +24,7 @@ export interface ITabItem<TAbstractTabIndex> {
   selected?: boolean;
   disabled?: boolean;
   closable?: boolean;
-  // selectedBg?: TBackgroundColor;
+  selectedBg?: TBackgroundColor;
 }
 
 export interface ITabSetProps<TAbstractTabIndex> extends IContainableProps {
@@ -28,9 +33,9 @@ export interface ITabSetProps<TAbstractTabIndex> extends IContainableProps {
   defaultValue: TAbstractTabIndex;
   onChange?: (value: TAbstractTabIndex) => Promise<void> | void;
   onClose?: (id: string) => Promise<void> | void;
-  // addButton?: boolean;
-  // onAdd?: () => Promise<void> | void;
-  // legend?: string;
+  addButton?: boolean;
+  onAdd?: () => Promise<void> | void;
+  legend?: string;
 }
 
 interface ITabSetState<TAbstractTabIndex> {
@@ -97,12 +102,12 @@ export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstrac
         id: item.id,
         label: item.label,
         selected: this.state.value === item.id,
-        // icon: item.icon,
-        // iconColor: item.iconColor,
+        icon: item.icon,
+        iconColor: item.iconColor,
         badge: item.badge,
         disabled: item.disabled,
         closable: item.closable,
-        // selectedBg: item.selectedBg
+        selectedBg: item.selectedBg
       } as ITabItem<TAbstractTabIndex>;
       listItem.onTap = ((x) => () => this.selectItem(x))(listItem);
       if (!first) first = listItem;
@@ -124,15 +129,15 @@ export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstrac
   public render() {
     let items = this.getListItems();
     return this.renderAttributes(<div>
-{/*       {!!this.props.legend && <Typography variant="h5" content={this.props.legend}/>} */}
-{/*       {this.props.tabPosition==='bottom' && <Spacer />} */}
-      {items.map((item) => (
+      {!!this.props.legend && <Typography variant="h5" content={this.props.legend}/>}
+      {this.props.tabPosition==='bottom' && <Spacer />}
+      {items.map(item => (
         <span
           className={classNames({ selected: item.selected, disabled: item.disabled }, /* `mn-bg-${item.selectedBg}`, */ "item")}
           id={`mn-tab-button-${item.id}`}
           onClick={() => this.selectItem(item)}
         >
-{/*           {!!item.icon && <Icon className='icon' iconId={item.icon} color={item.iconColor} />} */}
+          {!!item.icon && <Icon className='icon' iconId={item.icon} color={item.iconColor} />}
           <span className="label">{item.label}</span>
           {item.badge || item.closable || item.stateIcon ? <span className="mn-indicators">
             {item.badge ? <span className="mn-badge">{item.badge}</span> : null}
@@ -141,16 +146,16 @@ export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstrac
           </span> : null}
         </span>
       ))}
-{/*       {this.props.tabPosition==='top' && <Spacer />}
+      {this.props.tabPosition==='top' && <Spacer />}
       {this.props.addButton ? <span className="mn-tabset-add-button-holder">
         <ButtonIcon icon="toolkit-plus" onTap={() => this.onAddButton()} />
-      </span> : null} */}
+      </span> : null}
     </div>, 'mn-tabset');
   }
 
-/*   public onAddButton() {
+  public onAddButton() {
     if (this.props.onAdd) app.$errorManager.handlePromise(this.props.onAdd());
-  } */
+  }
 
   private onClose(id: string) {
     if (this.props.onClose) app.$errorManager.handlePromise(this.props.onClose(id));

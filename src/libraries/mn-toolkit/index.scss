@@ -138,6 +138,16 @@ $z-index-overall: 100;
   line-height: 130%;
 }
 
+@mixin mnLayountContainable() {
+  display: flex;
+  position: relative;
+
+  &.mn-fill {
+    flex: 1;
+    overflow: hidden;
+  }
+}
+
 @mixin mnLayoutHorizontalStack {
   flex-direction: row;
 }
@@ -177,7 +187,7 @@ $z-index-overall: 100;
   z-index: 2;
   border-#{$opposite}: $height solid $color;
 
-  $perpendicular-borders: $width/2 solid transparent;
+  $perpendicular-borders: calc($width/2) solid transparent;
 
   @if $direction == top or $direction == bottom {
     border-left: $perpendicular-borders;

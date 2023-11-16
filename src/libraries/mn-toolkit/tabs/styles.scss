@@ -16,6 +16,7 @@ $themePaneBg: rgba(lightgrey, 0.3);
 
 $decay: 4px;
 .mn-tabset {
+  @include mnLayountContainable();
   display: flex;
   // @include bg(1);
   padding: $themeDefaultSpacing;

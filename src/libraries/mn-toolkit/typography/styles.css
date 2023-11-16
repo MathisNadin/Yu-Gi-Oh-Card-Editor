@@ -532,7 +532,13 @@
 }
 
 .mn-typography {
+  display: flex;
+  position: relative;
   color: #474747;
+}
+.mn-typography.mn-fill {
+  flex: 1;
+  overflow: hidden;
 }
 
 .mn-typography-h1 {
