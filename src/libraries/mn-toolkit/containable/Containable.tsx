@@ -8,6 +8,8 @@ import {
 } from 'react';
 import { classNames, isDefined, isNumber } from 'libraries/mn-tools';
 
+export type ColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
+
 export type FloatPosition =
   | 'none'
   | 'top-left'
@@ -34,6 +36,11 @@ export type ZIndex =
   | 'overall';
 
 export interface IContainableProps extends PropsWithChildren {
+  s?: ColSpan;
+  m?: ColSpan;
+  l?: ColSpan;
+  xl?: ColSpan;
+  xxl?: ColSpan;
   nodeId?: string;
   className?: string;
   mainClassName?: string;

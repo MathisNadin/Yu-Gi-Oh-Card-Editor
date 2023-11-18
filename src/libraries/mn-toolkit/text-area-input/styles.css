@@ -1,17 +1,9 @@
 .mn-textarea-input {
-  display: flex;
-  position: relative;
   color: #474747;
   background-color: transparent;
-  border: none;
   line-height: 20px;
   padding: 5px;
   resize: none;
-  flex: 1;
-}
-.mn-textarea-input.mn-fill {
-  flex: 1;
-  overflow: hidden;
 }
 .mn-dark-theme .mn-textarea-input {
   color: #e9e9e9;

@@ -1,6 +1,6 @@
 @import '../index.scss';
 
-.mn-text-input {
+.mn-number-input {
   @include mnLayountContainable();
   line-height: $themeDefaultItemHeight - 4px;
   min-height: $themeDefaultItemHeight - 4px;

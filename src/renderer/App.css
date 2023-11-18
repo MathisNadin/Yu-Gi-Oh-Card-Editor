@@ -64,4 +64,10 @@ a:hover {
   text-decoration: none;
 }
 
+input, textarea {
+  font-family: Encode Sans Semi Condensed, Verdana, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 140%;
+}
+
 /*# sourceMappingURL=App.css.map */

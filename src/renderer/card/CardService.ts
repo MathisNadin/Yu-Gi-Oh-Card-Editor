@@ -36,6 +36,12 @@ const COMMON_FRAMES: TFrame[] = [
   'monsterToken',
 ];
 
+const FRAMES_WITH_DESCRIPTION: TFrame[] = [
+  'normal',
+  'token',
+  'monsterToken',
+];
+
 export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener> {
   private _currentCard = {} as ICard;
   private _tempCurrentCard: ICard | undefined = undefined;
@@ -823,5 +829,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public isOnlySkill(card: ICard) {
     return card.frames.length === 1 && card.frames.includes('skill');
+  }
+
+  public getDescriptionPlaceholder(card: ICard) {
+    if (card.frames.length === 1 && FRAMES_WITH_DESCRIPTION.includes(card.frames[0])) return 'Description';
+    return 'Effet';
   }
 }

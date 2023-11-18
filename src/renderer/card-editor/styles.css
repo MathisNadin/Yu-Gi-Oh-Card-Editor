@@ -5,16 +5,40 @@
 .card-editor {
   background-color: white;
 }
+.card-editor .card-editor-section {
+  /* .mn-text-input {
+    border: 0;
+    border-bottom: 1px solid rgba($positive, 0.5);
+
+    &:focus-visible {
+      outline: none;
+      border-color: $positive;
+    }
+  }
+
+  .mn-textarea-input {
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .mn-file-input {
+    input {
+      border-radius: 0;
+      border: 1px solid nth($theme-light-fg, 4);
+
+      &:focus-visible {
+        outline: none;
+        border-color: $positive;
+      }
+    }
+  } */
+}
 .card-editor .card-editor-section.basic-section .top-options .mn-button {
   font-size: 14px;
 }
-.card-editor .card-editor-section .mn-text-input {
-  border: 0;
-  border-bottom: 1px solid rgba(56, 126, 245, 0.5);
-}
-.card-editor .card-editor-section .mn-text-input:focus-visible {
-  outline: none;
-  border-color: #387ef5;
+.card-editor .card-editor-section .field-icon {
+  margin-right: 8px;
 }
 
 .card-editor-old {

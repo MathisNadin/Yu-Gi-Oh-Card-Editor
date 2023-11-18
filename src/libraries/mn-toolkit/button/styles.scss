@@ -285,7 +285,7 @@ $button-height: $themeDefaultItemHeight;
   }
 }
 
-@mixin buttonIconSize($size: $themeDefaultItemHeight, $padding: $themeDefaultSpacing/3) {
+@mixin buttonIconSize($size: $themeDefaultItemHeight, $padding: calc($themeDefaultSpacing/3)) {
   height: $size;
   width: $size;
   padding: 4px;
@@ -344,6 +344,8 @@ $button-height: $themeDefaultItemHeight;
     pointer-events: none;
   }
 }
+
+.mn-button-icon { @include themeButtonIcon; }
 
 .mn-ghost {
   z-index: $z-index-content + 1;

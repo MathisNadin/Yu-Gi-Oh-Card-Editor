@@ -18,7 +18,11 @@
       }
     }
 
-    .mn-text-input {
+    .field-icon {
+      margin-right: calc($themeDefaultSpacing/2);
+    }
+
+    /* .mn-text-input {
       border: 0;
       border-bottom: 1px solid rgba($positive, 0.5);
 
@@ -27,6 +31,24 @@
         border-color: $positive;
       }
     }
+
+    .mn-textarea-input {
+      &:focus-visible {
+        outline: none;
+      }
+    }
+
+    .mn-file-input {
+      input {
+        border-radius: 0;
+        border: 1px solid nth($theme-light-fg, 4);
+
+        &:focus-visible {
+          outline: none;
+          border-color: $positive;
+        }
+      }
+    } */
   }
 }
 

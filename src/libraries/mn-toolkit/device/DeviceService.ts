@@ -186,7 +186,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     let mediumBreakpoint = 768;
     let largeBreakpoint = 992;
     let xlargeBreakpoint = 1200;
-    let xxlargeBreakpoint = 1600;
+    // let xxlargeBreakpoint = 1600;
 
     // let width = domViewportWidth();
     // let height = domViewportHeight();
@@ -204,11 +204,12 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       isPortrait,
       isLandscape: !isPortrait
     });
-    document.body.classList.remove('an-screen-small', 'an-screen-medium', 'an-screen-large', 'an-screen-xlarge', 'an-screen-xxlarge');
-    if (width > mediumBreakpoint) document.body.classList.add('an-screen-medium');
-    if (width > largeBreakpoint) document.body.classList.add('an-screen-large');
-    if (width > xlargeBreakpoint) document.body.classList.add('an-screen-xlarge');
-    if (width > xxlargeBreakpoint) document.body.classList.add('an-screen-xxlarge');
+    document.body.classList.remove('mn-screen-small', 'mn-screen-medium', 'mn-screen-large', 'mn-screen-xlarge', 'mn-screen-xxlarge');
+    if (width <= smallBreakpoint) document.body.classList.add('mn-screen-small');
+    if (width > smallBreakpoint) document.body.classList.add('mn-screen-medium');
+    if (width > mediumBreakpoint) document.body.classList.add('mn-screen-large');
+    if (width > largeBreakpoint) document.body.classList.add('mn-screen-xlarge');
+    if (width > xlargeBreakpoint) document.body.classList.add('mn-screen-xxlarge');
 
     if (typeof data !== 'boolean') {
       extend(this._screenSpec, data);

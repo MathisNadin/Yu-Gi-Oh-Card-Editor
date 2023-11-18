@@ -5,15 +5,14 @@ import { FormEvent } from "react";
 
 export interface ITextAreaInputProps extends IContainableProps {
   rows?: number;
-  /** Set the minimum of row. */
   minRows?: number;
-  /** Set the maximum of row. */
   maxRows?: number;
   autoGrow?: boolean;
   autofocus?: boolean;
+  spellCheck?: boolean;
   placeholder?: string;
   defaultValue: string;
-  textareaLineHeight?: number;
+  lineHeight?: number;
   onRef?: (ref: HTMLTextAreaElement) => void;
   onChange?: (value: string) => void;
   onBlur?: () => void;
@@ -35,13 +34,14 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
       minRows: 5,
       maxRows: 10,
       autoGrow: false,
-      textareaLineHeight: 20,
+      spellCheck: true,
+      lineHeight: 20,
     };
   }
 
   public constructor(props: ITextAreaInputProps) {
     super(props);
-    this.setState({ rows: props.autoGrow ? 1 : props.minRows as number, value: props.defaultValue });
+    this.setState({ rows: props.minRows as number || 1, value: props.defaultValue });
   }
 
   public componentWillReceiveProps(nextProps: Readonly<ITextAreaInputProps>) {
@@ -50,6 +50,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     // -> l'utilisateur ne comprend pas que son texte soit "mangé" sans raison à chaque fois qu'il fait espace
     if (nextProps.defaultValue?.trim() !== this.state.value?.trim()) {
       this.setState({ value: nextProps.defaultValue });
+      if (this.inputElement) setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
     }
   }
 
@@ -69,6 +70,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     return <textarea
       ref={ref => !!ref && this.onDomInput(ref)}
       className={classNames('mn-textarea-input', this.props.className)}
+      spellCheck={this.props.spellCheck}
       name={this.props.name}
       disabled={this.props.disabled}
       rows={this.state.rows}
@@ -85,18 +87,14 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
   }
 
   private onBlur() {
-    if (this.props.onBlur) {
-      this.props.onBlur();
-    }
+    if (this.props.onBlur) this.props.onBlur();
   }
 
   private onFocus() {
-    if (this.props.onFocus) {
-      this.props.onFocus();
-    }
+    if (this.props.onFocus) this.props.onFocus();
   }
 
-  private onDomInput(c: HTMLTextAreaElement): void {
+  private onDomInput(c: HTMLTextAreaElement) {
     if (!c || this.inputElement) return;
     this.inputElement = c;
     setTimeout(() => this.onTextAreaChange({ target: c } as unknown as FormEvent));
@@ -116,7 +114,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     let target: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
     const previousRows = target.rows;
     target.rows = 1; // reset number of rows in textarea
-    const currentRows = Math.floor(target.scrollHeight / (this.props.textareaLineHeight as number));
+    const currentRows = Math.floor(target.scrollHeight / (this.props.lineHeight as number));
 
     if (currentRows === previousRows) {
       target.rows = currentRows;
@@ -132,10 +130,14 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     if (currentRows > (this.props.maxRows as number)) {
       rows = this.props.maxRows as number;
       activateScroll = true;
+    } else if (currentRows < (this.props.minRows as number)) {
+      rows = this.props.minRows as number;
+      activateScroll = false;
     } else {
       rows = currentRows;
       activateScroll = false;
     }
+    target.rows = rows;
     this.setState({ rows, activateScroll });
   }
 }

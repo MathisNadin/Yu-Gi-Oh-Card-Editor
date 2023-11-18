@@ -1,12 +1,13 @@
+import './styles.scss';
 import { IContainableProps, Containable, IContainableState } from "../containable/Containable";
 
 interface IImageProps extends IContainableProps {
   src: string;
   alt?: string;
+  title?: string;
 }
 
-interface IImageState extends IContainableState {
-}
+interface IImageState extends IContainableState { }
 
 export class Image extends Containable<IImageProps, IImageState> {
 
@@ -21,7 +22,7 @@ export class Image extends Containable<IImageProps, IImageState> {
   }
 
   public render() {
-    return this.renderAttributes(<img src={this.props.src} alt={this.props.alt} />, "mn-image");
+    return this.renderAttributes(<img src={this.props.src} alt={this.props.alt} title={this.props.title} />, "mn-image");
   }
 
 }
