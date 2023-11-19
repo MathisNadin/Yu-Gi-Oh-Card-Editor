@@ -42,6 +42,8 @@ interface ISelectProps<ID> extends IContainableProps {
   fill?: boolean;
   undefinedLabel?: string;
   sort?: boolean;
+  popoverMinWidth?: number;
+  popoverMinHeight?: number;
 }
 
 interface ISelectState<ID> extends IContainableState {
@@ -116,14 +118,15 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     let actions = this.generatePopOverActions();
     if (actions.length === 0) return;
     app.$popover.show({
-      dontManageFocus: true,
       targetElement: this.container,
       targetEnlarge: 0,
       syncWidth: true,
       actions,
       cssClass: 'mn-select-popover',
       maxVisibleItems: 5,
-      scrollToItem: this.getSelectedListItem(actions)
+      scrollToItem: this.getSelectedListItem(actions),
+      minWidth: this.props.popoverMinWidth,
+      minHeight: this.props.popoverMinHeight,
     } as IPopoverOptions);
 
     this.container.value = this.state.value ? this.state.value.toString() : '';

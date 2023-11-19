@@ -2,10 +2,16 @@
 
 .mn-textarea-input {
   @include fg(1);
-  background-color: transparent;
   line-height: 20px;
   padding: 5px;
   resize: none;
+  @include bg(1);
+
+  border-width: 1px;
+  border-style: solid;
+  @include border-color(4);
+  border-radius: $themeDefaultBorderRadius;
+
   &::placeholder {
     @include fg(2);
   }

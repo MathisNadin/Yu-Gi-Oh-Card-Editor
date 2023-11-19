@@ -59,14 +59,17 @@
   @include mnLayountContainable();
   display: block;
   position: relative;
+
   border-width: 1px;
   border-style: solid;
   @include border-color(4);
-
   border-radius: $themeDefaultBorderRadius;
+
   height: $themeDefaultItemHeight - 2px;
   display: flex;
   align-items: center;
+  @include bg(1);
+
   .label {
     cursor: pointer;
     margin: 0 $themeDefaultSpacing;

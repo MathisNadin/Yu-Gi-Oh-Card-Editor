@@ -276,7 +276,8 @@ $button-height: $themeDefaultItemHeight;
 
 
 @mixin colorizeButtonIcon($color) {
-  color: lighten($color, 20%);
+  color: $color;
+  fill: $color;
   &.mn-button-icon-pressed {
     background-color: rgba($color, 0.1);
   }
@@ -286,8 +287,9 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin buttonIconSize($size: $themeDefaultItemHeight, $padding: calc($themeDefaultSpacing/3)) {
-  height: $size;
-  width: $size;
+  $padding: 4px;
+  height: $size - $padding * 2;
+  width: $size - $padding * 2;
   padding: 4px;
   font-size: $size - 2 * $padding;
 }
@@ -336,6 +338,26 @@ $button-height: $themeDefaultItemHeight;
   .mn-dark-theme &.mn-color-2 { @include colorizeButtonIcon(nth($theme-dark-fg, 2)); }
   .mn-dark-theme &.mn-color-3 { @include colorizeButtonIcon(nth($theme-dark-fg, 3)); }
   .mn-dark-theme &.mn-color-4 { @include colorizeButtonIcon(nth($theme-dark-fg, 4)); }
+
+  &.mn-bg-primary { background-color: $primary; }
+  &.mn-bg-positive { background-color: $positive; }
+  &.mn-bg-calm { background-color: $calm; }
+  &.mn-bg-balanced { background-color: $balanced; }
+  &.mn-bg-energized { background-color: $energized; }
+  &.mn-bg-assertive { background-color: $assertive; }
+  &.mn-bg-royal { background-color: $royal; }
+
+  &.mn-bg-neutral { background-color: nth($theme-light-fg, 1); }
+  &.mn-bg-1 { background-color: nth($theme-light-fg, 1); }
+  &.mn-bg-2 { background-color: nth($theme-light-fg, 2); }
+  &.mn-bg-3 { background-color: nth($theme-light-fg, 3); }
+  &.mn-bg-4 { background-color: nth($theme-light-fg, 4); }
+
+  .mn-dark-theme &.mn-bg-neutral { background-color: nth($theme-dark-fg, 1); }
+  .mn-dark-theme &.mn-bg-1 { background-color: nth($theme-dark-fg, 1); }
+  .mn-dark-theme &.mn-bg-2 { background-color: nth($theme-dark-fg, 2); }
+  .mn-dark-theme &.mn-bg-3 { background-color: nth($theme-dark-fg, 3); }
+  .mn-dark-theme &.mn-bg-4 { background-color: nth($theme-dark-fg, 4); }
 
   &.mn-control-disable {
     .mn-icon {

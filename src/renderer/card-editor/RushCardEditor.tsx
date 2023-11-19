@@ -1,4 +1,4 @@
-import './styles.css';
+import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
@@ -50,16 +50,16 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       import: '',
       card: props.card,
       cardFrames: [
-        { id: 'normal', file: require(`../resources/pictures/rd-card-frames/normal.png`) },
-        { id: 'effect', file: require(`../resources/pictures/rd-card-frames/effect.png`) },
-        { id: 'ritual', file: require(`../resources/pictures/rd-card-frames/ritual.png`) },
-        { id: 'fusion', file: require(`../resources/pictures/rd-card-frames/fusion.png`) },
-        { id: 'synchro', file: require(`../resources/pictures/rd-card-frames/synchro.png`) },
-        { id: 'xyz', file: require(`../resources/pictures/rd-card-frames/xyz.png`) },
-        { id: 'spell', file: require(`../resources/pictures/rd-card-frames/spell.png`) },
-        { id: 'trap', file: require(`../resources/pictures/rd-card-frames/trap.png`) },
-        { id: 'monsterToken', file: require(`../resources/pictures/rd-card-frames/monsterToken.png`) },
-        { id: 'token', file: require(`../resources/pictures/rd-card-frames/token.png`) },
+        { id: 'normal', file: require(`../resources/pictures/menu-rd-card-frames/normal.png`) },
+        { id: 'effect', file: require(`../resources/pictures/menu-rd-card-frames/effect.png`) },
+        { id: 'ritual', file: require(`../resources/pictures/menu-rd-card-frames/ritual.png`) },
+        { id: 'fusion', file: require(`../resources/pictures/menu-rd-card-frames/fusion.png`) },
+        { id: 'synchro', file: require(`../resources/pictures/menu-rd-card-frames/synchro.png`) },
+        { id: 'xyz', file: require(`../resources/pictures/menu-rd-card-frames/xyz.png`) },
+        { id: 'spell', file: require(`../resources/pictures/menu-rd-card-frames/spell.png`) },
+        { id: 'trap', file: require(`../resources/pictures/menu-rd-card-frames/trap.png`) },
+        { id: 'monsterToken', file: require(`../resources/pictures/menu-rd-card-frames/monsterToken.png`) },
+        { id: 'token', file: require(`../resources/pictures/menu-rd-card-frames/token.png`) },
       ],
       cardAttributes: [
         { id: 'light', file: require(`../resources/pictures/rd-icons/vanilla/attributeLight.png`) },

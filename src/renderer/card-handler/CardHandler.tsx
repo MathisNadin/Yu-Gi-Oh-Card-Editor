@@ -130,8 +130,8 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
     return this.renderAttributes(<HorizontalStack gutter itemAlignment='center'>
       <VerticalStack className='editor-tabbed-pane' margin gutter>
         <HorizontalStack className='mode-tabs' gutter itemAlignment='center'>
-          <Button className={classNames('master-tab', { 'selected': isMaster })} color={isMaster ? 'balanced' : '4'} label='Master' onTap={() => this.onTabChange('master')} />
-          <Button className={classNames('rush-tab', { 'selected': !isMaster })} color={!isMaster ? 'balanced' : '4'} label='Rush' onTap={() => this.onTabChange('rush')} />
+          <Button className={classNames('master-tab', { 'selected': isMaster })} color={isMaster ? 'royal' : '4'} label='Master' onTap={() => this.onTabChange('master')} />
+          <Button className={classNames('rush-tab', { 'selected': !isMaster })} color={!isMaster ? 'assertive' : '4'} label='Rush' onTap={() => this.onTabChange('rush')} />
         </HorizontalStack>
         {this.renderUpdate()}
         {isMaster && <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}

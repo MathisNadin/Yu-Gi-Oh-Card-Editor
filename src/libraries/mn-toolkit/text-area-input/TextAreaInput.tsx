@@ -41,7 +41,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
 
   public constructor(props: ITextAreaInputProps) {
     super(props);
-    this.setState({ rows: props.minRows as number || 1, value: props.defaultValue });
+    this.state = { ...(this.state || {}), rows: props.minRows as number || 1, value: props.defaultValue };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<ITextAreaInputProps>) {

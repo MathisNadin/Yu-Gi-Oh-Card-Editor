@@ -5,6 +5,8 @@ import { IContainableProps, IContainableState, Containable } from "../containabl
 interface ITextInputProps extends IContainableProps {
   placeholder?: string;
   defaultValue: string;
+  minLength?: number;
+  maxLength?: number;
   onChange: (value: string) => void | Promise<void>;
 }
 
@@ -18,7 +20,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
 
   public constructor(props: ITextInputProps) {
     super(props);
-    this.setState({ value: props.defaultValue });
+    this.state = { ...(this.state || {}), value: props.defaultValue };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<ITextInputProps>) {
@@ -34,6 +36,8 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         value={this.state.value}
+        minLength={this.props.minLength}
+        maxLength={this.props.maxLength}
         onInput={e => this.onChange(e)}
       />, 'mn-text-input');
   }

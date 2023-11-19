@@ -32,7 +32,9 @@ export interface IPopoverOptions {
   targetEnlarge?: number;
   overlay?: boolean;
   event?: React.MouseEvent;
+  minWidth?: number;
   width?: number;
+  minHeight?: number;
   height?: number;
   maxHeight?: number;
   top?: number;

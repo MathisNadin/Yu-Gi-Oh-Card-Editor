@@ -12,7 +12,10 @@
   min-width: 1500px;
   width: 100%;
   position: absolute;
-  background-color: #313131;
+  background-color: #474747;
+}
+.mn-dark-theme .card-preview .cover {
+  background-color: #e9e9e9;
 }
 .card-preview .card-preview-img {
   position: absolute;
@@ -26,11 +29,9 @@
       } */
 }
 .card-preview .card-preview-img.rendering {
-  position: absolute;
   z-index: 2 !important;
   width: 100%;
   height: 100%;
-  background-color: rgba(240, 248, 255, 0.5);
 }
 .card-preview .card-preview-img.rendering.hidden {
   visibility: hidden;

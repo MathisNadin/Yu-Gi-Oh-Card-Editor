@@ -77,10 +77,8 @@ export interface IContainableState {
   loaded: boolean;
 }
 
-export class Containable<
-  PROPS extends IContainableProps,
-  STATE extends IContainableState
-> extends Component<PROPS, STATE> {
+export class Containable<PROPS extends IContainableProps,  STATE extends IContainableState> extends Component<PROPS, STATE> {
+
   public static get defaultProps(): Partial<IContainableProps> {
     return {
       zIndex: 'content',

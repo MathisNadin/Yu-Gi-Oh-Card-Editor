@@ -19,14 +19,21 @@
   text-overflow: ellipsis;
   line-height: 130%;
   color: #474747;
-  line-height: 28px;
-  min-height: 28px;
-  max-height: 28px;
+  line-height: 30px;
+  min-height: 30px;
+  max-height: 30px;
   padding: 0 8px;
   appearance: textfield;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #e4e4e4;
+  border-radius: 6px;
 }
 .mn-dark-theme .mn-file-input input {
   color: #e9e9e9;
+}
+.mn-dark-theme .mn-file-input input {
+  border-color: #707070;
 }
 .mn-file-input input::placeholder {
   color: #8a8a8a;
@@ -46,6 +53,7 @@
   align-items: center;
   border-color: #e4e4e4;
   border-radius: 6px;
+  padding: 3px;
 }
 .mn-dark-theme .mn-file-input .mn-icon {
   background-color: #555555;

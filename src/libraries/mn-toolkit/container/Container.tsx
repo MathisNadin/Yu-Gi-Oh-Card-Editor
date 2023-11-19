@@ -1,3 +1,5 @@
+import { classNames } from 'libraries/mn-tools';
+import { ScrollContainer } from './ScrollContainer';
 import './styles.css';
 import { Containable, IContainableProps, IContainableState } from 'libraries/mn-toolkit/containable/Containable';
 
@@ -23,6 +25,8 @@ export interface IContainerProps extends IContainableProps {
   scrollX?: boolean;
   verticalItemAlignment?: TVerticalAlignment;
   itemAlignment?: THorizontalAlignment;
+  onContainerScroll?: (event: UIEvent) => void | Promise<void>;
+  onScrollRef?: (scroller: HTMLElement) => void;
 }
 
 export interface IContainerState extends IContainableState {
@@ -54,5 +58,23 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     if (this.props.verticalItemAlignment) classes[`mn-layout-item-valign-${this.props.verticalItemAlignment}`] = true;
     if (this.props.itemAlignment) classes[`mn-layout-item-align-${this.props.itemAlignment}`] = true;
     return classes;
+  }
+
+  public shouldComponentUpdate() {
+    return true;
+  }
+
+  public render() {
+    if (!this.props.scroll && !this.props.scrollX) return this.renderAttributes(<div >{this.props.children}</div>, 'mn-container');
+    return <ScrollContainer
+      style={this.renderStyle()}
+      className={classNames(super.renderClasses())}
+      viewClassName={classNames(this.renderClasses('mn-container'))}
+      onContainerScroll={this.props.onContainerScroll}
+      onScrollRef={this.props.onScrollRef}
+      scroll={!!this.props.scroll}
+      scrollX={!!this.props.scrollX}>
+      {this.props.children}
+    </ScrollContainer>;
   }
 };

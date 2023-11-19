@@ -1,18 +1,29 @@
 .mn-text-input {
   display: flex;
   position: relative;
-  line-height: 28px;
-  min-height: 28px;
+  line-height: 30px;
+  min-height: 30px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #e4e4e4;
+  border-radius: 6px;
   color: #474747;
   padding: 0 8px;
   appearance: textfield;
+  background-color: #ffffff;
 }
 .mn-text-input.mn-fill {
   flex: 1;
   overflow: hidden;
 }
 .mn-dark-theme .mn-text-input {
+  border-color: #707070;
+}
+.mn-dark-theme .mn-text-input {
   color: #e9e9e9;
+}
+.mn-dark-theme .mn-text-input {
+  background-color: #181818;
 }
 .mn-text-input::placeholder {
   color: #8a8a8a;

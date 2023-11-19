@@ -36,6 +36,8 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> 
     let classes = super.renderClasses(name);
     classes['mn-button-icon-pressed'] = this.props.pressed;
     classes[`mn-size-${this.props.size}`] = true;
+    classes[`mn-color-${this.props.color}`] = true;
+    classes[`mn-bg-${this.props.bg}`] = true;
     return classes;
   }
 

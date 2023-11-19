@@ -6,49 +6,155 @@
 }
 
 .card-editor {
-  $baseBackgroundColor: mix(#f0f0f0, #fafafa, 50%);
-  background-color: lighten($baseBackgroundColor, 10%);
+  @include bg(1);
+  $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
 
-  .card-editor-section {
-    &.basic-section {
-      .top-options {
-        .mn-button {
-          font-size: 14px;
+  .top-options {
+    padding-top: calc($themeDefaultSpacing / 1.5) !important;
+    padding-bottom: calc($themeDefaultSpacing / 2) !important;
+
+    .mn-button {
+      font-size: 14px;
+    }
+  }
+
+  .card-editor-sections {
+    padding-top: calc($themeDefaultSpacing / 2);
+    gap: $themeDefaultSpacing * 2 !important;
+
+    .card-editor-section {
+      &.link-arrows-section {
+        .mn-checkbox {
+          &.checked {
+            .toggle {
+              background-color: $assertive;
+              border-color: $assertive;
+            }
+          }
+        }
+      }
+
+      .card-icons-grid {
+        margin-top: -6px;
+        margin-bottom: calc($themeDefaultSpacing / 2);
+      }
+
+      .sub-title-container, .sub-title {
+        padding-bottom: calc($themeDefaultSpacing / 2);
+        border-bottom: 1px solid $borderColor;
+      }
+
+      .sub-title-container {
+        margin-top: calc($themeDefaultSpacing / 2);
+      }
+
+      .sub-title-checkbox {
+        margin-top: $themeDefaultSpacing;
+
+        &.checked {
+          padding-bottom: calc($themeDefaultSpacing / 3);
+          border-bottom: 1px solid $borderColor;
+        }
+      }
+
+      .card-frame, .card-attribute, .card-st-icon {
+        cursor: pointer;
+
+        &:not(.selected) {
+          opacity: 0.5;
+        }
+
+        @for $i from 1 through 20 {
+          &.selected-#{$i} {
+            &::after {
+              $size: 16px;
+              $fontSize: 12px;
+              content: "#{$i}";
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: $size;
+              height: $size;
+              border-radius: 50%;
+              text-align: center;
+              line-height: $fontSize;
+              font-size: $fontSize;
+              background-color: adjust-hue(hsl(0, 70%, 50%), 20 * $i);
+              color: #fff;
+            }
+          }
+        }
+      }
+
+      .field-icon {
+        margin-right: calc($themeDefaultSpacing/2);
+      }
+
+      .pendulum-lock-icon {
+        padding: 5px;
+
+        .icon {
+          $pendLockSize: 24px;
+          min-height: $pendLockSize;
+          height: $pendLockSize;
+          max-height: $pendLockSize;
+          min-width: $pendLockSize;
+          width: $pendLockSize;
+          max-width: $pendLockSize;
+        }
+
+        &.mn-button-icon-pressed {
+          background-color: rgba($assertive, 0.7);
+        }
+
+        &:hover {
+          background-color: rgba($assertive, 0.5);
+        }
+      }
+
+      .mn-textarea-input {
+        width: calc(100% - 20px - $themeDefaultSpacing/2);
+      }
+
+      .card-abilities {
+        gap: calc($themeDefaultSpacing / 2);
+
+        .abilities-add {
+          margin-bottom: - calc($themeDefaultSpacing / 4);
+        }
+
+        .card-abilities-list {
+          border: 1px solid $borderColor;
+          min-height: $themeDefaultItemHeight;
+          @include bg(1);
+
+          .mn-inplace-edit {
+            @include bg(1);
+
+            input {
+              @include bg(1);
+            }
+          }
+
+          .abilities-line {
+            &:nth-child(even) {
+              @include bg(3);
+
+              .mn-inplace-edit {
+                @include bg(3);
+
+                input {
+                  @include bg(3);
+                }
+              }
+            }
+          }
         }
       }
     }
-
-    .field-icon {
-      margin-right: calc($themeDefaultSpacing/2);
-    }
-
-    /* .mn-text-input {
-      border: 0;
-      border-bottom: 1px solid rgba($positive, 0.5);
-
-      &:focus-visible {
-        outline: none;
-        border-color: $positive;
-      }
-    }
-
-    .mn-textarea-input {
-      &:focus-visible {
-        outline: none;
-      }
-    }
-
-    .mn-file-input {
-      input {
-        border-radius: 0;
-        border: 1px solid nth($theme-light-fg, 4);
-
-        &:focus-visible {
-          outline: none;
-          border-color: $positive;
-        }
-      }
-    } */
   }
 }
 

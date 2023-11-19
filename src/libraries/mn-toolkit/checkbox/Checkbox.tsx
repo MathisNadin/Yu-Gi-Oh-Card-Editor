@@ -54,7 +54,7 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
         onClick={() => this.onClick()}
       >
         <div className="toggle"></div>
-        {!!this.props.label && <Typography content={this.props.label} variant='help' />}
+        {!!this.props.label && <Typography className='label' content={this.props.label} variant='help' />}
       </div>
     );
   }

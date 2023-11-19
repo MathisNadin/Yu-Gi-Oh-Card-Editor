@@ -1,6 +1,6 @@
 import './styles.scss';
-import { isDefined, classNames, isNumber, isString } from 'libraries/mn-tools';
-import { Component, ReactElement, ReactNode } from 'react';
+import { isDefined, classNames, isNumber } from 'libraries/mn-tools';
+import { Component, ReactElement } from 'react';
 import { themeSettings } from '../themeSettings';
 import { ButtonLink } from '../button/ButtonLink';
 import { IDeviceListener } from '../device';
@@ -203,10 +203,12 @@ export class PopoverService implements Partial<IDeviceListener> {
 
     const padding = themeSettings().themeDefaultSpacing * 2;
     app.$react.setStyle(popover, {
-      top: `${top}px`,
-      left: `${left}px`,
-      width: `${width - padding}px`,
-      height: isString(cssHeight) ? cssHeight : `${cssHeight || height}px`,
+      top,
+      left,
+      width: width - padding,
+      height: cssHeight || height,
+      minHeight: this.options.minHeight || height,
+      minWidth: this.options.minWidth || width - padding,
     });
     popover.classList.add(...classes);
 

@@ -21,6 +21,9 @@
   will-change: transform, opacity;
   padding: 16px;
 }
+.mn-popover:focus-visible {
+  outline: none;
+}
 .mn-popover .mn-popover-wrapper {
   flex: 1;
   overflow-x: hidden;

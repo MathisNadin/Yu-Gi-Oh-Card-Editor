@@ -10,6 +10,7 @@
   height: 30px;
   display: flex;
   align-items: center;
+  background-color: #ffffff;
 }
 .mn-select.mn-fill {
   flex: 1;
@@ -17,6 +18,9 @@
 }
 .mn-dark-theme .mn-select {
   border-color: #707070;
+}
+.mn-dark-theme .mn-select {
+  background-color: #181818;
 }
 .mn-select .label {
   cursor: pointer;

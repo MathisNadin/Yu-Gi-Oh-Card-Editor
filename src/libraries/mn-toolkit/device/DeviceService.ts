@@ -170,12 +170,12 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     if (this.isNative) {
       /* this._platform = window.device.platform.toLowerCase();
       // console.log('deviceId', this._platform);
-      document.body.classList.add('an-platform-mobile'); */
+      document.body.classList.add('mn-platform-mobile'); */
     } else {
       this._platform = 'web';
       // console.log('deviceId', this._platform);
     }
-    document.body.classList.add(`an-platform-${this._platform}`);
+    document.body.classList.add(`mn-platform-${this._platform}`);
     return Promise.resolve();
   }
 

@@ -24,6 +24,11 @@
   transform: scale(0);
   will-change: transform, opacity;
   padding: $themeDefaultSpacing;
+
+  &:focus-visible {
+    outline: none;
+  }
+
   .mn-popover-wrapper {
     flex: 1;
     overflow-x: hidden;

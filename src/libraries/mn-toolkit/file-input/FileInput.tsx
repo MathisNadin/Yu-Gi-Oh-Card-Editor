@@ -27,7 +27,7 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
 
   public constructor(props: IFileInputProps) {
     super(props);
-    this.setState({ value: props.defaultValue as string });
+    this.state = { ...(this.state || {}), value: props.defaultValue as string };
   }
 
   public componentWillReceiveProps(nextProps: Readonly<IFileInputProps>) {
@@ -62,7 +62,7 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
         value={this.state.value}
         onInput={e => this.onChange(e)}
       />
-      <Icon iconId='toolkit-menu-meatballs' size={30} onTap={e => app.$errorManager.handlePromise(this.onTap(e))} />
+      <Icon iconId='toolkit-menu-meatballs' size={26} onTap={e => app.$errorManager.handlePromise(this.onTap(e))} />
     </HorizontalStack>, 'mn-file-input');
   }
 }
