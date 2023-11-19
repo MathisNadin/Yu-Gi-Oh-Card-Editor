@@ -9,6 +9,14 @@
   @include bg(1);
   $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
 
+  .mn-typography {
+    color: black !important;
+
+    .mn-dark-theme & {
+      color: white !important;
+    }
+  }
+
   .top-options {
     padding-top: calc($themeDefaultSpacing / 1.5) !important;
     padding-bottom: calc($themeDefaultSpacing / 2) !important;
@@ -27,8 +35,8 @@
         .mn-checkbox {
           &.checked {
             .toggle {
-              background-color: $assertive;
-              border-color: $assertive;
+              background-color: $assertive !important;
+              border-color: $assertive !important;
             }
           }
         }

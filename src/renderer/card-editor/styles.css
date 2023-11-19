@@ -8,6 +8,12 @@
 .mn-dark-theme .card-editor {
   background-color: #181818;
 }
+.card-editor .mn-typography {
+  color: black !important;
+}
+.mn-dark-theme .card-editor .mn-typography {
+  color: white !important;
+}
 .card-editor .top-options {
   padding-top: 10.6666666667px !important;
   padding-bottom: 8px !important;
@@ -20,8 +26,8 @@
   gap: 32px !important;
 }
 .card-editor .card-editor-sections .card-editor-section.link-arrows-section .mn-checkbox.checked .toggle {
-  background-color: #ef473a;
-  border-color: #ef473a;
+  background-color: #ef473a !important;
+  border-color: #ef473a !important;
 }
 .card-editor .card-editor-sections .card-editor-section .card-icons-grid {
   margin-top: -6px;
