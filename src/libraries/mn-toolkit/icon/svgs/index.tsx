@@ -35,10 +35,19 @@ declare global {
     'toolkit-language': ISvgIcons;
     'toolkit-copyright': ISvgIcons;
     'toolkit-print': ISvgIcons;
+    'toolkit-trash': ISvgIcons;
+    'toolkit-check-mark': ISvgIcons;
+    "toolkit-pin": ISvgIcons;
   }
 }
 
 export function loadSvgs() {
+  app.$icon.register('toolkit-pin', <svg  viewBox="0 0 24 24" height="48" width="48"><path d="M12,0C6.21,0,1.5,4.26,1.5,9.5c0,5.75,7.3,12.29,9.54,14.15a1.49,1.49,0,0,0,1.92,0c2.24-1.87,9.54-8.4,9.54-14.15C22.5,4.26,17.79,0,12,0Zm0,15a5.5,5.5,0,1,1,5.5-5.5A5.51,5.51,0,0,1,12,15Z" fill="currentColor"></path></svg>);
+
+  app.$icon.register('toolkit-check-mark', <svg viewBox="0 0 24 24"> <path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /> </svg>);
+
+  app.$icon.register('toolkit-trash', <svg viewBox="0 0 24 24"  strokeWidth="1.5" height="48" width="48"><path d="M18.5,22.09a1.544,1.544,0,0,1-1.513,1.16H7.018A1.545,1.545,0,0,1,5.5,22.09L.791,2.59a1.459,1.459,0,0,1,.3-1.273A1.577,1.577,0,0,1,2.3.75H21.7a1.574,1.574,0,0,1,1.217.567,1.463,1.463,0,0,1,.3,1.273Z" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"></path><path d="M7.339 0.75L9.669 23.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16.662 0.75L14.331 23.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"></path><path d="M1.796 6.75L22.204 6.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"></path><path d="M3.247 12.75L20.754 12.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"></path><path d="M4.697 18.75L19.304 18.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"></path></svg>);
+
   app.$icon.register('toolkit-print', <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V11C20.6569 11 22 12.3431 22 14V18C22 19.6569 20.6569 21 19 21H5C3.34314 21 2 19.6569 2 18V14C2 12.3431 3.34315 11 5 11V5ZM5 13C4.44772 13 4 13.4477 4 14V18C4 18.5523 4.44772 19 5 19H19C19.5523 19 20 18.5523 20 18V14C20 13.4477 19.5523 13 19 13V15C19 15.5523 18.5523 16 18 16H6C5.44772 16 5 15.5523 5 15V13ZM7 6V12V14H17V12V6H7ZM9 9C9 8.44772 9.44772 8 10 8H14C14.5523 8 15 8.44772 15 9C15 9.55228 14.5523 10 14 10H10C9.44772 10 9 9.55228 9 9ZM9 12C9 11.4477 9.44772 11 10 11H14C14.5523 11 15 11.4477 15 12C15 12.5523 14.5523 13 14 13H10C9.44772 13 9 12.5523 9 12Z" /></svg>);
 
   app.$icon.register('toolkit-copyright', <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 9C10 8.44754 10.4476 8 10.9997 8H13C13.5071 8 13.7898 8.16249 13.9378 8.28087C14.0486 8.36952 14.1077 8.45538 14.119 8.4731C14.3737 8.94812 14.962 9.13706 15.4472 8.89443C15.9309 8.65259 16.1361 8.03372 15.8934 7.55064C15.8387 7.44229 15.7712 7.34071 15.6984 7.24375C15.5859 7.09376 15.4194 6.90487 15.1872 6.71913C14.7102 6.33751 13.9929 6 13 6H10.9997C9.34271 6 8 7.34332 8 9V14.9999C8 16.6566 9.34275 17.9999 10.9998 17.9999L13 17.9999C13.9929 18 14.7101 17.6625 15.1872 17.2809C15.4194 17.0951 15.5859 16.9062 15.6984 16.7563C15.7714 16.659 15.8389 16.5568 15.8939 16.4483C16.138 15.9605 15.9354 15.3497 15.4472 15.1056C14.962 14.8629 14.3737 15.0519 14.119 15.5269C14.1077 15.5446 14.0486 15.6305 13.9378 15.7191C13.7899 15.8375 13.5071 16 13 15.9999L10.9998 15.9999C10.4476 15.9999 10 15.5524 10 14.9999V9Z" /><path fillRule="evenodd" clipRule="evenodd" d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM12 20.9932C7.03321 20.9932 3.00683 16.9668 3.00683 12C3.00683 7.03321 7.03321 3.00683 12 3.00683C16.9668 3.00683 20.9932 7.03321 20.9932 12C20.9932 16.9668 16.9668 20.9932 12 20.9932Z" /></svg>);

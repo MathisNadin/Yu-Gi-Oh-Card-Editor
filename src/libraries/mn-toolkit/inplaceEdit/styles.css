@@ -10,6 +10,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-inplace-edit.has-click {
+  cursor: pointer;
+}
 .mn-dark-theme .mn-inplace-edit {
   color: #e9e9e9;
 }

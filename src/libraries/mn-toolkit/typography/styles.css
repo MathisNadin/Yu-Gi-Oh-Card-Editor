@@ -540,6 +540,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-typography.has-click {
+  cursor: pointer;
+}
 
 .mn-typography-h1 {
   margin: 8px 0;

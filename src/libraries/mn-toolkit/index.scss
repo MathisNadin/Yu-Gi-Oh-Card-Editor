@@ -146,6 +146,10 @@ $z-index-overall: 100;
     flex: 1;
     overflow: hidden;
   }
+
+  &.has-click {
+    cursor: pointer;
+  }
 }
 
 @mixin mnLayoutHorizontalStack {

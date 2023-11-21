@@ -19,8 +19,8 @@ export interface ICardListener {
   localCardsLoaded: (localCards: ICard[]) => void;
   localCardsUpdated: (localCards: ICard[]) => void;
   renderCardChanged: (renderCard: ICard) => void;
-  renderCardDone: () => void;
   menuSaveTempToLocal: () => void;
+  cardRenderer: (cardUuid: string) => void;
 }
 
 const COMMON_FRAMES: TFrame[] = [
@@ -100,12 +100,12 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.dispatch('renderCardChanged', this._renderCard);
   }
 
-  public fireRenderCardDone() {
-    this.dispatch('renderCardDone');
-  }
-
   public fireMenuSaveTempToLocal() {
     this.dispatch('menuSaveTempToLocal');
+  }
+
+  public fireCardRenderer(cardUuid: string) {
+    this.dispatch('cardRenderer', cardUuid);
   }
 
   public correct(card: ICard) {
@@ -298,7 +298,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
     if (this._renderCardsQueue.length) {
       this._renderCardsQueue = this._renderCardsQueue.filter(c => c.uuid !== cardUuid);
-      this.fireRenderCardDone();
+      this.fireCardRenderer(cardUuid);
       if (this._renderCardsQueue.length) {
         this.setRenderCard();
       }

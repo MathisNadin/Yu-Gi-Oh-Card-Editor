@@ -105,7 +105,7 @@ $button-height: $themeDefaultItemHeight;
   &.mn-button-color-2 { @include colorizePlainButton(nth($theme-light-fg, 2)); }
   &.mn-button-color-3 { @include colorizePlainButton(nth($theme-light-fg, 3)); }
   &.mn-button-color-4 { @include colorizePlainButton(nth($theme-light-fg, 4));  @include fg(1); &:hover  { @include border-color(3); } }
-  &.mn-control-disable {
+  &.mn-disable {
     opacity: 0.2;
     filter: grayscale(100%);
     pointer-events: none;
@@ -186,7 +186,7 @@ $button-height: $themeDefaultItemHeight;
   &.mn-button-color-3 { @include colorize(nth($theme-light-fg, 3)); .mn-dark-theme & { @include colorize(nth($theme-dark-fg, 3)); } }
   &.mn-button-color-4 { @include colorize(nth($theme-light-fg, 4)); .mn-dark-theme & { @include colorize(nth($theme-dark-fg, 4)); } }
 
-  &.disabled, &.mn-control-disable {
+  &.disabled, &.mn-disable {
     color: black(0.3);
     border-color: black(0.1);
     pointer-events: none;
@@ -262,7 +262,7 @@ $button-height: $themeDefaultItemHeight;
   &.mn-button-color-2 { @include colorizeButtonLink(nth($theme-light-fg, 2)); }
   &.mn-button-color-3 { @include colorizeButtonLink(nth($theme-light-fg, 3)); }
   &.mn-button-color-4 { @include colorizeButtonLink(nth($theme-light-fg, 4)); }
-  &.mn-control-disable {
+  &.mn-disable {
     opacity: 0.3;
     filter: grayscale(1);
     pointer-events: none;
@@ -359,7 +359,7 @@ $button-height: $themeDefaultItemHeight;
   .mn-dark-theme &.mn-bg-3 { background-color: nth($theme-dark-fg, 3); }
   .mn-dark-theme &.mn-bg-4 { background-color: nth($theme-dark-fg, 4); }
 
-  &.mn-control-disable {
+  &.mn-disable {
     .mn-icon {
       @include fg(3);
     }

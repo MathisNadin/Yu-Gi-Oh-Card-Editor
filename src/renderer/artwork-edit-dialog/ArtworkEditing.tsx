@@ -66,8 +66,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       width: 100,
       unit: '%'
     };
-    this.setState({ artworkURL, crop });
-    if (this.props.onArtworkURLChange) this.props.onArtworkURLChange(artworkURL);
+    this.setState({ artworkURL, crop }, () => !!this.props.onArtworkURLChange && this.props.onArtworkURLChange(this.state.artworkURL));
   }
 
   private onCropXChange(x: number) {
@@ -78,8 +77,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     }
     const crop = this.state.crop;
     crop.x = x;
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   private onCropYChange(y: number) {
@@ -90,8 +88,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     }
     const crop = this.state.crop;
     crop.y = y;
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   private onCropWidthChange(width: number) {
@@ -106,8 +103,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (this.state.keepRatio && crop.width !== crop.height) {
       crop.height = width;
     }
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   private onCropHeightChange(height: number) {
@@ -122,8 +118,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (this.state.keepRatio && crop.height !== crop.width) {
       crop.width = height;
     }
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   private async doSelectImgPath() {
@@ -133,36 +128,33 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private switchKeepRatio() {
-    let keepRatio = !this.state.keepRatio;
-    this.setState({ keepRatio });
-    if (this.props.onKeepRatioChange) this.props.onKeepRatioChange(keepRatio);
+    this.setState({ keepRatio: !this.state.keepRatio }, () => {
+      if (this.props.onKeepRatioChange) this.props.onKeepRatioChange(this.state.keepRatio);
 
-    if (keepRatio) {
-      if (this.state.crop.height > this.state.crop.width) {
-        this.onCropHeightChange(this.state.crop.width);
+      if (this.state.keepRatio) {
+        if (this.state.crop.height > this.state.crop.width) {
+          this.onCropHeightChange(this.state.crop.width);
+        }
+        else if (this.state.crop.height < this.state.crop.width) {
+          this.onCropWidthChange(this.state.crop.height);
+        }
       }
-      else if (this.state.crop.height < this.state.crop.width) {
-        this.onCropWidthChange(this.state.crop.height);
-      }
-    }
+    });
   }
 
   private setFullCardPreset() {
     let crop = app.$card.getFullCardPreset();
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   private setFullPendulumCardPreset() {
     let crop = app.$card.getFullPendulumCardPreset();
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   private setFullRushCardPreset() {
     let crop = app.$card.getFullRushCardPreset();
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   public render() {

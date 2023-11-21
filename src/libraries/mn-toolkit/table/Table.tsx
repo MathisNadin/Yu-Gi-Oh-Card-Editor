@@ -15,6 +15,7 @@ import {
 import { ITableRow, TableRow } from './TableRow';
 import { ReactNode } from 'react';
 import { VerticalStack } from '../container/VerticalStack';
+import { Icon } from '../icon';
 
 interface ITableProps extends IContainerProps {
   /** Set a table of columns. */
@@ -110,7 +111,7 @@ export class Table extends Container<ITableProps, ITableState> {
             if (column.rotate === '90deg') {
               sum.push('2em');
             } else if (column.width) {
-              sum.push(column.width);
+              sum.push(column.width + themeSettings().themeDefaultSpacing);
             } else {
               nbNoWidth++;
             }
@@ -295,7 +296,7 @@ export class Table extends Container<ITableProps, ITableState> {
                         <span className="mn-table-header-text">
                           {column.label as ReactNode}
                         </span>
-                        {/* {column.order && (
+                        {column.order && (
                           <Icon
                             iconId={
                               column.order === 'asc'
@@ -303,7 +304,7 @@ export class Table extends Container<ITableProps, ITableState> {
                                 : 'toolkit-angle-down'
                             }
                           />
-                        )} */}
+                        )}
                       </span>
                     </div>
                   );

@@ -16,6 +16,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-select.has-click {
+  cursor: pointer;
+}
 .mn-dark-theme .mn-select {
   border-color: #707070;
 }

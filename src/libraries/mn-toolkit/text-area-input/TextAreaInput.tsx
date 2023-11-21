@@ -2,6 +2,7 @@ import './styles.scss';
 import { classNames } from "libraries/mn-tools";
 import { IContainableProps, IContainableState, Containable } from "../containable/Containable";
 import { FormEvent } from "react";
+import { IDeviceListener, IScreenSpec } from '../device';
 
 export interface ITextAreaInputProps extends IContainableProps {
   rows?: number;
@@ -25,7 +26,7 @@ interface ITextAreaInputState extends IContainableState {
   activateScroll: boolean;
 }
 
-export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInputState> {
+export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInputState> implements Partial<IDeviceListener> {
   private inputElement!: HTMLTextAreaElement;
 
   public static get defaultProps(): Partial<ITextAreaInputProps> {
@@ -39,9 +40,19 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     };
   }
 
+  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec) {
+    if (!this.inputElement || !this.props.autoGrow) return;
+    this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent);
+  }
+
   public constructor(props: ITextAreaInputProps) {
     super(props);
     this.state = { ...(this.state || {}), rows: props.minRows as number || 1, value: props.defaultValue };
+    app.$device.addListener(this);
+  }
+
+  public componentWillUnmount() {
+    app.$device.removeListener(this);
   }
 
   public componentWillReceiveProps(nextProps: Readonly<ITextAreaInputProps>) {
@@ -103,10 +114,11 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
 
   private onChange(e: FormEvent) {
     const value = e.target.value as string;
-    this.setState({ value });
-    // this.onTextAreaChange(e);
-    setTimeout(() => this.onTextAreaChange(e));
-    if (this.props.onChange) this.props.onChange(value);
+    this.setState({ value }, () => {
+      // this.onTextAreaChange(e);
+      setTimeout(() => this.onTextAreaChange(e));
+      if (this.props.onChange) this.props.onChange(value);
+    });
   }
 
   private onTextAreaChange(event: FormEvent): void {

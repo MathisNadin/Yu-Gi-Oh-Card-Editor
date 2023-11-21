@@ -28,6 +28,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-button.has-click {
+  cursor: pointer;
+}
 .mn-button .icon {
   display: inline-block;
   width: 30px;
@@ -273,7 +276,7 @@
 .mn-dark-theme .mn-button.mn-button-color-4:hover {
   border-color: #696969;
 }
-.mn-button.mn-control-disable {
+.mn-button.mn-disable {
   opacity: 0.2;
   filter: grayscale(100%);
   pointer-events: none;
@@ -306,6 +309,9 @@
 .mn-button-outline.mn-fill {
   flex: 1;
   overflow: hidden;
+}
+.mn-button-outline.has-click {
+  cursor: pointer;
 }
 .mn-button-outline .label {
   flex: 1;
@@ -579,12 +585,12 @@
 .mn-dark-theme .mn-button-outline.mn-button-color-4:active {
   background-color: rgba(112, 112, 112, 0.1);
 }
-.mn-button-outline.disabled, .mn-button-outline.mn-control-disable {
+.mn-button-outline.disabled, .mn-button-outline.mn-disable {
   color: rgba(0, 0, 0, 0.3);
   border-color: rgba(0, 0, 0, 0.1);
   pointer-events: none;
 }
-.mn-dark-theme .mn-button-outline.disabled, .mn-dark-theme .mn-button-outline.mn-control-disable {
+.mn-dark-theme .mn-button-outline.disabled, .mn-dark-theme .mn-button-outline.mn-disable {
   color: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.1);
 }
@@ -618,6 +624,9 @@
 .mn-button-link.mn-fill {
   flex: 1;
   overflow: hidden;
+}
+.mn-button-link.has-click {
+  cursor: pointer;
 }
 .mn-button-link .label {
   overflow: hidden;
@@ -801,7 +810,7 @@
 .mn-button-link.mn-button-color-4:hover {
   background-color: rgba(228, 228, 228, 0.1);
 }
-.mn-button-link.mn-control-disable {
+.mn-button-link.mn-disable {
   opacity: 0.3;
   filter: grayscale(1);
   pointer-events: none;
@@ -826,6 +835,9 @@
 .mn-button-icon.mn-fill {
   flex: 1;
   overflow: hidden;
+}
+.mn-button-icon.has-click {
+  cursor: pointer;
 }
 .mn-button-icon.mn-size-xs {
   height: 8px;
@@ -1063,13 +1075,13 @@
 .mn-dark-theme .mn-button-icon.mn-bg-4 {
   background-color: #707070;
 }
-.mn-button-icon.mn-control-disable {
+.mn-button-icon.mn-disable {
   pointer-events: none;
 }
-.mn-button-icon.mn-control-disable .mn-icon {
+.mn-button-icon.mn-disable .mn-icon {
   color: #9e9e9e;
 }
-.mn-dark-theme .mn-button-icon.mn-control-disable .mn-icon {
+.mn-dark-theme .mn-button-icon.mn-disable .mn-icon {
   color: #696969;
 }
 

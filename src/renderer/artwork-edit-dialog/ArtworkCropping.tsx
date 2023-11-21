@@ -59,8 +59,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     crop.y = Math.round(crop.y * 100) / 100;
     crop.height = Math.round(crop.height * 100) / 100;
     crop.width = Math.round(crop.width * 100) / 100;
-    this.setState({ crop });
-    if (this.props.onCroppingChange) this.props.onCroppingChange(crop);
+    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
   }
 
   public render() {

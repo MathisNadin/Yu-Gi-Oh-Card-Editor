@@ -8,6 +8,7 @@ import {
 import { isDefined, classNames, isNumber, isString } from 'libraries/mn-tools';
 import { ITableCell, CellValue, ITableColumn } from './interfaces';
 import { ReactNode } from 'react';
+import { ButtonIcon } from '../button';
 
 export interface ITableRow {
   /** Set the name of the class. */
@@ -100,7 +101,7 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
               >
                 {!i && this.props.hasSubRows && (
                   <div className="mn-table-toggle-sub-rows">
-                    {/* {!!this.props.row.subRows?.length && (
+                    {!!this.props.row.subRows?.length && (
                       <ButtonIcon
                         icon={
                           this.props.row.open
@@ -109,7 +110,7 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
                         }
                         onTap={() => this.props.onToggleSubRows && this.props.onToggleSubRows(this.props.row)}
                       />
-                    )} */}
+                    )}
                   </div>
                 )}
 

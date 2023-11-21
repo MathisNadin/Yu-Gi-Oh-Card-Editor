@@ -13,5 +13,8 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-image.has-click {
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=styles.css.map */

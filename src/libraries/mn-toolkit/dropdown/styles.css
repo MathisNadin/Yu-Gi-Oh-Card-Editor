@@ -6,5 +6,8 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-dropdown.has-click {
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=styles.css.map */

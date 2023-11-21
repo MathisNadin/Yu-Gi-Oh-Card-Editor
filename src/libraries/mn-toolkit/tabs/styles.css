@@ -19,6 +19,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-tabset.has-click {
+  cursor: pointer;
+}
 .mn-tabset .item {
   padding: 0 16px;
   cursor: pointer;

@@ -43,11 +43,12 @@ export interface ITableColumn {
   outside?: boolean;
 }
 
-export type CellValue = string | number | Date | boolean | Node;
+export type CellValue = string | number | Date | boolean | Node | JSX.Element;
 
 export interface ITableCell {
   /** Set the value of the cell. */
   value: CellValue;
   /** Set the name of the class. */
   className?: string;
+  onTap?: () => void | Promise<void>;
 }

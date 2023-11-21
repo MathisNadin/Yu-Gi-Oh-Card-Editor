@@ -44,6 +44,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-spinner.has-click {
+  cursor: pointer;
+}
 
 .spinner-circle {
   width: 33%;

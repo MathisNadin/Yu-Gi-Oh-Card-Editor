@@ -6,6 +6,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-container.has-click {
+  cursor: pointer;
+}
 .mn-container.mn-layout-item-valign-top {
   align-items: flex-start;
   justify-content: initial;

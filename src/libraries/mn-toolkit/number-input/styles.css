@@ -16,6 +16,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-number-input.has-click {
+  cursor: pointer;
+}
 .mn-dark-theme .mn-number-input {
   border-color: #707070;
 }

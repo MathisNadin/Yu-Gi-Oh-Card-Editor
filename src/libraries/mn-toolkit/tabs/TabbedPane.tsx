@@ -119,8 +119,7 @@ export class TabbedPane<TAbstractTabIndex> extends Container<ITabbedPaneProps<TA
   }
 
   public onChange(value: TAbstractTabIndex) {
-    this.setState({ value });
-    if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
+    this.setState({ value }, () => !!this.props.onChange && this.props.onChange(this.state.value));
   }
 
 

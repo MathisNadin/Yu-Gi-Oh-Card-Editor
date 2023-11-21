@@ -11,6 +11,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-file-input.has-click {
+  cursor: pointer;
+}
 .mn-file-input input {
   flex: 1;
   position: relative;

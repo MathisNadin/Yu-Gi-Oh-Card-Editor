@@ -40,8 +40,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
 
   private doBlur() {
     this.clickTimer = undefined;
-    this.setState({ isFocused: false });
-    if (this.props.onChange) this.props.onChange(this.tempValue);
+    this.setState({ isFocused: false }, () => !!this.props.onChange && this.props.onChange(this.tempValue));
   }
 
   private doFocus() {

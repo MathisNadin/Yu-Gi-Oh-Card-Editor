@@ -81,8 +81,7 @@ export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstrac
   }
 
   public set tabIndex(value: TAbstractTabIndex) {
-    this.setState({ value });
-    if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
+    this.setState({ value }, () => this.props.onChange && app.$errorManager.handlePromise(this.props.onChange(this.state.value)));
   }
 
 /*   public componentWillUpdate(props: ITabSetProps) {

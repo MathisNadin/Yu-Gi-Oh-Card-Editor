@@ -44,7 +44,6 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
 
   private onChange(e: FormEvent<HTMLInputElement>) {
     const value = e.target.value as string;
-    this.setState({ value });
-    if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
+    this.setState({ value }, () => !!this.props.onChange && app.$errorManager.handlePromise(this.props.onChange(this.state.value)));
   }
 }

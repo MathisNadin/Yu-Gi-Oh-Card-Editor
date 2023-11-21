@@ -2,25 +2,34 @@ import './styles.css';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { ICardListener } from 'renderer/card/CardService';
-import { classNames, deepClone, uuid } from 'libraries/mn-tools';
+import { deepClone } from 'libraries/mn-tools';
 import { MouseEvent } from 'react';
-import check from '../resources/pictures/check.svg';
-import edit from '../resources/pictures/edit.svg';
-import cross from '../resources/pictures/cross.svg';
-import trash from '../resources/pictures/trash.svg';
-import { ICard, TFrame } from 'renderer/card/card-interfaces';
+import { ICard } from 'renderer/card/card-interfaces';
+import { Table } from 'libraries/mn-toolkit/table/Table';
+import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
+import { Icon } from 'libraries/mn-toolkit/icon';
+import { TableColumnSortOrder } from 'libraries/mn-toolkit/table/interfaces';
+import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+import { Typography } from 'libraries/mn-toolkit/typography/Typography';
+import { Button } from 'libraries/mn-toolkit/button';
+import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
+import { Progress } from 'libraries/mn-toolkit/progress';
 
-export type CardSortOptions = 'name' | 'frame' | 'created' | 'created-reverse' | 'modified' | 'modified-reverse' | 'game' | 'game-reverse';
+export type TCardSortOption = 'game' | 'name' | 'modified';
 
 interface ILocalCardsDisplayProps extends IContainableProps {}
 
 interface ILocalCardsDisplayState extends IContainableState {
   localCards: ICard[];
-  sortOption: CardSortOptions;
-  frameOrder: TFrame[];
+  sortOption: TCardSortOption;
+  sortOrder: TableColumnSortOrder;
   current: string;
   edited: string;
+  selectAllMode: boolean;
+  selectedCardsNum: number;
   selectedCards: { [cardUuid: string]: boolean };
+  cardsRendered: number;
+  cardsToRender: number;
 }
 
 export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILocalCardsDisplayState> implements Partial<ICardListener> {
@@ -32,32 +41,15 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
       current: app.$card.tempCurrentCard?.uuid as string,
       edited: app.$card.tempCurrentCard?.uuid as string,
       sortOption: 'modified',
+      sortOrder: 'asc',
       localCards: app.$card.localCards,
+      selectAllMode: true,
+      selectedCardsNum: 0,
       selectedCards: {},
-      frameOrder: [
-        'obelisk',
-        'slifer',
-        'ra',
-        'normal',
-        'effect',
-        'ritual',
-        'fusion',
-        'synchro',
-        'darkSynchro',
-        'xyz',
-        'link',
-        'monsterToken',
-        'token',
-        'legendaryDragon',
-        'spell',
-        'trap',
-        'skill'
-      ]
+      cardsRendered: 0,
+      cardsToRender: 0,
     };
     app.$card.addListener(this);
-  }
-
-  public componentDidMount() {
     this.sort();
   }
 
@@ -77,108 +69,128 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     this.setState({ edited: tempCurrentCard.uuid as string, current: tempCurrentCard.uuid as string });
   }
 
+  public cardRenderer(cardUuid: string) {
+    let { cardsRendered, selectedCards, selectedCardsNum } = this.state;
+    selectedCards[cardUuid] = false;
+    selectedCardsNum--;
+    cardsRendered++;
+    this.setState({ cardsRendered, selectedCards, selectedCardsNum }, () => this.forceUpdate());
+  }
+
   public menuSaveTempToLocal() {
     this.setState({ edited: '', current: '' });
   }
 
-  private sort(localCards?: ICard[], sortOption?: CardSortOptions) {
-    sortOption = sortOption || this.state?.sortOption;
-    localCards = localCards || this.state?.localCards;
+  private async onChangeOrder(sortOption: TCardSortOption) {
+    let { sortOrder } = this.state;
+    if (this.state.sortOption === sortOption) {
+      switch (sortOrder) {
+        case 'asc':
+          sortOrder = 'desc';
+          break;
+
+        case 'desc':
+          sortOrder = 'asc';
+          break;
+
+        default:
+          break;
+      }
+    } else {
+      sortOrder = 'asc';
+    }
+    this.setState({ sortOption, sortOrder }, () => this.sort());
+  }
+
+  private sort(localCards: ICard[] = this.state.localCards) {
+    let { sortOption, sortOrder } = this.state;
     switch (sortOption) {
-      case 'name':
-        localCards.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-
-      case 'frame':
-        localCards.sort((a, b) => this.state.frameOrder.indexOf(a.frames[0]) - this.state.frameOrder.indexOf(b.frames[0]));
-        break;
-
-      case 'created':
-        localCards.sort((a, b) => (a.created as Date).getTime() - (b.created as Date).getTime());
-        break;
-
-      case 'created-reverse':
-        localCards.sort((a, b) => (b.created as Date).getTime() - (a.created as Date).getTime());
-        break;
-
-      case 'modified':
-        localCards.sort((a, b) => (a.modified as Date).getTime() - (b.modified as Date).getTime());
-        break;
-
-      case 'modified-reverse':
-        localCards.sort((a, b) => (b.modified as Date).getTime() - (a.modified as Date).getTime());
-        break;
-
       case 'game':
         localCards.sort((a, b) => {
           let aScore = a.rush ? 0 : 1;
           let bScore = b.rush ? 0 : 1;
-          return aScore - bScore;
+          return sortOrder === 'asc' ? aScore - bScore : bScore - aScore;
         });
         break;
 
-      case 'game-reverse':
-        localCards.sort((a, b) => {
-          let aScore = a.rush ? 1 : 0;
-          let bScore = b.rush ? 1 : 0;
-          return aScore - bScore;
-        });
+      case 'name':
+        if (sortOrder === 'asc') localCards.sort((a, b) => a.name.localeCompare(b.name));
+        else localCards.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+
+      case 'modified':
+        if (sortOrder === 'asc') localCards.sort((a, b) => (a.modified as Date).getTime() - (b.modified as Date).getTime());
+        else localCards.sort((a, b) => (b.modified as Date).getTime() - (a.modified as Date).getTime());
         break;
 
       default:
         break;
     }
-    this.setState({ sortOption, localCards });
-    this.forceUpdate();
+    this.setState({ sortOption, sortOrder, localCards }, () => this.forceUpdate());
   }
 
   private formatDate(date: Date | undefined) {
     if (!date) return 'Inconnu';
 
     let day = `${date.getDate()}`;
-    if (day.length < 2) {
-      day = `0${day}`;
-    }
+    if (day.length < 2) day = `0${day}`;
 
     let month = `${date.getMonth()}`;
-    if (month.length < 2) {
-      month = `0${month}`;
-    }
+    if (month.length < 2) month = `0${month}`;
 
-    let hours = `${date.getHours()}`;
-    if (hours.length < 2) {
-      hours = `0${hours}`;
-    }
-
-    let minutes = `${date.getMinutes()}`;
-    if (minutes.length < 2) {
-      minutes = `0${minutes}`;
-    }
-
-    return `${day}/${month}/${date.getFullYear()} ${hours}h${minutes}`;
+    return `${day}-${month}-${date.getFullYear()}`;
   }
 
-  private async saveEdit(event: MouseEvent) {
+  private async saveEdit(event?: MouseEvent) {
     if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
     await app.$card.saveTempCurrentToLocal();
   }
 
-  private async startEdit(event: MouseEvent, card: ICard) {
+  private async startEdit(card: ICard, event?: MouseEvent) {
     if (event) event.stopPropagation();
     this.setState({ edited: card.uuid as string, current: card.uuid as string });
     await app.$card.saveTempCurrentCard(deepClone(card));
   }
 
-  private async abordEdit(event: MouseEvent) {
+  private async abordEdit(event?: MouseEvent) {
     if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
     await app.$card.saveTempCurrentCard(undefined);
   }
 
-  private async deleteCard(event: MouseEvent, card: ICard) {
+  private async deleteCard(card: ICard, event?: MouseEvent) {
     if (event) event.stopPropagation();
     await app.$card.deleteLocalCard(card);
+  }
+
+  private toggleSelectCard(cardUuid: string) {
+    if (this.state.cardsToRender) return;
+    let { selectedCards, selectedCardsNum, selectAllMode, localCards } = this.state;
+    selectedCards[cardUuid] = !selectedCards[cardUuid];
+
+    if (selectedCards[cardUuid]) selectedCardsNum++;
+    else selectedCardsNum--;
+
+    if (selectedCardsNum === localCards.length) selectAllMode = false;
+    else selectAllMode = true;
+    this.setState({ selectedCards, selectedCardsNum, selectAllMode }, () => this.forceUpdate());
+  }
+
+  private selectAll() {
+    if (this.state.cardsToRender) return;
+    let { localCards, selectedCards, selectedCardsNum } = this.state;
+    selectedCardsNum = 0;
+    for (const card of localCards) {
+      selectedCards[card.uuid as string] = true;
+      selectedCardsNum++;
+    }
+    this.setState({ selectAllMode: false, selectedCards, selectedCardsNum });
+  }
+
+  private unselectAll() {
+    if (this.state.cardsToRender) return;
+    this.setState({ selectAllMode: true, selectedCards: {}, selectedCardsNum: 0 });
   }
 
   private async renderSelectedCards() {
@@ -187,76 +199,115 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
     let cards = this.state.localCards.filter(c => this.state.selectedCards[c.uuid as string]);
     if (!cards.length) return;
 
+    this.setState({ cardsToRender: cards.length, cardsRendered: 0 });
     await app.$card.renderCards(cards);
-    this.setState({ selectedCards: {} });
-  }
-
-  private toggleSelectCard(cardUuid: string) {
-    let selectedCards = this.state.selectedCards;
-    selectedCards[cardUuid] = !selectedCards[cardUuid];
-    this.setState({ selectedCards });
+    this.setState({ selectedCards: {}, selectedCardsNum: 0, cardsToRender: 0, cardsRendered: 0 });
   }
 
   public render() {
-    return this.renderAttributes(<VerticalStack>
+    if (!this.state?.localCards?.length) return <Spinner />;
+    const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } = this.state;
+    return this.renderAttributes(<VerticalStack fill margin>
+      <Table scroll
+        columns={[
+          {
+            label: 'Format',
+            order: sortOption === 'game' ? sortOrder : undefined,
+            width: '70px',
+            onChangeOrder: () => this.onChangeOrder('game'),
+          },
+          {
+            label: 'Nom',
+            order: sortOption === 'name' ? sortOrder : undefined,
+            onChangeOrder: () => this.onChangeOrder('name'),
+          },
+          {
+            label: 'Modifiée',
+            order: sortOption === 'modified' ? sortOrder : undefined,
+            width: '90px',
+            onChangeOrder: () => this.onChangeOrder('modified'),
+          },
+          {
+            label: '',
+            width: '25px',
+          },
+          {
+            label: '',
+            width: '25px',
+          },
+        ]}
+        rows={localCards.map(card => {
+          const uuid = card.uuid as string;
+          const isEdited = this.state.edited === card.uuid;
+          const isCurrent = this.state.current === card.uuid;
+          return {
+            className: isCurrent ? 'current' : '',
+            selected: this.state.selectedCards[card.uuid as string],
+            cells: [
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={card.rush ? 'Rush' : 'Master'} variant='help' />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={card.name} variant='help' />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={this.formatDate(card.modified)} variant='help' />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill itemAlignment='center' verticalItemAlignment='middle' onTap={() => isEdited ? this.saveEdit() : this.startEdit(card)}>
+                  <Icon iconId={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill itemAlignment='center' verticalItemAlignment='middle' onTap={() => isEdited ? this.abordEdit() : this.deleteCard(card)}>
+                  <Icon iconId={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
+                </HorizontalStack>
+              },
+            ],
+          };
+        })}
+      />
+
+      <Spacer />
+
+      {!!cardsToRender && <HorizontalStack margin itemAlignment='center'>
+        <Progress
+          fill
+          showPercent
+          color='positive'
+          message='Rendu en cours...'
+          progress={cardsRendered}
+          total={cardsToRender}
+        />
+      </HorizontalStack>}
+
+      {!cardsToRender && <HorizontalStack margin gutter itemAlignment='center'>
+        {selectAllMode && <Button
+          fill
+          color='balanced'
+          label='Sélectionner tout'
+          onTap={() => this.selectAll()}
+        />}
+        {!selectAllMode && <Button
+          fill
+          color='assertive'
+          label='Désélectionner tout'
+          onTap={() => this.unselectAll()}
+        />}
+        <Button
+          fill
+          disabled={!selectedCardsNum}
+          color='positive'
+          label='Faire le rendu'
+          onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
+        />
+      </HorizontalStack>}
     </VerticalStack>, 'local-cards-display');
   }
-
-  public render2() {
-    return this.renderAttributes(<VerticalStack>
-      <VerticalStack scroll fill className='local-cards-listing'>
-        <p className='local-cards-label'>Cartes locales</p>
-
-        <table className='table'>
-          <thead>
-            <tr>
-              <th
-                className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'game' }, { 'sorted-desc': this.state.sortOption === 'game-reverse' })}
-                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'game' ? 'game-reverse' : 'game')}
-              >Format</th>
-              <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'name')}>Nom</th>
-              <th className='cursor-pointer' onClick={() => this.sort(this.state.localCards, 'frame')}>Type</th>
-              <th
-                className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'created' }, { 'sorted-desc': this.state.sortOption === 'created-reverse' })}
-                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'created' ? 'created-reverse' : 'created')}
-              >Créée</th>
-              <th
-                className={classNames('cursor-pointer', { 'sorted-asc': this.state.sortOption === 'modified' }, { 'sorted-desc': this.state.sortOption === 'modified-reverse' })}
-                onClick={() => this.sort(this.state.localCards, this.state.sortOption === 'modified' ? 'modified-reverse' : 'modified')}
-              >Modifiée</th>
-              <th className='empty empty-1'> </th>
-              <th className='empty empty-2'> </th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state?.localCards?.map(card => {
-              const isEdited = this.state.edited === card.uuid;
-              const isCurrent = this.state.current === card.uuid;
-              return <tr key={uuid()} className={classNames('local-card-row', { 'selected': this.state.selectedCards[card.uuid as string] }, { 'current': isCurrent })}>
-                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.rush ? 'Rush' : 'Master'}</td>
-                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.name}</td>
-                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{app.$card.getFramesNames(card.frames)}</td>
-                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.created)}</td>
-                <td onClick={() => this.toggleSelectCard(card.uuid as string)}>{this.formatDate(card.modified)}</td>
-                <td className={classNames('with-icon', { 'current': isCurrent })}>{isEdited
-                  ? <img src={check} alt='check' className='check' onClick={e => app.$errorManager.handlePromise(this.saveEdit(e))} />
-                  : <img src={edit} alt='edit' className='edit' onClick={e => app.$errorManager.handlePromise(this.startEdit(e, card))} />
-                }</td>
-                <td className={classNames('with-icon', { 'current': isCurrent })}>{isEdited
-                  ? <img src={cross} alt='cross' className='cross' onClick={e => app.$errorManager.handlePromise(this.abordEdit(e))} />
-                  : <img src={trash} alt='trash' className='trash' onClick={e => app.$errorManager.handlePromise(this.deleteCard(e, card))} />
-                }</td>
-              </tr>;
-            })}
-          </tbody>
-        </table>
-      </VerticalStack>
-
-      <button
-        type='button'
-        className={classNames('render-cards-btn', { 'disabled': this.state.edited || !Object.values(this.state.selectedCards).filter(s => !!s).length })}
-        onClick={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
-      >Faire le rendu des cartes</button>
-    </VerticalStack>, 'local-cards-display-old');
-  }
-};
+}

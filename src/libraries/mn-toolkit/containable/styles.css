@@ -110,5 +110,8 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-containable.has-click {
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=styles.css.map */

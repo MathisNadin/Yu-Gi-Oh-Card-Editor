@@ -26,6 +26,9 @@
   flex: 1;
   overflow: hidden;
 }
+.mn-checkbox.has-click {
+  cursor: pointer;
+}
 .mn-checkbox .toggle {
   position: relative;
   display: inline-block;

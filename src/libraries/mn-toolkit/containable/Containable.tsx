@@ -99,6 +99,7 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
     } else if (!!name) {
       classes[name] = true;
     }
+    classes['has-click'] = !!this.props.onTap;
     classes['mn-fill'] = !!this.props.fill;
     classes['mn-ghost'] = !!this.props.ghost;
     classes['mn-disable'] = !!this.props.disabled;

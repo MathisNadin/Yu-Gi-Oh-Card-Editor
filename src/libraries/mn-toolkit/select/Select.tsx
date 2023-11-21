@@ -104,8 +104,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
   private async selectItem(item: IPopoverAction<ID>) {
     await this.hideList();
     const value = item.id as ID;
-    this.setState({ value });
-    if (this.props.onChange) this.props.onChange(value);
+    this.setState({ value }, () => !!this.props.onChange && this.props.onChange(this.state.value));
   }
 
   private async hideList() {

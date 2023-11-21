@@ -31,8 +31,7 @@ export class Dropdown<T extends string> extends Containable<DropdownProps<T>, Dr
   }
 
   private onChange(value: T) {
-    this.setState({ selectedOption: value });
-    if (this.props.onSelect) this.props.onSelect(value);
+    this.setState({ selectedOption: value }, () => !!this.props.onSelect && this.props.onSelect(this.state.selectedOption));
   }
 
   public renderClasses(name?: string) {
