@@ -422,6 +422,12 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           color='assertive'
           onTap={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}
         />}
+        <Spacer />
+        <Button
+          label='Sauvegarder'
+          color='balanced'
+          onTap={() => app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())}
+        />
       </HorizontalStack>
 
       <VerticalStack scroll padding gutter className='card-editor-sections'>
@@ -440,7 +446,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     return <VerticalStack gutter className='card-editor-section basic-section'>
       <HorizontalStack fill verticalItemAlignment='middle'>
         <Icon className='field-icon' iconId='toolkit-title' color='1' />
-        <TextInput fill placeholder='Nom' defaultValue={this.state.card.name} onChange={name =>  this.onNameChange(name)} />
+        <TextInput fill placeholder='Nom' defaultValue={this.state.card.name} onChange={name => this.onNameChange(name)} />
       </HorizontalStack>
 
       <HorizontalStack gutter>
@@ -480,7 +486,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
       </HorizontalStack>
 
-      <HorizontalStack verticalItemAlignment='middle' gutter>
+      <HorizontalStack gutter verticalItemAlignment='middle'>
         <HorizontalStack fill verticalItemAlignment='middle'>
           <Icon className='field-icon' iconId='toolkit-image' color='1' />
           <FileInput
@@ -710,7 +716,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
               validateOnEnter
               key={`${iAbility}-${ability}`}
               value={ability}
-              onChange={newValue => this.onAbilityChange(newValue, iAbility)}
+              onChange={ability => this.onAbilityChange(ability, iAbility)}
             />
 
             <HorizontalStack className='abilities-line-icons'>
@@ -782,7 +788,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   }
 
   private renderMiscDetails() {
-    return this.renderAttributes(<VerticalStack gutter>
+    return <VerticalStack gutter className='card-editor-section misc-section'>
       <Typography fill className='sub-title' variant='help' content='Autres' />
 
       <HorizontalStack gutter>
@@ -870,6 +876,6 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
           />
         </HorizontalStack>
       </HorizontalStack>
-    </VerticalStack>, 'card-editor-section misc-section');
+    </VerticalStack>;
   }
 };

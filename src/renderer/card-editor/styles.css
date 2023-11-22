@@ -460,6 +460,52 @@
 .mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-abilities .card-abilities-list .abilities-line:nth-child(even) .mn-inplace-edit input {
   background-color: #555555;
 }
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects {
+  gap: 8px;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .choice-effects-add {
+  margin-bottom: -4px;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list {
+  background-color: #ffffff;
+}
+.mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list {
+  background-color: #181818;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .mn-inplace-edit {
+  background-color: #ffffff;
+}
+.mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .mn-inplace-edit {
+  background-color: #181818;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .mn-inplace-edit input {
+  background-color: #ffffff;
+}
+.mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .mn-inplace-edit input {
+  background-color: #181818;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line:nth-child(even) {
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line:nth-child(even) {
+  background-color: #555555;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line:nth-child(even) .mn-inplace-edit {
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line:nth-child(even) .mn-inplace-edit {
+  background-color: #555555;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line:nth-child(even) .mn-inplace-edit input {
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line:nth-child(even) .mn-inplace-edit input {
+  background-color: #555555;
+}
+.card-editor .card-editor-sections .card-editor-section .card-choice-effects .card-choice-effects-list .choice-effects-line .choice-effects-line-icons {
+  min-width: 90%;
+  max-width: 100%;
+}
 
 .card-editor-old {
   height: 100%;

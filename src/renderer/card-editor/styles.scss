@@ -162,6 +162,47 @@
           }
         }
       }
+
+      .card-choice-effects {
+        gap: calc($themeDefaultSpacing / 2);
+
+        .choice-effects-add {
+          margin-bottom: - calc($themeDefaultSpacing / 4);
+        }
+
+        .card-choice-effects-list {
+          // border: 1px solid $borderColor;
+          // min-height: $themeDefaultItemHeight;
+          @include bg(1);
+
+          .mn-inplace-edit {
+            @include bg(1);
+
+            input {
+              @include bg(1);
+            }
+          }
+
+          .choice-effects-line {
+            &:nth-child(even) {
+              @include bg(3);
+
+              .mn-inplace-edit {
+                @include bg(3);
+
+                input {
+                  @include bg(3);
+                }
+              }
+            }
+
+            .choice-effects-line-icons {
+              min-width: 90%;
+              max-width: 100%;
+            }
+          }
+        }
+      }
     }
   }
 }
