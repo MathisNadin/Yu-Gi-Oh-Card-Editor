@@ -1,8 +1,3 @@
-.mn-tab-panes {
-  background-color: rgba(211, 211, 211, 0.3);
-  border-radius: 6px;
-}
-
 .mn-tab-pane {
   display: flex;
   width: 100%;
@@ -12,6 +7,7 @@
   display: flex;
   position: relative;
   display: flex;
+  background-color: #ffffff;
   padding: 16px;
   gap: 16px;
 }
@@ -21,6 +17,9 @@
 }
 .mn-tabset.has-click {
   cursor: pointer;
+}
+.mn-dark-theme .mn-tabset {
+  background-color: #181818;
 }
 .mn-tabset .item {
   padding: 0 16px;
@@ -36,6 +35,7 @@
   transition: transform 0.2s ease, background-color 0.2s ease;
   will-change: transform, background-color;
   transform: translateX(0);
+  background-color: #F6F8F9;
 }
 .mn-tabset .item .icon {
   margin-right: 3px;
@@ -49,28 +49,54 @@
 }
 .mn-tabset .item .mn-close {
   opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.2s ease;
   min-height: 15px;
   max-height: 15px;
-  /*       &:hover {
-          color: $primary;
-        } */
+  color: #9e9e9e;
+}
+.mn-dark-theme .mn-tabset .item .mn-close {
+  color: #696969;
+}
+.mn-tabset .item .mn-close:hover {
+  color: #886aea;
 }
 .mn-tabset .item > .label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 130%;
   font-size: 14px;
   flex: 1;
   color: black;
 }
+.mn-dark-theme .mn-tabset .item {
+  background-color: #414141;
+}
 .mn-tabset .item:hover {
-  background-color: rgba(128, 128, 128, 0.5);
+  background-color: #EEF0F2;
+}
+.mn-dark-theme .mn-tabset .item:hover {
+  background-color: #555555;
 }
 .mn-tabset .item.selected {
-  background-color: rgba(211, 211, 211, 0.3);
+  background-color: #E5E9EB;
+}
+.mn-dark-theme .mn-tabset .item.selected {
+  background-color: #9d9d9d;
 }
 .mn-tabset .item.disabled {
-  /*       .icon {
-          // @include fg(2);
-        } */
+  color: #8a8a8a;
   pointer-events: none;
+}
+.mn-dark-theme .mn-tabset .item.disabled {
+  color: #b8b8b8;
+}
+.mn-tabset .item.disabled .icon {
+  color: #8a8a8a;
+}
+.mn-dark-theme .mn-tabset .item.disabled .icon {
+  color: #b8b8b8;
 }
 .mn-tabset.mn-tabbed-pane-tab-position-left, .mn-tabset.mn-tabbed-pane-tab-position-right {
   flex-direction: column;
@@ -132,13 +158,8 @@
   text-align: center;
 }
 
-/* .mn-tabbed-pane {
-  &.mn-bg-1,
-  &.mn-bg-2,
-  &.mn-bg-3,
-  &.mn-bg-4 {
-    background-color: transparent;
-  }
-} */
+.mn-tabbed-pane.mn-bg-1, .mn-tabbed-pane.mn-bg-2, .mn-tabbed-pane.mn-bg-3, .mn-tabbed-pane.mn-bg-4 {
+  background-color: transparent;
+}
 
 /*# sourceMappingURL=styles.css.map */

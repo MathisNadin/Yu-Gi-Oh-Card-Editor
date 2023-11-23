@@ -1,0 +1,19 @@
+@import '../../libraries/mn-toolkit/index.scss';
+
+.settings {
+  @include bg(1);
+  $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
+  width: 100%;
+
+  .mn-typography {
+    color: black !important;
+
+    .mn-dark-theme & {
+      color: white !important;
+    }
+  }
+
+  .field-icon {
+    margin-right: calc($themeDefaultSpacing/2);
+  }
+}

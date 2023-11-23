@@ -1,0 +1,43 @@
+@import '../../libraries/mn-toolkit/index.scss';
+
+.cards-library {
+  @include bg(1);
+  background-color: nth($theme-light-bg, 1);
+  width: 100%;
+
+  .mn-table {
+    .mn-table-body {
+      .mn-table-row {
+        &.mn-table-row-selected {
+          background: rgba($balanced, 0.5);
+          border-color: rgba(black, 0.05);
+        }
+
+        &.mn-table-row-current {
+          background-color: rgba($calm, 0.5);
+        }
+
+        .mn-table-cell {
+          .mn-table-cell-wrapper {
+            .mn-container {
+              min-width: 100%;
+              max-width: 100%;
+              min-height: 100%;
+              max-height: 100%;
+
+              .mn-typography {
+                display: block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                min-width: 100%;
+                max-width: 100%;
+                user-select: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

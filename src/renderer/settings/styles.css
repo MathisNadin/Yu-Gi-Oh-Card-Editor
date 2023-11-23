@@ -1,0 +1,18 @@
+.settings {
+  background-color: #ffffff;
+  width: 100%;
+}
+.mn-dark-theme .settings {
+  background-color: #181818;
+}
+.settings .mn-typography {
+  color: black !important;
+}
+.mn-dark-theme .settings .mn-typography {
+  color: white !important;
+}
+.settings .field-icon {
+  margin-right: 8px;
+}
+
+/*# sourceMappingURL=styles.css.map */

@@ -41,6 +41,16 @@ interface ICardImportDialogState extends IContainableState {
 
 export class CardImportDialog extends Containable<ICardImportDialogProps, ICardImportDialogState> {
 
+  public static async show() {
+    return await app.$popup.show<ICardImportDialogResult>({
+      id: 'import-popup',
+      title: "Importez une carte",
+      innerHeight: 'auto',
+      innerWidth: '70%',
+      content: <CardImportDialog />,
+    });
+  }
+
   public constructor(props: ICardImportDialogProps) {
     super(props);
     this.state = {

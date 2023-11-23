@@ -1,0 +1,32 @@
+.cards-library {
+  background-color: #ffffff;
+  background-color: #ffffff;
+  width: 100%;
+}
+.mn-dark-theme .cards-library {
+  background-color: #181818;
+}
+.cards-library .mn-table .mn-table-body .mn-table-row.mn-table-row-selected {
+  background: rgba(51, 205, 95, 0.5);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+.cards-library .mn-table .mn-table-body .mn-table-row.mn-table-row-current {
+  background-color: rgba(17, 193, 243, 0.5);
+}
+.cards-library .mn-table .mn-table-body .mn-table-row .mn-table-cell .mn-table-cell-wrapper .mn-container {
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  max-height: 100%;
+}
+.cards-library .mn-table .mn-table-body .mn-table-row .mn-table-cell .mn-table-cell-wrapper .mn-container .mn-typography {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 100%;
+  max-width: 100%;
+  user-select: none;
+}
+
+/*# sourceMappingURL=styles.css.map */

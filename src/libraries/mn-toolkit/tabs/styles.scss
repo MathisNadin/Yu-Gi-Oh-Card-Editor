@@ -2,13 +2,6 @@
 
 $tabs-selector-height: 4px;
 
-$themePaneBg: rgba(lightgrey, 0.3);
-
-.mn-tab-panes {
-  background-color: $themePaneBg;
-  border-radius: $themeDefaultBorderRadius;
-}
-
 .mn-tab-pane {
   display: flex;
   width: 100%;
@@ -18,7 +11,7 @@ $decay: 4px;
 .mn-tabset {
   @include mnLayountContainable();
   display: flex;
-  // @include bg(1);
+  @include bg(1);
   padding: $themeDefaultSpacing;
   gap: $themeDefaultSpacing;
 
@@ -52,39 +45,36 @@ $decay: 4px;
 
     .mn-close {
       opacity: 0;
-      // @include fx(opacity);
+      @include fx(opacity);
       min-height: 15px;
       max-height: 15px;
-      // @include fg(3);
-/*       &:hover {
+      @include fg(3);
+      &:hover {
         color: $primary;
-      } */
+      }
     }
 
     > .label {
-      // @include text-overflow;
+      @include text-overflow;
       font-size: 14px;
       flex: 1;
       color: black;
     }
 
-    // @include bg(2);
-    // background-color: lightgray;
+    @include bg(2);
     &:hover {
-      background-color: rgba(grey, 0.5);
-      // @include bg(3);
+      @include bg(3);
     }
 
     &.selected {
-      background-color: $themePaneBg;
-      // @include bg(4);
+      @include bg(4);
     }
 
     &.disabled {
-      // @include fg(2);
-/*       .icon {
-        // @include fg(2);
-      } */
+      @include fg(2);
+      .icon {
+        @include fg(2);
+      }
 
       pointer-events: none;
     }
@@ -161,11 +151,11 @@ $decay: 4px;
   }
 }
 
-/* .mn-tabbed-pane {
+.mn-tabbed-pane {
   &.mn-bg-1,
   &.mn-bg-2,
   &.mn-bg-3,
   &.mn-bg-4 {
     background-color: transparent;
   }
-} */
+}

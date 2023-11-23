@@ -46,12 +46,12 @@ const electronHandler = {
       return ipcRenderer.invoke('read-file-utf-8');
     },
 
-    getFilePath(): Promise<string> {
-      return ipcRenderer.invoke('get-file-path');
+    getFilePath(defaultPath?: string): Promise<string> {
+      return ipcRenderer.invoke('get-file-path', defaultPath);
     },
 
-    getDirectoryPath(): Promise<string> {
-      return ipcRenderer.invoke('get-directory-path');
+    getDirectoryPath(defaultPath?: string): Promise<string> {
+      return ipcRenderer.invoke('get-directory-path', defaultPath);
     },
 
     checkFileExists(path: string): Promise<boolean> {

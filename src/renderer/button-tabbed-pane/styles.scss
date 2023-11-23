@@ -1,0 +1,20 @@
+@import '../../libraries/mn-toolkit/index.scss';
+
+.button-tabbed-pane {
+  height: 97%;
+  width: 30%;
+
+  .button-tabs {
+    min-width: 100%;
+    max-width: 100%;
+
+    .button-tab {
+      width: 40%;
+      border-radius: 32px;
+
+      &.selected {
+        font-weight: bold;
+      }
+    }
+  }
+}

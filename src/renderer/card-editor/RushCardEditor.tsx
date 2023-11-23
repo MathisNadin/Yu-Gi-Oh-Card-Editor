@@ -600,7 +600,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
         <TabPane id='regular' fill={false} label='Condition / Effet' gutter>
           <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-script' color='1' />
+            <Icon className='field-icon' iconId='toolkit-empty-small-script' color='1' />
             <TextAreaInput
               autoGrow
               minRows={3}
@@ -613,7 +613,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           </HorizontalStack>
 
           <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-script' color='1' />
+            <Icon className='field-icon' iconId='toolkit-small-script' color='1' />
             <TextAreaInput
               autoGrow
               minRows={3}
@@ -655,7 +655,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
         <TabPane id='choice' fill={false} label='Effet au Choix' gutter>
           <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-script' color='1' />
+            <Icon className='field-icon' iconId='toolkit-empty-small-script' color='1' />
             <TextAreaInput
               autoGrow
               minRows={3}
@@ -668,7 +668,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           </HorizontalStack>
 
           <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-script' color='1' />
+            <Icon className='field-icon' iconId='toolkit-small-script' color='1' />
             <TextAreaInput
               autoGrow
               minRows={3}
@@ -682,6 +682,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
           <VerticalStack className='card-choice-effects'>
             <HorizontalStack fill className='choice-effects-add' itemAlignment='right' verticalItemAlignment='middle'>
+              <Icon className='field-icon' iconId='toolkit-script' color='1' />
               <Typography fill variant='help' content='Choix' />
               <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddChoiceEffect()} />
             </HorizontalStack>
@@ -712,7 +713,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       </TabbedPane>
 
       <HorizontalStack>
-        <Icon className='field-icon' iconId='toolkit-color-palette' color='1' />
+        <Icon className='field-icon' iconId='toolkit-eye-close' color='1' />
         <CheckBox
           label="Ne pas couvrir l'artwork"
           defaultValue={this.state.card.dontCoverRushArt}
@@ -720,9 +721,9 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         />
       </HorizontalStack>
 
-      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter>
+      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter className='line-with-checkbox'>
         <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-color-palette' color='1' />
+          <Icon className='field-icon' iconId='toolkit-diamond-shine' color='1' />
           <CheckBox
             label='LEGEND'
             defaultValue={this.state.card.legend}
@@ -731,7 +732,6 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         </HorizontalStack>
 
         {this.state.card.legend && <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-color-palette' color='1' />
           <Select<TLegendType>
             fill
             popoverMinWidth={150}
@@ -816,9 +816,8 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         </HorizontalStack>
       </HorizontalStack>}
 
-      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter>
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-origami-sword' color='1' />
+      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter className='line-with-checkbox'>
+        <HorizontalStack verticalItemAlignment='middle'>
           <CheckBox
             label='Maximum'
             defaultValue={this.state.card.maximum}
@@ -856,8 +855,8 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
             <HorizontalStack className='abilities-line-icons'>
               <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
-              <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
-              <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
+              {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />}
+              {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />}
             </HorizontalStack>
           </HorizontalStack>)}
         </VerticalStack>

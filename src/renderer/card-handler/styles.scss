@@ -13,22 +13,6 @@
 .card-handler {
   height: 100%;
   width: 100%;
-
-  .editor-tabbed-pane {
-    height: 97%;
-    width: 30%;
-
-    .mode-tabs {
-      .mn-button {
-        width: 40%;
-        border-radius: 32px;
-
-        &.selected {
-          font-weight: bold;
-        }
-      }
-    }
-  }
 }
 
 .card-handler-old {

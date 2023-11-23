@@ -4,11 +4,12 @@ import { Observable } from "libraries/mn-toolkit/observable/Observable";
 import { deepClone, uuid } from "libraries/mn-tools";
 import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
 import { Crop } from "react-image-crop";
+import { CardImportDialog } from "renderer/card-import-dialog/CardImportDialog";
 
-interface IExportData {
-  'current-card': ICard,
-  'temp-current-card': ICard,
-  'local-cards': ICard[],
+export interface ICardsExportData {
+  'current-card': ICard;
+  'temp-current-card': ICard;
+  'local-cards': ICard[];
 }
 
 export interface ICardListener {
@@ -17,7 +18,7 @@ export interface ICardListener {
   tempCurrentCardLoaded: (tempCurrentCard: ICard) => void;
   tempCurrentCardUpdated: (tempCurrentCard: ICard) => void;
   localCardsLoaded: (localCards: ICard[]) => void;
-  localCardsUpdated: (localCards: ICard[]) => void;
+  localCardsUpdated: (localCards: ICard[], handlerShouldUpdate: boolean) => void;
   renderCardChanged: (renderCard: ICard) => void;
   menuSaveTempToLocal: () => void;
   cardRenderer: (cardUuid: string) => void;
@@ -92,8 +93,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.dispatch('localCardsLoaded', this.localCards);
   }
 
-  private fireLocalCardsUpdated() {
-    this.dispatch('localCardsUpdated', this.localCards);
+  private fireLocalCardsUpdated(handlerShouldUpdate: boolean) {
+    this.dispatch('localCardsUpdated', this.localCards, handlerShouldUpdate);
   }
 
   public fireRenderCardChanged() {
@@ -206,19 +207,21 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       this.fireCurrentCardLoaded();
       this.fireTempCurrentCardLoaded();
     } else {
-      this.fireLocalCardsUpdated();
+      this.fireLocalCardsUpdated(false);
       this.fireCurrentCardUpdated();
       this.fireTempCurrentCardUpdated();
     }
   }
 
-  public async importData() {
-    let buffer = await window.electron.ipcRenderer.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
-    if (!buffer) return;
+  public get exportCardData(): ICardsExportData {
+    return {
+      "current-card": this._currentCard,
+      "temp-current-card": this._tempCurrentCard as ICard,
+      "local-cards": this._localCards,
+    };
+  }
 
-    let data = JSON.parse(buffer.toString()) as IExportData;
-    if (!data) return;
-
+  public async importCardData(data: ICardsExportData) {
     if (data['local-cards']) {
       this._localCards = deepClone(data['local-cards']);
       if (this._localCards?.length) {
@@ -227,7 +230,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         }
       }
       await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-      this.fireLocalCardsUpdated();
+      this.fireLocalCardsUpdated(false);
     }
 
     if (data['current-card']) {
@@ -249,15 +252,6 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
-  public async exportData() {
-    let data: IExportData = {
-      "current-card": this._currentCard,
-      "temp-current-card": this._tempCurrentCard as ICard,
-      "local-cards": this._localCards
-    };
-    await window.electron.ipcRenderer.writeJsonFile('card_editor_data', JSON.stringify(data));
-  }
-
   public async renderCurrentCard() {
     const cardUuid = (this._tempCurrentCard ? this._tempCurrentCard.uuid : this._currentCard.uuid) as string;
     const cardName = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
@@ -272,7 +266,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async renderCards(cards: ICard[]) {
     if (!cards?.length) return;
 
-    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath();
+    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
     if (!this._renderPath) return;
 
     this._renderCardsQueue.push(...cards);
@@ -378,9 +372,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     currentCard.created = now;
     currentCard.modified = now;
     currentCard.uuid = uuid();
+    const previousLocalLength = this._localCards.length;
     this._localCards.push(currentCard);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated();
+    this.fireLocalCardsUpdated(!previousLocalLength);
   }
 
   public async saveTempCurrentToLocal() {
@@ -394,7 +389,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       }
     });
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated();
+    this.fireLocalCardsUpdated(false);
 
     this._tempCurrentCard = undefined;
     await app.$indexedDB.save<CardStorageKey, undefined>('temp-current-card', this._tempCurrentCard);
@@ -404,7 +399,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async deleteLocalCard(card: ICard) {
     this._localCards = this._localCards.filter(c => c.uuid !== card.uuid);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated();
+    this.fireLocalCardsUpdated(!this._localCards.length);
   }
 
   public async importCards(newCards: ICard[]) {
@@ -425,9 +420,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     newCard.created = now;
     newCard.modified = now;
     newCard.uuid = uuid();
+    const previousLocalLength = this._localCards.length;
     this._localCards.push(newCard);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated();
+    this.fireLocalCardsUpdated(!previousLocalLength);
 
     if (updateTempCurrentCard) {
       this._tempCurrentCard = newCard;
@@ -834,5 +830,9 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public getDescriptionPlaceholder(card: ICard) {
     if (card.frames.length === 1 && FRAMES_WITH_DESCRIPTION.includes(card.frames[0])) return 'Description';
     return 'Effet';
+  }
+
+  public async showImportDialog() {
+    return await CardImportDialog.show();
   }
 }

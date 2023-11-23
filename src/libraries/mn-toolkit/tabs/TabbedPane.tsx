@@ -5,7 +5,7 @@ import { ITabSetProps, TabPosition, TabSet, ITabItem } from "./TabSet";
 import { ReactNode } from "react";
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 
-type INodeWithProps = ReactNode & {
+export type INodeWithProps = ReactNode & {
   props: any;
 }
 

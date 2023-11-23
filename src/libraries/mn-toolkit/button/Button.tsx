@@ -1,12 +1,15 @@
 import './styles.css';
 import { IContainableProps, Containable, IContainableState } from "../containable/Containable";
 import { TBackgroundColor, TForegroundColor } from '../themeSettings';
+import { Icon, TIconId } from '../icon';
 
 interface IButtonProps extends IContainableProps {
   label: string;
   color?: TForegroundColor;
   bg?: TBackgroundColor;
   block?: boolean;
+  icon?: TIconId;
+  iconPosition?: 'left' | 'right';
 }
 
 interface IButtonState extends IContainableState {
@@ -20,6 +23,7 @@ export class Button extends Containable<IButtonProps, IButtonState> {
       block: false,
       disabled: false,
       color: 'neutral',
+      iconPosition: 'left',
     };
   }
 
@@ -32,12 +36,15 @@ export class Button extends Containable<IButtonProps, IButtonState> {
     if (this.props.block) classes['mn-button-block'] = true;
     if (this.props.color) classes[`mn-button-color-${this.props.color}`] = true;
     if (this.props.bg) classes[`mn-button-bg-${this.props.bg}`] = true;
+    classes['mn-button-icon-and-text'] = !!this.props.icon && !!this.props.label;
+    classes[`mn-icon-position-${this.props.iconPosition}`] = true;
     return classes;
   }
 
   public render() {
     return this.renderAttributes(<div>
-      <span className="label">{this.props.label}</span>
+      {this.props.icon && <Icon className='icon' size={18} iconId={this.props.icon} />}
+      {!!this.props.label && <span className="label">{this.props.label}</span>}
     </div>, 'mn-button');
   }
 

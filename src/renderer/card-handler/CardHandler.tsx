@@ -1,7 +1,7 @@
-import './styles.css';
+import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { LocalCardsDisplay } from 'renderer/local-cards-display/LocalCardsDisplay';
+import { CardsLibrary } from 'renderer/cards-library/CardsLibrary';
 import { CardEditor } from 'renderer/card-editor/CardEditor';
 import { CardPreview } from 'renderer/card-preview/CardPreview';
 import { ICardListener } from '../card/CardService';
@@ -9,13 +9,12 @@ import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { ICard } from 'renderer/card/card-interfaces';
 import { RushCardPreview } from 'renderer/card-preview/RushCardPreview';
 import { RushCardEditor } from 'renderer/card-editor/RushCardEditor';
-import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
-import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { Typography } from 'libraries/mn-toolkit/typography/Typography';
 import { IDeviceListener } from 'libraries/mn-toolkit/device';
 import { Button } from 'libraries/mn-toolkit/button/Button';
-import { classNames } from 'libraries/mn-tools';
+import { Settings } from 'renderer/settings';
+import { ButtonTabbedPane } from 'renderer/button-tabbed-pane/ButtonTabbedPane';
 
 interface IVersionInfos {
   version: string;
@@ -23,13 +22,16 @@ interface IVersionInfos {
   note: string;
 }
 
-type TTabIndex = 'master' | 'rush';
+type TLeftTabIndex = 'master' | 'rush';
+
+type TRightTabIndex = 'library' | 'settings';
 
 interface ICardHandlerProps extends IContainableProps {
 }
 
 interface ICardHandlerState extends IContainableState {
-  tabIndex: TTabIndex;
+  leftTabIndex: TLeftTabIndex;
+  rightTabIndex: TRightTabIndex;
   currentCard: ICard;
   tempCurrentCard: ICard;
   needUpdate: boolean;
@@ -42,7 +44,12 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
     super(props);
     app.$card.addListener(this);
     app.$device.addListener(this);
-    this.state = { tabIndex: 'master', loaded: false } as ICardHandlerState;
+    this.state = {
+      leftTabIndex: 'master',
+      rightTabIndex: app.$card.localCards?.length ? 'library' : 'settings',
+      loaded: false,
+    } as ICardHandlerState;
+
     if (app.$device.isConnected()) {
       app.$errorManager.handlePromise(this.checkUpdate());
     }
@@ -79,16 +86,16 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
   }
 
   public currentCardLoaded(currentCard: ICard) {
-    this.setState({ loaded: true, currentCard, tabIndex: currentCard.rush ? 'rush' : 'master' });
+    this.setState({ loaded: true, currentCard, leftTabIndex: currentCard.rush ? 'rush' : 'master' });
   }
 
   public currentCardUpdated(currentCard: ICard) {
-    this.setState({ currentCard, tabIndex: currentCard.rush ? 'rush' : 'master' });
+    this.setState({ currentCard, leftTabIndex: currentCard.rush ? 'rush' : 'master' });
   }
 
   public tempCurrentCardLoaded(tempCurrentCard: ICard) {
     if (tempCurrentCard) {
-      this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+      this.setState({ loaded: true, tempCurrentCard, leftTabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else {
       this.setState({ loaded: true, tempCurrentCard });
     }
@@ -96,14 +103,10 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
 
   public tempCurrentCardUpdated(tempCurrentCard: ICard) {
     if (tempCurrentCard) {
-      this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+      this.setState({ loaded: true, tempCurrentCard, leftTabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else {
       this.setState({ loaded: true, tempCurrentCard });
     }
-  }
-
-  public localCardsUpdated() {
-    this.forceUpdate();
   }
 
   private async onCardChange(card: ICard) {
@@ -114,8 +117,15 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
     }
   }
 
-  private async onTabChange(tabIndex: TTabIndex) {
-    this.setState({ tabIndex });
+  public localCardsUpdated(localCards: ICard[], handlerShouldUpdate: boolean) {
+    console.log('handlerShouldUpdate ============>', handlerShouldUpdate);
+    if (handlerShouldUpdate) {
+      this.setState({ rightTabIndex: !localCards.length ? 'settings' : this.state.rightTabIndex });
+      this.forceUpdate();
+    }
+  }
+
+  private async onLeftTabChange() {
     if (this.state.tempCurrentCard) {
       await app.$card.convertTempCurrentCard();
     } else {
@@ -125,20 +135,29 @@ export class CardHandler extends Containable<ICardHandlerProps, ICardHandlerStat
 
   public render() {
     if (!this.state.loaded) return <Spinner />;
-    const isMaster = this.state.tabIndex === 'master';
     const card = this.state.tempCurrentCard || this.state.currentCard;
     return this.renderAttributes(<HorizontalStack gutter itemAlignment='center'>
-      <VerticalStack className='editor-tabbed-pane' margin gutter>
-        <HorizontalStack className='mode-tabs' gutter itemAlignment='center'>
-          <Button className={classNames('master-tab', { 'selected': isMaster })} color={isMaster ? 'royal' : '4'} label='Master' onTap={() => this.onTabChange('master')} />
-          <Button className={classNames('rush-tab', { 'selected': !isMaster })} color={!isMaster ? 'assertive' : '4'} label='Rush' onTap={() => this.onTabChange('rush')} />
-        </HorizontalStack>
-        {this.renderUpdate()}
-        {isMaster && <CardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}
-        {!isMaster && <RushCardEditor card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}
-      </VerticalStack>
-      {card.rush ? <RushCardPreview card={card} /> : <CardPreview card={card} />}
-      {!!app.$card.localCards?.length && <LocalCardsDisplay />}
+      <ButtonTabbedPane
+        tab1={{ id: 'master', label: 'Master', selectedColor: 'royal' }}
+        tab2={{ id: 'rush', label: 'Rush', selectedColor: 'assertive' }}
+        defaultValue={this.state.leftTabIndex}
+        onChange={() => this.onLeftTabChange()}
+      >
+        <CardEditor id='master' card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
+        <RushCardEditor id='rush' card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />
+      </ButtonTabbedPane>
+
+      {card.rush && <RushCardPreview card={card} />}
+      {!card.rush && <CardPreview card={card} />}
+
+      <ButtonTabbedPane
+        tab1={app.$card.localCards?.length ? { id: 'library', label: 'Bibliothèque', selectedColor: 'positive' } : undefined}
+        tab2={{ id: 'settings', label: 'Paramètres', selectedColor: 'calm' }}
+        defaultValue={this.state.rightTabIndex}
+      >
+        <CardsLibrary id='library' />
+        <Settings id='settings' />
+      </ButtonTabbedPane>
     </HorizontalStack>, 'card-handler');
   }
 

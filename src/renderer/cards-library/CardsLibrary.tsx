@@ -17,9 +17,9 @@ import { Progress } from 'libraries/mn-toolkit/progress';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
 
-interface ILocalCardsDisplayProps extends IContainableProps {}
+interface ICardsLibraryProps extends IContainableProps {}
 
-interface ILocalCardsDisplayState extends IContainableState {
+interface ICardsLibraryState extends IContainableState {
   localCards: ICard[];
   sortOption: TCardSortOption;
   sortOrder: TableColumnSortOrder;
@@ -32,9 +32,9 @@ interface ILocalCardsDisplayState extends IContainableState {
   cardsToRender: number;
 }
 
-export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILocalCardsDisplayState> implements Partial<ICardListener> {
+export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryState> implements Partial<ICardListener> {
 
-  public constructor(props: ILocalCardsDisplayProps) {
+  public constructor(props: ICardsLibraryProps) {
     super(props);
     this.state = {
       loaded: true,
@@ -207,7 +207,7 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
   public render() {
     if (!this.state?.localCards?.length) return <Spinner />;
     const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } = this.state;
-    return this.renderAttributes(<VerticalStack fill margin>
+    return this.renderAttributes(<VerticalStack fill>
       <Table scroll
         columns={[
           {
@@ -289,25 +289,31 @@ export class LocalCardsDisplay extends Containable<ILocalCardsDisplayProps, ILoc
 
       {!cardsToRender && <HorizontalStack margin gutter itemAlignment='center'>
         {selectAllMode && <Button
-          fill
+          icon='toolkit-check-mark'
           color='balanced'
-          label='Sélectionner tout'
+          label='Tout'
           onTap={() => this.selectAll()}
         />}
         {!selectAllMode && <Button
-          fill
+          icon='toolkit-check-mark'
           color='assertive'
-          label='Désélectionner tout'
+          label='Tout'
           onTap={() => this.unselectAll()}
         />}
         <Button
           fill
           disabled={!selectedCardsNum}
           color='positive'
-          label='Faire le rendu'
+          label='Rendu'
           onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
         />
+        <Button
+          fill
+          color='energized'
+          label='Importer'
+          onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
+        />
       </HorizontalStack>}
-    </VerticalStack>, 'local-cards-display');
+    </VerticalStack>, 'cards-library');
   }
 }

@@ -106,7 +106,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.setState({ appVersion: `v. ${appVersion}` });
   }
 
-  public componentWillReceiveProps(nextProps: ICardEditorProps, _prevState: ICardEditorState) {
+  public componentWillReceiveProps(nextProps: ICardEditorProps) {
     this.setState({ card: nextProps.card });
   }
 
@@ -721,8 +721,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
             <HorizontalStack className='abilities-line-icons'>
               <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
-              <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
-              <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
+              {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />}
+              {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />}
             </HorizontalStack>
           </HorizontalStack>)}
         </VerticalStack>

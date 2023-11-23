@@ -56,17 +56,19 @@ ipcMain.handle('read-file-utf-8', async (_event, filters: FileFilter[]) => {
   return readFileSync(directoryPath.filePaths[0], 'utf-8');
 });
 
-ipcMain.handle('get-file-path', async () => {
+ipcMain.handle('get-file-path', async (_event, defaultPath: string) => {
   const directoryPath = await dialog.showOpenDialog({
     properties: ['openFile'],
+    defaultPath,
   });
   if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
   return directoryPath.filePaths[0];
 });
 
-ipcMain.handle('get-directory-path', async () => {
+ipcMain.handle('get-directory-path', async (_event, defaultPath: string) => {
   const directoryPath = await dialog.showOpenDialog({
     properties: ['openDirectory'],
+    defaultPath,
   });
   if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
   return directoryPath.filePaths[0];
