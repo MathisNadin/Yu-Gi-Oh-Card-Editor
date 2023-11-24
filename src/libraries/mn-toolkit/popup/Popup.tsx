@@ -1,8 +1,8 @@
+import './styles.scss';
 import { IContainerProps, IContainerState, Container } from 'libraries/mn-toolkit/container/Container';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { ReactElement } from 'react';
-import './styles.css';
 import { Icon } from '../icon';
 
 export interface IPopupProps extends IContainerProps {
