@@ -1,0 +1,17 @@
+.home-right-pane {
+  height: 97%;
+  width: 33%;
+}
+.home-right-pane .button-tabs {
+  min-width: 100%;
+  max-width: 100%;
+}
+.home-right-pane .button-tabs .button-tab {
+  width: 40%;
+  border-radius: 32px;
+}
+.home-right-pane .button-tabs .button-tab.selected {
+  font-weight: bold;
+}
+
+/*# sourceMappingURL=styles.css.map */

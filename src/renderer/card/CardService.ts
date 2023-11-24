@@ -93,8 +93,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     this.dispatch('localCardsLoaded', this.localCards);
   }
 
-  private fireLocalCardsUpdated(handlerShouldUpdate: boolean) {
-    this.dispatch('localCardsUpdated', this.localCards, handlerShouldUpdate);
+  private fireLocalCardsUpdated() {
+    this.dispatch('localCardsUpdated', this.localCards);
   }
 
   public fireRenderCardChanged() {
@@ -207,7 +207,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       this.fireCurrentCardLoaded();
       this.fireTempCurrentCardLoaded();
     } else {
-      this.fireLocalCardsUpdated(false);
+      this.fireLocalCardsUpdated();
       this.fireCurrentCardUpdated();
       this.fireTempCurrentCardUpdated();
     }
@@ -230,7 +230,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         }
       }
       await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-      this.fireLocalCardsUpdated(false);
+      this.fireLocalCardsUpdated();
     }
 
     if (data['current-card']) {
@@ -372,10 +372,9 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     currentCard.created = now;
     currentCard.modified = now;
     currentCard.uuid = uuid();
-    const previousLocalLength = this._localCards.length;
     this._localCards.push(currentCard);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated(!previousLocalLength);
+    this.fireLocalCardsUpdated();
   }
 
   public async saveTempCurrentToLocal() {
@@ -389,7 +388,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       }
     });
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated(false);
+    this.fireLocalCardsUpdated();
 
     this._tempCurrentCard = undefined;
     await app.$indexedDB.save<CardStorageKey, undefined>('temp-current-card', this._tempCurrentCard);
@@ -399,7 +398,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async deleteLocalCard(card: ICard) {
     this._localCards = this._localCards.filter(c => c.uuid !== card.uuid);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated(!this._localCards.length);
+    this.fireLocalCardsUpdated();
   }
 
   public async importCards(newCards: ICard[]) {
@@ -420,10 +419,9 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     newCard.created = now;
     newCard.modified = now;
     newCard.uuid = uuid();
-    const previousLocalLength = this._localCards.length;
     this._localCards.push(newCard);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
-    this.fireLocalCardsUpdated(!previousLocalLength);
+    this.fireLocalCardsUpdated();
 
     if (updateTempCurrentCard) {
       this._tempCurrentCard = newCard;

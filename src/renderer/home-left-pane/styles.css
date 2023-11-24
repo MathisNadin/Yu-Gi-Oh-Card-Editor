@@ -1,0 +1,17 @@
+.home-left-pane {
+  height: 97%;
+  width: 33%;
+}
+.home-left-pane .button-tabs {
+  min-width: 100%;
+  max-width: 100%;
+}
+.home-left-pane .button-tabs .button-tab {
+  width: 40%;
+  border-radius: 32px;
+}
+.home-left-pane .button-tabs .button-tab.selected {
+  font-weight: bold;
+}
+
+/*# sourceMappingURL=styles.css.map */

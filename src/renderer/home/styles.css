@@ -1,0 +1,10 @@
+@font-face {
+  font-family: fontAbilities;
+  src: url(../resources/fonts/itcStoneSerifBold.ttf);
+}
+.home {
+  height: 100%;
+  width: 100%;
+}
+
+/*# sourceMappingURL=styles.css.map */

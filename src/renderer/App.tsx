@@ -1,6 +1,6 @@
 import './App.css';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { CardHandler } from './card-handler/CardHandler';
+import { CardHandler } from './home/Home';
 
 function Page() {
   return <CardHandler />;
