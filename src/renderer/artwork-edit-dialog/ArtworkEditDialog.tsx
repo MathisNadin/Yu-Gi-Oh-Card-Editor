@@ -1,10 +1,10 @@
-import {  IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import './styles.scss';
+import { IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { isEmpty } from 'libraries/mn-tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
-import './styles.css';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
 
@@ -41,7 +41,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
       artworkBase64: '',
       crop: props.crop,
       keepRatio: props.keepRatio
-    }
+    };
   }
 
   public componentDidMount() {
@@ -82,12 +82,8 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   }
 
   private onValidate(url: string, crop: Crop, keepRatio: boolean) {
-    if (this.props.popupId) {
-      app.$popup.remove(this.props.popupId);
-    }
-    if (this.props.resolve) {
-      this.props.resolve({ url, crop, keepRatio });
-    }
+    if (this.props.popupId) app.$popup.remove(this.props.popupId);
+    if (this.props.resolve) this.props.resolve({ url, crop, keepRatio });
   }
 
   private onCroppingChange(crop: Crop) {
@@ -104,13 +100,14 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;
-    return this.renderAttributes(<HorizontalStack>
+    return this.renderAttributes(<HorizontalStack gutter>
       <ArtworkCropping
         artworkBase64={this.state.artworkBase64}
         hasPendulumFrame={this.props.hasPendulumFrame}
         hasLinkFrame={this.props.hasLinkFrame}
         crop={this.state.crop}
-        onCroppingChange={crop => this.onCroppingChange(crop)} />
+        onCroppingChange={crop => this.onCroppingChange(crop)}
+      />
 
       <ArtworkEditing
         artworkURL={this.state.artworkURL}
@@ -124,7 +121,8 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
         onKeepRatioChange={keepRatio => this.setState({ keepRatio })}
         onCroppingChange={crop => this.setState({ crop })}
         onArtworkURLChange={url => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
-        onValidate={(url, crop, keepRatio) => this.onValidate(url, crop, keepRatio)}/>
+        onValidate={(url, crop, keepRatio) => this.onValidate(url, crop, keepRatio)}
+      />
     </HorizontalStack>, 'artwork-edit-dialog');
   }
 }

@@ -1,9 +1,10 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { Container } from 'libraries/mn-toolkit/container/Container';
-import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/src/ReactCrop.scss'
-import './styles.css';
+import './styles.scss';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+import ReactCrop, { Crop } from 'react-image-crop';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
+import { classNames, isDefined } from 'libraries/mn-tools';
+import { Container } from 'libraries/mn-toolkit/container/Container';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;
@@ -20,20 +21,21 @@ interface IArtworkCroppingState extends IContainableState {
 }
 
 export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtworkCroppingState> {
-
   public constructor(props: IArtworkCroppingProps) {
     super(props);
     this.state = {
       loaded: false,
-      higher: false,
       croppedArtworkBase64: '',
       crop: props.crop
-    }
-    this.loadHigher(props);
+    } as IArtworkCroppingState;
   }
 
   public componentWillReceiveProps(nextProps: IArtworkCroppingProps, _prevState: IArtworkCroppingState) {
-    this.loadHigher(nextProps);
+    if (isDefined(this.state?.higher)) this.loadHigher(nextProps);
+  }
+
+  public componentDidMount() {
+    this.loadHigher(this.props);
   }
 
   private loadHigher(props: IArtworkCroppingProps) {
@@ -41,15 +43,21 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
       this.setState({
         loaded: true,
         higher: false,
-        crop: props.crop
+        crop: props.crop,
       });
     } else {
+      const container = document.querySelector('.artwork-cropping') as HTMLElement;
+      if (!container) return;
+      const containerisHigher = container.clientHeight > container.clientWidth;
+
       const image = new Image();
       image.src = props.artworkBase64;
+      const imageIsHigher = image.height > image.width;
+
       image.onload = () => this.setState({
         loaded: true,
-        higher: image.height > image.width,
-        crop: props.crop
+        higher: containerisHigher && imageIsHigher,
+        crop: props.crop,
       })
     }
   }
@@ -64,9 +72,9 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;
-    return this.renderAttributes(<Container>
+    return this.renderAttributes(<Container margin>
       {!!this.props.artworkBase64.length && <ReactCrop
-        className={`cropping-interface ${this.state.higher ? 'higher' : ''}`}
+        className={classNames('cropping-interface', { 'higher': this.state.higher, 'larger': !this.state.higher })}
         crop={this.state.crop}
         onChange={(_cropPx: Crop, crop: Crop) => this.onCroppingChange(crop)}>
 

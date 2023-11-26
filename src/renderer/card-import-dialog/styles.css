@@ -20,13 +20,18 @@ $slifer: #BF5541;
 $ra: #B6A331;
 $legendaryDragon: #4A9CBF;
 */
-.mn-popup-header {
-  background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
-}
-.mn-popup-header .mn-popup-title {
-  color: white !important;
-}
+/* .mn-popup-header {
+  background: linear-gradient(
+    200.96deg,
+    white -29.09%,
+    #70afee 51.77%,
+    #318ce7 129.35%
+  );
 
+  .mn-popup-title {
+    color: white !important;
+  }
+} */
 .card-import-dialog .mn-tab-panes {
   min-height: 400px;
 }
