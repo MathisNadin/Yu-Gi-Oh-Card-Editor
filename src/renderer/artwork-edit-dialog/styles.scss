@@ -1,239 +1,89 @@
 @import '../../libraries/mn-toolkit/index.scss';
 
-/* .mn-popup-header {
-  background: linear-gradient(
-    200.96deg,
-    white -29.09%,
-    #70afee 51.77%,
-    #318ce7 129.35%
-  );
+.artwork-cropping {
+  min-width: 50%;
+  max-width: 50%;
+  height: calc(100% - 2 * #{$themeDefaultSpacing});
+  align-items: center;
+  justify-content: center;
 
-  .mn-popup-title {
-    color: white !important;
-  }
-} */
+  .cropping-interface {
+    height: auto;
+    width: auto;
+    max-height: 100%;
+    min-width: 100%;
 
-.artwork-edit-dialog {
-  .artwork-cropping {
-    min-width: 50%;
-    max-width: 50%;
-    height: calc(100% - 2 * #{$themeDefaultSpacing});
-    align-items: center;
-    justify-content: center;
-
-    .cropping-interface {
-      height: auto;
-      width: auto;
-      max-height: 100%;
+    &.larger {
       min-width: 100%;
 
-      &.larger {
+      .ReactCrop__child-wrapper {
         min-width: 100%;
 
-        .ReactCrop__child-wrapper {
+        .artwork-img {
           min-width: 100%;
-
-          .artwork-img {
-            min-width: 100%;
-          }
         }
       }
+    }
 
-      &.higher {
+    &.higher {
+      min-height: 100%;
+
+      .ReactCrop__child-wrapper {
         min-height: 100%;
 
-        .ReactCrop__child-wrapper {
+        .artwork-img {
           min-height: 100%;
-
-          .artwork-img {
-            min-height: 100%;
-          }
         }
       }
     }
   }
+}
 
-  .artwork-editing {
-    .cropped-img {
-      align-self: center;
-      width: 70%;
-      object-fit: fill;
-      aspect-ratio: 1 / 1;
+.artwork-editing {
+  .cropped-img {
+    align-self: center;
+    width: 70%;
+    object-fit: fill;
+    aspect-ratio: 1 / 1;
 
-      &.pendulum-ratio {
-        aspect-ratio: 703 / 526;
-      }
-    }
-
-    .ratio-checkbox {
-      margin-bottom: 1px;
-
-      .mn-button {
-        font-size: 12px;
-        padding: 6px 8px;
-        border: 0;
-
-        &.full-card {
-          background: #DEB887;
-        }
-
-        &.full-pendulum-card {
-          background: linear-gradient(
-            250deg,
-            green -29%,
-            aquamarine 35%,
-            #DEB887 82%
-          );
-        }
-      }
-    }
-
-    .size-field {
-      gap: 4px;
-      margin-bottom: 1px;
-    }
-
-    .validate {
-      margin-bottom: calc($themeDefaultSpacing / 2);
+    &.pendulum-ratio {
+      aspect-ratio: 703 / 526;
     }
   }
 
-/*   .artwork-editing {
-    flex: 1;
-    margin: 0 16px;
-    gap: 16px;
-
-    .artwork-path {
-      align-items: center;
-
-      .path-label {
-        color: black;
-        margin: 5px 5px 5px 0;
-        font-size: 13px;
-        text-align: end;
-      }
-
-      .path-text-input {
-        width: 75%;
-        height: 19px;
-      }
-
-      .path-btn {
-        display: flex;
-        align-items: center;
-        width: fit-content;
-        padding: 8px;
-        margin-left: 2%;
-        border: 1px outset lightgray;
-        border-radius: 4px;
-        cursor: pointer;
-        width: auto;
-        height: 25px;
-        width: 33px;
-        background-color: lightgrey;
-      }
+  .ratio-checkbox {
+    .mn-checkbox {
+      padding: 4px 0;
+      margin: -4px 0;
     }
 
-    .cropped-img {
-      align-self: center;
-      width: 70%;
-      aspect-ratio: 1 / 1;
+    .mn-button {
+      font-size: 12px;
+      padding: 6px 8px;
+      border: 0;
 
-      &.pendulum-ratio {
-        aspect-ratio: 703 / 526;
-      }
-    }
-
-    .ratio-checkbox {
-      .pendulum-label {
-        color: black;
-        font-size: 13px;
-        margin-left: 3px;
-        flex: 1;
+      &.full-card {
+        background: #DEB887;
       }
 
-      .preset-btn {
-        align-self: center;
-        color: white;
-        font-size: 12px;
-        margin: 4px 8px 0 0;
-        cursor: pointer;
-        height: 27px;
-        padding: 4px 8px;
-        border-radius: 4px;
-
-        &.full-card-preset-btn {
-          background: #DEB887;
-        }
-
-        &.full-pendulum-card-preset-btn {
-          background: linear-gradient(
-            250deg,
-            green -29%,
-            aquamarine 35%,
-            #DEB887 82%
-          );
-        }
-
-        &:hover {
-          transform: none;
-        }
+      &.full-pendulum-card {
+        background: linear-gradient(
+          250deg,
+          green -29%,
+          aquamarine 35%,
+          #DEB887 82%
+        );
       }
     }
+  }
 
-    .ratio-section {
-      .ratio-column {
-        gap: 16px;
+  .size-field {
+    gap: 4px;
+    margin-bottom: 1px;
+  }
 
-        &.ratio-column-1 {
-          width: 35%;
-        }
-
-        &.ratio-column-2 {
-          width: 65%;
-
-          .ratio-crop-data {
-            justify-content: end;
-          }
-        }
-
-        .ratio-crop-data {
-          align-items: center;
-          justify-content: start;
-          height: 20px;
-
-          &.ratio-x, &.ratio-y {
-            margin-right: 5px;
-          }
-
-          .ratio-label {
-            color: black;
-            font-size: 13px;
-            max-width: 35%;
-            padding: 0;
-            margin-right: 5px;
-          }
-
-          .ratio-input {
-            width: 70%;
-          }
-        }
-      }
-    }
-
-    .validate-btn {
-      display: flex;
-      align-self: center;
-      align-items: center;
-      justify-content: center;
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      height: 40px;
-      width: 50px;
-      border: 1px outset lightgray;
-      background-color: rgba(green, 0.6);
-    }
-  } */
+  .validate {
+    padding: 4px 0;
+    margin: -4px 0;
+  }
 }

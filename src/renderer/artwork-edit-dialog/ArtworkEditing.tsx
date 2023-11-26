@@ -1,7 +1,6 @@
 import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { Crop } from 'react-image-crop';
-import { EventTargetWithValue } from 'libraries/mn-toolkit/container/Container';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { classNames, getCroppedArtworkBase64 } from 'libraries/mn-tools';
