@@ -1,5 +1,9 @@
 @import '../../libraries/mn-toolkit/index.scss';
 
+.artwork-edit-dialog {
+  max-height: calc(100% - 24px - 2 * #{$themeDefaultSpacing});
+}
+
 .artwork-cropping {
   min-width: 50%;
   max-width: 50%;
@@ -11,28 +15,38 @@
     height: auto;
     width: auto;
     max-height: 100%;
-    min-width: 100%;
+    max-width: 100%;
 
     &.larger {
       min-width: 100%;
+      width: 100%;
 
       .ReactCrop__child-wrapper {
         min-width: 100%;
+        width: 100%;
+        max-width: 100%;
 
         .artwork-img {
           min-width: 100%;
+          width: 100%;
+          max-width: 100%;
         }
       }
     }
 
     &.higher {
       min-height: 100%;
+      height: 100%;
 
       .ReactCrop__child-wrapper {
         min-height: 100%;
+        height: 100%;
+        max-height: 100%;
 
         .artwork-img {
           min-height: 100%;
+          height: 100%;
+          max-height: 100%;
         }
       }
     }

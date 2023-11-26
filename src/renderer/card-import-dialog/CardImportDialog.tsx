@@ -1,22 +1,29 @@
-import './styles.css';
+import './styles.scss';
 import { IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
 import { EventTargetWithValue } from 'libraries/mn-toolkit/container/Container';
-import { classNames } from 'libraries/mn-tools';
+import { classNames, isString } from 'libraries/mn-tools';
 import { ICard } from 'renderer/card/card-interfaces';
 import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
 import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
 import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
+import { Typography } from 'libraries/mn-toolkit/typography/Typography';
+import { TextAreaInput } from 'libraries/mn-toolkit/text-area-input/TextAreaInput';
+import { CheckBox } from 'libraries/mn-toolkit/checkbox/Checkbox';
+import { TextInput } from 'libraries/mn-toolkit/text-input/TextInput';
+import { FileInput } from 'libraries/mn-toolkit/file-input/FileInput';
+import { Button, ButtonIcon } from 'libraries/mn-toolkit/button';
+import { Table } from 'libraries/mn-toolkit/table/Table';
+import { ITableColumn, TableColumnSortOrder } from 'libraries/mn-toolkit/table/interfaces';
+import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
 
 type TTabIndex = 'yugipedia' | 'yuginews';
 
-type TCardsDataSortOption =
-  'theme' | 'id' | 'name' | 'set' |
-  'theme-reverse' | 'id-reverse' | 'name-reverse' | 'set-reverse';
+type TCardsDataSortOption = 'theme' | 'id' | 'name' | 'set';
 
 export interface ICardImportDialogResult {}
 
@@ -36,6 +43,7 @@ interface ICardImportDialogState extends IContainableState {
   cardsData: IYuginewsCardData[];
   selectedCards: { [cardUuid: string]: boolean };
   cardsDataSortOption: TCardsDataSortOption;
+  cardsDataSortOrder: TableColumnSortOrder;
   artworkSaveDirPath: string;
 }
 
@@ -44,7 +52,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   public static async show() {
     return await app.$popup.show<ICardImportDialogResult>({
       id: 'import-popup',
-      title: "Importez une carte",
+      title: 'Importer depuis un site',
       innerHeight: 'auto',
       innerWidth: '70%',
       content: <CardImportDialog />,
@@ -60,13 +68,14 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       useFr: false,
       generatePasscode: false,
       replaceMatrixes: [],
-      tabIndex: 'yugipedia',
+      tabIndex: 'yuginews',
       importArtwork: false,
       yuginewsUrl: '',
       cardsData: [],
       selectedCards: {},
       cardsDataSortOption: 'theme',
-      artworkSaveDirPath: '',
+      cardsDataSortOrder: 'asc',
+      artworkSaveDirPath: app.$settings.settings.defaultImgImportPath,
       yuginewsImporting: false,
     }
   }
@@ -121,20 +130,23 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
   private async getYuginewsCards() {
     if (!this.state.yuginewsUrl) return;
-    this.setState({ cardsData: [], yuginewsImporting: true });
-    let cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
+    this.setState({ cardsData: [], yuginewsImporting: true }, async () => {
+      const cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
 
-    let cardsDataSortOption = this.state.cardsDataSortOption;
-    if (cardsData.length) {
-      if (cardsDataSortOption === 'theme' || cardsDataSortOption === 'theme-reverse' && !cardsData[0].theme?.length) {
-        cardsDataSortOption = 'id';
-      } else if (cardsDataSortOption === 'set' || cardsDataSortOption === 'set-reverse' && cardsData[0].theme?.length) {
-        cardsDataSortOption = 'theme';
+      let cardsDataSortOption = this.state.cardsDataSortOption;
+      if (cardsData.length) {
+        if (cardsDataSortOption === 'theme' && !cardsData[0].theme?.length) {
+          cardsDataSortOption = 'id';
+        } else if (cardsDataSortOption === 'set' && cardsData[0].theme?.length) {
+          cardsDataSortOption = 'theme';
+        }
       }
-    }
 
-    this.sortCardsData(cardsData, cardsDataSortOption);
-    this.setState({ yuginewsImporting: false });
+      this.setState({ cardsDataSortOption }, () => {
+        this.sortCardsData(cardsData);
+        this.setState({ yuginewsImporting: false });
+      });
+    });
   }
 
   private async doYuginewsImport() {
@@ -159,75 +171,72 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     this.setState({ selectedCards });
   }
 
-  private sortCardsData(cardsData: IYuginewsCardData[], cardsDataSortOption: TCardsDataSortOption) {
-    cardsDataSortOption = cardsDataSortOption || this.state?.cardsDataSortOption;
-    cardsData = cardsData || this.state?.cardsData;
+  private async onChangeOrder(cardsDataSortOption: TCardsDataSortOption) {
+    let { cardsDataSortOrder } = this.state;
+    if (this.state.cardsDataSortOption === cardsDataSortOption) {
+      switch (cardsDataSortOrder) {
+        case 'asc':
+          cardsDataSortOrder = 'desc';
+          break;
+
+        case 'desc':
+          cardsDataSortOrder = 'asc';
+          break;
+
+        default:
+          break;
+      }
+    } else {
+      cardsDataSortOrder = 'asc';
+    }
+    this.setState({ cardsDataSortOption, cardsDataSortOrder }, () => this.sortCardsData());
+  }
+
+  private sortCardsData(cardsData: IYuginewsCardData[] = this.state.cardsData) {
+    const { cardsDataSortOption, cardsDataSortOrder } = this.state;
     switch (cardsDataSortOption) {
       case 'theme':
-        cardsData.sort((a, b) => ((a.theme) as string || '').localeCompare(((b.theme) as string || '')) || (a.id as number) - (b.id as number));
+        if (cardsDataSortOrder === 'asc') cardsData.sort((a, b) => (a.theme || '').localeCompare((b.theme || '')));
+        else cardsData.sort((a, b) => (b.theme || '').localeCompare((a.theme || '')));
         break;
 
-      case 'theme-reverse':
-        cardsData.sort((a, b) => ((b.theme) as string || '').localeCompare(((a.theme) as string || '')) || (a.id as number) - (b.id as number));
+      case 'set':
+        if (cardsDataSortOrder === 'asc') cardsData.sort((a, b) => (a.setId || '').localeCompare((b.setId || '')));
+        else cardsData.sort((a, b) => (b.setId || '').localeCompare((a.setId || '')));
+        break;
+
+      case 'name':
+        if (cardsDataSortOrder === 'asc') cardsData.sort((a, b) => (a.nameFR || '').localeCompare((b.nameFR || '')));
+        else cardsData.sort((a, b) => (b.nameFR || '').localeCompare((a.nameFR || '')));
         break;
 
       case 'id':
         cardsData.sort((a, b) => {
-          const aIsString = typeof a.id === 'string';
-          const bIsString = typeof b.id === 'string';
+          const aIsString = isString(a.id);
+          const bIsString = isString(b.id);
+          let result = 0;
           if (aIsString && bIsString) {
-            return (a.id as string).localeCompare(((b.id) as string));
+            result = (a.id as string).localeCompare(((b.id) as string));
           } else if (aIsString && !bIsString) {
-            return 1;
+            result = 1;
           } else if (!aIsString && bIsString) {
-            return -1;
+            result = -1;
           } else {
-            return ((a.id as number) || 0) - ((b.id as number) || 0);
+            result = ((a.id as number) || 0) - ((b.id as number) || 0);
           }
+          if (cardsDataSortOrder === 'asc') return result;
+          else return -1 * result;
         });
-        break;
-
-      case 'id-reverse':
-        cardsData.sort((a, b) => {
-          const aIsString = typeof a.id === 'string';
-          const bIsString = typeof b.id === 'string';
-          if (aIsString && bIsString) {
-            return (b.id as string).localeCompare(((a.id) as string));
-          } else if (aIsString && !bIsString) {
-            return -1;
-          } else if (!aIsString && bIsString) {
-            return 1;
-          } else {
-            return ((b.id as number) || 0) - ((a.id as number) || 0);
-          }
-        });
-        break;
-
-      case 'name':
-        cardsData.sort((a, b) => ((a.nameFR) as string || '').localeCompare(((b.nameFR) as string || '')));
-        break;
-
-      case 'name-reverse':
-        cardsData.sort((a, b) => ((b.nameFR) as string || '').localeCompare(((a.nameFR) as string || '')));
-        break;
-
-      case 'set':
-        cardsData.sort((a, b) => ((a.setId) as string || '').localeCompare(((b.setId) as string || '')));
-        break;
-
-      case 'set-reverse':
-        cardsData.sort((a, b) => ((b.setId) as string || '').localeCompare(((a.setId) as string || '')));
         break;
 
       default:
         break;
     }
-    this.setState({ cardsData, cardsDataSortOption });
-    this.forceUpdate();
+    this.setState({ cardsDataSortOption, cardsDataSortOrder, cardsData }, () => this.forceUpdate());
   }
 
   private async selectartworkSaveDirPath() {
-    const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath();
+    const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.artworkSaveDirPath);
     if (!artworkSaveDirPath) return;
     this.setState({ artworkSaveDirPath });
   }
@@ -241,168 +250,132 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         onChange={value => this.setState({ tabIndex: value as TTabIndex })}
       >
 
-        <TabPane id='yugipedia' fill={false} label='Yugipedia' gutter>
-          {this.renderYugipediaTab()}
-        </TabPane>
-
         <TabPane id='yuginews' fill={false} label='YugiNews' gutter>
           {this.renderYuginewsTab()}
+        </TabPane>
+
+        <TabPane id='yugipedia' fill={false} label='Yugipedia' gutter>
+          {this.renderYugipediaTab()}
         </TabPane>
 
     </TabbedPane>, 'card-import-dialog');
   }
 
-  private renderYugipediaTab() {
-    return this.renderAttributes(<VerticalStack>
-      <p className='import-label'>Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)</p>
-
-      <textarea spellCheck={false} className='import-input' value={this.state.import} onInput={e => this.setState({ import: (e.target as EventTargetWithValue).value })} />
-
-      <HorizontalStack className='import-options'>
-        <HorizontalStack className='import-option use-fr'>
-          <input
-            type='checkbox'
-            className='import-option-input use-fr-input'
-            checked={this.state.useFr}
-            onChange={() => this.setState({ useFr: !this.state.useFr })}
-          />
-          <p className='import-option-label use-fr-label'>Textes français</p>
-        </HorizontalStack>
-
-        <HorizontalStack className='import-option generate-passcode'>
-          <input
-            type='checkbox'
-            className='import-option-input generate-passcode-input'
-            checked={this.state.generatePasscode}
-            onChange={() => this.setState({ generatePasscode: !this.state.generatePasscode })}
-          />
-          <p className='import-option-label generate-passcode-label'>Si absent, générer un code</p>
-        </HorizontalStack>
-
-        {this.renderUrlImporter('yugipedia')}
-      </HorizontalStack>
-
-      {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
-        <HorizontalStack className='replace-matrix'>
-          <input
-            type='text'
-            className='replace-matrix-input to-replace-input'
-            value={m.toReplace}
-            onInput={e => this.updateReplaceMatrix(i, (e.target as EventTargetWithValue).value, m.newString)}
-          />
-
-          <input
-            type='text'
-            className='replace-matrix-input new-string-input'
-            value={m.newString}
-            onInput={e => this.updateReplaceMatrix(i, m.toReplace, (e.target as EventTargetWithValue).value)}
-          />
-
-          <button type='button' className='remove-replace-matrix-btn' onClick={() => this.removeReplaceMatrix(i)}>-</button>
-        </HorizontalStack>
-      )}
-      <button type='button' className='add-replace-matrix-btn' onClick={() => this.addReplaceMatrix()}>Ajouter un terme à remplacer dans les textes de la carte</button>
-
-      <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doYugipediaImport())}>
-        {this.state.importing ? 'Import en cours...' : 'Importer'}
-      </button>
-    </VerticalStack>, 'card-import-dialog-content yugipedia');
-  }
-
   private renderYuginewsTab() {
-    return this.renderAttributes(<VerticalStack>
+    if (!this.state) return null;
+
+    const { cardsDataSortOption, cardsDataSortOrder, yuginewsUrl, yuginewsImporting, importing, cardsData } = this.state;
+    const showTheme = cardsData.length && cardsData[0].theme?.length;
+    const columns: ITableColumn[] = [];
+    if (showTheme) {
+      columns.push({
+        label: 'Thème',
+        order: cardsDataSortOption === 'set' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('set'),
+      });
+    } else {
+      columns.push({
+        label: 'Set',
+        order: cardsDataSortOption === 'theme' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('theme'),
+      });
+    }
+    columns.push(...[
+      {
+        label: 'ID',
+        order: cardsDataSortOption === 'id' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('id'),
+      },
+      {
+        label: 'Nom',
+        order: cardsDataSortOption === 'name' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('name'),
+      },
+    ]);
+
+    return this.renderAttributes(<VerticalStack marginVertical gutter>
       {this.renderUrlImporter('yuginews')}
 
-      <VerticalStack className='yuginews-url' gutter>
-        <p className='yuginews-url-label'>Entrez le lien de l'article</p>
+      <HorizontalStack gutter verticalItemAlignment='middle'>
+        <TextInput fill placeholder="Lien de l'article" defaultValue={yuginewsUrl} onChange={value => this.setState({ yuginewsUrl: value })} />
+        <Button color='positive' label='Valider' onTap={() => this.getYuginewsCards()} />
+      </HorizontalStack>
 
-        <HorizontalStack className='yuginews-url-import'>
-          <input type='text' className='yuginews-url-import-input' value={this.state.yuginewsUrl} onInput={e => this.setState({ yuginewsUrl: (e.target as EventTargetWithValue).value })} />
-          <button type='button' className='yuginews-url-import-btn' onClick={() => app.$errorManager.handlePromise(this.getYuginewsCards())}>Valider</button>
-        </HorizontalStack>
-      </VerticalStack>
+      {yuginewsImporting && <Spinner />}
 
-      {this.state.yuginewsImporting && <Spinner />}
+      {cardsData?.length && <Table scroll
+        columns={columns}
+        rows={cardsData.map(card => {
+          const uuid = card.uuid as string;
+          return {
+            className: classNames('yuginews-card-row', this.getCardDataStyle(card), { 'selected': this.state.selectedCards[card.uuid as string] }),
+            cells: [
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={showTheme ? card.theme : card.setId} variant='help' />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={`${card.id}`} variant='help' />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={card.nameFR} variant='help' />
+                </HorizontalStack>
+              },
+            ],
+          }
+        })}
+      />}
 
-      {!!this.state.cardsData?.length && <VerticalStack fill scroll className='table-container'>
-        <table className='table'>
-          <thead>
-            <tr>
-              {this.state.cardsData[0].theme?.length
-                ? <th
-                  className={classNames('card-theme', 'cursor-pointer', {
-                    'sorted-asc': this.state.cardsDataSortOption === 'theme',
-                    'sorted-desc': this.state.cardsDataSortOption === 'theme-reverse'
-                  })}
-                  onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'theme' ? 'theme-reverse' : 'theme')}
-                >Thème</th>
-                : <th
-                  className={classNames('card-set', 'cursor-pointer', {
-                    'sorted-asc': this.state.cardsDataSortOption === 'set',
-                    'sorted-desc': this.state.cardsDataSortOption === 'set-reverse'
-                  })}
-                  onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'set' ? 'set-reverse' : 'set')}
-                >Set</th>
-              }
-              <th
-                className={classNames('card-id', 'cursor-pointer', {
-                  'sorted-asc': this.state.cardsDataSortOption === 'id',
-                  'sorted-desc': this.state.cardsDataSortOption === 'id-reverse'
-                })}
-                onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'id' ? 'id-reverse' : 'id')}
-              >ID</th>
-              <th
-                className={classNames('card-name', 'cursor-pointer', {
-                  'sorted-asc': this.state.cardsDataSortOption === 'name',
-                  'sorted-desc': this.state.cardsDataSortOption === 'name-reverse'
-                })}
-                onClick={() => this.sortCardsData(this.state.cardsData, this.state.cardsDataSortOption === 'name' ? 'name-reverse' : 'name')}
-              >Nom</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.cardsData.map(card => {
-              return <tr key={card.uuid} className={classNames('yuginews-card-row', this.getCardDataStyle(card), { 'selected': this.state.selectedCards[card.uuid as string] })}>
-              {this.state.cardsData[0].theme?.length
-                ? <td className='card-theme' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.theme}</td>
-                : <td className='card-set' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.setId}</td>
-              }
-                <td className='card-id' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.id}</td>
-                <td className='card-name' onClick={() => this.toggleSelectCard(card.uuid as string)}>{card.nameFR}</td>
-              </tr>;
-            })}
-          </tbody>
-        </table>
-      </VerticalStack>}
-
-      {!!this.state.cardsData?.length &&
-        <button type='button' className={classNames('import-btn', { 'disabled': this.state.importing })} onClick={() => app.$errorManager.handlePromise(this.doYuginewsImport())}>
-          {this.state.importing ? 'Import en cours...' : 'Importer'}
-        </button>
-      }
+      <HorizontalStack itemAlignment='center'>
+        {!!cardsData?.length && !importing && <Button color='balanced' label='Importer' onTap={() => this.doYuginewsImport()} />}
+        {!!cardsData?.length && importing && <Button color='balanced' disabled label='Import en cours...' />}
+      </HorizontalStack>
     </VerticalStack>, 'card-import-dialog-content yuginews');
   }
 
-  private renderUrlImporter(origin: string) {
-    return <HorizontalStack className={classNames('import-option', 'artwork-importer', origin)}>
-      <input
-        type='checkbox'
-        className='import-option-input artwork-importer-input'
-        checked={this.state.importArtwork}
-        onChange={() => this.setState({ importArtwork: !this.state.importArtwork })}
-      />
-      <p className='import-option-label artwork-importer-label'>Importer les images</p>
+  private renderYugipediaTab() {
+    return this.renderAttributes(<VerticalStack fill gutter marginVertical>
+      <Typography variant='help' content='Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)' />
 
-      {this.state.importArtwork && <HorizontalStack className='artwork-path'>
-        <input
-          type='text'
-          className='path-text-input'
-          value={this.state.artworkSaveDirPath}
-          placeholder='Choisissez un dossier où enregistrer les images'
-          onInput={e => this.setState({ artworkSaveDirPath: (e.target as EventTargetWithValue).value })}
-        />
-        <button type='button' className='path-btn' onClick={() => app.$errorManager.handlePromise(this.selectartworkSaveDirPath())}>...</button>
-      </HorizontalStack>}
+      <TextAreaInput defaultValue={this.state.import} onChange={value => this.setState({ import: value })} />
+
+      <HorizontalStack verticalItemAlignment='middle' gutter>
+        <CheckBox label='Textes français' defaultValue={this.state.useFr} onChange={useFr => this.setState({ useFr })} />
+        <CheckBox label='Si absent, générer un code' defaultValue={this.state.generatePasscode} onChange={generatePasscode => this.setState({ generatePasscode })} />
+        {this.renderUrlImporter('yugipedia')}
+      </HorizontalStack>
+
+      <VerticalStack itemAlignment='center' gutter fill>
+        {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
+          <HorizontalStack gutter verticalItemAlignment='middle'>
+            <TextInput fill defaultValue={m.toReplace} onChange={value => this.updateReplaceMatrix(i, value, m.newString)} />
+            <Typography variant='help' content="devient" />
+            <TextInput fill defaultValue={m.newString} onChange={value => this.updateReplaceMatrix(i, m.toReplace, value)} />
+            <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.removeReplaceMatrix(i)} />
+          </HorizontalStack>
+        )}
+
+        <Button color='positive' label='Ajouter un terme à remplacer dans les textes de la carte' onTap={() => this.addReplaceMatrix()} />
+
+        {!this.state.importing && <Button color='balanced' label='Importer' onTap={() => this.doYugipediaImport()} />}
+        {this.state.importing && <Button color='balanced' disabled label='Import en cours...' />}
+      </VerticalStack>
+    </VerticalStack>, 'card-import-dialog-content yugipedia');
+  }
+
+  private renderUrlImporter(origin: TTabIndex) {
+    return <HorizontalStack minHeight={32} fill={origin === 'yugipedia'} gutter /* className={classNames('import-option', 'artwork-importer', origin)} */>
+      <CheckBox label='Importer les images' defaultValue={this.state.importArtwork} onChange={importArtwork => this.setState({ importArtwork })} />
+      {this.state.importArtwork && <FileInput
+        fill
+        defaultValue={this.state.artworkSaveDirPath}
+        onChange={artworkSaveDirPath => this.setState({ artworkSaveDirPath })}
+        overrideOnTap={() => this.selectartworkSaveDirPath()}
+      />}
     </HorizontalStack>;
   }
 

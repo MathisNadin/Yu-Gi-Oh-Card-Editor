@@ -27,6 +27,8 @@
     border: 1px solid #0052a3;
     animation-duration: 0.2s;
     animation-name: scaleIn;
+    max-height: 100%;
+    max-width: 100%;
 
     .mn-popup-header {
       $title-height:24px;

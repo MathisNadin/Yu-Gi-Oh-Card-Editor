@@ -20,288 +20,91 @@ $slifer: #BF5541;
 $ra: #B6A331;
 $legendaryDragon: #4A9CBF;
 */
-/* .mn-popup-header {
-  background: linear-gradient(
-    200.96deg,
-    white -29.09%,
-    #70afee 51.77%,
-    #318ce7 129.35%
-  );
-
-  .mn-popup-title {
-    color: white !important;
-  }
-} */
-.card-import-dialog .mn-tab-panes {
+.mn-popup[id=import-popup] .mn-popup-inner {
+  max-height: 90%;
+}
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes {
   min-height: 400px;
 }
-
-.card-import-dialog-content {
-  position: relative;
-  width: 100%;
-  height: 100% !important;
-  gap: 16px;
-  display: flex;
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content {
+  /* &.yugipedia {
+  } */
 }
-.card-import-dialog-content p {
-  color: black;
-  margin: 0;
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews {
+  height: calc(100% - 2 * 16px);
 }
-.card-import-dialog-content .import-options {
-  justify-content: start;
-  margin-bottom: 16px;
-}
-.card-import-dialog-content .import-option {
-  margin-right: 16px;
-  gap: 4px;
-}
-.card-import-dialog-content .import-option-input {
-  margin: 0;
-  color: black;
-}
-.card-import-dialog-content .import-option-label {
-  margin: 0;
-  color: black;
-  display: flex;
-  align-items: center;
-}
-.card-import-dialog-content .artwork-importer {
-  margin-right: 0;
-  min-height: 25px;
-}
-.card-import-dialog-content .artwork-importer.yugipedia {
-  flex: 1;
-}
-.card-import-dialog-content .artwork-importer .artwork-importer-label {
-  margin-right: 8px;
-}
-.card-import-dialog-content .artwork-path {
-  align-items: center;
-  flex: 1;
-}
-.card-import-dialog-content .artwork-path .path-label {
-  color: black;
-  margin: 5px 5px 5px 0;
-  font-size: 13px;
-  text-align: end;
-}
-.card-import-dialog-content .artwork-path .path-text-input {
-  flex: 1;
-  height: 19px;
-}
-.card-import-dialog-content .artwork-path .path-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px;
-  margin-left: 2%;
-  border: 1px outset lightgray;
-  border-radius: 4px;
-  cursor: pointer;
-  width: auto;
-  height: 25px;
-  width: 33px;
-  background-color: lightgrey;
-}
-.card-import-dialog-content.yugipedia .import-label {
-  flex: 1;
-  margin: 0;
-  color: black;
-}
-.card-import-dialog-content.yugipedia .import-input {
-  resize: none;
-  height: 150px;
-  border: 0.5px solid black;
-  border-radius: 3px;
-}
-.card-import-dialog-content.yugipedia .replace-matrix {
-  height: 25px;
-  width: 85%;
-  gap: 16px;
-  align-self: center;
-}
-.card-import-dialog-content.yugipedia .replace-matrix .replace-matrix-input {
-  border: 0.5px solid grey;
-  border-radius: 3px;
-  flex: 1;
-}
-.card-import-dialog-content.yugipedia .replace-matrix .remove-replace-matrix-btn {
-  align-self: center;
-  width: 27px;
-  font-size: 15px;
-  padding: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: rgba(255, 0, 0, 0.4);
-}
-.card-import-dialog-content.yugipedia .replace-matrix .remove-replace-matrix-btn:hover {
-  transform: none;
-}
-.card-import-dialog-content.yugipedia .add-replace-matrix-btn {
-  align-self: center;
-  width: 50%;
-  font-size: 15px;
-  padding: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: rgba(34, 139, 34, 0.4);
-}
-.card-import-dialog-content.yugipedia .add-replace-matrix-btn:hover {
-  transform: none;
-}
-.card-import-dialog-content.yuginews .yuginews-url .yuginews-url-import {
-  height: auto;
-  align-items: center;
-  justify-content: center;
-}
-.card-import-dialog-content.yuginews .yuginews-url .yuginews-url-import .yuginews-url-import-input {
-  height: 20px;
-  flex: 1;
-  border: 1px solid black;
-}
-.card-import-dialog-content.yuginews .yuginews-url .yuginews-url-import .yuginews-url-import-btn {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  padding: 8px;
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-left: 10px;
-  border: 1px outset rgba(0, 255, 255, 0.5);
-  border-radius: 4px;
-  cursor: pointer;
-  height: 25px;
-  font-size: 13px;
-  background-color: rgba(0, 255, 255, 0.5);
-}
-.card-import-dialog-content.yuginews .table-container {
-  height: 500px;
-  min-height: 500px;
-  max-height: 500px;
-}
-.card-import-dialog-content.yuginews .table {
-  border-collapse: collapse;
-}
-.card-import-dialog-content.yuginews .table thead tr {
-  background: linear-gradient(200.96deg, white -29.09%, #70afee 51.77%, #318ce7 129.35%);
-}
-.card-import-dialog-content.yuginews .table tbody {
-  overflow: auto;
-}
-.card-import-dialog-content.yuginews .table th,
-.card-import-dialog-content.yuginews .table td {
-  padding: 0.5rem;
-  text-align: left;
-}
-.card-import-dialog-content.yuginews .table th {
-  border: 1px solid #0052a3;
-}
-.card-import-dialog-content.yuginews .table th.cursor-pointer {
-  cursor: pointer;
-}
-.card-import-dialog-content.yuginews .table th.sorted-asc::after {
-  content: " ▲";
-}
-.card-import-dialog-content.yuginews .table th.sorted-desc::after {
-  content: " ▼";
-}
-.card-import-dialog-content.yuginews .table td {
-  color: black;
-  font-size: small;
-  border: 1px solid #0052a3;
-}
-.card-import-dialog-content.yuginews .table tr.Normal {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Normal {
   background: #E7D8A0;
 }
-.card-import-dialog-content.yuginews .table tr.Normal.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Normal.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #E7D8A0 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Effet {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Effet {
   background: #E08151;
 }
-.card-import-dialog-content.yuginews .table tr.Effet.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Effet.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #E08151 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Rituel {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Rituel {
   background: #82A9D6;
 }
-.card-import-dialog-content.yuginews .table tr.Rituel.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Rituel.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #82A9D6 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Fusion {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Fusion {
   background: #B66CAE;
 }
-.card-import-dialog-content.yuginews .table tr.Fusion.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Fusion.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #B66CAE 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Synchro {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Synchro {
   background: #F0EEEC;
 }
-.card-import-dialog-content.yuginews .table tr.Synchro.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Synchro.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #F0EEEC 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Xyz {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Xyz {
   background: #666666;
 }
-.card-import-dialog-content.yuginews .table tr.Xyz.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Xyz.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #666666 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Lien {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Lien {
   background: #2E7FAC;
 }
-.card-import-dialog-content.yuginews .table tr.Lien.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Lien.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #2E7FAC 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Magie {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Magie {
   background: #00A88E;
 }
-.card-import-dialog-content.yuginews .table tr.Magie.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Magie.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #00A88E 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Piège {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Piège {
   background: #C35891;
 }
-.card-import-dialog-content.yuginews .table tr.Piège.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Piège.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #C35891 82%);
 }
-.card-import-dialog-content.yuginews .table tr.Jeton {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Jeton {
   background: #978D8B;
 }
-.card-import-dialog-content.yuginews .table tr.Jeton.Pendule {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Jeton.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #978D8B 82%);
 }
-.card-import-dialog-content.yuginews .table tr.selected {
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.selected {
   background: rgba(124, 252, 0, 0.6) !important;
 }
-.card-import-dialog-content.yuginews .table .card-theme {
-  width: 20%;
-}
-.card-import-dialog-content.yuginews .table .card-set {
-  width: 10%;
-}
-.card-import-dialog-content.yuginews .table .card-id {
-  width: 10%;
-}
-.card-import-dialog-content.yuginews .table .card-name {
-  width: 60%;
-}
-.card-import-dialog-content .import-btn {
-  margin-top: 16px;
-  align-self: end;
-  width: auto;
-  padding: 5px 10px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: rgba(112, 175, 238, 0.5);
-}
-.card-import-dialog-content .import-btn.disabled {
-  pointer-events: none;
-  background-color: rgba(128, 128, 128, 0.3);
-  color: rgba(128, 128, 128, 0.7);
-}
-.card-import-dialog-content .import-btn:hover {
-  transform: none;
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row .mn-typography {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 100%;
+  max-width: 100%;
+  user-select: none;
+  color: black;
 }
 
 /*# sourceMappingURL=styles.css.map */
