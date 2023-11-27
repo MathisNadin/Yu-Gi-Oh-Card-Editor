@@ -1,3 +1,14 @@
+@keyframes colorCycle {
+  0% {
+    background-color: #ffffff;
+  }
+  50% {
+    background-color: #FAFA33;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
 .home-left-pane {
   height: 97%;
   width: 33%;
@@ -12,6 +23,12 @@
 }
 .home-left-pane .button-tabs .button-tab.selected {
   font-weight: bold;
+}
+.home-left-pane .new-version {
+  animation: colorCycle 3s infinite;
+  min-width: calc(100% - 32px);
+  max-width: calc(100% - 32px);
+  border-radius: 12px;
 }
 
 /*# sourceMappingURL=styles.css.map */

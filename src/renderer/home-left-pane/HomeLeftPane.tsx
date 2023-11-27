@@ -128,6 +128,7 @@ export class HomeLeftPane extends Containable<IHomeLeftPaneProps, IHomeLeftPaneS
 
     return this.renderAttributes(<VerticalStack margin gutter itemAlignment='center'>
       {!loaded && <Spinner />}
+      {loaded && this.renderUpdate()}
       {loaded && <HorizontalStack className='button-tabs' gutter itemAlignment='center'>
          <Button
           className={classNames('button-tab', 'master-button-tab', { 'selected': isMaster })}
@@ -142,7 +143,6 @@ export class HomeLeftPane extends Containable<IHomeLeftPaneProps, IHomeLeftPaneS
           onTap={() => this.onTabChange('rush')}
         />
       </HorizontalStack>}
-      {loaded && this.renderUpdate()}
       {loaded && isMaster && <CardEditor id='master' card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}
       {loaded && !isMaster && <RushCardEditor id='rush' card={card} onCardChange={c => app.$errorManager.handlePromise(this.onCardChange(c))} />}
     </VerticalStack>, 'home-left-pane');
@@ -150,7 +150,7 @@ export class HomeLeftPane extends Containable<IHomeLeftPaneProps, IHomeLeftPaneS
 
   private renderUpdate() {
     if (!this.state.needUpdate) return null;
-    return <VerticalStack className='new-version' margin padding gutter itemAlignment='center'>
+    return <VerticalStack className='new-version' padding gutter itemAlignment='center'>
       {!!this.state.versionInfos.version && <Typography variant='label' content={`Nouvelle version disponible : ${this.state.versionInfos.version}`} />}
       {!!this.state.versionInfos.note && <Typography variant='help' content={this.state.versionInfos.note} />}
       {!!this.state.versionInfos.link && <Button label='Installer' color='balanced' onTap={() => window.electron.ipcRenderer.openLink(this.state.versionInfos.link)} />}

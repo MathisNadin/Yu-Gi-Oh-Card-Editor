@@ -1,7 +1,7 @@
 {
   "name": "yu-gi-oh-card-editor",
   "displayName": "Yu-Gi-Oh! Card Editor",
-  "version": "0.9.2",
+  "version": "1.0.0",
   "description": "Un éditeur de cartes Yu-Gi-Oh",
   "keywords": [
     "electron",
