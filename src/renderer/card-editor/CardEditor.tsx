@@ -107,7 +107,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   }
 
   public componentWillReceiveProps(nextProps: ICardEditorProps) {
-    this.setState({ card: nextProps.card });
+    this.setState({ card: nextProps.card }, () => this.forceUpdate());
   }
 
   private onLanguageChange(language: TCardLanguage) {
@@ -128,8 +128,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     if (card.frames.length > 1) {
       card.frames = [card.frames[0]];
     }
-    this.setState({ card });
-    this.debouncedOnCardChange(this.state.card);
+    this.setState({ card }, () => this.debouncedOnCardChange(this.state.card));
   }
 
   public onFrameChange(frame: TFrame) {

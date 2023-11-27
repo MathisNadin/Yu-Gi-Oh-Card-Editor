@@ -81,10 +81,6 @@ $legendaryDragon: #82B8D4;
                 }
               }
 
-              &.selected {
-                background: rgba(lawngreen, 0.6) !important;
-              }
-
               .mn-typography {
                 display: block;
                 overflow: hidden;
@@ -94,6 +90,11 @@ $legendaryDragon: #82B8D4;
                 max-width: 100%;
                 user-select: none;
                 color: black;
+              }
+
+              filter: brightness(0.8);
+              &.selected {
+                filter: brightness(1.2);
               }
             }
           }

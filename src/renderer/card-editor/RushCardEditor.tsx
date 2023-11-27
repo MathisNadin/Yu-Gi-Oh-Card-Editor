@@ -98,7 +98,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   }
 
   public componentWillReceiveProps(nextProps: IRushCardEditorProps, _prevState: IRushCardEditorState) {
-    this.setState({ card: nextProps.card });
+    this.setState({ card: nextProps.card }, () => this.forceUpdate());
   }
 
   private onLanguageChange(language: TCardLanguage) {
@@ -113,8 +113,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     if (card.frames.length > 1) {
       card.frames = [card.frames[0]];
     }
-    this.setState({ card });
-    this.debouncedOnCardChange(this.state.card);
+    this.setState({ card }, () => this.debouncedOnCardChange(this.state.card));
   }
 
   public onFrameChange(frame: TFrame) {

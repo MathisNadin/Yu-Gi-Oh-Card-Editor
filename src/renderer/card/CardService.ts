@@ -22,6 +22,7 @@ export interface ICardListener {
   renderCardChanged: (renderCard: ICard) => void;
   menuSaveTempToLocal: () => void;
   cardRenderer: (cardUuid: string) => void;
+  cardImported: (newCard: ICard) => void;
 }
 
 const COMMON_FRAMES: TFrame[] = [
@@ -107,6 +108,10 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public fireCardRenderer(cardUuid: string) {
     this.dispatch('cardRenderer', cardUuid);
+  }
+
+  private fireCardImported(newCard: ICard) {
+    this.dispatch('cardImported', newCard);
   }
 
   public correct(card: ICard) {
@@ -403,7 +408,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public async importCards(newCards: ICard[]) {
     let index = 0;
-    for (let newCard of newCards) {
+    for (const newCard of newCards) {
       index++;
       await this.importCard(newCard, index === newCards.length);
     }
@@ -421,6 +426,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     newCard.uuid = uuid();
     this._localCards.push(newCard);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
+    this.fireCardImported(newCard);
     this.fireLocalCardsUpdated();
 
     if (updateTempCurrentCard) {

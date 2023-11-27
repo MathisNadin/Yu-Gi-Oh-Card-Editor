@@ -74,7 +74,13 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
     selectedCards[cardUuid] = false;
     selectedCardsNum--;
     cardsRendered++;
-    this.setState({ cardsRendered, selectedCards, selectedCardsNum }, () => this.forceUpdate());
+    this.setState({ cardsRendered, selectedCards, selectedCardsNum }, () => {
+      if (this.state.cardsRendered === this.state.cardsToRender) {
+        this.setState({ selectedCards: {}, selectedCardsNum: 0, cardsToRender: 0, cardsRendered: 0 }, () => this.forceUpdate());
+      } else {
+        this.forceUpdate();
+      }
+    });
   }
 
   public menuSaveTempToLocal() {
@@ -142,24 +148,28 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
   }
 
   private async saveEdit(event?: MouseEvent) {
+    if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
     await app.$card.saveTempCurrentToLocal();
   }
 
   private async startEdit(card: ICard, event?: MouseEvent) {
+    if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     this.setState({ edited: card.uuid as string, current: card.uuid as string });
     await app.$card.saveTempCurrentCard(deepClone(card));
   }
 
   private async abordEdit(event?: MouseEvent) {
+    if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
     await app.$card.saveTempCurrentCard(undefined);
   }
 
   private async deleteCard(card: ICard, event?: MouseEvent) {
+    if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     await app.$card.deleteLocalCard(card);
   }
@@ -201,7 +211,6 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
 
     this.setState({ cardsToRender: cards.length, cardsRendered: 0 });
     await app.$card.renderCards(cards);
-    this.setState({ selectedCards: {}, selectedCardsNum: 0, cardsToRender: 0, cardsRendered: 0 });
   }
 
   public render() {

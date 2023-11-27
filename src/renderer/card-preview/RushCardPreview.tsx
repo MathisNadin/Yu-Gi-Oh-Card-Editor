@@ -6,6 +6,7 @@ import { RushCardBuilder } from 'renderer/card-builder/RushCardBuilder';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { ICardListener } from 'renderer/card/CardService';
 import { toPng } from 'libraries/mn-html-to-image';
+import { CardBuilder } from 'renderer/card-builder/CardBuilder';
 
 interface IRushCardPreviewProps extends IContainableProps {
   card: ICard;
@@ -66,10 +67,16 @@ export class RushCardPreview extends Containable<IRushCardPreviewProps, IRushCar
 
   public render() {
     return this.renderAttributes(<Container>
-      <RushCardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />
+      {!this.state.renderCard?.rush && <CardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
+
+      {!!this.state.renderCard?.rush && <RushCardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
+
       <RushCardBuilder card={this.props.card} onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())} id='main-card-builder' />
+
       <Container className='cover' />
+
       <img className='card-preview-img img-render' src={this.state.rdCardPlaceholder} alt='cardPreview' />
+
       <Spinner className='card-preview-img rendering' />
     </Container>, 'card-preview');
   }

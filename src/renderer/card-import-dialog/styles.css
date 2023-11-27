@@ -33,6 +33,9 @@ $legendaryDragon: #4A9CBF;
 .mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews {
   height: calc(100% - 2 * 16px);
 }
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row {
+  filter: brightness(0.8);
+}
 .mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Normal {
   background: #E7D8A0;
 }
@@ -93,9 +96,6 @@ $legendaryDragon: #4A9CBF;
 .mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.Jeton.Pendule {
   background: linear-gradient(250deg, green -29%, aquamarine 35%, #978D8B 82%);
 }
-.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.selected {
-  background: rgba(124, 252, 0, 0.6) !important;
-}
 .mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row .mn-typography {
   display: block;
   overflow: hidden;
@@ -105,6 +105,9 @@ $legendaryDragon: #4A9CBF;
   max-width: 100%;
   user-select: none;
   color: black;
+}
+.mn-popup[id=import-popup] .mn-popup-inner .card-import-dialog .mn-tab-panes .card-import-dialog-content.yuginews .mn-table-row.selected {
+  filter: brightness(1.2);
 }
 
 /*# sourceMappingURL=styles.css.map */

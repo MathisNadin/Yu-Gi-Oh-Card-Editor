@@ -24,7 +24,7 @@ export function cycleSortOrder(order: TableColumnSortOrder) {
 
 export interface ITableColumn {
   /** Set the name of the column. */
-  label?: string | Node | Element;
+  label?: string | Node | JSX.Element;
   /** Set the width of the column. */
   width?: string;
   noPadding?: boolean;

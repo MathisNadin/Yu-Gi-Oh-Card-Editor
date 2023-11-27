@@ -3,7 +3,6 @@ import { IContainableState, Containable } from 'libraries/mn-toolkit/containable
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
-import { EventTargetWithValue } from 'libraries/mn-toolkit/container/Container';
 import { classNames, isString } from 'libraries/mn-tools';
 import { ICard } from 'renderer/card/card-interfaces';
 import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
@@ -19,7 +18,7 @@ import { FileInput } from 'libraries/mn-toolkit/file-input/FileInput';
 import { Button, ButtonIcon } from 'libraries/mn-toolkit/button';
 import { Table } from 'libraries/mn-toolkit/table/Table';
 import { ITableColumn, TableColumnSortOrder } from 'libraries/mn-toolkit/table/interfaces';
-import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
+import { Progress } from 'libraries/mn-toolkit/progress';
 
 type TTabIndex = 'yugipedia' | 'yuginews';
 
@@ -42,12 +41,15 @@ interface ICardImportDialogState extends IContainableState {
   yuginewsUrl: string;
   cardsData: IYuginewsCardData[];
   selectedCards: { [cardUuid: string]: boolean };
+  selectedCardsNum: number;
   cardsDataSortOption: TCardsDataSortOption;
   cardsDataSortOrder: TableColumnSortOrder;
   artworkSaveDirPath: string;
+  cardsToImport: number;
+  cardsImported: number;
 }
 
-export class CardImportDialog extends Containable<ICardImportDialogProps, ICardImportDialogState> {
+export class CardImportDialog extends Containable<ICardImportDialogProps, ICardImportDialogState> /* implements Partial<ICardListener> */ {
 
   public static async show() {
     return await app.$popup.show<ICardImportDialogResult>({
@@ -73,10 +75,28 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       yuginewsUrl: '',
       cardsData: [],
       selectedCards: {},
+      selectedCardsNum: 0,
       cardsDataSortOption: 'theme',
       cardsDataSortOrder: 'asc',
       artworkSaveDirPath: app.$settings.settings.defaultImgImportPath,
       yuginewsImporting: false,
+      cardsImported: 0,
+      cardsToImport: 0,
+    };
+    app.$card.addListener(this);
+  }
+
+  public componentWillUnmount() {
+    app.$card.removeListener(this);
+  }
+
+  public cardImported(_newCard: ICard) {
+    if (this.state.importing) {
+      this.setState({ cardsImported: this.state.cardsImported + 1 }, () => {
+        if (this.state.cardsImported === this.state.cardsToImport) {
+          this.setState({ importing: false });
+        }
+      });
     }
   }
 
@@ -102,8 +122,8 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     if (this.state.importing || !this.state.import) return;
     this.setState({ importing: true });
     const importLinks = this.state.import.split('\n');
-    let newCards: ICard[] = [];
-    for (let importLink of importLinks) {
+    const newCards: ICard[] = [];
+    for (const importLink of importLinks) {
       const splitImport = importLink.split('/');
       const newCard = await app.$mediaWiki.getCardInfo(
         splitImport[splitImport.length-1],
@@ -119,6 +139,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       }
     }
     if (newCards.length) {
+      this.setState({ cardsToImport: newCards.length });
       await app.$card.importCards(newCards);
       if (this.props.popupId) {
         app.$popup.remove(this.props.popupId);
@@ -153,9 +174,10 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     let selectedCards = this.state.cardsData.filter(c => this.state.selectedCards[c.uuid as string]);
     if (!selectedCards?.length) return;
 
-    this.setState({ importing: true, selectedCards: {} });
+    this.setState({ importing: true, selectedCards: {}, selectedCardsNum: 0 });
     let newCards = await app.$yuginews.importFromCardData(selectedCards, this.state.importArtwork, this.state.artworkSaveDirPath);
     if (newCards.length) {
+      this.setState({ cardsToImport: newCards.length });
       await app.$card.importCards(newCards);
       if (this.props.popupId) {
         app.$popup.remove(this.props.popupId);
@@ -166,9 +188,22 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   }
 
   private toggleSelectCard(cardUuid: string) {
-    let selectedCards = this.state.selectedCards;
+    const selectedCards = this.state.selectedCards;
     selectedCards[cardUuid] = !selectedCards[cardUuid];
-    this.setState({ selectedCards });
+    const selectedCardsNum = selectedCards[cardUuid] ? this.state.selectedCardsNum + 1 : this.state.selectedCardsNum - 1;
+    this.setState({ selectedCards, selectedCardsNum }, () => this.forceUpdate());
+  }
+
+  private toggleAll() {
+    let { selectedCards, selectedCardsNum, cardsData } = this.state;
+    if (selectedCardsNum === cardsData.length) {
+      selectedCardsNum = 0;
+      selectedCards = {};
+    } else {
+      selectedCardsNum = cardsData.length;
+      cardsData.forEach(card => selectedCards[card.uuid as string] = true);
+    }
+    this.setState({ selectedCards, selectedCardsNum }, () => this.forceUpdate());
   }
 
   private async onChangeOrder(cardsDataSortOption: TCardsDataSortOption) {
@@ -264,25 +299,33 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   private renderYuginewsTab() {
     if (!this.state) return null;
 
-    const { cardsDataSortOption, cardsDataSortOrder, yuginewsUrl, yuginewsImporting, importing, cardsData } = this.state;
+    const { cardsDataSortOption, cardsDataSortOrder, yuginewsUrl, yuginewsImporting, importing, cardsData, cardsImported, cardsToImport, selectedCardsNum } = this.state;
     const showTheme = cardsData.length && cardsData[0].theme?.length;
-    const columns: ITableColumn[] = [];
+    const columns: ITableColumn[] = [{
+      label: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleAll()}>
+        <CheckBox defaultValue={selectedCardsNum === cardsData.length} />
+      </HorizontalStack>,
+      width: '40px',
+    }];
     if (showTheme) {
       columns.push({
         label: 'Thème',
-        order: cardsDataSortOption === 'set' ? cardsDataSortOrder : undefined,
-        onChangeOrder: () => this.onChangeOrder('set'),
+        width: '200px',
+        order: cardsDataSortOption === 'theme' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('theme'),
       });
     } else {
       columns.push({
         label: 'Set',
-        order: cardsDataSortOption === 'theme' ? cardsDataSortOrder : undefined,
-        onChangeOrder: () => this.onChangeOrder('theme'),
+        width: '100px',
+        order: cardsDataSortOption === 'set' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('set'),
       });
     }
     columns.push(...[
       {
         label: 'ID',
+        width: '50px',
         order: cardsDataSortOption === 'id' ? cardsDataSortOrder : undefined,
         onChangeOrder: () => this.onChangeOrder('id'),
       },
@@ -303,7 +346,8 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
       {yuginewsImporting && <Spinner />}
 
-      {cardsData?.length && <Table scroll
+      {cardsData?.length && <Table
+        scroll
         columns={columns}
         rows={cardsData.map(card => {
           const uuid = card.uuid as string;
@@ -312,12 +356,17 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
             cells: [
               {
                 value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
-                  <Typography content={showTheme ? card.theme : card.setId} variant='help' />
+                  <CheckBox defaultValue={this.state.selectedCards[card.uuid as string]} />
                 </HorizontalStack>
               },
               {
                 value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
-                  <Typography content={`${card.id}`} variant='help' />
+                  <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />
+                </HorizontalStack>
+              },
+              {
+                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                  <Typography content={`${card.id || '-'}`} variant='help' />
                 </HorizontalStack>
               },
               {
@@ -332,25 +381,36 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
       <HorizontalStack itemAlignment='center'>
         {!!cardsData?.length && !importing && <Button color='balanced' label='Importer' onTap={() => this.doYuginewsImport()} />}
-        {!!cardsData?.length && importing && <Button color='balanced' disabled label='Import en cours...' />}
+        {!!importing && <HorizontalStack margin itemAlignment='center'>
+          <Progress
+            fill
+            showPercent
+            color='balanced'
+            message='Import en cours...'
+            progress={cardsImported}
+            total={cardsToImport}
+          />
+        </HorizontalStack>}
       </HorizontalStack>
     </VerticalStack>, 'card-import-dialog-content yuginews');
   }
 
   private renderYugipediaTab() {
+    if (!this.state) return null;
+    const { cardsImported, cardsToImport, importing, useFr, generatePasscode, replaceMatrixes } = this.state;
     return this.renderAttributes(<VerticalStack fill gutter marginVertical>
       <Typography variant='help' content='Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)' />
 
       <TextAreaInput defaultValue={this.state.import} onChange={value => this.setState({ import: value })} />
 
       <HorizontalStack verticalItemAlignment='middle' gutter>
-        <CheckBox label='Textes français' defaultValue={this.state.useFr} onChange={useFr => this.setState({ useFr })} />
-        <CheckBox label='Si absent, générer un code' defaultValue={this.state.generatePasscode} onChange={generatePasscode => this.setState({ generatePasscode })} />
+        <CheckBox label='Textes français' defaultValue={useFr} onChange={useFr => this.setState({ useFr })} />
+        <CheckBox label='Si absent, générer un code' defaultValue={generatePasscode} onChange={generatePasscode => this.setState({ generatePasscode })} />
         {this.renderUrlImporter('yugipedia')}
       </HorizontalStack>
 
       <VerticalStack itemAlignment='center' gutter fill>
-        {!!this.state.replaceMatrixes.length && this.state.replaceMatrixes.map((m, i) =>
+        {!!replaceMatrixes.length && replaceMatrixes.map((m, i) =>
           <HorizontalStack gutter verticalItemAlignment='middle'>
             <TextInput fill defaultValue={m.toReplace} onChange={value => this.updateReplaceMatrix(i, value, m.newString)} />
             <Typography variant='help' content="devient" />
@@ -361,8 +421,17 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
         <Button color='positive' label='Ajouter un terme à remplacer dans les textes de la carte' onTap={() => this.addReplaceMatrix()} />
 
-        {!this.state.importing && <Button color='balanced' label='Importer' onTap={() => this.doYugipediaImport()} />}
-        {this.state.importing && <Button color='balanced' disabled label='Import en cours...' />}
+        {!importing && <Button color='balanced' label='Importer' onTap={() => this.doYugipediaImport()} />}
+        {!!importing && <HorizontalStack margin itemAlignment='center'>
+          <Progress
+            fill
+            showPercent
+            color='balanced'
+            message='Import en cours...'
+            progress={cardsImported}
+            total={cardsToImport}
+          />
+        </HorizontalStack>}
       </VerticalStack>
     </VerticalStack>, 'card-import-dialog-content yugipedia');
   }

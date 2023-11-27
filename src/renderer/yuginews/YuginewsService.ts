@@ -282,6 +282,8 @@ export class YuginewsService {
               if (!parsedCardData.cardType) parsedCardData.cardType = '1';
               parsedCardData.uuid = uuid();
               if (artworkUrl) parsedCardData.artworkUrl = artworkUrl;
+              if (!parsedCardData.setId) parsedCardData.setId = '';
+              if (!parsedCardData.id) parsedCardData.id = '';
               cards.push(parsedCardData);
             }
           });
