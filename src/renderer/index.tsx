@@ -9,12 +9,18 @@ import { SettingsService } from './settings';
 
 extendNativeObjects();
 
-setupAppAndToolkit(() => {
-  app.service('$settings', SettingsService, { depends: ['$indexedDB'] });
-  app.service('$mediaWiki', MediaWikiService, { depends: ['$api'] });
-  app.service('$card', CardService, { depends: ['$indexedDB'] });
-  app.service('$yuginews', YuginewsService, { depends: ['$api'] });
-});
+setupAppAndToolkit(
+  {
+    dbName: 'card-editor-db',
+    objectStoreName: 'card-editor-object-store',
+  },
+  () => {
+    app.service('$settings', SettingsService, { depends: ['$indexedDB'] });
+    app.service('$mediaWiki', MediaWikiService, { depends: ['$api'] });
+    app.service('$card', CardService, { depends: ['$indexedDB'] });
+    app.service('$yuginews', YuginewsService, { depends: ['$api'] });
+  }
+);
 
 
 

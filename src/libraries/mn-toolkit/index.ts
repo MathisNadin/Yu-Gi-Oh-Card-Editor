@@ -1,5 +1,5 @@
 import { ApiService } from "./api/ApiService";
-import { Application } from "./bootstrap";
+import { Application, IAppSettings } from "./bootstrap";
 import { DeviceService } from "./device";
 import { ErrorManagerService } from "./error-manager";
 import { IconService, loadSvgs } from "./icon";
@@ -8,13 +8,10 @@ import { PopoverService } from "./popover/PopoverService";
 import { PopupService } from "./popup/PopupService";
 import { ReactService } from "./react";
 
-export function setupAppAndToolkit(beforeBootstrap?: () => void) {
+export function setupAppAndToolkit(appSettings: IAppSettings, beforeBootstrap?: () => void) {
   window.app = new Application() as IApp;
 
-  app.settings = {
-    dbName: 'card-editor-db',
-    objectStoreName: 'card-editor-object-store',
-  }
+  app.settings = appSettings;
 
   app.service('$errorManager', ErrorManagerService);
   app.service('$react', ReactService);
