@@ -696,7 +696,6 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
                 </HorizontalStack>
 
                 <TextAreaInput
-                  key={`${iChoiceEff}-${choiceEff}`}
                   autoGrow
                   minRows={3}
                   maxRows={100}

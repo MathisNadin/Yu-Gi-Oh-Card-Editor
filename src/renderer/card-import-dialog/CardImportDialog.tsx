@@ -3,7 +3,7 @@ import { IContainableState, Containable } from 'libraries/mn-toolkit/containable
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
-import { classNames, isString } from 'libraries/mn-tools';
+import { classNames, isEmpty, isString } from 'libraries/mn-tools';
 import { ICard } from 'renderer/card/card-interfaces';
 import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
@@ -124,6 +124,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     const importLinks = this.state.import.split('\n');
     const newCards: ICard[] = [];
     for (const importLink of importLinks) {
+      if (isEmpty(importLink)) continue;
       const splitImport = importLink.split('/');
       const newCard = await app.$mediaWiki.getCardInfo(
         splitImport[splitImport.length-1],
@@ -401,7 +402,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     return this.renderAttributes(<VerticalStack fill gutter marginVertical>
       <Typography variant='help' content='Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)' />
 
-      <TextAreaInput defaultValue={this.state.import} onChange={value => this.setState({ import: value })} />
+      <TextAreaInput minRows={5} maxRows={15} autoGrow defaultValue={this.state.import} onChange={value => this.setState({ import: value })} />
 
       <HorizontalStack verticalItemAlignment='middle' gutter>
         <CheckBox label='Textes français' defaultValue={useFr} onChange={useFr => this.setState({ useFr })} />

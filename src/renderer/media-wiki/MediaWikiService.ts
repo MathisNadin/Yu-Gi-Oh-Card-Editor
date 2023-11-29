@@ -75,13 +75,40 @@ export class MediaWikiService {
 
     let card = app.$card.getDefaultImportCard();
 
+    titles = titles
+      .replaceAll("%20", " ")
+      .replaceAll("%27", "'")
+      .replaceAll("%22", "\"")
+      .replaceAll("%23", "#")
+      .replaceAll("%25", "%")
+      .replaceAll("%26", "&")
+      .replaceAll("%2B", "+")
+      .replaceAll("%2C", ",")
+      .replaceAll("%2F", "/")
+      .replaceAll("%3A", ":")
+      .replaceAll("%3B", ";")
+      .replaceAll("%3C", "<")
+      .replaceAll("%3D", "=")
+      .replaceAll("%3E", ">")
+      .replaceAll("%3F", "?")
+      .replaceAll("%40", "@")
+      .replaceAll("%5B", "[")
+      .replaceAll("%5C", "\\")
+      .replaceAll("%5D", "]")
+      .replaceAll("%5E", "^")
+      .replaceAll("%60", "`")
+      .replaceAll("%7B", "{")
+      .replaceAll("%7C", "|")
+      .replaceAll("%7D", "}")
+      .replaceAll("%7E", "~");
+
     let data: YugipediaGetCardPageApiResponse = await app.$api.get(this.baseApiUrl, {
       params: {
         action: 'query',
         prop: 'revisions',
         rvprop: 'content',
         format: 'json',
-        titles
+        titles,
       }
     });
     if (!data?.query?.pages) return card;
