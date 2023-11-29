@@ -61,7 +61,7 @@ export class MediaWikiService {
 
   public constructor() {
     this.baseApiUrl = 'https://yugipedia.com/api.php';
-    this.baseArtworkUrl = "F:\\Vidéos Joeri_sama\\Artworks\\";
+    this.baseArtworkUrl = "H:\\Images\\Images Yu-Gi-Oh!\\Artworks\\";
   }
 
   public async getCardInfo(
