@@ -151,6 +151,9 @@
         background-color: pink;
         @include border-color(2);
       }
+      &.mn-table-row-clickable {
+        cursor: pointer;
+      }
       &:not(.mn-table-row-selected):hover {
         @include bg(3);
       }

@@ -73,7 +73,7 @@ export class TabbedPane<TAbstractTabIndex> extends Container<ITabbedPaneProps<TA
       id={this.props.nodeId}
       name={this.props.name as string}
       layout={['left', 'right'].includes(this.props.tabPosition as string) ? 'horizontal' : 'vertical'}
-      className={classNames('mn-tabbed-pane', { 'mn-disable': this.props.disabled })}
+      className={classNames('mn-tabbed-pane', this.props.className, { 'mn-disable': this.props.disabled })}
     >
       <TabSet
         items={(this.props.children as ReactNode[]).filter(node => !!node && !(node as INodeWithProps).props.hidden).map(node => {

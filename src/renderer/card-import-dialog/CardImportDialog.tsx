@@ -279,22 +279,21 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;
-    return this.renderAttributes(
-      <TabbedPane
-        tabPosition='top'
-        defaultValue={this.state.tabIndex}
-        onChange={value => this.setState({ tabIndex: value as TTabIndex })}
-      >
+    return <TabbedPane
+      className='card-import-dialog'
+      tabPosition='top'
+      defaultValue={this.state.tabIndex}
+      onChange={value => this.setState({ tabIndex: value as TTabIndex })}
+    >
 
-        <TabPane id='yuginews' fill={false} label='YugiNews' gutter>
-          {this.renderYuginewsTab()}
-        </TabPane>
+      <TabPane id='yuginews' fill={false} label='YugiNews' gutter>
+        {this.renderYuginewsTab()}
+      </TabPane>
 
-        <TabPane id='yugipedia' fill={false} label='Yugipedia' gutter>
-          {this.renderYugipediaTab()}
-        </TabPane>
-
-    </TabbedPane>, 'card-import-dialog');
+      <TabPane id='yugipedia' fill={false} label='Yugipedia' gutter>
+        {this.renderYugipediaTab()}
+      </TabPane>
+    </TabbedPane>;
   }
 
   private renderYuginewsTab() {
@@ -338,40 +337,40 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     ]);
 
     return this.renderAttributes(<VerticalStack marginVertical gutter>
-      {this.renderUrlImporter('yuginews')}
-
       <HorizontalStack gutter verticalItemAlignment='middle'>
         <TextInput fill placeholder="Lien de l'article" defaultValue={yuginewsUrl} onChange={value => this.setState({ yuginewsUrl: value })} />
-        <Button color='positive' label='Valider' onTap={() => this.getYuginewsCards()} />
+        <Button color='positive' label='Rechercher' onTap={() => this.getYuginewsCards()} />
       </HorizontalStack>
 
       {yuginewsImporting && <Spinner />}
 
       {cardsData?.length && <Table
+        className='yuginews-cards-table'
         scroll
         columns={columns}
         rows={cardsData.map(card => {
           const uuid = card.uuid as string;
           return {
             className: classNames('yuginews-card-row', this.getCardDataStyle(card), { 'selected': this.state.selectedCards[card.uuid as string] }),
+            onTap: () => this.toggleSelectCard(uuid),
             cells: [
               {
-                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
-                  <CheckBox defaultValue={this.state.selectedCards[card.uuid as string]} />
+                value: <HorizontalStack fill verticalItemAlignment='middle'>
+                  <CheckBox defaultValue={this.state.selectedCards[uuid]} />
                 </HorizontalStack>
               },
               {
-                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                value: <HorizontalStack fill verticalItemAlignment='middle'>
                   <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />
                 </HorizontalStack>
               },
               {
-                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                value: <HorizontalStack fill verticalItemAlignment='middle'>
                   <Typography content={`${card.id || '-'}`} variant='help' />
                 </HorizontalStack>
               },
               {
-                value: <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
+                value: <HorizontalStack fill verticalItemAlignment='middle'>
                   <Typography content={card.nameFR} variant='help' />
                 </HorizontalStack>
               },
@@ -379,6 +378,8 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
           }
         })}
       />}
+
+      {cardsData?.length && this.renderUrlImporter('yuginews')}
 
       <HorizontalStack itemAlignment='center'>
         {!!cardsData?.length && !importing && <Button color='balanced' label='Importer' onTap={() => this.doYuginewsImport()} />}
@@ -411,16 +412,16 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       </HorizontalStack>
 
       <VerticalStack itemAlignment='center' gutter fill>
-        {!!replaceMatrixes.length && replaceMatrixes.map((m, i) =>
-          <HorizontalStack gutter verticalItemAlignment='middle'>
+        <Button color='positive' label='Ajouter un terme à remplacer dans les textes de la carte' onTap={() => this.addReplaceMatrix()} />
+
+        {!!replaceMatrixes.length && <VerticalStack gutter scroll fill>
+          {replaceMatrixes.map((m, i) => <HorizontalStack gutter verticalItemAlignment='middle'>
             <TextInput fill defaultValue={m.toReplace} onChange={value => this.updateReplaceMatrix(i, value, m.newString)} />
             <Typography variant='help' content="devient" />
             <TextInput fill defaultValue={m.newString} onChange={value => this.updateReplaceMatrix(i, m.toReplace, value)} />
             <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.removeReplaceMatrix(i)} />
-          </HorizontalStack>
-        )}
-
-        <Button color='positive' label='Ajouter un terme à remplacer dans les textes de la carte' onTap={() => this.addReplaceMatrix()} />
+          </HorizontalStack>)}
+        </VerticalStack>}
 
         {!importing && <Button color='balanced' label='Importer' onTap={() => this.doYugipediaImport()} />}
         {!!importing && <HorizontalStack margin itemAlignment='center'>

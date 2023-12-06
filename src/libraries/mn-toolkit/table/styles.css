@@ -149,6 +149,9 @@
 .mn-dark-theme .mn-table .mn-table-body .mn-table-row.mn-table-row-selected {
   border-color: #b8b8b8;
 }
+.mn-table .mn-table-body .mn-table-row.mn-table-row-clickable {
+  cursor: pointer;
+}
 .mn-table .mn-table-body .mn-table-row:not(.mn-table-row-selected):hover {
   background-color: #EEF0F2;
 }
