@@ -16,12 +16,13 @@ interface ICardBuilderProps extends IContainableProps {
   onCardReady: () => void;
 }
 
-type TAdjustState = 'waiting' | 'todo' | 'name' | 'atk' | 'def' | 'pend' | 'abilities' | 'desc' | 'done';
+type TAdjustState = 'waiting' /* | 'todo' */ | 'name' | 'atk' | 'def' | 'pend' | 'abilities' | 'desc' | 'done';
 
 interface ICardBuilderState extends IContainableState {
   adjustState: TAdjustState;
   adjustTextState: 'unknown' | 'tooBig' | 'tooSmall';
 
+  hasAbilities: boolean;
   usePendulumFrame: boolean;
   withLinkArrows: boolean;
 
@@ -68,36 +69,36 @@ interface ICardBuilderState extends IContainableState {
 }
 
 export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderState> {
+  private didMount!: boolean;
   private ref: HTMLDivElement | undefined;
   private debouncedRefreshState: (card: ICard) => void;
+  private handleResize = () => app.$errorManager.handlePromise(this.adjustAllFontSizes());
 
   public constructor(props: ICardBuilderProps) {
     super(props);
     this.state = {} as ICardBuilderState;
     this.debouncedRefreshState = debounce((card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)), 500);
-    if (!props.forRender) this.handleResize = this.handleResize.bind(this);
+    // if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
   public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
+    if (!this.didMount) return;
     this.setState({ adjustState: 'waiting' });
     app.$errorManager.handlePromise(this.debouncedRefreshState(nextProps.card));
   }
 
   public componentDidMount() {
+    this.didMount = true;
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
     app.$errorManager.handlePromise(this.debouncedRefreshState(this.props.card));
   }
 
   public componentDidUpdate() {
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
+    setTimeout(() => app.$errorManager.handlePromise(this.adjustAllFontSizes()));
   }
 
   public componentWillUnmount() {
     if (!this.props.forRender) window.removeEventListener('resize', this.handleResize);
-  }
-
-  private handleResize() {
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private async refreshState(card: ICard) {
@@ -155,9 +156,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     const state: ICardBuilderState = {
       loaded: true,
-      adjustState: 'todo',
+      // adjustState: 'todo',
+      adjustState: 'name',
       adjustTextState: 'unknown',
 
+      hasAbilities: app.$card.hasAbilities(card),
       usePendulumFrame,
       withLinkArrows: app.$card.hasLinkArrows(card),
 
@@ -227,19 +230,36 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private async adjustAllFontSizes() {
     switch (this.state?.adjustState) {
-      case 'todo': this.setState({ adjustState: 'name' }); break;
+      // case 'todo': this.setState({ adjustState: 'name' }); break;
       case 'name': await this.convertNameToImg(); break;
       case 'atk': this.convertAtkToImg(); break;
       case 'def': this.convertDefToImg(); break;
       case 'pend': this.adjustPendFontSize(); break;
       case 'abilities': await this.convertAbilitiesToImg(); break;
       case 'desc': this.adjustDescFontSize(); break;
-      case 'done': if (this.props.onCardReady) this.props.onCardReady(); break;
+      case 'done': this.onAdjustDone(); break;
       default: break;
     }
   }
 
+  private onAdjustDone() {
+    app.$card.updateCurrentCardToDo({
+      name: false,
+      atk: false,
+      def: false,
+      pend: false,
+      abilities: false,
+      desc: false,
+    });
+    if (this.props.onCardReady) this.props.onCardReady();
+  }
+
   public async convertNameToImg() {
+    if (!this.props.forRender && !app.$card.currentCardToDo.name) {
+      this.setState({ adjustState: 'atk' });
+      return;
+    }
+
     const container = this.ref?.querySelector('.card-name-container') as HTMLDivElement;
     if (!container) return;
 
@@ -266,7 +286,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertAtkToImg() {
-    if (app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')) {
+    if (!this.props.forRender && !app.$card.currentCardToDo.atk) {
+      this.setState({ adjustState: 'def' });
+      return;
+    }
+
+    if (this.state.hasAbilities && !this.props.card.frames.includes('skill')) {
       const container = this.ref?.querySelector('.atk') as HTMLDivElement;
       if (!container) return;
       const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
@@ -285,7 +310,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertDefToImg() {
-    if (app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')) {
+    if (!this.props.forRender && !app.$card.currentCardToDo.def) {
+      this.setState({ adjustState: 'pend' });
+      return;
+    }
+
+    if (this.state.hasAbilities && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')) {
       const container = this.ref?.querySelector('.def') as HTMLDivElement;
       if (!container) return;
       const def = container.querySelector('.def-text') as HTMLParagraphElement;
@@ -304,7 +334,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public async convertAbilitiesToImg() {
-    if (!app.$card.hasAbilities(this.props.card)) {
+    if ((!this.props.forRender && !app.$card.currentCardToDo.abilities) || !this.state.hasAbilities) {
       this.setState({ adjustState: 'desc' });
       return;
     }
@@ -327,7 +357,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private adjustPendFontSize() {
-    if (!app.$card.hasPendulumFrame(this.props.card)) {
+    if ((!this.props.forRender && !app.$card.currentCardToDo.pend) || !this.state.usePendulumFrame) {
       this.setState({ adjustState: 'abilities' });
       return;
     }
@@ -493,7 +523,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     if (!this.state?.loaded) return <Spinner />;
 
     let artworkClass = 'card-layer artwork-container';
-    if (app.$card.hasPendulumFrame(this.props.card)) {
+    if (this.state.usePendulumFrame) {
       if (this.props.card.frames.includes('link')) {
         artworkClass = `${artworkClass} artwork-pendulum-link`;
       } else {
@@ -522,24 +552,24 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       {this.state.withLinkArrows && this.renderLinkArrows()}
 
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && (this.props.card.frames.includes('link')
+      {this.state.hasAbilities && !this.props.card.frames.includes('skill') && (this.props.card.frames.includes('link')
         ? <img className='card-layer atk-link-line' src={this.state.atkLinkLine} alt='atkLinkLine' />
         : <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />)}
 
       {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
       {this.props.card.edition !== 'forbidden' && <p className={`card-layer passcode ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text`}>{this.props.card.passcode}</p>}
 
-      <p className={`card-layer card-set ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text ${app.$card.hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${app.$card.hasPendulumFrame(this.props.card) ? 'on-pendulum' : ''}`}>
+      <p className={`card-layer card-set ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text ${app.$card.hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${this.state.usePendulumFrame ? 'on-pendulum' : ''}`}>
         {this.props.card.cardSet}
       </p>
 
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')
+      {this.state.hasAbilities && !this.props.card.frames.includes('skill')
         && <Container className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}>
           <p className={classNames('stat-text', 'atk-text', 'black-text', { 'infinity': this.props.card.atk === '∞' })}>{this.props.card.atk}</p>
         </Container>
       }
 
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')
+      {this.state.hasAbilities && !this.props.card.frames.includes('skill') && !this.props.card.frames.includes('link')
         && <Container className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}>
           <p className={classNames('stat-text', 'def-text', 'black-text', { 'infinity': this.props.card.def === '∞' })}>{this.props.card.def}</p>
         </Container>
@@ -548,9 +578,9 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       {this.props.card.hasCopyright && <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />}
       {this.props.card.edition !== 'unlimited' && <img className='card-layer edition' src={this.state.edition} alt='edition' />}
 
-      {app.$card.hasAbilities(this.props.card) && this.renderAbilities()}
+      {this.state.hasAbilities && this.renderAbilities()}
       {this.renderDescription()}
-      {app.$card.hasPendulumFrame(this.props.card) && this.renderPendulum()}
+      {this.state.usePendulumFrame && this.renderPendulum()}
       {this.state.usePendulumFrame && <img className='card-layer card-scale left-scale' src={this.state.leftScale} alt='leftScale' />}
       {this.state.usePendulumFrame && <img className='card-layer card-scale right-scale' src={this.state.rightScale} alt='rightScale' />}
       {this.renderName()}
@@ -611,7 +641,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     }
 
     let containerClass = 'card-layer card-abilities';
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
+    if (this.state.usePendulumFrame && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
 
     return this.renderAttributes(<HorizontalStack>
       <p className="abilities-text black-text abilities-bracket left-bracket">[</p>
@@ -647,7 +677,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private renderDescription() {
     let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
-    if (app.$card.hasAbilities(this.props.card)) {
+    if (this.state.hasAbilities) {
       containerClass = `${containerClass} with-abilities`;
 
       if (this.props.card.frames.includes('skill')) {
@@ -655,7 +685,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       }
     }
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
+    if (this.state.usePendulumFrame && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
 
     return this.renderAttributes(<VerticalStack>
       {this.state.description.map(d => {

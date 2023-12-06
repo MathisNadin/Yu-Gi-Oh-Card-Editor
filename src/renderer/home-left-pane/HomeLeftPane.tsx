@@ -97,7 +97,7 @@ export class HomeLeftPane extends Containable<IHomeLeftPaneProps, IHomeLeftPaneS
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else {
-      this.setState({ loaded: true, tempCurrentCard });
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: app.$card.currentCard?.rush ? 'rush' : 'master' });
     }
   }
 

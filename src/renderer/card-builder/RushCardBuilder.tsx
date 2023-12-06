@@ -25,6 +25,7 @@ interface IRushCardBuilderState extends IContainableState {
   artworkBg: string;
   croppedArtworkBase64: string;
 
+  hasAbilities: boolean;
   cardFrames: string[];
   abilities: string[];
   hasStIcon: boolean;
@@ -51,22 +52,26 @@ interface IRushCardBuilderState extends IContainableState {
 }
 
 export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCardBuilderState> {
+  private didMount!: boolean;
   private ref: HTMLDivElement | undefined;
   private debouncedRefreshState: (card: ICard) => void;
+  private handleResize = () => app.$errorManager.handlePromise(this.adjustAllFontSizes());
 
   public constructor(props: IRushCardBuilderProps) {
     super(props);
     this.state = {} as IRushCardBuilderState;
     this.debouncedRefreshState = debounce((card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)), 500);
-    if (!props.forRender) this.handleResize = this.handleResize.bind(this);
+    // if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
   public componentWillReceiveProps(nextProps: IRushCardBuilderProps, _prevState: IRushCardBuilderState) {
+    if (!this.didMount) return;
     this.setState({ adjustState: 'waiting' });
     app.$errorManager.handlePromise(this.debouncedRefreshState(nextProps.card));
   }
 
   public componentDidMount() {
+    this.didMount = true;
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
     app.$errorManager.handlePromise(this.debouncedRefreshState(this.props.card));
   }
@@ -77,10 +82,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
   public componentWillUnmount() {
     if (!this.props.forRender) window.removeEventListener('resize', this.handleResize);
-  }
-
-  private handleResize() {
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private async refreshState(card: ICard) {
@@ -203,6 +204,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       artworkBg,
       croppedArtworkBase64,
 
+      hasAbilities: app.$card.hasAbilities(card),
       cardFrames,
       abilities,
       hasStIcon,
@@ -296,7 +298,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertAtkMaxToImg() {
-    if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && this.props.card.maximum) {
+    if (!this.props.card.dontCoverRushArt && this.state.hasAbilities && this.props.card.maximum) {
       const container = this.ref?.querySelector('.atk-max') as HTMLDivElement;
       if (!container) return;
       const atkMax = container.querySelector('.atk-max-text') as HTMLParagraphElement;
@@ -321,7 +323,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertAtkToImg() {
-    if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card)) {
+    if (!this.props.card.dontCoverRushArt && this.state.hasAbilities) {
       const container = this.ref?.querySelector('.atk') as HTMLDivElement;
       if (!container) return;
       const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
@@ -346,7 +348,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public async convertDefToImg() {
-    if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card)) {
+    if (!this.props.card.dontCoverRushArt && this.state.hasAbilities) {
       const container = this.ref?.querySelector('.def') as HTMLDivElement;
       if (!container) return;
       const def = container.querySelector('.def-text') as HTMLParagraphElement;
@@ -524,10 +526,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
 
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt && this.props.card.maximum &&
+      {this.state.hasAbilities && !this.props.card.dontCoverRushArt && this.props.card.maximum &&
         <img className='card-layer atk-max-line' src={this.state.atkMaxLine} alt='atkMaxLine' />
       }
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt &&
+      {this.state.hasAbilities && !this.props.card.dontCoverRushArt &&
         <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />
       }
 
@@ -541,7 +543,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
       {this.props.card.edition === 'unlimited' && <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>}
 
-      {!this.props.card.dontCoverRushArt && this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
+      {!this.props.card.dontCoverRushArt && this.props.card.maximum && this.state.hasAbilities &&
         <Container className={classNames('card-layer', 'atk-def', 'atk-max', {
           'question-mark': this.props.card.atkMax === '?',
           'compressed': this.props.card.atkMax?.length > 4,
@@ -550,7 +552,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         </Container>
       }
 
-      {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) &&
+      {!this.props.card.dontCoverRushArt && this.state.hasAbilities &&
         <Container className={classNames('card-layer', 'atk-def', 'atk', {
           'question-mark': this.props.card.atk === '?',
           'compressed': this.props.card.atk?.length > 4,
@@ -559,7 +561,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         </Container>
       }
 
-      {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) &&
+      {!this.props.card.dontCoverRushArt && this.state.hasAbilities &&
         <Container className={classNames('card-layer', 'atk-def', 'def', {
           'question-mark': this.props.card.def === '?',
           'compressed': this.props.card.def?.length > 4,

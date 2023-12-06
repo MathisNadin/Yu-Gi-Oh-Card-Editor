@@ -2,7 +2,7 @@ import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
+import { ICard, ICurrentCardToDo, TAttribute, TCardLanguage, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
 import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/mn-tools';
 import { InplaceEdit } from 'libraries/mn-toolkit/inplaceEdit/InplaceEdit';
 import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
@@ -123,44 +123,59 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   }
 
   private onMultipleFramesChange() {
-    let card = this.state.card;
+    const { card } = this.state;
     card.multipleFrames = !card.multipleFrames;
     if (card.frames.length > 1) {
       card.frames = [card.frames[0]];
+      app.$card.resetCurrentCardToDo();
     }
-    this.setState({ card }, () => this.debouncedOnCardChange(this.state.card));
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
   }
 
   public onFrameChange(frame: TFrame) {
-    if (this.state.card.frames.includes(frame)) {
-      if (this.state.card.frames.length > 1) {
-        this.state.card.frames = this.state.card.frames.filter(f => f !== frame);
+    const { card } = this.state;
+    const toDo: Partial<ICurrentCardToDo> = {};
+    const spNameFrames: TFrame[] = ['xyz', 'link', 'skill', 'spell', 'trap'];
+    if (spNameFrames.includes(frame) || card.frames.some(f => spNameFrames.includes(f))) {
+      toDo.name = true;
+      if (card.pendulum && (frame === 'link' || card.frames.includes('link'))) {
+        toDo.desc = true;
+        toDo.pend = true;
+      }
+    }
+
+    if (card.frames.includes(frame)) {
+      if (card.frames.length > 1) {
+        this.state.card.frames = card.frames.filter(f => f !== frame);
+        app.$card.updateCurrentCardToDo(toDo);
         this.forceUpdate();
-        this.debouncedOnCardChange(this.state.card);
+        this.debouncedOnCardChange(card);
       }
     }
     else {
-      if (this.state.card.multipleFrames) {
-        this.state.card.frames.push(frame);
+      if (card.multipleFrames) {
+        card.frames.push(frame);
       } else {
-        this.state.card.frames = [frame];
+        card.frames = [frame];
       }
 
       if (frame === 'spell') {
-        this.state.card.attribute = 'spell';
+        card.attribute = 'spell';
       } else if (frame === 'trap') {
-        this.state.card.attribute = 'trap';
+        card.attribute = 'trap';
       } else {
-        if (this.state.card.attribute === 'spell' || this.state.card.attribute === 'trap') {
-          this.state.card.attribute = 'dark';
+        if (card.attribute === 'spell' || card.attribute === 'trap') {
+          card.attribute = 'dark';
         }
-        if (this.state.card.level > 8 && frame === 'link') {
-          this.state.card.level = 8;
+        if (card.level > 8 && frame === 'link') {
+          card.level = 8;
         }
       }
 
+      app.$card.updateCurrentCardToDo(toDo);
       this.forceUpdate();
-      this.debouncedOnCardChange(this.state.card);
+      this.debouncedOnCardChange(card);
     }
   }
 
@@ -172,6 +187,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private onNameStyleChange(nameStyle: TNameStyle) {
     this.state.card.nameStyle = nameStyle;
+    app.$card.updateCurrentCardToDo({ name: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -193,6 +209,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     if (isUndefined(atk) || atk.length > 6) return;
     if (atk && atk !== '?' && atk !=='∞' && !atk.startsWith('X') && integer(atk) === 0) atk = '0';
     this.state.card.atk = atk;
+    app.$card.updateCurrentCardToDo({ atk: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -201,6 +218,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     if (isUndefined(def) || def.length > 6) return;
     if (def && def !== '?' && def !=='∞' &&  !def.startsWith('X') && integer(def) === 0) def = '0';
     this.state.card.def = def;
+    app.$card.updateCurrentCardToDo({ def: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -208,6 +226,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   private onNameChange(name: string) {
     if (isUndefined(name)) return;
     this.state.card.name = name;
+    app.$card.updateCurrentCardToDo({ name: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -215,12 +234,14 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   private onDescChange(description: string) {
     if (isUndefined(description)) return;
     this.state.card.description = description;
+    app.$card.updateCurrentCardToDo({ desc: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
 
   private onPendChange() {
     this.state.card.pendulum = !this.state.card.pendulum;
+    app.$card.resetCurrentCardToDo();
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -260,6 +281,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
   private onPendEffChange(pendEffect: string) {
     if (isUndefined(pendEffect)) return;
     this.state.card.pendEffect = pendEffect;
+    app.$card.updateCurrentCardToDo({ pend: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -310,18 +332,21 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
 
   private onAbilityChange(newValue: string, iAbility: number) {
     this.state.card.abilities[iAbility] = newValue;
+    app.$card.updateCurrentCardToDo({ abilities: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
 
   private onAddAbility() {
     this.state.card.abilities.push('');
+    app.$card.updateCurrentCardToDo({ abilities: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
 
   private onRemoveAbility(index: number) {
     this.state.card.abilities.splice(index, 1);
+    app.$card.updateCurrentCardToDo({ abilities: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -338,6 +363,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     let element = this.state.card.abilities[index];
     this.state.card.abilities.splice(index, 1);
     this.state.card.abilities.splice(newIndex, 0, element);
+    app.$card.updateCurrentCardToDo({ abilities: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -348,6 +374,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     let element = this.state.card.abilities[index];
     this.state.card.abilities.splice(index, 1);
     this.state.card.abilities.splice(newIndex, 0, element);
+    app.$card.updateCurrentCardToDo({ abilities: true });
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }

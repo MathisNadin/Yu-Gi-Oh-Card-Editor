@@ -2,7 +2,7 @@ import { toPng } from "libraries/mn-html-to-image";
 import { IIndexedDBListener } from "libraries/mn-toolkit/indexedDB/IndexedDBService";
 import { Observable } from "libraries/mn-toolkit/observable/Observable";
 import { deepClone, uuid } from "libraries/mn-tools";
-import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
+import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage, ICurrentCardToDo } from "./card-interfaces";
 import { Crop } from "react-image-crop";
 import { CardImportDialog } from "renderer/card-import-dialog/CardImportDialog";
 
@@ -51,6 +51,26 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   private _renderCardsQueue: ICard[] = [];
   private _localCards: ICard[] = [];
   private _renderPath: string | undefined = undefined;
+  private _currentCardToDo!: ICurrentCardToDo;
+
+  public get currentCardToDo() {
+    return this._currentCardToDo;
+  }
+
+  public updateCurrentCardToDo(currentCardToDo: Partial<ICurrentCardToDo>) {
+    this._currentCardToDo = { ...this._currentCardToDo, ...currentCardToDo };
+  }
+
+  public resetCurrentCardToDo() {
+    this._currentCardToDo = {
+      name: true,
+      atk: true,
+      def: true,
+      pend: true,
+      abilities: true,
+      desc: true,
+    };
+  }
 
   public get currentCard() {
     return this._currentCard;
@@ -66,6 +86,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public constructor() {
     super();
+    this.resetCurrentCardToDo();
     app.$indexedDB.addListener(this);
     app.$errorManager.handlePromise(this.load(true));
   }
@@ -307,6 +328,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async resetCurrentCard() {
     this._currentCard = this.getDefaultCurrentCard();
     await app.$indexedDB.save<CardStorageKey, ICard>('current-card', this._currentCard);
+    this.resetCurrentCardToDo();
     this.fireCurrentCardUpdated();
   }
 
@@ -323,6 +345,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   private convertCard(card: ICard) {
+    this.resetCurrentCardToDo();
     if (card.rush) {
       card.rush = false;
       return card;

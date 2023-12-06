@@ -151,6 +151,7 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
     if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
+    app.$card.resetCurrentCardToDo();
     await app.$card.saveTempCurrentToLocal();
   }
 
@@ -158,6 +159,7 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
     if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     this.setState({ edited: card.uuid as string, current: card.uuid as string });
+    app.$card.resetCurrentCardToDo();
     await app.$card.saveTempCurrentCard(deepClone(card));
   }
 
@@ -165,6 +167,7 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
     if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
     this.setState({ edited: '', current: '' });
+    app.$card.resetCurrentCardToDo();
     await app.$card.saveTempCurrentCard(undefined);
   }
 

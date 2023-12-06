@@ -80,3 +80,12 @@ export interface ICard {
   maximum: boolean;
   atkMax: string;
 }
+
+export interface ICurrentCardToDo {
+  name: boolean;
+  atk: boolean;
+  def: boolean;
+  pend: boolean;
+  abilities: boolean;
+  desc: boolean;
+}
