@@ -1,6 +1,6 @@
 {
-  "name": "mn-toolkit",
-  "displayName": "MN Toolkit",
+  "name": "mn-tools",
+  "displayName": "MN Tools",
   "version": "1.0.1",
   "description": "Bibliothèque Typescript pour des fonctions utilitaires",
   "repository": {
