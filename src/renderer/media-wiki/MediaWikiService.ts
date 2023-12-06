@@ -424,52 +424,54 @@ export class MediaWikiService {
     let artworkDefaultPath = `${this.baseArtworkUrl}${enName} Artwork`;
     let defaultPng = `${artworkDefaultPath}.png`;
     let defaultJpg = `${artworkDefaultPath}.jpg`;
-    if (await window.electron.ipcRenderer.checkFileExists(defaultPng)) {
-      card.artwork.url = defaultPng;
-    }
-    else if (await window.electron.ipcRenderer.checkFileExists(defaultJpg)) {
-      card.artwork.url = defaultJpg;
-    }
-    else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
-      let artworkName = this.getArtworkName(enName);
-      if (artworkName) {
-        let imgData: YugipediaGetCardPageImgApiResponse = await app.$api.get(this.baseApiUrl, {
-          params: {
-            action: 'parse',
-            page: titles,
-            prop: 'images',
-            format: 'json'
-          }
-        });
+    try {
+      if (await window.electron.ipcRenderer.checkFileExists(defaultPng)) {
+        card.artwork.url = defaultPng;
+      }
+      else if (await window.electron.ipcRenderer.checkFileExists(defaultJpg)) {
+        card.artwork.url = defaultJpg;
+      }
+      else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
+        let artworkName = this.getArtworkName(enName);
+        if (artworkName) {
+          let imgData: YugipediaGetCardPageImgApiResponse = await app.$api.get(this.baseApiUrl, {
+            params: {
+              action: 'parse',
+              page: titles,
+              prop: 'images',
+              format: 'json'
+            }
+          });
 
-        if (imgData?.parse?.images?.length) {
-          let fileName = imgData.parse.images.find(image => image.includes(artworkName));
-          if (fileName) {
-            let artworkData: YugipediaGetCardImgApiResponse = await app.$api.get(this.baseApiUrl, {
-              params: {
-                action: 'query',
-                titles: `File:${fileName}`,
-                prop: 'imageinfo',
-                iiprop: 'url',
-                format: 'json'
-              }
-            });
+          if (imgData?.parse?.images?.length) {
+            let fileName = imgData.parse.images.find(image => image.includes(artworkName));
+            if (fileName) {
+              let artworkData: YugipediaGetCardImgApiResponse = await app.$api.get(this.baseApiUrl, {
+                params: {
+                  action: 'query',
+                  titles: `File:${fileName}`,
+                  prop: 'imageinfo',
+                  iiprop: 'url',
+                  format: 'json'
+                }
+              });
 
-            if (artworkData?.query?.pages) {
-              let keys = Object.keys(artworkData?.query?.pages);
-              if (keys?.length) {
-                let pageInfo = artworkData?.query?.pages[keys[0]];
-                if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
-                  const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath) || '';
-                  if (filePath) {
-                    card.artwork.url = filePath;
-                    if (card.rush) {
-                      card.dontCoverRushArt = true;
-                      extend(card.artwork, app.$card.getFullRushCardPreset());
-                    } else if (card.pendulum) {
-                      extend(card.artwork, app.$card.getFullPendulumCardPreset());
-                    } else {
-                      extend(card.artwork, app.$card.getFullCardPreset());
+              if (artworkData?.query?.pages) {
+                let keys = Object.keys(artworkData?.query?.pages);
+                if (keys?.length) {
+                  let pageInfo = artworkData?.query?.pages[keys[0]];
+                  if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
+                    const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath) || '';
+                    if (filePath) {
+                      card.artwork.url = filePath;
+                      if (card.rush) {
+                        card.dontCoverRushArt = true;
+                        extend(card.artwork, app.$card.getFullRushCardPreset());
+                      } else if (card.pendulum) {
+                        extend(card.artwork, app.$card.getFullPendulumCardPreset());
+                      } else {
+                        extend(card.artwork, app.$card.getFullCardPreset());
+                      }
                     }
                   }
                 }
@@ -478,6 +480,9 @@ export class MediaWikiService {
           }
         }
       }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
 
     if (generatePasscode && !card.passcode) {

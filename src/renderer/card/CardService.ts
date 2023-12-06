@@ -271,7 +271,12 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async renderCards(cards: ICard[]) {
     if (!cards?.length) return;
 
-    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
+    try {
+      this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
     if (!this._renderPath) return;
 
     this._renderCardsQueue.push(...cards);
@@ -437,8 +442,14 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async importArtwork(url: string, path?: string): Promise<string> {
-    path = path || await window.electron.ipcRenderer.getDirectoryPath();
+    try {
+      path = path || await window.electron.ipcRenderer.getDirectoryPath();
+    } catch(error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
     if (!path) return '';
+
     let filePath!: string;
     try {
       filePath = await window.electron.ipcRenderer.download(path, url);

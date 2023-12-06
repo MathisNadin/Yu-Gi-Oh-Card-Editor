@@ -271,10 +271,15 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
     this.setState({ cardsDataSortOption, cardsDataSortOrder, cardsData }, () => this.forceUpdate());
   }
 
-  private async selectartworkSaveDirPath() {
-    const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.artworkSaveDirPath);
-    if (!artworkSaveDirPath) return;
-    this.setState({ artworkSaveDirPath });
+  private async selectArtworkSaveDirPath() {
+    try {
+      const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.artworkSaveDirPath);
+      if (!artworkSaveDirPath) return;
+      this.setState({ artworkSaveDirPath });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   public render() {
@@ -445,7 +450,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         fill
         defaultValue={this.state.artworkSaveDirPath}
         onChange={artworkSaveDirPath => this.setState({ artworkSaveDirPath })}
-        overrideOnTap={() => this.selectartworkSaveDirPath()}
+        overrideOnTap={() => this.selectArtworkSaveDirPath()}
       />}
     </HorizontalStack>;
   }

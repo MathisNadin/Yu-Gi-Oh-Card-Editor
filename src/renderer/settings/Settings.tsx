@@ -39,9 +39,14 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultRenderPath() {
-    const defaultRenderPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultRenderPath);
-    if (!defaultRenderPath) return;
-    await this.onDefaultRenderPathChanged(defaultRenderPath);
+    try {
+      const defaultRenderPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultRenderPath);
+      if (!defaultRenderPath) return;
+      await this.onDefaultRenderPathChanged(defaultRenderPath);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   private async onDefaultRenderPathChanged(defaultRenderPath: string) {
@@ -49,9 +54,14 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultArtworkPath() {
-    const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultArtworkPath);
-    if (!defaultArtworkPath) return;
-    await this.onDefaultArtworkPathChanged(defaultArtworkPath);
+    try {
+      const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultArtworkPath);
+      if (!defaultArtworkPath) return;
+      await this.onDefaultArtworkPathChanged(defaultArtworkPath);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   private async onDefaultArtworkPathChanged(defaultArtworkPath: string) {
@@ -59,9 +69,14 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultImgImportPath() {
-    const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultImgImportPath);
-    if (!defaultImgImportPath) return;
-    await this.onDefaultImgImportPathChanged(defaultImgImportPath);
+    try {
+      const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultImgImportPath);
+      if (!defaultImgImportPath) return;
+      await this.onDefaultImgImportPathChanged(defaultImgImportPath);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   private async onDefaultImgImportPathChanged(defaultImgImportPath: string) {

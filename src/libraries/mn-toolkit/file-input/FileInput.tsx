@@ -46,9 +46,12 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
     if (this.props.overrideOnTap) {
       app.$errorManager.handlePromise(this.props.overrideOnTap(e));
     } else {
-      const path = await window.electron.ipcRenderer.getFilePath();
-      if (path) {
-        this.onChange({ target: { value: path } } as FormEvent<HTMLInputElement>);
+      try {
+        const path = await window.electron.ipcRenderer.getFilePath();
+        if (path) this.onChange({ target: { value: path } } as FormEvent<HTMLInputElement>);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
     }
   }

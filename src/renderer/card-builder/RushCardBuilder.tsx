@@ -91,19 +91,31 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     let artworkExists = false;
     if (!isEmpty(card.artwork.url)) {
-      artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
+      try {
+        artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
     }
 
     if (artworkExists) {
       croppedArtworkBase64 = `file://${card.artwork.url}`;
-      croppedArtworkBase64 = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
-      croppedArtworkBase64 = await getCroppedArtworkBase64(croppedArtworkBase64, {
-        x: card.artwork.x,
-        y: card.artwork.y,
-        height: card.artwork.height,
-        width: card.artwork.width,
-        unit: '%'
-      });
+      try {
+        croppedArtworkBase64 = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
+        croppedArtworkBase64 = await getCroppedArtworkBase64(croppedArtworkBase64,
+          {
+            x: card.artwork.x,
+            y: card.artwork.y,
+            height: card.artwork.height,
+            width: card.artwork.width,
+            unit: '%'
+          }
+        );
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
     } else {
       croppedArtworkBase64 = artworkBg;
     }

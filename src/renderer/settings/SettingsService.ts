@@ -75,25 +75,36 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
       settings: this._settings,
       cards: app.$card.exportCardData,
     };
-    await window.electron.ipcRenderer.writeJsonFile('card_editor_data', JSON.stringify(data));
+
+    try {
+      await window.electron.ipcRenderer.writeJsonFile('card_editor_data', JSON.stringify(data));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   public async importData() {
-    const buffer = await window.electron.ipcRenderer.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
-    if (!buffer) return;
+    try {
+      const buffer = await window.electron.ipcRenderer.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
+      if (!buffer) return;
 
-    const data = JSON.parse(buffer.toString()) as IExportData;
-    if (!data) return;
+      const data = JSON.parse(buffer.toString()) as IExportData;
+      if (!data) return;
 
-    if (data.settings) {
-      const settings = deepClone(data.settings);
-      this.correct(settings);
-      this._settings = settings;
-      await app.$indexedDB.save<SettingsStorageKey, IUserSettings>('user-settings', this._settings);
-      this.fireSettingsUpdated();
+      if (data.settings) {
+        const settings = deepClone(data.settings);
+        this.correct(settings);
+        this._settings = settings;
+        await app.$indexedDB.save<SettingsStorageKey, IUserSettings>('user-settings', this._settings);
+        this.fireSettingsUpdated();
+      }
+
+      if (data.cards) await app.$card.importCardData(data.cards);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
-
-    if (data.cards) await app.$card.importCardData(data.cards);
   }
 
 }

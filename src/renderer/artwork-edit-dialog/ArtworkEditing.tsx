@@ -121,9 +121,14 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private async doSelectImgPath() {
-    const path = await window.electron.ipcRenderer.getFilePath(app.$settings.settings.defaultArtworkPath);
-    if (!path) return;
-    this.onArtworkURLChange(path);
+    try {
+      const path = await window.electron.ipcRenderer.getFilePath(app.$settings.settings.defaultArtworkPath);
+      if (!path) return;
+      this.onArtworkURLChange(path);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   private switchKeepRatio() {
