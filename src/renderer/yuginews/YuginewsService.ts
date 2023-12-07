@@ -570,11 +570,11 @@ export class YuginewsService {
             arrows.top = true;
             break;
 
-          case 'Haut-Droite':
+          case 'Haut-Gauche':
             arrows.topLeft = true;
             break;
 
-          case 'Haut-Gauche':
+          case 'Haut-Droite':
             arrows.topRight = true;
             break;
 
