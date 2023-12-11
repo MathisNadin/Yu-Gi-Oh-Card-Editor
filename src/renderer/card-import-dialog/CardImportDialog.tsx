@@ -78,7 +78,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
       selectedCardsNum: 0,
       cardsDataSortOption: 'theme',
       cardsDataSortOrder: 'asc',
-      artworkSaveDirPath: app.$settings.settings.defaultImgImportPath,
+      artworkSaveDirPath: `${app.$settings.settings.defaultImgImportPath}`,
       yuginewsImporting: false,
       cardsImported: 0,
       cardsToImport: 0,
