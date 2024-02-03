@@ -5,15 +5,17 @@ function arrayIntersect<T>(this: T[], b: T[]) {
 }
 
 function arrayUniq<T>(this: T[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let tmp : any = {};
   this.forEach((v) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tmp[v as any] = true;
   });
 
   return Object.keys(tmp);
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 function arrayFind<T>(this: T[], predicate: (item: T, index: number, o: Object)=>boolean, context?: any) : T | undefined {
   if (this == null) throw new TypeError('"this" is null or not defined');
   let o = Object(this);

@@ -55,6 +55,7 @@ export function delay<T>(ms: number) {
     });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toArray<T>(arrayLike: any): T[] {
   const arr: T[] = [];
 
@@ -183,6 +184,7 @@ export function canvasToBlob(
 export function createImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     img.decode = () => resolve(img) as any;
     img.onload = () => resolve(img);
     img.onerror = reject;

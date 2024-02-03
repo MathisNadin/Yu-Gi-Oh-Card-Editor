@@ -1,5 +1,6 @@
 import { isArray, monkeyPatch } from "..";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 let prototype: { [name: string]: Function } = {};
 
 prototype.toCamelCase = function (this: string) {
@@ -90,7 +91,9 @@ prototype.iequals = function (this: string, to: string) {
   return this.icompare(to) === 0;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 prototype.format = function (this: string, ...tokens: Object[]) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   let result = this;
   for (let i = 0; i < tokens.length; i++) {
     result = result.replace(`$${i}`, tokens[i].toString());
@@ -194,6 +197,7 @@ declare global {
     icompare(to: string): number;
     icontains(to: string): boolean;
     iequals(to: string): boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     format(...tokens: any[]): string;
 
     /**

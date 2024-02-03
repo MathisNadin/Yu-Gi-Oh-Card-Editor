@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import { CardService } from './card/CardService';
-import { MediaWikiService } from 'renderer/media-wiki/MediaWikiService';
+import { MediaWikiService } from '../media-wiki/MediaWikiService';
 import { YuginewsService } from './yuginews/YuginewsService';
 import { extendNativeObjects } from 'libraries/mn-tools/patch';
 import { setupAppAndToolkit } from 'libraries/mn-toolkit/index';

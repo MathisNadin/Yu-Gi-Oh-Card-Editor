@@ -100,7 +100,6 @@ async function cloneChildren<T extends HTMLElement>(
       deferred
         .then(() => cloneNode(child, options, cloneCSSStyleOptions))
         .then((clonedChild: HTMLElement | null) => {
-          // eslint-disable-next-line promise/always-return
           if (clonedChild) {
             clonedNode.appendChild(clonedChild);
           }
@@ -166,7 +165,7 @@ function cloneInputValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
 
 function cloneSelectValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
   if (isInstanceOfElement(nativeNode, HTMLSelectElement)) {
-    const clonedSelect = clonedNode as any as HTMLSelectElement;
+    const clonedSelect = clonedNode as unknown as HTMLSelectElement;
     const selectedOption = Array.from(clonedSelect.children).find(
       (child) => nativeNode.value === child.getAttribute('value')
     );

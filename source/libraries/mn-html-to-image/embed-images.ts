@@ -59,6 +59,7 @@ async function embedImageNode<T extends HTMLElement | SVGImageElement>(
 
     const image = clonedNode as HTMLImageElement;
     if (image.decode) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       image.decode = resolve as any;
     }
 

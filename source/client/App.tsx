@@ -1,4 +1,4 @@
-import './App.css';
+import './index.scss';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { CardHandler } from './home/Home';
 

@@ -12,6 +12,7 @@ export type __Dictionary<T> = { [key: string]: T } | { [oid: number]: T };
 export function clone<T>(object: T): T {
   if (object === undefined) return undefined as T;
   if (object === null) return null as T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (isArray(object)) return (object as any).slice(0);
   let copy = Object.create(Object.getPrototypeOf(object));
   extend(copy, object);
@@ -41,12 +42,14 @@ export function unserialize(json: string) {
       return value;
     });
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error as any).more = { json };
     throw error;
   }
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function serialize(data: any) {
   return JSON.stringify(data, (k, v) => {
     if (typeof k === 'string' && k.length > 0 && k.charAt(0) === '$') return undefined;
@@ -75,10 +78,12 @@ export function asArray<T>(x: T | T[]) : T[] {
  * @return Resulting augmented object
  */
 export function defaults<T>(object: T, ...args: Partial<T>[]): T {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!object) (object as any) = {};
   if (!isObject(object)) return object;
   for (let source of args) {
     for (let prop in source) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (object[prop] === void 0) object[prop] = source[prop] as any;
     }
   }
@@ -94,6 +99,7 @@ export function defaults<T>(object: T, ...args: Partial<T>[]): T {
  * @return resulting augmented object
  */
 export function extend<T>(object: T, ...args: Partial<T>[]): T {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!object) (object as any) = {};
   if (!isObject(object))
     return object;
@@ -101,6 +107,7 @@ export function extend<T>(object: T, ...args: Partial<T>[]): T {
   for (let source of args) {
     for (property in source) {
       if (source.hasOwnProperty(property)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (object as any)[property] = (source as any)[property];
       }
     }
@@ -116,6 +123,7 @@ export function extend<T>(object: T, ...args: Partial<T>[]): T {
  * @param context
  * @return the array
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapa<T>(source: { [key: string]: T }, iteratee: (item: T, key?: string) => any, context?: any): any[] {
   if (source === null) return [];
   // eslint-disable-next-line no-restricted-syntax
@@ -135,6 +143,7 @@ export function mapa<T>(source: { [key: string]: T }, iteratee: (item: T, key?: 
  * @param key property name to test
  * @return true is it owns it
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function has(object: any, key: string): boolean {
   return object !== null && object.hasOwnProperty(key);
 }
@@ -147,6 +156,7 @@ export function has(object: any, key: string): boolean {
  * @param iteratee function that will iterate
  * @param context a context to apply the callback to
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function each<T>(object: { [key: string]: T }, iteratee: (item: T, key: string) => boolean | void, context?: any): void {
   if (object === null) return;
   // eslint-disable-next-line no-restricted-syntax
@@ -159,6 +169,7 @@ export function each<T>(object: { [key: string]: T }, iteratee: (item: T, key: s
 }
 
 // FIXME: n'a rien à faire ici
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function diff(o: any[], n: any[]) {
   o = o.slice(0);
   n = n.slice(0);
@@ -193,6 +204,7 @@ export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): {
   let result: { [key: string]: T } = {};
   let callback: KeyByCallback<T>;
   if (typeof fieldOrCallback === 'string') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback = x => x[fieldOrCallback] as any;
   } else {
     callback = fieldOrCallback as KeyByCallback<T>;
@@ -203,6 +215,7 @@ export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): {
   return result;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function sortBy<T>(a: T[], field: keyof T, orderList: any[]) {
   let kb = keyBy(a, field);
   return orderList.map(x => kb[x]);
@@ -225,6 +238,7 @@ export function keyByAccumulated<T>(a: T[], fieldOrCallback: string | KeyByCallb
   return result;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type keyByMultipleCallback<T> = (root: { [k: string]: any }, value: string, item: T) => void;
 /**
  * Index an array of object by key. Each record is itself an array so
@@ -245,6 +259,7 @@ export function keyByMultiple<T>(items: T[], fieldsOrField: string | string[], a
   } else {
     aggregate = aggregateOrNull;
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: { [k: string]: any } = {};
   let last = fields.length - 1;
   items.forEach(item => {
@@ -252,9 +267,12 @@ export function keyByMultiple<T>(items: T[], fieldsOrField: string | string[], a
     for (let i = 0, length = fields.length; i < length; i++) {
       let key = fields[i];
       if (i < last) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (!root[(item as any)[key] as string]) root[(item as any)[key] as string] = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         root = root[(item as any)[key] as string];
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         aggregate(root, (item as any)[key] as string, item);
       }
     }
@@ -268,6 +286,7 @@ export function keyByMultiple<T>(items: T[], fieldsOrField: string | string[], a
  * @param object the object
  * @return the keys
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
  export function keys(object: any): string[] {
   if (!isObject(object))
     return [];
@@ -291,18 +310,21 @@ export function values<T>(object: __Dictionary<T>): T[] {
   let length = ks.length;
   let values: T[] = Array(length);
   for (let i = 0; i < length; i++) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values[i] = (object as any)[ks[i]];
   }
   return values;
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 export function monkeyPatch(obj: any, name: string, fn: Function) {
   if (!(name in obj)) {
     Object.defineProperty(obj, name, { value: fn });
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function monkeyPatchGet(obj: any, name: string, fn: {get: () => number}) {
   if (!(name in obj)) {
     Object.defineProperty(obj, name, fn);

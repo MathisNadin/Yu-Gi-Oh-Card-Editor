@@ -6,6 +6,7 @@ const PHONE_NUMBER_REGEXP = /^[\s\(\)\+0-9]+$/i;
 
 const UUID_REGEXP = /^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function kind(variable: any): string {
   return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
 }
@@ -17,11 +18,13 @@ function kind(variable: any): string {
  * @param {object} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function hasKeys(subject: any): boolean {
   for (let key in subject) if (subject.hasOwnProperty(key)) return true;
   return false;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function stringify(o: any) {
   return JSON.stringify(o);
 }
@@ -32,6 +35,7 @@ function stringify(o: any) {
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isClass(func: any): boolean {
   return hasKeys(func.prototype) || (typeof func === 'function' && /^class\s/.test(Function.prototype.toString.call(func)));
 }
@@ -43,6 +47,7 @@ export function isClass(func: any): boolean {
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 export function isFunction(obj: any): obj is Function { return kind(obj) === 'function'; }
 
 
@@ -52,6 +57,7 @@ export function isFunction(obj: any): obj is Function { return kind(obj) === 'fu
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isString(obj: any): obj is string { return kind(obj) === 'string'; }
 
 
@@ -61,6 +67,7 @@ export function isString(obj: any): obj is string { return kind(obj) === 'string
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isNumber(obj: any): obj is number { return kind(obj) === 'number'; }
 
 
@@ -70,6 +77,7 @@ export function isNumber(obj: any): obj is number { return kind(obj) === 'number
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isDate(obj: any): obj is Date { return kind(obj) === 'date'; }
 
 
@@ -79,10 +87,12 @@ export function isDate(obj: any): obj is Date { return kind(obj) === 'date'; }
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isArray(obj: any) : obj is any[] {
   return kind(obj) === 'array';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isError(obj: any) : obj is Error {
   return obj instanceof Error;
 }
@@ -94,6 +104,7 @@ export function isError(obj: any) : obj is Error {
  *
  * @param {Object} subject subject to test.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isUndefined(subject: any): subject is undefined {
   return typeof subject === 'undefined';
 }
@@ -113,11 +124,13 @@ export function isUndefined(subject: any): subject is undefined {
  *
  * @param {Object} subject subject to test.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isNumeric(subject: any): subject is number {
   return NUMERIC_REGEXP.test(`${subject}`);
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isInteger(subject: any): subject is number {
   return NUMERIC_REGEXP.test(`${subject}`);
 }
@@ -128,10 +141,12 @@ export function isInteger(subject: any): subject is number {
  *
  * @param {Object} subject subject to test.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 export function isObject(subject: any): subject is Object {
   return !isUndefined(subject) && !isArray(subject) && (typeof subject === 'object');
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isBoolean(subject: any): subject is boolean {
   return typeof subject === 'boolean';
 }
@@ -142,6 +157,7 @@ export function isBoolean(subject: any): subject is boolean {
  *
  * @param {Object} subject subject to test.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isEmpty(subject: any): boolean {
   return (
     isUndefined(subject) ||
@@ -159,6 +175,7 @@ export function isEmpty(subject: any): boolean {
  * @param {number} min the length to check
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isMinimumLength(subject: any, min: number): boolean {
   return typeof subject === 'string' && subject.length >= min;
 }
@@ -170,6 +187,7 @@ export function isMinimumLength(subject: any, min: number): boolean {
  * @param {Object} value the value
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isEquals(subject: any, value: any): boolean {
   return stringify(subject) === stringify(value);
 }
@@ -181,6 +199,7 @@ export function isEquals(subject: any, value: any): boolean {
  * @param {object} reference the reference
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isDifferent(subject: any, reference: any): boolean {
   return stringify(subject) !== stringify(reference);
 }
@@ -191,6 +210,7 @@ export function isDifferent(subject: any, reference: any): boolean {
  * @param {object} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isRegexp(subject: any): subject is RegExp {
   return subject instanceof RegExp;
 }
@@ -202,6 +222,7 @@ export function isRegexp(subject: any): subject is RegExp {
  * @param {string} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isEmail(subject: any): subject is string {
   return EMAIL_REGEXP.test(`${subject}`);
 }
@@ -213,6 +234,7 @@ export function isEmail(subject: any): subject is string {
  * @param {object} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isPhoneNumber(subject: any): subject is string {
   return PHONE_NUMBER_REGEXP.test(`${subject}`);
 }
@@ -224,6 +246,7 @@ export function isPhoneNumber(subject: any): subject is string {
  * @param {object} subject the subject
  * @return {boolean} true if the test is successful
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isUuid(subject: any): subject is string {
   return UUID_REGEXP.test(`${subject}`);
 }

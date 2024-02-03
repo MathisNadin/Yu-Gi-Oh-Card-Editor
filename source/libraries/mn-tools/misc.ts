@@ -62,6 +62,7 @@ export function seq(count: number, from = 0, step = 1) {
  * @param {any} x source value
  * @return {number} integer value
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function integer(x: any) {
   return Math.round(float(x));
 }
@@ -73,6 +74,7 @@ export function integer(x: any) {
  * @param {any} x source value
  * @return {number} integer value
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function positiveInteger(x: any) {
   let ix = integer(x);
   return ix < 0 ? 0 : ix;
@@ -85,6 +87,7 @@ export function positiveInteger(x: any) {
  * @param {any} x source value
  * @return {number} integer value
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function float(x: any) {
   let sx = isEmpty(x) ? '0.0' : `${x}`;
   sx = sx.replace(/,/g, '.');
@@ -99,6 +102,7 @@ export function float(x: any) {
  * @param {any} x source value
  * @return {number} integer value
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function positiveFloat(x: any) {
   let ix = float(x);
   return ix < 0 ? 0 : ix;
@@ -111,6 +115,7 @@ export function positiveFloat(x: any) {
  * @param {any} x source value
  * @return {boolean} integer value
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function boolean(x: any, d = false) {
   if (typeof x === 'undefined') return d;
   if (isBoolean(x)) return x;
@@ -122,10 +127,13 @@ export function boolean(x: any, d = false) {
 
 
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function debounce(func: Function, wait?: number) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let timeout: any;
   // var count = 0;
   if (typeof wait === 'undefined') wait = 200;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function(this: any, ...args: any[]) {
     let later = () => {
       timeout = null;
@@ -465,7 +473,8 @@ export function parseUri(uri: string): IParsedURI {
   let result: IParsedURI = {} as IParsedURI;
 
   for (let iKey = 14; iKey >= 0; iKey--) {
-    (result as any)[keys[iKey]] = matches[iKey] || "";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (result as any)[keys[iKey]] = matches[iKey] || '';
   }
   result.parameters = {};
   result.query.replace(/(?:^|&)([^&=]*)=?([^&]*)/g, (foo, key: string, value: string) => {
@@ -563,6 +572,7 @@ export function imageResizer(options: ImageResizerOptions, cb: (error: Error | u
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function classNames(...args: any[]): string {
   let result = [];
   for (let arg of args) {
