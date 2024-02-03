@@ -1,0 +1,285 @@
+@import '../index.scss';
+
+@mixin themeTypographyEnrichment {
+  em,
+  i {
+    font-style: italic;
+  }
+  strong,
+  b {
+    font-weight: bold;
+  }
+  u {
+    text-decoration: underline;
+  }
+  a {
+    color: $primary;
+    .mn-dark-theme & {
+      color: white(0.7);
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@mixin themeTypographyText() {
+  font-size: 16px;
+  line-height: 140%;
+  font-family: $theme-default-font-name;
+}
+
+@mixin themeTypographyColor() {
+  &.mn-color-primary { color: $primary; }
+  &.mn-color-positive { color: $positive; }
+  &.mn-color-calm { color: $calm; }
+  &.mn-color-balanced { color: $balanced; }
+  &.mn-color-energized { color: $energized; }
+  &.mn-color-assertive { color: $assertive; }
+  &.mn-color-royal { color: $royal; }
+  &.mn-color-1 { color: nth($theme-light-fg, 1); }
+  &.mn-color-2 { color: nth($theme-light-fg, 2); }
+  &.mn-color-3 { color: nth($theme-light-fg, 3); }
+  &.mn-color-4 { color: nth($theme-light-fg, 4); }
+
+  .mn-dark-theme &.mn-color-1 { color: nth($theme-dark-fg, 1); }
+  .mn-dark-theme &.mn-color-2 { color: nth($theme-dark-fg, 2); }
+  .mn-dark-theme &.mn-color-3 { color: nth($theme-dark-fg, 3); }
+  .mn-dark-theme &.mn-color-4 { color: nth($theme-dark-fg, 4); }
+}
+
+@mixin themeTypographyH1() {
+  margin: calc($themeDefaultSpacing/2) 0;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 42px;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyH2() {
+  margin: $themeDefaultSpacing 0;
+  font-size: 35px;
+  font-weight: 400;
+  line-height: 120%;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyH3() {
+  margin: $themeDefaultSpacing 0;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 120%;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyH4() {
+  margin: calc($themeDefaultSpacing/2) 0;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 27px;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyH5() {
+  margin: calc($themeDefaultSpacing/2) 0;
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.6;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyH6() {
+  margin: calc($themeDefaultSpacing/2) 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 110%;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyList {
+  list-style-position: outside;
+  margin: 0 0 $themeDefaultSpacing * 2 $themeDefaultSpacing * 2;
+  li {
+    margin-top: calc($themeDefaultSpacing/2);
+    line-height: 25px;
+  }
+}
+
+@mixin themeTypographyOL {
+  @include themeTypographyList();
+  list-style-type: decimal;
+  ol {
+    list-style-type: lower-latin;
+  }
+}
+
+@mixin themeTypographyUL {
+  @include themeTypographyList();
+  list-style-type: disc;
+  ul {
+    list-style-type: circle;
+  }
+}
+
+@mixin themeTypographySubtitle {
+  @include themeTypographyText();
+  line-height: 1.75;
+}
+
+@mixin themeTypographyLabel {
+  font: 400 20px/130% $theme-default-font-name;
+  letter-spacing: -0.3px;
+  @include fg(1);
+  pointer-events: none;
+}
+
+@mixin themeTypographyCaption {
+  @include fg(2);
+  font: 400 14px/120% $theme-default-font-name;
+  font-style: italic;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyHelp {
+  font: 400 14px/140% $theme-default-font-name;
+  @include themeTypographyColor();
+}
+
+@mixin themeTypographyParagraph {
+  @include themeTypographyText();
+  margin-bottom: $themeDefaultSpacing;
+}
+
+@mixin themeTypographyBlockquote {
+  &:not(.code-block) {
+    @include bg(2);
+    border-left: 5px solid #ccc !important;
+    @include border-color(1);
+    margin: $themeDefaultSpacing 0 !important;
+    padding: $themeDefaultSpacing !important;
+    quotes: none;
+    &:before {
+      @include fg(2);
+      content: '“';
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
+    p {
+      &:last-child {
+        font-size: 1.2em;
+        font-weight: 300;
+        font-style: italic;
+        display: inline,
+      }
+    }
+  }
+}
+
+@mixin themeTypographyDocument {
+  @include themeTypographyText();
+  blockquote,
+  q {
+    @include themeTypographyBlockquote();
+  }
+  p {
+    @include themeTypographyParagraph();
+  }
+}
+
+@mixin text-overflow() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 130%;
+}
+
+.mn-typography-right {
+  text-align: right;
+}
+.mn-typography-center {
+  text-align: center;
+}
+
+.mn-typography-h1 {
+  @include themeTypographyH1;
+}
+.mn-typography-h2 {
+  @include themeTypographyH2;
+}
+.mn-typography-h3 {
+  @include themeTypographyH3;
+}
+.mn-typography-h4 {
+  @include themeTypographyH4;
+}
+.mn-typography-h5 {
+  @include themeTypographyH5;
+}
+.mn-typography-h6 {
+  @include themeTypographyH6;
+}
+.mn-typography-subtitle {
+  @include themeTypographySubtitle;
+}
+.mn-typography-paragraph {
+  @include themeTypographyParagraph;
+}
+
+.mn-typography-caption {
+  @include themeTypographyCaption;
+}
+.mn-typography-help {
+  @include themeTypographyHelp;
+}
+.mn-typography-label {
+  @include themeTypographyLabel;
+  @include themeTypographyEnrichment;
+}
+
+.mn-typography-document {
+  @include themeTypographyDocument;
+}
+.mn-typography-attention {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: rgba(red, 0.2);
+  border: 1px solid rgba(red, 0.2);
+  border-radius: $themeDefaultBorderRadius;
+  color: rgba(red, 0.6);
+}
+
+.mn-typography-no-wrap {
+  @include text-overflow;
+}
+
+.mn-typography {
+  @include mnLayountContainable();
+  color: #474747;
+}
+
+.mn-typography-h1 {
+  @include themeTypographyH1();
+  margin: 0;
+}
+.mn-typography-h2 {
+  @include themeTypographyH2();
+  margin: 0;
+}
+.mn-typography-h3 {
+  @include themeTypographyH3();
+  margin: 0;
+}
+.mn-typography-h4 {
+  @include themeTypographyH4();
+  margin: 0;
+}
+.mn-typography-h5 {
+  @include themeTypographyH5();
+  margin: 0;
+}
+.mn-typography-h6 {
+  @include themeTypographyH6();
+  margin: 0;
+}

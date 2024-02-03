@@ -1,0 +1,24 @@
+@import '../index.scss';
+
+.mn-number-input {
+  @include mnLayountContainable();
+  line-height: $themeDefaultItemHeight - 2px;
+  min-height: $themeDefaultItemHeight - 2px;
+
+  border-width: 1px;
+  border-style: solid;
+  @include border-color(4);
+  border-radius: $themeDefaultBorderRadius;
+
+  @include fg(1);
+  @include bg(1);
+  padding: 0 calc($themeDefaultSpacing/2);
+  appearance: textfield;
+  &::placeholder {
+    @include fg(2);
+  }
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

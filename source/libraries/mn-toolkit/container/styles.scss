@@ -1,0 +1,192 @@
+@import '../index.scss';
+
+.mn-container {
+  @include mnLayountContainable();
+
+  &.mn-layout-item-valign-top {
+    align-items: flex-start;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-valign-middle {
+    align-items: center;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-valign-bottom {
+    align-items: flex-end;
+    justify-content: initial;
+  }
+
+  &.mn-layout-item-align-left {
+    justify-content: flex-start;
+  }
+
+  &.mn-layout-item-align-center {
+    justify-content: center;
+  }
+
+  &.mn-layout-item-align-right {
+    justify-content: flex-end;
+  }
+
+  &.horizontal-stack {
+    flex-direction: row;
+  }
+
+  &.vertical-stack {
+    flex-direction: column;
+
+    &.mn-layout-item-align-left {
+      align-items: flex-start;
+      justify-content: initial;
+    }
+
+    &.mn-layout-item-align-center {
+      align-items: center;
+      justify-content: initial;
+    }
+
+    &.mn-layout-item-align-right {
+      align-items: flex-end;
+      justify-content: initial;
+    }
+
+    &.mn-layout-item-valign-top {
+      justify-content: flex-start;
+    }
+
+    &.mn-layout-item-valign-middle {
+      justify-content: center;
+    }
+
+    &.mn-layout-item-valign-bottom {
+      justify-content: flex-end;
+    }
+  }
+
+  &.mn-layout-wrap {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  &.mn-layout-gutter {
+    gap: $themeDefaultSpacing;
+  }
+
+  &.mn-layout-margin-horizontal {
+    margin: 0 $themeDefaultSpacing;
+  }
+
+  &.mn-layout-margin-vertical {
+    margin: $themeDefaultSpacing 0;
+  }
+
+  &.mn-layout-margin {
+    margin: $themeDefaultSpacing;
+  }
+
+  &.mn-layout-padding-horizontal {
+    padding: 0 $themeDefaultSpacing;
+  }
+
+  &.mn-layout-padding-vertical {
+    padding: $themeDefaultSpacing 0;
+  }
+
+  .mn-layout-padding {
+    padding: $themeDefaultSpacing;
+  }
+
+  &.mn-scroll {
+    overflow-y: auto;
+  }
+
+  &.mn-scrollX {
+    overflow-x: auto;
+  }
+}
+
+
+
+
+
+$COLUMNS: (
+  -1: percentage(calc(1 / 12)),
+  -2: percentage(calc(2 / 12)),
+  -3: percentage(calc(3 / 12)),
+  -4: percentage(calc(4 / 12)),
+  -5: percentage(calc(5 / 12)),
+  -6: percentage(calc(6 / 12)),
+  -7: percentage(calc(7 / 12)),
+  -8: percentage(calc(8 / 12)),
+  -9: percentage(calc(9 / 12)),
+  -10: percentage(calc(10 / 12)),
+  -11: percentage(calc(11 / 12)),
+  -12: percentage(calc(12 / 12))
+);
+
+@mixin gridset($bp) {
+
+  @each $colwidth,
+  $width in $COLUMNS {
+    .mn-containable-item-width#{$bp}#{$colwidth} {
+      min-width: #{$width};
+      max-width: #{$width};
+      flex-basis: #{$width};
+    }
+  }
+}
+
+
+.grid-stack {
+  .mn-layout-gutter {
+    gap: initial;
+    margin-top: -$themeDefaultSpacing;
+    margin-left: -$themeDefaultSpacing;
+
+    >* {
+      padding: $themeDefaultSpacing 0 0 $themeDefaultSpacing;
+
+      >* {
+        width: 100%;
+      }
+    }
+
+  }
+
+  @include gridset("-s");
+
+  @include on(medium) {
+    @include gridset("-m");
+  }
+
+  @include on(large) {
+    @include gridset("-l");
+  }
+
+  @include on(xlarge) {
+    @include gridset("-xl");
+  }
+
+  @include on(xxlarge) {
+    @include gridset("-xxl");
+  }
+}
+
+@mixin columnWidth($nbColumns) {
+  width: calc((100% - (#{$nbColumns} -1) * (2 * 5px + 16px)) / #{$nbColumns}) !important;
+}
+
+
+@mixin frame($name) {
+  border-radius: $themeDefaultBorderRadius;
+  @if ($name=='shadow-1') {
+    @include shadow(0);
+  }
+  @if ($name=='dashed') {
+    border-style: dashed;
+    border-width: 1px;
+    @include border-color(3);
+  }
+}

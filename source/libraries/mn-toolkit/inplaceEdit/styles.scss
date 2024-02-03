@@ -1,0 +1,23 @@
+@import '../index.scss';
+
+.mn-inplace-edit {
+  @include mnLayountContainable();
+  line-height: $themeDefaultItemHeight;
+  min-height: $themeDefaultItemHeight;
+  @include fg(1);
+  @include bg(1);
+
+  .value {
+    line-height: $themeDefaultItemHeight - 4px;
+    min-height: $themeDefaultItemHeight - 4px;
+  }
+
+  div {
+    padding: 2px calc($themeDefaultSpacing/2 + 2px);
+  }
+
+  input {
+    padding: 0 calc($themeDefaultSpacing/2);
+    appearance: textfield;
+  }
+}

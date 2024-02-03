@@ -1,0 +1,440 @@
+@import '../index.scss';
+
+@mixin themeProgressBar() {
+  @include mnLayountContainable();
+  $overloadColor: #d32902;
+  display: flex;
+  flex-direction: column;
+  .message {
+    margin: 5px 0 0 0;
+    font-size: 12px;
+    padding: 0;
+    text-align: right;
+    p {
+      margin: 0;
+      padding: 0;
+    }
+    .percent {
+      float: right;
+      color: gray;
+      &:after {
+        content: '%';
+      }
+      padding-left: 0.5em;
+    }
+  }
+  .progress {
+    position: relative;
+    height: 7px;
+    border-radius: 7px;
+    background: rgba($primary, 0.3);
+    overflow: hidden;
+    @include fx(background-color);
+    .bar {
+      @include fill-all;
+      border-radius: 7px;
+      @include fx(width, background-color);
+      background: $primary;
+    }
+  }
+  &.overload {
+    .progress {
+      background: rgba($overloadColor, 0.3);
+      .bar {
+        background-color: $overloadColor;
+      }
+    }
+  }
+  &.mn-color-primary {
+    .progress {
+      background: rgba($primary, 0.3);
+      .bar {
+        background: $primary;
+      }
+    }
+    .message {
+      color: $primary;
+    }
+  }
+  &.mn-color-positive {
+    .progress {
+      background: rgba($positive, 0.3);
+      .bar {
+        background: $positive;
+      }
+    }
+    .message {
+      color: $positive;
+    }
+  }
+  &.mn-color-calm {
+    .progress {
+      background: rgba($calm, 0.3);
+      .bar {
+        background: $calm;
+      }
+    }
+    .message {
+      color: $calm;
+    }
+  }
+  &.mn-color-balanced {
+    .progress {
+      background: rgba($balanced, 0.3);
+      .bar {
+        background: $balanced;
+      }
+    }
+    .message {
+      color: $balanced;
+    }
+  }
+  &.mn-color-energized {
+    .progress {
+      background: rgba($energized, 0.3);
+      .bar {
+        background: $energized;
+      }
+    }
+    .message {
+      color: $energized;
+    }
+  }
+  &.mn-color-assertive {
+    .progress {
+      background: rgba($assertive, 0.3);
+      .bar {
+        background: $assertive;
+      }
+    }
+    .message {
+      color: $assertive;
+    }
+  }
+  &.mn-color-royal {
+    .progress {
+      background: rgba($royal, 0.3);
+      .bar {
+        background: $royal;
+      }
+    }
+    .message {
+      color: $royal;
+    }
+  }
+  &.mn-color-1 {
+    .progress {
+      background: rgba(nth($theme-light-bg, 1), 0.3);
+      .bar {
+        background: nth($theme-light-bg, 1);
+      }
+    }
+    .message {
+      color: nth($theme-light-bg, 1);
+    }
+  }
+  &.mn-color-2 {
+    .progress {
+      background: rgba(nth($theme-light-bg, 2), 0.3);
+      .bar {
+        background: nth($theme-light-bg, 2);
+      }
+    }
+    .message {
+      color: nth($theme-light-bg, 2);
+    }
+  }
+  &.mn-color-3 {
+    .progress {
+      background: rgba(nth($theme-light-bg, 3), 0.3);
+      .bar {
+        background: nth($theme-light-bg, 3);
+      }
+    }
+    .message {
+      color: nth($theme-light-bg, 3);
+    }
+  }
+  &.mn-color-4 {
+    .progress {
+      background: rgba(nth($theme-light-bg, 4), 0.3);
+      .bar {
+        background: nth($theme-light-bg, 4);
+      }
+    }
+    .message {
+      color: nth($theme-light-bg, 4);
+    }
+  }
+
+  &.mn-thickness-l {
+    .progress {
+      height: 14px;
+      border-radius: 7px;
+      .bar {
+        border-radius: 7px;
+      }
+    }
+  }
+
+  &.mn-thickness-xl {
+    .progress {
+      height: 28px;
+      border-radius: 14px;
+      .bar {
+        border-radius: 14px;
+      }
+    }
+  }
+
+  &.mn-thickness-xs {
+    .progress {
+      height: 2px;
+      border-radius: 0;
+      .bar {
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+@mixin themeStepProgressBar() {
+  display: flex;
+  padding-top: 26px;
+
+  .step {
+    flex: 1 1 0%;
+    margin: 0;
+    padding: 0;
+    min-width: 24px;
+
+    &:last-child {
+      flex-grow: 1;
+    }
+
+    &:last-child .step-circle::after {
+     border-style: dotted;
+     border-color: rgb(224, 224, 224);
+    }
+
+    .step-text {
+      width: 90%;
+    }
+
+    .step-circle {
+      display: block;
+      position: relative;
+      z-index: $z-index-content;
+      content: 'xxx';
+
+      &::before {
+        content: attr(data-text);
+        display: inline-block;
+        position: relative;
+        width: 24px;
+        height: 24px;
+        padding-bottom: 2px;
+        border-radius: 50%;
+        transition: background-color, border-color;
+        transition-duration: 0.3s;
+        background-color: #b6b6b6;
+        @include bgAsFg(1);
+        font-size: 15px;
+        line-height: 25px;
+        text-align: center;
+      }
+
+      .pointer {
+        position: absolute;
+        left: 2px;
+        top: -25px;
+        color: $energized;
+        display: none;
+      }
+
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        z-index: $z-index-content - 1;
+        top: 10px;
+        right: -12px;
+        width: 100%;
+        height: 4px;
+        border-top: 0px solid red;
+        border-bottom: 4px solid#b6b6b6;
+        transition: border-color 0.3s, background-position 0.3s;
+        // background-color: ;
+      }
+    }
+    &:not(.disabled) {
+      .step-circle {
+        &:before {
+          background-color: $secondary;
+        }
+      }
+      .step-text {
+        border-left: 3px dotted $primary;
+      }
+    }
+    &.completed {
+      .step-circle {
+        &:after,
+        &:before {
+          background-color: $primary;
+          border-color: $primary;
+        }
+      }
+      .step-text {
+        border-left: 3px dotted transparent;
+      }
+
+    }
+    &.active {
+      .step-circle {
+        &:before {
+          background-color: $primary;
+        }
+      }
+      .pointer {
+        display: block;
+      }
+  }
+    &.disabled {
+      pointer-events: none;
+      cursor: pointer;
+      .step-text {
+        opacity: 0.7;
+      }
+    }
+
+    &:hover {
+      .step-text {
+        border-left: 3px dotted $primary;
+      }
+      .step-circle {
+        &:before {
+          background-color: darken($primary, 10%);
+        }
+      }
+    }
+  }
+
+  .step-text {
+    transition: border-color 0.4s ease;
+    border-left: 3px solid transparent;
+    padding-left: 4px;
+    display: block;
+    margin: 8px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @include fg(1);
+    .mn-typography-caption {
+      font-size: 12px;
+    }
+  }
+
+  &.mn-color-primary {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $primary;
+        background-color: $primary;
+      }
+    }
+  }
+  &.mn-color-positive {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $positive;
+        background-color: $positive;
+      }
+    }
+  }
+  &.mn-color-calm {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $calm;
+        background-color: $calm;
+      }
+    }
+  }
+  &.mn-color-balanced {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $balanced;
+        background-color: $balanced;
+      }
+    }
+  }
+  &.mn-color-energized {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $energized;
+        background-color: $energized;
+      }
+    }
+  }
+  &.mn-color-assertive {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $assertive;
+        background-color: $assertive;
+      }
+    }
+  }
+  &.mn-color-royal {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: $royal;
+        background-color: $royal;
+      }
+    }
+  }
+  &.mn-color-1 {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: nth($theme-light-bg, 1);
+        @include bg(1);
+      }
+    }
+  }
+  &.mn-color-2 {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: nth($theme-light-bg, 2);
+        @include bg(2);
+      }
+    }
+  }
+  &.mn-color-3 {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: nth($theme-light-bg, 3);
+        @include bg(3);
+      }
+    }
+  }
+  &.mn-color-4 {
+    .segment,
+    .step {
+      &.mn-step-progress-on {
+        border-color: nth($theme-light-bg, 4);
+        @include bg(4);
+      }
+    }
+  }
+}
+
+.mn-progress {
+  @include themeProgressBar();
+}
