@@ -1,6 +1,5 @@
-import './styles.css';
 import { isDefined, classNames } from "libraries/mn-tools";
-import { IContainableProps, IContainableState, Containable } from "../containable/Containable";
+import { IContainableProps, IContainableState, Containable } from "../containable";
 import { TForegroundColor } from '../themeSettings';
 
 interface IButtonLinkProps extends IContainableProps {

@@ -1,11 +1,8 @@
-import './styles.scss';
 import { classNames } from "libraries/mn-tools";
-import { IContainableProps, IContainableState, Containable } from "../containable/Containable";
-import { TIconId } from "../icon";
-import { Icon } from "../icon/Icon";
-import { IPopoverAction, IPopoverOptions } from "../popover/interfaces";
+import { IContainableProps, IContainableState, Containable } from "../containable";
+import { TIconId, Icon } from "../icon";
+import { IPopoverAction, IPopoverOptions } from "../popover";
 import { TForegroundColor } from "../themeSettings";
-import { fireEvent } from "@testing-library/react";
 
 export function DefaultSelectLabelDecorator(label: string) {
   return <span>{label}</span>;

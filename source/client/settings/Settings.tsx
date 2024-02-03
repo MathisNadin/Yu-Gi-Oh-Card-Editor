@@ -1,13 +1,5 @@
-import './styles.scss';
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
+import { IContainableProps, IContainableState, Containable, Button, FileInput, HorizontalStack, Icon, Spacer, Spinner, VerticalStack } from 'libraries/mn-toolkit';
 import { ISettingsListener, IUserSettings } from './SettingsService';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { FileInput } from 'libraries/mn-toolkit/file-input/FileInput';
-import { Icon } from 'libraries/mn-toolkit/icon';
-import { Button } from 'libraries/mn-toolkit/button';
-import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
 
 interface ISettingsProps extends IContainableProps {}
 

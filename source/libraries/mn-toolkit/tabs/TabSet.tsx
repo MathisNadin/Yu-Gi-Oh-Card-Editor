@@ -1,9 +1,8 @@
-import './styles.css';
-import { Containable, IContainableProps } from "libraries/mn-toolkit/containable/Containable";
+import { Containable, IContainableProps } from "libraries/mn-toolkit/containable";
 import { classNames } from "libraries/mn-tools";
 import { ReactNode } from "react";
-import { Typography } from '../typography/Typography';
-import { Spacer } from '../spacer/Spacer';
+import { Typography } from '../typography';
+import { Spacer } from '../spacer';
 import { Icon, TIconId } from '../icon';
 import { ButtonIcon } from '../button';
 import { TForegroundColor, TBackgroundColor } from '../themeSettings';
@@ -131,6 +130,7 @@ export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstrac
       {!!this.props.legend && <Typography variant="h5" content={this.props.legend}/>}
       {this.props.tabPosition==='bottom' && <Spacer />}
       {items.map(item => (
+        // eslint-disable-next-line react/jsx-key
         <span
           className={classNames({ selected: item.selected, disabled: item.disabled }, /* `mn-bg-${item.selectedBg}`, */ "item")}
           id={`mn-tab-button-${item.id}`}
@@ -138,11 +138,11 @@ export class TabSet<TAbstractTabIndex> extends Containable<ITabSetProps<TAbstrac
         >
           {!!item.icon && <Icon className='icon' iconId={item.icon} color={item.iconColor} />}
           <span className="label">{item.label}</span>
-          {item.badge || item.closable || item.stateIcon ? <span className="mn-indicators">
+          {(!!item.badge || !!item.closable || !!item.stateIcon) && <span className="mn-indicators">
             {item.badge ? <span className="mn-badge">{item.badge}</span> : null}
-            {!item.stateIcon ? "" : <span className={`icon ${item.stateIcon} mn-color-${item.stateIconColor}`} />}
-            {item.closable ? <span className="mn-close" onClick={() => this.onClose(item.id as string)} /> : null}
-          </span> : null}
+            {!item.stateIcon ? '' : <span className={`icon ${item.stateIcon} mn-color-${item.stateIconColor}`} />}
+            {!!item.closable && <span className="mn-close" onClick={() => this.onClose(item.id as string)} />}
+          </span>}
         </span>
       ))}
       {this.props.tabPosition==='top' && <Spacer />}

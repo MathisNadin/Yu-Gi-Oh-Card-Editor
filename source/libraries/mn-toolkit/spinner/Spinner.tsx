@@ -1,6 +1,5 @@
-import './styles.css';
 import { classNames } from 'libraries/mn-tools';
-import { Containable, IContainableProps, IContainableState } from "libraries/mn-toolkit/containable/Containable";
+import { Containable, IContainableProps, IContainableState } from "libraries/mn-toolkit/containable";
 
 interface ISpinnerProps extends IContainableProps {
   /** Message in front of the spinner. */

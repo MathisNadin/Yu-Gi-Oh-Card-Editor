@@ -1,6 +1,5 @@
-import './styles.scss';
 import { ReactElement } from 'react';
-import { Containable, IContainableProps, IContainableState } from '../containable/Containable';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 
 export type TIconId = keyof ISvgIcons;

@@ -1,10 +1,8 @@
-/* eslint-disable react/no-danger */
-import './styles.css';
 import {
   IContainableProps,
   IContainableState,
   Containable
-} from 'libraries/mn-toolkit/containable/Containable';
+} from 'libraries/mn-toolkit/containable';
 import { markdownToHtml } from 'libraries/mn-tools';
 
 export type TControlTextContentType = 'html' | 'markdown' | 'text';

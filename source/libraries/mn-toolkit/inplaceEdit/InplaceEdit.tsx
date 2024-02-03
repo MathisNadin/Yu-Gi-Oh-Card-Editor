@@ -1,7 +1,5 @@
-import './styles.scss';
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { classNames } from 'libraries/mn-tools';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable';
+import { VerticalStack } from 'libraries/mn-toolkit/container';
 import { KeyboardEvent, MouseEvent, createRef } from 'react';
 
 interface InplaceEditProps extends IContainableProps {
@@ -32,7 +30,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
     this.tempValue = props.value;
   }
 
-  public componentDidUpdate(prevProps: Readonly<InplaceEditProps>, prevState: Readonly<InplaceEditState>, snapshot?: any) {
+  public componentDidUpdate() {
     setTimeout(() => {
       if (this.state.isFocused) this.inputRef.current?.focus();
     }, 100);

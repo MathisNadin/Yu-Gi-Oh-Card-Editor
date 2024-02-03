@@ -1,4 +1,3 @@
-import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
@@ -7,17 +6,17 @@ import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/m
 import { InplaceEdit } from 'libraries/mn-toolkit/inplaceEdit/InplaceEdit';
 import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
 import { Typography } from 'libraries/mn-toolkit/typography/Typography';
-import { TextInput } from 'libraries/mn-toolkit/text-input/TextInput';
+import { TextInput } from 'libraries/mn-toolkit/textInput/TextInput';
 import { Button, ButtonIcon } from 'libraries/mn-toolkit/button';
 import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
 import { Icon } from 'libraries/mn-toolkit/icon';
 import { Select } from 'libraries/mn-toolkit/select/Select';
-import { FileInput } from 'libraries/mn-toolkit/file-input/FileInput';
+import { FileInput } from 'libraries/mn-toolkit/fileInput/FileInput';
 import { CheckBox } from 'libraries/mn-toolkit/checkbox/Checkbox';
 import { Grid } from 'libraries/mn-toolkit/container/Grid';
 import { Image } from 'libraries/mn-toolkit/image/Image';
-import { TextAreaInput } from 'libraries/mn-toolkit/text-area-input/TextAreaInput';
-import { NumberInput } from 'libraries/mn-toolkit/number-input/NumberInput';
+import { TextAreaInput } from 'libraries/mn-toolkit/textAreaInput/TextAreaInput';
+import { NumberInput } from 'libraries/mn-toolkit/numberInput/NumberInput';
 
 interface ICardEditorProps extends IContainableProps {
   card: ICard;

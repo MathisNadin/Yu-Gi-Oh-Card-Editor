@@ -1,4 +1,3 @@
-import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';

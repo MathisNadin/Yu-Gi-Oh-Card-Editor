@@ -1,6 +1,5 @@
-import './styles.scss';
 import { ReactElement, ReactNode } from 'react';
-import { IContainerProps, IContainerState, Container } from 'libraries/mn-toolkit/container/Container';
+import { IContainerProps, IContainerState, Container } from './Container';
 
 export interface IGridProps extends IContainerProps { }
 export interface IGridState extends IContainerState { }
@@ -20,8 +19,8 @@ export class Grid extends Container<IGridProps, IGridState> {
     return this.renderAttributes(<div>
       {(this.props.children as unknown as  ReactNode[])
         .filter(x => !!x)
-        .map(x => <div className={this.getGridItemClasses(x as ReactElement)}
-      >{x}</div>)}
+        // eslint-disable-next-line react/jsx-key
+        .map(x => <div className={this.getGridItemClasses(x as ReactElement)}>{x}</div>)}
     </div>, 'mn-container');
   }
 

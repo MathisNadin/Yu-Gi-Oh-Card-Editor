@@ -1,5 +1,4 @@
-import './styles.scss';
-import { IContainableProps, Containable, IContainableState } from "../containable/Containable";
+import { IContainableProps, Containable, IContainableState } from "../containable";
 
 interface IImageProps extends IContainableProps {
   src: string;

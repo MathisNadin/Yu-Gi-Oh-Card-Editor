@@ -1,9 +1,8 @@
-import './styles.css';
 import {
   IContainerProps,
   IContainerState,
   Container
-} from 'libraries/mn-toolkit/container/Container';
+} from 'libraries/mn-toolkit/container';
 import { classNames } from 'libraries/mn-tools';
 import { ITabItem, TabPosition } from './TabSet';
 

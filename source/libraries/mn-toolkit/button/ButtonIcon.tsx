@@ -1,5 +1,4 @@
-import './styles.scss';
-import { Containable, IContainableProps, IContainableState } from '../containable/Containable';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TForegroundColor, TBackgroundColor } from '../themeSettings';
 import { TIconId } from '../icon';
 

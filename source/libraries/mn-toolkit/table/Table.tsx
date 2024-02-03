@@ -1,21 +1,20 @@
-import './styles.css';
-import { isEmpty, classNames, integer, clone } from 'libraries/mn-tools';
+import { isEmpty, classNames, clone } from 'libraries/mn-tools';
 import {
   IContainerProps,
   IContainerState,
-  Container
-} from '../container/Container';
-import { Spinner } from '../spinner/Spinner';
+  Container,
+  VerticalStack
+} from '../container';
+import { Spinner } from '../spinner';
 import {
   ITableColumn,
   CellValue,
   ITableCell,
-  themeSettings
 } from './interfaces';
 import { ITableRow, TableRow } from './TableRow';
 import { ReactNode } from 'react';
-import { VerticalStack } from '../container/VerticalStack';
 import { Icon } from '../icon';
+import { themeSettings } from '../themeSettings';
 
 interface ITableProps extends IContainerProps {
   /** Set a table of columns. */
@@ -268,8 +267,8 @@ export class Table extends Container<ITableProps, ITableState> {
             <div className="mn-table-row">
               {this.state.columns
                 .map((column, i) => {
-                  return (
-                    <div
+                  // eslint-disable-next-line react/jsx-key
+                  return (<div
                       style={this.state.columnStyle[i]}
                       className={classNames(
                         column.className,
@@ -317,6 +316,7 @@ export class Table extends Container<ITableProps, ITableState> {
           {this.state.rows &&
             this.state.rows.map((row) =>
               [
+                // eslint-disable-next-line react/jsx-key
                 <TableRow
                   row={row}
                   columnStyle={this.state.columnStyle}
@@ -330,6 +330,7 @@ export class Table extends Container<ITableProps, ITableState> {
               ].concat(
                 row.open && row.subRows
                   ? row.subRows.map((row) => (
+                      // eslint-disable-next-line react/jsx-key
                       <TableRow
                         row={row}
                         columnStyle={this.state.columnStyle}

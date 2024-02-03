@@ -1,11 +1,9 @@
-import './styles.scss';
 import { isDefined, classNames, isNumber } from 'libraries/mn-tools';
 import { Component, ReactElement } from 'react';
 import { themeSettings } from '../themeSettings';
-import { ButtonLink } from '../button/ButtonLink';
+import { ButtonLink, ButtonIcon } from '../button';
 import { IDeviceListener } from '../device';
 import { Icon } from '../icon';
-import { ButtonIcon } from '../button';
 import { IPopoverAction, IPopoverOptions } from './interfaces';
 import { PopoverContent } from './PopoverContent';
 
@@ -166,6 +164,7 @@ export class PopoverService implements Partial<IDeviceListener> {
       </div>
       {!!this.options.buttons && <div className="buttons">
         {this.options.buttons.map(button => {
+          // eslint-disable-next-line react/jsx-key
           return <ButtonLink label={button.label} onTap={() => {
             let promise = button.onTap ? button.onTap() : undefined;
             if (promise instanceof Promise) promise.catch((e: Error) => app.$errorManager.trigger(e));

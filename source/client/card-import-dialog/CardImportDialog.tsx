@@ -1,4 +1,3 @@
-import './styles.scss';
 import { IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
@@ -11,10 +10,10 @@ import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
 import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
 import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
 import { Typography } from 'libraries/mn-toolkit/typography/Typography';
-import { TextAreaInput } from 'libraries/mn-toolkit/text-area-input/TextAreaInput';
+import { TextAreaInput } from 'libraries/mn-toolkit/textAreaInput/TextAreaInput';
 import { CheckBox } from 'libraries/mn-toolkit/checkbox/Checkbox';
-import { TextInput } from 'libraries/mn-toolkit/text-input/TextInput';
-import { FileInput } from 'libraries/mn-toolkit/file-input/FileInput';
+import { TextInput } from 'libraries/mn-toolkit/textInput/TextInput';
+import { FileInput } from 'libraries/mn-toolkit/fileInput/FileInput';
 import { Button, ButtonIcon } from 'libraries/mn-toolkit/button';
 import { Table } from 'libraries/mn-toolkit/table/Table';
 import { ITableColumn, TableColumnSortOrder } from 'libraries/mn-toolkit/table/interfaces';

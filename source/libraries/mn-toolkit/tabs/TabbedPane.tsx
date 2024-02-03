@@ -1,11 +1,11 @@
-import './styles.css';
-import { IContainerProps, IContainerState, Container } from "libraries/mn-toolkit/container/Container";
+import { IContainerProps, IContainerState, Container } from "libraries/mn-toolkit/container";
 import { classNames } from "libraries/mn-tools";
 import { ITabSetProps, TabPosition, TabSet, ITabItem } from "./TabSet";
 import { ReactNode } from "react";
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
+import { Spinner } from 'libraries/mn-toolkit/spinner';
 
 export type INodeWithProps = ReactNode & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: any;
 }
 

@@ -1,15 +1,3 @@
-export function themeSettings() {
-  return {
-    "themeDefaultSpacing": 16,
-    "themeDefaultItemHeight": 32,
-    "themeDefaultBorderRadius": 6,
-    "themeDefaultFontSize": 16,
-    "themeMaxContentWidth": 750,
-    "themeMaxListWidth": 749,
-    "fieldBorderSize": 1
-  };
-}
-
 export type TableColumnSortOrder = undefined | 'asc' | 'desc';
 
 export function cycleSortOrder(order: TableColumnSortOrder) {

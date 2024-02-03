@@ -1,15 +1,14 @@
-import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { Crop } from 'react-image-crop';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { classNames, getCroppedArtworkBase64 } from 'libraries/mn-tools';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { FileInput } from 'libraries/mn-toolkit/file-input/FileInput';
+import { FileInput } from 'libraries/mn-toolkit/fileInput/FileInput';
 import { Image } from 'libraries/mn-toolkit/image/Image';
 import { CheckBox } from 'libraries/mn-toolkit/checkbox/Checkbox';
 import { Button } from 'libraries/mn-toolkit/button';
-import { NumberInput } from 'libraries/mn-toolkit/number-input/NumberInput';
+import { NumberInput } from 'libraries/mn-toolkit/numberInput/NumberInput';
 import { Typography } from 'libraries/mn-toolkit/typography/Typography';
 
 interface IArtworkEditingProps extends IContainableProps {

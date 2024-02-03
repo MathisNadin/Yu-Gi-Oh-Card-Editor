@@ -1,11 +1,10 @@
-import './styles.scss';
 import { classNames } from 'libraries/mn-tools';
 import {
   Containable,
   IContainableProps,
   IContainableState
-} from '../containable/Containable';
-import { Typography } from '../typography/Typography';
+} from '../containable';
+import { Typography } from '../typography';
 
 interface ICheckBoxProps extends IContainableProps {
   /** Text in front of the check box. */

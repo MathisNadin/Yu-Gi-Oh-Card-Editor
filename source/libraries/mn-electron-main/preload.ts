@@ -83,3 +83,9 @@ const electronHandler = {
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
 export type ElectronHandler = typeof electronHandler;
+
+declare global {
+  interface Window {
+    electron: ElectronHandler;
+  }
+}

@@ -1,4 +1,3 @@
-import './styles.scss';
 import { Component } from "react";
 import { IPopoverAction, IPopoverOptions } from "./interfaces";
 

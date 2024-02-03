@@ -1,5 +1,4 @@
-import './styles.scss';
-import { IContainableProps, Containable, IContainableState } from "../containable/Containable";
+import { IContainableProps, Containable, IContainableState } from "../containable";
 import { TForegroundColor } from '../themeSettings';
 import { classNames, isEmpty } from 'libraries/mn-tools';
 

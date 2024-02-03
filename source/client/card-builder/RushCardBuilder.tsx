@@ -1,5 +1,4 @@
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import './styles.css';
 import { Container } from 'libraries/mn-toolkit/container/Container';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { CSSProperties, Fragment } from 'react';

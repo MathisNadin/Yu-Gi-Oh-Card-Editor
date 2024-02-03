@@ -8,8 +8,10 @@ export class ApiService {
     this.axiosInstance = axios.create({});
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async get(url: string, options?: AxiosRequestConfig): Promise<any> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: AxiosResponse<any> = await this.axiosInstance.get(url, options);
       return response.data;
     } catch (error) {

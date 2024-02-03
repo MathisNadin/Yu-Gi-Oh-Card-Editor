@@ -1,5 +1,4 @@
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import './styles.css';
 import { Container } from 'libraries/mn-toolkit/container/Container';
 import { ICard } from 'renderer/card/card-interfaces';
 import { CardBuilder } from 'renderer/card-builder/CardBuilder';

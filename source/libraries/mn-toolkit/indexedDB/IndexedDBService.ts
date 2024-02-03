@@ -1,4 +1,4 @@
-import { Observable } from "libraries/mn-toolkit/observable/Observable";
+import { Observable } from "libraries/mn-toolkit/observable";
 
 export interface IIndexedDBListener {
   allDeleted: () => void;
@@ -110,6 +110,7 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
       const objectStore = transaction.objectStore(this.objectStoreName);
       const result: { [key: string]: T } = {};
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       objectStore.openCursor().onsuccess = (event: any) => {
         const cursor = event.target.result;
         if (cursor) {
@@ -170,6 +171,7 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
         reject(new Error(`Failed to clear object store ${this.objectStoreName}`));
       };
       clearRequest.onsuccess = () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.forEach((obj: any) => {
           const putRequest = objectStore.put(obj);
           putRequest.onerror = () => {

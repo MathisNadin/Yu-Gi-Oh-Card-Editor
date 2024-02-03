@@ -44,6 +44,7 @@ export interface IPopoverOptions {
   dontManageFocus?: boolean;
   scrollToItemIndex?: number;
   maxVisibleItems?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actions: IPopoverAction<any>[];
   buttons?: IPopoverButton[];
   doProcessAction?: (event: React.MouseEvent, action: IPopoverAction) => void | Promise<void>;

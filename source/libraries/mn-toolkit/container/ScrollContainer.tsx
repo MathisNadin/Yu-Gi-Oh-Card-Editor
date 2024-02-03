@@ -1,5 +1,3 @@
-/* eslint-disable react/require-default-props */
-import './styles.css';
 import { CSSProperties, Component, ReactNode } from "react";
 
 const containerStyleDefault = {
@@ -53,6 +51,7 @@ interface IValues {
 
 interface IProps {
   className: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   style?: any;
   viewClassName: string;
   scroll?: boolean;

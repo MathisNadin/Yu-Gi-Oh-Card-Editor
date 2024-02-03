@@ -33,9 +33,11 @@ export class ReactService {
       return value;
     }
     if (typeof key === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       element.style[key as any] = convert(key, value as string | number | boolean);
     } else {
       for (let k in key) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (element.style as any)[k] = convert(k, key[k]);
       }
     }

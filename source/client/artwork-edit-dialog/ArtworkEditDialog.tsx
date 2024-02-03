@@ -1,4 +1,3 @@
-import './styles.scss';
 import { IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
 import { isEmpty } from 'libraries/mn-tools';

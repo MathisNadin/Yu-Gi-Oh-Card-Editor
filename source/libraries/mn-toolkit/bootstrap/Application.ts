@@ -1,5 +1,5 @@
 import { each, sortDependencies } from "libraries/mn-tools";
-import { Observable } from "../observable/Observable";
+import { Observable } from "../observable";
 
 export interface IAppSettings {
   dbName: string;
@@ -29,6 +29,7 @@ interface IServiceOptions<T> {
   depends?: (keyof IApp)[];
   name?: string;
   clazz?: T;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   instance?: any;
 }
 
@@ -46,6 +47,7 @@ export class Application
   // implements IApplicationListener
 {
   private configurationCallBack: () => void = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _services: { [name: string]: IServiceOptions<any> } = {};
   private _ready = false;
   private _conf: IApplicationConfig = {} as IApplicationConfig;
@@ -127,6 +129,7 @@ export class Application
   private async bootstrapServices() {
     const graph: { [service: string]: string[] } = {};
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     each(this._services, (options: IServiceOptions<any>, name: string) => {
       if (
         (this._services[name].depends as (keyof IApp)[]).length === 0 &&
@@ -139,6 +142,7 @@ export class Application
     const sortedGraph = sortDependencies(graph);
     // eslint-disable-next-line no-restricted-syntax
     for (const serviceName of sortedGraph) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const service = (app as any)[serviceName];
       if (!service) {
         // eslint-disable-next-line no-console
@@ -179,6 +183,7 @@ export class Application
       get: () => {
         if (!this._services[name].instance) {
           try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this._services[name].instance = new (clazz as any)();
           } catch (e) {
             // eslint-disable-next-line no-console

@@ -1,5 +1,4 @@
 import 'react-image-crop/src/ReactCrop.scss'
-import './styles.scss';
 import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
 import ReactCrop, { Crop } from 'react-image-crop';
 import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';

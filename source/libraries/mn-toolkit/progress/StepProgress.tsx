@@ -1,8 +1,7 @@
-import './styles.scss';
 import { classNames } from "libraries/mn-tools";
-import { Containable, IContainableProps, IContainableState } from "../containable/Containable";
+import { Containable, IContainableProps, IContainableState } from "../containable";
 import { Icon } from "../icon";
-import { Typography } from "../typography/Typography";
+import { Typography } from "../typography";
 import { TForegroundColor } from '../themeSettings';
 
 interface IStep<ID> {
@@ -51,19 +50,22 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
         this.props.className
       )}
     >
-      {(this.props.items as IStep<number>[]).map((step, iStep) => <div
-        onClick={() => (this.props as unknown as IProps<number>).onChange(step.id)}
-        className={classNames('step', {
-          'completed': iStep < progress,
-          'active': step.id === this.props.active,
-          'disabled': iStep > progress,
-        })} >
-        <div className="step-circle" data-text={iStep + 1}><Icon className="pointer" iconId='toolkit-pin' /></div>
-        <div className="step-text">
-          <Typography variant="label" content={step.label} />
-          <Typography variant="caption" content={step.description} />
-        </div>
-      </div>)}
+      {(this.props.items as IStep<number>[]).map((step, iStep) => {
+        // eslint-disable-next-line react/jsx-key
+        return <div
+          onClick={() => (this.props as unknown as IProps<number>).onChange(step.id)}
+          className={classNames('step', {
+            'completed': iStep < progress,
+            'active': step.id === this.props.active,
+            'disabled': iStep > progress,
+          })} >
+          <div className="step-circle" data-text={iStep + 1}><Icon className="pointer" iconId='toolkit-pin' /></div>
+          <div className="step-text">
+            <Typography variant="label" content={step.label} />
+            <Typography variant="caption" content={step.description} />
+          </div>
+        </div>;
+      })}
     </div>;
   }
 }

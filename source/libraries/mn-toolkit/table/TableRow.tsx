@@ -1,5 +1,3 @@
-/* eslint-disable react/no-danger */
-import './styles.css';
 import {
   IContainerProps,
   IContainerState,
@@ -85,8 +83,9 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
             // puis on passe sur la vue 2 où à ce même endroit ça doit contenir un string
             // => eh bien non, faut F5 pour voir apparaître la valeur sur la vue 2
             // Ca marche avec une key mais je sens venir les effets de bord
-            return (
-              <div
+
+            // eslint-disable-next-line react/jsx-key
+            return (<div
                 style={this.props.columnStyle[i]}
                 className={classNames(
                   'mn-table-cell',

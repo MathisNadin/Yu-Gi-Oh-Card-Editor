@@ -1,7 +1,6 @@
 import { classNames } from 'libraries/mn-tools';
 import { ScrollContainer } from './ScrollContainer';
-import './styles.css';
-import { Containable, IContainableProps, IContainableState } from 'libraries/mn-toolkit/containable/Containable';
+import { Containable, IContainableProps, IContainableState } from 'libraries/mn-toolkit/containable';
 
 export type TContainerLayout = 'vertical' | 'horizontal' | 'grid';
 export type THorizontalAlignment = 'left' | 'right' | 'center';

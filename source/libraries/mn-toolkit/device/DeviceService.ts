@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { extend } from "libraries/mn-tools";
-import { Observable } from "../observable/Observable";
+import { Observable } from "../observable";
 import { IApplicationListener } from "../bootstrap";
 
 export interface IScreenSpec {
@@ -281,18 +281,25 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
         hidden = "hidden";
         visibilityChange = "visibilitychange";
-      } else if (typeof (document as any).mozHidden !== "undefined") {
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      else if (typeof (document as any).mozHidden !== "undefined") {
         hidden = "mozHidden";
         visibilityChange = "mozvisibilitychange";
-      } else if (typeof (document as any).msHidden !== "undefined") {
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      else if (typeof (document as any).msHidden !== "undefined") {
         hidden = "msHidden";
         visibilityChange = "msvisibilitychange";
-      } else if (typeof (document as any).webkitHidden !== "undefined") {
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      else if (typeof (document as any).webkitHidden !== "undefined") {
         hidden = "webkitHidden";
         visibilityChange = "webkitvisibilitychange";
       }
 
       document.addEventListener(visibilityChange, () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ((document as any)[hidden]) {
           // console.log('App invisible');
           this.doPause();
@@ -364,6 +371,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   // public get isNative() { return !!window.cordova; }
   public get isNative() { return false; }
   public get isBackground() { return !this._foreground; }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public get isTouch() { return !!("ontouchstart" in window || (navigator as any).msMaxTouchPoints); }
   public get isAndroid() { return this._platform === 'android'; }
   public get isApple() { return this._platform === 'ios'; }
@@ -383,9 +391,11 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   public get isChrome() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let isChromium = (window as any).chrome;
     let winNav = window.navigator;
     let vendorName = winNav.vendor;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let isOpera = typeof (window as any).opr !== "undefined";
     let isIEedge = winNav.userAgent.indexOf("Edge") > -1;
     let isIOSChrome = /CriOS/.exec(winNav.userAgent);

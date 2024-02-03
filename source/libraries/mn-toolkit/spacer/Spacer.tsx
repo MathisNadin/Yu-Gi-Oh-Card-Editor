@@ -1,6 +1,5 @@
-import './styles.scss';
 import { classNames } from "libraries/mn-tools";
-import { Containable, IContainableProps, IContainableState } from "../containable/Containable";
+import { Containable, IContainableProps, IContainableState } from "../containable";
 
 export interface ISpacerProps extends IContainableProps { }
 

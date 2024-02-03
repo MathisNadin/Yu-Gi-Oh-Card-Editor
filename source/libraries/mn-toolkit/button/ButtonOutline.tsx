@@ -1,6 +1,5 @@
-import './styles.css';
 import { classNames } from "libraries/mn-tools";
-import { IContainableProps, IContainableState, Containable } from "../containable/Containable";
+import { IContainableProps, IContainableState, Containable } from "../containable";
 import { TForegroundColor } from '../themeSettings';
 
 interface IButtonOutlineProps extends IContainableProps {

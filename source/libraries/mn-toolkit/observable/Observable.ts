@@ -11,9 +11,11 @@ export class Observable<T> {
     if (index !== -1) this.listeners.splice(index, 1);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public dispatch(method: keyof T, ...args: any[]) {
     this.listeners.forEach(listener => {
       if (typeof listener[method] === 'function') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (listener[method] as any).apply(listener, args);
       }
     });
