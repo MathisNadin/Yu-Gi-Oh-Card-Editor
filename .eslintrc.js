@@ -1,5 +1,20 @@
 module.exports = {
-  extends: 'erb',
+  parser: '@typescript-eslint/parser', // Specifies the ESLint parser
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
+  },
+  extends: [
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'plugin:jsx-a11y/recommended',
+    'prettier',
+    'plugin:prettier/recommended',
+  ],
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
@@ -8,6 +23,7 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-import-module-exports': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     'no-plusplus': 'off',
     'no-await-in-loop': 'off',
     'no-param-reassign': 'off',
@@ -17,16 +33,19 @@ module.exports = {
     'prefer-const': 'off',
     'no-else-return': 'off',
     'prettier/prettier': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
     'no-unused-vars': 'off',
     'import/prefer-default-export': 'off',
     'class-methods-use-this': 'off',
     'no-undef': 'off',
     'lines-between-class-members': 'off',
     'no-underscore-dangle': 'off',
+    'react/prop-types': 'off',
     'react/default-props-match-prop-types': 'off',
     'no-use-before-define': 'off',
     'react/static-property-placement': 'off',
     'react/sort-comp': 'off',
+    'react/jsx-uses-react': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
     'react/destructuring-assignment': 'off',
@@ -59,24 +78,9 @@ module.exports = {
     'no-nested-ternary': 'off',
     'no-case-declarations': 'off',
   },
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-    project: './tsconfig.json',
-    tsconfigRootDir: __dirname,
-    createDefaultProgram: true,
-  },
   settings: {
-    'import/resolver': {
-      // See https://github.com/benmosher/eslint-plugin-import/issues/1396#issuecomment-575727774 for line below
-      node: {},
-      webpack: {
-        config: require.resolve('./.erb/configs/webpack.config.eslint.ts'),
-      },
-      typescript: {},
-    },
-    'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
-    },
-  },
+    react: {
+      version: 'detect',
+    }
+  }
 };

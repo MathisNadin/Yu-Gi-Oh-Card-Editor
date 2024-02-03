@@ -3,17 +3,6 @@
   "displayName": "Yu-Gi-Oh! Card Editor",
   "version": "1.0.3",
   "description": "Un éditeur de cartes Yu-Gi-Oh",
-  "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MathisNadin/Yu-Gi-Oh-Card-Editor.git"
@@ -22,235 +11,79 @@
     "name": "Mathis Nadin",
     "email": "mathis.nadin@gmail.com"
   },
-  "main": "./src/main/main.ts",
+  "license": "MIT",
+  "main": "./.build-desktop/main.js",
   "scripts": {
-    "build": "concurrently \"npm run build:main\" \"npm run build:renderer\" \"npm run build:css\"",
-    "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
-    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "build:css": "sass src/:src/",
-    "watch:css": "npm run build:css && sass src/:src/ --watch",
-    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
-    "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
-    "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
-    "start": "ts-node ./.erb/scripts/check-port-in-use.js && concurrently \"npm run start:renderer\" \"npm run watch:css\" \"npm run start:js\"",
-    "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
-    "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
-    "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest && react-scripts-ts test --env=jsdom",
-    "start:js": "react-scripts-ts start",
-    "build:js": "react-scripts-ts build",
-    "eject": "react-scripts-ts eject"
-  },
-  "browserslist": [],
-  "prettier": {
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": [
-          ".prettierrc",
-          ".eslintrc"
-        ],
-        "options": {
-          "parser": "json"
-        }
-      }
-    ]
-  },
-  "jest": {
-    "moduleDirectories": [
-      "node_modules",
-      "release/app/node_modules",
-      "src"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "setupFiles": [
-      "./.erb/scripts/check-build-exists.ts"
-    ],
-    "testEnvironment": "jsdom",
-    "testEnvironmentOptions": {
-      "url": "http://localhost/"
-    },
-    "testPathIgnorePatterns": [
-      "release/app/dist",
-      ".erb/dll"
-    ],
-    "transform": {
-      "\\.(ts|tsx|js|jsx)$": "ts-jest"
-    }
-  },
-  "dependencies": {
-    "@electron/asar": "^3.2.3",
-    "@electron/osx-sign": "^1.0.4",
-    "axios": "^1.4.0",
-    "electron-debug": "^3.2.0",
-    "electron-log": "^4.4.8",
-    "electron-updater": "^5.3.0",
-    "file-url": "^4.0.0",
-    "fs": "^0.0.1-security",
-    "html2canvas": "^1.4.1",
-    "path": "^0.12.7",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-image-crop": "^10.0.9",
-    "react-router-dom": "^6.8.1"
+    "start:desktop-preload": "cross-env NODE_ENV=development PLATFORM=desktop-preload TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
+    "start:desktop-main": "cross-env NODE_ENV=development PLATFORM=desktop-main electron scripts/start-desktop-main-dev.js",
+    "start:desktop-renderer": "cross-env NODE_ENV=development PLATFORM=desktop-renderer webpack serve --config webpack/webpack.config.ts",
+    "start:desktop-watch": "concurrently \"npm run start:desktop-renderer\" \"npm run start:desktop-main\"",
+    "start:desktop": "cross-env NODE_ENV=development npm-run-all --serial start:desktop-preload start:desktop-watch",
+    "build:desktop-main": "cross-env NODE_ENV=production PLATFORM=desktop-main TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
+    "build:desktop-renderer": "cross-env NODE_ENV=production PLATFORM=desktop-renderer TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
+    "build:desktop": "cross-env NODE_ENV=production node scripts/clean-.build-desktop.js && concurrently \"npm run build:desktop-main\" \"npm run build:desktop-renderer\"",
+    "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-.package-desktop.js && electron-builder build --publish never",
+    "start:web": "cross-env NODE_ENV=development PLATFORM=web webpack serve --config webpack/webpack.config.ts",
+    "build:web": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack/webpack.config.ts",
+    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
   "devDependencies": {
-    "@electron/notarize": "^1.2.3",
-    "@electron/rebuild": "^3.2.10",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
-    "@svgr/webpack": "^6.5.1",
-    "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@types/jest": "^29.4.0",
-    "@types/node": "^18.15.7",
-    "@types/node-sass": "^4.11.3",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
-    "@types/react-test-renderer": "^18.0.0",
-    "@types/terser-webpack-plugin": "^5.0.4",
-    "@types/webpack-bundle-analyzer": "^4.6.0",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
-    "@typescript-eslint/parser": "^5.51.0",
-    "browserslist-config-erb": "^0.0.3",
-    "chalk": "^4.1.2",
-    "cheerio": "^1.0.0-rc.12",
-    "concurrently": "^7.6.0",
-    "core-js": "^3.27.2",
-    "cross-env": "^7.0.3",
-    "css-loader": "^6.7.3",
-    "css-minimizer-webpack-plugin": "^4.2.2",
-    "detect-port": "^1.5.1",
-    "electron": "^23.0.0",
-    "electron-builder": "^22.10.3",
-    "electron-devtools-installer": "^3.2.0",
-    "electron-dl": "^3.5.0",
-    "electronmon": "^2.0.2",
-    "eslint": "^8.33.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-erb": "^4.0.6",
-    "eslint-import-resolver-typescript": "^3.5.3",
-    "eslint-import-resolver-webpack": "^0.13.2",
-    "eslint-plugin-compat": "^4.1.1",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jest": "^27.2.1",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^29.4.2",
-    "jest-environment-jsdom": "^29.4.2",
-    "mini-css-extract-plugin": "^2.7.2",
-    "node-sass": "^8.0.0",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.4",
-    "react-refresh": "^0.14.0",
-    "react-test-renderer": "^18.2.0",
-    "require-context": "^1.1.0",
-    "rimraf": "^4.1.2",
-    "sass": "^1.58.0",
-    "sass-loader": "^13.2.0",
-    "style-loader": "^3.3.1",
-    "terser-webpack-plugin": "^5.3.6",
-    "ts-jest": "^29.0.5",
-    "ts-loader": "^9.4.2",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths-webpack-plugin": "^4.0.0",
-    "typescript": "^4.9.5",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.75.0",
-    "webpack-bundle-analyzer": "^4.7.0",
-    "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.11.1",
-    "webpack-merge": "^5.8.0"
-  },
-  "build": {
-    "productName": "Yu-Gi-Oh! Card Editor",
-    "appId": "org.erb.YuGiOhCardEditor",
-    "asar": true,
-    "asarUnpack": "**\\*.{node,dll}",
-    "files": [
-      "dist",
-      "node_modules",
-      "package.json"
-    ],
-    "afterSign": ".erb/scripts/notarize.js",
-    "mac": {
-      "target": {
-        "target": "default",
-        "arch": [
-          "arm64",
-          "x64"
-        ]
-      },
-      "type": "distribution",
-      "hardenedRuntime": true,
-      "entitlements": "assets/entitlements.mac.plist",
-      "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false
-    },
-    "dmg": {
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage"
-      ],
-      "category": "Development"
-    },
-    "directories": {
-      "app": "release/app",
-      "buildResources": "assets",
-      "output": "release/build"
-    },
-    "extraResources": [
-      "./assets/**"
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "MathisNadin",
-      "repo": "Yu-Gi-Oh-Card-Editor"
-    }
-  },
-  "devEngines": {
-    "node": ">=14.x",
-    "npm": ">=7.x"
-  },
-  "electronmon": {
-    "patterns": [
-      "!**/**",
-      "src/main/**"
-    ],
-    "logLevel": "quiet"
+    "@babel/core": "=7.23.9",
+    "@babel/plugin-transform-runtime": "=7.23.9",
+    "@babel/preset-env": "=7.23.9",
+    "@babel/preset-react": "=7.23.3",
+    "@babel/preset-typescript": "=7.23.3",
+    "@babel/runtime": "=7.23.9",
+    "@pmmmwh/react-refresh-webpack-plugin": "=0.5.11",
+    "@types/node": "=18.15.7",
+    "@types/node-sass": "=4.11.3",
+    "@types/react": "=18.0.27",
+    "@types/react-dom": "=18.0.10",
+    "@types/webpack": "=5.28.5",
+    "@types/webpack-dev-server": "=4.7.2",
+    "@types/webpack-node-externals": "=3.0.4",
+    "@typescript-eslint/eslint-plugin": "=6.19.1",
+    "@typescript-eslint/parser": "=6.19.1",
+    "axios": "=1.6.7",
+    "babel-loader": "=9.1.3",
+    "cheerio": "=1.0.0-rc.12",
+    "concurrently": "=8.2.2",
+    "cross-env": "=7.0.3",
+    "css-loader": "=6.9.1",
+    "css-minimizer-webpack-plugin": "=6.0.0",
+    "electron": "=28.1.1",
+    "electron-builder": "=24.9.1",
+    "electron-dl": "=3.5.0",
+    "electronmon": "=2.0.2",
+    "eslint": "=8.56.0",
+    "eslint-config-prettier": "=9.1.0",
+    "eslint-plugin-import": "=2.29.1",
+    "eslint-plugin-jsx-a11y": "=6.8.0",
+    "eslint-plugin-prettier": "=5.1.3",
+    "eslint-plugin-react": "=7.33.2",
+    "eslint-plugin-react-hooks": "=4.6.0",
+    "html-webpack-plugin": "=5.6.0",
+    "husky": "=4.3.8",
+    "mini-css-extract-plugin": "=2.8.0",
+    "node-sass": "=9.0.0",
+    "nodemon": "=3.0.2",
+    "npm-run-all": "=4.1.5",
+    "prettier": "=3.2.4",
+    "react": "=18.2.0",
+    "react-refresh": "=0.14.0",
+    "react-router-dom": "=6.21.2",
+    "sass": "=1.70.0",
+    "sass-loader": "=14.0.0",
+    "style-loader": "=3.3.4",
+    "terser-webpack-plugin": "=5.3.10",
+    "ts-node": "=10.9.2",
+    "tsconfig-paths-webpack-plugin": "=4.1.0",
+    "typescript": "=5.3.3",
+    "webpack": "=5.89.0",
+    "webpack-cli": "=5.1.4",
+    "webpack-dev-server": "=4.15.1",
+    "webpack-merge": "=5.10.0",
+    "webpack-node-externals": "=3.0.0"
   }
 }
