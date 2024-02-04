@@ -68,15 +68,8 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         { id: 'field', file: require(`assets/images/rd-icons/st/field.png`) },
         { id: 'counter', file: require(`assets/images/rd-icons/st/counter.png`) },
       ],
-      appVersion: '',
+      appVersion: `v. ${app.$device.getSpec().client.version}`,
     };
-
-    app.$errorManager.handlePromise(this.setAppVersion());
-  }
-
-  private async setAppVersion() {
-    const appVersion = await window.electron.ipcRenderer.getAppVersion();
-    this.setState({ appVersion: `v. ${appVersion}` });
   }
 
   public componentWillReceiveProps(nextProps: IRushCardEditorProps, _prevState: IRushCardEditorState) {
@@ -488,13 +481,13 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
       <HorizontalStack verticalItemAlignment='middle'>
         <Icon className='field-icon' iconId='toolkit-image' color='1' />
-        <FileInput
+        {app.$device.isDesktop && <FileInput
           fill
           placeholder="Chemin vers l'artwork"
           defaultValue={this.state.card.artwork.url}
           onChange={url => this.onArtworkURLChange(url)}
           overrideOnTap={() => this.showArtworkPopup()}
-        />
+        />}
       </HorizontalStack>
 
       <VerticalStack gutter>

@@ -9,7 +9,7 @@ export class ApiService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async get(url: string, options?: AxiosRequestConfig): Promise<any> {
+  public async get<R = any>(url: string, options?: AxiosRequestConfig): Promise<R> {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: AxiosResponse<any> = await this.axiosInstance.get(url, options);

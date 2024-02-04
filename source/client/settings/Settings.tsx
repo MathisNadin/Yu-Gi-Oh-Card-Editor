@@ -31,14 +31,9 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultRenderPath() {
-    try {
-      const defaultRenderPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultRenderPath);
-      if (!defaultRenderPath) return;
-      await this.onDefaultRenderPathChanged(defaultRenderPath);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    const defaultRenderPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultRenderPath);
+    if (!defaultRenderPath) return;
+    await this.onDefaultRenderPathChanged(defaultRenderPath);
   }
 
   private async onDefaultRenderPathChanged(defaultRenderPath: string) {
@@ -46,14 +41,9 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultArtworkPath() {
-    try {
-      const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultArtworkPath);
-      if (!defaultArtworkPath) return;
-      await this.onDefaultArtworkPathChanged(defaultArtworkPath);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultArtworkPath);
+    if (!defaultArtworkPath) return;
+    await this.onDefaultArtworkPathChanged(defaultArtworkPath);
   }
 
   private async onDefaultArtworkPathChanged(defaultArtworkPath: string) {
@@ -61,14 +51,9 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultImgImportPath() {
-    try {
-      const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultImgImportPath);
-      if (!defaultImgImportPath) return;
-      await this.onDefaultImgImportPathChanged(defaultImgImportPath);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultImgImportPath);
+    if (!defaultImgImportPath) return;
+    await this.onDefaultImgImportPathChanged(defaultImgImportPath);
   }
 
   private async onDefaultImgImportPathChanged(defaultImgImportPath: string) {
@@ -81,35 +66,35 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
       <VerticalStack fill gutter padding>
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' iconId='toolkit-millennium-puzzle' color='1' />
-          <FileInput
+          {app.$device.isDesktop && <FileInput
             fill
             placeholder="Chemin de rendu par défaut"
             defaultValue={this.state.settings.defaultRenderPath}
             onChange={url => this.onDefaultRenderPathChanged(url)}
             overrideOnTap={() => this.getDefaultRenderPath()}
-          />
+          />}
         </HorizontalStack>
 
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' iconId='toolkit-image' color='1' />
-          <FileInput
+          {app.$device.isDesktop && <FileInput
             fill
             placeholder="Chemin vers l'artwork par défaut"
             defaultValue={this.state.settings.defaultArtworkPath}
             onChange={path => this.onDefaultArtworkPathChanged(path)}
             overrideOnTap={() => this.getDefaultArtworkPath()}
-          />
+          />}
         </HorizontalStack>
 
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' iconId='toolkit-image-sync' color='1' />
-          <FileInput
+          {app.$device.isDesktop && <FileInput
             fill
             placeholder="Chemin d'import d'images par défaut"
             defaultValue={this.state.settings.defaultImgImportPath}
             onChange={path => this.onDefaultImgImportPathChanged(path)}
             overrideOnTap={() => this.getDefaultImgImportPath()}
-          />
+          />}
         </HorizontalStack>
 
         <Spacer />

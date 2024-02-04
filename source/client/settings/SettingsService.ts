@@ -1,6 +1,6 @@
 import { ICardsExportData } from "client/card";
 import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
-import { deepClone } from "libraries/mn-tools";
+import { deepClone, isObject } from "libraries/mn-tools";
 
 interface IExportData {
   settings: IUserSettings;
@@ -74,25 +74,23 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
       settings: this._settings,
       cards: app.$card.exportCardData,
     };
-
-    try {
-      await window.electron.ipcRenderer.writeJsonFile('card_editor_data', JSON.stringify(data));
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    await app.$device.writeAndDownloadJson('card_editor_data', data);
   }
 
   public async importData() {
     try {
-      const buffer = await window.electron.ipcRenderer.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
-      if (!buffer) return;
+      const result = await app.$device.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
+      if (!result?.content) return;
 
-      const data = JSON.parse(buffer.toString()) as IExportData;
-      if (!data) return;
+      const decoder = new TextDecoder('utf-8');
+      const stringContent = decoder.decode(result.content);
+      if (!stringContent) return;
+
+      const data = JSON.parse(stringContent);
+      if (!data || !isObject(data)) return;
 
       if (data.settings) {
-        const settings = deepClone(data.settings);
+        const settings = deepClone((data as IExportData).settings);
         this.correct(settings);
         this._settings = settings;
         await app.$indexedDB.save<SettingsStorageKey, IUserSettings>('user-settings', this._settings);

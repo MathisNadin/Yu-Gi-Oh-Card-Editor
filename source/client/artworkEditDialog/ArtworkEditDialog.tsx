@@ -52,13 +52,15 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     artworkURL = artworkURL || this.state.artworkURL;
 
     let artworkBase64 = '';
-    try {
-      if (!isEmpty(artworkURL) && await window.electron.ipcRenderer.checkFileExists(artworkURL)) {
-        artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
+    if (app.$device.isDesktop) {
+      try {
+        if (!isEmpty(artworkURL) && await window.electron.ipcRenderer.checkFileExists(artworkURL)) {
+          artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
     }
 
     const state: IArtworkEditDialogState = {

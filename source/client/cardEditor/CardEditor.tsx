@@ -79,15 +79,8 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         { id: 'counter', file: require(`assets/images/icons/st/counter.png`) },
         { id: 'link', file: require(`assets/images/icons/st/link.png`) },
       ],
-      appVersion: '',
+      appVersion: `v. ${app.$device.getSpec().client.version}`,
     };
-
-    app.$errorManager.handlePromise(this.setAppVersion());
-  }
-
-  private async setAppVersion() {
-    const appVersion = await window.electron.ipcRenderer.getAppVersion();
-    this.setState({ appVersion: `v. ${appVersion}` });
   }
 
   public componentWillReceiveProps(nextProps: ICardEditorProps) {
@@ -472,13 +465,13 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
       <HorizontalStack gutter verticalItemAlignment='middle'>
         <HorizontalStack fill verticalItemAlignment='middle'>
           <Icon className='field-icon' iconId='toolkit-image' color='1' />
-          <FileInput
+          {app.$device.isDesktop && <FileInput
             fill
             placeholder="Chemin vers l'artwork"
             defaultValue={this.state.card.artwork.url}
             onChange={url => this.onArtworkURLChange(url)}
             overrideOnTap={() => this.showArtworkPopup()}
-          />
+          />}
         </HorizontalStack>
 
         {this.state.card.pendulum && <CheckBox

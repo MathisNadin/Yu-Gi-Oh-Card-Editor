@@ -111,14 +111,9 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private async doSelectImgPath() {
-    try {
-      const path = await window.electron.ipcRenderer.getFilePath(app.$settings.settings.defaultArtworkPath);
-      if (!path) return;
-      this.onArtworkURLChange(path);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    const path = await window.electron.ipcRenderer.getFilePath(app.$settings.settings.defaultArtworkPath);
+    if (!path) return;
+    this.onArtworkURLChange(path);
   }
 
   private switchKeepRatio() {
@@ -154,12 +149,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   public render() {
     if (!this.state?.loaded) return <Spinner />;
     return this.renderAttributes(<VerticalStack fill scroll gutter>
-        <FileInput
+        {app.$device.isDesktop && <FileInput
           placeholder="Chemin vers l'artwork"
           defaultValue={this.state.artworkURL}
           onChange={url => this.onArtworkURLChange(url)}
           overrideOnTap={() => this.doSelectImgPath()}
-        />
+        />}
 
         {!!this.state.croppedArtworkBase64?.length
           ? <Image src={this.state.croppedArtworkBase64} className={classNames('cropped-img', { 'pendulum-ratio': this.props.pendulumRatio })} alt='cropped-img' />

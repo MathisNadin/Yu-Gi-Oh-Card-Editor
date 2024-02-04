@@ -425,10 +425,10 @@ export class MediaWikiService {
     let defaultPng = `${artworkDefaultPath}.png`;
     let defaultJpg = `${artworkDefaultPath}.jpg`;
     try {
-      if (await window.electron.ipcRenderer.checkFileExists(defaultPng)) {
+      if (app.$device.isDesktop && await window.electron.ipcRenderer.checkFileExists(defaultPng)) {
         card.artwork.url = defaultPng;
       }
-      else if (await window.electron.ipcRenderer.checkFileExists(defaultJpg)) {
+      else if (app.$device.isDesktop && await window.electron.ipcRenderer.checkFileExists(defaultJpg)) {
         card.artwork.url = defaultJpg;
       }
       else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {

@@ -3,6 +3,7 @@ import { IContainableProps, IContainableState, Containable } from "../containabl
 import { HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { isDefined } from 'libraries/mn-tools';
+import { Typography } from "../typography";
 
 interface IFileInputProps extends IContainableProps {
   placeholder?: string;
@@ -45,17 +46,13 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
     if (this.props.overrideOnTap) {
       app.$errorManager.handlePromise(this.props.overrideOnTap(e));
     } else {
-      try {
-        const path = await window.electron.ipcRenderer.getFilePath();
-        if (path) this.onChange({ target: { value: path } } as FormEvent<HTMLInputElement>);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
+      const path = await window.electron.ipcRenderer.getFilePath();
+      if (path) this.onChange({ target: { value: path } } as FormEvent<HTMLInputElement>);
     }
   }
 
   public render() {
+    if (!app.$device.isDesktop) return <Typography content="Impossible de choisir un chemin de fichier sur cette plateforme" />;
     return this.renderAttributes(<HorizontalStack>
       <input type='text'
         name={this.props.name}

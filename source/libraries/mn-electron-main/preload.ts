@@ -43,7 +43,7 @@ const electronHandler = {
     },
 
     readFileUtf8(filters?: FileFilter[]): Promise<Buffer> {
-      return ipcRenderer.invoke('read-file-utf-8');
+      return ipcRenderer.invoke('read-file-utf-8', filters);
     },
 
     getFilePath(defaultPath?: string): Promise<string> {

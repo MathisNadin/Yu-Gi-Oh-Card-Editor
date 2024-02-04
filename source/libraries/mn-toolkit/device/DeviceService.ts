@@ -1,7 +1,11 @@
-/* eslint-disable no-console */
 import { extend } from "libraries/mn-tools";
 import { Observable } from "../observable";
 import { IApplicationListener } from "../bootstrap";
+
+export interface IFileFilter {
+  extensions: string[];
+  name: string;
+}
 
 export interface IScreenSpec {
   width?: number;
@@ -45,7 +49,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
 
   public constructor() {
     super();
-    this.fireScreenSpecChanged(this.screenSpec);
+    // this.fireScreenSpecChanged(this.screenSpec);
     document.addEventListener("backbutton", (event: Event) => {
       event.preventDefault();
       this.dispatch('deviceBackButton');
@@ -54,7 +58,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   public getSpec() {
-    let deviceRecord: {
+    const deviceRecord: {
       device: {
         id: string,
         native: boolean,
@@ -171,6 +175,9 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       /* this._platform = window.device.platform.toLowerCase();
       // console.log('deviceId', this._platform);
       document.body.classList.add('mn-platform-mobile'); */
+    } else if (this.isElectron) {
+      this._platform = 'desktop';
+      // console.log('deviceId', this._platform);
     } else {
       this._platform = 'web';
       // console.log('deviceId', this._platform);
@@ -368,6 +375,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
 
+  public get isElectron() { return !!window.electron; }
   // public get isNative() { return !!window.cordova; }
   public get isNative() { return false; }
   public get isBackground() { return !this._foreground; }
@@ -375,6 +383,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   public get isTouch() { return !!("ontouchstart" in window || (navigator as any).msMaxTouchPoints); }
   public get isAndroid() { return this._platform === 'android'; }
   public get isApple() { return this._platform === 'ios'; }
+  public get isDesktop() { return this._platform === 'desktop'; }
   public get isWeb() { return this._platform === 'web'; }
   public get platform() { return this._platform; }
   // public get language(): LanguageLocale { return this._language; }
@@ -414,4 +423,73 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       return false;
     }
   }
+
+  public openExternalLink(url: string) {
+    if (this.isDesktop) {
+      app.$errorManager.handlePromise(window.electron.ipcRenderer.openLink(url));
+    } else {
+      (window.open(url, '_blank') as Window).focus();
+    }
+  }
+
+  public async writeAndDownloadJson(defaultFileName: string, object: object, filePath?: string) {
+    const jsonData = JSON.stringify(object);
+    if (this.isDesktop) {
+      await window.electron.ipcRenderer.writeJsonFile(defaultFileName, jsonData, filePath);
+    } else {
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${defaultFileName}.json`;
+      document.body.appendChild(a); // Nous devons ajouter l'élément au document pour que le clic fonctionne
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url); // Nettoyer l'URL objet
+    }
+  }
+
+  public async readFileUtf8(filters: IFileFilter[]): Promise<{content: ArrayBuffer, name?: string} | undefined> {
+    if (this.isDesktop) {
+      const buffer = await window.electron.ipcRenderer.readFileUtf8(filters);
+      if (buffer) {
+        // Supposant que result est le contenu du fichier en tant que Buffer
+        // Convertissez le Buffer (Node.js) en ArrayBuffer si nécessaire
+        return { content: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) };
+      }
+      return undefined;
+    } else {
+      // Mode web: Lire le fichier et renvoyer un objet avec ArrayBuffer
+      return new Promise<{content: ArrayBuffer, name?: string} | undefined>((resolve, reject) => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = filters.map(filter => filter.extensions.map(ext => `.${ext}`).join(',')).join(',');
+        input.onchange = e => {
+          const inputElement = e.target as HTMLInputElement;
+          if (!inputElement) {
+            reject(new Error('Aucune target'));
+            return;
+          }
+
+          const file = inputElement.files ? inputElement.files[0] : undefined;
+          if (!file) {
+            reject(new Error('Aucun fichier sélectionné'));
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = () => {
+            resolve({
+              content: reader.result as ArrayBuffer,
+              name: file.name
+            });
+          };
+          reader.onerror = () => reject(reader.error);
+          reader.readAsArrayBuffer(file);
+        };
+        input.click();
+      });
+    }
+  }
+
 }

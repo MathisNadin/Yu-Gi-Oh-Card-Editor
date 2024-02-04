@@ -7,6 +7,7 @@ import { IndexedDBService } from "./indexedDB";
 import { PopoverService } from "./popover";
 import { PopupService } from "./popup";
 import { ReactService } from "./react";
+import { FilePickerService } from './filePicker';
 
 export function setupAppAndToolkit(appSettings: IAppSettings, beforeBootstrap?: () => void) {
   window.app = new Application() as IApp;
@@ -21,6 +22,7 @@ export function setupAppAndToolkit(appSettings: IAppSettings, beforeBootstrap?: 
   app.service('$icon', IconService);
   app.service('$popup', PopupService);
   app.service('$popover', PopoverService);
+  app.service('$filePicker', FilePickerService);
 
   if (beforeBootstrap) beforeBootstrap();
 

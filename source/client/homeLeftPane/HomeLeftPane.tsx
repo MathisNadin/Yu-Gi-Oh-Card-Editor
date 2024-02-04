@@ -50,17 +50,19 @@ export class HomeLeftPane extends Containable<IHomeLeftPaneProps, IHomeLeftPaneS
 
   private async checkUpdate() {
     try {
-      const versionInfos = await app.$api.get(
+      const versionInfos = await app.$api.get<IVersionInfos>(
         "https://gist.githubusercontent.com/MathisNadin/e12c2c1494081ff24fbc5463f7c49470/raw/",
         {
           params: {
             timestamp: new Date().getTime()
           }
         }
-      ) as IVersionInfos;
+      );
       if (versionInfos?.version) {
-        const currentVersion = await window.electron.ipcRenderer.getAppVersion();
-        this.setState({ versionInfos, needUpdate: currentVersion !== versionInfos.version });
+        this.setState({
+          versionInfos,
+          needUpdate: app.$device.getSpec().client.version !== versionInfos.version,
+        });
       }
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -144,7 +146,7 @@ export class HomeLeftPane extends Containable<IHomeLeftPaneProps, IHomeLeftPaneS
     return <VerticalStack className='new-version' padding gutter itemAlignment='center'>
       {!!this.state.versionInfos.version && <Typography variant='label' content={`Nouvelle version disponible : ${this.state.versionInfos.version}`} />}
       {!!this.state.versionInfos.note && <Typography variant='help' content={this.state.versionInfos.note} />}
-      {!!this.state.versionInfos.link && <Button label='Installer' color='balanced' onTap={() => window.electron.ipcRenderer.openLink(this.state.versionInfos.link)} />}
+      {!!this.state.versionInfos.link && <Button label='Installer' color='balanced' onTap={() => app.$device.openExternalLink(this.state.versionInfos.link)} />}
     </VerticalStack>;
   }
 

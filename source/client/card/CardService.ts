@@ -268,14 +268,9 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async renderCards(cards: ICard[]) {
-    if (!cards?.length) return;
+    if (!cards?.length || !app.$device.isDesktop) return;
 
-    try {
-      this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
     if (!this._renderPath) return;
 
     this._renderCardsQueue.push(...cards);
@@ -283,6 +278,8 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async writeCardFile(id: string, cardUuid: string, cardName: string) {
+    if (!app.$device.isDesktop) return;
+
     const element = document.getElementById(id) as HTMLElement;
     if (element) {
       try {
@@ -440,23 +437,11 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
   }
 
-  public async importArtwork(url: string, path?: string): Promise<string> {
-    try {
-      path = path || await window.electron.ipcRenderer.getDirectoryPath();
-    } catch(error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+  public async importArtwork(url: string, path?: string): Promise<string | undefined> {
+    if (!app.$device.isDesktop) return undefined;
+    path = path || await window.electron.ipcRenderer.getDirectoryPath();
     if (!path) return '';
-
-    let filePath!: string;
-    try {
-      filePath = await window.electron.ipcRenderer.download(path, url);
-    } catch(error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-    return filePath;
+    return await window.electron.ipcRenderer.download(path, url);
   }
 
   private getDefaultCurrentCard(): ICard {

@@ -256,14 +256,9 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   }
 
   private async selectArtworkSaveDirPath() {
-    try {
-      const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.artworkSaveDirPath);
-      if (!artworkSaveDirPath) return;
-      this.setState({ artworkSaveDirPath });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
+    const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.artworkSaveDirPath);
+    if (!artworkSaveDirPath) return;
+    this.setState({ artworkSaveDirPath });
   }
 
   public render() {
@@ -431,6 +426,7 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
   }
 
   private renderUrlImporter(origin: TTabIndex) {
+    if (!app.$device.isDesktop) return undefined;
     return <HorizontalStack minHeight={32} fill={origin === 'yugipedia'} gutter /* className={classNames('import-option', 'artwork-importer', origin)} */>
       <CheckBox label='Importer les images' defaultValue={this.state.importArtwork} onChange={importArtwork => this.setState({ importArtwork })} />
       {this.state.importArtwork && <FileInput

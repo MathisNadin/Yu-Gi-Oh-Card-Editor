@@ -86,7 +86,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let croppedArtworkBase64: string;
 
     let artworkExists = false;
-    if (!isEmpty(card.artwork.url)) {
+    if (!isEmpty(card.artwork.url) && app.$device.isDesktop) {
       try {
         artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
       } catch (error) {
