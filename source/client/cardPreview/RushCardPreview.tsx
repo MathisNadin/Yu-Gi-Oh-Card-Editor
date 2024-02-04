@@ -1,33 +1,33 @@
-import { CardBuilder, RushCardBuilder } from 'client/card-builder';
+import { CardBuilder, RushCardBuilder } from 'client/cardBuilder';
 import { ICardListener } from 'client/card/CardService';
 import { ICard } from 'client/card/card-interfaces';
 import { toPng } from 'libraries/mn-html-to-image';
 import { IContainableProps, IContainableState, Containable, Container, Spinner } from 'libraries/mn-toolkit';
 
-interface ICardPreviewProps extends IContainableProps {
+interface IRushCardPreviewProps extends IContainableProps {
   card: ICard;
 }
 
-interface ICardPreviewState extends IContainableState {
-  cardPlaceholder: string;
+interface IRushCardPreviewState extends IContainableState {
+  rdCardPlaceholder: string;
   rendering: string;
   renderCard: ICard | undefined;
 }
 
-export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewState> implements Partial<ICardListener> {
+export class RushCardPreview extends Containable<IRushCardPreviewProps, IRushCardPreviewState> implements Partial<ICardListener> {
 
-  public constructor(props: ICardPreviewProps) {
+  public constructor(props: IRushCardPreviewProps) {
     super(props);
     app.$card.addListener(this);
     this.state = {
       loaded: true,
-      cardPlaceholder: require(`../resources/pictures/cardPlaceholder.png`),
+      rdCardPlaceholder: require(`../resources/pictures/rdCardPlaceholder.png`),
       rendering: require(`../resources/pictures/rendering.png`),
       renderCard: undefined,
     };
   }
 
-  public componentWillReceiveProps() {
+  public componentWillReceiveProps(_nextProps: IRushCardPreviewProps, _prevState: IRushCardPreviewState) {
     const rendering = document.querySelector('.rendering') as HTMLImageElement;
     rendering.classList.remove('hidden');
   }
@@ -67,11 +67,11 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
 
       {!!this.state.renderCard?.rush && <RushCardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
 
-      <CardBuilder card={this.props.card} onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())} id='main-card-builder' />
+      <RushCardBuilder card={this.props.card} onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())} id='main-card-builder' />
 
       <Container className='cover' />
 
-      <img className='card-preview-img img-render' src={this.state.cardPlaceholder} alt='cardPreview' />
+      <img className='card-preview-img img-render' src={this.state.rdCardPlaceholder} alt='cardPreview' />
 
       <Spinner className='card-preview-img rendering' />
     </Container>, 'card-preview');

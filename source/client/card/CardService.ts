@@ -2,7 +2,7 @@ import { toPng } from "libraries/mn-html-to-image";
 import { deepClone, uuid } from "libraries/mn-tools";
 import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
 import { Crop } from "react-image-crop";
-import { CardImportDialog } from "client/card-import-dialog";
+import { CardImportDialog } from "client/cardImportDialog";
 import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
 
 export interface ICardsExportData {

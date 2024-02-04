@@ -1,5 +1,5 @@
 import { ICard } from 'client/card/card-interfaces';
-import { IReplaceMatrix } from 'client/media-wiki';
+import { IReplaceMatrix } from 'client/mediaWiki';
 import { IYuginewsCardData } from 'client/yuginews';
 import { IDialogProps, IContainableState, TableColumnSortOrder, Containable, Spinner, TabbedPane, TabPane, ITableColumn, HorizontalStack, CheckBox, VerticalStack, TextInput, Button, Table, Typography, Progress, TextAreaInput, ButtonIcon, FileInput } from 'libraries/mn-toolkit';
 import { classNames, isEmpty, isString } from 'libraries/mn-tools';

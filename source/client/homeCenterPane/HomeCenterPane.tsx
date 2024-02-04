@@ -1,5 +1,5 @@
 import { ICard, ICardListener } from "client/card";
-import { CardPreview, RushCardPreview } from "client/card-preview";
+import { CardPreview, RushCardPreview } from "client/cardPreview";
 import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner } from "libraries/mn-toolkit";
 
 interface IHomeCenterPaneProps extends IContainableProps {

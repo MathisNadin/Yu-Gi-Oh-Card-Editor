@@ -1,5 +1,5 @@
 import { ICard, ICardListener } from 'client/card';
-import { CardEditor, RushCardEditor } from 'client/card-editor';
+import { CardEditor, RushCardEditor } from 'client/cardEditor';
 import { IContainableProps, IContainableState, Containable, IDeviceListener, Spinner, VerticalStack, HorizontalStack, Button, Typography } from 'libraries/mn-toolkit';
 import { classNames } from 'libraries/mn-tools';
 

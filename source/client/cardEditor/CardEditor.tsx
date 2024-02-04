@@ -1,4 +1,4 @@
-import { IArtworkEditDialogResult, ArtworkEditDialog } from 'client/artwork-edit-dialog';
+import { IArtworkEditDialogResult, ArtworkEditDialog } from 'client/artworkEditDialog';
 import { ICard, TFrame, TAttribute, TStIcon, TCardLanguage, TNameStyle, TLinkArrows, TEdition, TSticker } from 'client/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, VerticalStack, HorizontalStack, Button, Spacer, Typography, Icon, TextInput, Select, FileInput, CheckBox, Grid, TextAreaInput, NumberInput, ButtonIcon, InplaceEdit, Image } from 'libraries/mn-toolkit';
 import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/mn-tools';

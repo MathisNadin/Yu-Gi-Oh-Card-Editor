@@ -1,9 +1,17 @@
 @import '../libraries/mn-toolkit/index.scss';
 
-/*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
- */
+@import './artworkEditDialog/styles.scss';
+@import './cardBuilder/styles.scss';
+@import './cardEditor/styles.scss';
+@import './cardImportDialog/styles.scss';
+@import './cardPreview/styles.scss';
+@import './cardsLibrary/styles.scss';
+@import './home/styles.scss';
+@import './homeCenterPane/styles.scss';
+@import './homeLeftPane/styles.scss';
+@import './homeRightPane/styles.scss';
+@import './settings/styles.scss';
+
 #root {
   height: 100%;
   width: 100%;

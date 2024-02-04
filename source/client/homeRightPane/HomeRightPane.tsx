@@ -1,5 +1,5 @@
 import { ICardListener, ICard } from 'client/card';
-import { CardsLibrary } from 'client/cards-library';
+import { CardsLibrary } from 'client/cardsLibrary';
 import { Settings } from 'client/settings';
 import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner, HorizontalStack, Button } from 'libraries/mn-toolkit';
 import { classNames } from 'libraries/mn-tools';

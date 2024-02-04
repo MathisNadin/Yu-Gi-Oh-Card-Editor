@@ -5,7 +5,7 @@ import { SettingsService } from './settings';
 import { setupAppAndToolkit } from 'libraries/mn-toolkit';
 import { extendNativeObjects } from 'libraries/mn-tools';
 import { CardService } from './card';
-import { MediaWikiService } from './media-wiki';
+import { MediaWikiService } from './mediaWiki';
 import { YuginewsService } from './yuginews';
 
 extendNativeObjects();
