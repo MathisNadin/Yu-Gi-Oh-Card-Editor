@@ -1,5 +1,5 @@
+import { ICard } from "client/card";
 import { extend, integer } from "libraries/mn-tools";
-import { ICard } from "renderer/card/card-interfaces";
 
 export interface IReplaceMatrix {
   toReplace: string;

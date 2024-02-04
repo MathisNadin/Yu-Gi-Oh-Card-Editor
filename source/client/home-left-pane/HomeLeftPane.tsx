@@ -1,15 +1,7 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { Button } from 'libraries/mn-toolkit/button/Button';
+import { ICard, ICardListener } from 'client/card';
+import { CardEditor, RushCardEditor } from 'client/card-editor';
+import { IContainableProps, IContainableState, Containable, IDeviceListener, Spinner, VerticalStack, HorizontalStack, Button, Typography } from 'libraries/mn-toolkit';
 import { classNames } from 'libraries/mn-tools';
-import { IDeviceListener } from 'libraries/mn-toolkit/device';
-import { ICardListener } from 'renderer/card/CardService';
-import { ICard } from 'renderer/card/card-interfaces';
-import { CardEditor } from 'renderer/card-editor/CardEditor';
-import { RushCardEditor } from 'renderer/card-editor/RushCardEditor';
-import { Typography } from 'libraries/mn-toolkit/typography/Typography';
 
 interface IVersionInfos {
   version: string;

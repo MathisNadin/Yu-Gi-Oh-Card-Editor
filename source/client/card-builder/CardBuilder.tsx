@@ -1,12 +1,9 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { Container } from 'libraries/mn-toolkit/container/Container';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'libraries/mn-tools';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { ICard } from 'renderer/card/card-interfaces';
+import { ICard } from 'client/card/card-interfaces';
+import { IContainableProps, IContainableState, Containable, Spinner, Container, HorizontalStack, VerticalStack } from 'libraries/mn-toolkit';
 
 interface ICardBuilderProps extends IContainableProps {
   forRender?: boolean;
@@ -606,6 +603,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       {frames.map((frame, index) => {
         const style: CSSProperties = {};
         if (index) style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
+        // eslint-disable-next-line react/jsx-key
         return <img style={style} className={classNames('card-frame', className)} src={frame} alt={className} />;
       })}
     </HorizontalStack>, 'card-layer card-frames-container');
@@ -645,6 +643,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   private renderPendulum() {
     return this.renderAttributes(<VerticalStack>
       {this.state.pendEffect.map(text => {
+        // eslint-disable-next-line react/jsx-key
         return <p
           className='pendulum-effect-text black-text'
           style={{
@@ -670,6 +669,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     return this.renderAttributes(<VerticalStack>
       {this.state.description.map(d => {
+        // eslint-disable-next-line react/jsx-key
         return <p
           className='description-text black-text'
           style={{

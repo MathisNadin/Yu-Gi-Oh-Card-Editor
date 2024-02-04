@@ -1,9 +1,7 @@
-import 'react-image-crop/src/ReactCrop.scss'
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
+// eslint-disable-next-line import/no-named-as-default
 import ReactCrop, { Crop } from 'react-image-crop';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
 import { classNames, isDefined } from 'libraries/mn-tools';
-import { Container } from 'libraries/mn-toolkit/container/Container';
+import { IContainableProps, IContainableState, Containable, Spinner, Container } from 'libraries/mn-toolkit';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;

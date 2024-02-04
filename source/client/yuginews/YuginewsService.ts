@@ -1,6 +1,6 @@
 import { extend, integer, uuid } from "libraries/mn-tools";
-import { ICard, TAttribute, TFrame, TRushEffectType, TRushTextMode, TStIcon } from "renderer/card/card-interfaces";
 import { load } from 'cheerio';
+import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from "client/card";
 
 export interface IYuginewsCardData {
   artworkUrl?: string;

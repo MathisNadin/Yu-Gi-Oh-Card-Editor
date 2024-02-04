@@ -1,11 +1,12 @@
+import './index.scss';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import { CardService } from './card/CardService';
-import { MediaWikiService } from '../media-wiki/MediaWikiService';
-import { YuginewsService } from './yuginews/YuginewsService';
-import { extendNativeObjects } from 'libraries/mn-tools/patch';
-import { setupAppAndToolkit } from 'libraries/mn-toolkit/index';
 import { SettingsService } from './settings';
+import { setupAppAndToolkit } from 'libraries/mn-toolkit';
+import { extendNativeObjects } from 'libraries/mn-tools';
+import { CardService } from './card';
+import { MediaWikiService } from './media-wiki';
+import { YuginewsService } from './yuginews';
 
 extendNativeObjects();
 

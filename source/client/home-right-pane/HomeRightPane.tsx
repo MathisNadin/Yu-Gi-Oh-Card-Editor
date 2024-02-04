@@ -1,13 +1,8 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { Button } from 'libraries/mn-toolkit/button/Button';
+import { ICardListener, ICard } from 'client/card';
+import { CardsLibrary } from 'client/cards-library';
+import { Settings } from 'client/settings';
+import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner, HorizontalStack, Button } from 'libraries/mn-toolkit';
 import { classNames } from 'libraries/mn-tools';
-import { ICardListener } from 'renderer/card/CardService';
-import { ICard } from 'renderer/card/card-interfaces';
-import { CardsLibrary } from 'renderer/cards-library/CardsLibrary';
-import { Settings } from 'renderer/settings';
 
 type TtabIndex = 'library' | 'settings';
 

@@ -1,10 +1,6 @@
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { ICardListener } from 'renderer/card/CardService';
-import { ICard } from 'renderer/card/card-interfaces';
-import { CardPreview } from 'renderer/card-preview/CardPreview';
-import { RushCardPreview } from 'renderer/card-preview/RushCardPreview';
+import { ICard, ICardListener } from "client/card";
+import { CardPreview, RushCardPreview } from "client/card-preview";
+import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner } from "libraries/mn-toolkit";
 
 interface IHomeCenterPaneProps extends IContainableProps {
 }

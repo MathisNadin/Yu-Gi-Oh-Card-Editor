@@ -1,22 +1,7 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { ICard, TAttribute, TCardLanguage, TEdition, TFrame, TLinkArrows, TNameStyle, TStIcon, TSticker } from 'renderer/card/card-interfaces';
+import { IArtworkEditDialogResult, ArtworkEditDialog } from 'client/artwork-edit-dialog';
+import { ICard, TFrame, TAttribute, TStIcon, TCardLanguage, TNameStyle, TLinkArrows, TEdition, TSticker } from 'client/card/card-interfaces';
+import { IContainableProps, IContainableState, Containable, VerticalStack, HorizontalStack, Button, Spacer, Typography, Icon, TextInput, Select, FileInput, CheckBox, Grid, TextAreaInput, NumberInput, ButtonIcon, InplaceEdit, Image } from 'libraries/mn-toolkit';
 import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/mn-tools';
-import { InplaceEdit } from 'libraries/mn-toolkit/inplaceEdit/InplaceEdit';
-import { ArtworkEditDialog, IArtworkEditDialogResult } from 'renderer/artwork-edit-dialog/ArtworkEditDialog';
-import { Typography } from 'libraries/mn-toolkit/typography/Typography';
-import { TextInput } from 'libraries/mn-toolkit/textInput/TextInput';
-import { Button, ButtonIcon } from 'libraries/mn-toolkit/button';
-import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
-import { Icon } from 'libraries/mn-toolkit/icon';
-import { Select } from 'libraries/mn-toolkit/select/Select';
-import { FileInput } from 'libraries/mn-toolkit/fileInput/FileInput';
-import { CheckBox } from 'libraries/mn-toolkit/checkbox/Checkbox';
-import { Grid } from 'libraries/mn-toolkit/container/Grid';
-import { Image } from 'libraries/mn-toolkit/image/Image';
-import { TextAreaInput } from 'libraries/mn-toolkit/textAreaInput/TextAreaInput';
-import { NumberInput } from 'libraries/mn-toolkit/numberInput/NumberInput';
 
 interface ICardEditorProps extends IContainableProps {
   card: ICard;
@@ -519,6 +504,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
                 className = `${className} selected-${frameIndex + 1}`;
               }
             }
+            // eslint-disable-next-line react/jsx-key
             return <HorizontalStack className={className} s='12' m='6' l='3' xl='2' xxl='1'>
               <Image
                 src={frame.file}
@@ -539,30 +525,36 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
 
         <Grid className='card-icons-grid'>
-          {this.state.cardAttributes.map(attribute => <HorizontalStack className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`} s='12' m='6' l='3' xl='2' xxl='1'>
-            <Image
-              src={attribute.file}
-              alt={`attribute-${attribute.id}`}
-              title={app.$card.getAttributeName(attribute.id)}
-              onTap={() => this.onAttributeChange(attribute.id)}
-              maxHeight={40}
-            />
-          </HorizontalStack>)}
+          {this.state.cardAttributes.map(attribute => (
+            // eslint-disable-next-line react/jsx-key
+            <HorizontalStack className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`} s='12' m='6' l='3' xl='2' xxl='1'>
+              <Image
+                src={attribute.file}
+                alt={`attribute-${attribute.id}`}
+                title={app.$card.getAttributeName(attribute.id)}
+                onTap={() => this.onAttributeChange(attribute.id)}
+                maxHeight={40}
+              />
+            </HorizontalStack>
+          ))}
         </Grid>
       </VerticalStack>}
 
       {app.$card.isBackrow(this.state.card) && <VerticalStack gutter>
         <Typography fill className='sub-title' variant='help' content='Type de Magie/Piège' />
         <Grid className='card-icons-grid'>
-          {this.state.cardStTypes.map(stType => <HorizontalStack className={classNames('card-st-icon', { 'selected': this.state.card.stType === stType.id })} s='12' m='6' l='3' xl='2' xxl='1'>
-            <Image
-              src={stType.file}
-              alt={`st-icon-${stType.id}`}
-              title={app.$card.getStIconName(stType.id)}
-              onTap={() => this.onStTypeChange(stType.id)}
-              maxHeight={40}
-            />
-          </HorizontalStack>)}
+          {this.state.cardStTypes.map(stType => (
+            // eslint-disable-next-line react/jsx-key
+            <HorizontalStack className={classNames('card-st-icon', { 'selected': this.state.card.stType === stType.id })} s='12' m='6' l='3' xl='2' xxl='1'>
+              <Image
+                src={stType.file}
+                alt={`st-icon-${stType.id}`}
+                title={app.$card.getStIconName(stType.id)}
+                onTap={() => this.onStTypeChange(stType.id)}
+                maxHeight={40}
+              />
+            </HorizontalStack>
+          ))}
         </Grid>
       </VerticalStack>}
 
@@ -707,22 +699,25 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
         </HorizontalStack>
 
         <VerticalStack className='card-abilities-list'>
-          {this.state.card.abilities.map((ability, iAbility) => <HorizontalStack fill gutter className='abilities-line' verticalItemAlignment='middle'>
-            <InplaceEdit
-              fill
-              focusOnSingleClick
-              validateOnEnter
-              key={`${iAbility}-${ability}`}
-              value={ability}
-              onChange={ability => this.onAbilityChange(ability, iAbility)}
-            />
+          {this.state.card.abilities.map((ability, iAbility) => (
+            // eslint-disable-next-line react/jsx-key
+            <HorizontalStack fill gutter className='abilities-line' verticalItemAlignment='middle'>
+              <InplaceEdit
+                fill
+                focusOnSingleClick
+                validateOnEnter
+                key={`${iAbility}-${ability}`}
+                value={ability}
+                onChange={ability => this.onAbilityChange(ability, iAbility)}
+              />
 
-            <HorizontalStack className='abilities-line-icons'>
-              <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
-              {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />}
-              {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />}
+              <HorizontalStack className='abilities-line-icons'>
+                <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
+                {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />}
+                {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />}
+              </HorizontalStack>
             </HorizontalStack>
-          </HorizontalStack>)}
+          ))}
         </VerticalStack>
       </VerticalStack>
 

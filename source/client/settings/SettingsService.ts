@@ -1,7 +1,6 @@
-import { IIndexedDBListener } from "libraries/mn-toolkit/indexedDB/IndexedDBService";
-import { Observable } from "libraries/mn-toolkit/observable/Observable";
+import { ICardsExportData } from "client/card";
+import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
 import { deepClone } from "libraries/mn-tools";
-import { ICardsExportData } from "renderer/card/CardService";
 
 interface IExportData {
   settings: IUserSettings;

@@ -1,12 +1,9 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { Container } from 'libraries/mn-toolkit/container/Container';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
 import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'libraries/mn-tools';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { ICard } from 'renderer/card/card-interfaces';
+import { ICard } from 'client/card/card-interfaces';
+import { IContainableProps, IContainableState, Containable, Spinner, Container, HorizontalStack, VerticalStack } from 'libraries/mn-toolkit';
 
 interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
@@ -183,7 +180,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
         }
         description.push(
+          // eslint-disable-next-line react/jsx-key
           [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
+          // eslint-disable-next-line react/jsx-key
           [<span className='span-text rush-label effect'>{effectLabel}</span>].concat(...card.rushEffect.split('\n').map(d => this.getProcessedText(d))),
         );
         break;
@@ -194,7 +193,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         }
         let choiceEffectsLabel = card.language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ';
         description.push(
+          // eslint-disable-next-line react/jsx-key
           [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
+          // eslint-disable-next-line react/jsx-key
           [<span className='span-text rush-label effect'>{choiceEffectsLabel}</span>],
         );
         for (let choice of card.rushChoiceEffects) {
@@ -609,6 +610,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     let processedText = parts.map(part =>
       specialCharsRegex.test(part) ? (
+        // eslint-disable-next-line react/jsx-key
         <span className='special-char-span'>
           {part}
         </span>
@@ -628,6 +630,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       {frames.map((frame, index) => {
         const style: CSSProperties = {};
         if (index) style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
+        // eslint-disable-next-line react/jsx-key
         return <img style={style} className={classNames('card-frame', className)} src={frame} alt={className} />;
       })}
     </HorizontalStack>, 'card-layer card-frames-container');
@@ -701,6 +704,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           withBulletPoint = true;
           text = text.replace(/^●\s*/, '');
         }
+        // eslint-disable-next-line react/jsx-key
         return <p
           className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
           style={{
@@ -719,6 +723,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     return this.renderAttributes(<VerticalStack>
       {this.state.description.map(d => {
+        // eslint-disable-next-line react/jsx-key
         return <p
           className='description-text black-text'
           style={{

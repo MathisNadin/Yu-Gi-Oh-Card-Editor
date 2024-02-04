@@ -1,8 +1,7 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { HomeLeftPane } from 'renderer/home-left-pane/HomeLeftPane';
-import { HomeRightPane } from 'renderer/home-right-pane/HomeRightPane';
-import { HomeCenterPane } from 'renderer/home-center-pane/HomeCenterPane';
+import { HomeCenterPane } from "client/home-center-pane";
+import { HomeLeftPane } from "client/home-left-pane";
+import { HomeRightPane } from "client/home-right-pane";
+import { IContainableProps, IContainableState, Containable, HorizontalStack } from "libraries/mn-toolkit";
 
 interface ICardHandlerProps extends IContainableProps {}
 

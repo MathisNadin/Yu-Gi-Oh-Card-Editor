@@ -1,23 +1,8 @@
-import { IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { IDialogProps } from 'libraries/mn-toolkit/popup/PopupService';
+import { ICard } from 'client/card/card-interfaces';
+import { IReplaceMatrix } from 'client/media-wiki';
+import { IYuginewsCardData } from 'client/yuginews';
+import { IDialogProps, IContainableState, TableColumnSortOrder, Containable, Spinner, TabbedPane, TabPane, ITableColumn, HorizontalStack, CheckBox, VerticalStack, TextInput, Button, Table, Typography, Progress, TextAreaInput, ButtonIcon, FileInput } from 'libraries/mn-toolkit';
 import { classNames, isEmpty, isString } from 'libraries/mn-tools';
-import { ICard } from 'renderer/card/card-interfaces';
-import { IReplaceMatrix } from 'renderer/media-wiki/MediaWikiService';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { TabbedPane } from 'libraries/mn-toolkit/tabs/TabbedPane';
-import { TabPane } from 'libraries/mn-toolkit/tabs/TabPane';
-import { IYuginewsCardData } from 'renderer/yuginews/YuginewsService';
-import { Typography } from 'libraries/mn-toolkit/typography/Typography';
-import { TextAreaInput } from 'libraries/mn-toolkit/textAreaInput/TextAreaInput';
-import { CheckBox } from 'libraries/mn-toolkit/checkbox/Checkbox';
-import { TextInput } from 'libraries/mn-toolkit/textInput/TextInput';
-import { FileInput } from 'libraries/mn-toolkit/fileInput/FileInput';
-import { Button, ButtonIcon } from 'libraries/mn-toolkit/button';
-import { Table } from 'libraries/mn-toolkit/table/Table';
-import { ITableColumn, TableColumnSortOrder } from 'libraries/mn-toolkit/table/interfaces';
-import { Progress } from 'libraries/mn-toolkit/progress';
 
 type TTabIndex = 'yugipedia' | 'yuginews';
 
@@ -419,12 +404,15 @@ export class CardImportDialog extends Containable<ICardImportDialogProps, ICardI
         <Button color='positive' label='Ajouter un terme à remplacer dans les textes de la carte' onTap={() => this.addReplaceMatrix()} />
 
         {!!replaceMatrixes.length && <VerticalStack gutter scroll fill>
-          {replaceMatrixes.map((m, i) => <HorizontalStack gutter verticalItemAlignment='middle'>
-            <TextInput fill defaultValue={m.toReplace} onChange={value => this.updateReplaceMatrix(i, value, m.newString)} />
-            <Typography variant='help' content="devient" />
-            <TextInput fill defaultValue={m.newString} onChange={value => this.updateReplaceMatrix(i, m.toReplace, value)} />
-            <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.removeReplaceMatrix(i)} />
-          </HorizontalStack>)}
+          {replaceMatrixes.map((m, i) => (
+            // eslint-disable-next-line react/jsx-key
+            <HorizontalStack gutter verticalItemAlignment='middle'>
+              <TextInput fill defaultValue={m.toReplace} onChange={value => this.updateReplaceMatrix(i, value, m.newString)} />
+              <Typography variant='help' content="devient" />
+              <TextInput fill defaultValue={m.newString} onChange={value => this.updateReplaceMatrix(i, m.toReplace, value)} />
+              <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.removeReplaceMatrix(i)} />
+            </HorizontalStack>
+          ))}
         </VerticalStack>}
 
         {!importing && <Button color='balanced' label='Importer' onTap={() => this.doYugipediaImport()} />}

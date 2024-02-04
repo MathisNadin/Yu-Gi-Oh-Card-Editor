@@ -1,18 +1,8 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable/Containable';
-import { VerticalStack } from 'libraries/mn-toolkit/container/VerticalStack';
-import { ICardListener } from 'renderer/card/CardService';
 import { deepClone } from 'libraries/mn-tools';
 import { MouseEvent } from 'react';
-import { ICard } from 'renderer/card/card-interfaces';
-import { Table } from 'libraries/mn-toolkit/table/Table';
-import { Spinner } from 'libraries/mn-toolkit/spinner/Spinner';
-import { Icon } from 'libraries/mn-toolkit/icon';
-import { TableColumnSortOrder } from 'libraries/mn-toolkit/table/interfaces';
-import { HorizontalStack } from 'libraries/mn-toolkit/container/HorizontalStack';
-import { Typography } from 'libraries/mn-toolkit/typography/Typography';
-import { Button } from 'libraries/mn-toolkit/button';
-import { Spacer } from 'libraries/mn-toolkit/spacer/Spacer';
-import { Progress } from 'libraries/mn-toolkit/progress';
+import { ICard } from 'client/card/card-interfaces';
+import { ICardListener } from 'client/card/CardService';
+import { IContainableProps, IContainableState, TableColumnSortOrder, Containable, Spinner, VerticalStack, Table, HorizontalStack, Typography, Icon, Spacer, Progress, Button } from 'libraries/mn-toolkit';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
 
