@@ -102,7 +102,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${(!card.pendulum && card.frames.includes('xyz')) || card.frames.includes('skill') ? 'white' : 'black'}`;
     const usePendulumFrame = app.$card.hasPendulumFrame(card);
 
-    const artworkBg = require(`assets/images/whiteArtwork${usePendulumFrame ? `Pendulum${card.frames.includes('link') ? 'Link' : ''}` : '' }.png`);
+    const artworkBg = require(`../../assets/images/whiteArtwork${usePendulumFrame ? `Pendulum${card.frames.includes('link') ? 'Link' : ''}` : '' }.png`);
     let croppedArtworkBase64: string;
 
     let artworkExists = false;
@@ -141,24 +141,24 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     let includesLink = false;
 
     for (const frame of card.frames) {
-      cardFrames.push(require(`assets/images/card-frames/${frame}.png`));
+      cardFrames.push(require(`../../assets/images/card-frames/${frame}.png`));
 
       if (frame === 'link') {
         includesLink = true;
       }
 
       if (usePendulumFrame) {
-        pendulumCovers.push(require(`assets/images/pendulum-covers/${frame}.png`));
+        pendulumCovers.push(require(`../../assets/images/pendulum-covers/${frame}.png`));
       } else if (!pendulumCovers.length) {
-        pendulumCovers.push(require(`assets/images/pendulum-covers/normal.png`));
+        pendulumCovers.push(require(`../../assets/images/pendulum-covers/normal.png`));
       }
     }
 
     let pendulumFrame: string;
     if (includesLink) {
-      pendulumFrame = require(`assets/images/pendulum-frames/link.png`);
+      pendulumFrame = require(`../../assets/images/pendulum-frames/link.png`);
     } else {
-      pendulumFrame = require(`assets/images/pendulum-frames/regular.png`);
+      pendulumFrame = require(`../../assets/images/pendulum-frames/regular.png`);
     }
 
     const state: ICardBuilderState = {
@@ -177,14 +177,14 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       pendulumCovers,
       pendulumFrame,
 
-      linkArrowT: require(`assets/images/link-arrows/top${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowB: require(`assets/images/link-arrows/bottom${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowL: require(`assets/images/link-arrows/left${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowR: require(`assets/images/link-arrows/right${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTL: require(`assets/images/link-arrows/topLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTR: require(`assets/images/link-arrows/topRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBL: require(`assets/images/link-arrows/bottomLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBR: require(`assets/images/link-arrows/bottomRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowT: require(`../../assets/images/link-arrows/top${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowB: require(`../../assets/images/link-arrows/bottom${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowL: require(`../../assets/images/link-arrows/left${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowR: require(`../../assets/images/link-arrows/right${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowTL: require(`../../assets/images/link-arrows/topLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowTR: require(`../../assets/images/link-arrows/topRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowBL: require(`../../assets/images/link-arrows/bottomLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
+      linkArrowBR: require(`../../assets/images/link-arrows/bottomRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
 
       descFontSize: 30,
       descLineHeight: 1.2,
@@ -193,22 +193,22 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       pendLineHeight: 1.2,
       pendEffect: card.pendEffect.split('\n').map(d => this.getProcessedText(d)),
 
-      attribute: require(`assets/images/attributes/${card.noTextAttribute ? 'vanilla' : card.language}/${card.attribute}.png`),
-      level: require(`assets/images/levels/${card.level}.png`),
-      negativeLevel: require(`assets/images/negative-levels/${card.level}.png`),
-      rank: require(`assets/images/ranks/${card.level}.png`),
-      linkRating: require(`assets/images/link-ratings/${card.level}.png`),
-      spellPlus: require(`assets/images/st/${card.language}/spell+.png`),
-      trapPlus: require(`assets/images/st/${card.language}/trap+.png`),
-      stIcon: require(`assets/images/st/${card.language}/${card.stType}${card.stType === 'normal' ? card.frames.includes('spell') ? '-spell' : '-trap' : '' }.png`),
-      leftScale: require(`assets/images/pendulum-scales/${includesLink ? 'L_' : ''}G_${card.scales.left}.png`),
-      rightScale: require(`assets/images/pendulum-scales/${includesLink ? 'L_' : ''}D_${card.scales.right}.png`),
+      attribute: require(`../../assets/images/attributes/${card.noTextAttribute ? 'vanilla' : card.language}/${card.attribute}.png`),
+      level: require(`../../assets/images/levels/${card.level}.png`),
+      negativeLevel: require(`../../assets/images/negative-levels/${card.level}.png`),
+      rank: require(`../../assets/images/ranks/${card.level}.png`),
+      linkRating: require(`../../assets/images/link-ratings/${card.level}.png`),
+      spellPlus: require(`../../assets/images/st/${card.language}/spell+.png`),
+      trapPlus: require(`../../assets/images/st/${card.language}/trap+.png`),
+      stIcon: require(`../../assets/images/st/${card.language}/${card.stType}${card.stType === 'normal' ? card.frames.includes('spell') ? '-spell' : '-trap' : '' }.png`),
+      leftScale: require(`../../assets/images/pendulum-scales/${includesLink ? 'L_' : ''}G_${card.scales.left}.png`),
+      rightScale: require(`../../assets/images/pendulum-scales/${includesLink ? 'L_' : ''}D_${card.scales.right}.png`),
 
-      atkDefLine: require(`assets/images/atkDefLine.png`),
-      atkLinkLine: require(`assets/images/atkLinkLine.png`),
-      sticker: require(`assets/images/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
-      copyright: require(`assets/images/limitations/${card.language}/${copyrightPath}/copyright.png`),
-      edition: require(`assets/images/limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
+      atkDefLine: require(`../../assets/images/atkDefLine.png`),
+      atkLinkLine: require(`../../assets/images/atkLinkLine.png`),
+      sticker: require(`../../assets/images/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
+      copyright: require(`../../assets/images/limitations/${card.language}/${copyrightPath}/copyright.png`),
+      edition: require(`../../assets/images/limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
     };
 
     this.setState(state);

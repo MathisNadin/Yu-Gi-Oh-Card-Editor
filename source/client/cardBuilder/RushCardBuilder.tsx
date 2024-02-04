@@ -82,7 +82,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   private async refreshState(card: ICard) {
     if (!card) return;
 
-    const artworkBg = require(`assets/images/rdWhiteArtwork.png`);
+    const artworkBg = require(`../../assets/images/rdWhiteArtwork.png`);
     let croppedArtworkBase64: string;
 
     let artworkExists = false;
@@ -133,7 +133,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           includesOther = true;
           break;
       }
-      cardFrames.push(require(`assets/images/rd-card-frames/${frame}.png`));
+      cardFrames.push(require(`../../assets/images/rd-card-frames/${frame}.png`));
     }
 
     let hasStIcon = false;
@@ -225,19 +225,19 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       pendFontSize: 30,
       pendLineHeight: 1.2,
 
-      legend: require(`assets/images/rd-legend/${card.legendType}.png`),
-      attribute: require(`assets/images/rd-attributes/${card.language}/${card.attribute}.png`),
-      levelStar: require(`assets/images/rd-levels/star.png`),
-      level: require(`assets/images/rd-levels/${card.level}.png`),
-      rankStar: require(`assets/images/rd-ranks/star.png`),
-      rank: require(`assets/images/rd-ranks/${card.level}.png`),
-      stIcon: require(`assets/images/rd-icons/st/${card.stType}.png`),
+      legend: require(`../../assets/images/rd-legend/${card.legendType}.png`),
+      attribute: require(`../../assets/images/rd-attributes/${card.language}/${card.attribute}.png`),
+      levelStar: require(`../../assets/images/rd-levels/star.png`),
+      level: require(`../../assets/images/rd-levels/${card.level}.png`),
+      rankStar: require(`../../assets/images/rd-ranks/star.png`),
+      rank: require(`../../assets/images/rd-ranks/${card.level}.png`),
+      stIcon: require(`../../assets/images/rd-icons/st/${card.stType}.png`),
 
-      atkDefLine: require(`assets/images/rdAtkDefLine.png`),
-      atkMaxLine: require(`assets/images/rdAtkMaxLine.png`),
-      sticker: require(`assets/images/rd-stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
-      copyright: require(`assets/images/rd-limitations/${card.language}/${copyrightPath}/copyright.png`),
-      edition: require(`assets/images/rd-limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
+      atkDefLine: require(`../../assets/images/rdAtkDefLine.png`),
+      atkMaxLine: require(`../../assets/images/rdAtkMaxLine.png`),
+      sticker: require(`../../assets/images/rd-stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
+      copyright: require(`../../assets/images/rd-limitations/${card.language}/${copyrightPath}/copyright.png`),
+      edition: require(`../../assets/images/rd-limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
     };
 
     this.setState(state);
