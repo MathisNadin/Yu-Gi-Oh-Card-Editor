@@ -13,6 +13,16 @@
   },
   "license": "MIT",
   "main": "./.build-desktop/main.js",
+  "dbName": "card-editor-db",
+  "objectStoreName": "card-editor-object-store",
+  "presets": {
+    "development": {
+      "apiUrl": ""
+    },
+    "production": {
+      "apiUrl": ""
+    }
+  },
   "scripts": {
     "start:desktop-preload": "cross-env NODE_ENV=development PLATFORM=desktop-preload TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
     "start:desktop-main": "cross-env NODE_ENV=development PLATFORM=desktop-main electron scripts/start-desktop-main-dev.js",

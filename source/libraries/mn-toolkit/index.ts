@@ -1,5 +1,5 @@
 import { ApiService } from "./api";
-import { Application, IAppSettings } from "./bootstrap";
+import { Application, IApplicationConfig } from "./bootstrap";
 import { DeviceService } from "./device";
 import { ErrorManagerService } from "./errorManager";
 import { IconService, loadSvgs } from "./icon";
@@ -9,10 +9,10 @@ import { PopupService } from "./popup";
 import { ReactService } from "./react";
 import { FilePickerService } from './filePicker';
 
-export function setupAppAndToolkit(appSettings: IAppSettings, beforeBootstrap?: () => void) {
+export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   window.app = new Application() as IApp;
 
-  app.settings = appSettings;
+  window.app.conf = conf;
 
   app.service('$errorManager', ErrorManagerService);
   app.service('$react', ReactService);

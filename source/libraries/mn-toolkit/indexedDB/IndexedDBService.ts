@@ -13,9 +13,9 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
 
   public constructor() {
     super();
-    this.dbName = app.settings.dbName;
+    this.dbName = app.conf.dbName as string;
     this.dbVersion = 1;
-    this.objectStoreName = app.settings.objectStoreName;
+    this.objectStoreName = app.conf.objectStoreName as string;
   }
 
   public fireAllDeleted() {

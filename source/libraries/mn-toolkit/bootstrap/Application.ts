@@ -1,17 +1,6 @@
 import { each, sortDependencies } from "libraries/mn-tools";
 import { Observable } from "../observable";
 
-export interface IAppSettings {
-  dbName: string;
-  objectStoreName: string;
-}
-
-declare global {
-  interface IApp {
-    settings: IAppSettings;
-  }
-}
-
 export interface IApplicationListener {
   applicationReady(): void;
 }
@@ -21,7 +10,9 @@ export interface IApplicationConfig {
   displayName: string;
   stage: string;
   version: string;
-  apiUrl: string;
+  apiUrl?: string;
+  dbName?: string;
+  objectStoreName?: string;
   debug?: boolean;
 }
 
@@ -61,13 +52,16 @@ export class Application
     // this.addListener(this);
   }
 
-  public static initialize(conf: IApplicationConfig): Application {
+  /* public static initialize(conf: IApplicationConfig): Application {
     app._conf = conf;
     return app;
-  }
+  } */
 
   public get conf() {
     return this._conf;
+  }
+  public set conf(conf: IApplicationConfig) {
+    this._conf = conf;
   }
   public get version() {
     return this._conf.version;

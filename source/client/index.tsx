@@ -1,6 +1,6 @@
 import './index.scss';
-import { createRoot } from 'react-dom/client';
 import App from './App';
+import { createRoot } from 'react-dom/client';
 import { SettingsService } from './settings';
 import { setupAppAndToolkit } from 'libraries/mn-toolkit';
 import { extendNativeObjects } from 'libraries/mn-tools';
@@ -8,12 +8,44 @@ import { CardService } from './card';
 import { MediaWikiService } from './mediaWiki';
 import { YuginewsService } from './yuginews';
 
+interface IPackageJSON {
+  name: string;
+  displayName: string;
+  stage: string;
+  version: string;
+  dbName: string;
+  objectStoreName: string;
+  presets: {
+    development: {
+      apiUrl: string;
+    };
+    production: {
+      apiUrl: string;
+    };
+  }
+}
+
+import * as confJson from "../../package.json";
+const conf = confJson as unknown as IPackageJSON;
+const stage = process.env.NODE_ENV as 'development' | 'production';
+let apiUrl: string;
+if (stage === 'production') {
+  apiUrl = conf.presets.production.apiUrl;
+} else {
+  apiUrl = conf.presets.development.apiUrl;
+}
+
 extendNativeObjects();
 
 setupAppAndToolkit(
   {
-    dbName: 'card-editor-db',
-    objectStoreName: 'card-editor-object-store',
+    name: conf.name,
+    displayName: conf.displayName,
+    stage: stage,
+    version: conf.version,
+    apiUrl,
+    dbName: conf.dbName,
+    objectStoreName: conf.objectStoreName,
   },
   () => {
     app.service('$settings', SettingsService, { depends: ['$indexedDB'] });
