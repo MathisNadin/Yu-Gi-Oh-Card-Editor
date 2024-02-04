@@ -21,8 +21,8 @@ export class RushCardPreview extends Containable<IRushCardPreviewProps, IRushCar
     app.$card.addListener(this);
     this.state = {
       loaded: true,
-      rdCardPlaceholder: require(`../resources/pictures/rdCardPlaceholder.png`),
-      rendering: require(`../resources/pictures/rendering.png`),
+      rdCardPlaceholder: require(`assets/images/rdCardPlaceholder.png`),
+      rendering: require(`assets/images/rendering.png`),
       renderCard: undefined,
     };
   }
