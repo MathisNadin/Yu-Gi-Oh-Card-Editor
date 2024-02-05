@@ -1,9 +1,9 @@
 import path, { join } from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
 import { existsSync, readFileSync, writeFile } from 'fs';
-import MenuBuilder from './menuTemplate';
 import { download } from 'electron-dl';
-import { patchIpcMain } from 'client/electronMainPatchs';
+import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
+import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate, patchIpcMain } from 'client/electronMainPatchs';
 
 declare global {
   type IIpcMain = Electron.IpcMain;
@@ -172,8 +172,36 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  function setupDevelopmentEnvironment(mainWindow: BrowserWindow): void {
+    mainWindow.webContents.on('context-menu', (_, props) => {
+      const { x, y } = props;
+
+      Menu.buildFromTemplate([
+        {
+          label: 'Inspect element',
+          click: () => {
+            mainWindow.webContents.inspectElement(x, y);
+          },
+        },
+      ]).popup({ window: mainWindow });
+    });
+  }
+
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+    setupDevelopmentEnvironment(mainWindow as BrowserWindow);
+  }
+
+  let menuTemplate: IMenuItemConstructorOptions[];
+  if (process.platform === 'darwin') {
+    menuTemplate = buildProjectMenuDarwinTemplate(mainWindow, app, shell);
+    if (!menuTemplate?.length) menuTemplate = buildDefaultDarwinTemplate(mainWindow, app, shell);
+  } else {
+    menuTemplate = buildProjectMenuTemplate(mainWindow, app, shell);
+    if (!menuTemplate?.length) menuTemplate = buildDefaultTemplate(mainWindow, app, shell);
+  }
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
