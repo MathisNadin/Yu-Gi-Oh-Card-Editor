@@ -1,11 +1,12 @@
 import { Observable } from "libraries/mn-toolkit/observable";
+import { IDeviceListener } from "../device";
 
 export interface IIndexedDBListener {
   allDeleted: () => void;
   dataImported: () => void;
 }
 
-export class IndexedDBService extends Observable<IIndexedDBListener> {
+export class IndexedDBService extends Observable<IIndexedDBListener> implements Partial<IDeviceListener> {
   private dbName: string;
   private dbVersion: number;
   private objectStoreName: string;
@@ -16,6 +17,14 @@ export class IndexedDBService extends Observable<IIndexedDBListener> {
     this.dbName = app.conf.dbName as string;
     this.dbVersion = 1;
     this.objectStoreName = app.conf.objectStoreName as string;
+    app.$device.addListener(this);
+  }
+
+  public deviceInitialized() {
+    if (!app.$device.isDesktop) return;
+    window.electron.ipcRenderer.on('deleteLocalDb', async () => {
+      await this.deleteAll();
+    });
   }
 
   public fireAllDeleted() {

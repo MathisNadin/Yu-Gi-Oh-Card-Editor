@@ -16,8 +16,8 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 
   app.service('$errorManager', ErrorManagerService);
   app.service('$react', ReactService);
-  app.service('$device', DeviceService, /* {depends: ['$store']} */);
-  app.service('$indexedDB', IndexedDBService);
+  app.service('$device', DeviceService);
+  app.service('$indexedDB', IndexedDBService, { depends: ['$device']});
   app.service('$api', ApiService);
   app.service('$icon', IconService);
   app.service('$popup', PopupService);

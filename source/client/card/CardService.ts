@@ -3,7 +3,7 @@ import { deepClone, uuid } from "libraries/mn-tools";
 import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
 import { Crop } from "react-image-crop";
 import { CardImportDialog } from "client/cardImportDialog";
-import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
+import { Observable, IIndexedDBListener, IDeviceListener } from "libraries/mn-toolkit";
 
 export interface ICardsExportData {
   'current-card': ICard;
@@ -43,7 +43,7 @@ const FRAMES_WITH_DESCRIPTION: TFrame[] = [
   'monsterToken',
 ];
 
-export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener> {
+export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener>, Partial<IDeviceListener> {
   private _currentCard = {} as ICard;
   private _tempCurrentCard: ICard | undefined = undefined;
   private _renderCard: ICard | undefined = undefined;
@@ -66,7 +66,23 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public constructor() {
     super();
     app.$indexedDB.addListener(this);
+    app.$device.addListener(this);
     app.$errorManager.handlePromise(this.load(true));
+  }
+
+  public deviceInitialized() {
+    if (!app.$device.isDesktop) return;
+    window.electron.ipcRenderer.on('renderCurrentCard', async () => {
+      await this.renderCurrentCard();
+    });
+
+    window.electron.ipcRenderer.on('saveCurrentOrTempToLocal', async () => {
+      await this.saveCurrentOrTempToLocal();
+    });
+
+    window.electron.ipcRenderer.on('importCards', async () => {
+      await this.showImportDialog();
+    });
   }
 
   public allDeleted() {

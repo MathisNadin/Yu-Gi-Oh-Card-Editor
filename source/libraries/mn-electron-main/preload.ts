@@ -1,91 +1,126 @@
 import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electron';
+import { getProjectIpcRenderer } from 'client/electronMainPatchs';
 
-export type Channels =
-  'open-link' | 'check-file-exists' | 'create-img-from-path' |
-  'render-current-card' | 'save-current-or-temp-to-local' |
-  'delete-local-db' | 'import-cards' | 'import-data' | 'export-data' |
-  'read-file-utf-8' | 'get-app-version' | 'download';
+declare global {
+  interface ISendChannel {
+  }
+  type TSendChannel = keyof ISendChannel;
 
-const electronHandler = {
-  ipcRenderer: {
-    sendMessage(channel: Channels, args: unknown[]) {
-      ipcRenderer.send(channel, args);
-    },
+  interface IOnceChannel {
+  }
+  type TOnceChannel = keyof IOnceChannel;
 
-    on(channel: Channels, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-        func(...args);
-      ipcRenderer.on(channel, subscription);
+  interface IOnChannel {
+    deleteLocalDb?: null;
+  }
+  type TOnChannel = keyof IOnChannel;
 
-      return () => {
-        ipcRenderer.removeListener(channel, subscription);
-      };
-    },
+  interface IInvokeChannel {
+    getAppVersion?: null;
+    checkFileExists?: null;
+    getFilePath?: null;
+    getDirectoryPath?: null;
+    readFileUtf8?: null;
+    writePngFile?: null;
+    writeJsonFile?: null;
+    createImgFromPath?: null;
+    openLink?: null;
+    download?: null;
+  }
+  type TInvokeChannel = keyof IInvokeChannel;
 
-    once(channel: Channels, func: (...args: unknown[]) => void) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
-    },
+  interface IIpcRenderer {
+    send: (channel: TSendChannel, args: unknown[]) => void;
+    on: (channel: TOnChannel, func: (...args: unknown[]) => void) => () => void;
+    once: (channel: TOnceChannel, func: (...args: unknown[]) => void) => void;
+    invoke: (channel: TInvokeChannel, ...args: unknown[]) => Promise<unknown>;
+    openLink: (link: string) => Promise<void>;
+    download: (directoryPath: string, url: string) => Promise<string>;
+    getAppVersion: () => Promise<string>;
+    readFileUtf8: (filters?: FileFilter[]) => Promise<Buffer>;
+    getFilePath: (defaultPath?: string) => Promise<string>;
+    getDirectoryPath: (defaultPath?: string) => Promise<string>;
+    checkFileExists: (path: string) => Promise<boolean>;
+    createImgFromPath: (path: string) => Promise<string>;
+    writePngFile: (defaultFileName: string, base64: string, filePath?: string) => Promise<void>;
+    writeJsonFile: (defaultFileName: string, jsonData: string, filePath?: string) => Promise<void>;
+  }
 
-    invoke(channel: Channels, ...args: unknown[]): Promise<unknown> {
-      return ipcRenderer.invoke(channel, ...args);
-    },
+  interface IElectronHandler {
+    ipcRenderer: IIpcRenderer;
+  }
 
-    openLink(link: string) {
-      return ipcRenderer.invoke('open-link', link);
-    },
+  interface Window {
+    electron: IElectronHandler;
+  }
+}
 
-    download(directoryPath: string, url :string): Promise<string> {
-      return ipcRenderer.invoke('download', directoryPath, url);
-    },
+const defaultIpcRenderer: Partial<IIpcRenderer> = {
+  send(channel: TSendChannel, args: unknown[]) {
+    ipcRenderer.send(channel, args);
+  },
 
-    getAppVersion(): Promise<string> {
-      return ipcRenderer.invoke('get-app-version');
-    },
+  on(channel: TOnChannel, func: (...args: unknown[]) => void) {
+    const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
+      func(...args);
+    ipcRenderer.on(channel, subscription);
 
-    readFileUtf8(filters?: FileFilter[]): Promise<Buffer> {
-      return ipcRenderer.invoke('read-file-utf-8', filters);
-    },
+    return () => {
+      ipcRenderer.removeListener(channel, subscription);
+    };
+  },
 
-    getFilePath(defaultPath?: string): Promise<string> {
-      return ipcRenderer.invoke('get-file-path', defaultPath);
-    },
+  once(channel: TOnceChannel, func: (...args: unknown[]) => void) {
+    ipcRenderer.once(channel, (_event, ...args) => func(...args));
+  },
 
-    getDirectoryPath(defaultPath?: string): Promise<string> {
-      return ipcRenderer.invoke('get-directory-path', defaultPath);
-    },
+  invoke(channel: TInvokeChannel, ...args: unknown[]): Promise<unknown> {
+    return ipcRenderer.invoke(channel, ...args);
+  },
 
-    checkFileExists(path: string): Promise<boolean> {
-      return ipcRenderer.invoke('check-file-exists', path);
-    },
+  openLink(link: string) {
+    return ipcRenderer.invoke('openLink', link);
+  },
 
-    createImgFromPath(path: string): Promise<string> {
-      return ipcRenderer.invoke('create-img-from-path', path);
-    },
+  download(directoryPath: string, url :string): Promise<string> {
+    return ipcRenderer.invoke('download', directoryPath, url);
+  },
 
-    writePngFile(defaultFileName: string, base64: string, filePath?: string): Promise<void> {
-      return ipcRenderer.invoke('write-png-file', defaultFileName, base64, filePath);
-    },
+  getAppVersion(): Promise<string> {
+    return ipcRenderer.invoke('getAppVersion');
+  },
 
-    writeJsonFile(defaultFileName: string, jsonData: string, filePath?: string): Promise<void> {
-      return ipcRenderer.invoke('write-json-file', defaultFileName, jsonData, filePath);
-    },
+  readFileUtf8(filters?: FileFilter[]): Promise<Buffer> {
+    return ipcRenderer.invoke('readFileUtf8', filters);
+  },
 
-    renderCurrentCard(): Promise<void> {
-      return app.$card.renderCurrentCard();
-    },
+  getFilePath(defaultPath?: string): Promise<string> {
+    return ipcRenderer.invoke('getFilePath', defaultPath);
+  },
 
-    saveCurrentToLocal(): Promise<void> {
-      return app.$card.saveCurrentToLocal();
-    },
+  getDirectoryPath(defaultPath?: string): Promise<string> {
+    return ipcRenderer.invoke('getDirectoryPath', defaultPath);
+  },
+
+  checkFileExists(path: string): Promise<boolean> {
+    return ipcRenderer.invoke('checkFileExists', path);
+  },
+
+  createImgFromPath(path: string): Promise<string> {
+    return ipcRenderer.invoke('createImgFromPath', path);
+  },
+
+  writePngFile(defaultFileName: string, base64: string, filePath?: string): Promise<void> {
+    return ipcRenderer.invoke('writePngFile', defaultFileName, base64, filePath);
+  },
+
+  writeJsonFile(defaultFileName: string, jsonData: string, filePath?: string): Promise<void> {
+    return ipcRenderer.invoke('writeJsonFile', defaultFileName, jsonData, filePath);
   },
 };
 
+const electronHandler: IElectronHandler = {
+  ipcRenderer: { ...defaultIpcRenderer, ...getProjectIpcRenderer() } as IIpcRenderer,
+};
+
 contextBridge.exposeInMainWorld('electron', electronHandler);
-
-export type ElectronHandler = typeof electronHandler;
-
-declare global {
-  interface Window {
-    electron: ElectronHandler;
-  }
-}

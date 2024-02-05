@@ -42,10 +42,10 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   private _foreground = false;
 
   public fireScreenSpecChanged(spec: IScreenSpec) { this.dispatch('deviceScreenSpecificationChanged', spec); }
+  public fireForeground() { this.dispatch('deviceForeground'); }
+  public fireBackground() { this.dispatch('deviceBackground'); }
   public fireOnline() { this.dispatch('deviceOnline'); }
   public fireOffline() { this.dispatch('deviceOffline'); }
-  public fireBackground() { this.dispatch('deviceBackground'); }
-  public fireForeground() { this.dispatch('deviceForeground'); }
 
   public constructor() {
     super();
@@ -134,7 +134,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
    * @memberOf $device
    */
   public async setup() {
-    await this.setupDevice();
+    this.setupDevice();
     this.setupScreen();
     // this.setupStatusBar();
     this.setupNetwork();
@@ -170,20 +170,17 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
    *
    * @memberOf $device
    */
-  private async setupDevice() {
+  private setupDevice() {
     if (this.isNative) {
       /* this._platform = window.device.platform.toLowerCase();
-      // console.log('deviceId', this._platform);
       document.body.classList.add('mn-platform-mobile'); */
     } else if (this.isElectron) {
       this._platform = 'desktop';
-      // console.log('deviceId', this._platform);
     } else {
       this._platform = 'web';
-      // console.log('deviceId', this._platform);
     }
+    // console.log('deviceId', this._platform);
     document.body.classList.add(`mn-platform-${this._platform}`);
-    return Promise.resolve();
   }
 
 

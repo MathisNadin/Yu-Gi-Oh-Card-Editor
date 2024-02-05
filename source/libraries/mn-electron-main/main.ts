@@ -1,41 +1,26 @@
 import path, { join } from 'path';
 import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter } from 'electron';
 import { existsSync, readFileSync, writeFile } from 'fs';
-import MenuBuilder from './menu';
+import MenuBuilder from './menuTemplate';
 import { download } from 'electron-dl';
+import { patchIpcMain } from 'client/electronMainPatchs';
 
-let mainWindow: BrowserWindow | null = null;
+declare global {
+  type IIpcMain = Electron.IpcMain;
+}
 
-ipcMain.handle('open-link', async (_event, link: string) => {
-  shell.openExternal(link);
-});
-
-ipcMain.handle('download', async (_event, directory: string, url: string) => {
-  let win = BrowserWindow.getFocusedWindow() as BrowserWindow;
-  if (!win) {
-    let allWindows = BrowserWindow.getAllWindows();
-    if (allWindows?.length) {
-      win = allWindows[0];
-    }
-  }
-  let file = await download(win, url, { directory });
-  return file.getSavePath();
-});
-
-ipcMain.handle('get-app-version', async (_event) => {
+/**
+ * Add event handlers
+ */
+ipcMain.handle('getAppVersion', async (_event) => {
   return app.getVersion();
 });
 
-ipcMain.handle('read-file-utf-8', async (_event, filters: FileFilter[]) => {
-  const directoryPath = await dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters
-  });
-  if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
-  return readFileSync(directoryPath.filePaths[0], 'utf-8');
+ipcMain.handle('checkFileExists', async (_event, filePath: string) => {
+  return existsSync(filePath);
 });
 
-ipcMain.handle('get-file-path', async (_event, defaultPath: string) => {
+ipcMain.handle('getFilePath', async (_event, defaultPath: string) => {
   const directoryPath = await dialog.showOpenDialog({
     properties: ['openFile'],
     defaultPath,
@@ -44,7 +29,7 @@ ipcMain.handle('get-file-path', async (_event, defaultPath: string) => {
   return directoryPath.filePaths[0];
 });
 
-ipcMain.handle('get-directory-path', async (_event, defaultPath: string) => {
+ipcMain.handle('getDirectoryPath', async (_event, defaultPath: string) => {
   const directoryPath = await dialog.showOpenDialog({
     properties: ['openDirectory'],
     defaultPath,
@@ -53,7 +38,40 @@ ipcMain.handle('get-directory-path', async (_event, defaultPath: string) => {
   return directoryPath.filePaths[0];
 });
 
-ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64: string, filePath?: string) => {
+ipcMain.handle('readFileUtf8', async (_event, filters: FileFilter[]) => {
+  const directoryPath = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters
+  });
+  if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
+  return readFileSync(directoryPath.filePaths[0], 'utf-8');
+});
+
+ipcMain.handle('writeJsonFile', async (_event, defaultFileName: string, jsonData: string, filePath?: string) => {
+  let canceled = false;
+  if (!filePath) {
+    const result = await dialog.showSaveDialog({
+      defaultPath: `${defaultFileName}.json`,
+      filters: [{ extensions: ['json'], name: 'JSON File' }]
+    });
+    filePath = result?.filePath;
+    canceled = result?.canceled;
+  }
+  else {
+    filePath = join(filePath, `${defaultFileName}.json`);
+  }
+
+  if (!canceled && filePath) {
+    const finalFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
+    // eslint-disable-next-line consistent-return
+    writeFile(finalFilePath, jsonData, (err) => {
+      if (!err) return finalFilePath;
+    });
+  }
+  return undefined;
+});
+
+ipcMain.handle('writePngFile', async (_event, defaultFileName: string, base64: string, filePath?: string) => {
   let canceled = false;
   if (!filePath) {
     const result = await dialog.showSaveDialog({
@@ -78,39 +96,34 @@ ipcMain.handle('write-png-file', async (_event, defaultFileName: string, base64:
   return undefined;
 });
 
-ipcMain.handle('write-json-file', async (_event, defaultFileName: string, jsonData: string, filePath?: string) => {
-  let canceled = false;
-  if (!filePath) {
-    const result = await dialog.showSaveDialog({
-      defaultPath: `${defaultFileName}.json`,
-      filters: [{ extensions: ['json'], name: 'JSON File' }]
-    });
-    filePath = result?.filePath;
-    canceled = result?.canceled;
-  }
-  else {
-    filePath = join(filePath, `${defaultFileName}.json`);
-  }
-
-  if (!canceled && filePath) {
-    const finalFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
-    // eslint-disable-next-line consistent-return
-    writeFile(finalFilePath, jsonData, (err) => {
-      if (!err) return finalFilePath;
-    });
-  }
-  return undefined;
-});
-
-ipcMain.handle('check-file-exists', async (_event, filePath: string) => {
-  return existsSync(filePath);
-});
-
-ipcMain.handle('create-img-from-path', async (_event, filePath: string) => {
+ipcMain.handle('createImgFromPath', async (_event, filePath: string) => {
   const base64 = readFileSync(filePath).toString('base64');
   return `data:image/png;base64,${base64}`;
 });
 
+ipcMain.handle('openLink', async (_event, link: string) => {
+  shell.openExternal(link);
+});
+
+ipcMain.handle('download', async (_event, directory: string, url: string) => {
+  let win = BrowserWindow.getFocusedWindow() as BrowserWindow;
+  if (!win) {
+    let allWindows = BrowserWindow.getAllWindows();
+    if (allWindows?.length) {
+      win = allWindows[0];
+    }
+  }
+  let file = await download(win, url, { directory });
+  return file.getSavePath();
+});
+
+patchIpcMain(ipcMain);
+
+
+
+/**
+ * Create main window
+ */
 const createWindow = async () => {
   const isDev = process.env.NODE_ENV === 'development';
 
@@ -121,7 +134,7 @@ const createWindow = async () => {
     preloadPath = path.join(__dirname, 'preload.js');
   }
 
-  mainWindow = new BrowserWindow({
+  let mainWindow: BrowserWindow | null = new BrowserWindow({
     show: false,
     width: 1024,
     height: 728,
@@ -169,10 +182,12 @@ const createWindow = async () => {
   });
 };
 
-/**
- * Add event listeners...
- */
 
+
+
+/**
+ * Add event listeners
+ */
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed

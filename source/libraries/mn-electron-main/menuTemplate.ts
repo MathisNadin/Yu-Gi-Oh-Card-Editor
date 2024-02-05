@@ -1,10 +1,4 @@
-import {
-  app,
-  Menu,
-  shell,
-  BrowserWindow,
-  MenuItemConstructorOptions,
-} from 'electron';
+import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -192,7 +186,7 @@ export default class MenuBuilder {
     return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
-  buildDefaultTemplate() {
+  buildDefaultTemplate(): MenuItemConstructorOptions[] {
     const templateDefault = [
       {
         label: '&Fichier',
@@ -201,7 +195,7 @@ export default class MenuBuilder {
             label: '&Faire le rendu',
             accelerator: 'F1',
             click: () => {
-              this.mainWindow.webContents.send('render-current-card');
+              this.mainWindow.webContents.send('renderCurrentCard');
             },
           },
           {
@@ -220,28 +214,28 @@ export default class MenuBuilder {
             label: '&Sauvegarder la carte',
             accelerator: 'F2',
             click: () => {
-              this.mainWindow.webContents.send('save-current-or-temp-to-local');
+              this.mainWindow.webContents.send('saveCurrentOrTempToLocal');
             },
           },
           {
             label: '&Importer depuis un site',
             accelerator: 'F3',
             click: () => {
-              this.mainWindow.webContents.send('import-cards');
+              this.mainWindow.webContents.send('importCards');
             },
           },
           {
             label: '&Importer des données',
             accelerator: 'F7',
             click: () => {
-              this.mainWindow.webContents.send('import-data');
+              this.mainWindow.webContents.send('importData');
             },
           },
           {
             label: '&Exporter les données',
             accelerator: 'F8',
             click: () => {
-              this.mainWindow.webContents.send('export-data');
+              this.mainWindow.webContents.send('exportData');
             },
           },
         ],
@@ -298,7 +292,7 @@ export default class MenuBuilder {
             label: '&Supprimer les données locales',
             accelerator: 'Alt+Ctrl+D',
             click: () => {
-              this.mainWindow.webContents.send('delete-local-db');
+              this.mainWindow.webContents.send('deleteLocalDb');
             }
           },
         ]

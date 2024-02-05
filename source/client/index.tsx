@@ -55,35 +55,6 @@ setupAppAndToolkit(
   }
 );
 
-
-
-
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(<App />);
-
-
-
-window.electron.ipcRenderer.on('render-current-card', async () => {
-  await app.$card.renderCurrentCard();
-});
-
-window.electron.ipcRenderer.on('save-current-or-temp-to-local', async () => {
-  await app.$card.saveCurrentOrTempToLocal();
-});
-
-window.electron.ipcRenderer.on('import-cards', async () => {
-  await app.$card.showImportDialog();
-});
-
-window.electron.ipcRenderer.on('import-data', async () => {
-  await app.$settings.importData();
-});
-
-window.electron.ipcRenderer.on('export-data', async () => {
-  await app.$settings.exportData();
-});
-
-window.electron.ipcRenderer.on('delete-local-db', async () => {
-  await app.$indexedDB.deleteAll();
-});
