@@ -1,3 +1,5 @@
+import { CardService } from "./card";
+
 declare global {
   interface IOnChannel {
     renderCurrentCard?: null;
@@ -11,6 +13,12 @@ declare global {
     renderCurrentCard: () => Promise<void>;
     saveCurrentToLocal: () => Promise<void>;
   }
+
+  interface IApp {
+    $card: CardService;
+  }
+  // eslint-disable-next-line vars-on-top, no-var
+  var app: IApp;
 }
 
 export function patchIpcMain(_ipcMain: IIpcMain) {

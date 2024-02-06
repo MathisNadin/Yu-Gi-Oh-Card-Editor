@@ -1,4 +1,4 @@
-import { app, Menu, BrowserWindow, MenuItemConstructorOptions } from 'electron';
+import { Menu, BrowserWindow, MenuItemConstructorOptions } from 'electron';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -6,11 +6,11 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 }
 
 declare global {
+  type IElectronShell = Electron.Shell;
+  type IElectronApp = Electron.App;
   type IBrowserWindow = BrowserWindow;
   type IMenuItemConstructorOptions = MenuItemConstructorOptions;
   type IDarwinMenuItemConstructorOptions = DarwinMenuItemConstructorOptions;
-  type IElectronShell = Electron.Shell;
-  type IElectronApp = Electron.App;
 }
 
 export function buildDefaultDarwinTemplate(mainWindow: IBrowserWindow, app: IElectronApp, shell: IElectronShell): IMenuItemConstructorOptions[] {
@@ -156,118 +156,98 @@ export function buildDefaultDarwinTemplate(mainWindow: IBrowserWindow, app: IEle
   return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
 }
 
-export function buildDefaultTemplate(mainWindow: IBrowserWindow, _app: IElectronApp, _shell: IElectronShell): IMenuItemConstructorOptions[] {
+export function buildDefaultTemplate(mainWindow: IBrowserWindow, _app: IElectronApp, shell: IElectronShell): IMenuItemConstructorOptions[] {
   const includeDevTools = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-  const templateDefault = [
-    {
-      label: '&Fichier',
-      submenu: [
-        {
-          label: '&Faire le rendu',
-          accelerator: 'F1',
-          click: () => {
-            mainWindow.webContents.send('renderCurrentCard');
+    const templateDefault = [
+      {
+        label: '&File',
+        submenu: [
+          {
+            label: '&Open',
+            accelerator: 'Ctrl+O',
           },
-        },
-        {
-          label: '&Fermer',
-          accelerator: 'Ctrl+W',
-          click: () => {
-            mainWindow.close();
-          },
-        },
-      ],
-    },
-    {
-      label: '&Édition',
-      submenu: [
-        {
-          label: '&Sauvegarder la carte',
-          accelerator: 'F2',
-          click: () => {
-            mainWindow.webContents.send('saveCurrentOrTempToLocal');
-          },
-        },
-        {
-          label: '&Importer depuis un site',
-          accelerator: 'F3',
-          click: () => {
-            mainWindow.webContents.send('importCards');
-          },
-        },
-        {
-          label: '&Importer des données',
-          accelerator: 'F7',
-          click: () => {
-            mainWindow.webContents.send('importData');
-          },
-        },
-        {
-          label: '&Exporter les données',
-          accelerator: 'F8',
-          click: () => {
-            mainWindow.webContents.send('exportData');
-          },
-        },
-      ],
-    },
-    {
-      label: '&Affichage',
-      submenu: includeDevTools
-        ? [
-            {
-              label: '&Recharger',
-              accelerator: 'Ctrl+R',
-              click: () => {
-                mainWindow.webContents.reload();
-              },
+          {
+            label: '&Close',
+            accelerator: 'Ctrl+W',
+            click: () => {
+              mainWindow.close();
             },
-            {
-              label: '&Plein écran',
-              accelerator: 'F11',
-              click: () => {
-                mainWindow.setFullScreen(
-                  !mainWindow.isFullScreen()
-                );
+          },
+        ],
+      },
+      {
+        label: '&View',
+        submenu: includeDevTools
+          ? [
+              {
+                label: '&Reload',
+                accelerator: 'Ctrl+R',
+                click: () => {
+                  mainWindow.webContents.reload();
+                },
               },
-            },
-          ]
-        : [
-            {
-              label: '&Plein écran',
-              accelerator: 'F11',
-              click: () => {
-                mainWindow.setFullScreen(
-                  !mainWindow.isFullScreen()
-                );
+              {
+                label: 'Toggle &Full Screen',
+                accelerator: 'F11',
+                click: () => {
+                  mainWindow.setFullScreen(
+                    !mainWindow.isFullScreen(),
+                  );
+                },
               },
+              {
+                label: 'Toggle &Developer Tools',
+                accelerator: 'Alt+Ctrl+I',
+                click: () => {
+                  mainWindow.webContents.toggleDevTools();
+                },
+              },
+            ]
+          : [
+              {
+                label: 'Toggle &Full Screen',
+                accelerator: 'F11',
+                click: () => {
+                  mainWindow.setFullScreen(
+                    !mainWindow.isFullScreen(),
+                  );
+                },
+              },
+            ],
+      },
+      {
+        label: 'Help',
+        submenu: [
+          {
+            label: 'Learn More',
+            click() {
+              shell.openExternal('https://electronjs.org');
             },
-          ],
-    },
-  ];
+          },
+          {
+            label: 'Documentation',
+            click() {
+              shell.openExternal(
+                'https://github.com/electron/electron/tree/main/docs#readme',
+              );
+            },
+          },
+          {
+            label: 'Community Discussions',
+            click() {
+              shell.openExternal('https://www.electronjs.org/community');
+            },
+          },
+          {
+            label: 'Search Issues',
+            click() {
+              shell.openExternal('https://github.com/electron/electron/issues');
+            },
+          },
+        ],
+      },
+    ];
 
-  if (includeDevTools) {
-    templateDefault.push({
-      label: '&Développement',
-      submenu: [
-        {
-          label: '&Outils de développement',
-          accelerator: 'Alt+Ctrl+I',
-          click: () => {
-            mainWindow.webContents.toggleDevTools();
-          },
-        },
-        {
-          label: '&Supprimer les données locales',
-          accelerator: 'Alt+Ctrl+D',
-          click: () => {
-            mainWindow.webContents.send('deleteLocalDb');
-          }
-        },
-      ]
-    });
-  }
-
-  return templateDefault;
+    return templateDefault;
 }

@@ -1,9 +1,10 @@
 import path, { join } from 'path';
+import { createConnection } from 'net';
 import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
 import { existsSync, readFileSync, writeFile } from 'fs';
 import { download } from 'electron-dl';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
-import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate, patchIpcMain } from 'client/electronMainPatchs';
+import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate, patchIpcMain } from '../../client/electronMainPatchs';
 
 declare global {
   type IIpcMain = Electron.IpcMain;
@@ -146,16 +147,32 @@ const createWindow = async () => {
   mainWindow.maximize();
 
   function resolveHtmlPath(htmlFileName: string) {
-    if (isDev) {
-      const port = process.env.PORT || 8080;
-      const url = new URL(`http://localhost:${port}`);
-      url.pathname = htmlFileName;
-      return url.href;
-    }
-    return `file://${path.resolve(__dirname, htmlFileName)}`;
+    return new Promise<string>((resolve) => {
+      if (isDev) {
+        const port = process.env.PORT ? Number(process.env.PORT) : 8080;
+        const url = `http://localhost:${port}/${htmlFileName}`;
+
+        // Fonction pour tester la connexion au serveur de développement
+        const tryConnect = () => {
+          const client = createConnection({ port }, () => {
+            client.end();
+            resolve(url);
+          });
+
+          client.on('error', () => {
+            setTimeout(tryConnect, 1000); // Réessayer après un délai si la connexion échoue
+          });
+        };
+
+        tryConnect();
+      } else {
+        resolve(`file://${path.resolve(__dirname, htmlFileName)}`);
+      }
+    });
   }
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  const url = await resolveHtmlPath('index.html');
+  mainWindow.loadURL(url);
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {

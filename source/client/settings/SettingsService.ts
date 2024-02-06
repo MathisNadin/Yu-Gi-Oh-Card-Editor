@@ -1,5 +1,5 @@
 import { ICardsExportData } from "client/card";
-import { Observable, IIndexedDBListener, IDeviceListener } from "libraries/mn-toolkit";
+import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
 import { deepClone, isObject } from "libraries/mn-tools";
 
 interface IExportData {
@@ -20,7 +20,7 @@ export interface ISettingsListener {
   settingsUpdated: (settings: IUserSettings) => void;
 }
 
-export class SettingsService extends Observable<ISettingsListener> implements Partial<IIndexedDBListener>, Partial<IDeviceListener> {
+export class SettingsService extends Observable<ISettingsListener> implements Partial<IIndexedDBListener> {
   private _settings: IUserSettings = {} as IUserSettings;
 
   public get settings() {
@@ -38,11 +38,10 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
   public constructor() {
     super();
     app.$indexedDB.addListener(this);
-    app.$device.addListener(this);
     app.$errorManager.handlePromise(this.load(true));
   }
 
-  public deviceInitialized() {
+  public async setup() {
     if (!app.$device.isDesktop) return;
     window.electron.ipcRenderer.on('importData', async () => {
       await this.importData();

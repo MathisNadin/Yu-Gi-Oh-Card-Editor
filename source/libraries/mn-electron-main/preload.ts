@@ -1,5 +1,5 @@
 import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electron';
-import { getProjectIpcRenderer } from 'client/electronMainPatchs';
+import { getProjectIpcRenderer } from '../../client/electronMainPatchs';
 
 declare global {
   interface ISendChannel {
