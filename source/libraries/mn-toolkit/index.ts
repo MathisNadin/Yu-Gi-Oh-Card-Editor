@@ -8,8 +8,11 @@ import { PopoverService } from "./popover";
 import { PopupService } from "./popup";
 import { ReactService } from "./react";
 import { FilePickerService } from './filePicker';
+import { extendNativeObjects } from 'libraries/mn-tools';
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
+  extendNativeObjects();
+
   window.app = new Application() as IApp;
 
   window.app.conf = conf;

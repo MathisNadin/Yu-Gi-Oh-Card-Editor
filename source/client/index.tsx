@@ -3,7 +3,6 @@ import App from './App';
 import { createRoot } from 'react-dom/client';
 import { SettingsService } from './settings';
 import { setupAppAndToolkit } from 'libraries/mn-toolkit';
-import { extendNativeObjects } from 'libraries/mn-tools';
 import { CardService } from './card';
 import { MediaWikiService } from './mediaWiki';
 import { YuginewsService } from './yuginews';
@@ -34,8 +33,6 @@ if (stage === 'production') {
 } else {
   apiUrl = conf.presets.development.apiUrl;
 }
-
-extendNativeObjects();
 
 setupAppAndToolkit(
   {
