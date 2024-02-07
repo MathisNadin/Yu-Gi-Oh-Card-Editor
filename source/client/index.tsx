@@ -1,11 +1,8 @@
 import './index.scss';
-import App from './App';
-import { createRoot } from 'react-dom/client';
-import { SettingsService } from './editor/settings';
+import * as confJson from "../../package.json";
 import { setupAppAndToolkit } from 'libraries/mn-toolkit';
-import { CardService } from './editor/card';
-import { MediaWikiService } from './editor/mediaWiki';
-import { YuginewsService } from './editor/yuginews';
+import { CoreService } from './kernel';
+import { SettingsService, MediaWikiService, CardService, YuginewsService, HomeView } from './editor';
 
 interface IPackageJSON {
   name: string;
@@ -24,7 +21,6 @@ interface IPackageJSON {
   }
 }
 
-import * as confJson from "../../package.json";
 const conf = confJson as unknown as IPackageJSON;
 const stage = process.env.NODE_ENV as 'development' | 'production';
 let apiUrl: string;
@@ -45,6 +41,7 @@ setupAppAndToolkit(
     objectStoreName: conf.objectStoreName,
   },
   () => {
+    app.service('$core', CoreService);
     app.service('$settings', SettingsService, { depends: ['$indexedDB'] });
     app.service('$mediaWiki', MediaWikiService, { depends: ['$api'] });
     app.service('$card', CardService, { depends: ['$indexedDB'] });
@@ -52,6 +49,4 @@ setupAppAndToolkit(
   }
 );
 
-const container = document.getElementById('root')!;
-const root = createRoot(container);
-root.render(<App />);
+app.$router.register('home', '/home', HomeView);
