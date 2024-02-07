@@ -204,7 +204,7 @@ const createWindow = async () => {
     });
   }
 
-  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+  if (isDev || process.env.DEBUG_PROD === 'true') {
     setupDevelopmentEnvironment(mainWindow as BrowserWindow);
   }
 
@@ -225,6 +225,8 @@ const createWindow = async () => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
+
+  if (isDev) mainWindow.webContents.openDevTools();
 };
 
 

@@ -2,6 +2,11 @@
 @import './kernel/styles.scss';
 @import './editor/styles.scss';
 
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 .mn-router {
   height: 100%;
 }

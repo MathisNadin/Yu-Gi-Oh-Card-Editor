@@ -24,8 +24,9 @@ export class CoreService implements Partial<IApplicationListener> {
 
   public applicationReady() {
     // console.log('applicationReady');
-    const body = createRoot(document.body);
-    body.render(<Page />);
+    const container = document.getElementById('root')!;
+    const root = createRoot(container);
+    root.render(<Page />);
     this.gotoHome();
   }
 
