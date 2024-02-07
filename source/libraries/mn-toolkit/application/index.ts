@@ -32,4 +32,4 @@ declare global {
   }
 }
 
-export type IID = number | string;
+export type TID = number | string;

@@ -4,6 +4,7 @@ import { Icon } from '../icon';
 import { Typography } from '../typography';
 
 export interface IPopupProps extends IContainerProps {
+  type?: string;
   id: string;
   title: string;
   content: ReactElement;

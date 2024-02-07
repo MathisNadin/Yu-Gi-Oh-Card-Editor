@@ -6,7 +6,7 @@ const desktopPreloadConfig: Configuration = {
   target: 'electron-preload',
   entry: path.join(__dirname, '..', '..', 'source', 'libraries', 'mn-electron-main', 'preload.ts'),
   output: {
-    path: path.resolve(__dirname, '..', '..', '.desktop-temp'),
+    path: path.resolve(__dirname, '..', '..', '.temp-desktop'),
     filename: 'preload.js',
     library: {
       type: 'umd',

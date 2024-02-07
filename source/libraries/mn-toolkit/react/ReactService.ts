@@ -76,4 +76,19 @@ export class ReactService {
     }
     return this.scrollbarSize ?? 0;
   }
+
+  public domReady(fn: () => void) {
+    if (document.readyState !== 'loading') {
+      fn();
+    } else if (document.addEventListener) {
+      document.addEventListener('DOMContentLoaded', fn);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (document as any).attachEvent('onreadystatechange', () => {
+        if (document.readyState !== 'loading')
+          fn();
+      });
+    }
+  }
+
 }

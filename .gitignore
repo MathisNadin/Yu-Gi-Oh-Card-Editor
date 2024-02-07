@@ -1,6 +1,6 @@
 .build-web
 
-.desktop-temp
+.temp-desktop
 .build-desktop
 .package-desktop
 

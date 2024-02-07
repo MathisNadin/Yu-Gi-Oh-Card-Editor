@@ -1,5 +1,5 @@
 import { ApiService } from "./api";
-import { Application, IApplicationConfig } from "./bootstrap";
+import { Application, IApplicationConfig } from "./application";
 import { DeviceService } from "./device";
 import { ErrorManagerService } from "./errorManager";
 import { IconService, loadSvgs } from "./icon";
@@ -9,6 +9,7 @@ import { PopupService } from "./popup";
 import { ReactService } from "./react";
 import { FilePickerService } from './filePicker';
 import { extendNativeObjects } from 'libraries/mn-tools';
+import { RouterService } from "./router";
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   extendNativeObjects();
@@ -17,8 +18,9 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 
   window.app.conf = conf;
 
-  app.service('$errorManager', ErrorManagerService);
   app.service('$react', ReactService);
+  app.service('$router', RouterService, { depends: ['$react'] });
+  app.service('$errorManager', ErrorManagerService);
   app.service('$device', DeviceService);
   app.service('$indexedDB', IndexedDBService, { depends: ['$device']});
   app.service('$api', ApiService);
@@ -35,8 +37,9 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 }
 
 export * from './themeSettings';
+export * from './router';
 export * from './api';
-export * from './bootstrap';
+export * from './application';
 export * from './button';
 export * from './checkbox';
 export * from './containable';

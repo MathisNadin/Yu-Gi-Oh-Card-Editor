@@ -130,7 +130,7 @@ const createWindow = async () => {
 
   let preloadPath: string;
   if (isDev) {
-    preloadPath = path.join(__dirname, '../../../.desktop-temp/preload.js');
+    preloadPath = path.join(__dirname, '../../../.temp-desktop/preload.js');
   } else {
     preloadPath = path.join(__dirname, 'preload.js');
   }

@@ -20,4 +20,24 @@ export class Observable<T> {
       }
     });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public askForResponse<R>(method: keyof T, ...args: any[]): R {
+    for (let listener of this.listeners) {
+      if (typeof listener[method] !== 'function') continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let result = (listener[method] as any).apply(listener, args);
+      if (!!result) return result as R;
+    }
+    return undefined as R;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async asyncDispatch(method: keyof T, ...args: any[]) {
+    for (let listener of this.listeners) {
+      if (typeof listener[method] !== 'function') continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (listener[method] as any).apply(listener, args);
+    }
+  }
 }

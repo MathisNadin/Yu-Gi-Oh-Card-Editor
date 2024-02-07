@@ -1,6 +1,6 @@
 import { extend } from "libraries/mn-tools";
 import { Observable } from "../observable";
-import { IApplicationListener } from "../bootstrap";
+import { IApplicationListener } from "../application";
 
 export interface IFileFilter {
   extensions: string[];
