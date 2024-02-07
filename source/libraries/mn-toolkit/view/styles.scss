@@ -1,7 +1,7 @@
 @mixin themeHeader() {
   $progressHeight: 5px;
   @include bg(1);
-  padding:$themeDefaultSpacing/2 !important;
+  padding: calc($themeDefaultSpacing / 2) !important;
   border-bottom: 1px solid;
   @include border-color(4);
   @include ios-top('padding-top');
@@ -36,7 +36,7 @@
     z-index: $z-index-title-bar;
     padding: 2px 8px 0 8px;
     display: flex;
-    gap:$themeDefaultSpacing/2;
+    gap: calc($themeDefaultSpacing / 2);
     flex-direction: row;
     align-items: center;
     @include fg(1);
@@ -44,7 +44,7 @@
     .center-part {
       display: flex;
       align-items: center;
-      gap: $themeDefaultSpacing/2;
+      gap: calc($themeDefaultSpacing / 2);
       flex: 1;
       text-align: left;
       @include text-overflow;

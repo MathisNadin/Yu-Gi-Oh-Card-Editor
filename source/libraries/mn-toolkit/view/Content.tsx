@@ -1,4 +1,4 @@
-import { Container, IContainerProps, IContainerState } from '..';
+import { Container, IContainerProps, IContainerState } from '../container';
 
 interface IContentProps extends IContainerProps { }
 

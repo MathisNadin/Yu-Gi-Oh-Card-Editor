@@ -1,5 +1,6 @@
 import { unserialize, uuid, each, serialize } from 'libraries/mn-tools';
-import { IXhrListener, IXhrProgress, IXhrRequestOptions, Observable } from '..';
+import { IXhrListener, IXhrProgress, IXhrRequestOptions } from '.';
+import { Observable } from '../observable';
 
 declare global {
   interface XMLHttpRequest {

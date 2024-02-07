@@ -1,5 +1,5 @@
 import { Component, createElement } from 'react';
-import { IRouterListener, IState } from '..';
+import { IRouterListener, IState } from '../router';
 import { Spinner } from '../spinner';
 import { classNames } from 'libraries/mn-tools';
 

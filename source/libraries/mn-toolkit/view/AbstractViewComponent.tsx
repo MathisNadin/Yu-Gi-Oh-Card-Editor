@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { IContainerState } from '..';
+import { IContainerState } from '../container';
 
 export interface IAbstractViewComponentState extends IContainerState {
   loaded: boolean;

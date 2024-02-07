@@ -2,9 +2,8 @@
 @import './kernel/styles.scss';
 @import './editor/styles.scss';
 
-#root {
+.mn-router {
   height: 100%;
-  width: 100%;
 }
 
 // Vraiment parce que c'est plus simple de hacker comme ça

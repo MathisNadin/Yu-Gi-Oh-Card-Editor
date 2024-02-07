@@ -1,4 +1,4 @@
-import { Container, IContainerProps, IContainerState } from '..';
+import { Container, IContainerProps, IContainerState } from '../container';
 import { classNames } from 'libraries/mn-tools';
 
 interface IViewProps extends IContainerProps { }

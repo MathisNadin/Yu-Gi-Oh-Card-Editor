@@ -13,8 +13,9 @@ export class CoreService implements Partial<IApplicationListener> {
   /**
    * Configuration de l'application (appelé par toolkit/bootstrap).
    */
-  public setup() {
+  public async setup() {
     app.addListener(this);
+    return Promise.resolve();
   }
 
   public gotoHome() {

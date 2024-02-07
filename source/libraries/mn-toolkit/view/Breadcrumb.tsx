@@ -1,14 +1,16 @@
 import { Component, PropsWithChildren } from 'react';
 import { markdownToHtml } from 'libraries/mn-tools';
 import { IHeaderCrumb } from '.';
-import { ButtonIcon, IState, Icon } from '..';
+import { ButtonIcon } from '../button';
+import { IState } from '../router';
+import { Icon } from '../icon';
 
 interface IBreadcrumbProps extends PropsWithChildren {
   crumbs: IHeaderCrumb[];
 }
 
 interface IBreadcrumbState {
-  state: IState
+  state: IState;
 }
 
 export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState>{
