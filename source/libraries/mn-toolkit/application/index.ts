@@ -1,12 +1,5 @@
 import { Application } from './Application';
 
-// declare module 'an-react' {
-//   export interface VNode<P = {}> {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     attributes: {[key: string]: any};
-//   }
-// }
-
 export * from './Application';
 
 declare global {
@@ -15,8 +8,6 @@ declare global {
   }
   // eslint-disable-next-line vars-on-top, no-var
   var app: IApp;
-
-  // function require(name: string): any;
 
   interface IVendors {
   }

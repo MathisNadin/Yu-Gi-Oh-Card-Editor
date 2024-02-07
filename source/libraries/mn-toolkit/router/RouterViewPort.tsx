@@ -45,7 +45,7 @@ export class RouterViewPort extends Component<IRouterViewPortProps, IRouterViewP
     const content = createElement(c as unknown as string, app.$router.parameters);
     // console.log('render', key, content);
 
-    return <div key={key} className={classNames({ ['loaded']: this.state.loaded }, 'an-router', this.props.className)}>
+    return <div key={key} className={classNames({ ['loaded']: this.state.loaded }, 'mn-router', this.props.className)}>
       {content}
     </div>;
   }
