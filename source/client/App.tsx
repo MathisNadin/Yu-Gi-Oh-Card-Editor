@@ -1,5 +1,5 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { CardHandler } from './home/Home';
+import { CardHandler } from './editor/home/Home';
 
 function Page() {
   return <CardHandler />;

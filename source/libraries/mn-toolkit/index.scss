@@ -131,6 +131,33 @@ $z-index-popover-overlay: 8;
 $z-index-popover: 9;
 $z-index-overall: 100;
 
+.mn-bg-1 { @include bg(1); }
+.mn-bg-2 { @include bg(2); }
+.mn-bg-3 { @include bg(3); }
+.mn-bg-4 { @include bg(4); }
+.mn-bg-primary { background-color: $primary }
+.mn-bg-secondary { background-color: $secondary }
+.mn-bg-positive { background-color: $positive }
+.mn-bg-calm { background-color: $calm }
+.mn-bg-balanced { background-color: $balanced }
+.mn-bg-energized { background-color: $energized }
+.mn-bg-assertive { background-color: $assertive }
+.mn-bg-royal { background-color: $royal }
+
+.mn-zindex-content { z-index: $z-index-content; }
+.mn-zindex-view { z-index: $z-index-view; }
+.mn-zindex-notifications { z-index: $z-index-notifications; }
+.mn-zindex-view-below { z-index: $z-index-view-below; }
+.mn-zindex-view-above { z-index: $z-index-view-above; }
+.mn-zindex-drawer { z-index: $z-index-drawer; }
+.mn-zindex-overlay { z-index: $z-index-overlay; }
+.mn-zindex-popup { z-index: $z-index-popup; }
+.mn-zindex-popover { z-index: $z-index-popover; }
+.mn-zindex-toaster { z-index: $z-index-toaster; }
+.mn-zindex-overall { z-index: $z-index-overall; }
+
+
+
 @mixin text-overflow() {
   overflow: hidden;
   white-space: nowrap;
@@ -310,10 +337,14 @@ $z-index-overall: 100;
 
 
 
-@import './button/styles.scss';
-@import './checkbox/styles.scss';
 @import './containable/styles.scss';
 @import './container/styles.scss';
+@import './pane/styles.scss';
+@import './menu/styles.scss';
+@import './router/styles.scss';
+@import './view/styles.scss';
+@import './button/styles.scss';
+@import './checkbox/styles.scss';
 @import './dropdown/styles.scss';
 @import './fileInput/styles.scss';
 @import './icon/styles.scss';
@@ -331,4 +362,6 @@ $z-index-overall: 100;
 @import './textAreaInput/styles.scss';
 @import './textInput/styles.scss';
 @import './typography/styles.scss';
+@import './overlay/styles.scss';
+@import './drawer/styles.scss';
 

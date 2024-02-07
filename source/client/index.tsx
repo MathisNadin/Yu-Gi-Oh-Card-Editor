@@ -1,11 +1,11 @@
 import './index.scss';
 import App from './App';
 import { createRoot } from 'react-dom/client';
-import { SettingsService } from './settings';
+import { SettingsService } from './editor/settings';
 import { setupAppAndToolkit } from 'libraries/mn-toolkit';
-import { CardService } from './card';
-import { MediaWikiService } from './mediaWiki';
-import { YuginewsService } from './yuginews';
+import { CardService } from './editor/card';
+import { MediaWikiService } from './editor/mediaWiki';
+import { YuginewsService } from './editor/yuginews';
 
 interface IPackageJSON {
   name: string;

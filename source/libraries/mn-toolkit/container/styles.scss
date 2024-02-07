@@ -29,11 +29,11 @@
     justify-content: flex-end;
   }
 
-  &.horizontal-stack {
+  &.mn-layout-horizontal-stack {
     flex-direction: row;
   }
 
-  &.vertical-stack {
+  &.mn-layout-vertical-stack {
     flex-direction: column;
 
     &.mn-layout-item-align-left {
@@ -138,7 +138,7 @@ $COLUMNS: (
 }
 
 
-.grid-stack {
+.mn-layout-grid-stack {
   .mn-layout-gutter {
     gap: initial;
     margin-top: -$themeDefaultSpacing;
@@ -189,3 +189,6 @@ $COLUMNS: (
     @include border-color(3);
   }
 }
+
+.mn-frame-shadow-1 { @include frame('shadow-1') }
+.mn-frame-dashed { @include frame('dashed') }

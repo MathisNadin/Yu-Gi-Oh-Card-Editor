@@ -1,0 +1,25 @@
+.mn-pane {
+  @include bg(1);
+
+  &.mn-pane-left {
+    border-right-width: 1px;
+    border-right-style: solid;
+  }
+
+  &.mn-pane-right {
+    border-left-width: 1px;
+    border-left-style: solid;
+  }
+
+  &.mn-pane-top {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  &.mn-pane-bottom {
+    border-top-width: 1px;
+    border-top-style: solid;
+  }
+
+  @include border-color(4);
+}

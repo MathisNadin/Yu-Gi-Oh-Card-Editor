@@ -1,0 +1,87 @@
+@mixin themeHeader() {
+  $progressHeight: 5px;
+  @include bg(1);
+  padding:$themeDefaultSpacing/2 !important;
+  border-bottom: 1px solid;
+  @include border-color(4);
+  @include ios-top('padding-top');
+
+  .mn-progress {
+    min-height: $progressHeight;
+    max-height: $progressHeight;
+    background-color: transparent;
+
+    .progress {
+      opacity: 0;
+      @include fx(opacity);
+      .bar {
+        background-color: white(0.7);
+      }
+    }
+
+    &.enabled {
+      .progress {
+        opacity: 1;
+      }
+    }
+
+    &:not(.enabled) {
+      .progress {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .title-bar {
+    z-index: $z-index-title-bar;
+    padding: 2px 8px 0 8px;
+    display: flex;
+    gap:$themeDefaultSpacing/2;
+    flex-direction: row;
+    align-items: center;
+    @include fg(1);
+
+    .center-part {
+      display: flex;
+      align-items: center;
+      gap: $themeDefaultSpacing/2;
+      flex: 1;
+      text-align: left;
+      @include text-overflow;
+    }
+  }
+
+  .mn-header-content {
+    gap: $themeDefaultSpacing;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mn-sub-header {
+    padding: $themeDefaultSpacing;
+
+    .mn-fab {
+      position: absolute;
+      bottom: -32px;
+      right: $themeDefaultSpacing;
+      z-index: $z-index-view-above;
+    }
+  }
+
+  .mn-header-separator {
+    border-left: 1px solid;
+    @include border-color(3);
+    width: 10px;
+    height: 100%;
+    margin-left: 8px;
+
+  }
+}
+
+.mn-header {
+  @include themeHeader();
+}
+
+.mn-footer {
+  padding-top: 0;
+}

@@ -1,0 +1,19 @@
+@mixin themeOverlay {
+  @include fill-all;
+  position: fixed;
+  background-color: black;
+  z-index: $z-index-overlay;
+  opacity: 0;
+  will-change: opacity;
+  @include fx(opacity);
+  pointer-events: none;
+
+  &.active {
+    opacity: 0.2;
+    pointer-events: auto;
+  }
+}
+
+.mn-overlay {
+  @include themeOverlay();
+}

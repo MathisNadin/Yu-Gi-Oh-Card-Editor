@@ -7,7 +7,7 @@ interface Error404Props { }
 export class Error404 extends Component<Error404Props, Error404State> {
 
   public render() {
-    return <div>not foundeuh {location.pathname}</div>;
+    return <div>not found {location.pathname}</div>;
   }
 
 }

@@ -6,10 +6,14 @@ import { IconService, loadSvgs } from "./icon";
 import { IndexedDBService } from "./indexedDB";
 import { PopoverService } from "./popover";
 import { PopupService } from "./popup";
+import { HeaderService } from "./view";
 import { ReactService } from "./react";
 import { FilePickerService } from './filePicker';
 import { extendNativeObjects } from 'libraries/mn-tools';
 import { RouterService } from "./router";
+import { XhrService } from './xhr';
+import { DrawerService } from './drawer';
+import { OverlayService } from './overlay';
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   extendNativeObjects();
@@ -23,7 +27,11 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$errorManager', ErrorManagerService);
   app.service('$device', DeviceService);
   app.service('$indexedDB', IndexedDBService, { depends: ['$device']});
+  app.service('$xhr', XhrService);
+  app.service('$header', HeaderService);
   app.service('$api', ApiService);
+  app.service('$drawer', DrawerService);
+  app.service('$overlay', OverlayService);
   app.service('$icon', IconService);
   app.service('$popup', PopupService);
   app.service('$popover', PopoverService);
@@ -37,7 +45,13 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 }
 
 export * from './themeSettings';
+export * from './drawer';
+export * from './overlay';
+export * from './pane';
 export * from './router';
+export * from './view';
+export * from './xhr';
+export * from './menu';
 export * from './api';
 export * from './application';
 export * from './button';

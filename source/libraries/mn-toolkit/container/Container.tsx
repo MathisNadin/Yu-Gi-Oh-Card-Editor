@@ -3,8 +3,12 @@ import { ScrollContainer } from './ScrollContainer';
 import { Containable, IContainableProps, IContainableState } from 'libraries/mn-toolkit/containable';
 
 export type TContainerLayout = 'vertical' | 'horizontal' | 'grid';
+
 export type THorizontalAlignment = 'left' | 'right' | 'center';
+
 export type TVerticalAlignment = 'top' | 'bottom' | 'middle';
+
+export type TFrame = 'dashed' | 'shadow-1';
 
 export interface EventTargetWithValue extends EventTarget {
   value: string;
@@ -22,6 +26,7 @@ export interface IContainerProps extends IContainableProps {
   wrap?: boolean;
   scroll?: boolean;
   scrollX?: boolean;
+  frame: TFrame;
   verticalItemAlignment?: TVerticalAlignment;
   itemAlignment?: THorizontalAlignment;
   onContainerScroll?: (event: UIEvent) => void | Promise<void>;
@@ -43,7 +48,7 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
   public renderClasses(name?: string) {
     let classes = super.renderClasses(name);
     classes['mn-container'] = true;
-    if (this.props.layout) classes[`${this.props.layout}-stack`] = true;
+    if (this.props.layout) classes[`mn-layout-${this.props.layout}-stack`] = true;
     if (this.props.gutter) classes['mn-layout-gutter'] = true;
     if (this.props.marginHorizontal) classes['mn-layout-margin-horizontal'] = true;
     if (this.props.marginVertical) classes['mn-layout-margin-vertical'] = true;
@@ -54,6 +59,7 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     if (this.props.wrap) classes['mn-layout-wrap'] = true;
     if (this.props.scroll) classes['mn-scroll'] = true;
     if (this.props.scrollX) classes['mn-scrollX'] = true;
+    if(this.props.frame) classes[`mn-frame-${this.props.frame}`] = true;
     if (this.props.verticalItemAlignment) classes[`mn-layout-item-valign-${this.props.verticalItemAlignment}`] = true;
     if (this.props.itemAlignment) classes[`mn-layout-item-align-${this.props.itemAlignment}`] = true;
     return classes;
@@ -76,4 +82,5 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
       {this.props.children}
     </ScrollContainer>;
   }
+
 };

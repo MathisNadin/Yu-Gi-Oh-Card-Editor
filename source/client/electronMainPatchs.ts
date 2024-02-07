@@ -1,4 +1,4 @@
-import { CardService } from "./card";
+import { CardService } from "./editor/card";
 
 declare global {
   interface IOnChannel {

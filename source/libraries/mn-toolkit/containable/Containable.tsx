@@ -6,6 +6,7 @@ import {
   cloneElement
 } from 'react';
 import { classNames, isDefined, isNumber } from 'libraries/mn-tools';
+import { TBackgroundColor } from '../themeSettings';
 
 export type ColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
 
@@ -46,6 +47,7 @@ export interface IContainableProps extends PropsWithChildren {
   name?: string;
   id?: string;
   hint?: string;
+  bg?: TBackgroundColor;
   disabled?: boolean;
   fill?: boolean;
   ghost?: boolean;
@@ -91,7 +93,7 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
   }
 
   public renderClasses(name?: string) {
-    let classes: { [key: string]: boolean } = {};
+    const classes: { [key: string]: boolean } = {};
     if (this.props.className) classes[this.props.className] = true;
     if (!!this.props.mainClassName) {
       classes[this.props.mainClassName] = true;
@@ -103,6 +105,7 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
     classes['mn-ghost'] = !!this.props.ghost;
     classes['mn-disable'] = !!this.props.disabled;
     classes['mn-draggable'] = !!this.props.draggable;
+    if (this.props.bg) classes[`mn-bg-${this.props.bg}`] = true;
     if (this.props.zIndex) classes[`mn-zindex-${this.props.zIndex}`] = true;
     if (this.props.floatPosition) classes[`mn-float-${this.props.floatPosition}`] = true;
     return classes;
@@ -196,4 +199,9 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
       'mn-containable'
     );
   }
+
+  public inside() {
+    return this.props.children;
+  }
+
 }

@@ -1,6 +1,8 @@
 import { RouterService } from './RouterService';
 
 export * from './RouterService';
+export * from './RouterViewPort';
+export * from './404';
 
 declare global {
   interface IApp {
