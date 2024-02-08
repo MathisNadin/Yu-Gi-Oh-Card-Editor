@@ -20,7 +20,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
 
   public constructor(props: ITextInputProps) {
     super(props);
-    this.state = { ...(this.state || {}), value: props.defaultValue };
+    this.state = { ...this.state, value: props.defaultValue };
   }
 
   public componentDidUpdate() {

@@ -26,7 +26,7 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
 
   public constructor(props: IFileInputProps) {
     super(props);
-    this.state = { ...(this.state || {}), value: props.defaultValue as string };
+    this.state = { ...this.state, value: props.defaultValue as string };
   }
 
   public componentDidUpdate() {

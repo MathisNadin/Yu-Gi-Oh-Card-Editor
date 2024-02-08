@@ -29,7 +29,7 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
 
   public constructor(props: INumberInputProps) {
     super(props);
-    this.state = { ...(this.state || {}), value: props.defaultValue };
+    this.state = { ...this.state, value: props.defaultValue };
   }
 
   public componentDidUpdate() {
