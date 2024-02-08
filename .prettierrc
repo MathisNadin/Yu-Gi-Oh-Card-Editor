@@ -6,5 +6,5 @@
   "tabWidth": 2,
   "endOfLine": "auto",
   "jsxSingleQuote": true,
-  "printWidth": 500
+  "printWidth": 120
 }

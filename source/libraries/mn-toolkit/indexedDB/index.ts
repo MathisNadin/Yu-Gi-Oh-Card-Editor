@@ -1,4 +1,4 @@
-import { IndexedDBService } from "./IndexedDBService";
+import { IndexedDBService } from './IndexedDBService';
 
 export * from './IndexedDBService';
 

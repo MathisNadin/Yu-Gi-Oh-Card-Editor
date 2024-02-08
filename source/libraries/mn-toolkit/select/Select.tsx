@@ -1,8 +1,8 @@
-import { classNames } from "libraries/mn-tools";
-import { IContainableProps, IContainableState, Containable } from "../containable";
-import { TIconId, Icon } from "../icon";
-import { IPopoverAction, IPopoverOptions } from "../popover";
-import { TForegroundColor } from "../themeSettings";
+import { classNames } from 'libraries/mn-tools';
+import { IContainableProps, IContainableState, Containable } from '../containable';
+import { TIconId, Icon } from '../icon';
+import { IPopoverAction, IPopoverOptions } from '../popover';
+import { TForegroundColor } from '../themeSettings';
 
 export function DefaultSelectLabelDecorator(label: string) {
   return <span>{label}</span>;
@@ -23,7 +23,7 @@ export interface ISelectItem<ID = number> {
   action?: {
     icon: TIconId;
     onTap: () => void;
-  }
+  };
 }
 
 interface ISelectProps<ID> extends IContainableProps {
@@ -77,7 +77,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     let listItem: IPopoverAction<ID>;
     let first: IPopoverAction;
     if (!this.state.items) return result;
-    this.state.items.forEach(item => {
+    this.state.items.forEach((item) => {
       listItem = {
         id: item.id,
         label: item.label,
@@ -89,9 +89,12 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
         disabled: item.disabled,
         isTitle: item.isTitle,
         isSubTitle: item.isSubTitle,
-        onTap: undefined
+        onTap: undefined,
       };
-      listItem.onTap = (x => () => app.$errorManager.handlePromise(this.selectItem(x)))(listItem);
+      listItem.onTap = (
+        (x) => () =>
+          app.$errorManager.handlePromise(this.selectItem(x))
+      )(listItem);
       if (!first) first = listItem as unknown as IPopoverAction;
       result.push(listItem);
     });
@@ -132,39 +135,37 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     this.container.focus();
   }
 
-
   private onContainerRef(ref: HTMLElement) {
     if (!ref) return;
     this.container = ref;
   }
 
   private getSelectedListItem(actions: IPopoverAction<ID>[]) {
-    return actions.find(action => action.selected);
+    return actions.find((action) => action.selected);
   }
-
 
   public render() {
     const selectedItem = this.getSelectedListItem(this.generatePopOverActions()) as IPopoverAction<ID>;
-    return <div className={classNames(
-        this.renderClasses('mn-select'),
-        {
-          'mn-containable-item-fill': this.props.fill,
-          'disabled': this.props.disabled
-        }
-      )}
-      ref={ref => !!ref && this.onContainerRef(ref)}
-      style={{ 'minWidth': this.props.width || this.props.minWidth }}
-    >
+    return (
       <div
-        className="label"
-        onClick={() => this.showListItems()}
+        className={classNames(this.renderClasses('mn-select'), {
+          'mn-containable-item-fill': this.props.fill,
+          disabled: this.props.disabled,
+        })}
+        ref={(ref) => !!ref && this.onContainerRef(ref)}
+        style={{ minWidth: this.props.width || this.props.minWidth }}
       >
-        {!!this.props.labelDecorator && this.props.labelDecorator(selectedItem ? selectedItem.label as string : this.props.undefinedLabel as string)}
-      </div>
+        <div className='label' onClick={() => this.showListItems()}>
+          {!!this.props.labelDecorator &&
+            this.props.labelDecorator(
+              selectedItem ? (selectedItem.label as string) : (this.props.undefinedLabel as string)
+            )}
+        </div>
 
-      <span className='drop-icon' onClick={() => this.showListItems()}>
-        <Icon iconId='toolkit-angle-down'/>
-      </span>
-    </div>;
+        <span className='drop-icon' onClick={() => this.showListItems()}>
+          <Icon iconId='toolkit-angle-down' />
+        </span>
+      </div>
+    );
   }
 }

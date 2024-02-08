@@ -1,4 +1,4 @@
-import { isArray, isObject } from "./is";
+import { isArray, isObject } from './is';
 
 const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
@@ -18,7 +18,6 @@ export function clone<T>(object: T): T {
   extend(copy, object);
   return copy;
 }
-
 
 /**
  * Make a deep clone of the source object.
@@ -48,7 +47,6 @@ export function unserialize(json: string) {
   }
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function serialize(data: any) {
   return JSON.stringify(data, (k, v) => {
@@ -57,7 +55,6 @@ export function serialize(data: any) {
   });
 }
 
-
 /**
  * Convert any value to an array.
  * If the value is an array, it stays the same.
@@ -65,7 +62,7 @@ export function serialize(data: any) {
  * @param {any} x source value
  * @return {any[]} resulting array
  */
-export function asArray<T>(x: T | T[]) : T[] {
+export function asArray<T>(x: T | T[]): T[] {
   if (isArray(x)) return x;
   return [x];
 }
@@ -90,7 +87,6 @@ export function defaults<T>(object: T, ...args: Partial<T>[]): T {
   return object;
 }
 
-
 /**
  * Extend an object properties.
  *
@@ -101,8 +97,7 @@ export function defaults<T>(object: T, ...args: Partial<T>[]): T {
 export function extend<T>(object: T, ...args: Partial<T>[]): T {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!object) (object as any) = {};
-  if (!isObject(object))
-    return object;
+  if (!isObject(object)) return object;
   let property;
   for (let source of args) {
     for (property in source) {
@@ -135,7 +130,6 @@ export function mapa<T>(source: { [key: string]: T }, iteratee: (item: T, key?: 
   return result;
 }
 
-
 /**
  * Check if an object own a property.
  *
@@ -148,7 +142,6 @@ export function has(object: any, key: string): boolean {
   return object !== null && object.hasOwnProperty(key);
 }
 
-
 /**
  * Iterate over object properties
  *
@@ -156,15 +149,18 @@ export function has(object: any, key: string): boolean {
  * @param iteratee function that will iterate
  * @param context a context to apply the callback to
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function each<T>(object: { [key: string]: T }, iteratee: (item: T, key: string) => boolean | void, context?: any): void {
+export function each<T>(
+  object: { [key: string]: T },
+  iteratee: (item: T, key: string) => boolean | void,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: any
+): void {
   if (object === null) return;
   // eslint-disable-next-line no-restricted-syntax
   iteratee = iteratee.bind(context);
   let ks = Object.keys(object);
   for (let i = 0, length = ks.length; i < length; i++) {
-    if (iteratee(object[ks[i]], ks[i]))
-      break;
+    if (iteratee(object[ks[i]], ks[i])) break;
   }
 }
 
@@ -181,12 +177,11 @@ export function diff(o: any[], n: any[]) {
       }
     }
   }
-  o = o.filter(x => !!x);
-  n = n.filter(x => !!x);
+  o = o.filter((x) => !!x);
+  n = n.filter((x) => !!x);
   if (o.length || n.length) return [o, n];
   return undefined;
 }
-
 
 type KeyByPayload<T> = Partial<T>;
 
@@ -205,7 +200,7 @@ export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): {
   let callback: KeyByCallback<T>;
   if (typeof fieldOrCallback === 'string') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback = x => x[fieldOrCallback] as any;
+    callback = (x) => x[fieldOrCallback] as any;
   } else {
     callback = fieldOrCallback as KeyByCallback<T>;
   }
@@ -218,7 +213,7 @@ export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function sortBy<T>(a: T[], field: keyof T, orderList: any[]) {
   let kb = keyBy(a, field);
-  return orderList.map(x => kb[x]);
+  return orderList.map((x) => kb[x]);
 }
 
 export function keyByAccumulated<T>(a: T[], fieldOrCallback: string | KeyByCallback<T>): { [key: string]: T[] } {
@@ -230,7 +225,7 @@ export function keyByAccumulated<T>(a: T[], fieldOrCallback: string | KeyByCallb
     callback = fieldOrCallback;
   }
   a.forEach((v: T) => {
-    if (typeof (result[callback(v)]) === 'undefined') {
+    if (typeof result[callback(v)] === 'undefined') {
       result[callback(v)] = [];
     }
     result[callback(v)].push(v);
@@ -248,7 +243,11 @@ type keyByMultipleCallback<T> = (root: { [k: string]: any }, value: string, item
  * @param field the field to index
  * @return index object
  */
-export function keyByMultiple<T>(items: T[], fieldsOrField: string | string[], aggregateOrNull?: keyByMultipleCallback<T>): { [key: string]: T[] } {
+export function keyByMultiple<T>(
+  items: T[],
+  fieldsOrField: string | string[],
+  aggregateOrNull?: keyByMultipleCallback<T>
+): { [key: string]: T[] } {
   let fields = asArray(fieldsOrField);
   let aggregate: keyByMultipleCallback<T>;
   if (typeof aggregateOrNull === 'undefined') {
@@ -262,7 +261,7 @@ export function keyByMultiple<T>(items: T[], fieldsOrField: string | string[], a
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: { [k: string]: any } = {};
   let last = fields.length - 1;
-  items.forEach(item => {
+  items.forEach((item) => {
     let root = result;
     for (let i = 0, length = fields.length; i < length; i++) {
       let key = fields[i];
@@ -287,15 +286,11 @@ export function keyByMultiple<T>(items: T[], fieldsOrField: string | string[], a
  * @return the keys
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
- export function keys(object: any): string[] {
-  if (!isObject(object))
-    return [];
-  if (Object.keys)
-    return Object.keys(object);
+export function keys(object: any): string[] {
+  if (!isObject(object)) return [];
+  if (Object.keys) return Object.keys(object);
   let keys = [];
-  for (let key in object)
-    if (has(object, key))
-      keys.push(key);
+  for (let key in object) if (has(object, key)) keys.push(key);
   return keys;
 }
 
@@ -316,7 +311,6 @@ export function values<T>(object: __Dictionary<T>): T[] {
   return values;
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 export function monkeyPatch(obj: any, name: string, fn: Function) {
   if (!(name in obj)) {
@@ -325,7 +319,7 @@ export function monkeyPatch(obj: any, name: string, fn: Function) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function monkeyPatchGet(obj: any, name: string, fn: {get: () => number}) {
+export function monkeyPatchGet(obj: any, name: string, fn: { get: () => number }) {
   if (!(name in obj)) {
     Object.defineProperty(obj, name, fn);
   }

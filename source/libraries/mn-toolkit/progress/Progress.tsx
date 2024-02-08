@@ -1,4 +1,4 @@
-import { IContainableProps, Containable, IContainableState } from "../containable";
+import { IContainableProps, Containable, IContainableState } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 import { classNames, isEmpty } from 'libraries/mn-tools';
 
@@ -22,17 +22,17 @@ interface IProgressState extends IContainableState {
 }
 
 export class Progress extends Containable<IProgressProps, IProgressState> {
-  public static get defaultProps() : Partial<IProgressProps> {
-  return {
-    ...super.defaultProps,
-    total: 100,
-    progress: 0,
-    showPercent: false,
-    message: "",
-    color: "primary",
-    thickness: 's',
-  };
-}
+  public static get defaultProps(): Partial<IProgressProps> {
+    return {
+      ...super.defaultProps,
+      total: 100,
+      progress: 0,
+      showPercent: false,
+      message: '',
+      color: 'primary',
+      thickness: 's',
+    };
+  }
   public constructor(props: IProgressProps) {
     super(props);
     this.setState({
@@ -61,23 +61,25 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
     let percent = (100 * this.state.progress) / (this.props.total as number);
     let overload = percent > 100;
     return (
-      <div id={this.props.nodeId} title={this.props.hint}
+      <div
+        id={this.props.nodeId}
+        title={this.props.hint}
         className={classNames(
           this.renderClasses('mn-progress'),
           { overload },
-          `mn-thickness-${  this.props.thickness}`,
-          `mn-color-${  this.props.color}`
+          `mn-thickness-${this.props.thickness}`,
+          `mn-color-${this.props.color}`
         )}
       >
-        <div className="progress">
-          <span className="bar" style={{ width: `${percent}%` }}></span>
+        <div className='progress'>
+          <span className='bar' style={{ width: `${percent}%` }}></span>
         </div>
-        {!isEmpty(this.state.message) && <div className="message rich-text">
+        {!isEmpty(this.state.message) && (
+          <div className='message rich-text'>
             {this.state.message}
-            {this.props.showPercent ? (
-              <span className="percent">{this.getPercents()}</span>
-            ) : null}
-          </div>}
+            {this.props.showPercent ? <span className='percent'>{this.getPercents()}</span> : null}
+          </div>
+        )}
       </div>
     );
   }

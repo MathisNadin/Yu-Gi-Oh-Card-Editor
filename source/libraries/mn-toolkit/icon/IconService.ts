@@ -1,5 +1,5 @@
-import React from "react";
-import { TIconId } from "./Icon";
+import React from 'react';
+import { TIconId } from './Icon';
 
 export class IconService {
   private _icons: { [key: string]: JSX.Element } = {};
@@ -9,11 +9,11 @@ export class IconService {
   }
 
   public get(name: TIconId) {
-    try{
+    try {
       const icon = this._icons[name];
       // Cloner l'élément JSX pour renvoyer une nouvelle instance
       return React.cloneElement(icon);
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Erreur au chargement de l'icône ${name}\n ${(e as Error).message}`);
     }
   }

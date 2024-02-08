@@ -1,9 +1,5 @@
 import { classNames } from 'libraries/mn-tools';
-import {
-  Containable,
-  IContainableProps,
-  IContainableState
-} from '../containable';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { Typography } from '../typography';
 
 interface ICheckBoxProps extends IContainableProps {
@@ -28,7 +24,7 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
     return {
       ...super.defaultProps,
       defaultValue: false,
-      labelPosition: 'right'
+      labelPosition: 'right',
     };
   }
 
@@ -48,11 +44,11 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
       <div
         className={classNames(this.renderClasses('mn-checkbox'), {
           checked: this.state.value,
-          'label-position-left': this.props.labelPosition === 'left'
+          'label-position-left': this.props.labelPosition === 'left',
         })}
         onClick={() => this.onClick()}
       >
-        <div className="toggle"></div>
+        <div className='toggle'></div>
         {!!this.props.label && <Typography className='label' content={this.props.label} variant='help' />}
       </div>
     );

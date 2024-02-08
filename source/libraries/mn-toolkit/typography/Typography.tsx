@@ -1,8 +1,4 @@
-import {
-  IContainableProps,
-  IContainableState,
-  Containable
-} from 'libraries/mn-toolkit/containable';
+import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable';
 import { markdownToHtml } from 'libraries/mn-tools';
 
 export type TControlTextContentType = 'html' | 'markdown' | 'text';
@@ -39,15 +35,12 @@ interface ITypographyProps extends IContainableProps {
 
 interface ITypographyState extends IContainableState {}
 
-export class Typography extends Containable<
-  ITypographyProps,
-  ITypographyState
-> {
+export class Typography extends Containable<ITypographyProps, ITypographyState> {
   public constructor(props: ITypographyProps) {
     super(props);
 
     this.state = {
-      loaded: true
+      loaded: true,
     };
   }
 
@@ -56,7 +49,7 @@ export class Typography extends Containable<
       ...super.defaultProps,
       variant: 'paragraph',
       alignment: 'left',
-      contentType: 'markdown'
+      contentType: 'markdown',
     };
   }
 
@@ -71,21 +64,15 @@ export class Typography extends Containable<
 
   public render() {
     if (typeof this.props.content === 'undefined') {
-      return this.renderAttributes(
-        <div>{this.props.children}</div>,
-        'mn-typography'
-      );
+      return this.renderAttributes(<div>{this.props.children}</div>, 'mn-typography');
     } else {
       return this.renderAttributes(
         <div
           dangerouslySetInnerHTML={{
             __html:
               this.props.contentType === 'markdown'
-                ? markdownToHtml(
-                    this.props.content,
-                    this.props.variant.indexOf('document') === -1
-                  )
-                : this.props.content.replace(/<a/g, '<a target="_blank"')
+                ? markdownToHtml(this.props.content, this.props.variant.indexOf('document') === -1)
+                : this.props.content.replace(/<a/g, '<a target="_blank"'),
           }}
         />,
         'mn-typography'

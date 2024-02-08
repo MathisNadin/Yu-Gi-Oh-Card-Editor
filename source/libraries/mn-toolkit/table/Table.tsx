@@ -1,16 +1,7 @@
 import { isEmpty, classNames, clone } from 'libraries/mn-tools';
-import {
-  IContainerProps,
-  IContainerState,
-  Container,
-  VerticalStack
-} from '../container';
+import { IContainerProps, IContainerState, Container, VerticalStack } from '../container';
 import { Spinner } from '../spinner';
-import {
-  ITableColumn,
-  CellValue,
-  ITableCell,
-} from './interfaces';
+import { ITableColumn, CellValue, ITableCell } from './interfaces';
 import { ITableRow, TableRow } from './TableRow';
 import { ReactNode } from 'react';
 import { Icon } from '../icon';
@@ -66,7 +57,7 @@ export class Table extends Container<ITableProps, ITableState> {
     return {
       ...super.defaultProps,
       theme: 'normal',
-      layout: 'vertical'
+      layout: 'vertical',
     };
   }
 
@@ -92,15 +83,11 @@ export class Table extends Container<ITableProps, ITableState> {
     let nbNoWidth = 0;
     let nbHeaderLabel = 0;
     let sum: string[] = [];
-    let cols = props.columns
-      ? props.columns.filter((x) => !x.outside && !x.hidden)
-      : [];
+    let cols = props.columns ? props.columns.filter((x) => !x.outside && !x.hidden) : [];
 
     let first = cols.length > 0 ? cols[0] : undefined;
     let last = cols.length > 0 ? cols[cols.length - 1] : undefined;
-    let hiddenIndexes = (props.columns || [])
-      .map((x, i) => (!!x.hidden ? i : -1))
-      .filter((x) => x !== -1);
+    let hiddenIndexes = (props.columns || []).map((x, i) => (!!x.hidden ? i : -1)).filter((x) => x !== -1);
 
     let columns = props.columns
       ? props.columns
@@ -129,8 +116,7 @@ export class Table extends Container<ITableProps, ITableState> {
       hasHeader: !!nbHeaderLabel,
       columnStyle: columns.map((x) => {
         let style: { [k: string]: string } = {};
-        if (this.props.defaultWidth && !x.width)
-          x.width = this.props.defaultWidth;
+        if (this.props.defaultWidth && !x.width) x.width = this.props.defaultWidth;
         if (x.width) {
           style.maxWidth = x.width;
           style.minWidth = x.width;
@@ -147,20 +133,14 @@ export class Table extends Container<ITableProps, ITableState> {
           x.headerAlign = 'left';
         }
         return style;
-      })
+      }),
     });
     this.setState({
-      rows: props.rows
-        ? this.rebuildRows(props.rows, props.columns || [], hiddenIndexes)
-        : []
+      rows: props.rows ? this.rebuildRows(props.rows, props.columns || [], hiddenIndexes) : [],
     });
   }
 
-  private rebuildRows(
-    rows: ITableRow[] | CellValue[][],
-    columns: ITableColumn[],
-    hiddenIndexes: number[] = []
-  ) {
+  private rebuildRows(rows: ITableRow[] | CellValue[][], columns: ITableColumn[], hiddenIndexes: number[] = []) {
     let resultRows: ITableRow[] = [];
     for (let row of rows) {
       let resultRow: ITableRow = {} as unknown as ITableRow;
@@ -169,11 +149,7 @@ export class Table extends Container<ITableProps, ITableState> {
       } else {
         resultRow.cells = [];
         (row as unknown as ITableCell[]).forEach((cell) => {
-          if (
-            cell &&
-            typeof cell.className !== 'undefined' &&
-            typeof cell.value === 'undefined'
-          ) {
+          if (cell && typeof cell.className !== 'undefined' && typeof cell.value === 'undefined') {
             if (!isEmpty(cell.className)) resultRow.className = cell.className;
           } else {
             resultRow.cells.push(cell);
@@ -182,9 +158,7 @@ export class Table extends Container<ITableProps, ITableState> {
       }
       if (resultRow.cells.length !== columns.length) {
         // eslint-disable-next-line no-console
-        console.error(
-          'On doit avoir autant de cellule sur une ligne que de colonnes définies.'
-        );
+        console.error('On doit avoir autant de cellule sur une ligne que de colonnes définies.');
         return [];
       }
 
@@ -192,11 +166,7 @@ export class Table extends Container<ITableProps, ITableState> {
         .filter((_x, i) => hiddenIndexes.indexOf(i) === -1)
         .map((cell, i) => {
           let resultCell: ITableCell;
-          if (
-            !!cell &&
-            typeof (cell as unknown as HTMLElement).children === 'undefined' &&
-            typeof cell === 'object'
-          ) {
+          if (!!cell && typeof (cell as unknown as HTMLElement).children === 'undefined' && typeof cell === 'object') {
             resultCell = cell as ITableCell;
           } else {
             resultCell = { value: cell as CellValue };
@@ -205,10 +175,7 @@ export class Table extends Container<ITableProps, ITableState> {
           return resultCell;
         });
 
-      resultRow.subRows = this.rebuildRows(
-        (row as ITableRow).subRows || [],
-        columns
-      );
+      resultRow.subRows = this.rebuildRows((row as ITableRow).subRows || [], columns);
       this.hasSubRows = this.hasSubRows || !!resultRow.subRows.length;
 
       resultRows.push(resultRow);
@@ -224,9 +191,7 @@ export class Table extends Container<ITableProps, ITableState> {
     requestAnimationFrame(() => {
       let head = document.querySelector<HTMLElement>('.mn-table-head');
       if (head) head.style.top = `${this.top}px`;
-      let cells = Array.from(
-        document.querySelectorAll<HTMLElement>('.mn-table-cell-0')
-      );
+      let cells = Array.from(document.querySelectorAll<HTMLElement>('.mn-table-cell-0'));
       cells.forEach((elt) => (elt.style.left = `${this.left}px`));
       let footer = document.querySelector<HTMLElement>('.mn-table-footer');
       if (footer) footer.style.bottom = `-${this.top}px`;
@@ -239,18 +204,16 @@ export class Table extends Container<ITableProps, ITableState> {
     let minBodyHeight!: number;
     let maxBodyHeight!: number;
     if (this.props.visibleRows) {
-      minBodyHeight =
-        themeSettings().themeDefaultItemHeight * this.props.visibleRows;
+      minBodyHeight = themeSettings().themeDefaultItemHeight * this.props.visibleRows;
     }
     if (this.props.maxVisibleRows) {
-      maxBodyHeight =
-        themeSettings().themeDefaultItemHeight * this.props.maxVisibleRows;
+      maxBodyHeight = themeSettings().themeDefaultItemHeight * this.props.maxVisibleRows;
     }
 
     if (minBodyHeight || maxBodyHeight) {
       tableBodyStyle = {
         minHeight: minBodyHeight,
-        maxHeight: maxBodyHeight
+        maxHeight: maxBodyHeight,
       };
     }
 
@@ -258,51 +221,35 @@ export class Table extends Container<ITableProps, ITableState> {
       <div
         onScroll={() => this.updateScroll()}
         className={classNames(`mn-table-theme-${this.props.theme}`, {
-          'mn-table-scroll': !!this.props.visibleRows
+          'mn-table-scroll': !!this.props.visibleRows,
         })}
       >
         {this.loading(this.props) && <Spinner overlay />}
         {this.state.hasHeader && (
-          <div className="mn-table-head" style={{ top: this.top }}>
-            <div className="mn-table-row">
+          <div className='mn-table-head' style={{ top: this.top }}>
+            <div className='mn-table-row'>
               {this.state.columns
                 .map((column, i) => {
-                  // eslint-disable-next-line react/jsx-key
-                  return (<div
+                  return (
+                    // eslint-disable-next-line react/jsx-key
+                    <div
                       style={this.state.columnStyle[i]}
                       className={classNames(
                         column.className,
                         'mn-table-cell',
                         `mn-table-cell-${i}`,
-                        `mn-align-${
-                          !!column.headerAlign
-                            ? column.headerAlign
-                            : !!column.align
-                            ? column.align
-                            : 'center'
-                        }`
+                        `mn-align-${!!column.headerAlign ? column.headerAlign : !!column.align ? column.align : 'center'}`
                       )}
                     >
                       <span
-                        className="mn-table-header-label"
+                        className='mn-table-header-label'
                         onClick={() => {
-                          if (column.onChangeOrder)
-                            app.$errorManager.handlePromise(
-                              column.onChangeOrder()
-                            );
+                          if (column.onChangeOrder) app.$errorManager.handlePromise(column.onChangeOrder());
                         }}
                       >
-                        <span className="mn-table-header-text">
-                          {column.label as ReactNode}
-                        </span>
+                        <span className='mn-table-header-text'>{column.label as ReactNode}</span>
                         {column.order && (
-                          <Icon
-                            iconId={
-                              column.order === 'asc'
-                                ? 'toolkit-angle-up'
-                                : 'toolkit-angle-down'
-                            }
-                          />
+                          <Icon iconId={column.order === 'asc' ? 'toolkit-angle-up' : 'toolkit-angle-down'} />
                         )}
                       </span>
                     </div>
@@ -312,7 +259,7 @@ export class Table extends Container<ITableProps, ITableState> {
             </div>
           </div>
         )}
-        <VerticalStack className="mn-table-body" style={tableBodyStyle}>
+        <VerticalStack className='mn-table-body' style={tableBodyStyle}>
           {this.state.rows &&
             this.state.rows.map((row) =>
               [
@@ -326,7 +273,7 @@ export class Table extends Container<ITableProps, ITableState> {
                     row.open = !row.open;
                     this.forceUpdate();
                   }}
-                />
+                />,
               ].concat(
                 row.open && row.subRows
                   ? row.subRows.map((row) => (
@@ -342,9 +289,7 @@ export class Table extends Container<ITableProps, ITableState> {
               )
             )}
         </VerticalStack>
-        {this.props.footer ? (
-          <div className="mn-table-footer">{this.props.footer}</div>
-        ) : null}
+        {this.props.footer ? <div className='mn-table-footer'>{this.props.footer}</div> : null}
       </div>,
       'mn-table'
     );

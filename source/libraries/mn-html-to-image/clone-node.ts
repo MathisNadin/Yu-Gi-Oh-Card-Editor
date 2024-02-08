@@ -32,12 +32,7 @@ async function cloneVideoElement(video: HTMLVideoElement, options: Options) {
 async function cloneIFrameElement(iframe: HTMLIFrameElement, cloneCSSStyleOptions: ICloneCSSStyleOptions) {
   try {
     if (iframe?.contentDocument?.body) {
-      return (await cloneNode(
-        iframe.contentDocument.body,
-        {},
-        cloneCSSStyleOptions,
-        true
-      )) as HTMLBodyElement;
+      return (await cloneNode(iframe.contentDocument.body, {}, cloneCSSStyleOptions, true)) as HTMLBodyElement;
     }
   } catch {
     // Failed to clone iframe
@@ -79,19 +74,13 @@ async function cloneChildren<T extends HTMLElement>(
 
   if (isSlotElement(nativeNode) && nativeNode.assignedNodes) {
     children = toArray<T>(nativeNode.assignedNodes());
-  } else if (
-    isInstanceOfElement(nativeNode, HTMLIFrameElement) &&
-    nativeNode.contentDocument?.body
-  ) {
+  } else if (isInstanceOfElement(nativeNode, HTMLIFrameElement) && nativeNode.contentDocument?.body) {
     children = toArray<T>(nativeNode.contentDocument.body.childNodes);
   } else {
     children = toArray<T>((nativeNode.shadowRoot ?? nativeNode).childNodes);
   }
 
-  if (
-    children.length === 0 ||
-    isInstanceOfElement(nativeNode, HTMLVideoElement)
-  ) {
+  if (children.length === 0 || isInstanceOfElement(nativeNode, HTMLVideoElement)) {
     return clonedNode;
   }
 
@@ -123,7 +112,7 @@ function cloneCSSStyle<T extends HTMLElement>(nativeNode: T, clonedNode: T, opti
   } else {
     toArray<string>(sourceStyle).forEach((name) => {
       let value = sourceStyle.getPropertyValue(name);
-/*       if (name === 'font-size' && value.endsWith('px')) {
+      /*       if (name === 'font-size' && value.endsWith('px')) {
         const reducedFont =
           Math.floor(parseFloat(value.substring(0, value.length - 2))) - 0.1;
         value = `${reducedFont}px`;
@@ -144,11 +133,7 @@ function cloneCSSStyle<T extends HTMLElement>(nativeNode: T, clonedNode: T, opti
         value = `path(${clonedNode.getAttribute('d')})`;
       }
 
-      targetStyle.setProperty(
-        name,
-        value,
-        sourceStyle.getPropertyPriority(name)
-      );
+      targetStyle.setProperty(name, value, sourceStyle.getPropertyPriority(name));
     });
   }
 }

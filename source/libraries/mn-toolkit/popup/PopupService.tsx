@@ -1,10 +1,10 @@
-import { IContainerProps } from "libraries/mn-toolkit/container/Container";
-import { IPopupProps, Popup } from "./Popup";
-import { createRoot } from "react-dom/client";
-import { HorizontalStack } from "../container";
-import { Icon } from "../icon";
-import { Typography } from "../typography";
-import { AbstractPopupComponent, IPopup, IPopupAskOptions } from ".";
+import { IContainerProps } from 'libraries/mn-toolkit/container/Container';
+import { IPopupProps, Popup } from './Popup';
+import { createRoot } from 'react-dom/client';
+import { HorizontalStack } from '../container';
+import { Icon } from '../icon';
+import { Typography } from '../typography';
+import { AbstractPopupComponent, IPopup, IPopupAskOptions } from '.';
 
 export interface IDialogProps<RESULT> extends IContainerProps {
   popupId?: string;
@@ -12,9 +12,8 @@ export interface IDialogProps<RESULT> extends IContainerProps {
 }
 
 export class PopupService {
-
   public async show<RESULT>(props: IPopupProps) {
-    return new Promise<RESULT>(resolve => {
+    return new Promise<RESULT>((resolve) => {
       let newProps = {
         ...props,
         content: {
@@ -22,9 +21,9 @@ export class PopupService {
           props: {
             ...props.content.props,
             popupId: props.id,
-            resolve: (result: RESULT) => resolve(result)
-          }
-        }
+            resolve: (result: RESULT) => resolve(result),
+          },
+        },
       };
       let popup = new Popup<RESULT>(newProps, resolve);
       const rootElement = document.getElementById('root') as HTMLElement;
@@ -43,7 +42,6 @@ export class PopupService {
     }
   }
 
-
   public ask(optionsOrMessage: IPopupAskOptions | string) {
     let options: IPopupAskOptions;
     if (typeof optionsOrMessage === 'string') {
@@ -52,7 +50,7 @@ export class PopupService {
       options = optionsOrMessage;
     }
 
-    interface InformDialogState { }
+    interface InformDialogState {}
 
     class InformDialog extends AbstractPopupComponent<IPopupAskOptions, InformDialogState, boolean> {
       public constructor(props: IPopupAskOptions) {
@@ -63,13 +61,13 @@ export class PopupService {
         popup.addButtons({
           label: 'Oui',
           validate: true,
-          onTap: () => this.doValidate()
+          onTap: () => this.doValidate(),
         });
 
         popup.addButtons({
           label: 'Annuler',
           cancel: true,
-          onTap: () => this.doCancel()
+          onTap: () => this.doCancel(),
         });
       }
 
@@ -81,10 +79,12 @@ export class PopupService {
       }
 
       public render() {
-        return <HorizontalStack gutter={!!this.props.icon}>
-          {!!this.props.icon && <Icon iconId={this.props.icon} size={128}/>}
-          <Typography fill variant='document' content={options.message} />
-        </HorizontalStack>;
+        return (
+          <HorizontalStack gutter={!!this.props.icon}>
+            {!!this.props.icon && <Icon iconId={this.props.icon} size={128} />}
+            <Typography fill variant='document' content={options.message} />
+          </HorizontalStack>
+        );
       }
     }
 
@@ -95,6 +95,6 @@ export class PopupService {
       height: options.height,
       title: options.title as string,
       content: <InformDialog {...options} />,
-    }).catch(e => app.$errorManager.trigger(e));
+    }).catch((e) => app.$errorManager.trigger(e));
   }
 }

@@ -12,32 +12,32 @@ function popoverActionRenderer(
   onTapHandler: (event: React.MouseEvent, action: IPopoverAction) => void,
   last: boolean
 ) {
-
-  if (action.separator) return <div className="separator"></div>;
-  return <div
+  if (action.separator) return <div className='separator'></div>;
+  return (
+    <div
       className={classNames(
         {
           last,
           selected: action.selected,
           separator: action.separator,
           disabled: action.disabled,
-          'title': action.isTitle,
+          title: action.isTitle,
           'sub-title': action.isSubTitle,
         },
         'action',
-        !!action.color && `mn-color-${action.color}`)
-      }
-      onClick={event => !action.disabled && onTapHandler(event, action)}
+        !!action.color && `mn-color-${action.color}`
+      )}
+      onClick={(event) => !action.disabled && onTapHandler(event, action)}
     >
+      {isDefined(action.icon) && <Icon color={action.iconColor} iconId={action.icon} />}
 
-    {isDefined(action.icon) && <Icon color={action.iconColor} iconId={action.icon} />}
+      <span className='text'>{action.label}</span>
 
-    <span className="text">{action.label}</span>
+      {isDefined(action.badge) && <span className='mn-badge'>{action.badge}</span>}
 
-    {isDefined(action.badge) && <span className="mn-badge">{action.badge}</span>}
-
-    {isDefined(action.button) && <ButtonIcon icon={action.button.icon} onTap={action.button.onTap} />}
-  </div>;
+      {isDefined(action.button) && <ButtonIcon icon={action.button.icon} onTap={action.button.onTap} />}
+    </div>
+  );
 }
 
 export class PopoverService implements Partial<IDeviceListener> {
@@ -76,7 +76,9 @@ export class PopoverService implements Partial<IDeviceListener> {
     if (!this.options.event || !this.options.targetElement || !this.options.targetRect) {
       targetRect = this.options.targetRect as DOMRect;
       if (!targetRect) {
-        let targetElement = this.options.event ? this.options.event.currentTarget as HTMLElement : this.options.targetElement as HTMLElement;
+        let targetElement = this.options.event
+          ? (this.options.event.currentTarget as HTMLElement)
+          : (this.options.targetElement as HTMLElement);
         targetRect = targetElement.getBoundingClientRect();
       }
     }
@@ -91,7 +93,7 @@ export class PopoverService implements Partial<IDeviceListener> {
     }
 
     if (this.options.actions) {
-      this.options.actions = this.options.actions.filter(x => !!x);
+      this.options.actions = this.options.actions.filter((x) => !!x);
       this.options.maxVisibleItems = this.options.maxVisibleItems || 10;
       let nbVisibleSeparators = 0;
       let nbVisibleItems = 0;
@@ -106,16 +108,22 @@ export class PopoverService implements Partial<IDeviceListener> {
 
       const themeDefaultItemHeight = themeSettings().themeDefaultItemHeight;
       const themeDefaultSpacing = themeSettings().themeDefaultSpacing;
-      const separatorHeight = 1 + themeDefaultSpacing/2;
-      const itemHeight = themeDefaultItemHeight + themeDefaultSpacing/2;
-      this.options.height = nbVisibleItems*itemHeight + nbVisibleSeparators*separatorHeight + themeDefaultItemHeight/2 - themeDefaultSpacing;
+      const separatorHeight = 1 + themeDefaultSpacing / 2;
+      const itemHeight = themeDefaultItemHeight + themeDefaultSpacing / 2;
+      this.options.height =
+        nbVisibleItems * itemHeight +
+        nbVisibleSeparators * separatorHeight +
+        themeDefaultItemHeight / 2 -
+        themeDefaultSpacing;
     }
 
-    this.options.doProcessAction = this.options.doProcessAction || (async (event: React.MouseEvent, action: IPopoverAction) => {
-      await this.close();
-      let promise = action.onTap ? action.onTap(event) : undefined;
-      if (promise instanceof Promise) promise.catch((e: Error) => app.$errorManager.trigger(e));
-    });
+    this.options.doProcessAction =
+      this.options.doProcessAction ||
+      (async (event: React.MouseEvent, action: IPopoverAction) => {
+        await this.close();
+        let promise = action.onTap ? action.onTap(event) : undefined;
+        if (promise instanceof Promise) promise.catch((e: Error) => app.$errorManager.trigger(e));
+      });
     this.options.actionRenderer = this.options.actionRenderer || popoverActionRenderer;
 
     this.options.scrollToItemIndex = this.options.scrollToItemIndex || 0;
@@ -130,64 +138,93 @@ export class PopoverService implements Partial<IDeviceListener> {
       cssHeight = this.options.maxHeight;
     }
 
-    let popover = await app.$react.renderContentInParent(<div
-      className={classNames('mn-popover', this.options.cssClass, {
-        'mn-no-scroll': !!this.options.actions && this.options.actions.length <= (this.options.maxVisibleItems as number)
-      })}
-      tabIndex={this.options.dontManageFocus ? undefined : 100}
-      onClick={event => event.stopPropagation()}
-      onBlur={e => {
-        if (this.options.dontManageFocus) return;
-        setTimeout(() => app.$errorManager.handlePromise(this.close(e.target as HTMLElement)), 100);
-      }}
-      onKeyDown={(e: React.KeyboardEvent) => {
-        if (this.options.dontManageFocus) return;
-        this.search += e.key;
-        let match = this.options.actions.find(x => (x.label ?? '').toLowerCase().startsWith(this.search.toLowerCase()));
-        if (!match) {
-          this.search = e.key;
-          match = this.options.actions.find(x => (x.label ?? '').toLowerCase().startsWith(this.search.toLowerCase()));
-          if (!match) return;
-        }
-        let index = 0;
-        if (match) index = this.options.actions.indexOf(match);
-        if (index) setTimeout(() => (e.target as HTMLElement).scrollTo(0, index * themeSettings().themeDefaultItemHeight + themeSettings().themeDefaultBorderRadius));
-      }}
-      style={{
-        top: -9999,
-        left: -9999,
-        width,
-        height: cssHeight,
-      }}>
-      <div className='mn-popover-wrapper'>
-        {!this.options.content ? <PopoverContent {...this.options} /> : this.options.content as ReactElement}
-      </div>
-      {!!this.options.buttons && <div className="buttons">
-        {this.options.buttons.map(button => {
-          // eslint-disable-next-line react/jsx-key
-          return <ButtonLink label={button.label} onTap={() => {
-            let promise = button.onTap ? button.onTap() : undefined;
-            if (promise instanceof Promise) promise.catch((e: Error) => app.$errorManager.trigger(e));
-          }} />;
+    let popover = await app.$react.renderContentInParent(
+      <div
+        className={classNames('mn-popover', this.options.cssClass, {
+          'mn-no-scroll':
+            !!this.options.actions && this.options.actions.length <= (this.options.maxVisibleItems as number),
         })}
-      </div>}
-    </div>, this.popupsContainer);
+        tabIndex={this.options.dontManageFocus ? undefined : 100}
+        onClick={(event) => event.stopPropagation()}
+        onBlur={(e) => {
+          if (this.options.dontManageFocus) return;
+          setTimeout(() => app.$errorManager.handlePromise(this.close(e.target as HTMLElement)), 100);
+        }}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (this.options.dontManageFocus) return;
+          this.search += e.key;
+          let match = this.options.actions.find((x) =>
+            (x.label ?? '').toLowerCase().startsWith(this.search.toLowerCase())
+          );
+          if (!match) {
+            this.search = e.key;
+            match = this.options.actions.find((x) =>
+              (x.label ?? '').toLowerCase().startsWith(this.search.toLowerCase())
+            );
+            if (!match) return;
+          }
+          let index = 0;
+          if (match) index = this.options.actions.indexOf(match);
+          if (index)
+            setTimeout(() =>
+              (e.target as HTMLElement).scrollTo(
+                0,
+                index * themeSettings().themeDefaultItemHeight + themeSettings().themeDefaultBorderRadius
+              )
+            );
+        }}
+        style={{
+          top: -9999,
+          left: -9999,
+          width,
+          height: cssHeight,
+        }}
+      >
+        <div className='mn-popover-wrapper'>
+          {!this.options.content ? <PopoverContent {...this.options} /> : (this.options.content as ReactElement)}
+        </div>
+        {!!this.options.buttons && (
+          <div className='buttons'>
+            {this.options.buttons.map((button) => {
+              return (
+                // eslint-disable-next-line react/jsx-key
+                <ButtonLink
+                  label={button.label}
+                  onTap={() => {
+                    let promise = button.onTap ? button.onTap() : undefined;
+                    if (promise instanceof Promise) promise.catch((e: Error) => app.$errorManager.trigger(e));
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>,
+      this.popupsContainer
+    );
     this.popovers.push(popover);
 
     const height = popover.clientHeight + 2;
 
     if (this.options.overlay) {
-      this.overlay = await app.$react.renderContentInParent(<div className='mn-popover-overlay' onClick={() => app.$errorManager.handlePromise(this.close())} />, this.popupsContainer);
+      this.overlay = await app.$react.renderContentInParent(
+        <div className='mn-popover-overlay' onClick={() => app.$errorManager.handlePromise(this.close())} />,
+        this.popupsContainer
+      );
 
-      this.focusRect = await app.$react.renderContentInParent(<div className='mn-popover-focus'
-        style={{
-          left: targetRect.left,
-          top: targetRect.top,
-          width: targetRect.width,
-          height: targetRect.height,
-          position: 'absolute'
-        }} />,
-        this.popupsContainer);
+      this.focusRect = await app.$react.renderContentInParent(
+        <div
+          className='mn-popover-focus'
+          style={{
+            left: targetRect.left,
+            top: targetRect.top,
+            width: targetRect.width,
+            height: targetRect.height,
+            position: 'absolute',
+          }}
+        />,
+        this.popupsContainer
+      );
     }
 
     let top: number;
@@ -222,12 +259,12 @@ export class PopoverService implements Partial<IDeviceListener> {
   }
 
   /**
-    * Cette fonction est utilisée pour calculer la position de la bulle en fonction de la hauteur et de la largeur de la bulle.
-    * Elle renvoie un objet qui contient les propriétés 'top', 'left' et 'direction'.
-    *
-    * @param height la hauteur de la bulle
-    * @param width la largeur de la bulle
-    */
+   * Cette fonction est utilisée pour calculer la position de la bulle en fonction de la hauteur et de la largeur de la bulle.
+   * Elle renvoie un objet qui contient les propriétés 'top', 'left' et 'direction'.
+   *
+   * @param height la hauteur de la bulle
+   * @param width la largeur de la bulle
+   */
   private calculateBubblePosition(targetRect: DOMRect, height: number, width: number) {
     let screenWidth = app.$device.screenWidth;
     let screenHeight = app.$device.screenWidth;
@@ -236,11 +273,31 @@ export class PopoverService implements Partial<IDeviceListener> {
 
     // Points possibles pour la position de la bulle
     let points = [
-      { direction: 'bottom-top', weight: targetRect.top - height > 0 ? 4 : 1, top: targetRect.top, left: targetRect.left + targetRect.width / 2 },
-      { direction: 'top-bottom', weight: targetRect.bottom + height < screenHeight ? 4 : 1, top: targetRect.bottom, left: targetRect.left + targetRect.width / 2 },
-      { direction: 'right-left', weight: targetRect.left - width > 0 ? 4 : 1, top: targetRect.top + targetRect.height / 2, left: targetRect.left },
-      { direction: 'left-right', weight: targetRect.right + width < screenWidth ? 4 : 1, top: targetRect.top + targetRect.height / 2, left: targetRect.right }
-    ].filter(p => p.weight > 1);
+      {
+        direction: 'bottom-top',
+        weight: targetRect.top - height > 0 ? 4 : 1,
+        top: targetRect.top,
+        left: targetRect.left + targetRect.width / 2,
+      },
+      {
+        direction: 'top-bottom',
+        weight: targetRect.bottom + height < screenHeight ? 4 : 1,
+        top: targetRect.bottom,
+        left: targetRect.left + targetRect.width / 2,
+      },
+      {
+        direction: 'right-left',
+        weight: targetRect.left - width > 0 ? 4 : 1,
+        top: targetRect.top + targetRect.height / 2,
+        left: targetRect.left,
+      },
+      {
+        direction: 'left-right',
+        weight: targetRect.right + width < screenWidth ? 4 : 1,
+        top: targetRect.top + targetRect.height / 2,
+        left: targetRect.right,
+      },
+    ].filter((p) => p.weight > 1);
 
     points.sort((a, b) => b.weight - a.weight);
 
@@ -289,22 +346,22 @@ export class PopoverService implements Partial<IDeviceListener> {
       top = targetRect.top + targetRect.height;
       left = targetRect.left;
 
-      if ((top + height) > screenHeight) {
+      if (top + height > screenHeight) {
         popover.classList.add('bottom');
         top -= height + targetRect.height;
       }
-      if ((left + width) > screenWidth) {
+      if (left + width > screenWidth) {
         popover.classList.add('right');
         left -= width - targetRect.width;
       }
     } else {
       top = this.options.top as number;
       left = this.options.left as number;
-      if ((left + width) > screenWidth) {
+      if (left + width > screenWidth) {
         popover.classList.add('right');
         left = screenWidth - width - 10;
       }
-      if ((top + height) > screenHeight) {
+      if (top + height > screenHeight) {
         popover.classList.add('bottom');
         top = screenHeight - height - 10;
       }
@@ -352,5 +409,4 @@ export class PopoverService implements Partial<IDeviceListener> {
   public get visible() {
     return !!document.querySelector('.mn-popover');
   }
-
 }

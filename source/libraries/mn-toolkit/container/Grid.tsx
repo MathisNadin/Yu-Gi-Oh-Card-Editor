@@ -1,27 +1,31 @@
 import { ReactElement, ReactNode } from 'react';
 import { IContainerProps, IContainerState, Container } from './Container';
 
-export interface IGridProps extends IContainerProps { }
-export interface IGridState extends IContainerState { }
+export interface IGridProps extends IContainerProps {}
+export interface IGridState extends IContainerState {}
 
 export class Grid extends Container<IGridProps, IGridState> {
-
   public static get defaultProps(): Partial<IGridProps> {
     return {
       ...super.defaultProps,
       layout: 'grid',
       gutter: true,
-      wrap: true
+      wrap: true,
     };
   }
 
   public render() {
-    return this.renderAttributes(<div>
-      {(this.props.children as unknown as  ReactNode[])
-        .filter(x => !!x)
-        // eslint-disable-next-line react/jsx-key
-        .map(x => <div className={this.getGridItemClasses(x as ReactElement)}>{x}</div>)}
-    </div>, 'mn-container');
+    return this.renderAttributes(
+      <div>
+        {(this.props.children as unknown as ReactNode[])
+          .filter((x) => !!x)
+          .map((x) => (
+            // eslint-disable-next-line react/jsx-key
+            <div className={this.getGridItemClasses(x as ReactElement)}>{x}</div>
+          ))}
+      </div>,
+      'mn-container'
+    );
   }
 
   private getGridItemClasses(x: ReactElement): string {
@@ -35,5 +39,4 @@ export class Grid extends Container<IGridProps, IGridState> {
     }
     return classes.join(' ');
   }
-
 }

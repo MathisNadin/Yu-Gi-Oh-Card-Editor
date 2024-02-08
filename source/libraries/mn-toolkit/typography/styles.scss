@@ -1,4 +1,3 @@
-
 @mixin themeTypographyEnrichment {
   em,
   i {
@@ -29,22 +28,52 @@
 }
 
 @mixin themeTypographyColor() {
-  &.mn-color-primary { color: $primary; }
-  &.mn-color-positive { color: $positive; }
-  &.mn-color-calm { color: $calm; }
-  &.mn-color-balanced { color: $balanced; }
-  &.mn-color-energized { color: $energized; }
-  &.mn-color-assertive { color: $assertive; }
-  &.mn-color-royal { color: $royal; }
-  &.mn-color-1 { color: nth($theme-light-fg, 1); }
-  &.mn-color-2 { color: nth($theme-light-fg, 2); }
-  &.mn-color-3 { color: nth($theme-light-fg, 3); }
-  &.mn-color-4 { color: nth($theme-light-fg, 4); }
+  &.mn-color-primary {
+    color: $primary;
+  }
+  &.mn-color-positive {
+    color: $positive;
+  }
+  &.mn-color-calm {
+    color: $calm;
+  }
+  &.mn-color-balanced {
+    color: $balanced;
+  }
+  &.mn-color-energized {
+    color: $energized;
+  }
+  &.mn-color-assertive {
+    color: $assertive;
+  }
+  &.mn-color-royal {
+    color: $royal;
+  }
+  &.mn-color-1 {
+    color: nth($theme-light-fg, 1);
+  }
+  &.mn-color-2 {
+    color: nth($theme-light-fg, 2);
+  }
+  &.mn-color-3 {
+    color: nth($theme-light-fg, 3);
+  }
+  &.mn-color-4 {
+    color: nth($theme-light-fg, 4);
+  }
 
-  .mn-dark-theme &.mn-color-1 { color: nth($theme-dark-fg, 1); }
-  .mn-dark-theme &.mn-color-2 { color: nth($theme-dark-fg, 2); }
-  .mn-dark-theme &.mn-color-3 { color: nth($theme-dark-fg, 3); }
-  .mn-dark-theme &.mn-color-4 { color: nth($theme-dark-fg, 4); }
+  .mn-dark-theme &.mn-color-1 {
+    color: nth($theme-dark-fg, 1);
+  }
+  .mn-dark-theme &.mn-color-2 {
+    color: nth($theme-dark-fg, 2);
+  }
+  .mn-dark-theme &.mn-color-3 {
+    color: nth($theme-dark-fg, 3);
+  }
+  .mn-dark-theme &.mn-color-4 {
+    color: nth($theme-dark-fg, 4);
+  }
 }
 
 @mixin themeTypographyH1() {
@@ -170,7 +199,7 @@
         font-size: 1.2em;
         font-weight: 300;
         font-style: italic;
-        display: inline,
+        display: inline;
       }
     }
   }

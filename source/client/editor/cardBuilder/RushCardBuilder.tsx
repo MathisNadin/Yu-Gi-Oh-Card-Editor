@@ -3,7 +3,15 @@ import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'libraries/mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
-import { IContainableProps, IContainableState, Containable, Spinner, Container, HorizontalStack, VerticalStack } from 'libraries/mn-toolkit';
+import {
+  IContainableProps,
+  IContainableState,
+  Containable,
+  Spinner,
+  Container,
+  HorizontalStack,
+  VerticalStack,
+} from 'libraries/mn-toolkit';
 
 interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
@@ -53,7 +61,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   public constructor(props: IRushCardBuilderProps) {
     super(props);
     this.state = {} as IRushCardBuilderState;
-    this.debouncedRefreshState = debounce((card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)), 500);
+    this.debouncedRefreshState = debounce(
+      (card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)),
+      500
+    );
     if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
@@ -99,15 +110,13 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       croppedArtworkBase64 = `file://${card.artwork.url}`;
       try {
         croppedArtworkBase64 = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
-        croppedArtworkBase64 = await getCroppedArtworkBase64(croppedArtworkBase64,
-          {
-            x: card.artwork.x,
-            y: card.artwork.y,
-            height: card.artwork.height,
-            width: card.artwork.width,
-            unit: '%'
-          }
-        );
+        croppedArtworkBase64 = await getCroppedArtworkBase64(croppedArtworkBase64, {
+          x: card.artwork.x,
+          y: card.artwork.y,
+          height: card.artwork.height,
+          width: card.artwork.width,
+          unit: '%',
+        });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -159,7 +168,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let description: JSX.Element[][] = [];
     switch (card.rushTextMode) {
       case 'vanilla':
-        description = card.description.split('\n').map(d => this.getProcessedText(d));
+        description = card.description.split('\n').map((d) => this.getProcessedText(d));
         break;
 
       case 'regular':
@@ -177,29 +186,35 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             break;
         }
         if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
+          description.push(...card.rushOtherEffects.split('\n').map((d) => this.getProcessedText(d)));
         }
         description.push(
           // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
+          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(
+            ...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))
+          ),
           // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label effect'>{effectLabel}</span>].concat(...card.rushEffect.split('\n').map(d => this.getProcessedText(d))),
+          [<span className='span-text rush-label effect'>{effectLabel}</span>].concat(
+            ...card.rushEffect.split('\n').map((d) => this.getProcessedText(d))
+          )
         );
         break;
 
       case 'choice':
         if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map(d => this.getProcessedText(d)));
+          description.push(...card.rushOtherEffects.split('\n').map((d) => this.getProcessedText(d)));
         }
         let choiceEffectsLabel = card.language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ';
         description.push(
           // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(...card.rushCondition.split('\n').map(d => this.getProcessedText(d))),
+          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(
+            ...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))
+          ),
           // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label effect'>{choiceEffectsLabel}</span>],
+          [<span className='span-text rush-label effect'>{choiceEffectsLabel}</span>]
         );
         for (let choice of card.rushChoiceEffects) {
-          description.push(...choice.split('\n').map(d => this.getProcessedText(d, true)));
+          description.push(...choice.split('\n').map((d) => this.getProcessedText(d, true)));
         }
         break;
 
@@ -237,14 +252,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       atkMaxLine: require(`../../../assets/images/rdAtkMaxLine.png`),
       sticker: require(`../../../assets/images/rd-stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
       copyright: require(`../../../assets/images/rd-limitations/${card.language}/${copyrightPath}/copyright.png`),
-      edition: require(`../../../assets/images/rd-limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`),
+      edition: require(
+        `../../../assets/images/rd-limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`
+      ),
     };
 
     this.setState(state);
   }
 
   private getProcessedText(text: string, forceBulletAtStart?: boolean) {
-    const parts = text.split(/(●|•)/).map(part => part.trim());
+    const parts = text.split(/(●|•)/).map((part) => part.trim());
     if (parts.length && !parts[0]) parts.shift();
 
     let nextHasBullet = false;
@@ -253,12 +270,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       if (part === '●' || part === '•') {
         nextHasBullet = true;
       } else {
-        let classes = classNames(
-          'span-text', {
-            'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
-            'in-middle': i > 1
-          }
-        );
+        let classes = classNames('span-text', {
+          'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
+          'in-middle': i > 1,
+        });
         nextHasBullet = false;
         processedText.push(<span className={classes}>{part}</span>);
       }
@@ -269,15 +284,32 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
   private async adjustAllFontSizes() {
     switch (this.state.adjustState) {
-      case 'todo': this.setState({ adjustState: 'name' }); break;
-      case 'name': await this.convertNameToImg(); break;
-      case 'atkMax': this.convertAtkMaxToImg(); break;
-      case 'atk': this.convertAtkToImg(); break;
-      case 'def': this.convertDefToImg(); break;
-      case 'abilities': await this.convertAbilitiesToImg(); break;
-      case 'desc': this.adjustDescFontSize(); break;
-      case 'done': if (this.props.onCardReady) this.props.onCardReady(); break;
-      default: break;
+      case 'todo':
+        this.setState({ adjustState: 'name' });
+        break;
+      case 'name':
+        await this.convertNameToImg();
+        break;
+      case 'atkMax':
+        this.convertAtkMaxToImg();
+        break;
+      case 'atk':
+        this.convertAtkToImg();
+        break;
+      case 'def':
+        this.convertDefToImg();
+        break;
+      case 'abilities':
+        await this.convertAbilitiesToImg();
+        break;
+      case 'desc':
+        this.adjustDescFontSize();
+        break;
+      case 'done':
+        if (this.props.onCardReady) this.props.onCardReady();
+        break;
+      default:
+        break;
     }
   }
 
@@ -416,7 +448,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let textHeight = 0;
     let textWidth = 0;
     textWidth = texts[0].clientWidth;
-    texts.forEach(text => {
+    texts.forEach((text) => {
       textHeight += text.clientHeight;
     });
     const parentHeight = container.clientHeight;
@@ -433,8 +465,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       } else {
         this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
       }
-    }
-    else if (textHeight < parentHeight || textWidth < parentWidth) {
+    } else if (textHeight < parentHeight || textWidth < parentWidth) {
       if (this.state.adjustTextState === 'tooBig') {
         if (this.state.descLineHeight < 1.2) {
           let newLineHeight = this.state.descLineHeight + 0.1;
@@ -454,8 +485,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
         }
       }
-    }
-    else {
+    } else {
       this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
     }
   }
@@ -470,7 +500,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       for (let i = 1; i <= middleIndex; i++) {
         const distanceFromMiddle = i - 0.5;
         const multiplier = 1.4 ** (middleIndex - distanceFromMiddle);
-        const value = multiplier * 100 / ((1.4 ** middleIndex) * 2 - 1);
+        const value = (multiplier * 100) / (1.4 ** middleIndex * 2 - 1);
         array.unshift(value); // Ajouter à gauche
         array.push(value); // Ajouter à droite
         sum += 2 * value;
@@ -483,7 +513,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           value = 1;
         } else {
           const distanceFromMiddle = Math.abs(i - middleIndex);
-          value = 1 / (1.4 ** distanceFromMiddle);
+          value = 1 / 1.4 ** distanceFromMiddle;
         }
 
         array.push(value);
@@ -500,7 +530,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       } else {
         stringValue = `${add * scaleFactor}%`;
       }
-      add+=value;
+      add += value;
       return stringValue;
     });
     return scaledArray;
@@ -526,70 +556,111 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     const specificties = this.getSpecifities();
 
-    return this.renderAttributes(<Container id={this.props.id} ref={() => this.ref = document.getElementById(this.props.id) as HTMLDivElement}>
-      <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
-      {this.renderAttributes(<div><img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' /></div>, artworkClass)}
+    return this.renderAttributes(
+      <Container id={this.props.id} ref={() => (this.ref = document.getElementById(this.props.id) as HTMLDivElement)}>
+        <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
+        {this.renderAttributes(
+          <div>
+            <img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' />
+          </div>,
+          artworkClass
+        )}
 
-      {this.renderFrames(this.state.cardFrames, 'card-frame')}
+        {this.renderFrames(this.state.cardFrames, 'card-frame')}
 
-      {!this.props.card.dontCoverRushArt && this.props.card.legend && <img className='card-layer legend' src={this.state.legend} alt='legend' />}
+        {!this.props.card.dontCoverRushArt && this.props.card.legend && (
+          <img className='card-layer legend' src={this.state.legend} alt='legend' />
+        )}
 
-      <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
+        <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
 
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt && this.props.card.maximum &&
-        <img className='card-layer atk-max-line' src={this.state.atkMaxLine} alt='atkMaxLine' />
-      }
-      {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt &&
-        <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />
-      }
+        {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt && this.props.card.maximum && (
+          <img className='card-layer atk-max-line' src={this.state.atkMaxLine} alt='atkMaxLine' />
+        )}
+        {app.$card.hasAbilities(this.props.card) && !this.props.card.dontCoverRushArt && (
+          <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />
+        )}
 
-      {specificties.lv && <img className='card-layer level-star' src={this.state.levelStar} alt='levelStar' />}
-      {specificties.lv && <img className='card-layer level' src={this.state.level} alt='level' />}
+        {specificties.lv && <img className='card-layer level-star' src={this.state.levelStar} alt='levelStar' />}
+        {specificties.lv && <img className='card-layer level' src={this.state.level} alt='level' />}
 
-      {specificties.rk && <img className='card-layer rank-star' src={this.state.rankStar} alt='rankStar' />}
-      {specificties.rk && <img className='card-layer rank' src={this.state.rank} alt='rank' />}
+        {specificties.rk && <img className='card-layer rank-star' src={this.state.rankStar} alt='rankStar' />}
+        {specificties.rk && <img className='card-layer rank' src={this.state.rank} alt='rank' />}
 
-      {this.props.card.sticker !== 'none' && <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />}
+        {this.props.card.sticker !== 'none' && (
+          <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />
+        )}
 
-      {this.props.card.edition === 'unlimited' && <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>}
+        {this.props.card.edition === 'unlimited' && (
+          <p className='card-layer card-set white-text'>{this.props.card.cardSet}</p>
+        )}
 
-      {!this.props.card.dontCoverRushArt && this.props.card.maximum && app.$card.hasAbilities(this.props.card) &&
-        <Container className={classNames('card-layer', 'atk-def', 'atk-max', {
-          'question-mark': this.props.card.atkMax === '?',
-          'compressed': this.props.card.atkMax?.length > 4,
-        })}>
-          <p className={classNames('stat-text', 'atk-max-text', 'white-text', 'hidden', { 'infinity': this.props.card.atkMax === '∞' })}>{this.props.card.atkMax}</p>
-        </Container>
-      }
+        {!this.props.card.dontCoverRushArt && this.props.card.maximum && app.$card.hasAbilities(this.props.card) && (
+          <Container
+            className={classNames('card-layer', 'atk-def', 'atk-max', {
+              'question-mark': this.props.card.atkMax === '?',
+              compressed: this.props.card.atkMax?.length > 4,
+            })}
+          >
+            <p
+              className={classNames('stat-text', 'atk-max-text', 'white-text', 'hidden', {
+                infinity: this.props.card.atkMax === '∞',
+              })}
+            >
+              {this.props.card.atkMax}
+            </p>
+          </Container>
+        )}
 
-      {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) &&
-        <Container className={classNames('card-layer', 'atk-def', 'atk', {
-          'question-mark': this.props.card.atk === '?',
-          'compressed': this.props.card.atk?.length > 4,
-        })}>
-          <p className={classNames('stat-text', 'atk-text', 'white-text', 'hidden', { 'infinity': this.props.card.atk === '∞' })}>{this.props.card.atk}</p>
-        </Container>
-      }
+        {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && (
+          <Container
+            className={classNames('card-layer', 'atk-def', 'atk', {
+              'question-mark': this.props.card.atk === '?',
+              compressed: this.props.card.atk?.length > 4,
+            })}
+          >
+            <p
+              className={classNames('stat-text', 'atk-text', 'white-text', 'hidden', {
+                infinity: this.props.card.atk === '∞',
+              })}
+            >
+              {this.props.card.atk}
+            </p>
+          </Container>
+        )}
 
-      {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) &&
-        <Container className={classNames('card-layer', 'atk-def', 'def', {
-          'question-mark': this.props.card.def === '?',
-          'compressed': this.props.card.def?.length > 4,
-        })}>
-          <p className={classNames('stat-text', 'def-text', 'white-text', 'hidden', { 'infinity': this.props.card.def === '∞' })}>{this.props.card.def}</p>
-        </Container>
-      }
+        {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && (
+          <Container
+            className={classNames('card-layer', 'atk-def', 'def', {
+              'question-mark': this.props.card.def === '?',
+              compressed: this.props.card.def?.length > 4,
+            })}
+          >
+            <p
+              className={classNames('stat-text', 'def-text', 'white-text', 'hidden', {
+                infinity: this.props.card.def === '∞',
+              })}
+            >
+              {this.props.card.def}
+            </p>
+          </Container>
+        )}
 
-      {this.props.card.hasCopyright && <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />}
-      {this.props.card.edition !== 'unlimited' && <img className='card-layer edition' src={this.state.edition} alt='edition' />}
+        {this.props.card.hasCopyright && (
+          <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />
+        )}
+        {this.props.card.edition !== 'unlimited' && (
+          <img className='card-layer edition' src={this.state.edition} alt='edition' />
+        )}
 
-      {this.renderAbilities()}
+        {this.renderAbilities()}
 
-      {this.renderDescription()}
+        {this.renderDescription()}
 
-      {this.renderName()}
-
-    </Container>, 'card-builder rush-card-builder');
+        {this.renderName()}
+      </Container>,
+      'card-builder rush-card-builder'
+    );
   }
 
   private renderName() {
@@ -608,37 +679,45 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     const specialCharsRegex = /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
     const parts = this.props.card.name.split(specialCharsRegex);
 
-    let processedText = parts.map(part =>
+    let processedText = parts.map((part) =>
       specialCharsRegex.test(part) ? (
         // eslint-disable-next-line react/jsx-key
-        <span className='special-char-span'>
-          {part}
-        </span>
+        <span className='special-char-span'>{part}</span>
       ) : (
         part
       )
     );
 
-    return this.renderAttributes(<HorizontalStack>
-      <p className={pClassName}>{processedText}</p>
-    </HorizontalStack>, hStackClassName);
+    return this.renderAttributes(
+      <HorizontalStack>
+        <p className={pClassName}>{processedText}</p>
+      </HorizontalStack>,
+      hStackClassName
+    );
   }
 
   private renderFrames(frames: string[], className: string) {
     const styleArray = this.getFramesStylesArray(frames.length);
-    return this.renderAttributes(<HorizontalStack>
-      {frames.map((frame, index) => {
-        const style: CSSProperties = {};
-        if (index) style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
-        // eslint-disable-next-line react/jsx-key
-        return <img style={style} className={classNames('card-frame', className)} src={frame} alt={className} />;
-      })}
-    </HorizontalStack>, 'card-layer card-frames-container');
+    return this.renderAttributes(
+      <HorizontalStack>
+        {frames.map((frame, index) => {
+          const style: CSSProperties = {};
+          if (index)
+            style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
+          // eslint-disable-next-line react/jsx-key
+          return <img style={style} className={classNames('card-frame', className)} src={frame} alt={className} />;
+        })}
+      </HorizontalStack>,
+      'card-layer card-frames-container'
+    );
   }
 
   private renderAbilities() {
     let text = this.state.abilities.join(' / ');
-    const upperCaseIndexes = text.split('').map((char, index) => char === char.toUpperCase() ? index : -1).filter(i => i !== -1);
+    const upperCaseIndexes = text
+      .split('')
+      .map((char, index) => (char === char.toUpperCase() ? index : -1))
+      .filter((i) => i !== -1);
     const lowerCaseText = text.toLowerCase();
     let firstIndexLowerCase: boolean;
     if (!upperCaseIndexes.includes(0)) {
@@ -648,94 +727,110 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     let useWhiteText = this.props.card.frames.includes('xyz');
 
-    return this.renderAttributes(<HorizontalStack>
-      <p className={classNames(
-        'abilities-text',
-        'abilities-bracket',
-        'left-bracket',
-        {
-          'black-text': !useWhiteText,
-          'white-text': useWhiteText,
-        }
-      )}>[</p>
+    return this.renderAttributes(
+      <HorizontalStack>
+        <p
+          className={classNames('abilities-text', 'abilities-bracket', 'left-bracket', {
+            'black-text': !useWhiteText,
+            'white-text': useWhiteText,
+          })}
+        >
+          [
+        </p>
 
-      <p className={classNames(
-        'abilities-text',
-        'abilities',
-        {
-          'with-st-icon': this.state.hasStIcon,
-          'black-text': !useWhiteText,
-          'white-text': useWhiteText,
-        }
-      )}>
-        {upperCaseIndexes.map((index, i) => (
-          <Fragment key={`uppercase-index-${i}`}>
-            <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
-              {text.slice(index, index+1)}
-            </span>
-            <span className='lowercase'>
-              {lowerCaseText.slice(index+1, upperCaseIndexes[i+1] || text.length)}
-            </span>
-          </Fragment>
-        ))}
-      </p>
+        <p
+          className={classNames('abilities-text', 'abilities', {
+            'with-st-icon': this.state.hasStIcon,
+            'black-text': !useWhiteText,
+            'white-text': useWhiteText,
+          })}
+        >
+          {upperCaseIndexes.map((index, i) => (
+            <Fragment key={`uppercase-index-${i}`}>
+              <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
+                {text.slice(index, index + 1)}
+              </span>
+              <span className='lowercase'>
+                {lowerCaseText.slice(index + 1, upperCaseIndexes[i + 1] || text.length)}
+              </span>
+            </Fragment>
+          ))}
+        </p>
 
-      {this.state.hasStIcon && <img className='rush-st-icon' src={this.state.stIcon} alt='stIcon' />}
+        {this.state.hasStIcon && <img className='rush-st-icon' src={this.state.stIcon} alt='stIcon' />}
 
-      <p className={classNames(
-        'abilities-text',
-        'abilities-bracket',
-        'right-bracket',
-        {
-          'black-text': !useWhiteText,
-          'white-text': useWhiteText,
-        }
-      )}>]</p>
-    </HorizontalStack>, 'card-layer card-abilities');
+        <p
+          className={classNames('abilities-text', 'abilities-bracket', 'right-bracket', {
+            'black-text': !useWhiteText,
+            'white-text': useWhiteText,
+          })}
+        >
+          ]
+        </p>
+      </HorizontalStack>,
+      'card-layer card-abilities'
+    );
   }
 
   private renderPendulum() {
     const pendEffect = this.props.card.pendEffect.split('\n');
 
-    return this.renderAttributes(<VerticalStack>
-      {pendEffect.map(text => {
-        let withBulletPoint = false;
-        if (text.startsWith('●')) {
-          withBulletPoint = true;
-          text = text.replace(/^●\s*/, '');
-        }
-        // eslint-disable-next-line react/jsx-key
-        return <p
-          className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
-          style={{
-            fontSize: `${this.state.pendFontSize}px`,
-            lineHeight: this.state.pendLineHeight,
-            marginBottom: this.state.pendLineHeight / 2
-          }}>{text}</p>;
+    return this.renderAttributes(
+      <VerticalStack>
+        {pendEffect.map((text) => {
+          let withBulletPoint = false;
+          if (text.startsWith('●')) {
+            withBulletPoint = true;
+            text = text.replace(/^●\s*/, '');
+          }
+          return (
+            // eslint-disable-next-line react/jsx-key
+            <p
+              className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
+              style={{
+                fontSize: `${this.state.pendFontSize}px`,
+                lineHeight: this.state.pendLineHeight,
+                marginBottom: this.state.pendLineHeight / 2,
+              }}
+            >
+              {text}
+            </p>
+          );
         })}
-    </VerticalStack>, `card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`);
+      </VerticalStack>,
+      `card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`
+    );
   }
 
   private renderDescription() {
     let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link')) containerClass = `${containerClass} on-pendulum-link`;
+    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link'))
+      containerClass = `${containerClass} on-pendulum-link`;
 
-    return this.renderAttributes(<VerticalStack>
-      {this.state.description.map(d => {
-        // eslint-disable-next-line react/jsx-key
-        return <p
-          className='description-text black-text'
-          style={{
-            fontSize: `${this.state.descFontSize}px`,
-            lineHeight: this.state.descLineHeight,
-            marginBottom: this.state.descLineHeight / 2
-          }}>{d}</p>;
+    return this.renderAttributes(
+      <VerticalStack>
+        {this.state.description.map((d) => {
+          return (
+            // eslint-disable-next-line react/jsx-key
+            <p
+              className='description-text black-text'
+              style={{
+                fontSize: `${this.state.descFontSize}px`,
+                lineHeight: this.state.descLineHeight,
+                marginBottom: this.state.descLineHeight / 2,
+              }}
+            >
+              {d}
+            </p>
+          );
         })}
-    </VerticalStack>, containerClass);
+      </VerticalStack>,
+      containerClass
+    );
   }
 
-  private getSpecifities(): { lv: boolean, rk: boolean } {
+  private getSpecifities(): { lv: boolean; rk: boolean } {
     let includesXyz = false;
 
     for (let frame of this.props.card.frames) {

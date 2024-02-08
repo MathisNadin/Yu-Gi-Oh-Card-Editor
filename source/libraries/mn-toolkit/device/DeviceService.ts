@@ -1,6 +1,6 @@
-import { extend } from "libraries/mn-tools";
-import { Observable } from "../observable";
-import { IApplicationListener } from "../application";
+import { extend } from 'libraries/mn-tools';
+import { Observable } from '../observable';
+import { IApplicationListener } from '../application';
 
 export interface IFileFilter {
   extensions: string[];
@@ -41,46 +41,60 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   private _platform!: string;
   private _foreground = false;
 
-  public fireScreenSpecChanged(spec: IScreenSpec) { this.dispatch('deviceScreenSpecificationChanged', spec); }
-  public fireForeground() { this.dispatch('deviceForeground'); }
-  public fireBackground() { this.dispatch('deviceBackground'); }
-  public fireOnline() { this.dispatch('deviceOnline'); }
-  public fireOffline() { this.dispatch('deviceOffline'); }
+  public fireScreenSpecChanged(spec: IScreenSpec) {
+    this.dispatch('deviceScreenSpecificationChanged', spec);
+  }
+  public fireForeground() {
+    this.dispatch('deviceForeground');
+  }
+  public fireBackground() {
+    this.dispatch('deviceBackground');
+  }
+  public fireOnline() {
+    this.dispatch('deviceOnline');
+  }
+  public fireOffline() {
+    this.dispatch('deviceOffline');
+  }
 
   public constructor() {
     super();
     // this.fireScreenSpecChanged(this.screenSpec);
-    document.addEventListener("backbutton", (event: Event) => {
-      event.preventDefault();
-      this.dispatch('deviceBackButton');
-    }, false);
+    document.addEventListener(
+      'backbutton',
+      (event: Event) => {
+        event.preventDefault();
+        this.dispatch('deviceBackButton');
+      },
+      false
+    );
     app.addListener(this);
   }
 
   public getSpec() {
     const deviceRecord: {
       device: {
-        id: string,
-        native: boolean,
-        platform: string,
-        model: string,
-        version: string,
-        language: string,
-        time: Date,
-        timeOffset: number
+        id: string;
+        native: boolean;
+        platform: string;
+        model: string;
+        version: string;
+        language: string;
+        time: Date;
+        timeOffset: number;
         screen: {
-          width: number,
-          height: number,
-          pixelWidth: number,
-        },
-      },
+          width: number;
+          height: number;
+          pixelWidth: number;
+        };
+      };
       client: {
         // language: LanguageLocale
-        name: string,
-        stage: string,
-        version: string
-        userAgent: string,
-      }
+        name: string;
+        stage: string;
+        version: string;
+        userAgent: string;
+      };
     } = {
       device: {
         id: undefined as unknown as string,
@@ -104,7 +118,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
         stage: app.stage,
         // language: app.$i18n.currentLanguage,
         userAgent: navigator.userAgent,
-      }
+      },
     };
 
     /* if (hasCordova()) {
@@ -116,7 +130,6 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     } */
     return deviceRecord;
   }
-
 
   public applicationReady() {
     // console.log('READY');
@@ -163,7 +176,6 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     this._timeOffset = new Date().getTimezoneOffset();
   }
 
-
   /**
    * Initialisation de device. Principalement on
    * attend cordova
@@ -182,7 +194,6 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     // console.log('deviceId', this._platform);
     document.body.classList.add(`mn-platform-${this._platform}`);
   }
-
 
   private onScreenSpecChanged(data: boolean | IScreenSpec = false) {
     // console.log('onScreenSpecChanged');
@@ -206,9 +217,15 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       isXLargeScreen: width > largeBreakpoint && width < xlargeBreakpoint,
       isXXLargeScreen: width > xlargeBreakpoint,
       isPortrait,
-      isLandscape: !isPortrait
+      isLandscape: !isPortrait,
     });
-    document.body.classList.remove('mn-screen-small', 'mn-screen-medium', 'mn-screen-large', 'mn-screen-xlarge', 'mn-screen-xxlarge');
+    document.body.classList.remove(
+      'mn-screen-small',
+      'mn-screen-medium',
+      'mn-screen-large',
+      'mn-screen-xlarge',
+      'mn-screen-xxlarge'
+    );
     if (width <= smallBreakpoint) document.body.classList.add('mn-screen-small');
     if (width > smallBreakpoint) document.body.classList.add('mn-screen-medium');
     if (width > mediumBreakpoint) document.body.classList.add('mn-screen-large');
@@ -230,21 +247,32 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     if (this.isNative) Keyboard.show();
   } */
 
-
   private setupScreen() {
     window.addEventListener('resize', () => this.onScreenSpecChanged(), true);
     this.onScreenSpecChanged();
   }
 
-
-  public get screenWidth() { return this._screenSpec.width as number; }
-  public get screenHeight() { return this._screenSpec.height as number; }
-  public get isPortrait() { return this._screenSpec.isPortrait; }
-  public get isLandscape() { return this._screenSpec.isLandscape; }
-  public get isSmallScreen() { return this._screenSpec.isSmallScreen; }
-  public get isMediumScreen() { return this._screenSpec.isMediumScreen; }
-  public get isLargeScreen() { return this._screenSpec.isLargeScreen; }
-
+  public get screenWidth() {
+    return this._screenSpec.width as number;
+  }
+  public get screenHeight() {
+    return this._screenSpec.height as number;
+  }
+  public get isPortrait() {
+    return this._screenSpec.isPortrait;
+  }
+  public get isLandscape() {
+    return this._screenSpec.isLandscape;
+  }
+  public get isSmallScreen() {
+    return this._screenSpec.isSmallScreen;
+  }
+  public get isMediumScreen() {
+    return this._screenSpec.isMediumScreen;
+  }
+  public get isLargeScreen() {
+    return this._screenSpec.isLargeScreen;
+  }
 
   /**
    * Initialisation de la barre de statut
@@ -267,51 +295,66 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     this.fireForeground();
   }
 
-
   private doPause() {
     this.stopIdle();
     this._foreground = false;
     this.fireBackground();
   }
 
-
   private setupBackground() {
     if (this.isNative) {
-      document.addEventListener(this.isApple ? "resign" : "pause", () => { this.doPause(); }, false);
-      document.addEventListener("resume", () => { this.doResume(); }, false);
+      document.addEventListener(
+        this.isApple ? 'resign' : 'pause',
+        () => {
+          this.doPause();
+        },
+        false
+      );
+      document.addEventListener(
+        'resume',
+        () => {
+          this.doResume();
+        },
+        false
+      );
     } else {
       let hidden: string;
       let visibilityChange!: string;
-      if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-        hidden = "hidden";
-        visibilityChange = "visibilitychange";
+      if (typeof document.hidden !== 'undefined') {
+        // Opera 12.10 and Firefox 18 and later support
+        hidden = 'hidden';
+        visibilityChange = 'visibilitychange';
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      else if (typeof (document as any).mozHidden !== "undefined") {
-        hidden = "mozHidden";
-        visibilityChange = "mozvisibilitychange";
+      else if (typeof (document as any).mozHidden !== 'undefined') {
+        hidden = 'mozHidden';
+        visibilityChange = 'mozvisibilitychange';
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      else if (typeof (document as any).msHidden !== "undefined") {
-        hidden = "msHidden";
-        visibilityChange = "msvisibilitychange";
+      else if (typeof (document as any).msHidden !== 'undefined') {
+        hidden = 'msHidden';
+        visibilityChange = 'msvisibilitychange';
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      else if (typeof (document as any).webkitHidden !== "undefined") {
-        hidden = "webkitHidden";
-        visibilityChange = "webkitvisibilitychange";
+      else if (typeof (document as any).webkitHidden !== 'undefined') {
+        hidden = 'webkitHidden';
+        visibilityChange = 'webkitvisibilitychange';
       }
 
-      document.addEventListener(visibilityChange, () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((document as any)[hidden]) {
-          // console.log('App invisible');
-          this.doPause();
-        } else {
-          // console.log('App visible');
-          this.doResume();
-        }
-      }, false);
+      document.addEventListener(
+        visibilityChange,
+        () => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((document as any)[hidden]) {
+            // console.log('App invisible');
+            this.doPause();
+          } else {
+            // console.log('App visible');
+            this.doResume();
+          }
+        },
+        false
+      );
 
       window.addEventListener('pagehide', function () {
         // console.log('Page hidden');
@@ -349,51 +392,85 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   private startIdle() {
-    ['touchend', 'mousedown', 'keypress', 'touchmove'].forEach(eventName => {
+    ['touchend', 'mousedown', 'keypress', 'touchmove'].forEach((eventName) => {
       document.addEventListener(eventName, () => this.restartIdle(), false);
     });
     this.restartIdle();
   }
 
   private setupNetwork() {
-    window.addEventListener("offline", () => {
-      // console.log('offline', this.isConnected());
-      this.fireOffline();
-    }, false);
-    window.addEventListener("online", () => {
-      // console.log('online', this.isConnected());
-      this.fireOnline();
-    }, false);
+    window.addEventListener(
+      'offline',
+      () => {
+        // console.log('offline', this.isConnected());
+        this.fireOffline();
+      },
+      false
+    );
+    window.addEventListener(
+      'online',
+      () => {
+        // console.log('online', this.isConnected());
+        this.fireOnline();
+      },
+      false
+    );
   }
-
 
   public isConnected() {
     return navigator.onLine;
   }
 
+  public get isElectron() {
+    return !!window.electron;
+  }
 
-  public get isElectron() { return !!window.electron; }
   // public get isNative() { return !!window.cordova; }
-  public get isNative() { return false; }
-  public get isBackground() { return !this._foreground; }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public get isTouch() { return !!("ontouchstart" in window || (navigator as any).msMaxTouchPoints); }
-  public get isAndroid() { return this._platform === 'android'; }
-  public get isApple() { return this._platform === 'ios'; }
-  public get isDesktop() { return this._platform === 'desktop'; }
-  public get isWeb() { return this._platform === 'web'; }
-  public get platform() { return this._platform; }
+  public get isNative() {
+    return false;
+  }
+
+  public get isBackground() {
+    return !this._foreground;
+  }
+  public get isTouch() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return !!('ontouchstart' in window || (navigator as any).msMaxTouchPoints);
+  }
+
+  public get isAndroid() {
+    return this._platform === 'android';
+  }
+
+  public get isApple() {
+    return this._platform === 'ios';
+  }
+
+  public get isDesktop() {
+    return this._platform === 'desktop';
+  }
+
+  public get isWeb() {
+    return this._platform === 'web';
+  }
+
+  public get platform() {
+    return this._platform;
+  }
+
   // public get language(): LanguageLocale { return this._language; }
-  public get timeOffset(): number { return this._timeOffset; }
+
+  public get timeOffset(): number {
+    return this._timeOffset;
+  }
 
   /* public hideSplash() {
     if (this.isNative) navigator.splashscreen.hide();
   } */
 
-
   public get isIE() {
     let ua = navigator.userAgent;
-    return ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+    return ua.indexOf('MSIE ') > -1 || ua.indexOf('Trident/') > -1;
   }
 
   public get isChrome() {
@@ -402,16 +479,16 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     let winNav = window.navigator;
     let vendorName = winNav.vendor;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let isOpera = typeof (window as any).opr !== "undefined";
-    let isIEedge = winNav.userAgent.indexOf("Edge") > -1;
+    let isOpera = typeof (window as any).opr !== 'undefined';
+    let isIEedge = winNav.userAgent.indexOf('Edge') > -1;
     let isIOSChrome = /CriOS/.exec(winNav.userAgent);
 
     if (isIOSChrome) {
       return false;
     } else if (
       isChromium !== null &&
-      typeof isChromium !== "undefined" &&
-      vendorName === "Google Inc." &&
+      typeof isChromium !== 'undefined' &&
+      vendorName === 'Google Inc.' &&
       isOpera === false &&
       isIEedge === false
     ) {
@@ -446,7 +523,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     }
   }
 
-  public async readFileUtf8(filters: IFileFilter[]): Promise<{content: ArrayBuffer, name?: string} | undefined> {
+  public async readFileUtf8(filters: IFileFilter[]): Promise<{ content: ArrayBuffer; name?: string } | undefined> {
     if (this.isDesktop) {
       const buffer = await window.electron.ipcRenderer.readFileUtf8(filters);
       if (buffer) {
@@ -457,11 +534,11 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       return undefined;
     } else {
       // Mode web: Lire le fichier et renvoyer un objet avec ArrayBuffer
-      return new Promise<{content: ArrayBuffer, name?: string} | undefined>((resolve, reject) => {
+      return new Promise<{ content: ArrayBuffer; name?: string } | undefined>((resolve, reject) => {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = filters.map(filter => filter.extensions.map(ext => `.${ext}`).join(',')).join(',');
-        input.onchange = e => {
+        input.accept = filters.map((filter) => filter.extensions.map((ext) => `.${ext}`).join(',')).join(',');
+        input.onchange = (e) => {
           const inputElement = e.target as HTMLInputElement;
           if (!inputElement) {
             reject(new Error('Aucune target'));
@@ -478,7 +555,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
           reader.onload = () => {
             resolve({
               content: reader.result as ArrayBuffer,
-              name: file.name
+              name: file.name,
             });
           };
           reader.onerror = () => reject(reader.error);
@@ -488,5 +565,4 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       });
     }
   }
-
 }

@@ -1,6 +1,40 @@
 import { IArtworkEditDialogResult, ArtworkEditDialog } from 'client/editor/artworkEditDialog';
-import { ICard, TFrame, TAttribute, TStIcon, TCardLanguage, TNameStyle, TLegendType, TRushEffectType, TRushTextMode, TEdition, TSticker } from 'client/editor/card/card-interfaces';
-import { IContainableProps, IContainableState, Containable, VerticalStack, HorizontalStack, Button, Spacer, Typography, Icon, TextInput, Select, FileInput, CheckBox, Grid, TabbedPane, TabPane, TextAreaInput, ButtonIcon, NumberInput, InplaceEdit, Image } from 'libraries/mn-toolkit';
+import {
+  ICard,
+  TFrame,
+  TAttribute,
+  TStIcon,
+  TCardLanguage,
+  TNameStyle,
+  TLegendType,
+  TRushEffectType,
+  TRushTextMode,
+  TEdition,
+  TSticker,
+} from 'client/editor/card/card-interfaces';
+import {
+  IContainableProps,
+  IContainableState,
+  Containable,
+  VerticalStack,
+  HorizontalStack,
+  Button,
+  Spacer,
+  Typography,
+  Icon,
+  TextInput,
+  Select,
+  FileInput,
+  CheckBox,
+  Grid,
+  TabbedPane,
+  TabPane,
+  TextAreaInput,
+  ButtonIcon,
+  NumberInput,
+  InplaceEdit,
+  Image,
+} from 'libraries/mn-toolkit';
 import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/mn-tools';
 
 interface IRushCardEditorProps extends IContainableProps {
@@ -94,12 +128,11 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   public onFrameChange(frame: TFrame) {
     if (this.state.card.frames.includes(frame)) {
       if (this.state.card.frames.length > 1) {
-        this.state.card.frames = this.state.card.frames.filter(f => f !== frame);
+        this.state.card.frames = this.state.card.frames.filter((f) => f !== frame);
         this.forceUpdate();
         this.debouncedOnCardChange(this.state.card);
       }
-    }
-    else {
+    } else {
       if (this.state.card.multipleFrames) {
         this.state.card.frames.push(frame);
       } else {
@@ -161,7 +194,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
   public onAtkChange(atk: string) {
     if (isUndefined(atk) || atk.length > 6) return;
-    if (atk && atk !== '?' && atk !=='∞' &&  !atk.startsWith('X') && integer(atk) === 0) atk = '0';
+    if (atk && atk !== '?' && atk !== '∞' && !atk.startsWith('X') && integer(atk) === 0) atk = '0';
     this.state.card.atk = atk;
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
@@ -169,7 +202,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
   public onDefChange(def: string) {
     if (isUndefined(def) || def.length > 6) return;
-    if (def && def !== '?' && def !=='∞' &&  !def.startsWith('X') && integer(def) === 0) def = '0';
+    if (def && def !== '?' && def !== '∞' && !def.startsWith('X') && integer(def) === 0) def = '0';
     this.state.card.def = def;
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
@@ -256,8 +289,8 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       height: infos.crop?.height,
       width: infos.crop?.width,
       pendulum: this.state.card.artwork.pendulum,
-      keepRatio: infos.keepRatio
-    }
+      keepRatio: infos.keepRatio,
+    };
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -271,8 +304,8 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       height: 100,
       width: 100,
       pendulum: false,
-      keepRatio: false
-    }
+      keepRatio: false,
+    };
     this.forceUpdate();
     this.debouncedOnCardChange(this.state.card);
   }
@@ -312,7 +345,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   }
 
   private onMoveChoiceEffectDown(index: number) {
-    if (index === this.state.card.rushChoiceEffects.length-1) return;
+    if (index === this.state.card.rushChoiceEffects.length - 1) return;
     const newIndex = index + 1;
     let element = this.state.card.rushChoiceEffects[index];
     this.state.card.rushChoiceEffects.splice(index, 1);
@@ -344,7 +377,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   }
 
   private onMoveAbilityDown(index: number) {
-    if (index === this.state.card.abilities.length-1) return;
+    if (index === this.state.card.abilities.length - 1) return;
     const newIndex = index + 1;
     let element = this.state.card.abilities[index];
     this.state.card.abilities.splice(index, 1);
@@ -383,353 +416,397 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       title: "Édition de l'image",
       innerHeight: '85%',
       innerWidth: '80%',
-      content: <ArtworkEditDialog
-        isRush
-        artworkURL={this.state.card.artwork.url}
-        crop={{
-          x: this.state.card.artwork.x,
-          y: this.state.card.artwork.y,
-          height: this.state.card.artwork.height,
-          width: this.state.card.artwork.width,
-          unit: '%'
-        }}
-        keepRatio={this.state.card.artwork.keepRatio}
-        pendulumRatio={this.state.card.pendulum && !this.state.card.artwork.pendulum}
-        hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
-        hasLinkFrame={this.state.card.frames.includes('link')}
-      />
+      content: (
+        <ArtworkEditDialog
+          isRush
+          artworkURL={this.state.card.artwork.url}
+          crop={{
+            x: this.state.card.artwork.x,
+            y: this.state.card.artwork.y,
+            height: this.state.card.artwork.height,
+            width: this.state.card.artwork.width,
+            unit: '%',
+          }}
+          keepRatio={this.state.card.artwork.keepRatio}
+          pendulumRatio={this.state.card.pendulum && !this.state.card.artwork.pendulum}
+          hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
+          hasLinkFrame={this.state.card.frames.includes('link')}
+        />
+      ),
     });
     if (result) this.onArtworkInfoChange(result);
   }
 
   public render() {
-    return this.renderAttributes(<VerticalStack fill>
-      <HorizontalStack padding className='top-options'>
-        <Button
-          label='Faire le rendu'
-          color='positive'
-          onTap={() => app.$errorManager.handlePromise(app.$card.renderCurrentCard())}
-        />
-        <Spacer />
-        {!app.$card.tempCurrentCard && <Button
-          label='Réinitialiser'
-          color='assertive'
-          onTap={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}
-        />}
-        <Spacer />
-        <Button
-          label='Sauvegarder'
-          color='balanced'
-          onTap={() => app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())}
-        />
-      </HorizontalStack>
-
-      <VerticalStack scroll padding gutter className='card-editor-sections'>
-        {this.renderBasicCardDetails()}
-        {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
-        {this.renderMiscDetails()}
-        <HorizontalStack itemAlignment='right'>
-          <Typography variant='help' content={this.state.appVersion} />
+    return this.renderAttributes(
+      <VerticalStack fill>
+        <HorizontalStack padding className='top-options'>
+          <Button
+            label='Faire le rendu'
+            color='positive'
+            onTap={() => app.$errorManager.handlePromise(app.$card.renderCurrentCard())}
+          />
+          <Spacer />
+          {!app.$card.tempCurrentCard && (
+            <Button
+              label='Réinitialiser'
+              color='assertive'
+              onTap={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}
+            />
+          )}
+          <Spacer />
+          <Button
+            label='Sauvegarder'
+            color='balanced'
+            onTap={() => app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())}
+          />
         </HorizontalStack>
-      </VerticalStack>
-    </VerticalStack>, 'card-editor');
+
+        <VerticalStack scroll padding gutter className='card-editor-sections'>
+          {this.renderBasicCardDetails()}
+          {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
+          {this.renderMiscDetails()}
+          <HorizontalStack itemAlignment='right'>
+            <Typography variant='help' content={this.state.appVersion} />
+          </HorizontalStack>
+        </VerticalStack>
+      </VerticalStack>,
+      'card-editor'
+    );
   }
 
   private renderBasicCardDetails() {
-    return <VerticalStack gutter className='card-editor-section basic-section'>
-      <HorizontalStack verticalItemAlignment='middle'>
-        <Icon className='field-icon' iconId='toolkit-title' color='1' />
-        <TextInput fill placeholder='Nom' defaultValue={this.state.card.name} onChange={name => this.onNameChange(name)} />
-      </HorizontalStack>
-
-      <HorizontalStack gutter>
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-color-palette' color='1' />
-          <Select<TNameStyle>
+    return (
+      <VerticalStack gutter className='card-editor-section basic-section'>
+        <HorizontalStack verticalItemAlignment='middle'>
+          <Icon className='field-icon' iconId='toolkit-title' color='1' />
+          <TextInput
             fill
-            popoverMinWidth={115}
-            items={[
-              { id: 'default', label: 'Par défaut' },
-              { id: 'white', label: 'Blanc' },
-              { id: 'black', label: 'Noir' },
-              { id: 'yellow', label: 'Jaune' },
-              { id: 'gold', label: 'Or' },
-              { id: 'silver', label: 'Argent' },
-              { id: 'rare', label: 'Rare' },
-              { id: 'ultra', label: 'Ultra Rare' },
-              { id: 'secret', label: 'Secret Rare' },
-            ]}
-            defaultValue={this.state.card.nameStyle}
-            onChange={nameStyle => this.onNameStyleChange(nameStyle)}
+            placeholder='Nom'
+            defaultValue={this.state.card.name}
+            onChange={(name) => this.onNameChange(name)}
           />
         </HorizontalStack>
 
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-language' color='1' />
-          <Select<TCardLanguage>
-            fill
-            popoverMinWidth={115}
-            items={[
-              { id: 'fr', label: 'Français' },
-              { id: 'en', label: 'Anglais' },
-            ]}
-            defaultValue={this.state.card.language}
-            onChange={language => this.onLanguageChange(language)}
-          />
-        </HorizontalStack>
-      </HorizontalStack>
-
-      <HorizontalStack verticalItemAlignment='middle'>
-        <Icon className='field-icon' iconId='toolkit-image' color='1' />
-        {app.$device.isDesktop && <FileInput
-          fill
-          placeholder="Chemin vers l'artwork"
-          defaultValue={this.state.card.artwork.url}
-          onChange={url => this.onArtworkURLChange(url)}
-          overrideOnTap={() => this.showArtworkPopup()}
-        />}
-      </HorizontalStack>
-
-      <VerticalStack gutter>
-        <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
-          <Typography fill variant='help' content={this.state.card.multipleFrames ? 'Bordures' : 'Bordure'} />
-          <CheckBox label='Cumuler' defaultValue={this.state.card.multipleFrames} onChange={() => this.onMultipleFramesChange()} />
-        </HorizontalStack>
-
-        <Grid>
-          {this.state.cardFrames.map(frame => {
-            let className = 'card-frame';
-            const frameIndex = this.state.card.frames.indexOf(frame.id);
-            if (frameIndex >= 0) {
-              className = `${className} selected`;
-              if (this.state.card.multipleFrames) {
-                className = `${className} selected-${frameIndex + 1}`;
-              }
-            }
-            // eslint-disable-next-line react/jsx-key
-            return <HorizontalStack className={className} s='12' m='6' l='3' xl='2' xxl='1'>
-              <Image
-                src={frame.file}
-                alt={`frame-${frame.id}`}
-                title={app.$card.getFrameName(frame.id)}
-                onTap={() => this.onFrameChange(frame.id)}
-                maxHeight={60}
-              />
-            </HorizontalStack>;}
-          )}
-        </Grid>
-      </VerticalStack>
-
-      {!app.$card.isOnlySkill(this.state.card) && <VerticalStack gutter>
-        <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
-          <Typography fill variant='help' content='Icône' />
-        </HorizontalStack>
-
-        <Grid className='card-icons-grid'>
-          {this.state.cardAttributes.map(attribute => (
-            // eslint-disable-next-line react/jsx-key
-            <HorizontalStack className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`} s='12' m='6' l='3' xl='2' xxl='1'>
-              <Image
-                src={attribute.file}
-                alt={`attribute-${attribute.id}`}
-                title={app.$card.getAttributeName(attribute.id)}
-                onTap={() => this.onAttributeChange(attribute.id)}
-                maxHeight={40}
-              />
-            </HorizontalStack>
-          ))}
-        </Grid>
-      </VerticalStack>}
-
-      {app.$card.isBackrow(this.state.card) && <VerticalStack gutter>
-        <Typography fill className='sub-title' variant='help' content='Type de Magie/Piège' />
-        <Grid className='card-icons-grid'>
-          {this.state.cardStTypes.map(stType => (
-            // eslint-disable-next-line react/jsx-key
-            <HorizontalStack className={classNames('card-st-icon', { 'selected': this.state.card.stType === stType.id })} s='12' m='6' l='3' xl='2' xxl='1'>
-              <Image
-                src={stType.file}
-                alt={`st-icon-${stType.id}`}
-                title={app.$card.getStIconName(stType.id)}
-                onTap={() => this.onStTypeChange(stType.id)}
-                maxHeight={40}
-              />
-            </HorizontalStack>
-          ))}
-        </Grid>
-      </VerticalStack>}
-
-      <TabbedPane
-        tabPosition='top'
-        defaultValue={this.state.card.rushTextMode}
-        onChange={rushTextMode => this.onRushTextModeChange(rushTextMode as TRushTextMode)}
-      >
-        <TabPane id='vanilla' fill={false} label='Entier' gutter>
-          <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-script' color='1' />
-            <TextAreaInput
-              autoGrow
-              minRows={5}
-              maxRows={100}
-              spellCheck={false}
-              defaultValue={this.state.card.description}
-              placeholder='Description'
-              onChange={description => this.onDescChange(description)}
-            />
-          </HorizontalStack>
-        </TabPane>
-
-        <TabPane id='regular' fill={false} label='Condition / Effet' gutter>
-          <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-empty-small-script' color='1' />
-            <TextAreaInput
-              autoGrow
-              minRows={3}
-              maxRows={100}
-              spellCheck={false}
-              defaultValue={this.state.card.rushOtherEffects}
-              placeholder='Autres'
-              onChange={rushOtherEffects => this.onRushOtherEffectsChange(rushOtherEffects)}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-small-script' color='1' />
-            <TextAreaInput
-              autoGrow
-              minRows={3}
-              maxRows={100}
-              spellCheck={false}
-              defaultValue={this.state.card.rushCondition}
-              placeholder='Condition'
-              onChange={rushCondition => this.onRushConditionChange(rushCondition)}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-script' color='1' />
-            <TextAreaInput
-              autoGrow
-              minRows={3}
-              maxRows={100}
-              spellCheck={false}
-              defaultValue={this.state.card.rushEffect}
-              placeholder='Effet'
-              onChange={rushEffect => this.onRushEffectChange(rushEffect)}
+        <HorizontalStack gutter>
+          <HorizontalStack fill verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-color-palette' color='1' />
+            <Select<TNameStyle>
+              fill
+              popoverMinWidth={115}
+              items={[
+                { id: 'default', label: 'Par défaut' },
+                { id: 'white', label: 'Blanc' },
+                { id: 'black', label: 'Noir' },
+                { id: 'yellow', label: 'Jaune' },
+                { id: 'gold', label: 'Or' },
+                { id: 'silver', label: 'Argent' },
+                { id: 'rare', label: 'Rare' },
+                { id: 'ultra', label: 'Ultra Rare' },
+                { id: 'secret', label: 'Secret Rare' },
+              ]}
+              defaultValue={this.state.card.nameStyle}
+              onChange={(nameStyle) => this.onNameStyleChange(nameStyle)}
             />
           </HorizontalStack>
 
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' iconId='toolkit-print' color='1' />
-            <Select<TRushEffectType>
+            <Icon className='field-icon' iconId='toolkit-language' color='1' />
+            <Select<TCardLanguage>
               fill
-              popoverMinWidth={150}
+              popoverMinWidth={115}
               items={[
-                { id: 'effect', label: 'Effet' },
-                { id: 'continuous', label: 'Effet Continu' },
+                { id: 'fr', label: 'Français' },
+                { id: 'en', label: 'Anglais' },
               ]}
-              defaultValue={this.state.card.rushEffectType}
-              onChange={rushEffectType => this.onRushEffectTypeChange(rushEffectType)}
+              defaultValue={this.state.card.language}
+              onChange={(language) => this.onLanguageChange(language)}
             />
           </HorizontalStack>
-        </TabPane>
+        </HorizontalStack>
 
-        <TabPane id='choice' fill={false} label='Effet au Choix' gutter>
-          <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-empty-small-script' color='1' />
-            <TextAreaInput
-              autoGrow
-              minRows={3}
-              maxRows={100}
-              spellCheck={false}
-              placeholder='Autres'
-              defaultValue={this.state.card.rushOtherEffects}
-              onChange={rushOtherEffects => this.onRushOtherEffectsChange(rushOtherEffects)}
+        <HorizontalStack verticalItemAlignment='middle'>
+          <Icon className='field-icon' iconId='toolkit-image' color='1' />
+          {app.$device.isDesktop && (
+            <FileInput
+              fill
+              placeholder="Chemin vers l'artwork"
+              defaultValue={this.state.card.artwork.url}
+              onChange={(url) => this.onArtworkURLChange(url)}
+              overrideOnTap={() => this.showArtworkPopup()}
             />
-          </HorizontalStack>
+          )}
+        </HorizontalStack>
 
-          <HorizontalStack>
-            <Icon className='field-icon' iconId='toolkit-small-script' color='1' />
-            <TextAreaInput
-              autoGrow
-              minRows={3}
-              maxRows={100}
-              spellCheck={false}
-              placeholder='Condition'
-              defaultValue={this.state.card.rushCondition}
-              onChange={rushCondition => this.onRushConditionChange(rushCondition)}
+        <VerticalStack gutter>
+          <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
+            <Typography fill variant='help' content={this.state.card.multipleFrames ? 'Bordures' : 'Bordure'} />
+            <CheckBox
+              label='Cumuler'
+              defaultValue={this.state.card.multipleFrames}
+              onChange={() => this.onMultipleFramesChange()}
             />
           </HorizontalStack>
 
-          <VerticalStack className='card-choice-effects'>
-            <HorizontalStack fill className='choice-effects-add' itemAlignment='right' verticalItemAlignment='middle'>
-              <Icon className='field-icon' iconId='toolkit-script' color='1' />
-              <Typography fill variant='help' content='Choix' />
-              <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddChoiceEffect()} />
+          <Grid>
+            {this.state.cardFrames.map((frame) => {
+              let className = 'card-frame';
+              const frameIndex = this.state.card.frames.indexOf(frame.id);
+              if (frameIndex >= 0) {
+                className = `${className} selected`;
+                if (this.state.card.multipleFrames) {
+                  className = `${className} selected-${frameIndex + 1}`;
+                }
+              }
+              return (
+                // eslint-disable-next-line react/jsx-key
+                <HorizontalStack className={className} s='12' m='6' l='3' xl='2' xxl='1'>
+                  <Image
+                    src={frame.file}
+                    alt={`frame-${frame.id}`}
+                    title={app.$card.getFrameName(frame.id)}
+                    onTap={() => this.onFrameChange(frame.id)}
+                    maxHeight={60}
+                  />
+                </HorizontalStack>
+              );
+            })}
+          </Grid>
+        </VerticalStack>
+
+        {!app.$card.isOnlySkill(this.state.card) && (
+          <VerticalStack gutter>
+            <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
+              <Typography fill variant='help' content='Icône' />
             </HorizontalStack>
 
-            <VerticalStack className='card-choice-effects-list'>
-              {this.state.card.rushChoiceEffects.map((choiceEff, iChoiceEff) => (
+            <Grid className='card-icons-grid'>
+              {this.state.cardAttributes.map((attribute) => (
                 // eslint-disable-next-line react/jsx-key
-                <VerticalStack fill className='choice-effects-line' verticalItemAlignment='middle'>
-                  <HorizontalStack className='choice-effects-line-icons' verticalItemAlignment='middle'>
-                    <Typography fill variant='help' content={`• ${iChoiceEff+1}`} />
-                    <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveChoiceEffect(iChoiceEff)} />
-                    <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveChoiceEffectUp(iChoiceEff)} />
-                    <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveChoiceEffectDown(iChoiceEff)} />
-                  </HorizontalStack>
-
-                  <TextAreaInput
-                    autoGrow
-                    minRows={3}
-                    maxRows={100}
-                    spellCheck={false}
-                    placeholder='Effet'
-                    defaultValue={choiceEff}
-                    onChange={choiceEff => this.onRushChoiceEffectsChange(choiceEff, iChoiceEff)}
+                <HorizontalStack
+                  className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`}
+                  s='12'
+                  m='6'
+                  l='3'
+                  xl='2'
+                  xxl='1'
+                >
+                  <Image
+                    src={attribute.file}
+                    alt={`attribute-${attribute.id}`}
+                    title={app.$card.getAttributeName(attribute.id)}
+                    onTap={() => this.onAttributeChange(attribute.id)}
+                    maxHeight={40}
                   />
-                </VerticalStack>
+                </HorizontalStack>
               ))}
-            </VerticalStack>
+            </Grid>
           </VerticalStack>
-        </TabPane>
-      </TabbedPane>
+        )}
 
-      <HorizontalStack>
-        <Icon className='field-icon' iconId='toolkit-eye-close' color='1' />
-        <CheckBox
-          label="Ne pas couvrir l'artwork"
-          defaultValue={this.state.card.dontCoverRushArt}
-          onChange={() => this.onDontCoverRushArtChange()}
-        />
-      </HorizontalStack>
+        {app.$card.isBackrow(this.state.card) && (
+          <VerticalStack gutter>
+            <Typography fill className='sub-title' variant='help' content='Type de Magie/Piège' />
+            <Grid className='card-icons-grid'>
+              {this.state.cardStTypes.map((stType) => (
+                // eslint-disable-next-line react/jsx-key
+                <HorizontalStack
+                  className={classNames('card-st-icon', { selected: this.state.card.stType === stType.id })}
+                  s='12'
+                  m='6'
+                  l='3'
+                  xl='2'
+                  xxl='1'
+                >
+                  <Image
+                    src={stType.file}
+                    alt={`st-icon-${stType.id}`}
+                    title={app.$card.getStIconName(stType.id)}
+                    onTap={() => this.onStTypeChange(stType.id)}
+                    maxHeight={40}
+                  />
+                </HorizontalStack>
+              ))}
+            </Grid>
+          </VerticalStack>
+        )}
 
-      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter className='line-with-checkbox'>
-        <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-diamond-shine' color='1' />
+        <TabbedPane
+          tabPosition='top'
+          defaultValue={this.state.card.rushTextMode}
+          onChange={(rushTextMode) => this.onRushTextModeChange(rushTextMode as TRushTextMode)}
+        >
+          <TabPane id='vanilla' fill={false} label='Entier' gutter>
+            <HorizontalStack>
+              <Icon className='field-icon' iconId='toolkit-script' color='1' />
+              <TextAreaInput
+                autoGrow
+                minRows={5}
+                maxRows={100}
+                spellCheck={false}
+                defaultValue={this.state.card.description}
+                placeholder='Description'
+                onChange={(description) => this.onDescChange(description)}
+              />
+            </HorizontalStack>
+          </TabPane>
+
+          <TabPane id='regular' fill={false} label='Condition / Effet' gutter>
+            <HorizontalStack>
+              <Icon className='field-icon' iconId='toolkit-empty-small-script' color='1' />
+              <TextAreaInput
+                autoGrow
+                minRows={3}
+                maxRows={100}
+                spellCheck={false}
+                defaultValue={this.state.card.rushOtherEffects}
+                placeholder='Autres'
+                onChange={(rushOtherEffects) => this.onRushOtherEffectsChange(rushOtherEffects)}
+              />
+            </HorizontalStack>
+
+            <HorizontalStack>
+              <Icon className='field-icon' iconId='toolkit-small-script' color='1' />
+              <TextAreaInput
+                autoGrow
+                minRows={3}
+                maxRows={100}
+                spellCheck={false}
+                defaultValue={this.state.card.rushCondition}
+                placeholder='Condition'
+                onChange={(rushCondition) => this.onRushConditionChange(rushCondition)}
+              />
+            </HorizontalStack>
+
+            <HorizontalStack>
+              <Icon className='field-icon' iconId='toolkit-script' color='1' />
+              <TextAreaInput
+                autoGrow
+                minRows={3}
+                maxRows={100}
+                spellCheck={false}
+                defaultValue={this.state.card.rushEffect}
+                placeholder='Effet'
+                onChange={(rushEffect) => this.onRushEffectChange(rushEffect)}
+              />
+            </HorizontalStack>
+
+            <HorizontalStack fill verticalItemAlignment='middle'>
+              <Icon className='field-icon' iconId='toolkit-print' color='1' />
+              <Select<TRushEffectType>
+                fill
+                popoverMinWidth={150}
+                items={[
+                  { id: 'effect', label: 'Effet' },
+                  { id: 'continuous', label: 'Effet Continu' },
+                ]}
+                defaultValue={this.state.card.rushEffectType}
+                onChange={(rushEffectType) => this.onRushEffectTypeChange(rushEffectType)}
+              />
+            </HorizontalStack>
+          </TabPane>
+
+          <TabPane id='choice' fill={false} label='Effet au Choix' gutter>
+            <HorizontalStack>
+              <Icon className='field-icon' iconId='toolkit-empty-small-script' color='1' />
+              <TextAreaInput
+                autoGrow
+                minRows={3}
+                maxRows={100}
+                spellCheck={false}
+                placeholder='Autres'
+                defaultValue={this.state.card.rushOtherEffects}
+                onChange={(rushOtherEffects) => this.onRushOtherEffectsChange(rushOtherEffects)}
+              />
+            </HorizontalStack>
+
+            <HorizontalStack>
+              <Icon className='field-icon' iconId='toolkit-small-script' color='1' />
+              <TextAreaInput
+                autoGrow
+                minRows={3}
+                maxRows={100}
+                spellCheck={false}
+                placeholder='Condition'
+                defaultValue={this.state.card.rushCondition}
+                onChange={(rushCondition) => this.onRushConditionChange(rushCondition)}
+              />
+            </HorizontalStack>
+
+            <VerticalStack className='card-choice-effects'>
+              <HorizontalStack fill className='choice-effects-add' itemAlignment='right' verticalItemAlignment='middle'>
+                <Icon className='field-icon' iconId='toolkit-script' color='1' />
+                <Typography fill variant='help' content='Choix' />
+                <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddChoiceEffect()} />
+              </HorizontalStack>
+
+              <VerticalStack className='card-choice-effects-list'>
+                {this.state.card.rushChoiceEffects.map((choiceEff, iChoiceEff) => (
+                  // eslint-disable-next-line react/jsx-key
+                  <VerticalStack fill className='choice-effects-line' verticalItemAlignment='middle'>
+                    <HorizontalStack className='choice-effects-line-icons' verticalItemAlignment='middle'>
+                      <Typography fill variant='help' content={`• ${iChoiceEff + 1}`} />
+                      <ButtonIcon
+                        icon='toolkit-minus'
+                        color='assertive'
+                        onTap={() => this.onRemoveChoiceEffect(iChoiceEff)}
+                      />
+                      <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveChoiceEffectUp(iChoiceEff)} />
+                      <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveChoiceEffectDown(iChoiceEff)} />
+                    </HorizontalStack>
+
+                    <TextAreaInput
+                      autoGrow
+                      minRows={3}
+                      maxRows={100}
+                      spellCheck={false}
+                      placeholder='Effet'
+                      defaultValue={choiceEff}
+                      onChange={(choiceEff) => this.onRushChoiceEffectsChange(choiceEff, iChoiceEff)}
+                    />
+                  </VerticalStack>
+                ))}
+              </VerticalStack>
+            </VerticalStack>
+          </TabPane>
+        </TabbedPane>
+
+        <HorizontalStack>
+          <Icon className='field-icon' iconId='toolkit-eye-close' color='1' />
           <CheckBox
-            label='LEGEND'
-            defaultValue={this.state.card.legend}
-            onChange={() => this.onLegendChange()}
+            label="Ne pas couvrir l'artwork"
+            defaultValue={this.state.card.dontCoverRushArt}
+            onChange={() => this.onDontCoverRushArtChange()}
           />
         </HorizontalStack>
 
-        {this.state.card.legend && <HorizontalStack fill verticalItemAlignment='middle'>
-          <Select<TLegendType>
-            fill
-            popoverMinWidth={150}
-            items={[
-              { id: 'gold', label: 'Or' },
-              { id: 'goldFoil', label: 'Or Foil' },
-              { id: 'silver', label: 'Argent' },
-              { id: 'silverFoil', label: 'Argent Foil' },
-            ]}
-            defaultValue={this.state.card.legendType}
-            onChange={legendType => this.onLegendTypeChange(legendType)}
-          />
-        </HorizontalStack>}
-      </HorizontalStack>}
-    </VerticalStack>;
+        {!this.state.card.dontCoverRushArt && (
+          <HorizontalStack gutter className='line-with-checkbox'>
+            <HorizontalStack verticalItemAlignment='middle'>
+              <Icon className='field-icon' iconId='toolkit-diamond-shine' color='1' />
+              <CheckBox label='LEGEND' defaultValue={this.state.card.legend} onChange={() => this.onLegendChange()} />
+            </HorizontalStack>
+
+            {this.state.card.legend && (
+              <HorizontalStack fill verticalItemAlignment='middle'>
+                <Select<TLegendType>
+                  fill
+                  popoverMinWidth={150}
+                  items={[
+                    { id: 'gold', label: 'Or' },
+                    { id: 'goldFoil', label: 'Or Foil' },
+                    { id: 'silver', label: 'Argent' },
+                    { id: 'silverFoil', label: 'Argent Foil' },
+                  ]}
+                  defaultValue={this.state.card.legendType}
+                  onChange={(legendType) => this.onLegendTypeChange(legendType)}
+                />
+              </HorizontalStack>
+            )}
+          </HorizontalStack>
+        )}
+      </VerticalStack>
+    );
   }
 
   private renderMonsterCardDetails() {
@@ -737,7 +814,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     let max: number;
     if (this.state.card.frames.includes('link')) {
       levelPlaceholder = 'Classification Lien';
-      max = 8
+      max = 8;
     } else {
       max = 13;
 
@@ -762,168 +839,182 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
       }
     }
 
-    return <VerticalStack gutter className='card-editor-section abilities-section'>
-      <Typography fill className='sub-title' variant='help' content='Détails' />
+    return (
+      <VerticalStack gutter className='card-editor-section abilities-section'>
+        <Typography fill className='sub-title' variant='help' content='Détails' />
 
-      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter>
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-star' color='1' />
-          <NumberInput
-            fill
-            min={0}
-            max={max}
-            placeholder={levelPlaceholder}
-            defaultValue={this.state.card.level}
-            onChange={level =>  this.onLevelChange(level, max)}
-          />
-        </HorizontalStack>
-
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-sword' color='1' />
-          <TextInput
-            fill
-            placeholder='ATK'
-            defaultValue={this.state.card.atk}
-            onChange={atk =>  this.onAtkChange(atk)}
-          />
-        </HorizontalStack>
-
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-shield' color='1' />
-          <TextInput
-            fill
-            placeholder='DEF'
-            defaultValue={this.state.card.def}
-            onChange={def =>  this.onDefChange(def)}
-          />
-        </HorizontalStack>
-      </HorizontalStack>}
-
-      {!this.state.card.dontCoverRushArt && <HorizontalStack gutter className='line-with-checkbox'>
-        <HorizontalStack verticalItemAlignment='middle'>
-          <CheckBox
-            label='Maximum'
-            defaultValue={this.state.card.maximum}
-            onChange={() => this.onMaximumChange()}
-          />
-        </HorizontalStack>
-
-        {this.state.card.maximum && <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-origami-sword' color='1' />
-          <TextInput
-            fill
-            placeholder='ATK MAX'
-            defaultValue={this.state.card.atkMax}
-            onChange={atkMax =>  this.onAtkMaxChange(atkMax)}
-          />
-        </HorizontalStack>}
-      </HorizontalStack>}
-
-      <VerticalStack className='card-abilities'>
-        <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
-          <Typography fill variant='help' content='Types' />
-          <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddAbility()} />
-        </HorizontalStack>
-
-        <VerticalStack className='card-abilities-list'>
-          {this.state.card.abilities.map((ability, iAbility) => (
-            // eslint-disable-next-line react/jsx-key
-            <HorizontalStack fill gutter className='abilities-line' verticalItemAlignment='middle'>
-              <InplaceEdit
+        {!this.state.card.dontCoverRushArt && (
+          <HorizontalStack gutter>
+            <HorizontalStack fill verticalItemAlignment='middle'>
+              <Icon className='field-icon' iconId='toolkit-star' color='1' />
+              <NumberInput
                 fill
-                focusOnSingleClick
-                validateOnEnter
-                key={`${iAbility}-${ability}`}
-                value={ability}
-                onChange={newValue => this.onAbilityChange(newValue, iAbility)}
+                min={0}
+                max={max}
+                placeholder={levelPlaceholder}
+                defaultValue={this.state.card.level}
+                onChange={(level) => this.onLevelChange(level, max)}
               />
-
-              <HorizontalStack className='abilities-line-icons'>
-                <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
-                {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />}
-                {this.state.card.abilities.length > 1 && <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />}
-              </HorizontalStack>
             </HorizontalStack>
-          ))}
+
+            <HorizontalStack fill verticalItemAlignment='middle'>
+              <Icon className='field-icon' iconId='toolkit-sword' color='1' />
+              <TextInput
+                fill
+                placeholder='ATK'
+                defaultValue={this.state.card.atk}
+                onChange={(atk) => this.onAtkChange(atk)}
+              />
+            </HorizontalStack>
+
+            <HorizontalStack fill verticalItemAlignment='middle'>
+              <Icon className='field-icon' iconId='toolkit-shield' color='1' />
+              <TextInput
+                fill
+                placeholder='DEF'
+                defaultValue={this.state.card.def}
+                onChange={(def) => this.onDefChange(def)}
+              />
+            </HorizontalStack>
+          </HorizontalStack>
+        )}
+
+        {!this.state.card.dontCoverRushArt && (
+          <HorizontalStack gutter className='line-with-checkbox'>
+            <HorizontalStack verticalItemAlignment='middle'>
+              <CheckBox
+                label='Maximum'
+                defaultValue={this.state.card.maximum}
+                onChange={() => this.onMaximumChange()}
+              />
+            </HorizontalStack>
+
+            {this.state.card.maximum && (
+              <HorizontalStack fill verticalItemAlignment='middle'>
+                <Icon className='field-icon' iconId='toolkit-origami-sword' color='1' />
+                <TextInput
+                  fill
+                  placeholder='ATK MAX'
+                  defaultValue={this.state.card.atkMax}
+                  onChange={(atkMax) => this.onAtkMaxChange(atkMax)}
+                />
+              </HorizontalStack>
+            )}
+          </HorizontalStack>
+        )}
+
+        <VerticalStack className='card-abilities'>
+          <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
+            <Typography fill variant='help' content='Types' />
+            <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddAbility()} />
+          </HorizontalStack>
+
+          <VerticalStack className='card-abilities-list'>
+            {this.state.card.abilities.map((ability, iAbility) => (
+              // eslint-disable-next-line react/jsx-key
+              <HorizontalStack fill gutter className='abilities-line' verticalItemAlignment='middle'>
+                <InplaceEdit
+                  fill
+                  focusOnSingleClick
+                  validateOnEnter
+                  key={`${iAbility}-${ability}`}
+                  value={ability}
+                  onChange={(newValue) => this.onAbilityChange(newValue, iAbility)}
+                />
+
+                <HorizontalStack className='abilities-line-icons'>
+                  <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
+                  {this.state.card.abilities.length > 1 && (
+                    <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
+                  )}
+                  {this.state.card.abilities.length > 1 && (
+                    <ButtonIcon icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
+                  )}
+                </HorizontalStack>
+              </HorizontalStack>
+            ))}
+          </VerticalStack>
         </VerticalStack>
       </VerticalStack>
-    </VerticalStack>;
+    );
   }
 
   private renderMiscDetails() {
-    return <VerticalStack gutter className='card-editor-section misc-section'>
-      <Typography fill className='sub-title' variant='help' content='Autres' />
+    return (
+      <VerticalStack gutter className='card-editor-section misc-section'>
+        <Typography fill className='sub-title' variant='help' content='Autres' />
 
-      <HorizontalStack gutter>
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-id' color='1' />
-          <TextInput
-            fill
-            placeholder='Set'
-            defaultValue={this.state.card.cardSet}
-            onChange={cardSet => this.onCardSetChange(cardSet)}
-          />
+        <HorizontalStack gutter>
+          <HorizontalStack fill verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-id' color='1' />
+            <TextInput
+              fill
+              placeholder='Set'
+              defaultValue={this.state.card.cardSet}
+              onChange={(cardSet) => this.onCardSetChange(cardSet)}
+            />
+          </HorizontalStack>
+
+          <HorizontalStack fill verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-print' color='1' />
+            <Select<TEdition>
+              fill
+              popoverMinWidth={200}
+              items={[
+                { id: 'unlimited', label: 'Aucune édition' },
+                { id: 'firstEdition', label: '1ère Édition' },
+                { id: 'limited', label: 'Édition Limitée' },
+                { id: 'forbidden', label: 'Interdite' },
+                { id: 'forbiddenDeck', label: 'Interdite dans un Deck' },
+                { id: 'duelTerminal', label: 'Duel Terminal' },
+                { id: 'anime', label: 'Édition Anime' },
+              ]}
+              defaultValue={this.state.card.edition}
+              onChange={(edition) => this.onEditionChange(edition)}
+            />
+          </HorizontalStack>
         </HorizontalStack>
 
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-print' color='1' />
-          <Select<TEdition>
-            fill
-            popoverMinWidth={200}
-            items={[
-              { id: 'unlimited', label: 'Aucune édition' },
-              { id: 'firstEdition', label: '1ère Édition' },
-              { id: 'limited', label: 'Édition Limitée' },
-              { id: 'forbidden', label: 'Interdite' },
-              { id: 'forbiddenDeck', label: 'Interdite dans un Deck' },
-              { id: 'duelTerminal', label: 'Duel Terminal' },
-              { id: 'anime', label: 'Édition Anime' },
-            ]}
-            defaultValue={this.state.card.edition}
-            onChange={edition => this.onEditionChange(edition)}
-          />
-        </HorizontalStack>
-      </HorizontalStack>
+        <HorizontalStack gutter>
+          <HorizontalStack fill verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-sticker' color='1' />
+            <Select<TSticker>
+              fill
+              popoverMinWidth={150}
+              items={[
+                { id: 'none', label: 'Aucun sticker' },
+                { id: 'silver', label: 'Argent' },
+                { id: 'gold', label: 'Or' },
+                { id: 'grey', label: 'Gris' },
+                { id: 'white', label: 'Blanc' },
+                { id: 'lightBlue', label: 'Bleu clair' },
+                { id: 'skyBlue', label: 'Bleu ciel' },
+                { id: 'cyan', label: 'Cyan' },
+                { id: 'aqua', label: 'Aqua' },
+                { id: 'green', label: 'Vert' },
+              ]}
+              defaultValue={this.state.card.sticker}
+              onChange={(sticker) => this.onStickerChange(sticker)}
+            />
+          </HorizontalStack>
 
-      <HorizontalStack gutter>
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-sticker' color='1' />
-          <Select<TSticker>
-            fill
-            popoverMinWidth={150}
-            items={[
-              { id: 'none', label: 'Aucun sticker' },
-              { id: 'silver', label: 'Argent' },
-              { id: 'gold', label: 'Or' },
-              { id: 'grey', label: 'Gris' },
-              { id: 'white', label: 'Blanc' },
-              { id: 'lightBlue', label: 'Bleu clair' },
-              { id: 'skyBlue', label: 'Bleu ciel' },
-              { id: 'cyan', label: 'Cyan' },
-              { id: 'aqua', label: 'Aqua' },
-              { id: 'green', label: 'Vert' },
-            ]}
-            defaultValue={this.state.card.sticker}
-            onChange={sticker => this.onStickerChange(sticker)}
-          />
+          <HorizontalStack fill verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-copyright' color='1' />
+            <CheckBox
+              fill
+              label='Copyright'
+              defaultValue={this.state.card.hasCopyright}
+              onChange={() => this.onCopyrightChange()}
+            />
+            <CheckBox
+              fill
+              label='1996'
+              defaultValue={this.state.card.oldCopyright}
+              onChange={() => this.onOldCopyrightChange()}
+            />
+          </HorizontalStack>
         </HorizontalStack>
-
-        <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-copyright' color='1' />
-          <CheckBox
-            fill
-            label='Copyright'
-            defaultValue={this.state.card.hasCopyright}
-            onChange={() => this.onCopyrightChange()}
-          />
-          <CheckBox
-            fill
-            label='1996'
-            defaultValue={this.state.card.oldCopyright}
-            onChange={() => this.onOldCopyrightChange()}
-          />
-        </HorizontalStack>
-      </HorizontalStack>
-    </VerticalStack>;
+      </VerticalStack>
+    );
   }
-};
+}

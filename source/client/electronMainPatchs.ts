@@ -1,4 +1,4 @@
-import { CardService } from "./editor/card";
+import { CardService } from './editor/card';
 
 declare global {
   interface IOnChannel {
@@ -21,8 +21,7 @@ declare global {
   var app: IApp;
 }
 
-export function patchIpcMain(_ipcMain: IIpcMain) {
-}
+export function patchIpcMain(_ipcMain: IIpcMain) {}
 
 export function getProjectIpcRenderer(): Partial<IIpcRenderer> {
   return {
@@ -36,7 +35,11 @@ export function getProjectIpcRenderer(): Partial<IIpcRenderer> {
   };
 }
 
-export function buildProjectMenuDarwinTemplate(mainWindow: IBrowserWindow, app: IElectronApp, shell: IElectronShell): IMenuItemConstructorOptions[] {
+export function buildProjectMenuDarwinTemplate(
+  mainWindow: IBrowserWindow,
+  app: IElectronApp,
+  shell: IElectronShell
+): IMenuItemConstructorOptions[] {
   const includeDevTools = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
   const subMenuAbout: IDarwinMenuItemConstructorOptions = {
@@ -154,9 +157,7 @@ export function buildProjectMenuDarwinTemplate(mainWindow: IBrowserWindow, app: 
       {
         label: 'Documentation',
         click() {
-          shell.openExternal(
-            'https://github.com/electron/electron/tree/main/docs#readme'
-          );
+          shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme');
         },
       },
       {
@@ -179,7 +180,11 @@ export function buildProjectMenuDarwinTemplate(mainWindow: IBrowserWindow, app: 
   return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
 }
 
-export function buildProjectMenuTemplate(mainWindow: IBrowserWindow, _app: IElectronApp, _shell: IElectronShell): IMenuItemConstructorOptions[] {
+export function buildProjectMenuTemplate(
+  mainWindow: IBrowserWindow,
+  _app: IElectronApp,
+  _shell: IElectronShell
+): IMenuItemConstructorOptions[] {
   const includeDevTools = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
   const templateDefault = [
@@ -250,9 +255,7 @@ export function buildProjectMenuTemplate(mainWindow: IBrowserWindow, _app: IElec
               label: '&Plein écran',
               accelerator: 'F11',
               click: () => {
-                mainWindow.setFullScreen(
-                  !mainWindow.isFullScreen()
-                );
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
               },
             },
           ]
@@ -261,9 +264,7 @@ export function buildProjectMenuTemplate(mainWindow: IBrowserWindow, _app: IElec
               label: '&Plein écran',
               accelerator: 'F11',
               click: () => {
-                mainWindow.setFullScreen(
-                  !mainWindow.isFullScreen()
-                );
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
               },
             },
           ],
@@ -286,9 +287,9 @@ export function buildProjectMenuTemplate(mainWindow: IBrowserWindow, _app: IElec
           accelerator: 'Alt+Ctrl+D',
           click: () => {
             mainWindow.webContents.send('deleteLocalDb');
-          }
+          },
         },
-      ]
+      ],
     });
   }
 

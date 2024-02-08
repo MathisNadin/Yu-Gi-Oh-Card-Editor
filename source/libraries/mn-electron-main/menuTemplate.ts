@@ -13,7 +13,11 @@ declare global {
   type IDarwinMenuItemConstructorOptions = DarwinMenuItemConstructorOptions;
 }
 
-export function buildDefaultDarwinTemplate(mainWindow: IBrowserWindow, app: IElectronApp, shell: IElectronShell): IMenuItemConstructorOptions[] {
+export function buildDefaultDarwinTemplate(
+  mainWindow: IBrowserWindow,
+  app: IElectronApp,
+  shell: IElectronShell
+): IMenuItemConstructorOptions[] {
   const includeDevTools = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
   const subMenuAbout: IDarwinMenuItemConstructorOptions = {
@@ -131,9 +135,7 @@ export function buildDefaultDarwinTemplate(mainWindow: IBrowserWindow, app: IEle
       {
         label: 'Documentation',
         click() {
-          shell.openExternal(
-            'https://github.com/electron/electron/tree/main/docs#readme'
-          );
+          shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme');
         },
       },
       {
@@ -156,98 +158,96 @@ export function buildDefaultDarwinTemplate(mainWindow: IBrowserWindow, app: IEle
   return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
 }
 
-export function buildDefaultTemplate(mainWindow: IBrowserWindow, _app: IElectronApp, shell: IElectronShell): IMenuItemConstructorOptions[] {
+export function buildDefaultTemplate(
+  mainWindow: IBrowserWindow,
+  _app: IElectronApp,
+  shell: IElectronShell
+): IMenuItemConstructorOptions[] {
   const includeDevTools = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-    const templateDefault = [
-      {
-        label: '&File',
-        submenu: [
-          {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
+  const templateDefault = [
+    {
+      label: '&File',
+      submenu: [
+        {
+          label: '&Open',
+          accelerator: 'Ctrl+O',
+        },
+        {
+          label: '&Close',
+          accelerator: 'Ctrl+W',
+          click: () => {
+            mainWindow.close();
           },
-          {
-            label: '&Close',
-            accelerator: 'Ctrl+W',
-            click: () => {
-              mainWindow.close();
-            },
-          },
-        ],
-      },
-      {
-        label: '&View',
-        submenu: includeDevTools
-          ? [
-              {
-                label: '&Reload',
-                accelerator: 'Ctrl+R',
-                click: () => {
-                  mainWindow.webContents.reload();
-                },
+        },
+      ],
+    },
+    {
+      label: '&View',
+      submenu: includeDevTools
+        ? [
+            {
+              label: '&Reload',
+              accelerator: 'Ctrl+R',
+              click: () => {
+                mainWindow.webContents.reload();
               },
-              {
-                label: 'Toggle &Full Screen',
-                accelerator: 'F11',
-                click: () => {
-                  mainWindow.setFullScreen(
-                    !mainWindow.isFullScreen(),
-                  );
-                },
+            },
+            {
+              label: 'Toggle &Full Screen',
+              accelerator: 'F11',
+              click: () => {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
               },
-              {
-                label: 'Toggle &Developer Tools',
-                accelerator: 'Alt+Ctrl+I',
-                click: () => {
-                  mainWindow.webContents.toggleDevTools();
-                },
+            },
+            {
+              label: 'Toggle &Developer Tools',
+              accelerator: 'Alt+Ctrl+I',
+              click: () => {
+                mainWindow.webContents.toggleDevTools();
               },
-            ]
-          : [
-              {
-                label: 'Toggle &Full Screen',
-                accelerator: 'F11',
-                click: () => {
-                  mainWindow.setFullScreen(
-                    !mainWindow.isFullScreen(),
-                  );
-                },
+            },
+          ]
+        : [
+            {
+              label: 'Toggle &Full Screen',
+              accelerator: 'F11',
+              click: () => {
+                mainWindow.setFullScreen(!mainWindow.isFullScreen());
               },
-            ],
-      },
-      {
-        label: 'Help',
-        submenu: [
-          {
-            label: 'Learn More',
-            click() {
-              shell.openExternal('https://electronjs.org');
             },
+          ],
+    },
+    {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click() {
+            shell.openExternal('https://electronjs.org');
           },
-          {
-            label: 'Documentation',
-            click() {
-              shell.openExternal(
-                'https://github.com/electron/electron/tree/main/docs#readme',
-              );
-            },
+        },
+        {
+          label: 'Documentation',
+          click() {
+            shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme');
           },
-          {
-            label: 'Community Discussions',
-            click() {
-              shell.openExternal('https://www.electronjs.org/community');
-            },
+        },
+        {
+          label: 'Community Discussions',
+          click() {
+            shell.openExternal('https://www.electronjs.org/community');
           },
-          {
-            label: 'Search Issues',
-            click() {
-              shell.openExternal('https://github.com/electron/electron/issues');
-            },
+        },
+        {
+          label: 'Search Issues',
+          click() {
+            shell.openExternal('https://github.com/electron/electron/issues');
           },
-        ],
-      },
-    ];
+        },
+      ],
+    },
+  ];
 
-    return templateDefault;
+  return templateDefault;
 }

@@ -13,7 +13,7 @@ export class Observable<T> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public dispatch(method: keyof T, ...args: any[]) {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       if (typeof listener[method] === 'function') {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (listener[method] as any).apply(listener, args);

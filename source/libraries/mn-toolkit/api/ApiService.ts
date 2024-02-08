@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export class ApiService {
-
   private axiosInstance: AxiosInstance;
 
   public constructor() {

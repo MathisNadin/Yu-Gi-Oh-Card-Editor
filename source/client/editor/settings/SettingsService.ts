@@ -1,6 +1,6 @@
-import { ICardsExportData } from "client/editor/card";
-import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
-import { deepClone, isObject } from "libraries/mn-tools";
+import { ICardsExportData } from 'client/editor/card';
+import { Observable, IIndexedDBListener } from 'libraries/mn-toolkit';
+import { deepClone, isObject } from 'libraries/mn-tools';
 
 interface IExportData {
   settings: IUserSettings;
@@ -114,5 +114,4 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
       console.error(error);
     }
   }
-
 }

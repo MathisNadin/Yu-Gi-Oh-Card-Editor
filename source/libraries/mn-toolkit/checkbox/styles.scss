@@ -1,4 +1,3 @@
-
 @mixin themeCheckbox() {
   @include mnLayountContainable();
   display: flex !important;
@@ -74,7 +73,6 @@
     }
   }
 }
-
 
 .mn-checkbox {
   @include themeCheckbox();

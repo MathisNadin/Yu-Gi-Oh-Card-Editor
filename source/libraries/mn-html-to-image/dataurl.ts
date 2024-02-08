@@ -39,11 +39,7 @@ export async function fetchAsDataURL<T>(
 
 const cache: { [url: string]: string } = {};
 
-function getCacheKey(
-  url: string,
-  contentType: string | undefined,
-  includeQueryParams: boolean | undefined
-) {
+function getCacheKey(url: string, contentType: string | undefined, includeQueryParams: boolean | undefined) {
   let key = url.replace(/\?.*/, '');
 
   if (includeQueryParams) {
@@ -58,16 +54,8 @@ function getCacheKey(
   return contentType ? `[${contentType}]${key}` : key;
 }
 
-export async function resourceToDataURL(
-  resourceUrl: string,
-  contentType: string | undefined,
-  options: Options
-) {
-  const cacheKey = getCacheKey(
-    resourceUrl,
-    contentType,
-    options.includeQueryParams
-  );
+export async function resourceToDataURL(resourceUrl: string, contentType: string | undefined, options: Options) {
+  const cacheKey = getCacheKey(resourceUrl, contentType, options.includeQueryParams);
 
   if (cache[cacheKey] != null) {
     return cache[cacheKey];
@@ -81,17 +69,13 @@ export async function resourceToDataURL(
 
   let dataURL: string;
   try {
-    const content = await fetchAsDataURL(
-      resourceUrl,
-      options.fetchRequestInit,
-      ({ res, result }) => {
-        if (!contentType) {
-          // eslint-disable-next-line no-param-reassign
-          contentType = res.headers.get('Content-Type') || '';
-        }
-        return getContentFromDataUrl(result);
+    const content = await fetchAsDataURL(resourceUrl, options.fetchRequestInit, ({ res, result }) => {
+      if (!contentType) {
+        // eslint-disable-next-line no-param-reassign
+        contentType = res.headers.get('Content-Type') || '';
       }
-    );
+      return getContentFromDataUrl(result);
+    });
     dataURL = makeDataUrl(content, contentType!);
   } catch (error) {
     dataURL = options.imagePlaceholder || '';

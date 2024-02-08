@@ -1,8 +1,4 @@
-import {
-  IContainerProps,
-  IContainerState,
-  Container
-} from '../container/Container';
+import { IContainerProps, IContainerState, Container } from '../container/Container';
 import { isDefined, classNames, isNumber, isString } from 'libraries/mn-tools';
 import { ITableCell, CellValue, ITableColumn } from './interfaces';
 import { ReactNode } from 'react';
@@ -35,7 +31,7 @@ interface ITableRowState extends IContainerState {}
 export class TableRow extends Container<ITableRowProps, ITableRowState> {
   public static get defaultProps(): Partial<ITableRowProps> {
     return {
-      ...super.defaultProps
+      ...super.defaultProps,
     };
   }
 
@@ -47,30 +43,23 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
   public render() {
     let style: { height?: string } = {};
     if (isDefined(this.props.row.height)) {
-      style.height = isNumber(this.props.row.height)
-        ? `${this.props.row.height}px`
-        : this.props.row.height;
+      style.height = isNumber(this.props.row.height) ? `${this.props.row.height}px` : this.props.row.height;
     }
     return (
       <div
         className={classNames(
           'mn-table-row',
-          this.props.row.className
-            ? `mn-table-row-${this.props.row.className}`
-            : null,
+          this.props.row.className ? `mn-table-row-${this.props.row.className}` : null,
           {
             'mn-table-row-with-sub-rows': !!this.props.row.subRows?.length,
             'mn-table-row-clickable': !!this.props.row.onTap,
-            'mn-table-row-selected': !!this.props.row.selected
+            'mn-table-row-selected': !!this.props.row.selected,
           }
         )}
         style={style}
         onClick={
           this.props.row.onTap
-            ? () =>
-                app.$errorManager.handlePromise(
-                  this.props.row.onTap && this.props.row.onTap(this.props.row)
-                )
+            ? () => app.$errorManager.handlePromise(this.props.row.onTap && this.props.row.onTap(this.props.row))
             : undefined
         }
       >
@@ -84,29 +73,24 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
             // => eh bien non, faut F5 pour voir apparaître la valeur sur la vue 2
             // Ca marche avec une key mais je sens venir les effets de bord
 
-            // eslint-disable-next-line react/jsx-key
-            return (<div
+            return (
+              // eslint-disable-next-line react/jsx-key
+              <div
                 style={this.props.columnStyle[i]}
                 className={classNames(
                   'mn-table-cell',
                   { 'no-padding': column.noPadding },
                   column.className,
                   `mn-align-${!!column.align ? column.align : 'left'}`,
-                  `mn-vertical-align-${
-                    !!column.verticalAlign ? column.verticalAlign : 'center'
-                  }`,
+                  `mn-vertical-align-${!!column.verticalAlign ? column.verticalAlign : 'center'}`,
                   `mn-table-cell-${cell.className}`
                 )}
               >
                 {!i && this.props.hasSubRows && (
-                  <div className="mn-table-toggle-sub-rows">
+                  <div className='mn-table-toggle-sub-rows'>
                     {!!this.props.row.subRows?.length && (
                       <ButtonIcon
-                        icon={
-                          this.props.row.open
-                            ? 'toolkit-angle-down'
-                            : 'toolkit-angle-right'
-                        }
+                        icon={this.props.row.open ? 'toolkit-angle-down' : 'toolkit-angle-right'}
                         onTap={() => this.props.onToggleSubRows && this.props.onToggleSubRows(this.props.row)}
                       />
                     )}
@@ -114,15 +98,9 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
                 )}
 
                 {isString(cell.value) ? (
-                  <div
-                    className="mn-table-cell-wrapper"
-                    dangerouslySetInnerHTML={{ __html: cell.value }}
-                  />
+                  <div className='mn-table-cell-wrapper' dangerouslySetInnerHTML={{ __html: cell.value }} />
                 ) : (
-                  <div
-                    key={`${cell.value}-${cell.className}`}
-                    className="mn-table-cell-wrapper"
-                  >
+                  <div key={`${cell.value}-${cell.className}`} className='mn-table-cell-wrapper'>
                     {cell.value as ReactNode}
                   </div>
                 )}

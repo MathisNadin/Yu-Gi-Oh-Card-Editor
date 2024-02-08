@@ -1,15 +1,15 @@
-import { IHeaderCrumb, IHeaderListener, IHeaderComponent as IHeaderPart } from ".";
-import { Observable } from "../observable";
-import { IPopoverAction } from "../popover";
-import { IRouterListener } from "../router";
+import { IHeaderCrumb, IHeaderListener, IHeaderComponent as IHeaderPart } from '.';
+import { Observable } from '../observable';
+import { IPopoverAction } from '../popover';
+import { IRouterListener } from '../router';
 
 export class HeaderService extends Observable<IHeaderListener> implements Partial<IRouterListener> {
   private _pageActions: IPopoverAction[] = [];
 
-  private _parts: {[position: string]: IHeaderPart[]} = {
+  private _parts: { [position: string]: IHeaderPart[] } = {
     left: [],
     right: [],
-    center: []
+    center: [],
   };
 
   public get pageActions(): IPopoverAction[] {
@@ -59,8 +59,7 @@ export class HeaderService extends Observable<IHeaderListener> implements Partia
     parts.sort((a, b) => {
       return (a.weight || 0) - (b.weight || 0);
     });
-    parts.forEach(part => this._parts[part.position].push(part));
+    parts.forEach((part) => this._parts[part.position].push(part));
     this.dispatch('headerUpdated');
   }
-
 }

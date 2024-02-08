@@ -23,7 +23,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     this.state = {
       loaded: false,
       croppedArtworkBase64: '',
-      crop: props.crop
+      crop: props.crop,
     } as IArtworkCroppingState;
   }
 
@@ -51,11 +51,12 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
       image.src = props.artworkBase64;
       const imageIsHigher = image.height > image.width;
 
-      image.onload = () => this.setState({
-        loaded: true,
-        higher: containerisHigher && imageIsHigher,
-        crop: props.crop,
-      })
+      image.onload = () =>
+        this.setState({
+          loaded: true,
+          higher: containerisHigher && imageIsHigher,
+          crop: props.crop,
+        });
     }
   }
 
@@ -69,14 +70,19 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;
-    return this.renderAttributes(<Container margin>
-      {!!this.props.artworkBase64.length && <ReactCrop
-        className={classNames('cropping-interface', { 'higher': this.state.higher, 'larger': !this.state.higher })}
-        crop={this.state.crop}
-        onChange={(_cropPx: Crop, crop: Crop) => this.onCroppingChange(crop)}>
-
-        <img id='artwork-img' className='artwork-img' src={this.props.artworkBase64} alt='artwork' />
-      </ReactCrop>}
-    </Container>, 'artwork-cropping');
+    return this.renderAttributes(
+      <Container margin>
+        {!!this.props.artworkBase64.length && (
+          <ReactCrop
+            className={classNames('cropping-interface', { higher: this.state.higher, larger: !this.state.higher })}
+            crop={this.state.crop}
+            onChange={(_cropPx: Crop, crop: Crop) => this.onCroppingChange(crop)}
+          >
+            <img id='artwork-img' className='artwork-img' src={this.props.artworkBase64} alt='artwork' />
+          </ReactCrop>
+        )}
+      </Container>,
+      'artwork-cropping'
+    );
   }
 }

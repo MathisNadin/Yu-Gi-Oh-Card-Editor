@@ -1,10 +1,10 @@
-import { createRoot } from "react-dom/client";
+import { createRoot } from 'react-dom/client';
 
 export class ReactService {
   private scrollbarSize!: number;
 
   public async renderContentInParent(divContent: JSX.Element, parent: Element): Promise<HTMLElement> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // Rend le contenu JSX dans l'élément parent
       const root = createRoot(parent);
       root.render(divContent);
@@ -23,9 +23,16 @@ export class ReactService {
     return div;
   }
 
-  public setStyle(element: HTMLElement, key: { [key: string]: string | boolean | number } | string, value?: string | boolean | number) {
+  public setStyle(
+    element: HTMLElement,
+    key: { [key: string]: string | boolean | number } | string,
+    value?: string | boolean | number
+  ) {
     function convert(key: string, value: string | boolean | number) {
-      if (typeof value === 'number' && ['width', 'height', 'left', 'top', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'].includes(key)) {
+      if (
+        typeof value === 'number' &&
+        ['width', 'height', 'left', 'top', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'].includes(key)
+      ) {
         value = `${value}px`;
       } else {
         value = `${value}`;
@@ -85,10 +92,8 @@ export class ReactService {
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (document as any).attachEvent('onreadystatechange', () => {
-        if (document.readyState !== 'loading')
-          fn();
+        if (document.readyState !== 'loading') fn();
       });
     }
   }
-
 }

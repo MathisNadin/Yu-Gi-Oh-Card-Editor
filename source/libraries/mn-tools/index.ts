@@ -4,7 +4,7 @@ export * from './objects';
 export * from './misc';
 
 export async function sleep(time: number) {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     setTimeout(() => resolve(), time);
   });
 }
@@ -14,13 +14,11 @@ export function plural(count: number, none: string, single: string, multiple: st
   return (count === 1 ? single : multiple).replace('%%', count.toString());
 }
 
-
 export function formatList(a: string[]) {
-  if (a.length===1) return a[0];
+  if (a.length === 1) return a[0];
   let last = a.pop();
   return `${a.join(', ')} et ${last}`;
 }
-
 
 export function markdownToHtml(input: string, noParagraph = false) {
   if (!input) return '';
@@ -50,7 +48,6 @@ export function markdownToHtml(input: string, noParagraph = false) {
   // Ajouter des sauts de ligne
   input = input.replace(/\n$/gim, '<br />');
 
-
   if (noParagraph) {
     input = input.replace(/^\s*\<p\>\s*/, '');
     input = input.replace(/\s*\<\/p\>\s*$/, '');
@@ -73,7 +70,7 @@ interface IRemoveMarkdownOptions {
 }
 
 export function removeMarkdown(source: string, options?: IRemoveMarkdownOptions) {
-  options = options || {} as IRemoveMarkdownOptions;
+  options = options || ({} as IRemoveMarkdownOptions);
   options.listUnicodeChar = options.hasOwnProperty('listUnicodeChar') ? options.listUnicodeChar : false;
   options.stripListLeaders = options.hasOwnProperty('stripListLeaders') ? options.stripListLeaders : true;
   options.gfm = options.hasOwnProperty('gfm') ? options.gfm : true;
@@ -88,8 +85,7 @@ export function removeMarkdown(source: string, options?: IRemoveMarkdownOptions)
     if (options.stripListLeaders) {
       if (options.listUnicodeChar)
         output = output.replace(/^([\s\t]*)([\*\-\+]|\d+\.)\s+/gm, `${options.listUnicodeChar} \$1`);
-      else
-        output = output.replace(/^([\s\t]*)([\*\-\+]|\d+\.)\s+/gm, '$1');
+      else output = output.replace(/^([\s\t]*)([\*\-\+]|\d+\.)\s+/gm, '$1');
     }
     if (options.gfm) {
       output = output

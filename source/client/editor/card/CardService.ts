@@ -1,9 +1,9 @@
-import { toPng } from "libraries/mn-html-to-image";
-import { deepClone, uuid } from "libraries/mn-tools";
-import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from "./card-interfaces";
-import { Crop } from "react-image-crop";
-import { CardImportDialog } from "client/editor/cardImportDialog";
-import { Observable, IIndexedDBListener } from "libraries/mn-toolkit";
+import { toPng } from 'libraries/mn-html-to-image';
+import { deepClone, uuid } from 'libraries/mn-tools';
+import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from './card-interfaces';
+import { Crop } from 'react-image-crop';
+import { CardImportDialog } from 'client/editor/cardImportDialog';
+import { Observable, IIndexedDBListener } from 'libraries/mn-toolkit';
 
 export interface ICardsExportData {
   'current-card': ICard;
@@ -37,11 +37,7 @@ const COMMON_FRAMES: TFrame[] = [
   'monsterToken',
 ];
 
-const FRAMES_WITH_DESCRIPTION: TFrame[] = [
-  'normal',
-  'token',
-  'monsterToken',
-];
+const FRAMES_WITH_DESCRIPTION: TFrame[] = ['normal', 'token', 'monsterToken'];
 
 export class CardService extends Observable<ICardListener> implements Partial<IIndexedDBListener> {
   private _currentCard = {} as ICard;
@@ -156,7 +152,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     card.pendEffect = card.pendEffect || '';
     card.scales = card.scales || {
       left: 0,
-      right: 0
+      right: 0,
     };
     card.linkArrows = card.linkArrows || {
       top: false,
@@ -166,7 +162,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       topLeft: false,
       topRight: false,
       bottomLeft: false,
-      bottomRight: false
+      bottomRight: false,
     };
     card.edition = card.edition || 'firstEdition';
     card.cardSet = card.cardSet || '';
@@ -184,8 +180,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
     if (!card.rushChoiceEffects?.length) {
       card.rushChoiceEffects = ['', ''];
-    }
-    else if (card.rushChoiceEffects.length === 1) {
+    } else if (card.rushChoiceEffects.length === 1) {
       card.rushChoiceEffects = [card.rushChoiceEffects[0], ''];
     }
 
@@ -234,9 +229,9 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public get exportCardData(): ICardsExportData {
     return {
-      "current-card": this._currentCard,
-      "temp-current-card": this._tempCurrentCard as ICard,
-      "local-cards": this._localCards,
+      'current-card': this._currentCard,
+      'temp-current-card': this._tempCurrentCard as ICard,
+      'local-cards': this._localCards,
     };
   }
 
@@ -312,7 +307,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     }
 
     if (this._renderCardsQueue.length) {
-      this._renderCardsQueue = this._renderCardsQueue.filter(c => c.uuid !== cardUuid);
+      this._renderCardsQueue = this._renderCardsQueue.filter((c) => c.uuid !== cardUuid);
       this.fireCardRenderer(cardUuid);
       if (this._renderCardsQueue.length) {
         this.setRenderCard();
@@ -374,7 +369,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public async saveTempCurrentCard(card: ICard | undefined) {
     this._tempCurrentCard = card;
-    await app.$indexedDB.save<CardStorageKey, (ICard | undefined)>('temp-current-card', this._tempCurrentCard);
+    await app.$indexedDB.save<CardStorageKey, ICard | undefined>('temp-current-card', this._tempCurrentCard);
     this.fireTempCurrentCardUpdated();
   }
 
@@ -401,7 +396,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async saveTempCurrentToLocal() {
     const tempCurrentCard = await app.$indexedDB.get<ICard, CardStorageKey>('temp-current-card');
     tempCurrentCard.modified = new Date();
-    this._localCards = this._localCards.map(c => {
+    this._localCards = this._localCards.map((c) => {
       if (c.uuid === tempCurrentCard.uuid) {
         return tempCurrentCard;
       } else {
@@ -417,7 +412,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   }
 
   public async deleteLocalCard(card: ICard) {
-    this._localCards = this._localCards.filter(c => c.uuid !== card.uuid);
+    this._localCards = this._localCards.filter((c) => c.uuid !== card.uuid);
     await app.$indexedDB.save<CardStorageKey, ICard[]>('local-cards', this._localCards);
     this.fireLocalCardsUpdated();
   }
@@ -447,14 +442,14 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
     if (updateTempCurrentCard) {
       this._tempCurrentCard = newCard;
-      await app.$indexedDB.save<CardStorageKey, (ICard | undefined)>('temp-current-card', this._tempCurrentCard);
+      await app.$indexedDB.save<CardStorageKey, ICard | undefined>('temp-current-card', this._tempCurrentCard);
       this.fireTempCurrentCardLoaded();
     }
   }
 
   public async importArtwork(url: string, path?: string): Promise<string | undefined> {
     if (!app.$device.isDesktop) return undefined;
-    path = path || await window.electron.ipcRenderer.getDirectoryPath();
+    path = path || (await window.electron.ipcRenderer.getDirectoryPath());
     if (!path) return '';
     return await window.electron.ipcRenderer.download(path, url);
   }
@@ -472,7 +467,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         height: 100,
         width: 100,
         pendulum: false,
-        keepRatio: false
+        keepRatio: false,
       },
       frames: ['effect'],
       multipleFrames: false,
@@ -488,7 +483,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       pendEffect: '',
       scales: {
         left: 0,
-        right: 0
+        right: 0,
       },
       linkArrows: {
         top: false,
@@ -498,7 +493,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         topLeft: false,
         topRight: false,
         bottomLeft: false,
-        bottomRight: false
+        bottomRight: false,
       },
       edition: 'unlimited',
       cardSet: '',
@@ -535,7 +530,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         height: 100,
         width: 100,
         pendulum: false,
-        keepRatio: false
+        keepRatio: false,
       },
       frames: [],
       multipleFrames: false,
@@ -551,7 +546,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       pendEffect: '',
       scales: {
         left: 0,
-        right: 0
+        right: 0,
       },
       linkArrows: {
         top: false,
@@ -561,7 +556,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
         topLeft: false,
         topRight: false,
         bottomLeft: false,
-        bottomRight: false
+        bottomRight: false,
       },
       edition: 'firstEdition',
       cardSet: '',
@@ -591,7 +586,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       y: 18.5,
       width: 75.3,
       height: 51.85,
-      unit: '%'
+      unit: '%',
     };
   }
 
@@ -601,7 +596,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       y: 18.25,
       width: 85.75,
       height: 44,
-      unit: '%'
+      unit: '%',
     };
   }
 
@@ -611,7 +606,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
       y: 10,
       width: 89.4,
       height: 62,
-      unit: '%'
+      unit: '%',
     };
   }
 
@@ -625,15 +620,24 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public getStIconName(icon: TStIcon) {
     switch (icon) {
-      case 'normal': return 'Normal';
-      case 'continuous': return 'Continu';
-      case 'counter': return 'Contre';
-      case 'equip': return 'Équipement';
-      case 'field': return 'Terrain';
-      case 'link': return 'Lien';
-      case 'quickplay': return 'Jeu-Rapide';
-      case 'ritual': return 'Rituel';
-      default: return 'Inconnu';
+      case 'normal':
+        return 'Normal';
+      case 'continuous':
+        return 'Continu';
+      case 'counter':
+        return 'Contre';
+      case 'equip':
+        return 'Équipement';
+      case 'field':
+        return 'Terrain';
+      case 'link':
+        return 'Lien';
+      case 'quickplay':
+        return 'Jeu-Rapide';
+      case 'ritual':
+        return 'Rituel';
+      default:
+        return 'Inconnu';
     }
   }
 
@@ -706,39 +710,67 @@ export class CardService extends Observable<ICardListener> implements Partial<II
 
   public getAttributeName(attribute: TAttribute) {
     switch (attribute) {
-      case 'dark': return 'TÉNÈBRES';
-      case 'light': return 'LUMIÈRE';
-      case 'water': return 'EAU';
-      case 'earth': return 'TERRE';
-      case 'wind': return 'VENT';
-      case 'fire': return 'FEU';
-      case 'divine': return 'DIVIN';
-      case 'spell': return 'MAGIE';
-      case 'trap': return 'PIÈGE';
-      default: return 'INCONNU';
+      case 'dark':
+        return 'TÉNÈBRES';
+      case 'light':
+        return 'LUMIÈRE';
+      case 'water':
+        return 'EAU';
+      case 'earth':
+        return 'TERRE';
+      case 'wind':
+        return 'VENT';
+      case 'fire':
+        return 'FEU';
+      case 'divine':
+        return 'DIVIN';
+      case 'spell':
+        return 'MAGIE';
+      case 'trap':
+        return 'PIÈGE';
+      default:
+        return 'INCONNU';
     }
   }
 
   public getFrameName(frame: TFrame) {
     switch (frame) {
-      case 'normal': return 'Normal';
-      case 'effect': return 'Effet';
-      case 'ritual': return 'Rituel';
-      case 'fusion': return 'Fusion';
-      case 'synchro': return 'Synchro';
-      case 'darkSynchro': return 'Synchro des Ténèbres';
-      case 'xyz': return 'Xyz';
-      case 'link': return 'Lien';
-      case 'spell': return 'Magie';
-      case 'trap': return 'Piège';
-      case 'token': return 'Jeton';
-      case 'monsterToken': return 'Jeton Monstre';
-      case 'skill': return 'Compétence';
-      case 'obelisk': return 'Obelisk';
-      case 'slifer': return 'Slifer';
-      case 'ra': return 'Ra';
-      case 'legendaryDragon': return 'Dragon Légendaire';
-      default: return 'Inconnu';
+      case 'normal':
+        return 'Normal';
+      case 'effect':
+        return 'Effet';
+      case 'ritual':
+        return 'Rituel';
+      case 'fusion':
+        return 'Fusion';
+      case 'synchro':
+        return 'Synchro';
+      case 'darkSynchro':
+        return 'Synchro des Ténèbres';
+      case 'xyz':
+        return 'Xyz';
+      case 'link':
+        return 'Lien';
+      case 'spell':
+        return 'Magie';
+      case 'trap':
+        return 'Piège';
+      case 'token':
+        return 'Jeton';
+      case 'monsterToken':
+        return 'Jeton Monstre';
+      case 'skill':
+        return 'Compétence';
+      case 'obelisk':
+        return 'Obelisk';
+      case 'slifer':
+        return 'Slifer';
+      case 'ra':
+        return 'Ra';
+      case 'legendaryDragon':
+        return 'Dragon Légendaire';
+      default:
+        return 'Inconnu';
     }
   }
 
@@ -754,13 +786,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     if (!card.frames?.length) return false;
 
     for (let frame of card.frames) {
-      if (
-        frame === 'fusion' ||
-        frame === 'synchro' ||
-        frame === 'darkSynchro' ||
-        frame === 'xyz' ||
-        frame === 'link'
-      ) {
+      if (frame === 'fusion' || frame === 'synchro' || frame === 'darkSynchro' || frame === 'xyz' || frame === 'link') {
         return true;
       }
     }

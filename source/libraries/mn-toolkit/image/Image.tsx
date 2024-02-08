@@ -1,4 +1,4 @@
-import { IContainableProps, Containable, IContainableState } from "../containable";
+import { IContainableProps, Containable, IContainableState } from '../containable';
 
 interface IImageProps extends IContainableProps {
   src: string;
@@ -6,10 +6,9 @@ interface IImageProps extends IContainableProps {
   title?: string;
 }
 
-interface IImageState extends IContainableState { }
+interface IImageState extends IContainableState {}
 
 export class Image extends Containable<IImageProps, IImageState> {
-
   public static get defaultProps(): Partial<IImageProps> {
     return {
       ...super.defaultProps,
@@ -21,7 +20,9 @@ export class Image extends Containable<IImageProps, IImageState> {
   }
 
   public render() {
-    return this.renderAttributes(<img src={this.props.src} alt={this.props.alt} title={this.props.title} />, "mn-image");
+    return this.renderAttributes(
+      <img src={this.props.src} alt={this.props.alt} title={this.props.title} />,
+      'mn-image'
+    );
   }
-
 }

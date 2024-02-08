@@ -72,20 +72,25 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
   }
 
   public render() {
-    return this.renderAttributes(<VerticalStack>
-      {this.state.isFocused
-        ? <input
-          className='value'
-          type='text'
-          ref={this.inputRef}
-          defaultValue={this.tempValue}
-          onChange={e => this.tempValue = e.target.value}
-          onKeyDown={e => this.onKeyDown(e)}
-          onBlur={() => this.doBlur()} />
-        : <div className='value' onClick={e => this.onSingleClick(e)} onDoubleClick={e => this.onDoubleClick(e)}>
-          {this.tempValue || '<vide>'}
-        </div>
-      }
-    </VerticalStack>, 'mn-inplace-edit');
+    return this.renderAttributes(
+      <VerticalStack>
+        {this.state.isFocused ? (
+          <input
+            className='value'
+            type='text'
+            ref={this.inputRef}
+            defaultValue={this.tempValue}
+            onChange={(e) => (this.tempValue = e.target.value)}
+            onKeyDown={(e) => this.onKeyDown(e)}
+            onBlur={() => this.doBlur()}
+          />
+        ) : (
+          <div className='value' onClick={(e) => this.onSingleClick(e)} onDoubleClick={(e) => this.onDoubleClick(e)}>
+            {this.tempValue || '<vide>'}
+          </div>
+        )}
+      </VerticalStack>,
+      'mn-inplace-edit'
+    );
   }
 }

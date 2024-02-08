@@ -2,12 +2,10 @@ import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electr
 import { getProjectIpcRenderer } from '../../client/electronMainPatchs';
 
 declare global {
-  interface ISendChannel {
-  }
+  interface ISendChannel {}
   type TSendChannel = keyof ISendChannel;
 
-  interface IOnceChannel {
-  }
+  interface IOnceChannel {}
   type TOnceChannel = keyof IOnceChannel;
 
   interface IOnChannel {
@@ -61,8 +59,7 @@ const defaultIpcRenderer: Partial<IIpcRenderer> = {
   },
 
   on(channel: TOnChannel, func: (...args: unknown[]) => void) {
-    const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-      func(...args);
+    const subscription = (_event: IpcRendererEvent, ...args: unknown[]) => func(...args);
     ipcRenderer.on(channel, subscription);
 
     return () => {
@@ -82,7 +79,7 @@ const defaultIpcRenderer: Partial<IIpcRenderer> = {
     return ipcRenderer.invoke('openLink', link);
   },
 
-  download(directoryPath: string, url :string): Promise<string> {
+  download(directoryPath: string, url: string): Promise<string> {
     return ipcRenderer.invoke('download', directoryPath, url);
   },
 

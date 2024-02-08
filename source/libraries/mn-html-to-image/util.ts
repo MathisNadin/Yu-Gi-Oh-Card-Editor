@@ -101,10 +101,7 @@ export function getPixelRatio() {
     // pass
   }
 
-  const val =
-    FINAL_PROCESS && FINAL_PROCESS.env
-      ? FINAL_PROCESS.env.devicePixelRatio
-      : null;
+  const val = FINAL_PROCESS && FINAL_PROCESS.env ? FINAL_PROCESS.env.devicePixelRatio : null;
   if (val) {
     ratio = parseInt(val, 10);
     if (Number.isNaN(ratio)) {
@@ -118,14 +115,8 @@ export function getPixelRatio() {
 const canvasDimensionLimit = 16384;
 
 export function checkCanvasDimensions(canvas: HTMLCanvasElement) {
-  if (
-    canvas.width > canvasDimensionLimit ||
-    canvas.height > canvasDimensionLimit
-  ) {
-    if (
-      canvas.width > canvasDimensionLimit &&
-      canvas.height > canvasDimensionLimit
-    ) {
+  if (canvas.width > canvasDimensionLimit || canvas.height > canvasDimensionLimit) {
+    if (canvas.width > canvasDimensionLimit && canvas.height > canvasDimensionLimit) {
       if (canvas.width > canvas.height) {
         canvas.height *= canvasDimensionLimit / canvas.width;
         canvas.width = canvasDimensionLimit;
@@ -143,27 +134,17 @@ export function checkCanvasDimensions(canvas: HTMLCanvasElement) {
   }
 }
 
-export function canvasToBlob(
-  canvas: HTMLCanvasElement,
-  options: Options = {}
-): Promise<Blob | null> {
+export function canvasToBlob(canvas: HTMLCanvasElement, options: Options = {}): Promise<Blob | null> {
   if (canvas.toBlob) {
     return new Promise((resolve) => {
-      canvas.toBlob(
-        resolve,
-        options.type ? options.type : 'image/png',
-        options.quality ? options.quality : 1
-      );
+      canvas.toBlob(resolve, options.type ? options.type : 'image/png', options.quality ? options.quality : 1);
     });
   }
 
   return new Promise((resolve) => {
     const binaryString = window.atob(
       canvas
-        .toDataURL(
-          options.type ? options.type : undefined,
-          options.quality ? options.quality : undefined
-        )
+        .toDataURL(options.type ? options.type : undefined, options.quality ? options.quality : undefined)
         .split(',')[1]
     );
     const len = binaryString.length;
@@ -201,11 +182,7 @@ export async function svgToDataURL(svg: SVGElement): Promise<string> {
     .then((html) => `data:image/svg+xml;charset=utf-8,${html}`);
 }
 
-export async function nodeToDataURL(
-  node: HTMLElement,
-  width: number,
-  height: number
-): Promise<string> {
+export async function nodeToDataURL(node: HTMLElement, width: number, height: number): Promise<string> {
   const xmlns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(xmlns, 'svg');
   const foreignObject = document.createElementNS(xmlns, 'foreignObject');
@@ -225,9 +202,7 @@ export async function nodeToDataURL(
   return svgToDataURL(svg);
 }
 
-export const isInstanceOfElement = <
-  T extends typeof Element | typeof HTMLElement | typeof SVGImageElement
->(
+export const isInstanceOfElement = <T extends typeof Element | typeof HTMLElement | typeof SVGImageElement>(
   node: Element | HTMLElement | SVGImageElement,
   instance: T
 ): node is T['prototype'] => {
@@ -237,8 +212,5 @@ export const isInstanceOfElement = <
 
   if (nodePrototype === null) return false;
 
-  return (
-    nodePrototype.constructor.name === instance.name ||
-    isInstanceOfElement(nodePrototype, instance)
-  );
+  return nodePrototype.constructor.name === instance.name || isInstanceOfElement(nodePrototype, instance);
 };

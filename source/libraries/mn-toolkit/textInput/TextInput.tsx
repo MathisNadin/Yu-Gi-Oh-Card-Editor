@@ -1,5 +1,5 @@
-import { FormEvent } from "react";
-import { IContainableProps, IContainableState, Containable } from "../containable";
+import { FormEvent } from 'react';
+import { IContainableProps, IContainableState, Containable } from '../containable';
 
 interface ITextInputProps extends IContainableProps {
   placeholder?: string;
@@ -14,8 +14,9 @@ interface ITextInputState extends IContainableState {
 }
 
 export class TextInput extends Containable<ITextInputProps, ITextInputState> {
-
-  public static get defaultProps() { return { ...super.defaultProps }; }
+  public static get defaultProps() {
+    return { ...super.defaultProps };
+  }
 
   public constructor(props: ITextInputProps) {
     super(props);
@@ -30,19 +31,25 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
 
   public render() {
     return this.renderAttributes(
-      <input type="text"
+      <input
+        type='text'
         name={this.props.name}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         value={this.state.value}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
-        onInput={e => this.onChange(e)}
-      />, 'mn-text-input');
+        onInput={(e) => this.onChange(e)}
+      />,
+      'mn-text-input'
+    );
   }
 
   private onChange(e: FormEvent<HTMLInputElement>) {
     const value = e.target.value as string;
-    this.setState({ value }, () => !!this.props.onChange && app.$errorManager.handlePromise(this.props.onChange(this.state.value)));
+    this.setState(
+      { value },
+      () => !!this.props.onChange && app.$errorManager.handlePromise(this.props.onChange(this.state.value))
+    );
   }
 }

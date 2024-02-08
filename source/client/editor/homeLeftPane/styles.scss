@@ -1,7 +1,13 @@
 @keyframes colorCycle {
-  0% { background-color: nth($theme-light-bg, 1); }
-  50% { background-color: #FAFA33; }
-  100% { background-color: nth($theme-light-bg, 1); }
+  0% {
+    background-color: nth($theme-light-bg, 1);
+  }
+  50% {
+    background-color: #fafa33;
+  }
+  100% {
+    background-color: nth($theme-light-bg, 1);
+  }
 }
 
 .home-left-pane {

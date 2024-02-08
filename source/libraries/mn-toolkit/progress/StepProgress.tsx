@@ -1,7 +1,7 @@
-import { classNames } from "libraries/mn-tools";
-import { Containable, IContainableProps, IContainableState } from "../containable";
-import { Icon } from "../icon";
-import { Typography } from "../typography";
+import { classNames } from 'libraries/mn-tools';
+import { Containable, IContainableProps, IContainableState } from '../containable';
+import { Icon } from '../icon';
+import { Typography } from '../typography';
 import { TForegroundColor } from '../themeSettings';
 
 interface IStep<ID> {
@@ -23,10 +23,9 @@ interface IState<ID> extends IContainableState {
 }
 
 export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID>> {
-
   public static get defaultProps(): Partial<IProps<string>> {
     return {
-      ...super.defaultProps
+      ...super.defaultProps,
     };
   }
 
@@ -40,32 +39,39 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
   }
 
   public render() {
-    let progress = this.props.items.findIndex(x => x.id === this.state.progress);
-    return <div
-      id={this.props.nodeId}
-      title={this.props.hint}
-      className={classNames(
-        this.renderClasses('mn-step-progress'),
-        `mn-color-${this.props.color}`,
-        this.props.className
-      )}
-    >
-      {(this.props.items as IStep<number>[]).map((step, iStep) => {
-        // eslint-disable-next-line react/jsx-key
-        return <div
-          onClick={() => (this.props as unknown as IProps<number>).onChange(step.id)}
-          className={classNames('step', {
-            'completed': iStep < progress,
-            'active': step.id === this.props.active,
-            'disabled': iStep > progress,
-          })} >
-          <div className="step-circle" data-text={iStep + 1}><Icon className="pointer" iconId='toolkit-pin' /></div>
-          <div className="step-text">
-            <Typography variant="label" content={step.label} />
-            <Typography variant="caption" content={step.description} />
-          </div>
-        </div>;
-      })}
-    </div>;
+    let progress = this.props.items.findIndex((x) => x.id === this.state.progress);
+    return (
+      <div
+        id={this.props.nodeId}
+        title={this.props.hint}
+        className={classNames(
+          this.renderClasses('mn-step-progress'),
+          `mn-color-${this.props.color}`,
+          this.props.className
+        )}
+      >
+        {(this.props.items as IStep<number>[]).map((step, iStep) => {
+          return (
+            // eslint-disable-next-line react/jsx-key
+            <div
+              onClick={() => (this.props as unknown as IProps<number>).onChange(step.id)}
+              className={classNames('step', {
+                completed: iStep < progress,
+                active: step.id === this.props.active,
+                disabled: iStep > progress,
+              })}
+            >
+              <div className='step-circle' data-text={iStep + 1}>
+                <Icon className='pointer' iconId='toolkit-pin' />
+              </div>
+              <div className='step-text'>
+                <Typography variant='label' content={step.label} />
+                <Typography variant='caption' content={step.description} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 }

@@ -10,7 +10,7 @@ export interface IFilePickerOptions {
 
 export * from './FilePickerService';
 
-import { FilePickerService } from "./FilePickerService";
+import { FilePickerService } from './FilePickerService';
 
 declare global {
   interface IApp {

@@ -1,4 +1,4 @@
-import { CSSProperties, Component, ReactNode } from "react";
+import { CSSProperties, Component, ReactNode } from 'react';
 
 const containerStyleDefault = {
   position: 'relative',
@@ -61,14 +61,13 @@ interface IProps {
   onScrollRef?: (scroller: HTMLElement) => void;
 }
 
-interface IState { }
+interface IState {}
 
 const AUTO_HIDE_TIMEOUT = 1000;
 const AUTO_HIDE_DURATION = 200;
 const THUMB_MINIMUM_SIZE = 30;
 
 export class ScrollContainer extends Component<IProps, IState> {
-
   public static get defaultProps(): IProps {
     return {
       className: '',
@@ -133,14 +132,14 @@ export class ScrollContainer extends Component<IProps, IState> {
 
   private getThumbHorizontalWidth() {
     const trackWidth = app.$react.getInnerWidth(this.horizontalTrack);
-    const width = Math.ceil(this.content.clientWidth / this.content.scrollWidth * trackWidth);
+    const width = Math.ceil((this.content.clientWidth / this.content.scrollWidth) * trackWidth);
     if (trackWidth === width) return 0;
     return Math.max(width, THUMB_MINIMUM_SIZE);
   }
 
   private getThumbVerticalHeight() {
     const trackHeight = app.$react.getInnerHeight(this.verticalTrack);
-    const height = Math.ceil(this.content.clientHeight / this.content.scrollHeight * trackHeight);
+    const height = Math.ceil((this.content.clientHeight / this.content.scrollHeight) * trackHeight);
     if (trackHeight === height) return 0;
     return Math.max(height, THUMB_MINIMUM_SIZE);
   }
@@ -148,19 +147,19 @@ export class ScrollContainer extends Component<IProps, IState> {
   private getScrollLeftForOffset(offset: number) {
     const trackWidth = app.$react.getInnerWidth(this.horizontalTrack);
     const thumbWidth = this.getThumbHorizontalWidth();
-    return offset / (trackWidth - thumbWidth) * (this.content.scrollWidth - this.content.clientWidth);
+    return (offset / (trackWidth - thumbWidth)) * (this.content.scrollWidth - this.content.clientWidth);
   }
 
   private getScrollTopForOffset(offset: number) {
     const trackHeight = app.$react.getInnerHeight(this.verticalTrack);
     const thumbHeight = this.getThumbVerticalHeight();
-    return offset / (trackHeight - thumbHeight) * (this.content.scrollHeight - this.content.clientHeight);
+    return (offset / (trackHeight - thumbHeight)) * (this.content.scrollHeight - this.content.clientHeight);
   }
 
   private addListeners() {
     if (typeof document === 'undefined') return;
     this.onScroll = this.onScroll.bind(this);
-    this.content.addEventListener('scroll', e => this.onScroll(e as UIEvent));
+    this.content.addEventListener('scroll', (e) => this.onScroll(e as UIEvent));
     if (!app.$react.getScrollbarSize()) return;
     this.onTrackMouseEnter = this.onTrackMouseEnter.bind(this);
     this.onTrackMouseLeave = this.onTrackMouseLeave.bind(this);
@@ -186,7 +185,7 @@ export class ScrollContainer extends Component<IProps, IState> {
 
   private removeListeners() {
     if (typeof document === 'undefined') return;
-    this.content.removeEventListener('scroll', e => this.onScroll(e as UIEvent));
+    this.content.removeEventListener('scroll', (e) => this.onScroll(e as UIEvent));
     if (!app.$react.getScrollbarSize()) return;
     if (this.props.scrollX) {
       this.horizontalTrack.removeEventListener('mouseenter', this.onTrackMouseEnter);
@@ -205,7 +204,7 @@ export class ScrollContainer extends Component<IProps, IState> {
   }
 
   private onScroll(event: UIEvent) {
-    this.update(values => {
+    this.update((values) => {
       this.viewScrollLeft = values.scrollLeft;
       this.viewScrollTop = values.scrollTop;
     });
@@ -215,7 +214,9 @@ export class ScrollContainer extends Component<IProps, IState> {
     this.detectScrolling();
   }
 
-  private onWindowResize() { this.update(); }
+  private onWindowResize() {
+    this.update();
+  }
 
   private onHorizontalTrackMouseDown(event: MouseEvent) {
     event.preventDefault();
@@ -261,7 +262,7 @@ export class ScrollContainer extends Component<IProps, IState> {
   private startDragging(event: MouseEvent) {
     event.stopImmediatePropagation();
     this.dragging = true;
-    document.body.style.userSelect =  'none';
+    document.body.style.userSelect = 'none';
     this.onDrag = this.onDrag.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
     document.addEventListener('mousemove', this.onDrag);
@@ -307,8 +308,8 @@ export class ScrollContainer extends Component<IProps, IState> {
 
   private showTracks() {
     clearTimeout(this.hideTracksTimeout);
-    if (this.props.scrollX) this.horizontalTrack.style.opacity= '1';
-    if (this.props.scroll) this.verticalTrack.style.opacity= '1';
+    if (this.props.scrollX) this.horizontalTrack.style.opacity = '1';
+    if (this.props.scroll) this.verticalTrack.style.opacity = '1';
   }
 
   private hideTracks() {
@@ -317,8 +318,8 @@ export class ScrollContainer extends Component<IProps, IState> {
     if (this.trackMouseOver) return;
     clearTimeout(this.hideTracksTimeout);
     this.hideTracksTimeout = setTimeout(() => {
-      if (this.props.scrollX) this.horizontalTrack.style.opacity='0';
-      if (this.props.scroll) this.verticalTrack.style.opacity='0';
+      if (this.props.scrollX) this.horizontalTrack.style.opacity = '0';
+      if (this.props.scroll) this.verticalTrack.style.opacity = '0';
     }, AUTO_HIDE_TIMEOUT);
   }
 
@@ -341,7 +342,7 @@ export class ScrollContainer extends Component<IProps, IState> {
     if (this.requestFrame) cancelAnimationFrame(this.requestFrame);
     this.requestFrame = requestAnimationFrame(() => {
       this.requestFrame = undefined as unknown as number;
-      this._update(values => !!callback && callback(values));
+      this._update((values) => !!callback && callback(values));
     });
   }
 
@@ -350,12 +351,16 @@ export class ScrollContainer extends Component<IProps, IState> {
       if (this.props.scrollX) {
         const trackHorizontalWidth = app.$react.getInnerWidth(this.horizontalTrack);
         const thumbHorizontalWidth = this.getThumbHorizontalWidth();
-        const thumbHorizontalX = this.content.scrollLeft / (this.content.scrollWidth - this.content.clientWidth) * (trackHorizontalWidth - thumbHorizontalWidth);
+        const thumbHorizontalX =
+          (this.content.scrollLeft / (this.content.scrollWidth - this.content.clientWidth)) *
+          (trackHorizontalWidth - thumbHorizontalWidth);
         const thumbHorizontalStyle = {
           width: thumbHorizontalWidth,
-          transform: `translateX(${thumbHorizontalX}px)`
+          transform: `translateX(${thumbHorizontalX}px)`,
         };
-        const trackHorizontalStyle = { visibility: this.content.scrollWidth > this.content.clientWidth ? 'visible' : 'hidden' };
+        const trackHorizontalStyle = {
+          visibility: this.content.scrollWidth > this.content.clientWidth ? 'visible' : 'hidden',
+        };
         app.$react.setStyle(this.horizontalTrack, trackHorizontalStyle);
         app.$react.setStyle(this.horizontalThumb, thumbHorizontalStyle);
       }
@@ -363,23 +368,33 @@ export class ScrollContainer extends Component<IProps, IState> {
       if (this.props.scroll) {
         const trackVerticalHeight = app.$react.getInnerHeight(this.verticalTrack);
         const thumbVerticalHeight = this.getThumbVerticalHeight();
-        const thumbVerticalY = this.content.scrollTop / (this.content.scrollHeight - this.content.clientHeight) * (trackVerticalHeight - thumbVerticalHeight);
+        const thumbVerticalY =
+          (this.content.scrollTop / (this.content.scrollHeight - this.content.clientHeight)) *
+          (trackVerticalHeight - thumbVerticalHeight);
         const thumbVerticalStyle = {
           height: thumbVerticalHeight,
-          transform: `translateY(${thumbVerticalY}px)`
+          transform: `translateY(${thumbVerticalY}px)`,
         };
-        const trackVerticalStyle = { visibility: this.content.scrollHeight > this.content.clientHeight ? 'visible' : 'hidden' };
+        const trackVerticalStyle = {
+          visibility: this.content.scrollHeight > this.content.clientHeight ? 'visible' : 'hidden',
+        };
         app.$react.setStyle(this.verticalTrack, trackVerticalStyle);
         app.$react.setStyle(this.verticalThumb, thumbVerticalStyle);
       }
     }
-    if (!!callback) callback({ scrollLeft: this.content.scrollLeft, scrollTop: this.content.scrollTop, });
+    if (!!callback) callback({ scrollLeft: this.content.scrollLeft, scrollTop: this.content.scrollTop });
   }
 
   public render() {
     const scrollBarSize = app.$react.getScrollbarSize();
     const containerStyle = { ...containerStyleDefault, ...this.props.style };
-    const viewStyle = { ...viewStyleDefault, marginBottom: 0, marginRight: 0, overflowX: 'hidden', overflowY: 'hidden' } as CSSProperties;
+    const viewStyle = {
+      ...viewStyleDefault,
+      marginBottom: 0,
+      marginRight: 0,
+      overflowX: 'hidden',
+      overflowY: 'hidden',
+    } as CSSProperties;
     // Ici réside la magie : on cache les scrollbars natives par une marge négative
     if (this.props.scroll) {
       viewStyle.marginRight = scrollBarSize ? -scrollBarSize - 1 : 0;
@@ -392,7 +407,7 @@ export class ScrollContainer extends Component<IProps, IState> {
 
     const trackAutoHeightStyle = {
       transition: `opacity ${AUTO_HIDE_DURATION}ms`,
-      opacity: 0
+      opacity: 0,
     } as CSSProperties;
 
     const horizontalTrackStyle = {
@@ -419,7 +434,7 @@ export class ScrollContainer extends Component<IProps, IState> {
       ...thumbHorizontalStyleDefault,
       cursor: 'pointer',
       borderRadius: 'inherit',
-      backgroundColor: 'rgba(0,0,0,.2)'
+      backgroundColor: 'rgba(0,0,0,.2)',
     } as CSSProperties;
 
     const verticalThumbStyle = {
@@ -429,24 +444,48 @@ export class ScrollContainer extends Component<IProps, IState> {
       backgroundColor: 'rgba(0,0,0,.2)',
     } as CSSProperties;
 
-    return <div className={`mn-scroller-container ${  this.props.className}`} style={containerStyle} >
-      <div className={`mn-scroller-view ${  this.props.viewClassName}`} style={viewStyle} ref={(r: HTMLDivElement) => {
-        this.content = r;
-        if (this.props.onScrollRef) this.props.onScrollRef(r);
-      }}>{this.props.children}</div>
-      {
-        this.props.scrollX && <div className='mn-scroller-horizontal-track' ref={(r: HTMLDivElement) => this.horizontalTrack = r} style={horizontalTrackStyle} >
-          <div className='mn-scroller-horizontal-thumn' ref={(r: HTMLDivElement) => this.horizontalThumb = r} style={horizontalThumbStyle} />
+    return (
+      <div className={`mn-scroller-container ${this.props.className}`} style={containerStyle}>
+        <div
+          className={`mn-scroller-view ${this.props.viewClassName}`}
+          style={viewStyle}
+          ref={(r: HTMLDivElement) => {
+            this.content = r;
+            if (this.props.onScrollRef) this.props.onScrollRef(r);
+          }}
+        >
+          {this.props.children}
         </div>
-      }
+        {this.props.scrollX && (
+          <div
+            className='mn-scroller-horizontal-track'
+            ref={(r: HTMLDivElement) => (this.horizontalTrack = r)}
+            style={horizontalTrackStyle}
+          >
+            <div
+              className='mn-scroller-horizontal-thumn'
+              ref={(r: HTMLDivElement) => (this.horizontalThumb = r)}
+              style={horizontalThumbStyle}
+            />
+          </div>
+        )}
 
-      {
-        this.props.scroll && <div className='mn-scroller-vertical-track' ref={(r: HTMLDivElement) => this.verticalTrack = r} style={trackVerticalStyle} >
-          <div className='mn-scroller-vertical-thumb' ref={(r: HTMLDivElement) => {
-            this.verticalThumb = r;
-          }} style={verticalThumbStyle} />
-        </div>
-      }
-    </div >;
+        {this.props.scroll && (
+          <div
+            className='mn-scroller-vertical-track'
+            ref={(r: HTMLDivElement) => (this.verticalTrack = r)}
+            style={trackVerticalStyle}
+          >
+            <div
+              className='mn-scroller-vertical-thumb'
+              ref={(r: HTMLDivElement) => {
+                this.verticalThumb = r;
+              }}
+              style={verticalThumbStyle}
+            />
+          </div>
+        )}
+      </div>
+    );
   }
 }

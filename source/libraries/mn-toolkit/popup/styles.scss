@@ -1,4 +1,3 @@
-
 @keyframes scaleIn {
   0% {
     transform: translate(-50%, -50%) scale(0.3);
@@ -30,7 +29,7 @@
     max-width: 100%;
 
     .mn-popup-header {
-      $title-height:24px;
+      $title-height: 24px;
       @include bg(1);
       margin: $themeDefaultSpacing;
       max-width: 100%;

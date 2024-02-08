@@ -40,7 +40,8 @@ button {
   border: none;
   appearance: none;
   font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+  box-shadow:
+    0px 8px 28px -6px rgba(24, 39, 75, 0.12),
     0px 18px 88px -4px rgba(24, 39, 75, 0.14);
   transition: all ease-in 0.1s;
   cursor: pointer;
@@ -68,13 +69,20 @@ a:hover {
   text-decoration: none;
 }
 
-input, textarea, .mn-inplace-edit div {
-  font-family: Encode Sans Semi Condensed,Verdana,Helvetica,sans-serif;
+input,
+textarea,
+.mn-inplace-edit div {
+  font-family:
+    Encode Sans Semi Condensed,
+    Verdana,
+    Helvetica,
+    sans-serif;
   font-size: 14px;
   line-height: 130%;
 }
 
-input, textarea {
+input,
+textarea {
   &:focus-visible {
     outline-color: rgba($positive, 0.7);
     outline-width: 1px;

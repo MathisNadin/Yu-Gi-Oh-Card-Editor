@@ -5,8 +5,7 @@ export * from './IconService';
 export * from './Icon';
 
 declare global {
-  interface ISvgIcons {
-  }
+  interface ISvgIcons {}
   interface IApp {
     $icon: IconService;
   }

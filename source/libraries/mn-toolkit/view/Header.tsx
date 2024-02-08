@@ -1,18 +1,18 @@
-import { Component, PropsWithChildren } from "react";
-import { IHeaderCrumb, IHeaderListener } from ".";
-import { ButtonIcon } from "../button";
-import { Container } from "../container";
-import { Progress } from "../progress";
-import { clone } from "libraries/mn-tools";
-import { Breadcrumb } from "./Breadcrumb";
-import { IXhrProgress } from "../xhr";
+import { Component, PropsWithChildren } from 'react';
+import { IHeaderCrumb, IHeaderListener } from '.';
+import { ButtonIcon } from '../button';
+import { Container } from '../container';
+import { Progress } from '../progress';
+import { clone } from 'libraries/mn-tools';
+import { Breadcrumb } from './Breadcrumb';
+import { IXhrProgress } from '../xhr';
 
 interface IHeaderProps extends PropsWithChildren {
   crumbs?: IHeaderCrumb[];
   title?: string;
 }
 
-interface IHeaderState { }
+interface IHeaderState {}
 
 export class Header extends Component<IHeaderProps, IHeaderState> implements Partial<IHeaderListener> {
   private downloadTotal!: number;
@@ -69,38 +69,34 @@ export class Header extends Component<IHeaderProps, IHeaderState> implements Par
     app.$popover.show({
       event,
       width: 320,
-      actions: app.$header.pageActions
+      actions: app.$header.pageActions,
     });
   }
 
   public render() {
     const crumbs = this.props.crumbs ? clone(this.props.crumbs) : [];
     if (this.props.title) crumbs.push({ title: this.props.title });
-    return <Container mainClassName='mn-header' fill={false} padding gutter>
-      <div className='mn-header-content'>
-        <div className='title-bar'>
-          {app.$header.parts['left'].map(part => part.component)}
+    return (
+      <Container mainClassName='mn-header' fill={false} padding gutter>
+        <div className='mn-header-content'>
+          <div className='title-bar'>
+            {app.$header.parts['left'].map((part) => part.component)}
 
-          <div className="center-part">
-            <Breadcrumb crumbs={crumbs} />
-            {app.$header.parts['center'].map(part => part.component)}
+            <div className='center-part'>
+              <Breadcrumb crumbs={crumbs} />
+              {app.$header.parts['center'].map((part) => part.component)}
+            </div>
+
+            {app.$header.parts['right'].map((part) => part.component)}
+
+            {this.hasPageActions() && <ButtonIcon icon='toolkit-menu-kebab' onTap={(e) => this.doShowPageActions(e)} />}
           </div>
 
-          {app.$header.parts['right'].map(part => part.component)}
+          {!!this.downloadTotal && <Progress total={this.downloadTotal} progress={this.downloadProgress} />}
 
-          {this.hasPageActions() && <ButtonIcon
-            icon="toolkit-menu-kebab"
-            onTap={e => this.doShowPageActions(e)}
-          />}
+          {this.props.children}
         </div>
-
-        {!!this.downloadTotal && <Progress
-          total={this.downloadTotal}
-          progress={this.downloadProgress}
-        />}
-
-        {this.props.children}
-      </div>
-    </Container>;
+      </Container>
+    );
   }
 }

@@ -2,7 +2,21 @@ import { deepClone } from 'libraries/mn-tools';
 import { MouseEvent } from 'react';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { ICardListener } from 'client/editor/card/CardService';
-import { IContainableProps, IContainableState, TableColumnSortOrder, Containable, Spinner, VerticalStack, Table, HorizontalStack, Typography, Icon, Spacer, Progress, Button } from 'libraries/mn-toolkit';
+import {
+  IContainableProps,
+  IContainableState,
+  TableColumnSortOrder,
+  Containable,
+  Spinner,
+  VerticalStack,
+  Table,
+  HorizontalStack,
+  Typography,
+  Icon,
+  Spacer,
+  Progress,
+  Button,
+} from 'libraries/mn-toolkit';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
 
@@ -21,7 +35,10 @@ interface ICardsLibraryState extends IContainableState {
   cardsToRender: number;
 }
 
-export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryState> implements Partial<ICardListener> {
+export class CardsLibrary
+  extends Containable<ICardsLibraryProps, ICardsLibraryState>
+  implements Partial<ICardListener>
+{
   public constructor(props: ICardsLibraryProps) {
     super(props);
     this.state = {
@@ -64,7 +81,9 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
     cardsRendered++;
     this.setState({ cardsRendered, selectedCards, selectedCardsNum }, () => {
       if (this.state.cardsRendered === this.state.cardsToRender) {
-        this.setState({ selectedCards: {}, selectedCardsNum: 0, cardsToRender: 0, cardsRendered: 0 }, () => this.forceUpdate());
+        this.setState({ selectedCards: {}, selectedCardsNum: 0, cardsToRender: 0, cardsRendered: 0 }, () =>
+          this.forceUpdate()
+        );
       } else {
         this.forceUpdate();
       }
@@ -113,7 +132,8 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
         break;
 
       case 'modified':
-        if (sortOrder === 'asc') localCards.sort((a, b) => (a.modified as Date).getTime() - (b.modified as Date).getTime());
+        if (sortOrder === 'asc')
+          localCards.sort((a, b) => (a.modified as Date).getTime() - (b.modified as Date).getTime());
         else localCards.sort((a, b) => (b.modified as Date).getTime() - (a.modified as Date).getTime());
         break;
 
@@ -203,7 +223,8 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
 
   public render() {
     if (!this.state?.localCards?.length) return <Spinner />;
-    const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } = this.state;
+    const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } =
+      this.state;
     return this.renderAttributes(
       <VerticalStack fill>
         <Table
@@ -266,14 +287,24 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
                 },
                 {
                   value: (
-                    <HorizontalStack fill itemAlignment='center' verticalItemAlignment='middle' onTap={() => (isEdited ? this.saveEdit() : this.startEdit(card))}>
+                    <HorizontalStack
+                      fill
+                      itemAlignment='center'
+                      verticalItemAlignment='middle'
+                      onTap={() => (isEdited ? this.saveEdit() : this.startEdit(card))}
+                    >
                       <Icon iconId={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
                     </HorizontalStack>
                   ),
                 },
                 {
                   value: (
-                    <HorizontalStack fill itemAlignment='center' verticalItemAlignment='middle' onTap={() => (isEdited ? this.abordEdit() : this.deleteCard(card))}>
+                    <HorizontalStack
+                      fill
+                      itemAlignment='center'
+                      verticalItemAlignment='middle'
+                      onTap={() => (isEdited ? this.abordEdit() : this.deleteCard(card))}
+                    >
                       <Icon iconId={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
                     </HorizontalStack>
                   ),
@@ -287,16 +318,38 @@ export class CardsLibrary extends Containable<ICardsLibraryProps, ICardsLibraryS
 
         {!!cardsToRender && (
           <HorizontalStack margin itemAlignment='center'>
-            <Progress fill showPercent color='positive' message='Rendu en cours...' progress={cardsRendered} total={cardsToRender} />
+            <Progress
+              fill
+              showPercent
+              color='positive'
+              message='Rendu en cours...'
+              progress={cardsRendered}
+              total={cardsToRender}
+            />
           </HorizontalStack>
         )}
 
         {!cardsToRender && (
           <HorizontalStack margin gutter itemAlignment='center'>
-            {selectAllMode && <Button icon='toolkit-check-mark' color='balanced' label='Tout' onTap={() => this.selectAll()} />}
-            {!selectAllMode && <Button icon='toolkit-check-mark' color='assertive' label='Tout' onTap={() => this.unselectAll()} />}
-            <Button fill disabled={!selectedCardsNum} color='positive' label='Rendu' onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())} />
-            <Button fill color='energized' label='Importer' onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())} />
+            {selectAllMode && (
+              <Button icon='toolkit-check-mark' color='balanced' label='Tout' onTap={() => this.selectAll()} />
+            )}
+            {!selectAllMode && (
+              <Button icon='toolkit-check-mark' color='assertive' label='Tout' onTap={() => this.unselectAll()} />
+            )}
+            <Button
+              fill
+              disabled={!selectedCardsNum}
+              color='positive'
+              label='Rendu'
+              onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
+            />
+            <Button
+              fill
+              color='energized'
+              label='Importer'
+              onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
+            />
           </HorizontalStack>
         )}
       </VerticalStack>,

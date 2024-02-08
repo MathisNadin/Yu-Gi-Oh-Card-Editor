@@ -9,7 +9,7 @@ $secondary: $calm !default;
 
 $theme-dark-bg: (#181818 #414141 #555555 #9d9d9d) !default;
 $theme-dark-fg: (#e9e9e9 #b8b8b8 #696969 #707070) !default;
-$theme-light-bg: (#ffffff #F6F8F9 #EEF0F2 #E5E9EB) !default;
+$theme-light-bg: (#ffffff #f6f8f9 #eef0f2 #e5e9eb) !default;
 $theme-light-fg: (#474747 #8a8a8a #9e9e9e #e4e4e4) !default;
 
 $themeDefaultSpacing: 16px;
@@ -20,36 +20,35 @@ $themeMaxContentWidth: 750px;
 $themeMaxListWidth: 749px;
 $fieldBorderSize: 1px;
 
-@mixin bg($index:1) {
+@mixin bg($index: 1) {
   background-color: nth($theme-light-bg, $index);
   .mn-dark-theme & {
     background-color: nth($theme-dark-bg, $index);
   }
 }
 
-@mixin fgAsBg($index:1) {
+@mixin fgAsBg($index: 1) {
   background-color: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     background-color: nth($theme-dark-fg, $index);
   }
 }
 
-
-@mixin bgAsFg($index:1) {
+@mixin bgAsFg($index: 1) {
   color: nth($theme-light-bg, $index);
   .mn-dark-theme & {
     color: nth($theme-dark-bg, $index);
   }
 }
 
-@mixin fill($index:1) {
+@mixin fill($index: 1) {
   fill: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     fill: nth($theme-dark-fg, $index);
   }
 }
 
-@mixin bgAsFill($index:1) {
+@mixin bgAsFill($index: 1) {
   fill: nth($theme-light-bg, $index);
   color: nth($theme-light-bg, $index);
   .mn-dark-theme & {
@@ -58,52 +57,76 @@ $fieldBorderSize: 1px;
   }
 }
 
-@mixin fg($index:1) {
+@mixin fg($index: 1) {
   color: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     color: nth($theme-dark-fg, $index);
   }
 }
 
-@mixin strokeFg($index:1) {
+@mixin strokeFg($index: 1) {
   stroke: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     stroke: nth($theme-dark-fg, $index);
   }
 }
 
-@mixin strokeBg($index:1) {
+@mixin strokeBg($index: 1) {
   stroke: nth($theme-light-bg, $index);
   .mn-dark-theme & {
     stroke: nth($theme-dark-bg, $index);
   }
 }
 
-@mixin caret-color($index:1) {
+@mixin caret-color($index: 1) {
   caret-color: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     caret-color: nth($theme-dark-fg, $index);
   }
 }
-@mixin border-color($index:1) {
+@mixin border-color($index: 1) {
   border-color: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     border-color: nth($theme-dark-fg, $index);
   }
 }
 
-@mixin shadow($index:3) {
-  @if($index==0) {
+@mixin shadow($index: 3) {
+  @if ($index==0) {
     border: 1px solid;
     @include border-color(4);
-      box-shadow: none;
+    box-shadow: none;
   }
-  @if($index==1) { box-shadow: 0px 0px 1px rgba(26, 32, 36, 0.32), 0px 1px 2px rgba(91, 104, 113, 0.32); }
-  @if($index==2) { box-shadow: 0px 0px 1px rgba(26, 32, 36, 0.32), 0px 4px 8px rgba(91, 104, 113, 0.24); }
-  @if($index==3) { box-shadow: 0px 0px 1px rgba(26, 32, 36, 0.32), 0px 8px 16px rgba(91, 104, 113, 0.24); }
-  @if($index==4) { box-shadow: 0px 0px 1px rgba(26, 32, 36, 0.32), 0px 12px 24px rgba(91, 104, 113, 0.24); }
-  @if($index==5) { box-shadow: 0px 0px 1px rgba(26, 32, 36, 0.32), 0px 24px 32px rgba(91, 104, 113, 0.24); }
-  @if($index==6) { box-shadow: 0px 0px 1px rgba(26, 32, 36, 0.32), 0px 40px 64px rgba(91, 104, 113, 0.24); }
+  @if ($index==1) {
+    box-shadow:
+      0px 0px 1px rgba(26, 32, 36, 0.32),
+      0px 1px 2px rgba(91, 104, 113, 0.32);
+  }
+  @if ($index==2) {
+    box-shadow:
+      0px 0px 1px rgba(26, 32, 36, 0.32),
+      0px 4px 8px rgba(91, 104, 113, 0.24);
+  }
+  @if ($index==3) {
+    box-shadow:
+      0px 0px 1px rgba(26, 32, 36, 0.32),
+      0px 8px 16px rgba(91, 104, 113, 0.24);
+  }
+  @if ($index==4) {
+    box-shadow:
+      0px 0px 1px rgba(26, 32, 36, 0.32),
+      0px 12px 24px rgba(91, 104, 113, 0.24);
+  }
+  @if ($index==5) {
+    box-shadow:
+      0px 0px 1px rgba(26, 32, 36, 0.32),
+      0px 24px 32px rgba(91, 104, 113, 0.24);
+  }
+  @if ($index==6) {
+    box-shadow:
+      0px 0px 1px rgba(26, 32, 36, 0.32),
+      0px 40px 64px rgba(91, 104, 113, 0.24);
+  }
   .mn-dark-theme & {
     box-shadow: none;
     border: 1px solid;
@@ -131,32 +154,76 @@ $z-index-popover-overlay: 8;
 $z-index-popover: 9;
 $z-index-overall: 100;
 
-.mn-bg-1 { @include bg(1); }
-.mn-bg-2 { @include bg(2); }
-.mn-bg-3 { @include bg(3); }
-.mn-bg-4 { @include bg(4); }
-.mn-bg-primary { background-color: $primary }
-.mn-bg-secondary { background-color: $secondary }
-.mn-bg-positive { background-color: $positive }
-.mn-bg-calm { background-color: $calm }
-.mn-bg-balanced { background-color: $balanced }
-.mn-bg-energized { background-color: $energized }
-.mn-bg-assertive { background-color: $assertive }
-.mn-bg-royal { background-color: $royal }
+.mn-bg-1 {
+  @include bg(1);
+}
+.mn-bg-2 {
+  @include bg(2);
+}
+.mn-bg-3 {
+  @include bg(3);
+}
+.mn-bg-4 {
+  @include bg(4);
+}
+.mn-bg-primary {
+  background-color: $primary;
+}
+.mn-bg-secondary {
+  background-color: $secondary;
+}
+.mn-bg-positive {
+  background-color: $positive;
+}
+.mn-bg-calm {
+  background-color: $calm;
+}
+.mn-bg-balanced {
+  background-color: $balanced;
+}
+.mn-bg-energized {
+  background-color: $energized;
+}
+.mn-bg-assertive {
+  background-color: $assertive;
+}
+.mn-bg-royal {
+  background-color: $royal;
+}
 
-.mn-zindex-content { z-index: $z-index-content; }
-.mn-zindex-view { z-index: $z-index-view; }
-.mn-zindex-notifications { z-index: $z-index-notifications; }
-.mn-zindex-view-below { z-index: $z-index-view-below; }
-.mn-zindex-view-above { z-index: $z-index-view-above; }
-.mn-zindex-drawer { z-index: $z-index-drawer; }
-.mn-zindex-overlay { z-index: $z-index-overlay; }
-.mn-zindex-popup { z-index: $z-index-popup; }
-.mn-zindex-popover { z-index: $z-index-popover; }
-.mn-zindex-toaster { z-index: $z-index-toaster; }
-.mn-zindex-overall { z-index: $z-index-overall; }
-
-
+.mn-zindex-content {
+  z-index: $z-index-content;
+}
+.mn-zindex-view {
+  z-index: $z-index-view;
+}
+.mn-zindex-notifications {
+  z-index: $z-index-notifications;
+}
+.mn-zindex-view-below {
+  z-index: $z-index-view-below;
+}
+.mn-zindex-view-above {
+  z-index: $z-index-view-above;
+}
+.mn-zindex-drawer {
+  z-index: $z-index-drawer;
+}
+.mn-zindex-overlay {
+  z-index: $z-index-overlay;
+}
+.mn-zindex-popup {
+  z-index: $z-index-popup;
+}
+.mn-zindex-popover {
+  z-index: $z-index-popover;
+}
+.mn-zindex-toaster {
+  z-index: $z-index-toaster;
+}
+.mn-zindex-overall {
+  z-index: $z-index-overall;
+}
 
 @mixin text-overflow() {
   overflow: hidden;
@@ -212,7 +279,7 @@ $z-index-overall: 100;
 @mixin triangle($direction, $opposite, $color: currentcolor, $width: 20px, $height: 20px) {
   width: 0;
   height: 0;
-  content: "";
+  content: '';
   position: absolute;
 
   z-index: 2;
@@ -239,7 +306,7 @@ $z-index-overall: 100;
 
 @mixin touch-zone($size) {
   &:after {
-    content: "";
+    content: '';
     position: absolute;
     left: -32px + $size;
     right: -32px + $size;
@@ -259,7 +326,6 @@ $z-index-overall: 100;
   will-change: #{$property};
   transition: #{$property} $delay $ease;
 }
-
 
 @mixin ios-top($prop, $adding: 0) {
   /* ios-top #{$prop} #{$adding} */
@@ -335,8 +401,6 @@ $z-index-overall: 100;
   }
 }
 
-
-
 @import './containable/styles.scss';
 @import './container/styles.scss';
 @import './pane/styles.scss';
@@ -364,4 +428,3 @@ $z-index-overall: 100;
 @import './typography/styles.scss';
 @import './overlay/styles.scss';
 @import './drawer/styles.scss';
-

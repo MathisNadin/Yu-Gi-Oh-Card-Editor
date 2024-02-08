@@ -12,11 +12,9 @@ interface IButtonIconProps extends IContainableProps {
   size?: 'normal' | 'small';
 }
 
-interface IButtonIconState extends IContainableState {
-}
+interface IButtonIconState extends IContainableState {}
 
 export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> {
-
   public static get defaultProps(): Partial<IButtonIconProps> {
     return {
       ...super.defaultProps,
@@ -42,9 +40,12 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> 
 
   public render() {
     const icon = app.$icon.get(this.props.icon);
-    return this.renderAttributes(<div>
-      {!!this.props.icon && <div className="icon">{icon}</div>}
-      {!!this.props.badge && <div className="mn-badge mn-badge-top-right">{this.props.badge}</div>}
-    </div>, 'mn-button-icon');
+    return this.renderAttributes(
+      <div>
+        {!!this.props.icon && <div className='icon'>{icon}</div>}
+        {!!this.props.badge && <div className='mn-badge mn-badge-top-right'>{this.props.badge}</div>}
+      </div>,
+      'mn-button-icon'
+    );
   }
 }

@@ -26,18 +26,16 @@ export interface IContainerProps extends IContainableProps {
   wrap?: boolean;
   scroll?: boolean;
   scrollX?: boolean;
-  frame: TFrame;
+  frame?: TFrame;
   verticalItemAlignment?: TVerticalAlignment;
   itemAlignment?: THorizontalAlignment;
   onContainerScroll?: (event: UIEvent) => void | Promise<void>;
   onScrollRef?: (scroller: HTMLElement) => void;
 }
 
-export interface IContainerState extends IContainableState {
-}
+export interface IContainerState extends IContainableState {}
 
 export class Container<PROPS extends IContainerProps, STATE extends IContainerState> extends Containable<PROPS, STATE> {
-
   public static get defaultProps(): Partial<IContainerProps> {
     return {
       ...super.defaultProps,
@@ -59,7 +57,7 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     if (this.props.wrap) classes['mn-layout-wrap'] = true;
     if (this.props.scroll) classes['mn-scroll'] = true;
     if (this.props.scrollX) classes['mn-scrollX'] = true;
-    if(this.props.frame) classes[`mn-frame-${this.props.frame}`] = true;
+    if (this.props.frame) classes[`mn-frame-${this.props.frame}`] = true;
     if (this.props.verticalItemAlignment) classes[`mn-layout-item-valign-${this.props.verticalItemAlignment}`] = true;
     if (this.props.itemAlignment) classes[`mn-layout-item-align-${this.props.itemAlignment}`] = true;
     return classes;
@@ -70,17 +68,20 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
   }
 
   public render() {
-    if (!this.props.scroll && !this.props.scrollX) return this.renderAttributes(<div >{this.props.children}</div>, 'mn-container');
-    return <ScrollContainer
-      style={this.renderStyle()}
-      className={classNames(super.renderClasses())}
-      viewClassName={classNames(this.renderClasses('mn-container'))}
-      onContainerScroll={this.props.onContainerScroll}
-      onScrollRef={this.props.onScrollRef}
-      scroll={!!this.props.scroll}
-      scrollX={!!this.props.scrollX}>
-      {this.props.children}
-    </ScrollContainer>;
+    if (!this.props.scroll && !this.props.scrollX)
+      return this.renderAttributes(<div>{this.props.children}</div>, 'mn-container');
+    return (
+      <ScrollContainer
+        style={this.renderStyle()}
+        className={classNames(super.renderClasses())}
+        viewClassName={classNames(this.renderClasses('mn-container'))}
+        onContainerScroll={this.props.onContainerScroll}
+        onScrollRef={this.props.onScrollRef}
+        scroll={!!this.props.scroll}
+        scrollX={!!this.props.scrollX}
+      >
+        {this.props.children}
+      </ScrollContainer>
+    );
   }
-
-};
+}

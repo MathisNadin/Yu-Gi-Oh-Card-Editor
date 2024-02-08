@@ -9,20 +9,18 @@ declare global {
     $router: RouterService;
   }
 
-  interface IRouter {
-  }
+  interface IRouter {}
 }
 
 export interface IStateCrumb {
-  state: string,
-  title: string
-  parameters?: IStateParameters,
+  state: string;
+  title: string;
+  parameters?: IStateParameters;
 }
-
 
 export interface IStateParameters {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [name: string]: any
+  [name: string]: any;
 }
 
 export interface IResolvedState {
@@ -32,14 +30,13 @@ export interface IResolvedState {
   historyData?: IStateParameters;
   title?: string;
   parentParameters?: IStateParameters;
-  breadcrumb?: IStateCrumb[]
+  breadcrumb?: IStateCrumb[];
 }
-
 
 export interface IStatePathKey {
   name: string;
   optional: boolean;
-  type: 'qs' | 'path'
+  type: 'qs' | 'path';
 }
 
 export interface IState {

@@ -20,32 +20,32 @@ $ra: #B6A331;
 $legendaryDragon: #4A9CBF;
 */
 
-$normal: #E7D8A0;
-$effect: #E08151;
-$ritual: #82A9D6;
-$fusion: #B66CAE;
-$synchro: #F0EEEC;
-$darkSynchro: #5E5555;
+$normal: #e7d8a0;
+$effect: #e08151;
+$ritual: #82a9d6;
+$fusion: #b66cae;
+$synchro: #f0eeec;
+$darkSynchro: #5e5555;
 $xyz: #666666;
-$pendulum: #2CAE88;
-$link: #2E7FAC;
-$spell: #00A88E;
-$trap: #C35891;
-$tokenColor: #978D8B;
+$pendulum: #2cae88;
+$link: #2e7fac;
+$spell: #00a88e;
+$trap: #c35891;
+$tokenColor: #978d8b;
 $monsterToken: $tokenColor;
 $token: $tokenColor;
-$skill: #1A9AE0;
-$obelisk: #667AAB;
-$slifer: #D9654B;
-$ra: #D4B055;
-$legendaryDragon: #82B8D4;
+$skill: #1a9ae0;
+$obelisk: #667aab;
+$slifer: #d9654b;
+$ra: #d4b055;
+$legendaryDragon: #82b8d4;
 
-.mn-popup[id="import-popup"] {
+.mn-popup[id='import-popup'] {
   .mn-popup-inner {
     max-height: 90%;
 
     .card-import-dialog {
-      $dialogHeight: calc(100% - 2*#{$themeDefaultSpacing} - 24px);
+      $dialogHeight: calc(100% - 2 *#{$themeDefaultSpacing} - 24px);
       min-height: $dialogHeight;
       max-height: $dialogHeight;
 
@@ -57,33 +57,31 @@ $legendaryDragon: #82B8D4;
 
           &.yuginews {
             .yuginews-cards-table {
-              height: calc(100% - 3*#{$themeDefaultSpacing} - 3*32px);
+              height: calc(100% - 3 *#{$themeDefaultSpacing} - 3 * 32px);
             }
 
             .mn-table-body {
               .mn-table-row {
-                @each $class, $color in (
-                  Normal: $normal,
-                  Effet: $effect,
-                  Rituel: $ritual,
-                  Fusion: $fusion,
-                  Synchro: $synchro,
-                  Xyz: $xyz,
-                  Lien: $link,
-                  Magie: $spell,
-                  Piège: $trap,
-                  Jeton: $token
-                ) {
+                @each $class,
+                  $color
+                    in (
+                      Normal: $normal,
+                      Effet: $effect,
+                      Rituel: $ritual,
+                      Fusion: $fusion,
+                      Synchro: $synchro,
+                      Xyz: $xyz,
+                      Lien: $link,
+                      Magie: $spell,
+                      Piège: $trap,
+                      Jeton: $token
+                    )
+                {
                   &.#{$class} {
                     background: $color;
 
                     &.Pendule {
-                      background: linear-gradient(
-                        250deg,
-                        green -29%,
-                        aquamarine 35%,
-                        $color 82%
-                      );
+                      background: linear-gradient(250deg, green -29%, aquamarine 35%, $color 82%);
                     }
                   }
                 }
@@ -109,9 +107,9 @@ $legendaryDragon: #82B8D4;
 
           &.yugipedia {
             .mn-scroller-container {
-              $scrollerHeight: calc(100% - 2*#{$themeDefaultSpacing} - 2*32px);
+              $scrollerHeight: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
               min-height: 150px;
-              max-height: calc(100% - 2*#{$themeDefaultSpacing} - 2*32px);
+              max-height: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
               width: 80%;
             }
           }

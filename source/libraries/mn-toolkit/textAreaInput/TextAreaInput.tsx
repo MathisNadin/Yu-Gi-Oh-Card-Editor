@@ -1,6 +1,6 @@
-import { classNames } from "libraries/mn-tools";
-import { IContainableProps, IContainableState, Containable } from "../containable";
-import { FormEvent } from "react";
+import { classNames } from 'libraries/mn-tools';
+import { IContainableProps, IContainableState, Containable } from '../containable';
+import { FormEvent } from 'react';
 import { IDeviceListener, IScreenSpec } from '../device';
 
 export interface ITextAreaInputProps extends IContainableProps {
@@ -25,7 +25,10 @@ interface ITextAreaInputState extends IContainableState {
   activateScroll: boolean;
 }
 
-export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInputState> implements Partial<IDeviceListener> {
+export class TextAreaInput
+  extends Containable<ITextAreaInputProps, ITextAreaInputState>
+  implements Partial<IDeviceListener>
+{
   private inputElement!: HTMLTextAreaElement;
 
   public static get defaultProps(): Partial<ITextAreaInputProps> {
@@ -46,7 +49,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
 
   public constructor(props: ITextAreaInputProps) {
     super(props);
-    this.state = { ...(this.state || {}), rows: props.minRows as number || 1, value: props.defaultValue };
+    this.state = { ...(this.state || {}), rows: (props.minRows as number) || 1, value: props.defaultValue };
     app.$device.addListener(this);
   }
 
@@ -60,7 +63,8 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     // -> l'utilisateur ne comprend pas que son texte soit "mangé" sans raison à chaque fois qu'il fait espace
     if (nextProps.defaultValue?.trim() !== this.state.value?.trim()) {
       this.setState({ value: nextProps.defaultValue });
-      if (this.inputElement) setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
+      if (this.inputElement)
+        setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
     }
   }
 
@@ -77,23 +81,25 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
   }
 
   public render() {
-    return <textarea
-      ref={ref => !!ref && this.onDomInput(ref)}
-      className={classNames('mn-textarea-input', this.props.className)}
-      spellCheck={this.props.spellCheck}
-      name={this.props.name}
-      disabled={this.props.disabled}
-      rows={this.state.rows}
-      placeholder={this.props.placeholder}
-      value={this.state.value}
-      onBlur={() => this.onBlur()}
-      onFocus={() => this.onFocus()}
-      onInput={e => this.onChange(e)}
-      onKeyUp={e => this.onChange(e)}
-      // FIXME MN : Un peu bâtard, ça empêche le scroll tant qu'on n'a pas dépassé le nombre de maxRows
-      // Utile notamment quand on force une police/lineHeight plus haut qu'à la normale
-      style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
-    />;
+    return (
+      <textarea
+        ref={(ref) => !!ref && this.onDomInput(ref)}
+        className={classNames('mn-textarea-input', this.props.className)}
+        spellCheck={this.props.spellCheck}
+        name={this.props.name}
+        disabled={this.props.disabled}
+        rows={this.state.rows}
+        placeholder={this.props.placeholder}
+        value={this.state.value}
+        onBlur={() => this.onBlur()}
+        onFocus={() => this.onFocus()}
+        onInput={(e) => this.onChange(e)}
+        onKeyUp={(e) => this.onChange(e)}
+        // FIXME MN : Un peu bâtard, ça empêche le scroll tant qu'on n'a pas dépassé le nombre de maxRows
+        // Utile notamment quand on force une police/lineHeight plus haut qu'à la normale
+        style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
+      />
+    );
   }
 
   private onBlur() {

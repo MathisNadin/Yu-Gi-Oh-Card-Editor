@@ -1,5 +1,5 @@
-import { classNames } from "libraries/mn-tools";
-import { IContainableProps, IContainableState, Containable } from "../containable";
+import { classNames } from 'libraries/mn-tools';
+import { IContainableProps, IContainableState, Containable } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 
 interface IButtonOutlineProps extends IContainableProps {
@@ -11,12 +11,10 @@ interface IButtonOutlineProps extends IContainableProps {
   block?: boolean;
 }
 
-interface IButtonOutlineState extends IContainableState {
-}
+interface IButtonOutlineState extends IContainableState {}
 
 export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutlineState> {
-
-  public static get defaultProps() : Partial<IButtonOutlineProps> {
+  public static get defaultProps(): Partial<IButtonOutlineProps> {
     return {
       ...super.defaultProps,
       color: 'neutral',
@@ -30,14 +28,21 @@ export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutli
   }
 
   public render() {
-    return <div
-      id={this.props.nodeId}
-      title={this.props.hint}
-      className={classNames(this.renderClasses('mn-button-outline'), { 'mn-button-block': this.props.block }, `mn-button-color-${this.props.color}`)}
-      onClick={e => { if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(e)); }}
-    >
-      {!!this.props.label && <span className="label">{this.props.label}</span>}
-    </div>;
+    return (
+      <div
+        id={this.props.nodeId}
+        title={this.props.hint}
+        className={classNames(
+          this.renderClasses('mn-button-outline'),
+          { 'mn-button-block': this.props.block },
+          `mn-button-color-${this.props.color}`
+        )}
+        onClick={(e) => {
+          if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(e));
+        }}
+      >
+        {!!this.props.label && <span className='label'>{this.props.label}</span>}
+      </div>
+    );
   }
-
 }

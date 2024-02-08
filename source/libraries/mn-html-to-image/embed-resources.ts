@@ -31,9 +31,7 @@ export async function embed(
   getContentFromUrl?: (url: string) => Promise<string>
 ): Promise<string> {
   try {
-    const resolvedURL = baseURL
-      ? resolveUrl(resourceURL, baseURL)
-      : resourceURL;
+    const resolvedURL = baseURL ? resolveUrl(resourceURL, baseURL) : resourceURL;
     const contentType = getMimeType(resourceURL);
     let dataURL: string;
     if (getContentFromUrl) {
@@ -49,10 +47,7 @@ export async function embed(
   return cssText;
 }
 
-function filterPreferredFontFormat(
-  str: string,
-  { preferredFontFormat }: Options
-): string {
+function filterPreferredFontFormat(str: string, { preferredFontFormat }: Options): string {
   return !preferredFontFormat
     ? str
     : str.replace(FONT_SRC_REGEX, (match: string) => {
@@ -74,11 +69,7 @@ export function shouldEmbed(url: string): boolean {
   return url.search(URL_REGEX) !== -1;
 }
 
-export async function embedResources(
-  cssText: string,
-  baseUrl: string | null,
-  options: Options
-): Promise<string> {
+export async function embedResources(cssText: string, baseUrl: string | null, options: Options): Promise<string> {
   if (!shouldEmbed(cssText)) {
     return cssText;
   }
@@ -86,8 +77,7 @@ export async function embedResources(
   const filteredCSSText = filterPreferredFontFormat(cssText, options);
   const urls = parseURLs(filteredCSSText);
   return urls.reduce(
-    (deferred, url) =>
-      deferred.then((css) => embed(css, url, baseUrl, options)),
+    (deferred, url) => deferred.then((css) => embed(css, url, baseUrl, options)),
     Promise.resolve(filteredCSSText)
   );
 }

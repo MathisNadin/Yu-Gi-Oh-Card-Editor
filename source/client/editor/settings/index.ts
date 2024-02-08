@@ -1,4 +1,4 @@
-import { SettingsService } from "./SettingsService";
+import { SettingsService } from './SettingsService';
 
 export * from './Settings';
 export * from './SettingsService';

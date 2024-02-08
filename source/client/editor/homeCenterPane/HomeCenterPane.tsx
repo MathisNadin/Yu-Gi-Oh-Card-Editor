@@ -1,17 +1,18 @@
-import { ICard, ICardListener } from "client/editor/card";
-import { CardPreview, RushCardPreview } from "client/editor/cardPreview";
-import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner } from "libraries/mn-toolkit";
+import { ICard, ICardListener } from 'client/editor/card';
+import { CardPreview, RushCardPreview } from 'client/editor/cardPreview';
+import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner } from 'libraries/mn-toolkit';
 
-interface IHomeCenterPaneProps extends IContainableProps {
-}
+interface IHomeCenterPaneProps extends IContainableProps {}
 
 interface IHomeCenterPaneState extends IContainableState {
   currentCard: ICard;
   tempCurrentCard: ICard;
 }
 
-export class HomeCenterPane extends Containable<IHomeCenterPaneProps, IHomeCenterPaneState> implements Partial<ICardListener> {
-
+export class HomeCenterPane
+  extends Containable<IHomeCenterPaneProps, IHomeCenterPaneState>
+  implements Partial<ICardListener>
+{
   public constructor(props: IHomeCenterPaneProps) {
     super(props);
     this.state = {
@@ -42,11 +43,14 @@ export class HomeCenterPane extends Containable<IHomeCenterPaneProps, IHomeCente
 
   public render() {
     const { loaded, currentCard, tempCurrentCard } = this.state;
-    const card = tempCurrentCard || currentCard;;
-    return this.renderAttributes(<VerticalStack>
-      {!loaded && <Spinner />}
-      {loaded && !card.rush && <CardPreview card={card} />}
-      {loaded && card.rush && <RushCardPreview card={card} />}
-    </VerticalStack>, 'home-center-pane');
+    const card = tempCurrentCard || currentCard;
+    return this.renderAttributes(
+      <VerticalStack>
+        {!loaded && <Spinner />}
+        {loaded && !card.rush && <CardPreview card={card} />}
+        {loaded && card.rush && <RushCardPreview card={card} />}
+      </VerticalStack>,
+      'home-center-pane'
+    );
   }
 }

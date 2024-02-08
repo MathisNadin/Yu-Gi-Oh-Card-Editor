@@ -1,5 +1,5 @@
 import './index.scss';
-import * as confJson from "../../package.json";
+import * as confJson from '../../package.json';
 import { setupAppAndToolkit } from 'libraries/mn-toolkit';
 import { CoreService } from './kernel';
 import { SettingsService, MediaWikiService, CardService, YuginewsService, HomeView } from './editor';
@@ -18,7 +18,7 @@ interface IPackageJSON {
     production: {
       apiUrl: string;
     };
-  }
+  };
 }
 
 const conf = confJson as unknown as IPackageJSON;

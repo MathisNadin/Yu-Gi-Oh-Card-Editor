@@ -1,12 +1,11 @@
 import { Container, IContainerProps, IContainerState } from '../container';
 
-interface IContentProps extends IContainerProps { }
+interface IContentProps extends IContainerProps {}
 
-interface IContentState extends IContainerState { }
+interface IContentState extends IContainerState {}
 
 export class Content extends Container<IContentProps, IContentState> {
-
-  public static get defaultProps() : Partial<IContentProps> {
+  public static get defaultProps(): Partial<IContentProps> {
     return {
       ...super.defaultProps,
       layout: 'vertical',
@@ -15,12 +14,11 @@ export class Content extends Container<IContentProps, IContentState> {
       margin: false,
       padding: true,
       bg: '2',
-      mainClassName: 'mn-content'
+      mainClassName: 'mn-content',
     };
   }
 
   public constructor(props: IContentProps) {
     super(props);
   }
-
 }

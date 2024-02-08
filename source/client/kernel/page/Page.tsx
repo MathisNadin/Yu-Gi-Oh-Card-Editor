@@ -1,12 +1,11 @@
-import { Spinner, RouterViewPort } from "libraries/mn-toolkit";
-import { Component } from "react";
+import { Spinner, RouterViewPort } from 'libraries/mn-toolkit';
+import { Component } from 'react';
 
-interface IPageProps { }
+interface IPageProps {}
 
-interface IPageState { }
+interface IPageState {}
 
 export class Page extends Component<IPageProps, IPageState> {
-
   public constructor(props: IPageProps) {
     super(props);
 

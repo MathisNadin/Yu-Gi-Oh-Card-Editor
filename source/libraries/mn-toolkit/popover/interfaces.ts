@@ -1,6 +1,6 @@
-import { ReactElement } from "react";
-import { TIconId } from "../icon";
-import { TForegroundColor } from "../themeSettings";
+import { ReactElement } from 'react';
+import { TIconId } from '../icon';
+import { TForegroundColor } from '../themeSettings';
 
 export interface IPopoverButton<ID = number> {
   id?: ID;
@@ -25,7 +25,7 @@ export interface IPopoverAction<ID = number> {
   button?: {
     icon: TIconId;
     onTap: () => void | Promise<void>;
-  }
+  };
 }
 
 export interface IPopoverOptions {
@@ -55,5 +55,6 @@ export interface IPopoverOptions {
   actionRenderer?: (
     action: IPopoverAction,
     handler: (event: React.MouseEvent, action: IPopoverAction) => void,
-    last: boolean) => JSX.Element;
+    last: boolean
+  ) => JSX.Element;
 }

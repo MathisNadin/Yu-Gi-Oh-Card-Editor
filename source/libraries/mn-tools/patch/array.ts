@@ -1,12 +1,12 @@
-import { monkeyPatch } from "..";
+import { monkeyPatch } from '..';
 
 function arrayIntersect<T>(this: T[], b: T[]) {
-  return this.filter(x => b.indexOf(x) !== -1);
+  return this.filter((x) => b.indexOf(x) !== -1);
 }
 
 function arrayUniq<T>(this: T[]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let tmp : any = {};
+  let tmp: any = {};
   this.forEach((v) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tmp[v as any] = true;
@@ -15,8 +15,12 @@ function arrayUniq<T>(this: T[]) {
   return Object.keys(tmp);
 }
 
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-function arrayFind<T>(this: T[], predicate: (item: T, index: number, o: Object)=>boolean, context?: any) : T | undefined {
+function arrayFind<T>(
+  this: T[],
+  predicate: (item: T, index: number, o: object) => boolean,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: any
+): T | undefined {
   if (this == null) throw new TypeError('"this" is null or not defined');
   let o = Object(this);
   // eslint-disable-next-line no-bitwise
@@ -33,12 +37,12 @@ function arrayFind<T>(this: T[], predicate: (item: T, index: number, o: Object)=
 }
 
 function arrayContains<T>(this: T[], item: T): boolean {
-  return this.indexOf(item)!==-1;
+  return this.indexOf(item) !== -1;
 }
 
-function arrayRemove<T>(this: T[], item: T) : T[] | void {
+function arrayRemove<T>(this: T[], item: T): T[] | void {
   let index = this.indexOf(item);
-  if (index===-1) return;
+  if (index === -1) return;
   // eslint-disable-next-line consistent-return
   return this.splice(index, 1);
 }
@@ -51,10 +55,10 @@ function arrayMove<T>(this: T[], fromIndex: number, toIndex: number) {
 }
 
 function arrayChunk<T>(this: T[], size: number) {
-  let result : T[][] = [];
+  let result: T[][] = [];
   let i = 0;
-  for (let j = this.length; i<j; i+=size) {
-    result.push(this.slice(i,i+size));
+  for (let j = this.length; i < j; i += size) {
+    result.push(this.slice(i, i + size));
   }
   return result;
 }
@@ -68,8 +72,6 @@ export function install() {
   monkeyPatch(Array.prototype, 'chunk', arrayChunk);
   monkeyPatch(Array.prototype, 'move', arrayMove);
 }
-
-
 
 declare global {
   interface Array<T> {

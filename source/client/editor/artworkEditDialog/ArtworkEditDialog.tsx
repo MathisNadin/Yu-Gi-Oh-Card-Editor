@@ -28,7 +28,6 @@ interface IArtworkEditDialogState extends IContainableState {
 }
 
 export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArtworkEditDialogState> {
-
   public constructor(props: IArtworkEditDialogProps) {
     super(props);
     this.state = {
@@ -36,7 +35,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
       artworkURL: props.artworkURL,
       artworkBase64: '',
       crop: props.crop,
-      keepRatio: props.keepRatio
+      keepRatio: props.keepRatio,
     };
   }
 
@@ -54,7 +53,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     let artworkBase64 = '';
     if (app.$device.isDesktop) {
       try {
-        if (!isEmpty(artworkURL) && await window.electron.ipcRenderer.checkFileExists(artworkURL)) {
+        if (!isEmpty(artworkURL) && (await window.electron.ipcRenderer.checkFileExists(artworkURL))) {
           artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
         }
       } catch (error) {
@@ -67,15 +66,17 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
       loaded: true,
       artworkURL,
       artworkBase64,
-      crop: usePropsCrops ? this.props.crop : {
-        x: 0,
-        y: 0,
-        height: 100,
-        width: 100,
-        unit: '%'
-      },
-      keepRatio: this.props.keepRatio || false
-    }
+      crop: usePropsCrops
+        ? this.props.crop
+        : {
+            x: 0,
+            y: 0,
+            height: 100,
+            width: 100,
+            unit: '%',
+          },
+      keepRatio: this.props.keepRatio || false,
+    };
 
     if (this.state) {
       this.setState(state);
@@ -93,8 +94,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     if (this.state.keepRatio && crop.height !== crop.width) {
       if (crop.height !== this.state.crop.height) {
         crop.width = crop.height;
-      }
-      else if (crop.width !== this.state.crop.width) {
+      } else if (crop.width !== this.state.crop.width) {
         crop.height = crop.width;
       }
     }
@@ -103,29 +103,32 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
 
   public render() {
     if (!this.state?.loaded) return <Spinner />;
-    return this.renderAttributes(<HorizontalStack gutter>
-      <ArtworkCropping
-        artworkBase64={this.state.artworkBase64}
-        hasPendulumFrame={this.props.hasPendulumFrame}
-        hasLinkFrame={this.props.hasLinkFrame}
-        crop={this.state.crop}
-        onCroppingChange={crop => this.onCroppingChange(crop)}
-      />
+    return this.renderAttributes(
+      <HorizontalStack gutter>
+        <ArtworkCropping
+          artworkBase64={this.state.artworkBase64}
+          hasPendulumFrame={this.props.hasPendulumFrame}
+          hasLinkFrame={this.props.hasLinkFrame}
+          crop={this.state.crop}
+          onCroppingChange={(crop) => this.onCroppingChange(crop)}
+        />
 
-      <ArtworkEditing
-        artworkURL={this.state.artworkURL}
-        artworkBase64={this.state.artworkBase64}
-        keepRatio={this.state.keepRatio}
-        pendulumRatio={this.props.pendulumRatio}
-        hasPendulumFrame={this.props.hasPendulumFrame}
-        hasLinkFrame={this.props.hasLinkFrame}
-        isRush={this.props.isRush}
-        crop={this.state.crop}
-        onKeepRatioChange={keepRatio => this.setState({ keepRatio })}
-        onCroppingChange={crop => this.setState({ crop })}
-        onArtworkURLChange={url => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
-        onValidate={(url, crop, keepRatio) => this.onValidate(url, crop, keepRatio)}
-      />
-    </HorizontalStack>, 'artwork-edit-dialog');
+        <ArtworkEditing
+          artworkURL={this.state.artworkURL}
+          artworkBase64={this.state.artworkBase64}
+          keepRatio={this.state.keepRatio}
+          pendulumRatio={this.props.pendulumRatio}
+          hasPendulumFrame={this.props.hasPendulumFrame}
+          hasLinkFrame={this.props.hasLinkFrame}
+          isRush={this.props.isRush}
+          crop={this.state.crop}
+          onKeepRatioChange={(keepRatio) => this.setState({ keepRatio })}
+          onCroppingChange={(crop) => this.setState({ crop })}
+          onArtworkURLChange={(url) => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
+          onValidate={(url, crop, keepRatio) => this.onValidate(url, crop, keepRatio)}
+        />
+      </HorizontalStack>,
+      'artwork-edit-dialog'
+    );
   }
 }

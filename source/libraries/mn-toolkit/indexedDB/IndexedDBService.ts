@@ -1,5 +1,5 @@
-import { Observable } from "libraries/mn-toolkit/observable";
-import { IDeviceListener } from "../device";
+import { Observable } from 'libraries/mn-toolkit/observable';
+import { IDeviceListener } from '../device';
 
 export interface IIndexedDBListener {
   allDeleted: () => void;
@@ -194,5 +194,4 @@ export class IndexedDBService extends Observable<IIndexedDBListener> implements 
       };
     });
   }
-
 }

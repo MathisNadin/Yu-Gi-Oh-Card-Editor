@@ -1,12 +1,11 @@
-import { extend, isUndefined } from "libraries/mn-tools";
-import { IRouterListener, IResolvedState, IState, IStateParameters, IStateCrumb } from ".";
-import { Observable } from "../observable";
+import { extend, isUndefined } from 'libraries/mn-tools';
+import { IRouterListener, IResolvedState, IState, IStateParameters, IStateCrumb } from '.';
+import { Observable } from '../observable';
 
 /**
  * Router service.
  */
 export class RouterService extends Observable<IRouterListener> {
-
   // private historyCursor: number;
   private currentResolvedState!: IResolvedState;
   private states: { [name: string]: IState } = {};
@@ -15,7 +14,7 @@ export class RouterService extends Observable<IRouterListener> {
 
   public goto: IRouter = {} as IRouter;
 
- /**
+  /**
    * Return the current state.
    *
    * @returns {State}
@@ -34,9 +33,7 @@ export class RouterService extends Observable<IRouterListener> {
     return this.currentResolvedState.parameters;
   }
 
-
-
-   public get hasHistory() {
+  public get hasHistory() {
     return !!this.history.length;
   }
 
@@ -59,8 +56,6 @@ export class RouterService extends Observable<IRouterListener> {
   public getByName(name: string) {
     return this.states[name];
   }
-
-
 
   /**
    * Default constructor.
@@ -86,8 +81,6 @@ export class RouterService extends Observable<IRouterListener> {
     this.dispatch('routerStateLoaded', resolvedState);
   }
 
-
-
   public documentUrlToState(fallBackState?: keyof IRouter) {
     let resolvedState = this.resolvePath();
     if (resolvedState) {
@@ -103,8 +96,6 @@ export class RouterService extends Observable<IRouterListener> {
     return resolvedState.state.name === stateName;
   }
 
-
-
   /**
    * Move the view to a new specific state.
    *
@@ -112,7 +103,7 @@ export class RouterService extends Observable<IRouterListener> {
    * @param {mixed} params
    */
   public go(stateName: string, params: object = {}) {
-    this.go_async(stateName, params).catch(e => app.$errorManager.trigger(e));
+    this.go_async(stateName, params).catch((e) => app.$errorManager.trigger(e));
   }
 
   public async go_async(stateName: string, params: object = {}) {
@@ -120,7 +111,7 @@ export class RouterService extends Observable<IRouterListener> {
     if (!currentState) throw new Error(`No state defined for ${stateName}`);
     let path = window.location.href.replace(/#.*$/, '') + '#!' + currentState.path;
     let qs: string[] = [];
-    currentState.pathKeys.forEach(key => {
+    currentState.pathKeys.forEach((key) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (isUndefined((params as any)[key.name])) {
         if (!key.optional) throw new Error(`param '${key.name}' for route '${stateName}' is not optional`);
@@ -172,25 +163,23 @@ export class RouterService extends Observable<IRouterListener> {
     this.go((this.currentState as IState).name, this.parameters);
   }
 
-
-
-
   private populateState(record: IState) {
     record.pathKeys = record.pathKeys || [];
 
     let iQs = record.path.indexOf('?');
     if (iQs !== -1) {
-      record.path.substr(iQs + 1).split('&').forEach(q => {
-        record.pathKeys.push({ name: q, type: 'qs', optional: true });
-      });
+      record.path
+        .substr(iQs + 1)
+        .split('&')
+        .forEach((q) => {
+          record.pathKeys.push({ name: q, type: 'qs', optional: true });
+        });
       record.path = record.path.substr(0, iQs);
-
     }
-    let path = record.path
-      .replace(/:([a-zA-Z]+)/g, (_, key) => {
-        record.pathKeys.push({ name: key, type: 'path', optional: false });
-        return '([^/]+)';
-      });
+    let path = record.path.replace(/:([a-zA-Z]+)/g, (_, key) => {
+      record.pathKeys.push({ name: key, type: 'path', optional: false });
+      return '([^/]+)';
+    });
 
     record.regExp = new RegExp('^' + path + '$', 'i');
   }
@@ -237,7 +226,7 @@ export class RouterService extends Observable<IRouterListener> {
       last = rc;
       if (!!rc.state.describe) await rc.state.describe(rc);
     }
-    let result: IStateCrumb[] = bc.map(x => {
+    let result: IStateCrumb[] = bc.map((x) => {
       return {
         state: x.state.name,
         parameters: x.parameters || {},
@@ -247,9 +236,6 @@ export class RouterService extends Observable<IRouterListener> {
     result.reverse();
     return result;
   }
-
-
-
 
   private testState(eligible: IState, path: string): IResolvedState {
     let key;
@@ -268,11 +254,11 @@ export class RouterService extends Observable<IRouterListener> {
       path,
       state: eligible,
       parameters: {},
-      historyData: {}
+      historyData: {},
     };
 
     if (qs) {
-      qs.split('&').forEach(q => {
+      qs.split('&').forEach((q) => {
         let [name, value] = q.split('=');
         state.parameters[name] = value;
       });
@@ -322,10 +308,10 @@ export class RouterService extends Observable<IRouterListener> {
     if (!!this.currentResolvedState.state.describe) await this.currentResolvedState.state.describe(state);
     let breadcrumb = await this.buildBreadcrumb();
     this.currentResolvedState.breadcrumb = breadcrumb;
-    if (!!this.currentResolvedState.state.resolver) await this.currentResolvedState.state.resolver(this.currentResolvedState);
+    if (!!this.currentResolvedState.state.resolver)
+      await this.currentResolvedState.state.resolver(this.currentResolvedState);
     // console.log('resolved, now go', this.currentResolvedState.path);
     this.resolving = false;
     this.fireStateChanged(this.currentResolvedState);
   }
-
 }

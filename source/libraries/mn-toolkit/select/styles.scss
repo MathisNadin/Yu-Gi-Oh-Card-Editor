@@ -1,24 +1,22 @@
-
 @mixin themeChipsSelect {
   .item {
     display: inline-block;
     line-height: 26px;
     padding: 0 12px;
     border-radius: $themeDefaultBorderRadius;
-    background-color: #E0E0E0;
+    background-color: #e0e0e0;
     margin: 4px 5px 3px 0;
     font-size: 14px;
     &:hover,
     &.activated {
-      background-color: #AEAEAE;
+      background-color: #aeaeae;
     }
     &.selected {
-      background-color: #38D8EC;
+      background-color: #38d8ec;
       color: white;
     }
   }
 }
-
 
 @mixin themeButtonsSelect {
   display: flex;
@@ -88,7 +86,7 @@
     width: $themeDefaultItemHeight;
     cursor: pointer;
     justify-content: center;
-    display:flex;
+    display: flex;
     align-items: center;
     border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
     border-left: 1px solid;
@@ -107,7 +105,7 @@
   }
   .mn-dark-theme & {
     .label {
-     color: white;
+      color: white;
     }
   }
 
@@ -124,7 +122,7 @@
   &.mn-search-bar-select {
     background-color: white;
     border-radius: 0%;
-    border-right: 1px solid #D5D7F1;
+    border-right: 1px solid #d5d7f1;
     margin-left: 2px;
   }
 }

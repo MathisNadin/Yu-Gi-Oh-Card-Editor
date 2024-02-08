@@ -1,16 +1,13 @@
 import { Component } from 'react';
 
-interface IHeaderSeparatorProps {
-}
+interface IHeaderSeparatorProps {}
 
-interface IHeaderSeparatorState {
-}
+interface IHeaderSeparatorState {}
 
 export class HeaderSeparator extends Component<IHeaderSeparatorProps, IHeaderSeparatorState> {
-
-  public static get defaultProps() : Partial<IHeaderSeparatorProps> {
+  public static get defaultProps(): Partial<IHeaderSeparatorProps> {
     return {
-      $name: 'HeaderSeparator'
+      $name: 'HeaderSeparator',
     };
   }
 
@@ -21,5 +18,4 @@ export class HeaderSeparator extends Component<IHeaderSeparatorProps, IHeaderSep
   public render() {
     return <div className='mn-header-separator'></div>;
   }
-
 }

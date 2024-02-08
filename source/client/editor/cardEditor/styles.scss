@@ -51,7 +51,8 @@
         margin-bottom: calc($themeDefaultSpacing / 2);
       }
 
-      .sub-title-container, .sub-title {
+      .sub-title-container,
+      .sub-title {
         padding-bottom: calc($themeDefaultSpacing / 2);
         border-bottom: 1px solid $borderColor;
       }
@@ -69,7 +70,9 @@
         }
       }
 
-      .card-frame, .card-attribute, .card-st-icon {
+      .card-frame,
+      .card-attribute,
+      .card-st-icon {
         cursor: pointer;
 
         &:not(.selected) {
@@ -81,7 +84,7 @@
             &::after {
               $size: 16px;
               $fontSize: 12px;
-              content: "#{$i}";
+              content: '#{$i}';
               position: absolute;
               bottom: 0;
               right: 0;
@@ -172,7 +175,8 @@
         border: 1px solid $borderColor;
         border-radius: 4px;
 
-        &#regular, &#choice {
+        &#regular,
+        &#choice {
           padding-bottom: $themeDefaultSpacing;
         }
       }

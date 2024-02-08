@@ -1,18 +1,17 @@
-import { integer, classNames } from "libraries/mn-tools";
-import { Component, createRef } from "react";
-import { IDrawerProps, IDrawer } from ".";
-import { IDeviceListener } from "../device";
-import { IOverlayListener } from "../overlay";
+import { integer, classNames } from 'libraries/mn-tools';
+import { Component, createRef } from 'react';
+import { IDrawerProps, IDrawer } from '.';
+import { IDeviceListener } from '../device';
+import { IOverlayListener } from '../overlay';
 
 interface IDrawerState {
   active: boolean;
 }
 
-export class LeftDrawer extends Component<IDrawerProps, IDrawerState> implements
-  IDrawer,
-  Partial<IDeviceListener>,
-  Partial<IOverlayListener> {
-
+export class LeftDrawer
+  extends Component<IDrawerProps, IDrawerState>
+  implements IDrawer, Partial<IDeviceListener>, Partial<IOverlayListener>
+{
   private element = createRef<HTMLDivElement>();
   private position!: number;
   private _active!: boolean;
@@ -26,11 +25,13 @@ export class LeftDrawer extends Component<IDrawerProps, IDrawerState> implements
       handleLabel: '',
       expanded: false,
       smallDeviceWidth: '90%',
-      mediumDeviceWidth: '150px'
+      mediumDeviceWidth: '150px',
     };
   }
 
-  public get hasClass() { return false; }
+  public get hasClass() {
+    return false;
+  }
 
   public constructor(props: IDrawerProps) {
     super(props);
@@ -41,7 +42,6 @@ export class LeftDrawer extends Component<IDrawerProps, IDrawerState> implements
     if (props.expanded) {
       setTimeout(() => this.expand(), 1000);
     }
-
   }
 
   public componentWillUnmount() {
@@ -98,7 +98,7 @@ export class LeftDrawer extends Component<IDrawerProps, IDrawerState> implements
     } else {
       match = /^\s*(\d+)%\s*$/.exec(width);
       if (match) {
-        return integer(match[1]) * app.$device.screenWidth / 100;
+        return (integer(match[1]) * app.$device.screenWidth) / 100;
       } else {
         throw new Error(`format inconnu ${width}`);
       }
@@ -119,7 +119,8 @@ export class LeftDrawer extends Component<IDrawerProps, IDrawerState> implements
   private setPosition(position: number) {
     this.position = position;
     if (this.position > this.pixelWidth) this.position = this.pixelWidth;
-    if (this.element?.current?.style) this.element.current.style.transform = `translateX(${-this.pixelWidth + this.position}px)`;
+    if (this.element?.current?.style)
+      this.element.current.style.transform = `translateX(${-this.pixelWidth + this.position}px)`;
     // this.updateOverlay(this.position / this.width);
   }
 
@@ -145,15 +146,29 @@ export class LeftDrawer extends Component<IDrawerProps, IDrawerState> implements
       right: `${-(this.props.handleSize as number)}px`,
       width: `${this.props.handleSize}px`,
     };
-    return <div
-      ref={this.element}
-      style={{ width: this.width }}
-      className={classNames({ active: this.state.active }, 'mn-drawer', 'mn-drawer-left', 'mn-layout-vertical-stack', this.props.className)} >
-      {this.props.children}
-      < div className="handle" style={handleStyle} onClick={_e => { if (this.props.onTap) this.props.onTap(this); }}>
-        {this.props.handleLabel ? <span className="label">{this.props.handleSize}</span> : null}
-      </div >
-    </div >;
+    return (
+      <div
+        ref={this.element}
+        style={{ width: this.width }}
+        className={classNames(
+          { active: this.state.active },
+          'mn-drawer',
+          'mn-drawer-left',
+          'mn-layout-vertical-stack',
+          this.props.className
+        )}
+      >
+        {this.props.children}
+        <div
+          className='handle'
+          style={handleStyle}
+          onClick={(_e) => {
+            if (this.props.onTap) this.props.onTap(this);
+          }}
+        >
+          {this.props.handleLabel ? <span className='label'>{this.props.handleSize}</span> : null}
+        </div>
+      </div>
+    );
   }
-
 }

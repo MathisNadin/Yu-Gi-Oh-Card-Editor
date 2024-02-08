@@ -5,7 +5,10 @@ export interface IAbstractViewComponentState extends IContainerState {
   loaded: boolean;
 }
 
-export abstract class AbstractViewComponent<P, S extends IAbstractViewComponentState = IAbstractViewComponentState> extends Component<P, S> {
+export abstract class AbstractViewComponent<
+  P,
+  S extends IAbstractViewComponentState = IAbstractViewComponentState,
+> extends Component<P, S> {
   protected onLoad?(): Promise<void>;
   protected onViewEnter?(): Promise<void>;
   protected onViewLeave?(): Promise<void>;
@@ -40,5 +43,4 @@ export abstract class AbstractViewComponent<P, S extends IAbstractViewComponentS
     // console.log('Leave');
     if (this.onViewLeave) app.$errorManager.handlePromise(this.onViewLeave());
   }
-
 }

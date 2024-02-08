@@ -1,11 +1,10 @@
 import { Container, IContainerProps, IContainerState } from '../container';
 
-interface IPaperProps extends IContainerProps { }
+interface IPaperProps extends IContainerProps {}
 
-interface IPaperState extends IContainerState { }
+interface IPaperState extends IContainerState {}
 
 export class Paper extends Container<IPaperProps, IPaperState> {
-
   public static get defaultProps(): Partial<IPaperProps> {
     return {
       ...super.defaultProps,
@@ -24,9 +23,6 @@ export class Paper extends Container<IPaperProps, IPaperState> {
   }
 
   public render() {
-    return this.renderAttributes(<div>
-      {this.inside()}
-    </div>, 'mn-paper');
+    return this.renderAttributes(<div>{this.inside()}</div>, 'mn-paper');
   }
-
 }

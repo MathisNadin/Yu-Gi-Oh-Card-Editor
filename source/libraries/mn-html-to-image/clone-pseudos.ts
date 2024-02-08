@@ -18,24 +18,14 @@ function formatCSSProperties(style: CSSStyleDeclaration) {
     .join(' ');
 }
 
-function getPseudoElementStyle(
-  className: string,
-  pseudo: Pseudo,
-  style: CSSStyleDeclaration
-): Text {
+function getPseudoElementStyle(className: string, pseudo: Pseudo, style: CSSStyleDeclaration): Text {
   const selector = `.${className}:${pseudo}`;
-  const cssText = style.cssText
-    ? formatCSSText(style)
-    : formatCSSProperties(style);
+  const cssText = style.cssText ? formatCSSText(style) : formatCSSProperties(style);
 
   return document.createTextNode(`${selector}{${cssText}}`);
 }
 
-function clonePseudoElement<T extends HTMLElement>(
-  nativeNode: T,
-  clonedNode: T,
-  pseudo: Pseudo
-) {
+function clonePseudoElement<T extends HTMLElement>(nativeNode: T, clonedNode: T, pseudo: Pseudo) {
   const style = window.getComputedStyle(nativeNode, pseudo);
   const content = style.getPropertyValue('content');
   if (content === '' || content === 'none') {
@@ -54,10 +44,7 @@ function clonePseudoElement<T extends HTMLElement>(
   clonedNode.appendChild(styleElement);
 }
 
-export function clonePseudoElements<T extends HTMLElement>(
-  nativeNode: T,
-  clonedNode: T
-) {
+export function clonePseudoElements<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
   clonePseudoElement(nativeNode, clonedNode, ':before');
   clonePseudoElement(nativeNode, clonedNode, ':after');
 }

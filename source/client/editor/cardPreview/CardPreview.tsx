@@ -15,7 +15,6 @@ interface ICardPreviewState extends IContainableState {
 }
 
 export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewState> implements Partial<ICardListener> {
-
   public constructor(props: ICardPreviewProps) {
     super(props);
     app.$card.addListener(this);
@@ -41,7 +40,11 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   private async onPlaceholderCardReady() {
-    await app.$card.writeCardFile('placeholder-card-builder', (this.state.renderCard as ICard).uuid as string, (this.state.renderCard as ICard).name);
+    await app.$card.writeCardFile(
+      'placeholder-card-builder',
+      (this.state.renderCard as ICard).uuid as string,
+      (this.state.renderCard as ICard).name
+    );
   }
 
   private async onCardReady() {
@@ -62,18 +65,39 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   }
 
   public render() {
-    return this.renderAttributes(<Container>
-      {!this.state.renderCard?.rush && <CardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
+    return this.renderAttributes(
+      <Container>
+        {!this.state.renderCard?.rush && (
+          <CardBuilder
+            forRender
+            card={this.state.renderCard as ICard}
+            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            id='placeholder-card-builder'
+          />
+        )}
 
-      {!!this.state.renderCard?.rush && <RushCardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
+        {!!this.state.renderCard?.rush && (
+          <RushCardBuilder
+            forRender
+            card={this.state.renderCard as ICard}
+            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            id='placeholder-card-builder'
+          />
+        )}
 
-      <CardBuilder card={this.props.card} onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())} id='main-card-builder' />
+        <CardBuilder
+          card={this.props.card}
+          onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())}
+          id='main-card-builder'
+        />
 
-      <Container className='cover' />
+        <Container className='cover' />
 
-      <img className='card-preview-img img-render' src={this.state.cardPlaceholder} alt='cardPreview' />
+        <img className='card-preview-img img-render' src={this.state.cardPlaceholder} alt='cardPreview' />
 
-      <Spinner className='card-preview-img rendering' />
-    </Container>, 'card-preview');
+        <Spinner className='card-preview-img rendering' />
+      </Container>,
+      'card-preview'
+    );
   }
 }

@@ -1,5 +1,5 @@
-import { deepClone } from "libraries/mn-tools";
-import { Component } from "react";
+import { deepClone } from 'libraries/mn-tools';
+import { Component } from 'react';
 
 // let log = logger('$errorManager');
 
@@ -18,7 +18,6 @@ export interface IErrorManagerDelegator {
   getErrorManagerBaseException(): IExceptionEvent;
 }
 
-
 interface IOptions {
   apiUrl: string;
   source?: string;
@@ -26,7 +25,6 @@ interface IOptions {
 }
 
 export class ErrorManagerService {
-
   private delegators: IErrorManagerDelegator[] = [];
   private options: IOptions;
   private inProcess = false;
@@ -36,11 +34,9 @@ export class ErrorManagerService {
     this.inProcess = false;
   }
 
-
   public configure(options: IOptions) {
     this.options = options;
   }
-
 
   public register(delegator: IErrorManagerDelegator) {
     this.delegators.push(delegator);
@@ -59,7 +55,7 @@ export class ErrorManagerService {
   public trigger(error: Error, component?: Component) {
     if (component) {
       // app.$toaster.pop(error.message);
-      component.setState({loading: false});
+      component.setState({ loading: false });
     }
     window.$oldErrorManager.call(window.console, error);
     if (!this.options || !this.options.apiUrl) {
@@ -71,19 +67,19 @@ export class ErrorManagerService {
     this.inProcess = true;
 
     let event!: IExceptionEvent;
-    this.delegators.forEach(d => {
+    this.delegators.forEach((d) => {
       event = d.getErrorManagerBaseException();
       return false;
     });
-    event = event || {} as unknown as IExceptionEvent;
+    event = event || ({} as unknown as IExceptionEvent);
     event = deepClone(event);
     event.source = {
       name: this.options.source as string,
-      version: this.options.version as string
+      version: this.options.version as string,
     };
     event.error = {
       message: error.message,
-      stack: error.stack ? error.stack.toString() : ''
+      stack: error.stack ? error.stack.toString() : '',
     };
   }
 

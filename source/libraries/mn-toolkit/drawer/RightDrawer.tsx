@@ -1,19 +1,18 @@
-import { integer, classNames } from "libraries/mn-tools";
-import { Component } from "react";
-import { IDrawerProps, IDrawer } from ".";
-import { IDeviceListener } from "../device";
-import { IOverlayListener } from "../overlay";
+import { integer, classNames } from 'libraries/mn-tools';
+import { Component } from 'react';
+import { IDrawerProps, IDrawer } from '.';
+import { IDeviceListener } from '../device';
+import { IOverlayListener } from '../overlay';
 
 interface IDrawerState {
   active: boolean;
   position: number;
 }
 
-export class RightDrawer extends Component<IDrawerProps, IDrawerState> implements
-  IDrawer,
-  Partial<IDeviceListener>,
-  Partial<IOverlayListener> {
-
+export class RightDrawer
+  extends Component<IDrawerProps, IDrawerState>
+  implements IDrawer, Partial<IDeviceListener>, Partial<IOverlayListener>
+{
   public static get defaultProps(): Partial<IDrawerProps> {
     return {
       overlay: true,
@@ -22,7 +21,7 @@ export class RightDrawer extends Component<IDrawerProps, IDrawerState> implement
       handleSize: 0,
       handleLabel: '',
       smallDeviceWidth: '90%',
-      mediumDeviceWidth: '350px'
+      mediumDeviceWidth: '350px',
     };
   }
 
@@ -84,7 +83,7 @@ export class RightDrawer extends Component<IDrawerProps, IDrawerState> implement
     } else {
       match = /^\s*(\d+)%\s*$/.exec(width);
       if (match) {
-        return integer(match[1]) * app.$device.screenWidth / 100;
+        return (integer(match[1]) * app.$device.screenWidth) / 100;
       } else {
         throw new Error(`format inconnu ${width}`);
       }
@@ -120,18 +119,25 @@ export class RightDrawer extends Component<IDrawerProps, IDrawerState> implement
     };
     let style = {
       width: `${this.width}px`,
-      transform: `translateX(${this.positionToTranslation(this.state.position || 0)}px)`
+      transform: `translateX(${this.positionToTranslation(this.state.position || 0)}px)`,
     };
 
-    return <div
-      style={style}
-      className={classNames({ active: this.state.active }, 'mn-drawer', 'mn-drawer-right', 'mn-layout-vertical-stack', this.props.className)}
-    >
-      {this.props.children}
-      <div className="handle" style={handleStyle} onClick={_e => this.toggle()}>
-        {this.props.handleLabel ? <span className="label">{this.props.handleLabel}</span> : null}
+    return (
+      <div
+        style={style}
+        className={classNames(
+          { active: this.state.active },
+          'mn-drawer',
+          'mn-drawer-right',
+          'mn-layout-vertical-stack',
+          this.props.className
+        )}
+      >
+        {this.props.children}
+        <div className='handle' style={handleStyle} onClick={(_e) => this.toggle()}>
+          {this.props.handleLabel ? <span className='label'>{this.props.handleLabel}</span> : null}
+        </div>
       </div>
-    </div>;
+    );
   }
-
 }

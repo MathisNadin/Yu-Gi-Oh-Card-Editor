@@ -1,9 +1,9 @@
-import { FormEvent, MouseEvent } from "react";
-import { IContainableProps, IContainableState, Containable } from "../containable";
+import { FormEvent, MouseEvent } from 'react';
+import { IContainableProps, IContainableState, Containable } from '../containable';
 import { HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { isDefined } from 'libraries/mn-tools';
-import { Typography } from "../typography";
+import { Typography } from '../typography';
 
 interface IFileInputProps extends IContainableProps {
   placeholder?: string;
@@ -17,13 +17,12 @@ interface IFileInputState extends IContainableState {
 }
 
 export class FileInput extends Containable<IFileInputProps, IFileInputState> {
-
   public static get defaultProps() {
     return {
-        ...super.defaultProps,
-        defaultValue: '',
-      };
-    }
+      ...super.defaultProps,
+      defaultValue: '',
+    };
+  }
 
   public constructor(props: IFileInputProps) {
     super(props);
@@ -52,16 +51,21 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
   }
 
   public render() {
-    if (!app.$device.isDesktop) return <Typography content="Impossible de choisir un chemin de fichier sur cette plateforme" />;
-    return this.renderAttributes(<HorizontalStack>
-      <input type='text'
-        name={this.props.name}
-        disabled={this.props.disabled}
-        placeholder={this.props.placeholder}
-        value={this.state.value}
-        onInput={e => this.onChange(e)}
-      />
-      <Icon iconId='toolkit-menu-meatballs' size={26} onTap={e => app.$errorManager.handlePromise(this.onTap(e))} />
-    </HorizontalStack>, 'mn-file-input');
+    if (!app.$device.isDesktop)
+      return <Typography content='Impossible de choisir un chemin de fichier sur cette plateforme' />;
+    return this.renderAttributes(
+      <HorizontalStack>
+        <input
+          type='text'
+          name={this.props.name}
+          disabled={this.props.disabled}
+          placeholder={this.props.placeholder}
+          value={this.state.value}
+          onInput={(e) => this.onChange(e)}
+        />
+        <Icon iconId='toolkit-menu-meatballs' size={26} onTap={(e) => app.$errorManager.handlePromise(this.onTap(e))} />
+      </HorizontalStack>,
+      'mn-file-input'
+    );
   }
 }

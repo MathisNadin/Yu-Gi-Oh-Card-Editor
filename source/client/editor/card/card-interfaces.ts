@@ -1,10 +1,23 @@
 export type TCardLanguage = 'fr' | 'en';
 
 export type TFrame =
-  'normal' | 'effect' | 'ritual' | 'fusion' |
-  'synchro' | 'darkSynchro' | 'xyz' | 'link' |
-  'spell' | 'trap' | 'token' | 'monsterToken' |
-  'skill' | 'obelisk' | 'slifer' | 'ra' | 'legendaryDragon';
+  | 'normal'
+  | 'effect'
+  | 'ritual'
+  | 'fusion'
+  | 'synchro'
+  | 'darkSynchro'
+  | 'xyz'
+  | 'link'
+  | 'spell'
+  | 'trap'
+  | 'token'
+  | 'monsterToken'
+  | 'skill'
+  | 'obelisk'
+  | 'slifer'
+  | 'ra'
+  | 'legendaryDragon';
 
 export type TAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine' | 'spell' | 'trap';
 
@@ -12,9 +25,26 @@ export type TStIcon = 'normal' | 'ritual' | 'quickplay' | 'field' | 'continuous'
 
 export type TNameStyle = 'default' | 'white' | 'black' | 'yellow' | 'gold' | 'silver' | 'rare' | 'ultra' | 'secret';
 
-export type TEdition = 'unlimited' | 'firstEdition' | 'limited' | 'forbidden' | 'forbiddenDeck' | 'duelTerminal' | 'anime';
+export type TEdition =
+  | 'unlimited'
+  | 'firstEdition'
+  | 'limited'
+  | 'forbidden'
+  | 'forbiddenDeck'
+  | 'duelTerminal'
+  | 'anime';
 
-export type TSticker = 'none' | 'silver' | 'gold' | 'grey' | 'white' | 'lightBlue' | 'skyBlue' | 'cyan' | 'aqua' | 'green';
+export type TSticker =
+  | 'none'
+  | 'silver'
+  | 'gold'
+  | 'grey'
+  | 'white'
+  | 'lightBlue'
+  | 'skyBlue'
+  | 'cyan'
+  | 'aqua'
+  | 'green';
 
 export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
@@ -28,8 +58,8 @@ export type CardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards
 
 export interface ICard {
   uuid?: string;
-  created?: Date,
-  modified?: Date,
+  created?: Date;
+  modified?: Date;
   language: TCardLanguage;
   name: string;
   nameStyle: TNameStyle;

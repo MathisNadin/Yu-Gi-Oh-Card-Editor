@@ -1,8 +1,7 @@
-import { IOverlayListener } from ".";
-import { Observable } from "../observable";
+import { IOverlayListener } from '.';
+import { Observable } from '../observable';
 
 export class OverlayService extends Observable<IOverlayListener> {
-
   private _overlay!: HTMLElement;
   private allowClick = true;
 

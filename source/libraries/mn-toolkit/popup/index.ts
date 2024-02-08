@@ -28,8 +28,8 @@ export interface IPopupButton {
   badge?: string | number;
   selected?: boolean;
   onTap?: (event?: Event) => void | Promise<void>;
-  validate?: boolean,
-  cancel?: boolean,
+  validate?: boolean;
+  cancel?: boolean;
   type?: string;
   disabled?: boolean;
   dangerous?: boolean;
@@ -44,8 +44,7 @@ export interface IPopup<RESULT = void> {
   addButtons: (...buttons: IPopupButton[]) => void;
 }
 
-export abstract class AbstractPopupComponent<Props, State, RESULT = void>
-  extends Component<Props, State> {
+export abstract class AbstractPopupComponent<Props, State, RESULT = void> extends Component<Props, State> {
   protected popup!: IPopup<RESULT>;
   public abstract onInitializePopup(popup: IPopup<RESULT>, props: Props): void;
   public onDestroyPopup(): void {}

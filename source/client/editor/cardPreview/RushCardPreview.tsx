@@ -14,8 +14,10 @@ interface IRushCardPreviewState extends IContainableState {
   renderCard: ICard | undefined;
 }
 
-export class RushCardPreview extends Containable<IRushCardPreviewProps, IRushCardPreviewState> implements Partial<ICardListener> {
-
+export class RushCardPreview
+  extends Containable<IRushCardPreviewProps, IRushCardPreviewState>
+  implements Partial<ICardListener>
+{
   public constructor(props: IRushCardPreviewProps) {
     super(props);
     app.$card.addListener(this);
@@ -41,7 +43,11 @@ export class RushCardPreview extends Containable<IRushCardPreviewProps, IRushCar
   }
 
   private async onPlaceholderCardReady() {
-    await app.$card.writeCardFile('placeholder-card-builder', (this.state.renderCard as ICard).uuid as string, (this.state.renderCard as ICard).name);
+    await app.$card.writeCardFile(
+      'placeholder-card-builder',
+      (this.state.renderCard as ICard).uuid as string,
+      (this.state.renderCard as ICard).name
+    );
   }
 
   private async onCardReady() {
@@ -62,18 +68,39 @@ export class RushCardPreview extends Containable<IRushCardPreviewProps, IRushCar
   }
 
   public render() {
-    return this.renderAttributes(<Container>
-      {!this.state.renderCard?.rush && <CardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
+    return this.renderAttributes(
+      <Container>
+        {!this.state.renderCard?.rush && (
+          <CardBuilder
+            forRender
+            card={this.state.renderCard as ICard}
+            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            id='placeholder-card-builder'
+          />
+        )}
 
-      {!!this.state.renderCard?.rush && <RushCardBuilder forRender card={this.state.renderCard as ICard} onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())} id='placeholder-card-builder' />}
+        {!!this.state.renderCard?.rush && (
+          <RushCardBuilder
+            forRender
+            card={this.state.renderCard as ICard}
+            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            id='placeholder-card-builder'
+          />
+        )}
 
-      <RushCardBuilder card={this.props.card} onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())} id='main-card-builder' />
+        <RushCardBuilder
+          card={this.props.card}
+          onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())}
+          id='main-card-builder'
+        />
 
-      <Container className='cover' />
+        <Container className='cover' />
 
-      <img className='card-preview-img img-render' src={this.state.rdCardPlaceholder} alt='cardPreview' />
+        <img className='card-preview-img img-render' src={this.state.rdCardPlaceholder} alt='cardPreview' />
 
-      <Spinner className='card-preview-img rendering' />
-    </Container>, 'card-preview');
+        <Spinner className='card-preview-img rendering' />
+      </Container>,
+      'card-preview'
+    );
   }
 }

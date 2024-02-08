@@ -1,6 +1,6 @@
-import { createRoot } from "react-dom/client";
-import { IApplicationListener } from "libraries/mn-toolkit";
-import { Page } from "../page";
+import { createRoot } from 'react-dom/client';
+import { IApplicationListener } from 'libraries/mn-toolkit';
+import { Page } from '../page';
 
 const HOME_STATE = 'home';
 
@@ -9,7 +9,6 @@ const HOME_STATE = 'home';
  * l'initialisation de l'ensemble des composants.
  */
 export class CoreService implements Partial<IApplicationListener> {
-
   /**
    * Configuration de l'application (appelé par toolkit/bootstrap).
    */
@@ -29,5 +28,4 @@ export class CoreService implements Partial<IApplicationListener> {
     root.render(<Page />);
     this.gotoHome();
   }
-
 }

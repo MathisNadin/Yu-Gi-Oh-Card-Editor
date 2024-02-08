@@ -1,5 +1,5 @@
-import { Icon } from "../icon";
-import { IPaneProps, IPaneState, Pane } from "../pane/Pane";
+import { Icon } from '../icon';
+import { IPaneProps, IPaneState, Pane } from '../pane/Pane';
 
 interface IMenuPaneProps extends IPaneProps {
   dark?: boolean;
@@ -12,7 +12,6 @@ interface IMenuPaneState extends IPaneState {
 }
 
 export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
-
   public static get defaultProps(): Partial<IMenuPaneProps> {
     return {
       ...super.defaultProps,
@@ -31,13 +30,13 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
     app.$overlay.addListener({
       overlayClick: () => {
         this.toggle();
-      }
+      },
     });
 
     app.$device.addListener({
       deviceScreenSpecificationChanged: () => {
         this.update(false);
-      }
+      },
     });
   }
 
@@ -84,10 +83,12 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
   }
 
   public render() {
-    return this.renderAttributes(<div>
-      <Icon className="shrink-btn" onTap={() => this.toggle()} iconId={this.getCloseIcon()} />
-      {this.props.children}
-    </div>, 'mn-menu-pane');
+    return this.renderAttributes(
+      <div>
+        <Icon className='shrink-btn' onTap={() => this.toggle()} iconId={this.getCloseIcon()} />
+        {this.props.children}
+      </div>,
+      'mn-menu-pane'
+    );
   }
-
 }

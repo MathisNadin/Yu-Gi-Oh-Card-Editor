@@ -1,11 +1,11 @@
-import { IDrawerListener, IDrawer } from ".";
-import { Observable } from "../observable";
+import { IDrawerListener, IDrawer } from '.';
+import { Observable } from '../observable';
 
 export class DrawerService extends Observable<IDrawerListener> {
   private panes: IDrawer[] = [];
 
   public get active() {
-    return !!this.panes.find(pane => pane.isActive);
+    return !!this.panes.find((pane) => pane.isActive);
   }
 
   public fireClose(pane: IDrawer) {
@@ -25,7 +25,6 @@ export class DrawerService extends Observable<IDrawerListener> {
   }
 
   public close() {
-    this.panes.forEach(pane => pane.retract());
+    this.panes.forEach((pane) => pane.retract());
   }
-
 }

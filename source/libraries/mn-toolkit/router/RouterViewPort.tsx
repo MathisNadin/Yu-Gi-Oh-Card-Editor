@@ -12,9 +12,11 @@ interface IRouterViewPortState {
   fragment: string;
 }
 
-export class RouterViewPort extends Component<IRouterViewPortProps, IRouterViewPortState> implements Partial<IRouterListener> {
-
-  public static get defaultProps() : Partial<IRouterViewPortProps> {
+export class RouterViewPort
+  extends Component<IRouterViewPortProps, IRouterViewPortState>
+  implements Partial<IRouterListener>
+{
+  public static get defaultProps(): Partial<IRouterViewPortProps> {
     return {
       className: '',
     };
@@ -37,7 +39,12 @@ export class RouterViewPort extends Component<IRouterViewPortProps, IRouterViewP
 
   public render() {
     const currentState = app.$router.currentState as IState;
-    if (!app.$router.ready) return <div><Spinner /></div>;
+    if (!app.$router.ready)
+      return (
+        <div>
+          <Spinner />
+        </div>
+      );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const c: Component<any, any> = currentState.component;
@@ -45,9 +52,10 @@ export class RouterViewPort extends Component<IRouterViewPortProps, IRouterViewP
     const content = createElement(c as unknown as string, app.$router.parameters);
     // console.log('render', key, content);
 
-    return <div key={key} className={classNames({ ['loaded']: this.state.loaded }, 'mn-router', this.props.className)}>
-      {content}
-    </div>;
+    return (
+      <div key={key} className={classNames({ ['loaded']: this.state.loaded }, 'mn-router', this.props.className)}>
+        {content}
+      </div>
+    );
   }
-
 }

@@ -10,15 +10,13 @@ export interface IIconProps extends IContainableProps {
   size: number;
 }
 
-export interface IIconState extends IContainableState {
-}
+export interface IIconState extends IContainableState {}
 
 export class Icon<P extends IIconProps, S extends IIconState> extends Containable<P, S> {
-
   public static get defaultProps(): Partial<IIconProps> {
     return {
       ...super.defaultProps,
-      size: 20
+      size: 20,
     };
   }
 
@@ -51,5 +49,4 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     if (!icon) return <div>{this.props.iconId}</div>;
     return this.renderAttributes(icon, 'mn-icon');
   }
-
 }

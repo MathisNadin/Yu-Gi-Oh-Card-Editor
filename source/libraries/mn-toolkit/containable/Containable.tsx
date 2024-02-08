@@ -1,10 +1,4 @@
-import {
-  Component,
-  MouseEvent,
-  PropsWithChildren,
-  ReactElement,
-  cloneElement
-} from 'react';
+import { Component, MouseEvent, PropsWithChildren, ReactElement, cloneElement } from 'react';
 import { classNames, isDefined, isNumber } from 'libraries/mn-tools';
 import { TBackgroundColor } from '../themeSettings';
 
@@ -78,12 +72,14 @@ export interface IContainableState {
   loaded: boolean;
 }
 
-export class Containable<PROPS extends IContainableProps,  STATE extends IContainableState> extends Component<PROPS, STATE> {
-
+export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends Component<
+  PROPS,
+  STATE
+> {
   public static get defaultProps(): Partial<IContainableProps> {
     return {
       zIndex: 'content',
-      floatPosition: 'none'
+      floatPosition: 'none',
     };
   }
 
@@ -116,23 +112,15 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
       ...fc.props,
       className: classNames(this.renderClasses(name)),
       style: this.renderStyle(),
-      onClick: (e: MouseEvent) =>
-        app.$errorManager.handlePromise(this.props.onTap?.(e)),
-      onScroll: (e: UIEvent) =>
-        app.$errorManager.handlePromise(this.props.onScroll?.(e)),
+      onClick: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onTap?.(e)),
+      onScroll: (e: UIEvent) => app.$errorManager.handlePromise(this.props.onScroll?.(e)),
       draggable: this.props.draggable,
-      onMouseEnter: (e: MouseEvent) =>
-        app.$errorManager.handlePromise(this.props.onMouseEnter?.(e)),
-      onMouseLeave: (e: MouseEvent) =>
-        app.$errorManager.handlePromise(this.props.onMouseLeave?.(e)),
-      onDragStart: (e: DragEvent) =>
-        app.$errorManager.handlePromise(this.props.onDragStart?.(e)),
-      onDragEnd: (e: DragEvent) =>
-        app.$errorManager.handlePromise(this.props.onDragEnd?.(e)),
-      onDragLeave: (e: DragEvent) =>
-        app.$errorManager.handlePromise(this.props.onDragLeave?.(e)),
-      onDragEnter: (e: DragEvent) =>
-        app.$errorManager.handlePromise(this.props.onDragEnter?.(e))
+      onMouseEnter: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseEnter?.(e)),
+      onMouseLeave: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseLeave?.(e)),
+      onDragStart: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragStart?.(e)),
+      onDragEnd: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnd?.(e)),
+      onDragLeave: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragLeave?.(e)),
+      onDragEnter: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnter?.(e)),
     };
 
     if (this.props.onDrop || this.props.onDragOver) {
@@ -147,8 +135,7 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
           e.stopPropagation();
           e.preventDefault();
         }
-        if (this.props.onDragOver)
-          app.$errorManager.handlePromise(this.props.onDragOver(e));
+        if (this.props.onDragOver) app.$errorManager.handlePromise(this.props.onDragOver(e));
       };
     }
 
@@ -167,41 +154,25 @@ export class Containable<PROPS extends IContainableProps,  STATE extends IContai
       }
     }
     if (isDefined(this.props.height))
-      style.height = isNumber(this.props.height)
-        ? `${this.props.height}px`
-        : (this.props.height as string);
+      style.height = isNumber(this.props.height) ? `${this.props.height}px` : (this.props.height as string);
     if (isDefined(this.props.maxHeight))
-      style.maxHeight = isNumber(this.props.maxHeight)
-        ? `${this.props.maxHeight}px`
-        : (this.props.maxHeight as string);
+      style.maxHeight = isNumber(this.props.maxHeight) ? `${this.props.maxHeight}px` : (this.props.maxHeight as string);
     if (isDefined(this.props.minHeight))
-      style.minHeight = isNumber(this.props.minHeight)
-        ? `${this.props.minHeight}px`
-        : (this.props.minHeight as string);
+      style.minHeight = isNumber(this.props.minHeight) ? `${this.props.minHeight}px` : (this.props.minHeight as string);
     if (isDefined(this.props.width))
-      style.width = isNumber(this.props.width)
-        ? `${this.props.width}px`
-        : (this.props.width as string);
+      style.width = isNumber(this.props.width) ? `${this.props.width}px` : (this.props.width as string);
     if (isDefined(this.props.maxWidth))
-      style.maxWidth = isNumber(this.props.maxWidth)
-        ? `${this.props.maxWidth}px`
-        : (this.props.maxWidth as string);
+      style.maxWidth = isNumber(this.props.maxWidth) ? `${this.props.maxWidth}px` : (this.props.maxWidth as string);
     if (isDefined(this.props.minWidth))
-      style.minWidth = isNumber(this.props.minWidth)
-        ? `${this.props.minWidth}px`
-        : (this.props.minWidth as string);
+      style.minWidth = isNumber(this.props.minWidth) ? `${this.props.minWidth}px` : (this.props.minWidth as string);
     return style;
   }
 
   public render() {
-    return this.renderAttributes(
-      <div>{this.props.children}</div>,
-      'mn-containable'
-    );
+    return this.renderAttributes(<div>{this.props.children}</div>, 'mn-containable');
   }
 
   public inside() {
     return this.props.children;
   }
-
 }

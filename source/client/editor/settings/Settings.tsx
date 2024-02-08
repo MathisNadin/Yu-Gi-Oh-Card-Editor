@@ -1,4 +1,15 @@
-import { IContainableProps, IContainableState, Containable, Button, FileInput, HorizontalStack, Icon, Spacer, Spinner, VerticalStack } from 'libraries/mn-toolkit';
+import {
+  IContainableProps,
+  IContainableState,
+  Containable,
+  Button,
+  FileInput,
+  HorizontalStack,
+  Icon,
+  Spacer,
+  Spinner,
+  VerticalStack,
+} from 'libraries/mn-toolkit';
 import { ISettingsListener, IUserSettings } from './SettingsService';
 
 interface ISettingsProps extends IContainableProps {}
@@ -8,7 +19,6 @@ interface ISettingsState extends IContainableState {
 }
 
 export class Settings extends Containable<ISettingsProps, ISettingsState> implements Partial<ISettingsListener> {
-
   public constructor(props: ISettingsProps) {
     super(props);
     this.state = {
@@ -41,7 +51,9 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultArtworkPath() {
-    const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultArtworkPath);
+    const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(
+      this.state.settings.defaultArtworkPath
+    );
     if (!defaultArtworkPath) return;
     await this.onDefaultArtworkPathChanged(defaultArtworkPath);
   }
@@ -51,7 +63,9 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   private async getDefaultImgImportPath() {
-    const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultImgImportPath);
+    const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(
+      this.state.settings.defaultImgImportPath
+    );
     if (!defaultImgImportPath) return;
     await this.onDefaultImgImportPathChanged(defaultImgImportPath);
   }
@@ -62,59 +76,68 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
 
   public render() {
     if (!this.state?.settings) return <Spinner />;
-    return this.renderAttributes(<VerticalStack fill>
-      <VerticalStack fill gutter padding>
-        <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-millennium-puzzle' color='1' />
-          {app.$device.isDesktop && <FileInput
-            fill
-            placeholder="Chemin de rendu par défaut"
-            defaultValue={this.state.settings.defaultRenderPath}
-            onChange={url => this.onDefaultRenderPathChanged(url)}
-            overrideOnTap={() => this.getDefaultRenderPath()}
-          />}
-        </HorizontalStack>
+    return this.renderAttributes(
+      <VerticalStack fill>
+        <VerticalStack fill gutter padding>
+          <HorizontalStack verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-millennium-puzzle' color='1' />
+            {app.$device.isDesktop && (
+              <FileInput
+                fill
+                placeholder='Chemin de rendu par défaut'
+                defaultValue={this.state.settings.defaultRenderPath}
+                onChange={(url) => this.onDefaultRenderPathChanged(url)}
+                overrideOnTap={() => this.getDefaultRenderPath()}
+              />
+            )}
+          </HorizontalStack>
 
-        <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-image' color='1' />
-          {app.$device.isDesktop && <FileInput
-            fill
-            placeholder="Chemin vers l'artwork par défaut"
-            defaultValue={this.state.settings.defaultArtworkPath}
-            onChange={path => this.onDefaultArtworkPathChanged(path)}
-            overrideOnTap={() => this.getDefaultArtworkPath()}
-          />}
-        </HorizontalStack>
+          <HorizontalStack verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-image' color='1' />
+            {app.$device.isDesktop && (
+              <FileInput
+                fill
+                placeholder="Chemin vers l'artwork par défaut"
+                defaultValue={this.state.settings.defaultArtworkPath}
+                onChange={(path) => this.onDefaultArtworkPathChanged(path)}
+                overrideOnTap={() => this.getDefaultArtworkPath()}
+              />
+            )}
+          </HorizontalStack>
 
-        <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' iconId='toolkit-image-sync' color='1' />
-          {app.$device.isDesktop && <FileInput
-            fill
-            placeholder="Chemin d'import d'images par défaut"
-            defaultValue={this.state.settings.defaultImgImportPath}
-            onChange={path => this.onDefaultImgImportPathChanged(path)}
-            overrideOnTap={() => this.getDefaultImgImportPath()}
-          />}
-        </HorizontalStack>
+          <HorizontalStack verticalItemAlignment='middle'>
+            <Icon className='field-icon' iconId='toolkit-image-sync' color='1' />
+            {app.$device.isDesktop && (
+              <FileInput
+                fill
+                placeholder="Chemin d'import d'images par défaut"
+                defaultValue={this.state.settings.defaultImgImportPath}
+                onChange={(path) => this.onDefaultImgImportPathChanged(path)}
+                overrideOnTap={() => this.getDefaultImgImportPath()}
+              />
+            )}
+          </HorizontalStack>
 
-        <Spacer />
+          <Spacer />
 
-        <HorizontalStack gutter verticalItemAlignment='middle'>
-          <Button
-            fill
-            label='Importer des données'
-            color='energized'
-            onTap={() => app.$errorManager.handlePromise(app.$settings.importData())}
-          />
+          <HorizontalStack gutter verticalItemAlignment='middle'>
+            <Button
+              fill
+              label='Importer des données'
+              color='energized'
+              onTap={() => app.$errorManager.handlePromise(app.$settings.importData())}
+            />
 
-          <Button
-            fill
-            label='Exporter les données'
-            color='royal'
-            onTap={() => app.$errorManager.handlePromise(app.$settings.exportData())}
-          />
-        </HorizontalStack>
-      </VerticalStack>
-    </VerticalStack>, 'settings');
+            <Button
+              fill
+              label='Exporter les données'
+              color='royal'
+              onTap={() => app.$errorManager.handlePromise(app.$settings.exportData())}
+            />
+          </HorizontalStack>
+        </VerticalStack>
+      </VerticalStack>,
+      'settings'
+    );
   }
 }

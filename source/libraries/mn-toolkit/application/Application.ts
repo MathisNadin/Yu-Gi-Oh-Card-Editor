@@ -1,5 +1,5 @@
-import { each, sortDependencies } from "libraries/mn-tools";
-import { Observable } from "../observable";
+import { each, sortDependencies } from 'libraries/mn-tools';
+import { Observable } from '../observable';
 
 export interface IApplicationListener {
   applicationReady(): void;
@@ -33,10 +33,8 @@ export interface IBootstrapOptions {
  * Core engine to boostrap the application.
  *
  */
-export class Application
-  extends Observable<IApplicationListener>
+export class Application extends Observable<IApplicationListener> {
   // implements IApplicationListener
-{
   private configurationCallBack: () => void = () => {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _services: { [name: string]: IServiceOptions<any> } = {};
@@ -89,7 +87,7 @@ export class Application
       .then(() => this.fireReady())
       // eslint-disable-next-line no-console
       .catch((e: Error) => console.error(e));
-/*     this.bootstrapDOM()
+    /*     this.bootstrapDOM()
       .then(() => this.bootstrapServices())
       .then(() => this.fireReady())
       .catch((e: Error) => app.$errorManager.trigger(e)); */
@@ -108,15 +106,15 @@ export class Application
     if (this.configurationCallBack) this.configurationCallBack();
   }
 
-/*   public get isProd(): boolean {
+  /*   public get isProd(): boolean {
     return this.stage === 'prod';
   } */
 
-/*   public get hasCordova() {
+  /*   public get hasCordova() {
     return typeof (window as any).cordova !== 'undefined';
   } */
 
-/*   public exit() {
+  /*   public exit() {
     if (this.hasCordova) (navigator as any).app.exitApp();
   } */
 
@@ -125,10 +123,7 @@ export class Application
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     each(this._services, (options: IServiceOptions<any>, name: string) => {
-      if (
-        (this._services[name].depends as (keyof IApp)[]).length === 0 &&
-        !this._services[name].clazz.prototype.setup
-      )
+      if ((this._services[name].depends as (keyof IApp)[]).length === 0 && !this._services[name].clazz.prototype.setup)
         return;
       graph[name] = options.depends as (keyof IApp)[];
     });
@@ -148,7 +143,7 @@ export class Application
     }
   }
 
-/*   public applicationReady() {
+  /*   public applicationReady() {
     setTimeout(() => app.$device.hideSplash());
   } */
 
@@ -159,17 +154,10 @@ export class Application
    * @param {Class} clazz
    * @param {Object} options
    */
-  public service<T>(
-    name: keyof IApp,
-    clazz: T,
-    options: IServiceOptions<T> = {}
-  ) {
+  public service<T>(name: keyof IApp, clazz: T, options: IServiceOptions<T> = {}) {
     if (!clazz) throw new Error(`Nous avons besoin d'une classe pour ${name}`);
     options.depends = options.depends || [];
-    if (!Array.isArray(options.depends))
-      throw new Error(
-        `Mauvaises dépendances pour ${name} : ${options.depends}`
-      );
+    if (!Array.isArray(options.depends)) throw new Error(`Mauvaises dépendances pour ${name} : ${options.depends}`);
     options.name = name;
     options.clazz = clazz;
     this._services[name] = options;
@@ -189,7 +177,7 @@ export class Application
     });
   }
 
-/*   private async bootstrapDOM() {
+  /*   private async bootstrapDOM() {
     return new Promise<void>(resolve => {
       // 7. On s'accroche maintenat à la disponibilité du DOM
       // pour bootstrapper l'application

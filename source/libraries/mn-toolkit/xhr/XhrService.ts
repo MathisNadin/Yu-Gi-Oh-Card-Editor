@@ -5,8 +5,8 @@ import { Observable } from '../observable';
 declare global {
   interface XMLHttpRequest {
     $id: string;
-    $uploadProgress: IXhrProgress,
-    $downloadProgress: IXhrProgress
+    $uploadProgress: IXhrProgress;
+    $downloadProgress: IXhrProgress;
     $url: string;
   }
 
@@ -38,15 +38,21 @@ export function isXhrError(value: Error): value is XhrError {
  * @memberOf $xhr
  */
 export class XhrService extends Observable<IXhrListener> {
-
-  private fireStart(requestId: string) { this.dispatch('xhrStart', requestId); }
-  private fireStop(requestId: string) { this.dispatch('xhrStop', requestId); }
-  private fireError(requestId: string, statusCode: number, url: string) { this.dispatch('xhrError', requestId, statusCode, url); }
-  private fireProgress(requestId: string, progress: IXhrProgress) { this.dispatch('xhrProgress', requestId, progress); }
+  private fireStart(requestId: string) {
+    this.dispatch('xhrStart', requestId);
+  }
+  private fireStop(requestId: string) {
+    this.dispatch('xhrStop', requestId);
+  }
+  private fireError(requestId: string, statusCode: number, url: string) {
+    this.dispatch('xhrError', requestId, statusCode, url);
+  }
+  private fireProgress(requestId: string, progress: IXhrProgress) {
+    this.dispatch('xhrProgress', requestId, progress);
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async request(options: IXhrRequestOptions): Promise<any> {
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new Promise<any>((resolve, reject) => {
       options.timeout = options.timeout || 0;
@@ -58,18 +64,24 @@ export class XhrService extends Observable<IXhrListener> {
       if (typeof (window as any).XMLHttpRequest !== 'undefined') {
         request = new XMLHttpRequest();
       } else {
-        let versions = ["MSXML2.XmlHttp.5.0", "MSXML2.XmlHttp.4.0", "MSXML2.XmlHttp.3.0", "MSXML2.XmlHttp.2.0", "Microsoft.XmlHttp"];
+        let versions = [
+          'MSXML2.XmlHttp.5.0',
+          'MSXML2.XmlHttp.4.0',
+          'MSXML2.XmlHttp.3.0',
+          'MSXML2.XmlHttp.2.0',
+          'Microsoft.XmlHttp',
+        ];
 
         for (let i = 0, len = versions.length; i < len; i++) {
           try {
             request = new ActiveXObject(versions[i]);
             break;
-          } catch (e) { }
+          } catch (e) {}
         }
       }
       if (typeof request === 'undefined') return reject(new XhrError('No XHR'));
 
-      if (options.binary) request.responseType = "arraybuffer";
+      if (options.binary) request.responseType = 'arraybuffer';
 
       let url = options.url;
       if (options.method === 'GET') {
@@ -103,26 +115,33 @@ export class XhrService extends Observable<IXhrListener> {
         request.ontimeout = () => reject('timeout');
       }
 
-      request.upload.addEventListener('progress', event => {
-        let total = event.total || parseInt(request.getResponseHeader('Data-Size') as string, 10);
-        if (total && event.loaded < total) {
-          request.$uploadProgress = {
-            id: request.$id,
-            total: total,
-            progress: event.loaded
-          };
-          this.fireProgress(request.$id, request.$uploadProgress);
-        }
-      }, false);
+      request.upload.addEventListener(
+        'progress',
+        (event) => {
+          let total = event.total || parseInt(request.getResponseHeader('Data-Size') as string, 10);
+          if (total && event.loaded < total) {
+            request.$uploadProgress = {
+              id: request.$id,
+              total: total,
+              progress: event.loaded,
+            };
+            this.fireProgress(request.$id, request.$uploadProgress);
+          }
+        },
+        false
+      );
 
-      request.addEventListener('progress', event => {
-        let total = event.total || parseInt(request.getResponseHeader('Data-Size') as string, 10);
-        if (total && event.loaded < total) {
-          request.$downloadProgress = { id: request.$id, total: total, progress: event.loaded };
-          this.fireProgress(request.$id, request.$downloadProgress);
-        }
-      }, false);
-
+      request.addEventListener(
+        'progress',
+        (event) => {
+          let total = event.total || parseInt(request.getResponseHeader('Data-Size') as string, 10);
+          if (total && event.loaded < total) {
+            request.$downloadProgress = { id: request.$id, total: total, progress: event.loaded };
+            this.fireProgress(request.$id, request.$downloadProgress);
+          }
+        },
+        false
+      );
 
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       let self = this;
@@ -138,7 +157,6 @@ export class XhrService extends Observable<IXhrListener> {
               let contentType = this.getResponseHeader('content-type') as string;
               let tokens = contentType.split(/\s*;\s*/);
               if (tokens[0] === 'application/json') {
-
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 data = unserialize(data);
               }
@@ -167,5 +185,4 @@ export class XhrService extends Observable<IXhrListener> {
       return request.$id;
     });
   }
-
 }

@@ -4,7 +4,11 @@ import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'el
 import { existsSync, readFileSync, writeFile } from 'fs';
 import { download } from 'electron-dl';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
-import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate, patchIpcMain } from '../../client/electronMainPatchs';
+import {
+  buildProjectMenuDarwinTemplate,
+  buildProjectMenuTemplate,
+  patchIpcMain,
+} from '../../client/electronMainPatchs';
 
 declare global {
   type IIpcMain = Electron.IpcMain;
@@ -42,7 +46,7 @@ ipcMain.handle('getDirectoryPath', async (_event, defaultPath: string) => {
 ipcMain.handle('readFileUtf8', async (_event, filters: FileFilter[]) => {
   const directoryPath = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters
+    filters,
   });
   if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
   return readFileSync(directoryPath.filePaths[0], 'utf-8');
@@ -53,12 +57,11 @@ ipcMain.handle('writeJsonFile', async (_event, defaultFileName: string, jsonData
   if (!filePath) {
     const result = await dialog.showSaveDialog({
       defaultPath: `${defaultFileName}.json`,
-      filters: [{ extensions: ['json'], name: 'JSON File' }]
+      filters: [{ extensions: ['json'], name: 'JSON File' }],
     });
     filePath = result?.filePath;
     canceled = result?.canceled;
-  }
-  else {
+  } else {
     filePath = join(filePath, `${defaultFileName}.json`);
   }
 
@@ -77,12 +80,11 @@ ipcMain.handle('writePngFile', async (_event, defaultFileName: string, base64: s
   if (!filePath) {
     const result = await dialog.showSaveDialog({
       defaultPath: `${defaultFileName}.png`,
-      filters: [{ extensions: ['png'], name: 'PNG Image' }]
+      filters: [{ extensions: ['png'], name: 'PNG Image' }],
     });
     filePath = result?.filePath;
     canceled = result?.canceled;
-  }
-  else {
+  } else {
     filePath = join(filePath, `${defaultFileName}.png`);
   }
 
@@ -119,8 +121,6 @@ ipcMain.handle('download', async (_event, directory: string, url: string) => {
 });
 
 patchIpcMain(ipcMain);
-
-
 
 /**
  * Create main window
@@ -229,9 +229,6 @@ const createWindow = async () => {
   if (isDev) mainWindow.webContents.openDevTools();
 };
 
-
-
-
 /**
  * Add event listeners
  */
@@ -248,7 +245,7 @@ app
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-    if (!BrowserWindow.getAllWindows().length) createWindow();
+      if (!BrowserWindow.getAllWindows().length) createWindow();
     });
   })
   .catch(console.log);

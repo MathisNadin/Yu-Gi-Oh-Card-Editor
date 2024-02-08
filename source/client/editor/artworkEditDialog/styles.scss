@@ -77,16 +77,11 @@
       border: 0;
 
       &.full-card {
-        background: #DEB887;
+        background: #deb887;
       }
 
       &.full-pendulum-card {
-        background: linear-gradient(
-          250deg,
-          green -29%,
-          aquamarine 35%,
-          #DEB887 82%
-        );
+        background: linear-gradient(250deg, green -29%, aquamarine 35%, #deb887 82%);
       }
     }
   }
