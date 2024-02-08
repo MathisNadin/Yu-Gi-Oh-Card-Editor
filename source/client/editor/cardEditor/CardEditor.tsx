@@ -113,8 +113,10 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     };
   }
 
-  public componentWillReceiveProps(nextProps: ICardEditorProps) {
-    this.setState({ card: nextProps.card }, () => this.forceUpdate());
+  public componentDidUpdate() {
+    if (this.props.card !== this.state.card) {
+      this.setState({ card: this.props.card });
+    }
   }
 
   private onLanguageChange(language: TCardLanguage) {

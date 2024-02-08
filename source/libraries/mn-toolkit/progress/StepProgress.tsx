@@ -34,8 +34,8 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
     this.setState({ progress: props.defaultValue });
   }
 
-  public componentWillReceiveProps(nextProps: IProps<ID>) {
-    this.setState({ progress: nextProps.defaultValue });
+  public componentDidUpdate() {
+    if (this.props.defaultValue !== this.state.progress) this.setState({ progress: this.props.defaultValue });
   }
 
   public render() {

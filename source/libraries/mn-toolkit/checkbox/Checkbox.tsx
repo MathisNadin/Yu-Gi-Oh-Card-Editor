@@ -33,9 +33,9 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
     this.setState({ value: props.defaultValue as boolean });
   }
 
-  public componentWillReceiveProps(props: ICheckBoxProps) {
-    if (props.defaultValue !== this.state.value) {
-      this.setState({ value: props.defaultValue as boolean });
+  public componentDidUpdate() {
+    if (this.props.defaultValue !== this.state.value) {
+      this.setState({ value: this.props.defaultValue as boolean });
     }
   }
 

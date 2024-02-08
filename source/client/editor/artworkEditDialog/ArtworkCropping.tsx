@@ -27,20 +27,22 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     } as IArtworkCroppingState;
   }
 
-  public componentWillReceiveProps(nextProps: IArtworkCroppingProps, _prevState: IArtworkCroppingState) {
-    if (isDefined(this.state?.higher)) this.loadHigher(nextProps);
-  }
-
   public componentDidMount() {
-    this.loadHigher(this.props);
+    this.loadHigher();
   }
 
-  private loadHigher(props: IArtworkCroppingProps) {
-    if (!props.artworkBase64) {
+  public componentDidUpdate(prevProps: IArtworkCroppingProps) {
+    if (isDefined(this.state?.higher) && prevProps !== this.props) {
+      this.loadHigher();
+    }
+  }
+
+  private loadHigher() {
+    if (!this.props.artworkBase64) {
       this.setState({
         loaded: true,
         higher: false,
-        crop: props.crop,
+        crop: this.props.crop,
       });
     } else {
       const container = document.querySelector('.artwork-cropping') as HTMLElement;
@@ -48,14 +50,14 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
       const containerisHigher = container.clientHeight > container.clientWidth;
 
       const image = new Image();
-      image.src = props.artworkBase64;
+      image.src = this.props.artworkBase64;
       const imageIsHigher = image.height > image.width;
 
       image.onload = () =>
         this.setState({
           loaded: true,
           higher: containerisHigher && imageIsHigher,
-          crop: props.crop,
+          crop: this.props.crop,
         });
     }
   }

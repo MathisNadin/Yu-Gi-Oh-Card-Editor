@@ -93,8 +93,10 @@ export class TabSet<TAbstractTabIndex> extends Containable<
     this.setState({ value: props.defaultValue, items: props.items });
   } */
 
-  public componentWillReceiveProps(props: ITabSetProps<TAbstractTabIndex>) {
-    this.setState({ value: props.defaultValue, items: props.items });
+  public componentDidUpdate() {
+    if (this.state.value !== this.props.defaultValue || this.state.items !== this.props.items) {
+      this.setState({ value: this.props.defaultValue, items: this.props.items });
+    }
   }
 
   private getListItems() {

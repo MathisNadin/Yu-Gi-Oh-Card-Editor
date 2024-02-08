@@ -68,18 +68,17 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
-  public componentWillReceiveProps(nextProps: IRushCardBuilderProps, _prevState: IRushCardBuilderState) {
-    this.setState({ adjustState: 'waiting' });
-    app.$errorManager.handlePromise(this.debouncedRefreshState(nextProps.card));
-  }
-
   public componentDidMount() {
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
-    app.$errorManager.handlePromise(this.debouncedRefreshState(this.props.card));
+    this.debouncedRefreshState(this.props.card);
   }
 
-  public componentDidUpdate() {
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
+  public componentDidUpdate(prevProps: IRushCardBuilderProps) {
+    if (prevProps.card !== this.props.card) {
+      this.setState({ adjustState: 'waiting' }, () => {
+        this.debouncedRefreshState(this.props.card);
+      });
+    }
   }
 
   public componentWillUnmount() {
@@ -258,6 +257,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     };
 
     this.setState(state);
+    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private getProcessedText(text: string, forceBulletAtStart?: boolean) {

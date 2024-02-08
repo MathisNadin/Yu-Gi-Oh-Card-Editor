@@ -32,9 +32,9 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     this.state = { ...(this.state || {}), value: props.defaultValue };
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<INumberInputProps>) {
-    if (nextProps.defaultValue !== this.state.value) {
-      this.setState({ value: nextProps.defaultValue });
+  public componentDidUpdate() {
+    if (this.props.defaultValue !== this.state.value) {
+      this.setState({ value: this.props.defaultValue });
     }
   }
 

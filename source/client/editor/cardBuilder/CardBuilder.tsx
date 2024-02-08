@@ -85,18 +85,17 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     if (!props.forRender) this.handleResize = this.handleResize.bind(this);
   }
 
-  public componentWillReceiveProps(nextProps: ICardBuilderProps, _prevState: ICardBuilderState) {
-    this.setState({ adjustState: 'waiting' });
-    app.$errorManager.handlePromise(this.debouncedRefreshState(nextProps.card));
-  }
-
   public componentDidMount() {
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
     app.$errorManager.handlePromise(this.debouncedRefreshState(this.props.card));
   }
 
-  public componentDidUpdate() {
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
+  public componentDidUpdate(prevProps: ICardBuilderProps) {
+    if (prevProps.card !== this.props.card) {
+      this.setState({ adjustState: 'waiting' }, () => {
+        this.debouncedRefreshState(this.props.card);
+      });
+    }
   }
 
   public componentWillUnmount() {
@@ -231,6 +230,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     };
 
     this.setState(state);
+    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private getProcessedText(text: string) {

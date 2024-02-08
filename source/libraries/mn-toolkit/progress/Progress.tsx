@@ -46,11 +46,13 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
     }, 200);
   }
 
-  public componentWillReceiveProps(nextProps: IProgressProps) {
-    this.setState({
-      progress: nextProps.progress as number,
-      message: nextProps.message as string,
-    });
+  public componentDidUpdate() {
+    if (this.props.progress !== this.state.progress || this.props.message !== this.state.message) {
+      this.setState({
+        progress: this.props.progress as number,
+        message: this.props.message as string,
+      });
+    }
   }
 
   private getPercents() {

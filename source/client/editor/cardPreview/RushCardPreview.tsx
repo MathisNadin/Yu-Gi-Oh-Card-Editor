@@ -29,7 +29,7 @@ export class RushCardPreview
     };
   }
 
-  public componentWillReceiveProps(_nextProps: IRushCardPreviewProps, _prevState: IRushCardPreviewState) {
+  public componentDidUpdate() {
     const rendering = document.querySelector('.rendering') as HTMLImageElement;
     rendering.classList.remove('hidden');
   }

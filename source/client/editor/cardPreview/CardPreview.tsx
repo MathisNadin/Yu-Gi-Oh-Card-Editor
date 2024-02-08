@@ -26,7 +26,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     };
   }
 
-  public componentWillReceiveProps() {
+  public componentDidUpdate() {
     const rendering = document.querySelector('.rendering') as HTMLImageElement;
     rendering.classList.remove('hidden');
   }

@@ -47,8 +47,10 @@ export class Menu extends Container<IMenuProps, IMenuState> {
     this.setState({ items: props.items, open: [] });
   }
 
-  public componentWillReceiveProps(props: IMenuProps) {
-    this.setState({ items: props.items });
+  public componentDidUpdate() {
+    if (this.props.items !== this.state.items) {
+      this.setState({ items: this.props.items });
+    }
   }
 
   private hideBeforeClick() {

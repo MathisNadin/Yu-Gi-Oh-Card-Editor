@@ -43,8 +43,8 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     app.$errorManager.handlePromise(this.loadArtworkBase64(undefined, true));
   }
 
-  public componentWillReceiveProps(_nextProps: IArtworkEditDialogProps, _prevState: IArtworkEditDialogState) {
-    app.$errorManager.handlePromise(this.loadArtworkBase64());
+  public componentDidUpdate(prevProps: IArtworkEditDialogProps) {
+    if (prevProps !== this.props) app.$errorManager.handlePromise(this.loadArtworkBase64());
   }
 
   private async loadArtworkBase64(artworkURL?: string, usePropsCrops?: boolean) {

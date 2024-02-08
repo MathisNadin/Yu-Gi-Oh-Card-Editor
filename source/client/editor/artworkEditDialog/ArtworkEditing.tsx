@@ -47,20 +47,20 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       croppedArtworkBase64: '',
       keepRatio: props.keepRatio,
     };
-    app.$errorManager.handlePromise(this.load(props));
+    app.$errorManager.handlePromise(this.load());
   }
 
-  public componentWillReceiveProps(nextProps: IArtworkEditingProps, _prevState: IArtworkEditingState) {
-    app.$errorManager.handlePromise(this.load(nextProps));
+  public componentDidUpdate(prevProps: IArtworkEditingProps) {
+    if (prevProps !== this.props) app.$errorManager.handlePromise(this.load());
   }
 
-  private async load(props: IArtworkEditingProps) {
-    const croppedArtworkBase64 = await getCroppedArtworkBase64(props.artworkBase64, props.crop);
+  private async load() {
+    const croppedArtworkBase64 = await getCroppedArtworkBase64(this.props.artworkBase64, this.props.crop);
     this.setState({
-      crop: props.crop,
-      artworkURL: props.artworkURL,
+      crop: this.props.crop,
+      artworkURL: this.props.artworkURL,
       croppedArtworkBase64,
-      keepRatio: props.keepRatio,
+      keepRatio: this.props.keepRatio,
     });
   }
 

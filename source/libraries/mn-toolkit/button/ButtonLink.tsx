@@ -23,11 +23,13 @@ export class ButtonLink extends Containable<IButtonLinkProps, IButtonLinkState> 
 
   public constructor(props: IButtonLinkProps) {
     super(props);
-    this.componentWillReceiveProps(props);
+    if (isDefined(props.pressed)) this.setState({ pressed: props.pressed });
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<IButtonLinkProps>) {
-    if (isDefined(nextProps.pressed)) this.setState({ pressed: nextProps.pressed });
+  public componentDidUpdate() {
+    if (this.props.pressed !== this.state.pressed) {
+      this.setState({ pressed: this.props.pressed as boolean });
+    }
   }
 
   public render() {

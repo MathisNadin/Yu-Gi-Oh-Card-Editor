@@ -67,18 +67,19 @@ export class Table extends Container<ITableProps, ITableState> {
   }
 
   public componentDidMount() {
-    this.processxProps(this.props);
+    this.processxProps();
   }
 
-  public componentWillReceiveProps(props: ITableProps) {
-    this.processxProps(props);
+  public componentDidUpdate(prevProps: ITableProps) {
+    if (prevProps !== this.props) this.processxProps();
   }
 
   private loading(props: ITableProps) {
     return props.loading || !props.columns || !props.rows;
   }
 
-  public processxProps(props: ITableProps) {
+  public processxProps() {
+    const { props } = this;
     if (this.loading(props)) return;
     let nbNoWidth = 0;
     let nbHeaderLabel = 0;

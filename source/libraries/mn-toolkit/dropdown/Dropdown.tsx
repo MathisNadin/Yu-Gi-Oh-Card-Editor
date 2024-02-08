@@ -24,8 +24,10 @@ export class Dropdown<T extends string> extends Containable<DropdownProps<T>, Dr
     };
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<DropdownProps<T>>) {
-    this.setState({ selectedOption: nextProps.defaultOption as T });
+  public componentDidUpdate() {
+    if (this.props.defaultOption !== this.state.selectedOption) {
+      this.setState({ selectedOption: this.props.defaultOption as T });
+    }
   }
 
   private onChange(value: T) {

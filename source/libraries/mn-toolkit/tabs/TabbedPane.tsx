@@ -54,8 +54,8 @@ export class TabbedPane<TAbstractTabIndex> extends Container<
     return this.state.value;
   }
 
-  public componentWillReceiveProps(props: ITabbedPaneProps<TAbstractTabIndex>) {
-    this.setState({ value: props.defaultValue });
+  public componentDidUpdate() {
+    if (this.props.defaultValue !== this.state.value) this.setState({ value: this.props.defaultValue });
   }
 
   public render() {

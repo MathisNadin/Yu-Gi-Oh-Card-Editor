@@ -29,9 +29,9 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
     this.state = { ...(this.state || {}), value: props.defaultValue as string };
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<IFileInputProps>) {
-    if (isDefined(nextProps.defaultValue) && nextProps.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: nextProps.defaultValue });
+  public componentDidUpdate() {
+    if (isDefined(this.props.defaultValue) && this.props.defaultValue.trim() !== this.state.value?.trim()) {
+      this.setState({ value: this.props.defaultValue });
     }
   }
 

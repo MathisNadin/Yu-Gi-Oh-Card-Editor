@@ -68,8 +68,10 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     this.setState({ value: props.defaultValue as ID, items: props.items });
   }
 
-  public componentWillReceiveProps(props: ISelectProps<ID>) {
-    this.setState({ value: props.defaultValue as ID, items: props.items });
+  public componentDidUpdate() {
+    if (this.props.defaultValue !== this.state.value || this.props.items !== this.state.items) {
+      this.setState({ value: this.props.defaultValue as ID, items: this.props.items });
+    }
   }
 
   private generatePopOverActions() {
