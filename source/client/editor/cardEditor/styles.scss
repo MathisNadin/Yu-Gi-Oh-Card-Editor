@@ -130,8 +130,9 @@
         }
       }
 
-      .mn-textarea-input {
-        width: calc(100% - 20px - $themeDefaultSpacing/2);
+      .mn-textarea-input-container {
+        min-width: calc(100% - 20px - $themeDefaultSpacing/2);
+        max-width: calc(100% - 20px - $themeDefaultSpacing/2);
       }
 
       .card-abilities {
@@ -193,7 +194,8 @@
         .card-choice-effects-list {
           .choice-effects-line {
             .choice-effects-line-icons {
-              width: calc(100% - #{$themeDefaultSpacing});
+              min-width: calc(100% - #{$themeDefaultSpacing});
+              max-width: calc(100% - #{$themeDefaultSpacing});
               padding: 0 5px;
             }
           }
