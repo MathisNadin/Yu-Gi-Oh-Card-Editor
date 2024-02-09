@@ -185,10 +185,10 @@ export class PopoverService implements Partial<IDeviceListener> {
         </div>
         {!!this.options.buttons && (
           <div className='buttons'>
-            {this.options.buttons.map((button) => {
+            {this.options.buttons.map((button, i) => {
               return (
-                // eslint-disable-next-line react/jsx-key
                 <ButtonLink
+                  key={`mn-popover-button-${i}`}
                   label={button.label}
                   onTap={() => {
                     let promise = button.onTap ? button.onTap() : undefined;

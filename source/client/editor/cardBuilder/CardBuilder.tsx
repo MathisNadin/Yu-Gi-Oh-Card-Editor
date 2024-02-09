@@ -689,8 +689,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           const style: CSSProperties = {};
           if (index)
             style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
-          // eslint-disable-next-line react/jsx-key
-          return <img style={style} className={classNames('card-frame', className)} src={frame} alt={className} />;
+          return (
+            <img
+              key={`card-frame-${index}`}
+              style={style}
+              className={classNames('card-frame', className)}
+              src={frame}
+              alt={className}
+            />
+          );
         })}
       </HorizontalStack>,
       'card-layer card-frames-container'
@@ -738,10 +745,10 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   private renderPendulum() {
     return this.renderAttributes(
       <VerticalStack>
-        {this.state.pendEffect.map((text) => {
+        {this.state.pendEffect.map((text, i) => {
           return (
-            // eslint-disable-next-line react/jsx-key
             <p
+              key={`pendulum-effect-${i}`}
               className='pendulum-effect-text black-text'
               style={{
                 fontSize: `${this.state.pendFontSize}px`,
@@ -773,11 +780,10 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     return this.renderAttributes(
       <VerticalStack>
-        {this.state.description.map((d) => {
-          // eslint-disable-next-line react/jsx-key
+        {this.state.description.map((d, i) => {
           return (
-            // eslint-disable-next-line react/jsx-key
             <p
+              key={`description-${i}`}
               className='description-text black-text'
               style={{
                 fontSize: `${this.state.descFontSize}px`,

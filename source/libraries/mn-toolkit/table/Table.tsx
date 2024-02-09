@@ -232,8 +232,8 @@ export class Table extends Container<ITableProps, ITableState> {
               {this.state.columns
                 .map((column, i) => {
                   return (
-                    // eslint-disable-next-line react/jsx-key
                     <div
+                      key={`mn-table-header-${i}`}
                       style={this.state.columnStyle[i]}
                       className={classNames(
                         column.className,
@@ -262,10 +262,10 @@ export class Table extends Container<ITableProps, ITableState> {
         )}
         <VerticalStack className='mn-table-body' style={tableBodyStyle}>
           {this.state.rows &&
-            this.state.rows.map((row) =>
+            this.state.rows.map((row, i) =>
               [
-                // eslint-disable-next-line react/jsx-key
                 <TableRow
+                  key={`mn-table-row-${i}`}
                   row={row}
                   columnStyle={this.state.columnStyle}
                   columns={this.state.columns}
@@ -277,9 +277,9 @@ export class Table extends Container<ITableProps, ITableState> {
                 />,
               ].concat(
                 row.open && row.subRows
-                  ? row.subRows.map((row) => (
-                      // eslint-disable-next-line react/jsx-key
+                  ? row.subRows.map((row, i) => (
                       <TableRow
+                        key={`mn-table-sub-row-${i}`}
                         row={row}
                         columnStyle={this.state.columnStyle}
                         columns={this.state.columns}

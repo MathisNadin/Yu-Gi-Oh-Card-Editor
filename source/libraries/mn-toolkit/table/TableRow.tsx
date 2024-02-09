@@ -66,16 +66,9 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
         {this.props.columns
           .map((column, i) => {
             let cell = this.props.row.cells[i] as ITableCell;
-            // FIXME MN : J'ai ajouté une key au mn-table-cell-wrapper
-            // car sinon le contenu n'est pas mis à jour d'une vue avec une table à l'autre
-            // Ex : la vue 1 a une table donc la 3ème cell du 1er row est vide
-            // puis on passe sur la vue 2 où à ce même endroit ça doit contenir un string
-            // => eh bien non, faut F5 pour voir apparaître la valeur sur la vue 2
-            // Ca marche avec une key mais je sens venir les effets de bord
-
             return (
-              // eslint-disable-next-line react/jsx-key
               <div
+                key={`mn-table-cell-wrapper-${i}-${cell.className}`}
                 style={this.props.columnStyle[i]}
                 className={classNames(
                   'mn-table-cell',

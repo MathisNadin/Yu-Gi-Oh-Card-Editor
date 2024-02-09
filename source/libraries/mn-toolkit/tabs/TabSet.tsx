@@ -140,14 +140,14 @@ export class TabSet<TAbstractTabIndex> extends Containable<
       <div>
         {!!this.props.legend && <Typography variant='h5' content={this.props.legend} />}
         {this.props.tabPosition === 'bottom' && <Spacer />}
-        {items.map((item) => (
-          // eslint-disable-next-line react/jsx-key
+        {items.map((item, i) => (
           <span
+            key={`mn-tab-button-${item.id}`}
+            id={`mn-tab-button-${item.id}`}
             className={classNames(
               { selected: item.selected, disabled: item.disabled },
               /* `mn-bg-${item.selectedBg}`, */ 'item'
             )}
-            id={`mn-tab-button-${item.id}`}
             onClick={() => this.selectItem(item)}
           >
             {!!item.icon && <Icon className='icon' iconId={item.icon} color={item.iconColor} />}

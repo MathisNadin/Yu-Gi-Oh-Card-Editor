@@ -19,9 +19,10 @@ export class Grid extends Container<IGridProps, IGridState> {
       <div>
         {(this.props.children as unknown as ReactNode[])
           .filter((x) => !!x)
-          .map((x) => (
-            // eslint-disable-next-line react/jsx-key
-            <div className={this.getGridItemClasses(x as ReactElement)}>{x}</div>
+          .map((x, i) => (
+            <div key={`mn-grid-item-${i}`} className={this.getGridItemClasses(x as ReactElement)}>
+              {x}
+            </div>
           ))}
       </div>,
       'mn-container'

@@ -188,14 +188,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           description.push(...card.rushOtherEffects.split('\n').map((d) => this.getProcessedText(d)));
         }
         description.push(
-          // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(
-            ...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))
-          ),
-          // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label effect'>{effectLabel}</span>].concat(
-            ...card.rushEffect.split('\n').map((d) => this.getProcessedText(d))
-          )
+          [
+            <span key={`rush-label-condition`} className='span-text rush-label condition'>
+              {'[Condition] '}
+            </span>,
+          ].concat(...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))),
+          [
+            <span key={`rush-label-effect`} className='span-text rush-label effect'>
+              {effectLabel}
+            </span>,
+          ].concat(...card.rushEffect.split('\n').map((d) => this.getProcessedText(d)))
         );
         break;
 
@@ -205,12 +207,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         }
         let choiceEffectsLabel = card.language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ';
         description.push(
-          // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label condition'>{'[Condition] '}</span>].concat(
-            ...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))
-          ),
-          // eslint-disable-next-line react/jsx-key
-          [<span className='span-text rush-label effect'>{choiceEffectsLabel}</span>]
+          [
+            <span key={`rush-label-condition`} className='span-text rush-label condition'>
+              {'[Condition] '}
+            </span>,
+          ].concat(...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))),
+          [
+            <span key={`rush-label-effect`} className='span-text rush-label effect'>
+              {choiceEffectsLabel}
+            </span>,
+          ]
         );
         for (let choice of card.rushChoiceEffects) {
           description.push(...choice.split('\n').map((d) => this.getProcessedText(d, true)));
@@ -679,10 +685,11 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     const specialCharsRegex = /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
     const parts = this.props.card.name.split(specialCharsRegex);
 
-    let processedText = parts.map((part) =>
+    let processedText = parts.map((part, i) =>
       specialCharsRegex.test(part) ? (
-        // eslint-disable-next-line react/jsx-key
-        <span className='special-char-span'>{part}</span>
+        <span key={`special-char-span-${i}`} className='special-char-span'>
+          {part}
+        </span>
       ) : (
         part
       )
@@ -704,8 +711,15 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           const style: CSSProperties = {};
           if (index)
             style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
-          // eslint-disable-next-line react/jsx-key
-          return <img style={style} className={classNames('card-frame', className)} src={frame} alt={className} />;
+          return (
+            <img
+              key={`rush-card-frame-${index}`}
+              style={style}
+              className={classNames('card-frame', className)}
+              src={frame}
+              alt={className}
+            />
+          );
         })}
       </HorizontalStack>,
       'card-layer card-frames-container'
@@ -777,15 +791,15 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     return this.renderAttributes(
       <VerticalStack>
-        {pendEffect.map((text) => {
+        {pendEffect.map((text, i) => {
           let withBulletPoint = false;
           if (text.startsWith('●')) {
             withBulletPoint = true;
             text = text.replace(/^●\s*/, '');
           }
           return (
-            // eslint-disable-next-line react/jsx-key
             <p
+              key={`pendulum-effect-${i}`}
               className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
               style={{
                 fontSize: `${this.state.pendFontSize}px`,
@@ -810,10 +824,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     return this.renderAttributes(
       <VerticalStack>
-        {this.state.description.map((d) => {
+        {this.state.description.map((d, i) => {
           return (
-            // eslint-disable-next-line react/jsx-key
             <p
+              key={`rush-description-${i}`}
               className='description-text black-text'
               style={{
                 fontSize: `${this.state.descFontSize}px`,

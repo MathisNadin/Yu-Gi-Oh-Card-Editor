@@ -487,8 +487,7 @@ export class CardImportDialog extends Containable<
           {!!replaceMatrixes.length && (
             <VerticalStack gutter scroll fill>
               {replaceMatrixes.map((m, i) => (
-                // eslint-disable-next-line react/jsx-key
-                <HorizontalStack gutter verticalItemAlignment='middle'>
+                <HorizontalStack key={`replace-matrix-${i}`} gutter verticalItemAlignment='middle'>
                   <TextInput
                     fill
                     defaultValue={m.toReplace}

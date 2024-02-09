@@ -43,8 +43,8 @@ export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState> {
         {crumbs.map((crumb, i) => {
           if (!!crumb.onTap) {
             return [
-              // eslint-disable-next-line react/jsx-key
               <span
+                key={`mn-breadcrumb-${i}`}
                 onClick={() => {
                   if (crumb.onTap) app.$errorManager.handlePromise(crumb.onTap());
                 }}
@@ -54,8 +54,13 @@ export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState> {
               i < crumbs.length - 1 && <Icon className='separator' iconId='toolkit-angle-right' />,
             ];
           } else {
-            // eslint-disable-next-line react/jsx-key
-            return <span className='bread' dangerouslySetInnerHTML={{ __html: markdownToHtml(crumb.title, true) }} />;
+            return (
+              <span
+                key={`mn-breadcrumb-${i}`}
+                className='bread'
+                dangerouslySetInnerHTML={{ __html: markdownToHtml(crumb.title, true) }}
+              />
+            );
           }
         })}
         {this.props.children}

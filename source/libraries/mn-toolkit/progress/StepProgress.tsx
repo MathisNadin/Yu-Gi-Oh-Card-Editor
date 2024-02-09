@@ -52,8 +52,8 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
       >
         {(this.props.items as IStep<number>[]).map((step, iStep) => {
           return (
-            // eslint-disable-next-line react/jsx-key
             <div
+              key={`mn-step-progress-${iStep}`}
               onClick={() => (this.props as unknown as IProps<number>).onChange(step.id)}
               className={classNames('step', {
                 completed: iStep < progress,

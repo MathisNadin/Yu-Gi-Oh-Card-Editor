@@ -551,7 +551,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           </HorizontalStack>
 
           <Grid>
-            {this.state.cardFrames.map((frame) => {
+            {this.state.cardFrames.map((frame, i) => {
               let className = 'card-frame';
               const frameIndex = this.state.card.frames.indexOf(frame.id);
               if (frameIndex >= 0) {
@@ -561,8 +561,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
                 }
               }
               return (
-                // eslint-disable-next-line react/jsx-key
-                <HorizontalStack className={className} s='12' m='6' l='3' xl='2' xxl='1'>
+                <HorizontalStack key={`card-frame-${i}`} className={className} s='12' m='6' l='3' xl='2' xxl='1'>
                   <Image
                     src={frame.file}
                     alt={`frame-${frame.id}`}
@@ -583,9 +582,9 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             </HorizontalStack>
 
             <Grid className='card-icons-grid'>
-              {this.state.cardAttributes.map((attribute) => (
-                // eslint-disable-next-line react/jsx-key
+              {this.state.cardAttributes.map((attribute, i) => (
                 <HorizontalStack
+                  key={`card-attribute-${i}`}
                   className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`}
                   s='12'
                   m='6'
@@ -610,9 +609,9 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
           <VerticalStack gutter>
             <Typography fill className='sub-title' variant='help' content='Type de Magie/Piège' />
             <Grid className='card-icons-grid'>
-              {this.state.cardStTypes.map((stType) => (
-                // eslint-disable-next-line react/jsx-key
+              {this.state.cardStTypes.map((stType, i) => (
                 <HorizontalStack
+                  key={`card-st-icon-${i}`}
                   className={classNames('card-st-icon', { selected: this.state.card.stType === stType.id })}
                   s='12'
                   m='6'
@@ -744,8 +743,12 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
               <VerticalStack className='card-choice-effects-list'>
                 {this.state.card.rushChoiceEffects.map((choiceEff, iChoiceEff) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <VerticalStack fill className='choice-effects-line' verticalItemAlignment='middle'>
+                  <VerticalStack
+                    key={`choice-effect-line-${iChoiceEff}`}
+                    fill
+                    className='choice-effects-line'
+                    verticalItemAlignment='middle'
+                  >
                     <HorizontalStack className='choice-effects-line-icons' verticalItemAlignment='middle'>
                       <Typography fill variant='help' content={`• ${iChoiceEff + 1}`} />
                       <ButtonIcon
@@ -913,8 +916,13 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
 
           <VerticalStack className='card-abilities-list'>
             {this.state.card.abilities.map((ability, iAbility) => (
-              // eslint-disable-next-line react/jsx-key
-              <HorizontalStack fill gutter className='abilities-line' verticalItemAlignment='middle'>
+              <HorizontalStack
+                key={`abilities-line-${iAbility}`}
+                fill
+                gutter
+                className='abilities-line'
+                verticalItemAlignment='middle'
+              >
                 <InplaceEdit
                   fill
                   focusOnSingleClick
