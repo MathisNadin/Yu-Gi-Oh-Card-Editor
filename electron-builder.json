@@ -1,11 +1,7 @@
 {
-  "appId": "com.testelectronjs.app",
-  "productName": "TestElectronJS",
-  "files": [
-    ".build-desktop/**/*",
-    "node_modules",
-    "package.json"
-  ],
+  "productName": "Yu-Gi-Oh! Card Editor",
+  "appId": "org.erb.YuGiOhCardEditor",
+  "files": [".build-desktop/**/*", "node_modules", "package.json"],
   "directories": {
     "buildResources": "source/assets",
     "output": ".package-desktop"
