@@ -197,10 +197,10 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
       descFontSize: 30,
       descLineHeight: 1.2,
-      description: card.description.split('\n').map((d) => this.getProcessedText(d)),
+      description: card.description.split('\n').map((d, i) => this.getProcessedText(d, i)),
       pendFontSize: 30,
       pendLineHeight: 1.2,
-      pendEffect: card.pendEffect.split('\n').map((d) => this.getProcessedText(d)),
+      pendEffect: card.pendEffect.split('\n').map((d, i) => this.getProcessedText(d, i)),
 
       attribute: require(
         `../../../assets/images/attributes/${card.noTextAttribute ? 'vanilla' : card.language}/${card.attribute}.png`
@@ -232,7 +232,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
-  private getProcessedText(text: string) {
+  private getProcessedText(text: string, index: number) {
     const parts = text.split(/(●|•)/).map((part) => part.trim());
     if (parts.length && !parts[0]) parts.shift();
 
@@ -244,7 +244,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       } else {
         let classes = classNames('span-text', { 'with-bullet-point': nextHasBullet, 'in-middle': i > 1 });
         nextHasBullet = false;
-        processedText.push(<span className={classes}>{part}</span>);
+        processedText.push(
+          <span key={`processed-text-${index}-${i}`} className={classes}>
+            {part}
+          </span>
+        );
       }
     });
 
@@ -782,7 +786,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {this.state.description.map((d, i) => {
           return (
             <p
-              key={`description-${i}`}
+              key={`description-text-${i}`}
               className='description-text black-text'
               style={{
                 fontSize: `${this.state.descFontSize}px`,

@@ -166,7 +166,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let description: JSX.Element[][] = [];
     switch (card.rushTextMode) {
       case 'vanilla':
-        description = card.description.split('\n').map((d) => this.getProcessedText(d));
+        description = card.description.split('\n').map((d, i) => this.getProcessedText(d, i));
         break;
 
       case 'regular':
@@ -184,25 +184,25 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             break;
         }
         if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map((d) => this.getProcessedText(d)));
+          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i)));
         }
         description.push(
           [
             <span key={`rush-label-condition`} className='span-text rush-label condition'>
               {'[Condition] '}
             </span>,
-          ].concat(...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))),
+          ].concat(...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i))),
           [
             <span key={`rush-label-effect`} className='span-text rush-label effect'>
               {effectLabel}
             </span>,
-          ].concat(...card.rushEffect.split('\n').map((d) => this.getProcessedText(d)))
+          ].concat(...card.rushEffect.split('\n').map((d, i) => this.getProcessedText(d, i)))
         );
         break;
 
       case 'choice':
         if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map((d) => this.getProcessedText(d)));
+          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i)));
         }
         let choiceEffectsLabel = card.language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ';
         description.push(
@@ -210,7 +210,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             <span key={`rush-label-condition`} className='span-text rush-label condition'>
               {'[Condition] '}
             </span>,
-          ].concat(...card.rushCondition.split('\n').map((d) => this.getProcessedText(d))),
+          ].concat(...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i))),
           [
             <span key={`rush-label-effect`} className='span-text rush-label effect'>
               {choiceEffectsLabel}
@@ -218,7 +218,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           ]
         );
         for (let choice of card.rushChoiceEffects) {
-          description.push(...choice.split('\n').map((d) => this.getProcessedText(d, true)));
+          description.push(...choice.split('\n').map((d, i) => this.getProcessedText(d, i, true)));
         }
         break;
 
@@ -265,7 +265,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
-  private getProcessedText(text: string, forceBulletAtStart?: boolean) {
+  private getProcessedText(text: string, index: number, forceBulletAtStart?: boolean) {
     const parts = text.split(/(●|•)/).map((part) => part.trim());
     if (parts.length && !parts[0]) parts.shift();
 
@@ -280,7 +280,11 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           'in-middle': i > 1,
         });
         nextHasBullet = false;
-        processedText.push(<span className={classes}>{part}</span>);
+        processedText.push(
+          <span key={`processed-text-${index}-${i}`} className={classes}>
+            {part}
+          </span>
+        );
       }
     });
 
@@ -826,7 +830,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         {this.state.description.map((d, i) => {
           return (
             <p
-              key={`rush-description-${i}`}
+              key={`rush-description-text-${i}`}
               className='description-text black-text'
               style={{
                 fontSize: `${this.state.descFontSize}px`,
