@@ -22,6 +22,7 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   public constructor(props: ISettingsProps) {
     super(props);
     this.state = {
+      ...this.state,
       loaded: true,
       settings: app.$settings.settings,
     };

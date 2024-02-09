@@ -69,6 +69,7 @@ export class CardImportDialog extends Containable<
   public constructor(props: ICardImportDialogProps) {
     super(props);
     this.state = {
+      ...this.state,
       loaded: true,
       import: '',
       importing: false,

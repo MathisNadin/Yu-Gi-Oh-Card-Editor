@@ -41,6 +41,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   public constructor(props: IArtworkEditingProps) {
     super(props);
     this.state = {
+      ...this.state,
       loaded: true,
       artworkURL: props.artworkURL,
       crop: props.crop,

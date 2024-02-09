@@ -31,6 +31,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   public constructor(props: IArtworkEditDialogProps) {
     super(props);
     this.state = {
+      ...this.state,
       loaded: true,
       artworkURL: props.artworkURL,
       artworkBase64: '',
@@ -62,10 +63,11 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
       }
     }
 
-    const state: IArtworkEditDialogState = {
+    this.setState({
       loaded: true,
       artworkURL,
       artworkBase64,
+      keepRatio: this.props.keepRatio || false,
       crop: usePropsCrops
         ? this.props.crop
         : {
@@ -75,14 +77,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
             width: 100,
             unit: '%',
           },
-      keepRatio: this.props.keepRatio || false,
-    };
-
-    if (this.state) {
-      this.setState(state);
-    } else {
-      this.state = state;
-    }
+    });
   }
 
   private onValidate(url: string, crop: Crop, keepRatio: boolean) {

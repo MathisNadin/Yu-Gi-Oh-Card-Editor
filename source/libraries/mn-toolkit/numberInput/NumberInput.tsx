@@ -71,11 +71,11 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     );
   }
 
-  protected onBlur(): void {
+  protected onBlur() {
     this.setState({ focus: false });
   }
 
-  protected onFocus(): void {
+  protected onFocus() {
     this.setState({ focus: true });
   }
 

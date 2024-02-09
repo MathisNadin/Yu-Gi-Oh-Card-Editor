@@ -77,7 +77,6 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public constructor(props: ICardBuilderProps) {
     super(props);
-    this.state = {} as ICardBuilderState;
     this.debouncedRefreshState = debounce(
       (card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)),
       500

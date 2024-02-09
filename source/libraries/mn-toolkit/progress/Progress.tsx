@@ -35,14 +35,9 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
   }
   public constructor(props: IProgressProps) {
     super(props);
-    this.setState({
-      progress: 0,
-      message: props.message as string,
-    });
+    this.state = { ...this.state, progress: 0, message: props.message as string };
     setTimeout(() => {
-      this.setState({
-        progress: props.progress as number,
-      });
+      this.state = { ...this.state, progress: props.progress as number };
     }, 200);
   }
 

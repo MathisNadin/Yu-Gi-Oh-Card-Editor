@@ -22,6 +22,7 @@ export class RushCardPreview
     super(props);
     app.$card.addListener(this);
     this.state = {
+      ...this.state,
       loaded: true,
       rdCardPlaceholder: require(`../../../assets/images/rdCardPlaceholder.png`),
       rendering: require(`../../../assets/images/rendering.png`),

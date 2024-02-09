@@ -68,6 +68,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
     this.debouncedOnCardChange = debounce((card: ICard) => this.props.onCardChange(card), 100);
 
     this.state = {
+      ...this.state,
       loaded: true,
       import: '',
       card: props.card,

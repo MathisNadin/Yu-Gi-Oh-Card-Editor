@@ -21,10 +21,11 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   public constructor(props: IArtworkCroppingProps) {
     super(props);
     this.state = {
+      ...this.state,
       loaded: false,
       croppedArtworkBase64: '',
       crop: props.crop,
-    } as IArtworkCroppingState;
+    };
   }
 
   public componentDidMount() {

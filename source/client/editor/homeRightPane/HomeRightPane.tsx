@@ -27,9 +27,9 @@ export class HomeRightPane
   public constructor(props: IHomeRightPaneProps) {
     super(props);
     this.state = {
+      ...this.state,
       tabIndex: app.$card.localCards?.length ? 'library' : 'settings',
-      loaded: false,
-    } as IHomeRightPaneState;
+    };
 
     app.$card.addListener(this);
   }

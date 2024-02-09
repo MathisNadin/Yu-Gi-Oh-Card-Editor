@@ -44,7 +44,7 @@ export class Menu extends Container<IMenuProps, IMenuState> {
 
   public constructor(props: IMenuProps) {
     super(props);
-    this.setState({ items: props.items, open: [] });
+    this.state = { ...this.state, items: props.items, open: [] };
   }
 
   public componentDidUpdate() {

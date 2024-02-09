@@ -65,7 +65,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
   public constructor(props: ISelectProps<ID>) {
     super(props);
     if (this.props.sort) props.items.sort((a, b) => a.label.icompare(b.label));
-    this.setState({ value: props.defaultValue as ID, items: props.items });
+    this.state = { ...this.state, value: props.defaultValue as ID, items: props.items };
   }
 
   public componentDidUpdate() {

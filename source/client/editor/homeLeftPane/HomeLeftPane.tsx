@@ -38,9 +38,9 @@ export class HomeLeftPane
   public constructor(props: IHomeLeftPaneProps) {
     super(props);
     this.state = {
+      ...this.state,
       tabIndex: 'master',
-      loaded: false,
-    } as IHomeLeftPaneState;
+    };
 
     app.$card.addListener(this);
     app.$device.addListener(this);

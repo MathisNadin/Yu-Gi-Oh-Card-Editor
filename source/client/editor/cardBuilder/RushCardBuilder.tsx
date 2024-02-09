@@ -60,7 +60,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
   public constructor(props: IRushCardBuilderProps) {
     super(props);
-    this.state = {} as IRushCardBuilderState;
     this.debouncedRefreshState = debounce(
       (card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)),
       500

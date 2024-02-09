@@ -42,6 +42,7 @@ export class CardsLibrary
   public constructor(props: ICardsLibraryProps) {
     super(props);
     this.state = {
+      ...this.state,
       loaded: true,
       current: app.$card.tempCurrentCard?.uuid as string,
       edited: app.$card.tempCurrentCard?.uuid as string,

@@ -31,7 +31,7 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
 
   public constructor(props: IProps<ID>) {
     super(props);
-    this.setState({ progress: props.defaultValue });
+    this.state = { ...this.state, progress: props.defaultValue };
   }
 
   public componentDidUpdate() {

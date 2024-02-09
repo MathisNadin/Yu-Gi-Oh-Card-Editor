@@ -15,9 +15,6 @@ export class HomeCenterPane
 {
   public constructor(props: IHomeCenterPaneProps) {
     super(props);
-    this.state = {
-      loaded: false,
-    } as IHomeCenterPaneState;
     app.$card.addListener(this);
   }
 

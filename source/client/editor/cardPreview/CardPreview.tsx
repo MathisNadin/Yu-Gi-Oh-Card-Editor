@@ -19,6 +19,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     super(props);
     app.$card.addListener(this);
     this.state = {
+      ...this.state,
       loaded: true,
       cardPlaceholder: require(`../../../assets/images/cardPlaceholder.png`),
       rendering: require(`../../../assets/images/rendering.png`),

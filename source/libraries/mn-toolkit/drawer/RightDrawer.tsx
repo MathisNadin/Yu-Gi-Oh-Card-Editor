@@ -31,7 +31,7 @@ export class RightDrawer
 
     app.$device.addListener(this);
     app.$overlay.addListener(this);
-    this.setState({ position: 0 });
+    this.state = { ...this.state, position: 0 };
   }
 
   public componentWillUnmount() {

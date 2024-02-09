@@ -65,6 +65,7 @@ export class CardEditor extends Containable<ICardEditorProps, ICardEditorState> 
     this.debouncedOnCardChange = debounce((card: ICard) => this.props.onCardChange(card), 100);
 
     this.state = {
+      ...this.state,
       loaded: true,
       import: '',
       lockPend: props.card.scales.left === props.card.scales.right,
