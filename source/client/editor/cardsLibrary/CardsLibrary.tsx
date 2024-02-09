@@ -56,7 +56,7 @@ export class CardsLibrary
       cardsToRender: 0,
     };
     app.$card.addListener(this);
-    this.sort();
+    this.sort(undefined, true);
   }
 
   public componentWillUnmount() {
@@ -116,7 +116,7 @@ export class CardsLibrary
     this.setState({ sortOption, sortOrder }, () => this.sort());
   }
 
-  private sort(localCards: ICard[] = this.state.localCards) {
+  private sort(localCards: ICard[] = this.state.localCards, initial?: boolean) {
     let { sortOption, sortOrder } = this.state;
     switch (sortOption) {
       case 'game':
@@ -141,7 +141,9 @@ export class CardsLibrary
       default:
         break;
     }
-    this.setState({ sortOption, sortOrder, localCards }, () => this.forceUpdate());
+
+    if (initial) this.state = { ...this.state, localCards, sortOption, sortOrder };
+    else this.setState({ sortOption, sortOrder, localCards }, () => this.forceUpdate());
   }
 
   private formatDate(date: Date | undefined) {
