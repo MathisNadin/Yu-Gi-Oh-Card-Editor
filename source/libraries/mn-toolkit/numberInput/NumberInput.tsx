@@ -63,7 +63,7 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
         value={this.state.value}
         onBlur={() => this.onBlur()}
         onFocus={() => this.onFocus()}
-        onInput={(e) => this.onChange(e)}
+        onChange={(e) => this.onChange(e)}
         min={this.props.min}
         max={this.props.max}
       />,

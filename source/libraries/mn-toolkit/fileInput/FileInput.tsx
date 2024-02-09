@@ -61,7 +61,7 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
           disabled={this.props.disabled}
           placeholder={this.props.placeholder}
           value={this.state.value}
-          onInput={(e) => this.onChange(e)}
+          onChange={(e) => this.onChange(e)}
         />
         <Icon iconId='toolkit-menu-meatballs' size={26} onTap={(e) => app.$errorManager.handlePromise(this.onTap(e))} />
       </HorizontalStack>,

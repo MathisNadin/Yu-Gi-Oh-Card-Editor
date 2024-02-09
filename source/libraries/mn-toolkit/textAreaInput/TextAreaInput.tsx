@@ -96,7 +96,7 @@ export class TextAreaInput
           value={this.state.value}
           onBlur={() => this.onBlur()}
           onFocus={() => this.onFocus()}
-          onInput={(e) => this.onChange(e)}
+          onChange={(e) => this.onChange(e)}
           onKeyUp={(e) => this.onChange(e)}
           // FIXME MN : Un peu bâtard, ça empêche le scroll tant qu'on n'a pas dépassé le nombre de maxRows
           // Utile notamment quand on force une police/lineHeight plus haut qu'à la normale
@@ -111,6 +111,7 @@ export class TextAreaInput
           placeholder={this.props.placeholder}
           value={this.state.value}
           style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
+          onChange={() => {}}
         />
       </div>
     );

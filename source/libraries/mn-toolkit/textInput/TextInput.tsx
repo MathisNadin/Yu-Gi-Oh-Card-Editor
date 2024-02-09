@@ -39,7 +39,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
         value={this.state.value}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
-        onInput={(e) => this.onChange(e)}
+        onChange={(e) => this.onChange(e)}
       />,
       'mn-text-input'
     );
