@@ -137,7 +137,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     this.container.focus();
   }
 
-  private onContainerRef(ref: HTMLElement) {
+  private onContainerRef(ref: HTMLElement | null) {
     if (!ref) return;
     this.container = ref;
   }
@@ -154,7 +154,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
           'mn-containable-item-fill': this.props.fill,
           disabled: this.props.disabled,
         })}
-        ref={(ref) => !!ref && this.onContainerRef(ref)}
+        ref={(ref) => this.onContainerRef(ref)}
         style={{ minWidth: this.props.width || this.props.minWidth }}
       >
         <div className='label' onClick={() => this.showListItems()}>

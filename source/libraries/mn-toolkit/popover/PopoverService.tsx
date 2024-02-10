@@ -15,6 +15,7 @@ function popoverActionRenderer(
   if (action.separator) return <div className='separator'></div>;
   return (
     <div
+      key={`mn-popover-action-${action.id}`}
       className={classNames(
         {
           last,
@@ -109,12 +110,9 @@ export class PopoverService implements Partial<IDeviceListener> {
       const themeDefaultItemHeight = themeSettings().themeDefaultItemHeight;
       const themeDefaultSpacing = themeSettings().themeDefaultSpacing;
       const separatorHeight = 1 + themeDefaultSpacing / 2;
-      const itemHeight = themeDefaultItemHeight + themeDefaultSpacing / 2;
+      const itemHeight = themeDefaultItemHeight;
       this.options.height =
-        nbVisibleItems * itemHeight +
-        nbVisibleSeparators * separatorHeight +
-        themeDefaultItemHeight / 2 -
-        themeDefaultSpacing;
+        nbVisibleItems * itemHeight + nbVisibleSeparators * separatorHeight + themeDefaultSpacing / 2;
     }
 
     this.options.doProcessAction =
@@ -204,7 +202,7 @@ export class PopoverService implements Partial<IDeviceListener> {
     );
     this.popovers.push(popover);
 
-    const height = popover.clientHeight + 2;
+    const height = popover.clientHeight - themeSettings().themeDefaultSpacing * 2;
 
     if (this.options.overlay) {
       this.overlay = await app.$react.renderContentInParent(

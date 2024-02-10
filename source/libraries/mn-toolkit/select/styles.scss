@@ -53,16 +53,14 @@
 }
 
 @mixin themeSelect {
-  @include mnLayountContainable();
   display: block;
   position: relative;
-
   border-width: 1px;
   border-style: solid;
   @include border-color(4);
-  border-radius: $themeDefaultBorderRadius;
 
-  height: $themeDefaultItemHeight - 2px;
+  border-radius: $themeDefaultBorderRadius;
+  height: $themeDefaultItemHeight;
   display: flex;
   align-items: center;
   @include bg(1);
@@ -127,10 +125,6 @@
   }
 }
 
-.mn-select {
-  @include themeSelect();
-}
-
 .mn-form-field.mn-select-field .input-wrapper {
   padding: 0;
   overflow: hidden;
@@ -149,5 +143,9 @@
 
 .mn-popover.mn-select-popover {
   border-radius: $themeDefaultBorderRadius;
-  margin-top: calc($themeDefaultSpacing/4);
+  // margin-top: calc($themeDefaultSpacing/4);
+}
+
+.mn-select {
+  @include themeSelect();
 }
