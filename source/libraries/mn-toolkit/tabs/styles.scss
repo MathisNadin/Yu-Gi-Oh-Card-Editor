@@ -7,7 +7,7 @@ $tabs-selector-height: 4px;
 
 $decay: 4px;
 .mn-tabset {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   display: flex;
   @include bg(1);
   padding: $themeDefaultSpacing;

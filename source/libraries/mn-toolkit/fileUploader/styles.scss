@@ -1,0 +1,27 @@
+.mn-file-uploader {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  text-align: center;
+  gap: $themeDefaultSpacing;
+  padding: $themeDefaultSpacing*2;
+
+  border-radius: $themeDefaultBorderRadius;
+  border: 2px dashed;
+  border-color: nth($theme-light-fg, 1);
+  .mn-dark-theme & {
+    border-color: nth($theme-dark-fg, 1);
+  }
+
+  &.dragged-over {
+    border-color: $energized;
+  }
+
+  &.mn-control-disable {
+    opacity: 0.2;
+    filter: grayscale(100%);
+    pointer-events: none;
+  }
+}

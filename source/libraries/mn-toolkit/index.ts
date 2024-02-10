@@ -56,6 +56,7 @@ export * from './api';
 export * from './application';
 export * from './button';
 export * from './checkbox';
+export * from './fileUploader';
 export * from './containable';
 export * from './container';
 export * from './device';

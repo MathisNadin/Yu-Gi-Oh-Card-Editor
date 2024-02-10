@@ -232,7 +232,7 @@ $z-index-overall: 100;
   line-height: 130%;
 }
 
-@mixin mnLayountContainable() {
+@mixin mnLayoutContainable() {
   display: flex;
   position: relative;
 
@@ -243,6 +243,54 @@ $z-index-overall: 100;
 
   &.has-click {
     cursor: pointer;
+  }
+
+  $float-margin: 5px;
+
+  &.mn-float-left {
+    position: absolute !important;
+    left: $float-margin
+  }
+
+  &.mn-float-right {
+    position: absolute !important;
+    right: $float-margin;
+  }
+
+  &.mn-float-top-left {
+    position: absolute !important;
+    left: $float-margin;
+    top: $float-margin;
+  }
+
+  &.mn-float-top-right {
+    position: absolute !important;
+    right: $float-margin;
+    top: $float-margin;
+  }
+
+  &.mn-float-bottom-right {
+    position: absolute !important;
+    right: $float-margin;
+    bottom: $float-margin;
+  }
+
+  &.mn-float-bottom-left {
+    position: absolute !important;
+    left: $float-margin;
+    bottom: $float-margin;
+  }
+
+  &.mn-float-middle-right {
+    position: absolute !important;
+    right: $float-margin;
+    top: 50%;
+  }
+
+  &.mn-float-middle-left {
+    position: absolute !important;
+    left: $float-margin;
+    top: 50%;
   }
 }
 
@@ -410,6 +458,7 @@ $z-index-overall: 100;
 @import './button/styles.scss';
 @import './checkbox/styles.scss';
 @import './dropdown/styles.scss';
+@import './fileUploader/styles.scss';
 @import './fileInput/styles.scss';
 @import './icon/styles.scss';
 @import './image/styles.scss';

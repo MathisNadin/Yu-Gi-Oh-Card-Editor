@@ -409,7 +409,7 @@ export class CardImportDialog extends Containable<
                   {
                     value: (
                       <HorizontalStack fill verticalItemAlignment='middle'>
-                        <Typography content={`${card.id || '-'}`} variant='help' />
+                        <Typography content={`${card.id ?? '-'}`} variant='help' />
                       </HorizontalStack>
                     ),
                   },

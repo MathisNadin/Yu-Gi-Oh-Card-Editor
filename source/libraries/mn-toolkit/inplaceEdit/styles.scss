@@ -1,5 +1,5 @@
 .mn-inplace-edit {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   line-height: $themeDefaultItemHeight;
   min-height: $themeDefaultItemHeight;
   @include fg(1);

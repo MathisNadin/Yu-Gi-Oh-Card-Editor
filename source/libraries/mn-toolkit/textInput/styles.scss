@@ -1,5 +1,5 @@
 .mn-text-input {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   line-height: $themeDefaultItemHeight - 2px;
   min-height: $themeDefaultItemHeight - 2px;
 

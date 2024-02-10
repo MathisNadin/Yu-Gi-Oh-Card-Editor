@@ -1,5 +1,5 @@
 .mn-image {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   overflow: hidden;
   // border-radius: $themeDefaultBorderRadius;
   width: auto;

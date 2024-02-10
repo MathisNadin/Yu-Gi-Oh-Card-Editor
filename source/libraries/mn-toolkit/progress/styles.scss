@@ -1,5 +1,5 @@
 @mixin themeProgressBar() {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   $overloadColor: #d32902;
   display: flex;
   flex-direction: column;

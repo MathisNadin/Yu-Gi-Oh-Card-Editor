@@ -1,5 +1,5 @@
 .mn-icon {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   // border-radius: $themeDefaultBorderRadius;
   object-fit: cover;
   object-position: center;

@@ -33,7 +33,7 @@
  */
 
 .mn-spinner {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   display: flex;
   justify-content: center;
   align-items: center;

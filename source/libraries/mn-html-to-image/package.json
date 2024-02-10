@@ -1,0 +1,14 @@
+{
+  "name": "mn-html-to-image",
+  "displayName": "MN HTML to Image",
+  "version": "1.0.1",
+  "description": "Bibliothèque Typescript pour convertir des éléments HTML en image",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisNadin/mn-html-to-image.git"
+  },
+  "author": {
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
+  }
+}

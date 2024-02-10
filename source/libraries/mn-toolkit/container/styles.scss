@@ -1,5 +1,5 @@
 .mn-container {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
 
   &.mn-layout-item-valign-top {
     align-items: flex-start;

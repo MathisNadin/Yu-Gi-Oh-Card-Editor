@@ -17,7 +17,7 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin themeButton() {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -160,7 +160,7 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin themeButtonOutline() {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -278,7 +278,7 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin themeButtonLink() {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   display: inline-flex;
   align-items: center;
   justify-content: right;
@@ -382,7 +382,7 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin themeButtonIcon {
-  @include mnLayountContainable();
+  @include mnLayoutContainable();
   cursor: pointer;
   user-select: none;
   border-radius: $themeDefaultBorderRadius;
