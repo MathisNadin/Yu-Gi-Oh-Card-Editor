@@ -82,9 +82,13 @@ export class CardsLibrary
     cardsRendered++;
     this.setState({ cardsRendered, selectedCards, selectedCardsNum }, () => {
       if (this.state.cardsRendered === this.state.cardsToRender) {
-        this.setState({ selectedCards: {}, selectedCardsNum: 0, cardsToRender: 0, cardsRendered: 0 }, () =>
-          this.forceUpdate()
-        );
+        this.setState({
+          selectedCards: {},
+          selectedCardsNum: 0,
+          cardsToRender: 0,
+          cardsRendered: 0,
+          selectAllMode: true,
+        });
       } else {
         this.forceUpdate();
       }

@@ -239,7 +239,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
     if (data['local-cards']) {
       this._localCards = deepClone(data['local-cards']);
       if (this._localCards?.length) {
-        for (let localCard of this._localCards) {
+        for (const localCard of this._localCards) {
           this.correct(localCard);
         }
       }
