@@ -24,7 +24,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
   }
 
   public componentDidUpdate(prevProps: ITextInputProps) {
-    if (prevProps !== this.props) {
+    if (prevProps !== this.props && this.props.defaultValue?.trim() !== this.state.value?.trim()) {
       this.setState({ value: this.props.defaultValue });
     }
   }

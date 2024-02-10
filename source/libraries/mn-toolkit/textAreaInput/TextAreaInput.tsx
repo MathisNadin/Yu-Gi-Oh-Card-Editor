@@ -59,7 +59,7 @@ export class TextAreaInput
   }
 
   public componentDidUpdate(prevProps: ITextAreaInputProps) {
-    if (prevProps !== this.props) {
+    if (prevProps !== this.props && this.props.defaultValue?.trim() !== this.state.value?.trim()) {
       this.setState({ value: this.props.defaultValue }, () => {
         if (this.inputElement) {
           setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
@@ -162,6 +162,9 @@ export class TextAreaInput
       if (currentRows > (this.props.maxRows as number)) {
         rows = this.props.maxRows as number;
         activateScroll = true;
+      } else if (currentRows < (this.props.minRows as number)) {
+        rows = this.props.minRows as number;
+        activateScroll = false;
       } else {
         rows = currentRows;
         activateScroll = false;
