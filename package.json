@@ -32,7 +32,7 @@
     "build:desktop-main": "cross-env NODE_ENV=production PLATFORM=desktop-main TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
     "build:desktop-renderer": "cross-env NODE_ENV=production PLATFORM=desktop-renderer TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
     "build:desktop": "cross-env NODE_ENV=production node scripts/clean-build-desktop.js && concurrently \"npm run build:desktop-main\" \"npm run build:desktop-renderer\"",
-    "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-.package-desktop.js && electron-builder build --publish never",
+    "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish never",
     "start:web": "cross-env NODE_ENV=development PLATFORM=web webpack serve --config webpack/webpack.config.ts",
     "build:web": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack/webpack.config.ts",
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
