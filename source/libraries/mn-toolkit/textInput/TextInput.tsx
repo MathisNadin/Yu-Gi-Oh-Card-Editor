@@ -23,8 +23,8 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
     this.state = { ...this.state, value: props.defaultValue };
   }
 
-  public componentDidUpdate() {
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
+  public componentDidUpdate(prevProps: ITextInputProps) {
+    if (prevProps !== this.props) {
       this.setState({ value: this.props.defaultValue });
     }
   }
@@ -47,9 +47,12 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
 
   private onChange(e: FormEvent<HTMLInputElement>) {
     const value = e.target.value as string;
-    this.setState(
-      { value },
-      () => !!this.props.onChange && app.$errorManager.handlePromise(this.props.onChange(this.state.value))
-    );
+    this.setState({ value }, () => {
+      setTimeout(() => {
+        if (this.props.onChange) {
+          app.$errorManager.handlePromise(this.props.onChange(this.state.value));
+        }
+      });
+    });
   }
 }

@@ -16,15 +16,25 @@ import {
 interface ICardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
+  renderId: string;
   card: ICard;
   onCardReady: () => void;
 }
 
-type TAdjustState = 'waiting' | 'todo' | 'name' | 'atk' | 'def' | 'pend' | 'abilities' | 'desc' | 'done';
+type TAdjustState = 'waiting' | 'todo' | 'done';
+
+type TAdjustTextState = 'unknown' | 'tooBig' | 'tooSmall';
 
 interface ICardBuilderState extends IContainableState {
-  adjustState: TAdjustState;
-  adjustTextState: 'unknown' | 'tooBig' | 'tooSmall';
+  adjustDescTextState: TAdjustTextState;
+  adjustPendTextState: TAdjustTextState;
+
+  nameDone: boolean;
+  atkDone: boolean;
+  defDone: boolean;
+  pendDone: boolean;
+  abilitiesDone: boolean;
+  descDone: boolean;
 
   usePendulumFrame: boolean;
   withLinkArrows: boolean;
@@ -72,13 +82,14 @@ interface ICardBuilderState extends IContainableState {
 }
 
 export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderState> {
+  private adjustState: TAdjustState = 'waiting';
   private ref: HTMLDivElement | undefined;
-  private debouncedRefreshState: (card: ICard) => void;
+  private debouncedRefreshState: (resetFontSizes: boolean) => void;
 
   public constructor(props: ICardBuilderProps) {
     super(props);
     this.debouncedRefreshState = debounce(
-      (card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)),
+      (resetFontSizes: boolean) => app.$errorManager.handlePromise(this.refreshState(resetFontSizes)),
       500
     );
     if (!props.forRender) this.handleResize = this.handleResize.bind(this);
@@ -86,14 +97,18 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public componentDidMount() {
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
-    app.$errorManager.handlePromise(this.debouncedRefreshState(this.props.card));
+    app.$errorManager.handlePromise(this.debouncedRefreshState(true));
   }
 
   public componentDidUpdate(prevProps: ICardBuilderProps) {
-    if (prevProps.card !== this.props.card) {
-      this.setState({ adjustState: 'waiting' }, () => {
-        this.debouncedRefreshState(this.props.card);
-      });
+    if (prevProps.renderId !== this.props.renderId) {
+      this.adjustState = 'waiting';
+      this.debouncedRefreshState(prevProps.card !== this.props.card);
+    } else if (this.adjustState === 'todo') {
+      app.$errorManager.handlePromise(this.adjustAllFontSizes());
+    } else if (this.adjustState === 'done') {
+      this.adjustState = 'waiting';
+      setTimeout(() => this.props.onCardReady());
     }
   }
 
@@ -102,11 +117,21 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private handleResize() {
+    this.adjustState = 'todo';
     app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
-  private async refreshState(card: ICard) {
+  private async refreshState(resetFontSizes: boolean) {
+    const { card } = this.props;
     if (!card) return;
+
+    let { descFontSize, descLineHeight, pendFontSize, pendLineHeight } = this.state;
+    if (resetFontSizes) {
+      descFontSize = 30;
+      descLineHeight = 1.2;
+      pendFontSize = 30;
+      pendLineHeight = 1.2;
+    }
 
     const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${(!card.pendulum && card.frames.includes('xyz')) || card.frames.includes('skill') ? 'white' : 'black'}`;
     const usePendulumFrame = app.$card.hasPendulumFrame(card);
@@ -172,8 +197,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     const state: ICardBuilderState = {
       loaded: true,
-      adjustState: 'todo',
-      adjustTextState: 'unknown',
+      adjustDescTextState: 'unknown',
+      adjustPendTextState: 'unknown',
+
+      nameDone: false,
+      atkDone: false,
+      defDone: false,
+      pendDone: false,
+      abilitiesDone: false,
+      descDone: false,
 
       usePendulumFrame,
       withLinkArrows: app.$card.hasLinkArrows(card),
@@ -195,11 +227,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       linkArrowBL: require(`../../../assets/images/link-arrows/bottomLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
       linkArrowBR: require(`../../../assets/images/link-arrows/bottomRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
 
-      descFontSize: 30,
-      descLineHeight: 1.2,
+      descFontSize,
+      descLineHeight,
       description: card.description.split('\n').map((d, i) => this.getProcessedText(d, i)),
-      pendFontSize: 30,
-      pendLineHeight: 1.2,
+      pendFontSize,
+      pendLineHeight,
       pendEffect: card.pendEffect.split('\n').map((d, i) => this.getProcessedText(d, i)),
 
       attribute: require(
@@ -228,8 +260,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       ),
     };
 
+    this.adjustState = 'todo';
     this.setState(state);
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private getProcessedText(text: string, index: number) {
@@ -256,42 +288,81 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private async adjustAllFontSizes() {
-    switch (this.state?.adjustState) {
-      case 'todo':
-        this.setState({ adjustState: 'name' });
-        break;
-      case 'name':
-        await this.convertNameToImg();
-        break;
-      case 'atk':
-        this.convertAtkToImg();
-        break;
-      case 'def':
-        this.convertDefToImg();
-        break;
-      case 'pend':
-        this.adjustPendFontSize();
-        break;
-      case 'abilities':
-        await this.convertAbilitiesToImg();
-        break;
-      case 'desc':
-        this.adjustDescFontSize();
-        break;
-      case 'done':
-        if (this.props.onCardReady) this.props.onCardReady();
-        break;
-      default:
-        break;
+    if (this.adjustState !== 'todo') return;
+
+    let {
+      nameDone,
+      atkDone,
+      defDone,
+      abilitiesDone,
+      pendDone,
+      adjustPendTextState,
+      pendFontSize,
+      pendLineHeight,
+      descDone,
+      adjustDescTextState,
+      descFontSize,
+      descLineHeight,
+    } = this.state;
+
+    if (!nameDone) {
+      nameDone = await this.convertNameToImg();
     }
+
+    if (!atkDone) {
+      atkDone = await this.convertAtkToImg();
+    }
+
+    if (!defDone) {
+      defDone = await this.convertDefToImg();
+    }
+
+    if (!abilitiesDone) {
+      abilitiesDone = await this.convertAbilitiesToImg();
+    }
+
+    if (!pendDone) {
+      const response = this.adjustPendFontSize();
+      pendDone = response.pendDone;
+      adjustPendTextState = response.adjustPendTextState;
+      pendFontSize = response.pendFontSize;
+      pendLineHeight = response.pendLineHeight;
+    }
+
+    if (!descDone) {
+      const response = this.adjustDescFontSize();
+      descDone = response.descDone;
+      adjustDescTextState = response.adjustDescTextState;
+      descFontSize = response.descFontSize;
+      descLineHeight = response.descLineHeight;
+    }
+
+    if (nameDone && atkDone && defDone && abilitiesDone && pendDone && descDone) {
+      this.adjustState = 'done';
+    }
+
+    this.setState({
+      nameDone,
+      atkDone,
+      defDone,
+      abilitiesDone,
+      pendDone,
+      adjustPendTextState,
+      pendFontSize,
+      pendLineHeight,
+      descDone,
+      adjustDescTextState,
+      descFontSize,
+      descLineHeight,
+    });
   }
 
-  public async convertNameToImg() {
+  public async convertNameToImg(): Promise<boolean> {
     const container = this.ref?.querySelector('.card-name-container') as HTMLDivElement;
-    if (!container) return;
+    if (!container) return true;
 
     const name = container.querySelector('.card-name') as HTMLDivElement;
-    if (!name) return;
+    if (!name) return true;
 
     if (this.props.card.frames.includes('skill')) {
       name.style.width = `${name.scrollWidth + 6}px`;
@@ -301,7 +372,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       name.style.height = '';
     }
 
-    const canvas = await html2canvas(name, { backgroundColor: null });
+    const canvas = await html2canvas(name, { backgroundColor: null, allowTaint: true });
     canvas.className = 'html2canvas-name';
     const existingCanvas = container.querySelector('.html2canvas-name');
     if (existingCanvas) {
@@ -309,17 +380,18 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     } else {
       container.appendChild(canvas);
     }
-    this.setState({ adjustState: 'atk' });
+    return true;
   }
 
-  public async convertAtkToImg() {
+  public async convertAtkToImg(): Promise<boolean> {
     if (app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')) {
       const container = this.ref?.querySelector('.atk') as HTMLDivElement;
-      if (!container) return;
-      const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
-      if (!atk) return;
+      if (!container) return true;
 
-      const canvas = await html2canvas(atk, { backgroundColor: null });
+      const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
+      if (!atk) return true;
+
+      const canvas = await html2canvas(atk, { backgroundColor: null, allowTaint: true });
       canvas.className = 'html2canvas html2canvas-atk';
       const existingCanvas = container.querySelector('.html2canvas-atk');
       if (existingCanvas) {
@@ -328,21 +400,22 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         container.appendChild(canvas);
       }
     }
-    this.setState({ adjustState: 'def' });
+    return true;
   }
 
-  public async convertDefToImg() {
+  public async convertDefToImg(): Promise<boolean> {
     if (
       app.$card.hasAbilities(this.props.card) &&
       !this.props.card.frames.includes('skill') &&
       !this.props.card.frames.includes('link')
     ) {
       const container = this.ref?.querySelector('.def') as HTMLDivElement;
-      if (!container) return;
-      const def = container.querySelector('.def-text') as HTMLParagraphElement;
-      if (!def) return;
+      if (!container) return true;
 
-      const canvas = await html2canvas(def, { backgroundColor: null });
+      const def = container.querySelector('.def-text') as HTMLParagraphElement;
+      if (!def) return true;
+
+      const canvas = await html2canvas(def, { backgroundColor: null, allowTaint: true });
       canvas.className = 'html2canvas html2canvas-def';
       const existingCanvas = container.querySelector('.html2canvas-def');
       if (existingCanvas) {
@@ -351,22 +424,20 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         container.appendChild(canvas);
       }
     }
-    this.setState({ adjustState: 'pend' });
+    return true;
   }
 
-  public async convertAbilitiesToImg() {
-    if (!app.$card.hasAbilities(this.props.card)) {
-      this.setState({ adjustState: 'desc' });
-      return;
-    }
+  public async convertAbilitiesToImg(): Promise<boolean> {
+    if (!app.$card.hasAbilities(this.props.card)) return true;
 
     const container = this.ref?.querySelector('.card-abilities') as HTMLDivElement;
-    if (!container) return;
+    if (!container) return true;
+
     const rightBracket = container.querySelector('.right-bracket') as HTMLDivElement;
     const abilities = container.querySelector('.abilities') as HTMLDivElement;
-    if (!rightBracket || !abilities) return;
+    if (!rightBracket || !abilities) return true;
 
-    const canvas = await html2canvas(abilities, { backgroundColor: null });
+    const canvas = await html2canvas(abilities, { backgroundColor: null, allowTaint: true });
     canvas.className = 'html2canvas-abilities';
     const existingCanvas = container.querySelector('.html2canvas-abilities');
     if (existingCanvas) {
@@ -374,20 +445,33 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     } else {
       container.insertBefore(canvas, rightBracket);
     }
-    this.setState({ adjustState: 'desc' });
+    return true;
   }
 
-  private adjustPendFontSize() {
+  private adjustPendFontSize(): {
+    pendDone: boolean;
+    adjustPendTextState: TAdjustTextState;
+    pendFontSize: number;
+    pendLineHeight: number;
+  } {
     if (!app.$card.hasPendulumFrame(this.props.card)) {
-      this.setState({ adjustState: 'abilities' });
-      return;
+      return {
+        pendDone: true,
+        adjustPendTextState: 'unknown',
+        pendFontSize: this.state.pendFontSize,
+        pendLineHeight: this.state.pendLineHeight,
+      };
     }
 
     const container = this.ref?.querySelector('.card-pendulum-effect-holder') as HTMLDivElement;
     const texts = this.ref?.querySelectorAll('.pendulum-effect-text') as NodeListOf<HTMLDivElement>;
     if (!container || !texts?.length || this.state.pendFontSize === 0) {
-      this.setState({ adjustState: 'abilities' });
-      return;
+      return {
+        pendDone: true,
+        adjustPendTextState: 'unknown',
+        pendFontSize: this.state.pendFontSize,
+        pendLineHeight: this.state.pendLineHeight,
+      };
     }
 
     let textHeight = 0;
@@ -406,18 +490,38 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       if (newLineHeight < 1.05) newLineHeight = 1.05;
 
       if (newFontSize >= 5) {
-        this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooBig' });
+        return {
+          pendDone: false,
+          adjustPendTextState: 'tooBig',
+          pendFontSize: newFontSize,
+          pendLineHeight: newLineHeight,
+        };
       } else {
-        this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+        return {
+          pendDone: true,
+          adjustPendTextState: 'unknown',
+          pendFontSize: this.state.pendFontSize,
+          pendLineHeight: this.state.pendLineHeight,
+        };
       }
     } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustTextState === 'tooBig') {
+      if (this.state.adjustPendTextState === 'tooBig') {
         if (this.state.pendLineHeight < 1.2) {
           let newLineHeight = this.state.pendLineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
-          this.setState({ pendLineHeight: newLineHeight });
+          return {
+            pendDone: false,
+            adjustPendTextState: this.state.adjustPendTextState,
+            pendFontSize: this.state.pendFontSize,
+            pendLineHeight: newLineHeight,
+          };
         } else {
-          this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+          return {
+            pendDone: true,
+            adjustPendTextState: 'unknown',
+            pendFontSize: this.state.pendFontSize,
+            pendLineHeight: this.state.pendLineHeight,
+          };
         }
       } else {
         const newFontSize = fontSize + 0.5;
@@ -425,22 +529,46 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         if (newLineHeight > 1.2) newLineHeight = 1.2;
 
         if (newFontSize <= 30) {
-          this.setState({ pendFontSize: newFontSize, pendLineHeight: newLineHeight, adjustTextState: 'tooSmall' });
+          return {
+            pendDone: false,
+            adjustPendTextState: 'tooSmall',
+            pendFontSize: newFontSize,
+            pendLineHeight: newLineHeight,
+          };
         } else {
-          this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+          return {
+            pendDone: true,
+            adjustPendTextState: 'unknown',
+            pendFontSize: this.state.pendFontSize,
+            pendLineHeight: this.state.pendLineHeight,
+          };
         }
       }
     } else {
-      this.setState({ adjustState: 'abilities', adjustTextState: 'unknown' });
+      return {
+        pendDone: true,
+        adjustPendTextState: 'unknown',
+        pendFontSize: this.state.pendFontSize,
+        pendLineHeight: this.state.pendLineHeight,
+      };
     }
   }
 
-  public adjustDescFontSize() {
+  public adjustDescFontSize(): {
+    descDone: boolean;
+    adjustDescTextState: TAdjustTextState;
+    descFontSize: number;
+    descLineHeight: number;
+  } {
     const container = this.ref?.querySelector('.card-description-holder') as HTMLDivElement;
     const texts = this.ref?.querySelectorAll('.description-text') as NodeListOf<HTMLDivElement>;
     if (!container || !texts?.length || this.state.descFontSize === 0) {
-      this.setState({ adjustState: 'done' });
-      return;
+      return {
+        descDone: true,
+        adjustDescTextState: 'unknown',
+        descFontSize: this.state.descFontSize,
+        descLineHeight: this.state.descLineHeight,
+      };
     }
 
     let textHeight = 0;
@@ -459,18 +587,39 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       if (newLineHeight < 1.05) newLineHeight = 1.05;
 
       if (newFontSize >= 5) {
-        this.setState({ descFontSize: newFontSize, descLineHeight: newLineHeight, adjustTextState: 'tooBig' });
+        return {
+          descDone: false,
+          adjustDescTextState: 'tooBig',
+          descFontSize: newFontSize,
+          descLineHeight: newLineHeight,
+        };
       } else {
-        this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+        return {
+          descDone: true,
+          adjustDescTextState: 'unknown',
+          descFontSize: this.state.descFontSize,
+          descLineHeight: this.state.descLineHeight,
+        };
       }
     } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustTextState === 'tooBig') {
+      if (this.state.adjustDescTextState === 'tooBig') {
         if (this.state.descLineHeight < 1.2) {
           let newLineHeight = this.state.descLineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
           this.setState({ descLineHeight: newLineHeight });
+          return {
+            descDone: false,
+            adjustDescTextState: this.state.adjustDescTextState,
+            descFontSize: this.state.descFontSize,
+            descLineHeight: newLineHeight,
+          };
         } else {
-          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+          return {
+            descDone: true,
+            adjustDescTextState: 'unknown',
+            descFontSize: this.state.descFontSize,
+            descLineHeight: this.state.descLineHeight,
+          };
         }
       } else {
         const newFontSize = fontSize + 0.5;
@@ -478,13 +627,28 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         if (newLineHeight > 1.2) newLineHeight = 1.2;
 
         if (newFontSize <= 30) {
-          this.setState({ descFontSize: newFontSize, descLineHeight: newLineHeight, adjustTextState: 'tooSmall' });
+          return {
+            descDone: false,
+            adjustDescTextState: 'tooSmall',
+            descFontSize: newFontSize,
+            descLineHeight: newLineHeight,
+          };
         } else {
-          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+          return {
+            descDone: true,
+            adjustDescTextState: 'unknown',
+            descFontSize: this.state.descFontSize,
+            descLineHeight: this.state.descLineHeight,
+          };
         }
       }
     } else {
-      this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+      return {
+        descDone: true,
+        adjustDescTextState: 'unknown',
+        descFontSize: this.state.descFontSize,
+        descLineHeight: this.state.descLineHeight,
+      };
     }
   }
 
@@ -764,12 +928,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           );
         })}
       </VerticalStack>,
-      `card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`
+      `card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''}${this.state.pendDone ? '' : ' hidden'}`
     );
   }
 
   private renderDescription() {
-    let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
+    let containerClass = `card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
     if (app.$card.hasAbilities(this.props.card)) {
       containerClass = `${containerClass} with-abilities`;
 

@@ -16,15 +16,22 @@ import {
 interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
+  renderId: string;
   card: ICard;
   onCardReady: () => void;
 }
 
-type TAdjustState = 'waiting' | 'todo' | 'name' | 'atkMax' | 'atk' | 'def' | 'abilities' | 'desc' | 'done';
+type TAdjustState = 'waiting' | 'todo' | 'done';
+
+type TAdjustTextState = 'unknown' | 'tooBig' | 'tooSmall';
 
 interface IRushCardBuilderState extends IContainableState {
-  adjustState: TAdjustState;
-  adjustTextState: 'unknown' | 'tooBig' | 'tooSmall';
+  nameDone: boolean;
+  atkMaxDone: boolean;
+  atkDone: boolean;
+  defDone: boolean;
+  abilitiesDone: boolean;
+  descDone: boolean;
 
   artworkBg: string;
   croppedArtworkBase64: string;
@@ -33,11 +40,10 @@ interface IRushCardBuilderState extends IContainableState {
   abilities: string[];
   hasStIcon: boolean;
 
+  adjustDescTextState: TAdjustTextState;
   descFontSize: number;
   descLineHeight: number;
   description: JSX.Element[][];
-  pendFontSize: number;
-  pendLineHeight: number;
 
   legend: string;
   attribute: string;
@@ -55,13 +61,14 @@ interface IRushCardBuilderState extends IContainableState {
 }
 
 export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCardBuilderState> {
+  private adjustState: TAdjustState = 'waiting';
   private ref: HTMLDivElement | undefined;
-  private debouncedRefreshState: (card: ICard) => void;
+  private debouncedRefreshState: (resetFontSizes: boolean) => void;
 
   public constructor(props: IRushCardBuilderProps) {
     super(props);
     this.debouncedRefreshState = debounce(
-      (card: ICard) => app.$errorManager.handlePromise(this.refreshState(card)),
+      (resetFontSizes: boolean) => app.$errorManager.handlePromise(this.refreshState(resetFontSizes)),
       500
     );
     if (!props.forRender) this.handleResize = this.handleResize.bind(this);
@@ -69,14 +76,18 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
   public componentDidMount() {
     if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
-    this.debouncedRefreshState(this.props.card);
+    app.$errorManager.handlePromise(this.debouncedRefreshState(true));
   }
 
   public componentDidUpdate(prevProps: IRushCardBuilderProps) {
-    if (prevProps.card !== this.props.card) {
-      this.setState({ adjustState: 'waiting' }, () => {
-        this.debouncedRefreshState(this.props.card);
-      });
+    if (prevProps.renderId !== this.props.renderId) {
+      this.adjustState = 'waiting';
+      this.debouncedRefreshState(prevProps.card !== this.props.card);
+    } else if (this.adjustState === 'todo') {
+      app.$errorManager.handlePromise(this.adjustAllFontSizes());
+    } else if (this.adjustState === 'done') {
+      this.adjustState = 'waiting';
+      setTimeout(() => this.props.onCardReady());
     }
   }
 
@@ -85,11 +96,19 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private handleResize() {
+    this.adjustState = 'todo';
     app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
-  private async refreshState(card: ICard) {
+  private async refreshState(resetFontSizes?: boolean) {
+    const { card } = this.props;
     if (!card) return;
+
+    let { descFontSize, descLineHeight } = this.state;
+    if (resetFontSizes) {
+      descFontSize = 30;
+      descLineHeight = 1.2;
+    }
 
     const artworkBg = require(`../../../assets/images/rdWhiteArtwork.png`);
     let croppedArtworkBase64: string;
@@ -228,8 +247,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     const state: IRushCardBuilderState = {
       loaded: true,
-      adjustState: 'todo',
-      adjustTextState: 'unknown',
+      nameDone: false,
+      atkMaxDone: false,
+      atkDone: false,
+      defDone: false,
+      abilitiesDone: false,
+      descDone: false,
 
       artworkBg,
       croppedArtworkBase64,
@@ -238,11 +261,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       abilities,
       hasStIcon,
 
-      descFontSize: 30,
-      descLineHeight: 1.2,
+      adjustDescTextState: 'unknown',
+      descFontSize,
+      descLineHeight,
       description,
-      pendFontSize: 30,
-      pendLineHeight: 1.2,
 
       legend: require(`../../../assets/images/rd-legend/${card.legendType}.png`),
       attribute: require(`../../../assets/images/rd-attributes/${card.language}/${card.attribute}.png`),
@@ -261,8 +283,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       ),
     };
 
+    this.adjustState = 'todo';
     this.setState(state);
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
   }
 
   private getProcessedText(text: string, index: number, forceBulletAtStart?: boolean) {
@@ -292,42 +314,71 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private async adjustAllFontSizes() {
-    switch (this.state.adjustState) {
-      case 'todo':
-        this.setState({ adjustState: 'name' });
-        break;
-      case 'name':
-        await this.convertNameToImg();
-        break;
-      case 'atkMax':
-        this.convertAtkMaxToImg();
-        break;
-      case 'atk':
-        this.convertAtkToImg();
-        break;
-      case 'def':
-        this.convertDefToImg();
-        break;
-      case 'abilities':
-        await this.convertAbilitiesToImg();
-        break;
-      case 'desc':
-        this.adjustDescFontSize();
-        break;
-      case 'done':
-        if (this.props.onCardReady) this.props.onCardReady();
-        break;
-      default:
-        break;
+    if (this.adjustState !== 'todo') return;
+
+    let {
+      nameDone,
+      atkMaxDone,
+      atkDone,
+      defDone,
+      abilitiesDone,
+      descDone,
+      adjustDescTextState,
+      descFontSize,
+      descLineHeight,
+    } = this.state;
+
+    if (!nameDone) {
+      nameDone = await this.convertNameToImg();
     }
+
+    if (!atkMaxDone) {
+      atkMaxDone = await this.convertAtkMaxToImg();
+    }
+
+    if (!atkDone) {
+      atkDone = await this.convertAtkToImg();
+    }
+
+    if (!defDone) {
+      defDone = await this.convertDefToImg();
+    }
+
+    if (!abilitiesDone) {
+      abilitiesDone = await this.convertAbilitiesToImg();
+    }
+
+    if (!descDone) {
+      const response = this.adjustDescFontSize();
+      descDone = response.descDone;
+      adjustDescTextState = response.adjustDescTextState;
+      descFontSize = response.descFontSize;
+      descLineHeight = response.descLineHeight;
+    }
+
+    if (nameDone && atkMaxDone && atkDone && defDone && abilitiesDone && descDone) {
+      this.adjustState = 'done';
+    }
+
+    this.setState({
+      nameDone,
+      atkMaxDone,
+      atkDone,
+      defDone,
+      abilitiesDone,
+      descDone,
+      adjustDescTextState,
+      descFontSize,
+      descLineHeight,
+    });
   }
 
-  public async convertNameToImg() {
+  public async convertNameToImg(): Promise<boolean> {
     const container = this.ref?.querySelector('.card-name-container') as HTMLDivElement;
-    if (!container) return;
+    if (!container) return true;
 
     const name = container.querySelector('.card-name') as HTMLDivElement;
-    if (!name) return;
+    if (!name) return true;
 
     if (this.props.card.frames.includes('skill')) {
       name.style.width = `${name.scrollWidth + 6}px`;
@@ -337,7 +388,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       name.style.height = '';
     }
 
-    const canvas = await html2canvas(name, { backgroundColor: null });
+    const canvas = await html2canvas(name, { backgroundColor: null, allowTaint: true });
     canvas.className = 'html2canvas-name';
     const existingCanvas = container.querySelector('.html2canvas-name');
     if (existingCanvas) {
@@ -345,18 +396,19 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     } else {
       container.appendChild(canvas);
     }
-    this.setState({ adjustState: 'atkMax' });
+    return true;
   }
 
-  public async convertAtkMaxToImg() {
+  public async convertAtkMaxToImg(): Promise<boolean> {
     if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && this.props.card.maximum) {
       const container = this.ref?.querySelector('.atk-max') as HTMLDivElement;
-      if (!container) return;
+      if (!container) return true;
+
       const atkMax = container.querySelector('.atk-max-text') as HTMLParagraphElement;
-      if (!atkMax) return;
+      if (!atkMax) return true;
       atkMax.classList.remove('hidden');
 
-      const canvas = await html2canvas(atkMax, { backgroundColor: null });
+      const canvas = await html2canvas(atkMax, { backgroundColor: null, allowTaint: true });
       canvas.className = 'html2canvas html2canvas-atk-max';
       if (container.classList.contains('compressed')) {
         canvas.classList.add('compressed');
@@ -370,18 +422,19 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
       atkMax.classList.add('hidden');
     }
-    this.setState({ adjustState: 'atk' });
+    return true;
   }
 
-  public async convertAtkToImg() {
+  public async convertAtkToImg(): Promise<boolean> {
     if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card)) {
       const container = this.ref?.querySelector('.atk') as HTMLDivElement;
-      if (!container) return;
+      if (!container) return true;
+
       const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
-      if (!atk) return;
+      if (!atk) return true;
       atk.classList.remove('hidden');
 
-      const canvas = await html2canvas(atk, { backgroundColor: null });
+      const canvas = await html2canvas(atk, { backgroundColor: null, allowTaint: true });
       canvas.className = 'html2canvas html2canvas-atk';
       if (container.classList.contains('compressed')) {
         canvas.classList.add('compressed');
@@ -395,18 +448,19 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
       atk.classList.add('hidden');
     }
-    this.setState({ adjustState: 'def' });
+    return true;
   }
 
-  public async convertDefToImg() {
+  public async convertDefToImg(): Promise<boolean> {
     if (!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card)) {
       const container = this.ref?.querySelector('.def') as HTMLDivElement;
-      if (!container) return;
+      if (!container) return true;
+
       const def = container.querySelector('.def-text') as HTMLParagraphElement;
-      if (!def) return;
+      if (!def) return true;
       def.classList.remove('hidden');
 
-      const canvas = await html2canvas(def, { backgroundColor: null });
+      const canvas = await html2canvas(def, { backgroundColor: null, allowTaint: true });
       canvas.className = 'html2canvas html2canvas-def';
       if (container.classList.contains('compressed')) {
         canvas.classList.add('compressed');
@@ -420,17 +474,18 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
       def.classList.add('hidden');
     }
-    this.setState({ adjustState: 'abilities' });
+    return true;
   }
 
-  public async convertAbilitiesToImg() {
+  public async convertAbilitiesToImg(): Promise<boolean> {
     const container = this.ref?.querySelector('.card-abilities') as HTMLDivElement;
-    if (!container) return;
+    if (!container) return true;
+
     const rightBracket = container.querySelector('.right-bracket') as HTMLDivElement;
     const abilities = container.querySelector('.abilities') as HTMLDivElement;
-    if (!rightBracket || !abilities) return;
+    if (!rightBracket || !abilities) return true;
 
-    const canvas = await html2canvas(abilities, { backgroundColor: null });
+    const canvas = await html2canvas(abilities, { backgroundColor: null, allowTaint: true });
     canvas.className = 'html2canvas-abilities';
     if (abilities.classList.contains('with-st-icon')) {
       canvas.classList.add('with-st-icon');
@@ -443,15 +498,24 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       const rushStIcon = container.querySelector('.rush-st-icon') as HTMLDivElement;
       container.insertBefore(canvas, rushStIcon || rightBracket);
     }
-    this.setState({ adjustState: 'desc' });
+    return true;
   }
 
-  public adjustDescFontSize() {
+  public adjustDescFontSize(): {
+    descDone: boolean;
+    adjustDescTextState: TAdjustTextState;
+    descFontSize: number;
+    descLineHeight: number;
+  } {
     const container = this.ref?.querySelector('.card-description-holder') as HTMLDivElement;
     const texts = this.ref?.querySelectorAll('.description-text') as NodeListOf<HTMLDivElement>;
     if (!container || !texts?.length || this.state.descFontSize === 0) {
-      this.setState({ adjustState: 'done' });
-      return;
+      return {
+        descDone: true,
+        adjustDescTextState: 'unknown',
+        descFontSize: this.state.descFontSize,
+        descLineHeight: this.state.descLineHeight,
+      };
     }
 
     let textHeight = 0;
@@ -470,18 +534,38 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       if (newLineHeight < 1.05) newLineHeight = 1.05;
 
       if (newFontSize >= 5) {
-        this.setState({ descFontSize: newFontSize, descLineHeight: newLineHeight, adjustTextState: 'tooBig' });
+        return {
+          descDone: false,
+          adjustDescTextState: 'tooBig',
+          descFontSize: newFontSize,
+          descLineHeight: newLineHeight,
+        };
       } else {
-        this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+        return {
+          descDone: true,
+          adjustDescTextState: 'unknown',
+          descFontSize: this.state.descFontSize,
+          descLineHeight: this.state.descLineHeight,
+        };
       }
     } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustTextState === 'tooBig') {
+      if (this.state.adjustDescTextState === 'tooBig') {
         if (this.state.descLineHeight < 1.2) {
           let newLineHeight = this.state.descLineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
-          this.setState({ descLineHeight: newLineHeight });
+          return {
+            descDone: false,
+            adjustDescTextState: this.state.adjustDescTextState,
+            descFontSize: this.state.descFontSize,
+            descLineHeight: newLineHeight,
+          };
         } else {
-          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+          return {
+            descDone: true,
+            adjustDescTextState: 'unknown',
+            descFontSize: this.state.descFontSize,
+            descLineHeight: this.state.descLineHeight,
+          };
         }
       } else {
         const newFontSize = fontSize + 0.5;
@@ -489,13 +573,28 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         if (newLineHeight > 1.2) newLineHeight = 1.2;
 
         if (newFontSize <= 30) {
-          this.setState({ descFontSize: newFontSize, descLineHeight: newLineHeight, adjustTextState: 'tooSmall' });
+          return {
+            descDone: false,
+            adjustDescTextState: 'tooSmall',
+            descFontSize: newFontSize,
+            descLineHeight: newLineHeight,
+          };
         } else {
-          this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+          return {
+            descDone: true,
+            adjustDescTextState: 'unknown',
+            descFontSize: this.state.descFontSize,
+            descLineHeight: this.state.descLineHeight,
+          };
         }
       }
     } else {
-      this.setState({ adjustState: 'done', adjustTextState: 'unknown' });
+      return {
+        descDone: true,
+        adjustDescTextState: 'unknown',
+        descFontSize: this.state.descFontSize,
+        descLineHeight: this.state.descLineHeight,
+      };
     }
   }
 
@@ -550,19 +649,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     if (!this.state?.loaded) return <Spinner />;
 
-    let artworkClass = 'card-layer artwork-container';
-    if (app.$card.hasPendulumFrame(this.props.card)) {
-      if (this.props.card.frames.includes('link')) {
-        artworkClass = `${artworkClass} artwork-pendulum-link`;
-      } else {
-        artworkClass = `${artworkClass} artwork-pendulum`;
-      }
-
-      if (this.props.card.artwork.pendulum) {
-        artworkClass = `${artworkClass} in-pendulum-effect`;
-      }
-    }
-
     const specificties = this.getSpecifities();
 
     return this.renderAttributes(
@@ -572,7 +658,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           <div>
             <img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' />
           </div>,
-          artworkClass
+          'card-layer artwork-container'
         )}
 
         {this.renderFrames(this.state.cardFrames, 'card-frame')}
@@ -789,41 +875,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     );
   }
 
-  private renderPendulum() {
-    const pendEffect = this.props.card.pendEffect.split('\n');
-
-    return this.renderAttributes(
-      <VerticalStack>
-        {pendEffect.map((text, i) => {
-          let withBulletPoint = false;
-          if (text.startsWith('●')) {
-            withBulletPoint = true;
-            text = text.replace(/^●\s*/, '');
-          }
-          return (
-            <p
-              key={`pendulum-effect-${i}`}
-              className={classNames('pendulum-effect-text', 'black-text', { 'with-bullet-point': withBulletPoint })}
-              style={{
-                fontSize: `${this.state.pendFontSize}px`,
-                lineHeight: this.state.pendLineHeight,
-                marginBottom: this.state.pendLineHeight / 2,
-              }}
-            >
-              {text}
-            </p>
-          );
-        })}
-      </VerticalStack>,
-      `card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''} ${this.state.adjustState === 'done' ? '' : 'hidden'}`
-    );
-  }
-
   private renderDescription() {
-    let containerClass = `card-layer card-description-holder${this.state.adjustState === 'done' ? '' : ' hidden'}`;
+    let containerClass = `card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link'))
-      containerClass = `${containerClass} on-pendulum-link`;
 
     return this.renderAttributes(
       <VerticalStack>

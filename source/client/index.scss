@@ -1,3 +1,10 @@
+// Vraiment parce que c'est plus simple de hacker comme ça
+.mn-zindex-content {
+  &:not(.mn-popup-container .mn-zindex-content) {
+    z-index: inherit !important;
+  }
+}
+
 @import 'libraries/mn-toolkit/index.scss';
 @import './kernel/styles.scss';
 @import './editor/styles.scss';
@@ -9,14 +16,6 @@
 
 .mn-router {
   height: 100%;
-}
-
-// Vraiment parce que c'est plus simple de hacker comme ça
-.mn-zindex-content {
-  // ...sauf ceux à l'intérieur de `.mn-popup-container`
-  &:not(.mn-popup-container .mn-zindex-content) {
-    z-index: inherit !important;
-  }
 }
 
 html {

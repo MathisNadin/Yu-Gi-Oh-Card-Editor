@@ -164,7 +164,6 @@ export function each<T>(
   }
 }
 
-// FIXME: n'a rien à faire ici
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function diff(o: any[], n: any[]) {
   o = o.slice(0);

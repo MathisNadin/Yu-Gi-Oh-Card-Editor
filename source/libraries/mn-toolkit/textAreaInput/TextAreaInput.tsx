@@ -14,7 +14,7 @@ export interface ITextAreaInputProps extends IContainableProps {
   defaultValue: string;
   lineHeight?: number;
   onRef?: (ref: HTMLTextAreaElement) => void;
-  onChange?: (value: string) => void;
+  onChange?: (value: string) => void | Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
 }
@@ -58,15 +58,13 @@ export class TextAreaInput
     app.$device.removeListener(this);
   }
 
-  public componentDidUpdate() {
-    // Si on applique trim() sur la source des props,
-    // alors la state.value peut se retrouver écrasée par le même texte mais sans les espaces à la fin
-    // -> l'utilisateur ne comprend pas que son texte soit "mangé" sans raison à chaque fois qu'il fait espace
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue });
-      if (this.inputElement) {
-        setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
-      }
+  public componentDidUpdate(prevProps: ITextAreaInputProps) {
+    if (prevProps !== this.props) {
+      this.setState({ value: this.props.defaultValue }, () => {
+        if (this.inputElement) {
+          setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
+        }
+      });
     }
   }
 
@@ -97,7 +95,7 @@ export class TextAreaInput
           onBlur={() => this.onBlur()}
           onFocus={() => this.onFocus()}
           onChange={(e) => this.onChange(e)}
-          onKeyUp={(e) => this.onChange(e)}
+          // onKeyUp={(e) => this.onChange(e)}
           // FIXME MN : Un peu bâtard, ça empêche le scroll tant qu'on n'a pas dépassé le nombre de maxRows
           // Utile notamment quand on force une police/lineHeight plus haut qu'à la normale
           style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
@@ -141,7 +139,11 @@ export class TextAreaInput
     const value = e.target.value as string;
     this.setState({ value }, () => {
       this.onTextAreaChange(e);
-      if (this.props.onChange) this.props.onChange(value);
+      setTimeout(() => {
+        if (this.props.onChange) {
+          app.$errorManager.handlePromise(this.props.onChange(this.state.value));
+        }
+      });
     });
   }
 
