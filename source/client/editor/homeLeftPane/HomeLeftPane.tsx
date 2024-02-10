@@ -44,10 +44,6 @@ export class HomeLeftPane
 
     app.$card.addListener(this);
     app.$device.addListener(this);
-
-    if (app.$device.isConnected()) {
-      app.$errorManager.handlePromise(this.checkUpdate());
-    }
   }
 
   public componentWillUnmount() {
@@ -60,7 +56,14 @@ export class HomeLeftPane
     app.$errorManager.handlePromise(this.checkUpdate());
   }
 
+  public deviceInitialized() {
+    if (this.state.versionInfos) return;
+    app.$errorManager.handlePromise(this.checkUpdate());
+  }
+
   private async checkUpdate() {
+    console.log('checkUpdate', app.$device.isDesktop);
+    if (app.$device.isDesktop || !app.$device.isConnected()) return;
     try {
       const versionInfos = await app.$api.get<IVersionInfos>(
         'https://gist.githubusercontent.com/MathisNadin/e12c2c1494081ff24fbc5463f7c49470/raw/',
