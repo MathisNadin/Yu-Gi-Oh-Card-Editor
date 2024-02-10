@@ -94,7 +94,7 @@ export class HomeLeftPane
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else {
-      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard.rush ? 'rush' : 'master' });
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard?.rush ? 'rush' : 'master' });
     }
   }
 
@@ -102,7 +102,7 @@ export class HomeLeftPane
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else {
-      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard.rush ? 'rush' : 'master' });
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard?.rush ? 'rush' : 'master' });
     }
   }
 

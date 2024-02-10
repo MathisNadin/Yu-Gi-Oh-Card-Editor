@@ -14,7 +14,7 @@ interface IArtworkCroppingProps extends IContainableProps {
 interface IArtworkCroppingState extends IContainableState {
   higher: boolean;
   crop: Crop;
-  croppedArtworkBase64: string;
+  artworkBase64: string;
 }
 
 export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtworkCroppingState> {
@@ -23,44 +23,58 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     this.state = {
       ...this.state,
       loaded: false,
-      croppedArtworkBase64: '',
       crop: props.crop,
+      artworkBase64: '',
     };
   }
 
   public componentDidMount() {
-    this.loadHigher();
+    setTimeout(() => this.loadHigher());
+  }
+
+  private prevPropsIsDifferent(prevProps: IArtworkCroppingProps) {
+    return (
+      prevProps.hasPendulumFrame !== this.props.hasPendulumFrame ||
+      prevProps.hasLinkFrame !== this.props.hasLinkFrame ||
+      prevProps.crop.height !== this.props.crop.height ||
+      prevProps.crop.width !== this.props.crop.width ||
+      prevProps.crop.x !== this.props.crop.x ||
+      prevProps.crop.y !== this.props.crop.y ||
+      prevProps.artworkBase64 !== this.props.artworkBase64
+    );
   }
 
   public componentDidUpdate(prevProps: IArtworkCroppingProps) {
-    if (isDefined(this.state.higher) && prevProps !== this.props) {
-      this.loadHigher();
+    if (isDefined(this.state.higher) && this.prevPropsIsDifferent(prevProps)) {
+      setTimeout(() => this.loadHigher());
     }
   }
 
   private loadHigher() {
     if (!this.props.artworkBase64) {
-      this.setState({
+      return this.setState({
         loaded: true,
         higher: false,
         crop: this.props.crop,
+        artworkBase64: '',
       });
-    } else {
-      const container = document.querySelector('.artwork-cropping') as HTMLElement;
-      if (!container) return;
-      const containerisHigher = container.clientHeight > container.clientWidth;
-
-      const image = new Image();
-      image.src = this.props.artworkBase64;
-      const imageIsHigher = image.height > image.width;
-
-      image.onload = () =>
-        this.setState({
-          loaded: true,
-          higher: containerisHigher && imageIsHigher,
-          crop: this.props.crop,
-        });
     }
+
+    const container = document.querySelector('.artwork-cropping') as HTMLElement;
+    if (!container) return;
+    const containerisHigher = container.clientHeight > container.clientWidth;
+
+    const image = new Image();
+    image.src = this.props.artworkBase64;
+    const imageIsHigher = image.height > image.width;
+
+    image.onload = () =>
+      this.setState({
+        loaded: true,
+        higher: containerisHigher && imageIsHigher,
+        crop: this.props.crop,
+        artworkBase64: this.props.artworkBase64,
+      });
   }
 
   private onCroppingChange(crop: Crop) {
@@ -68,24 +82,23 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     crop.y = Math.round(crop.y * 100) / 100;
     crop.height = Math.round(crop.height * 100) / 100;
     crop.width = Math.round(crop.width * 100) / 100;
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+    this.setState({ crop }, () => this.props.onCroppingChange(this.state.crop));
   }
 
   public render() {
     if (!this.state.loaded) return <Spinner />;
-    return this.renderAttributes(
-      <Container margin>
-        {!!this.props.artworkBase64.length && (
+    return (
+      <Container className='artwork-cropping' margin>
+        {!!this.state.artworkBase64 && (
           <ReactCrop
             className={classNames('cropping-interface', { higher: this.state.higher, larger: !this.state.higher })}
             crop={this.state.crop}
             onChange={(_cropPx: Crop, crop: Crop) => this.onCroppingChange(crop)}
           >
-            <img id='artwork-img' className='artwork-img' src={this.props.artworkBase64} alt='artwork' />
+            <img id='artwork-img' className='artwork-img' src={this.state.artworkBase64} alt='artwork' />
           </ReactCrop>
         )}
-      </Container>,
-      'artwork-cropping'
+      </Container>
     );
   }
 }
