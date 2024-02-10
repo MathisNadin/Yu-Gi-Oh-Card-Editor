@@ -1,0 +1,14 @@
+{
+  "name": "mn-electron-main",
+  "displayName": "MN Electron Main",
+  "version": "1.0.0",
+  "description": "Bibliothèque Typescript pour agir comme partie Main d'un projet Electron JS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisNadin/mn-electron-main.git"
+  },
+  "author": {
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
+  }
+}
