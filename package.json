@@ -1,7 +1,7 @@
 {
   "name": "yu-gi-oh-card-editor",
   "displayName": "Yu-Gi-Oh! Card Editor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Un éditeur de cartes Yu-Gi-Oh",
   "repository": {
     "type": "git",
