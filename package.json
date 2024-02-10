@@ -38,6 +38,9 @@
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
     "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
+  "dependencies": {
+    "electron-dl": "=3.5.0"
+  },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "=0.5.11",
     "@types/node": "=18.15.7",
@@ -57,7 +60,6 @@
     "css-minimizer-webpack-plugin": "=6.0.0",
     "electron": "=28.1.1",
     "electron-builder": "=24.9.1",
-    "electron-dl": "=3.5.0",
     "electronmon": "=2.0.2",
     "eslint": "=8.56.0",
     "eslint-config-prettier": "=9.1.0",
