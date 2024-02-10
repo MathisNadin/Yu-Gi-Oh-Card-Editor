@@ -225,7 +225,7 @@ export class CardsLibrary
   }
 
   public render() {
-    if (!this.state?.localCards?.length) return <Spinner />;
+    if (!this.state.localCards?.length) return <Spinner />;
     const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } =
       this.state;
     return this.renderAttributes(

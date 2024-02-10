@@ -290,7 +290,7 @@ export class CardImportDialog extends Containable<
   }
 
   public render() {
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
     return (
       <TabbedPane
         className='card-import-dialog'

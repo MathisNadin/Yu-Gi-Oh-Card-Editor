@@ -330,7 +330,7 @@ export class CardService extends Observable<ICardListener> implements Partial<II
   public async convertTempCurrentCard() {
     if (!this._tempCurrentCard) return;
     this._tempCurrentCard = this.convertCard(this._tempCurrentCard);
-    await this.saveCurrentCard(this._tempCurrentCard);
+    await this.saveTempCurrentCard(this._tempCurrentCard);
   }
 
   private convertCard(card: ICard) {

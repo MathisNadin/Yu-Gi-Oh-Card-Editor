@@ -76,7 +76,7 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
   }
 
   public render() {
-    if (!this.state?.settings) return <Spinner />;
+    if (!this.state.settings) return <Spinner />;
     return this.renderAttributes(
       <VerticalStack fill>
         <VerticalStack fill gutter padding>

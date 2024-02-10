@@ -647,7 +647,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   public render() {
     if (!this.props.card) return <div></div>;
 
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
 
     const specificties = this.getSpecifities();
 

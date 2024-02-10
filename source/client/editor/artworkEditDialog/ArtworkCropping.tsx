@@ -33,7 +33,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   }
 
   public componentDidUpdate(prevProps: IArtworkCroppingProps) {
-    if (isDefined(this.state?.higher) && prevProps !== this.props) {
+    if (isDefined(this.state.higher) && prevProps !== this.props) {
       this.loadHigher();
     }
   }
@@ -72,7 +72,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   }
 
   public render() {
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
     return this.renderAttributes(
       <Container margin>
         {!!this.props.artworkBase64.length && (

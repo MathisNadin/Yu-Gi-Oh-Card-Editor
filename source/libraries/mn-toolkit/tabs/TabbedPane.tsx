@@ -59,7 +59,7 @@ export class TabbedPane<TAbstractTabIndex> extends Container<
   }
 
   public render() {
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
 
     let x = (this.props.children as ReactNode[]).filter((node, i) => {
       /*       console.log(node);

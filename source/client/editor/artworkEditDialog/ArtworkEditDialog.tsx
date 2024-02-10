@@ -97,7 +97,7 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   }
 
   public render() {
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
     return this.renderAttributes(
       <HorizontalStack gutter>
         <ArtworkCropping

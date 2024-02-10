@@ -162,7 +162,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   public render() {
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
     return this.renderAttributes(
       <VerticalStack fill scroll gutter>
         {app.$device.isDesktop && (

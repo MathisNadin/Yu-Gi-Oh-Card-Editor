@@ -701,7 +701,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   public render() {
     if (!this.props.card) return <div></div>;
 
-    if (!this.state?.loaded) return <Spinner />;
+    if (!this.state.loaded) return <Spinner />;
 
     let artworkClass = 'card-layer artwork-container';
     if (app.$card.hasPendulumFrame(this.props.card)) {
