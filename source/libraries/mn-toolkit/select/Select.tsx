@@ -1,8 +1,8 @@
 import { classNames } from 'libraries/mn-tools';
-import { IContainableProps, IContainableState, Containable } from '../containable';
 import { TIconId, Icon } from '../icon';
 import { IPopoverAction, IPopoverOptions } from '../popover';
 import { TForegroundColor } from '../themeSettings';
+import { Container, IContainerProps, IContainerState } from '../container';
 
 export function DefaultSelectLabelDecorator(label: string) {
   return <span>{label}</span>;
@@ -26,7 +26,7 @@ export interface ISelectItem<ID = number> {
   };
 }
 
-interface ISelectProps<ID> extends IContainableProps {
+interface ISelectProps<ID> extends IContainerProps {
   items: ISelectItem<ID>[];
   defaultValue?: ID;
   disabled?: boolean;
@@ -43,12 +43,12 @@ interface ISelectProps<ID> extends IContainableProps {
   popoverMinHeight?: number;
 }
 
-interface ISelectState<ID> extends IContainableState {
+interface ISelectState<ID> extends IContainerState {
   items: ISelectItem<ID>[];
   value: ID;
 }
 
-export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectState<ID>> {
+export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectState<ID>> {
   private container!: HTMLElement;
 
   public static get defaultProps() {
