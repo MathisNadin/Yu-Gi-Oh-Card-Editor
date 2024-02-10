@@ -44,6 +44,7 @@ export class HomeLeftPane
 
     app.$card.addListener(this);
     app.$device.addListener(this);
+    app.$errorManager.handlePromise(this.checkUpdate());
   }
 
   public componentWillUnmount() {
@@ -62,7 +63,6 @@ export class HomeLeftPane
   }
 
   private async checkUpdate() {
-    console.log('checkUpdate', app.$device.isDesktop);
     if (!app.$device.isDesktop || !app.$device.isConnected()) return;
     try {
       const versionInfos = await app.$api.get<IVersionInfos>(
