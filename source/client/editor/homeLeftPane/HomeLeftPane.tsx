@@ -63,7 +63,7 @@ export class HomeLeftPane
 
   private async checkUpdate() {
     console.log('checkUpdate', app.$device.isDesktop);
-    if (app.$device.isDesktop || !app.$device.isConnected()) return;
+    if (!app.$device.isDesktop || !app.$device.isConnected()) return;
     try {
       const versionInfos = await app.$api.get<IVersionInfos>(
         'https://gist.githubusercontent.com/MathisNadin/e12c2c1494081ff24fbc5463f7c49470/raw/',
