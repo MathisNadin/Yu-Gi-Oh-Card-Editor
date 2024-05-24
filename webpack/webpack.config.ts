@@ -50,11 +50,11 @@ const getConfig = () => {
       envConfigs.push(webCommonConfig);
       switch (nodeEnv) {
         case 'production':
-          envConfigs.push(webDevConfig);
+          envConfigs.push(webProdConfig);
           break;
 
         case 'development':
-          envConfigs.push(webProdConfig);
+          envConfigs.push(webDevConfig);
           break;
       }
       break;
