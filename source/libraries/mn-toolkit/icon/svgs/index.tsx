@@ -15,6 +15,10 @@ declare global {
     'toolkit-angle-left': ISvgIcons;
     'toolkit-angle-right': ISvgIcons;
     'toolkit-angle-up': ISvgIcons;
+    'toolkit-double-angle-down': ISvgIcons;
+    'toolkit-double-angle-left': ISvgIcons;
+    'toolkit-double-angle-right': ISvgIcons;
+    'toolkit-double-angle-up': ISvgIcons;
     'toolkit-cog': ISvgIcons;
     'toolkit-menu-candy-box': ISvgIcons;
     'toolkit-menu-handburger': ISvgIcons;
@@ -47,10 +51,934 @@ declare global {
     'toolkit-eye-close': ISvgIcons;
     'toolkit-millennium-puzzle': ISvgIcons;
     'toolkit-copy': ISvgIcons;
+    'toolkit-close-disc': ISvgIcons;
+    'toolkit-database': ISvgIcons;
+    'toolkit-database-add': ISvgIcons;
+    'toolkit-database-search': ISvgIcons;
+    'toolkit-database-update': ISvgIcons;
+    'toolkit-cctv': ISvgIcons;
+    'toolkit-download': ISvgIcons;
+    'toolkit-lock': ISvgIcons;
+    'toolkit-security': ISvgIcons;
+    'toolkit-persons': ISvgIcons;
+    'toolkit-tasks': ISvgIcons;
+    'toolkit-newspaper': ISvgIcons;
+    'toolkit-question-circle': ISvgIcons;
+    'toolkit-light-bulb': ISvgIcons;
+    'toolkit-login': ISvgIcons;
+    'toolkit-logout': ISvgIcons;
+    'toolkit-check-disc': ISvgIcons;
+    'toolkit-sync': ISvgIcons;
+    'toolkit-format-bold': ISvgIcons;
+    'toolkit-format-blockquote': ISvgIcons;
+    'toolkit-format-italic': ISvgIcons;
+    'toolkit-format-underline': ISvgIcons;
+    'toolkit-format-color': ISvgIcons;
+    'toolkit-format-ul': ISvgIcons;
+    'toolkit-format-ol': ISvgIcons;
+    'toolkit-format-indent': ISvgIcons;
+    'toolkit-format-header-1': ISvgIcons;
+    'toolkit-format-header-2': ISvgIcons;
+    'toolkit-format-header-3': ISvgIcons;
+    'toolkit-format-paragraph': ISvgIcons;
+    'toolkit-format-align-left': ISvgIcons;
+    'toolkit-format-align-center': ISvgIcons;
+    'toolkit-format-unformat': ISvgIcons;
+    'toolkit-format-link': ISvgIcons;
+    'toolkit-format-unlink': ISvgIcons;
+    'toolkit-search': ISvgIcons;
+    'toolkit-image-info': ISvgIcons;
+    'toolkit-embeded-video': ISvgIcons;
+    'toolkit-crop': ISvgIcons;
+    'toolkit-drag-vertical': ISvgIcons;
+    'toolkit-cloud-sync': ISvgIcons;
+    'toolkit-cloud-up': ISvgIcons;
+    'toolkit-camera': ISvgIcons;
   }
 }
 
 export function loadSvgs() {
+  app.$icon.register(
+    'toolkit-camera',
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      viewBox='-15 -15 500 500'
+      height='500'
+      width='500'
+      id='Camera-1--Streamline-Ultimate.svg'
+    >
+      <path
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M279.0625 352.5c56.781875 0 102.8125 -46.03062499999999 102.8125 -102.8125 0 -56.78167916666666 -46.03062499999999 -102.8125 -102.8125 -102.8125S176.25 192.9058208333333 176.25 249.68749999999997C176.25 306.46937499999996 222.280625 352.5 279.0625 352.5Z'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='m381.875 117.5 -21.247916666666665 -42.51541666666666c-2.4400833333333334 -4.8797749999999995 -6.19225 -8.983266666666667 -10.833499999999999 -11.850854166666664 -4.643208333333333 -2.8673916666666663 -9.991416666666666 -4.385295833333333 -15.447333333333331 -4.383729166666666h-110.5675c-5.455916666666667 -0.0015666666666666667 -10.804124999999999 1.5163375 -15.447333333333331 4.383729166666666 -4.641249999999999 2.8675875 -8.393416666666665 6.971079166666667 -10.833499999999999 11.850854166666664L176.25 117.5H44.0625c-7.790641666666667 0 -15.262466666666667 3.09495 -20.771258333333332 8.603741666666666C17.782352083333333 131.61253333333335 14.6875 139.0843583333333 14.6875 146.875v235c0 7.7902499999999995 3.0948520833333335 15.26325 8.603741666666666 20.772041666666667 5.508791666666666 5.508791666666666 12.980616666666666 8.602958333333333 20.771258333333332 8.602958333333333h381.875c7.7902499999999995 0 15.26325 -3.0941666666666667 20.772041666666667 -8.602958333333333s8.602958333333333 -12.981791666666666 8.602958333333333 -20.772041666666667v-235c0 -7.790641666666667 -3.0941666666666667 -15.262466666666667 -8.602958333333333 -20.771258333333332C441.20074999999997 120.59494999999998 433.72774999999996 117.5 425.9375 117.5H381.875Z'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentcolor'
+        d='M80.78125 190.9375c-4.055904166666666 0 -7.34375 -3.2878458333333334 -7.34375 -7.34375S76.72534583333332 176.25 80.78125 176.25'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentcolor'
+        d='M80.78125 190.9375c4.055904166666666 0 7.34375 -3.2878458333333334 7.34375 -7.34375S84.83715416666666 176.25 80.78125 176.25'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M102.8125 117.5V88.125'
+        strokeWidth='30'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-cloud-sync',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M13.03 18C13.08 18.7 13.24 19.38 13.5 20H6.5C5 20 3.69 19.5 2.61 18.43C1.54 17.38 1 16.09 1 14.58C1 13.28 1.39 12.12 2.17 11.1S4 9.43 5.25 9.15C5.67 7.62 6.5 6.38 7.75 5.43S10.42 4 12 4C13.95 4 15.6 4.68 16.96 6.04C18.32 7.4 19 9.05 19 11C19.04 11 19.07 11 19.1 11C18.36 11.07 17.65 11.23 17 11.5V11C17 9.62 16.5 8.44 15.54 7.46C14.56 6.5 13.38 6 12 6S9.44 6.5 8.46 7.46C7.5 8.44 7 9.62 7 11H6.5C5.53 11 4.71 11.34 4.03 12.03C3.34 12.71 3 13.53 3 14.5S3.34 16.29 4.03 17C4.71 17.66 5.53 18 6.5 18H13.03M19 13.5V12L16.75 14.25L19 16.5V15C20.38 15 21.5 16.12 21.5 17.5C21.5 17.9 21.41 18.28 21.24 18.62L22.33 19.71C22.75 19.08 23 18.32 23 17.5C23 15.29 21.21 13.5 19 13.5M19 20C17.62 20 16.5 18.88 16.5 17.5C16.5 17.1 16.59 16.72 16.76 16.38L15.67 15.29C15.25 15.92 15 16.68 15 17.5C15 19.71 16.79 21.5 19 21.5V23L21.25 20.75L19 18.5V20Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-cloud-up',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M4.03 12.03C3.34 12.71 3 13.53 3 14.5S3.34 16.29 4.03 17C4.71 17.66 5.53 18 6.5 18H13.09C13.04 18.33 13 18.66 13 19C13 19.34 13.04 19.67 13.09 20H6.5C5 20 3.69 19.5 2.61 18.43C1.54 17.38 1 16.09 1 14.58C1 13.28 1.39 12.12 2.17 11.1S4 9.43 5.25 9.15C5.67 7.62 6.5 6.38 7.75 5.43S10.42 4 12 4C13.95 4 15.6 4.68 16.96 6.04C18.32 7.4 19 9.05 19 11C20.15 11.13 21.1 11.63 21.86 12.5C22.37 13.07 22.7 13.71 22.86 14.42C21.82 13.54 20.5 13 19 13C18.89 13 18.79 13 18.68 13C18.62 13 18.56 13 18.5 13H17V11C17 9.62 16.5 8.44 15.54 7.46C14.56 6.5 13.38 6 12 6S9.44 6.5 8.46 7.46C7.5 8.44 7 9.62 7 11H6.5C5.53 11 4.71 11.34 4.03 12.03M16 18H18V22H20V18H22L19 15L16 18Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-drag-vertical',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-crop',
+    <svg height='48' viewBox='0 0 48 48' width='48' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M0 0h48v48h-48z' fill='none' />
+      <path d='M34 30h4v-16c0-2.21-1.79-4-4-4h-16v4h16v16zm-20 4v-32h-4v8h-8v4h8v20c0 2.21 1.79 4 4 4h20v8h4v-8h8v-4h-32z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-embeded-video',
+    <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='-1 -1 24 24'>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='m19.814941666666666 15.023983333333334 -2.160766666666667 1.2104583333333332v-1.1239249999999998c0 -0.5187416666666667 -0.34567499999999995 -0.8646 -0.8642333333333333 -0.8646H11.604083333333334c-0.5185583333333333 0 -0.8643249999999999 0.3458583333333333 -0.8643249999999999 0.8646v5.187416666666667c0 0.5187416666666667 0.3457666666666666 0.8645083333333333 0.8643249999999999 0.8645083333333333h5.185858333333333c0.5185583333333333 0 0.8642333333333333 -0.3457666666666666 0.8642333333333333 -0.8645083333333333v-1.1239249999999998l2.160766666666667 1.2103666666666666c0.605 0.3458583333333333 1.2964416666666665 -0.08644166666666665 1.2964416666666665 -0.7781583333333333v-3.976958333333333c0 -0.5187416666666667 -0.7777916666666667 -0.9510416666666667 -1.2964416666666665 -0.605275Z'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='M19.76608333333333 10.982583333333332V2.120855c0 -0.7333333333333334 -0.5498166666666666 -1.2833351666666666 -1.282875 -1.2833351666666666H2.171574166666667c-0.7331133333333333 0 -1.2829327499999998 0.5500018333333333 -1.2829327499999998 1.2833351666666666V14.679224999999999c0 0.7333333333333334 0.5498194166666667 1.2833333333333332 1.2829327499999998 1.2833333333333332h5.836682499999999'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='m8.219676666666667 15.962558333333332 -0.6416666666666666 3.758333333333333'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='M8.284365833333332 19.720891666666667H6.569676666666666'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='m6.524420833333333 5.650012499999999 -2.2916666666666665 2.3833333333333333 2.2916666666666665 2.4749541666666666'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='m13.763108333333333 5.650012499999999 2.2916666666666665 2.3833333333333333 -2.2916666666666665 2.4749541666666666'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeMiterlimit='10'
+        d='m8.906333333333333 11.241724999999999 2.475 -6.416703333333333'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-image-info',
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      viewBox='-15 -15 500 500'
+      height='500'
+      width='500'
+      id='Image-File-Info--Streamline-Ultimate.svg'
+    >
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M337.8125 455.3125c64.89329166666666 0 117.5 -52.60670833333333 117.5 -117.5s-52.60670833333333 -117.5 -117.5 -117.5 -117.5 52.60670833333333 -117.5 117.5 52.60670833333333 117.5 117.5 117.5Z'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M337.8125 396.5625v-58.75'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentColor'
+        d='M337.8125 294.9445833333333c-4.0557083333333335 0 -7.34375 -3.2880416666666665 -7.34375 -7.34375s3.2880416666666665 -7.34375 7.34375 -7.34375'
+        strokeWidth='30'
+      ></path>
+      <path
+        fill='none'
+        stroke='currentColor'
+        d='M337.8125 294.9445833333333c4.0557083333333335 0 7.34375 -3.2880416666666665 7.34375 -7.34375s-3.2880416666666665 -7.34375 -7.34375 -7.34375'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M161.5625 396.5625h-117.5c-7.790641666666667 0 -15.262466666666667 -3.0941666666666667 -20.771258333333332 -8.602958333333333C17.782352083333333 382.45074999999997 14.6875 374.97774999999996 14.6875 367.1875V44.0625c0 -7.790641666666667 3.0948520833333335 -15.262466666666667 8.603741666666666 -20.771258333333332C28.80003333333333 17.782352083333333 36.27185833333333 14.6875 44.0625 14.6875h208.15124999999998c7.784375 0.0016645833333333335 15.2515 3.0938141666666668 20.758333333333333 8.597083333333332l56.243333333333325 56.243333333333325c5.502916666666667 5.506833333333333 8.595125 12.972979166666665 8.597083333333332 20.758333333333333V161.5625'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentColor'
+        d='M102.8125 124.84374999999999c-4.055904166666666 0 -7.34375 -3.2878458333333334 -7.34375 -7.34375s3.2878458333333334 -7.34375 7.34375 -7.34375'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentColor'
+        d='M102.8125 124.84374999999999c4.055904166666666 0 7.34375 -3.2878458333333334 7.34375 -7.34375s-3.2878458333333334 -7.34375 -7.34375 -7.34375'
+        strokeWidth='30'
+      />
+      <path
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='m236.66458333333333 187.723875 -16.352083333333333 -26.163333333333334c-1.3238333333333332 -1.9904499999999998 -3.111791666666667 -3.6274208333333333 -5.213083333333333 -4.768541666666667 -2.0993333333333335 -1.140925 -4.447375 -1.7515333333333334 -6.836541666666666 -1.7785583333333332 -2.3891666666666667 -0.027024999999999997 -4.750916666666667 0.5303166666666667 -6.875708333333334 1.6236541666666666 -2.1247916666666664 1.0931416666666667 -3.9519166666666665 2.6893791666666664 -5.318833333333333 4.649279166666666l-39.166666666666664 55.83208333333333 -24.126666666666665 -19.32875c-1.5893833333333331 -1.274875 -3.4263 -2.203320833333333 -5.394033333333334 -2.7293291666666666 -1.9677333333333331 -0.5258124999999999 -4.0235916666666665 -0.6366541666666665 -6.036366666666667 -0.32547499999999996 -2.012970833333333 0.311375 -3.9391874999999996 1.0377208333333334 -5.656254166666666 2.1343875 -1.7172625 1.0947083333333332 -3.1875791666666666 2.5360416666666667 -4.317929166666667 4.2299999999999995l-37.932916666666664 77.96124999999999h88.125'
+        strokeWidth='30'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-search',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-bold',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-blockquote',
+    <svg viewBox='0 0 24 24'>
+      <path fill='currentColor' d='M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-italic',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path fill='currentColor' d='M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-underline',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M5,21H19V19H5V21M12,17A6,6 0 0,0 18,11V3H15.5V11A3.5,3.5 0 0,1 12,14.5A3.5,3.5 0 0,1 8.5,11V3H6V11A6,6 0 0,0 12,17Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-color',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path fill='currentColor' d='M9.62,12L12,5.67L14.37,12M11,3L5.5,17H7.75L8.87,14H15.12L16.25,17H18.5L13,3H11Z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-ul',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M3,4H7V8H3V4M9,5V7H21V5H9M3,10H7V14H3V10M9,11V13H21V11H9M3,16H7V20H3V16M9,17V19H21V17H9'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-ol',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M7,13V11H21V13H7M7,19V17H21V19H7M7,7V5H21V7H7M3,8V5H2V4H4V8H3M2,17V16H5V20H2V19H4V18.5H3V17.5H4V17H2M4.25,10A0.75,0.75 0 0,1 5,10.75C5,10.95 4.92,11.14 4.79,11.27L3.12,13H5V14H2V13.08L4,11H2V10H4.25Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-indent',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M11,13H21V11H11M11,9H21V7H11M3,3V5H21V3M11,17H21V15H11M3,8V16L7,12M3,21H21V19H3V21Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-header-1',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M3,4H5V10H9V4H11V18H9V12H5V18H3V4M14,18V16H16V6.31L13.5,7.75V5.44L16,4H18V16H20V18H14Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-header-2',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M3,4H5V10H9V4H11V18H9V12H5V18H3V4M21,18H15A2,2 0 0,1 13,16C13,15.47 13.2,15 13.54,14.64L18.41,9.41C18.78,9.05 19,8.55 19,8A2,2 0 0,0 17,6A2,2 0 0,0 15,8H13A4,4 0 0,1 17,4A4,4 0 0,1 21,8C21,9.1 20.55,10.1 19.83,10.83L15,16H21V18Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-header-3',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M3,4H5V10H9V4H11V18H9V12H5V18H3V4M15,4H19A2,2 0 0,1 21,6V16A2,2 0 0,1 19,18H15A2,2 0 0,1 13,16V15H15V16H19V12H15V10H19V6H15V7H13V6A2,2 0 0,1 15,4Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-paragraph',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M13,4A4,4 0 0,1 17,8A4,4 0 0,1 13,12H11V18H9V4H13M13,10A2,2 0 0,0 15,8A2,2 0 0,0 13,6H11V10H13Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-align-left',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path fill='currentColor' d='M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-align-center',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path fill='currentColor' d='M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-unformat',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M16.24,3.56L21.19,8.5C21.97,9.29 21.97,10.55 21.19,11.34L12,20.53C10.44,22.09 7.91,22.09 6.34,20.53L2.81,17C2.03,16.21 2.03,14.95 2.81,14.16L13.41,3.56C14.2,2.78 15.46,2.78 16.24,3.56M4.22,15.58L7.76,19.11C8.54,19.9 9.8,19.9 10.59,19.11L14.12,15.58L9.17,10.63L4.22,15.58Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-link',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-unlink',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M2,5.27L3.28,4L20,20.72L18.73,22L13.9,17.17L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L12.5,15.76L10.88,14.15C10.87,14.39 10.77,14.64 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C8.12,13.77 7.63,12.37 7.72,11L2,5.27M12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.79,8.97L9.38,7.55L12.71,4.22M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.2,10.54 16.61,12.5 16.06,14.23L14.28,12.46C14.23,11.78 13.94,11.11 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-check-disc',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-sync',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M12,18A6,6 0 0,1 6,12C6,11 6.25,10.03 6.7,9.2L5.24,7.74C4.46,8.97 4,10.43 4,12A8,8 0 0,0 12,20V23L16,19L12,15M12,4V1L8,5L12,9V6A6,6 0 0,1 18,12C18,13 17.75,13.97 17.3,14.8L18.76,16.26C19.54,15.03 20,13.57 20,12A8,8 0 0,0 12,4Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-logout',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' height='48' width='48'>
+      <g>
+        <line
+          x1='6.5'
+          y1='7'
+          x2='13.5'
+          y2='7'
+          fill='none'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+        ></line>
+        <polyline
+          points='11.5 5 13.5 7 11.5 9'
+          fill='none'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+        ></polyline>
+        <path
+          d='M11.7,11.49a6.5,6.5,0,1,1,0-9'
+          fill='none'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+        ></path>
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-login',
+    <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' id='Login--Streamline-Ultimate.svg'>
+      <path
+        d='m23.25 12.004 -15.75 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m11.25 15.754 -3.75 -3.75 3.75 -3.75'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='M20.693 16.6a10.5 10.5 0 1 1 -0.179 -9.542'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-light-bulb',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' height='48' width='48'>
+      <g>
+        <path
+          d='M11.5,5A4.5,4.5,0,1,0,5,9V10.5a.5.5,0,0,0,.5.5h3a.5.5,0,0,0,.5-.5V9A4.48,4.48,0,0,0,11.5,5Z'
+          fill='none'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+        ></path>
+        <line
+          x1='5'
+          y1='13.5'
+          x2='9'
+          y2='13.5'
+          fill='none'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+        ></line>
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-newspaper',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' id='Newspaper--Streamline-Ultimate.svg'>
+      <defs></defs>
+      <title>newspaper</title>
+      <path
+        d='M2.25 0.75h19.5s1.5 0 1.5 1.5v19.5s0 1.5 -1.5 1.5H2.25s-1.5 0 -1.5 -1.5V2.25s0 -1.5 1.5 -1.5'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m13.5 13.5 6 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m13.5 16.5 6 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m13.5 19.5 3.75 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m3.75 13.5 6 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m3.75 16.5 6 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='m3.75 19.5 3.75 0'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='M4.5 3.75h15s0.75 0 0.75 0.75V9s0 0.75 -0.75 0.75h-15s-0.75 0 -0.75 -0.75V4.5s0 -0.75 0.75 -0.75'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-question-circle',
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      fill='none'
+      viewBox='0 0 24 24'
+      id='Question-Circle--Streamline-Ultimate.svg'
+    >
+      <path
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M9 9.00004c0.00011 -0.54997 0.15139 -1.08933 0.43732 -1.55913s0.69548 -0.85196 1.18398 -1.10472c0.4884 -0.25275 1.037 -0.36637 1.5856 -0.32843 0.5487 0.03793 1.0764 0.22596 1.5254 0.54353 0.449 0.31757 0.8021 0.75246 1.0206 1.25714 0.2186 0.50468 0.2942 1.05973 0.2186 1.60448 -0.0756 0.54475 -0.2994 1.05829 -0.6471 1.48439 -0.3477 0.4261 -0.8059 0.7484 -1.3244 0.9317 -0.2926 0.1035 -0.5459 0.2951 -0.725 0.5485 -0.1791 0.2535 -0.2752 0.5562 -0.275 0.8665v1.006'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        stroke='currentcolor'
+        d='M12 18c-0.2071 0 -0.375 -0.1679 -0.375 -0.375s0.1679 -0.375 0.375 -0.375'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        stroke='currentcolor'
+        d='M12 18c0.2071 0 0.375 -0.1679 0.375 -0.375s-0.1679 -0.375 -0.375 -0.375'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        stroke='currentcolor'
+        strokeMiterlimit='10'
+        d='M12 23.25c6.2132 0 11.25 -5.0368 11.25 -11.25S18.2132 0.75 12 0.75 0.75 5.7868 0.75 12 5.7868 23.25 12 23.25Z'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-database',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentcolor'
+        d='M18.68,12.32C16.92,10.56 14.07,10.57 12.32,12.33C10.56,14.09 10.56,16.94 12.32,18.69C13.81,20.17 16.11,20.43 17.89,19.32L21,22.39L22.39,21L19.3,17.89C20.43,16.12 20.17,13.8 18.68,12.32M17.27,17.27C16.29,18.25 14.71,18.24 13.73,17.27C12.76,16.29 12.76,14.71 13.74,13.73C14.71,12.76 16.29,12.76 17.27,13.73C18.24,14.71 18.24,16.29 17.27,17.27M10.9,20.1C10.25,19.44 9.74,18.65 9.42,17.78C6.27,17.25 4,15.76 4,14V17C4,19.21 7.58,21 12,21V21C11.6,20.74 11.23,20.44 10.9,20.1M4,9V12C4,13.68 6.07,15.12 9,15.7C9,15.63 9,15.57 9,15.5C9,14.57 9.2,13.65 9.58,12.81C6.34,12.3 4,10.79 4,9M12,3C7.58,3 4,4.79 4,7C4,9 7,10.68 10.85,11H10.9C12.1,9.74 13.76,9 15.5,9C16.41,9 17.31,9.19 18.14,9.56C19.17,9.09 19.87,8.12 20,7C20,4.79 16.42,3 12,3Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-database-add',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentcolor'
+        d='M20 13.09V7C20 4.79 16.42 3 12 3S4 4.79 4 7V17C4 19.21 7.59 21 12 21C12.46 21 12.9 21 13.33 20.94C13.12 20.33 13 19.68 13 19L13 18.95C12.68 19 12.35 19 12 19C8.13 19 6 17.5 6 17V14.77C7.61 15.55 9.72 16 12 16C12.65 16 13.27 15.96 13.88 15.89C14.93 14.16 16.83 13 19 13C19.34 13 19.67 13.04 20 13.09M18 12.45C16.7 13.4 14.42 14 12 14S7.3 13.4 6 12.45V9.64C7.47 10.47 9.61 11 12 11S16.53 10.47 18 9.64V12.45M12 9C8.13 9 6 7.5 6 7S8.13 5 12 5 18 6.5 18 7 15.87 9 12 9M23 18V20H20V23H18V20H15V18H18V15H20V18H23Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-database-search',
+    <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' strokeWidth='1.5' height='48' width='48'>
+      <path
+        d='M9.767,9.662C4.624,9.248.75,7.43.75,5.251.75,2.765,5.787.751,12,.751s11.25,2.014,11.25,4.5c0,1.181-1.138,2.256-3,3.059'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></path>
+      <path
+        d='M23.25 11.251L23.25 5.251'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></path>
+      <path
+        d='M.75,5.251v6c0,1.85,2.792,3.439,6.782,4.131'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></path>
+      <path
+        d='M.75,11.251v6c0,2.179,3.874,4,9.017,4.411'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></path>
+      <path
+        d='M10.500 15.751 A5.250 5.250 0 1 0 21.000 15.751 A5.250 5.250 0 1 0 10.500 15.751 Z'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></path>
+      <path
+        d='M23.25 23.251L19.462 19.463'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-database-update',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentcolor'
+        d='M12 16C12.41 16 12.81 15.97 13.21 15.94C13.4 15.18 13.72 14.46 14.16 13.83C13.47 13.94 12.74 14 12 14C9.58 14 7.3 13.4 6 12.45V9.64C7.47 10.47 9.61 11 12 11S16.53 10.47 18 9.64V11.19C18.5 11.07 19 11 19.55 11C19.7 11 19.85 11 20 11.03V7C20 4.79 16.42 3 12 3S4 4.79 4 7V17C4 19.21 7.59 21 12 21C12.66 21 13.31 20.96 13.92 20.88C13.57 20.29 13.31 19.64 13.16 18.94C12.79 19 12.41 19 12 19C8.13 19 6 17.5 6 17V14.77C7.61 15.55 9.72 16 12 16M12 5C15.87 5 18 6.5 18 7S15.87 9 12 9 6 7.5 6 7 8.13 5 12 5M23 17.5C23 18.32 22.75 19.08 22.33 19.71L21.24 18.62C21.41 18.28 21.5 17.9 21.5 17.5C21.5 16.12 20.38 15 19 15V16.5L16.75 14.25L19 12V13.5C21.21 13.5 23 15.29 23 17.5M19 18.5L21.25 20.75L19 23V21.5C16.79 21.5 15 19.71 15 17.5C15 16.68 15.25 15.92 15.67 15.29L16.76 16.38C16.59 16.72 16.5 17.1 16.5 17.5C16.5 18.88 17.62 20 19 20V18.5Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-cctv',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentcolor'
+        d='M6.03 12.03L8.03 15.5L5.5 18.68L2 12.62L6.03 12.03M17 18V15.29C17.88 14.9 18.5 14.03 18.5 13C18.5 12.43 18.3 11.9 17.97 11.5L19.94 10.35C20.95 9.76 21.3 8.47 20.71 7.46L19.33 5.06C18.74 4.05 17.45 3.7 16.44 4.28L8.31 9C7.36 9.53 7.03 10.75 7.58 11.71L9.08 14.31C9.63 15.26 10.86 15.59 11.81 15.04L13.69 13.96C13.94 14.55 14.41 15.03 15 15.29V18C15 19.1 15.9 20 17 20H22V18H17Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-download',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M13,2.03C17.73,2.5 21.5,6.25 21.95,11C22.5,16.5 18.5,21.38 13,21.93V19.93C16.64,19.5 19.5,16.61 19.96,12.97C20.5,8.58 17.39,4.59 13,4.05V2.05L13,2.03M11,2.06V4.06C9.57,4.26 8.22,4.84 7.1,5.74L5.67,4.26C7.19,3 9.05,2.25 11,2.06M4.26,5.67L5.69,7.1C4.8,8.23 4.24,9.58 4.05,11H2.05C2.25,9.04 3,7.19 4.26,5.67M2.06,13H4.06C4.24,14.42 4.81,15.77 5.69,16.9L4.27,18.33C3.03,16.81 2.26,14.96 2.06,13M7.1,18.37C8.23,19.25 9.58,19.82 11,20V22C9.04,21.79 7.18,21 5.67,19.74L7.1,18.37M12,16.5L7.5,12H11V8H13V12H16.5L12,16.5Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-lock',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentcolor'
+        d='M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.1 14.8,9.5V11C15.4,11 16,11.6 16,12.3V15.8C16,16.4 15.4,17 14.7,17H9.2C8.6,17 8,16.4 8,15.7V12.2C8,11.6 8.6,11 9.2,11V9.5C9.2,8.1 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,9.5V11H13.5V9.5C13.5,8.7 12.8,8.2 12,8.2Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-security',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentcolor'
+        d='M12,12H19C18.47,16.11 15.72,19.78 12,20.92V12H5V6.3L12,3.19M12,1L3,5V11C3,16.55 6.84,21.73 12,23C17.16,21.73 21,16.55 21,11V5L12,1Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-persons',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M16 17V19H2V17S2 13 9 13 16 17 16 17M12.5 7.5A3.5 3.5 0 1 0 9 11A3.5 3.5 0 0 0 12.5 7.5M15.94 13A5.32 5.32 0 0 1 18 17V19H22V17S22 13.37 15.94 13M15 4A3.39 3.39 0 0 0 13.07 4.59A5 5 0 0 1 13.07 10.41A3.39 3.39 0 0 0 15 11A3.5 3.5 0 0 0 15 4Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-tasks',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' strokeWidth='1.5px' height='48' width='48'>
+      <defs></defs>
+      <title>checklist</title>
+      <rect
+        x='0.75'
+        y='0.749'
+        width='22.5'
+        height='22.5'
+        rx='1.5'
+        ry='1.5'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></rect>
+      <polyline
+        points='12 4.499 7.5 10.499 4.5 7.499'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></polyline>
+      <line
+        x1='14.25'
+        y1='8.249'
+        x2='18.75'
+        y2='8.249'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></line>
+      <polyline
+        points='12 13.499 7.5 19.499 4.5 16.499'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></polyline>
+      <line
+        x1='14.25'
+        y1='17.249'
+        x2='18.75'
+        y2='17.249'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      ></line>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-close-disc',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-double-angle-up',
+    <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' id='Navigation-Up-1--Streamline-Ultimate.svg'>
+      <path
+        d='m23.251 10.573 -11.25 -7.826 -11.25 7.826'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='M23.251 20.768c0 0.538 -0.362 0.727 -0.8 0.42L12.8 14.479a1.517 1.517 0 0 0 -1.607 0l-9.639 6.709c-0.442 0.307 -0.8 0.118 -0.8 -0.42v-3.3a2.1 2.1 0 0 1 0.8 -1.537L11.2 9.218a1.517 1.517 0 0 1 1.607 0l9.643 6.709a2.1 2.1 0 0 1 0.8 1.537Z'
+        fill='none'
+        stroke='currentColor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-double-angle-down',
+    <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' id='Navigation-Down-1--Streamline-Ultimate.svg'>
+      <path
+        d='m0.751 13.509 11.25 7.826 11.25 -7.826'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='M0.751 3.314c0 -0.538 0.361 -0.727 0.8 -0.42L11.2 9.6a1.513 1.513 0 0 0 1.607 0l9.643 -6.709c0.442 -0.307 0.8 -0.118 0.8 0.42v3.3a2.1 2.1 0 0 1 -0.8 1.537l-9.65 6.716a1.517 1.517 0 0 1 -1.607 0L1.554 8.155a2.1 2.1 0 0 1 -0.8 -1.537Z'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-double-angle-right',
+    <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' id='Navigation-Right-2--Streamline-Ultimate.svg'>
+      <path
+        d='m13.513 0.747 7.826 11.25 -7.826 11.25'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='M3.318 0.747c-0.538 0 -0.727 0.361 -0.42 0.8l6.709 9.644a1.515 1.515 0 0 1 0 1.606L2.9 22.444c-0.307 0.442 -0.118 0.8 0.42 0.8h3.3a2.105 2.105 0 0 0 1.537 -0.8l6.71 -9.644a1.511 1.511 0 0 0 0 -1.606L8.159 1.55a2.105 2.105 0 0 0 -1.537 -0.8Z'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-double-angle-left',
+    <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' id='Navigation-Left-2--Streamline-Ultimate.svg'>
+      <path
+        d='m10.577 0.747 -7.826 11.25 7.826 11.25'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+      <path
+        d='M20.772 0.747c0.538 0 0.727 0.361 0.419 0.8l-6.708 9.644a1.511 1.511 0 0 0 0 1.606l6.708 9.644c0.308 0.442 0.119 0.8 -0.419 0.8h-3.3a2.1 2.1 0 0 1 -1.537 -0.8L9.222 12.8a1.515 1.515 0 0 1 0 -1.606l6.709 -9.644a2.1 2.1 0 0 1 1.537 -0.8Z'
+        fill='none'
+        stroke='currentcolor'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
+      ></path>
+    </svg>
+  );
+
   app.$icon.register(
     'toolkit-upload',
     <svg viewBox='0 0 24 24'>

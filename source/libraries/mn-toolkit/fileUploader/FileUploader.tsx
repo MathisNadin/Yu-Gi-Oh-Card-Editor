@@ -8,9 +8,14 @@ import { TForegroundColor } from '../themeSettings';
 import { Typography } from '../typography/Typography';
 import { IFilePickerOptions } from '../filePicker';
 
+// Fourni sur File par Electron, là pour éviter les erreurs de typing en son absence
+interface FileWithPath extends File {
+  path: string;
+}
+
 export interface IFile {
   name: File['name'];
-  path?: File['path'];
+  path?: FileWithPath['path'];
   size?: File['size'];
   type?: File['type'];
   extension?: string;
@@ -45,8 +50,8 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       ...super.defaultProps,
       files: [],
       multiple: false,
-      uploadBtnColor: 'balanced',
-      resetBtnColor: 'assertive',
+      uploadBtnColor: 'positive',
+      resetBtnColor: 'negative',
     };
   }
 
@@ -62,9 +67,9 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       };
   }
 
-  public componentWillReceiveProps(nextProps: Readonly<IFileUploaderProps>) {
-    if (!!nextProps.files && this.state.files !== nextProps.files) {
-      this.setState({ files: nextProps.files });
+  public componentDidUpdate(_prevProps: Readonly<IFileUploaderProps>) {
+    if (this.props.files !== this.state.files) {
+      this.setState({ files: this.props.files! });
     }
   }
 
@@ -83,12 +88,12 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
           for (const orgFile of fileListArray) {
             this.setState({ loadingProgress: this.state.loadingProgress + 1 });
             try {
-              const url = await app.$filePicker.fileToBuffer(orgFile, 'url');
+              const url = await app.$api.fileToBuffer(orgFile, 'url');
               const match = orgFile.name?.match(/\.[0-9a-z]+$/i);
               const file: IFile = {
                 url,
                 name: orgFile.name,
-                path: orgFile.path,
+                path: (orgFile as FileWithPath).path,
                 size: orgFile.size,
                 type: orgFile.type,
                 extension: match ? match[0] : '',
@@ -107,21 +112,31 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
 
     if (this.props.multiple) files = [...this.state.files, ...files];
 
-    this.setState({ files, loadingFiles: false, loadingProgress: 0, loadingTotal: 0 }, () => this.fireOnFilesChanged());
+    await this.setStateAsync({ files, loadingFiles: false, loadingProgress: 0, loadingTotal: 0 });
+    () => this.fireOnFilesChanged();
   }
 
-  private onRemoveFile(index: number) {
+  private async onRemoveFile(index: number) {
     this.state.files.splice(index, 1);
-    this.forceUpdate(() => this.fireOnFilesChanged());
+    await this.forceUpdateAsync();
+    this.fireOnFilesChanged();
   }
 
-  private onRemoveAll() {
-    this.setState({ files: [] }, () => this.fireOnFilesChanged());
+  private async onRemoveAll() {
+    await this.setStateAsync({ files: [] });
+    this.fireOnFilesChanged();
+  }
+
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-file-uploader'] = true;
+    return classes;
   }
 
   public render() {
-    return this.renderAttributes(
+    return (
       <div
+        {...this.renderAttributes()}
         ref={this.fileUploaderRef}
         onDragEnter={(e) => {
           e.preventDefault();
@@ -200,8 +215,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
             color={this.props.progressColor}
           />
         )}
-      </div>,
-      'mn-file-uploader'
+      </div>
     );
   }
 

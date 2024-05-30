@@ -1,5 +1,5 @@
 import { IOverlayListener } from '.';
-import { Observable } from '../observable';
+import { Observable } from 'mn-tools';
 
 export class OverlayService extends Observable<IOverlayListener> {
   private _overlay!: HTMLElement;
@@ -33,13 +33,15 @@ export class OverlayService extends Observable<IOverlayListener> {
     this.hide();
   }
 
-  public show(disableClick?: boolean) {
-    if (disableClick) this.allowClick = false;
+  public show(options: { withMenuMargin?: boolean; disableClick?: boolean } = {}) {
+    if (options.disableClick) this.allowClick = false;
     this.overlay.classList.add('active');
+    if (options.withMenuMargin) this.overlay.classList.add('with-menu-margin');
   }
 
   public hide() {
     this.overlay.classList.remove('active');
+    this.overlay.classList.remove('with-menu-margin');
     this.allowClick = true;
   }
 }

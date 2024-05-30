@@ -2,20 +2,21 @@ import { Container, IContainerProps, IContainerState } from '../container';
 
 interface ISubHeaderProps extends IContainerProps {}
 
-interface IState extends IContainerState {}
+interface ISubHeaderState extends IContainerState {}
 
-export class SubHeader extends Container<ISubHeaderProps, IState> {
+export class SubHeader extends Container<ISubHeaderProps, ISubHeaderState> {
   public static get defaultProps(): Partial<ISubHeaderProps> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
-      mainClassName: 'mn-sub-header',
       margin: false,
       gutter: true,
     };
   }
 
-  public constructor(props: ISubHeaderProps) {
-    super(props);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-sub-header'] = true;
+    return classes;
   }
 }

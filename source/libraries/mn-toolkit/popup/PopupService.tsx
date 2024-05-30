@@ -1,100 +1,30 @@
-import { IContainerProps } from 'libraries/mn-toolkit/container/Container';
-import { IPopupProps, Popup } from './Popup';
-import { createRoot } from 'react-dom/client';
-import { HorizontalStack } from '../container';
-import { Icon } from '../icon';
-import { Typography } from '../typography';
-import { AbstractPopupComponent, IPopup, IPopupAskOptions } from '.';
+import { Observable, uuid } from 'mn-tools';
+import { IAbstractPopupProps, IPopupListener, IPopupShowOptions } from '.';
 
-export interface IDialogProps<RESULT> extends IContainerProps {
-  popupId?: string;
-  resolve?: (value: RESULT | Promise<RESULT>) => void;
-}
+export class PopupService extends Observable<IPopupListener> {
+  public popups: JSX.Element[] = [];
 
-export class PopupService {
-  public async show<RESULT>(props: IPopupProps) {
-    return new Promise<RESULT>((resolve) => {
-      let newProps = {
-        ...props,
-        content: {
-          ...props.content,
-          props: {
-            ...props.content.props,
-            popupId: props.id,
-            resolve: (result: RESULT) => resolve(result),
-          },
-        },
-      };
-      let popup = new Popup<RESULT>(newProps, resolve);
-      const rootElement = document.getElementById('root') as HTMLElement;
-      const popupContainer = document.createElement('div');
-      popupContainer.className = 'mn-popup-container';
-      popupContainer.id = props.id;
-      rootElement.appendChild(popupContainer);
-      createRoot(popupContainer).render(popup.render());
+  public async show<R, P extends IAbstractPopupProps<R>>(options: IPopupShowOptions<R, P>): Promise<R | undefined> {
+    return new Promise<R | undefined>((resolve) => {
+      const { Component, componentProps, type } = options;
+      componentProps.height = componentProps.height || '80%';
+      componentProps.width = componentProps.width || '80%';
+      const key = `${type}-${this.popups.length + 1}-${uuid()}`;
+      const popupElement = (
+        <Component {...componentProps} onClose={(r) => resolve(r as R)} key={key} id={key} type={type} />
+      );
+      this.popups.push(popupElement);
+      this.dispatch('popupsChanged');
     });
   }
 
   public remove(id: string) {
-    const popupElement = document.getElementById(id) as HTMLElement;
-    if (popupElement && popupElement.parentNode) {
-      popupElement.parentNode.removeChild(popupElement);
-    }
+    this.popups = this.popups.filter((p) => p.props.id !== id);
+    this.dispatch('popupsChanged');
   }
 
-  public ask(optionsOrMessage: IPopupAskOptions | string) {
-    let options: IPopupAskOptions;
-    if (typeof optionsOrMessage === 'string') {
-      options = { message: optionsOrMessage } as IPopupAskOptions;
-    } else {
-      options = optionsOrMessage;
-    }
-
-    interface InformDialogState {}
-
-    class InformDialog extends AbstractPopupComponent<IPopupAskOptions, InformDialogState, boolean> {
-      public constructor(props: IPopupAskOptions) {
-        super(props);
-      }
-
-      public onInitializePopup(popup: IPopup<boolean>): void {
-        popup.addButtons({
-          label: 'Oui',
-          validate: true,
-          onTap: () => this.doValidate(),
-        });
-
-        popup.addButtons({
-          label: 'Annuler',
-          cancel: true,
-          onTap: () => this.doCancel(),
-        });
-      }
-
-      private doValidate() {
-        this.popup.close(true);
-      }
-      private doCancel() {
-        this.popup.close(false);
-      }
-
-      public render() {
-        return (
-          <HorizontalStack gutter={!!this.props.icon}>
-            {!!this.props.icon && <Icon iconId={this.props.icon} size={128} />}
-            <Typography fill variant='document' content={options.message} />
-          </HorizontalStack>
-        );
-      }
-    }
-
-    return this.show<boolean>({
-      id: '',
-      type: 'dialog-prompt',
-      width: 300,
-      height: options.height,
-      title: options.title as string,
-      content: <InformDialog {...options} />,
-    }).catch((e) => app.$errorManager.trigger(e));
+  public removeAll() {
+    this.popups = [];
+    this.dispatch('popupsChanged');
   }
 }

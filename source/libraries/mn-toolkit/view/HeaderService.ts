@@ -1,10 +1,10 @@
 import { IHeaderCrumb, IHeaderListener, IHeaderComponent as IHeaderPart } from '.';
-import { Observable } from '../observable';
-import { IPopoverAction } from '../popover';
+import { Observable } from 'mn-tools';
+import { IActionsPopoverAction } from '../popover';
 import { IRouterListener } from '../router';
 
 export class HeaderService extends Observable<IHeaderListener> implements Partial<IRouterListener> {
-  private _pageActions: IPopoverAction[] = [];
+  private _pageActions: IActionsPopoverAction[] = [];
 
   private _parts: { [position: string]: IHeaderPart[] } = {
     left: [],
@@ -12,7 +12,7 @@ export class HeaderService extends Observable<IHeaderListener> implements Partia
     center: [],
   };
 
-  public get pageActions(): IPopoverAction[] {
+  public get pageActions(): IActionsPopoverAction[] {
     return this._pageActions;
   }
 
@@ -33,7 +33,7 @@ export class HeaderService extends Observable<IHeaderListener> implements Partia
     this.dispatch('headerGetButtons', parts);
   }
 
-  private fireGetPageActions(actions: IPopoverAction[]) {
+  private fireGetPageActions(actions: IActionsPopoverAction[]) {
     this.dispatch('headerGetPageActions', actions);
   }
 

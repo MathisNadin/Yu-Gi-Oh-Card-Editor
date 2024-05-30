@@ -2,6 +2,19 @@ export * from './patch';
 export * from './is';
 export * from './objects';
 export * from './misc';
+export * from './date';
+export * from './ansi';
+export * from './logger';
+export * from './observable';
+export * from './locales';
+
+export type JSONValue = string | number | boolean | { [x: string]: JSONValue } | JSONValue[];
+
+export interface JSONObject {
+  [x: string]: JSONValue;
+}
+
+export interface JSONArray extends Array<JSONValue> {}
 
 export async function sleep(time: number) {
   return new Promise<void>((resolve) => {

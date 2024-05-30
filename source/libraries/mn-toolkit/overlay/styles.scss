@@ -12,6 +12,10 @@
     opacity: 0.2;
     pointer-events: auto;
   }
+
+  &.with-menu-margin {
+    left: $menu-width;
+  }
 }
 
 .mn-overlay {

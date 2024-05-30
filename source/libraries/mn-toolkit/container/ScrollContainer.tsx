@@ -1,4 +1,4 @@
-import { CSSProperties, Component, ReactNode } from 'react';
+import { CSSProperties, Component, ReactNode, createRef } from 'react';
 
 const containerStyleDefault = {
   position: 'relative',
@@ -68,6 +68,8 @@ const AUTO_HIDE_DURATION = 200;
 const THUMB_MINIMUM_SIZE = 30;
 
 export class ScrollContainer extends Component<IProps, IState> {
+  public containerRef = createRef<HTMLDivElement>();
+
   public static get defaultProps(): IProps {
     return {
       className: '',

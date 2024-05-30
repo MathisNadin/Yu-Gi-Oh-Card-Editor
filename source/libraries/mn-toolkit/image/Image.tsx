@@ -15,14 +15,13 @@ export class Image extends Containable<IImageProps, IImageState> {
     };
   }
 
-  public constructor(props: IImageProps) {
-    super(props);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-image'] = true;
+    return classes;
   }
 
   public render() {
-    return this.renderAttributes(
-      <img src={this.props.src} alt={this.props.alt} title={this.props.title} />,
-      'mn-image'
-    );
+    return <img {...this.renderAttributes()} src={this.props.src} alt={this.props.alt} title={this.props.title} />;
   }
 }

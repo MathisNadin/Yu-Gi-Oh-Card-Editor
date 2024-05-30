@@ -1,8 +1,14 @@
-import { Crop } from 'react-image-crop';
 import { isEmpty, isBoolean, isString, isObject } from './is';
 import { each } from './objects';
 
-export async function getCroppedArtworkBase64(src: string, crop: Crop) {
+export interface ICrop {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export async function getCroppedArtworkBase64(src: string, crop: ICrop) {
   if (!src?.length) return '';
   const image = new Image();
   image.src = src;

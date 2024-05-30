@@ -1,12 +1,13 @@
-import { FormEvent } from 'react';
+import { FormEvent, HTMLInputTypeAttribute } from 'react';
 import { IContainableProps, IContainableState, Containable } from '../containable';
 
-interface ITextInputProps extends IContainableProps {
+export interface ITextInputProps extends IContainableProps {
+  inputType?: HTMLInputTypeAttribute;
   placeholder?: string;
-  defaultValue: string;
+  defaultValue?: string;
   minLength?: number;
   maxLength?: number;
-  onChange: (value: string) => void | Promise<void>;
+  onChange?: (value: string) => void | Promise<void>;
 }
 
 interface ITextInputState extends IContainableState {
@@ -14,25 +15,48 @@ interface ITextInputState extends IContainableState {
 }
 
 export class TextInput extends Containable<ITextInputProps, ITextInputState> {
-  public static get defaultProps() {
-    return { ...super.defaultProps };
+  private inputElement!: HTMLInputElement;
+
+  public static get defaultProps(): ITextInputProps {
+    return {
+      ...super.defaultProps,
+      inputType: 'text',
+      defaultValue: '',
+    };
   }
 
   public constructor(props: ITextInputProps) {
     super(props);
-    this.state = { ...this.state, value: props.defaultValue };
+    this.state = { ...this.state, value: props.defaultValue! };
   }
 
   public componentDidUpdate(prevProps: ITextInputProps) {
     if (prevProps !== this.props && this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue });
+      this.setState({ value: this.props.defaultValue! });
     }
   }
 
+  public doFocus() {
+    if (this.inputElement) this.inputElement.focus();
+  }
+
+  private onDomInput(c: HTMLInputElement | null) {
+    if (!c || this.inputElement) return;
+    this.inputElement = c;
+  }
+
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-text-input'] = true;
+    return classes;
+  }
+
   public render() {
-    return this.renderAttributes(
+    return (
       <input
-        type='text'
+        {...this.renderAttributes()}
+        ref={(ref) => this.onDomInput(ref)}
+        type={this.props.inputType}
         name={this.props.name}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
@@ -40,8 +64,11 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
         onChange={(e) => this.onChange(e)}
-      />,
-      'mn-text-input'
+        onKeyUp={(e) => this.props.onKeyUp && app.$errorManager.handlePromise(this.props.onKeyUp(e))}
+        onKeyDown={(e) => this.props.onKeyDown && app.$errorManager.handlePromise(this.props.onKeyDown(e))}
+        onBlur={(e) => this.props.onBlur && app.$errorManager.handlePromise(this.props.onBlur(e))}
+        onFocus={(e) => this.props.onFocus && app.$errorManager.handlePromise(this.props.onFocus(e))}
+      />
     );
   }
 

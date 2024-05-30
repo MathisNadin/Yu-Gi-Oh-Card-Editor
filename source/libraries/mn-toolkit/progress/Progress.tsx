@@ -1,19 +1,15 @@
 import { IContainableProps, Containable, IContainableState } from '../containable';
 import { TForegroundColor } from '../themeSettings';
-import { classNames, isEmpty } from 'libraries/mn-tools';
+import { classNames, isEmpty } from 'mn-tools';
 
 interface IProgressProps extends IContainableProps {
-  /** Set the value of the progress. */
   progress?: number;
-  /** Set the total of the progress. */
   total?: number;
-  /** Message in front of the progress. */
   message?: string;
-  /** Set the visibility of the percent. */
   showPercent?: boolean;
   color?: TForegroundColor;
-  /** Set the thickness of the progress. */
   thickness?: 'xs' | 's' | 'm' | 'l' | 'xl';
+  indeterminate?: boolean;
 }
 
 interface IProgressState extends IContainableState {
@@ -31,13 +27,15 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
       message: '',
       color: 'primary',
       thickness: 's',
+      indeterminate: false,
     };
   }
+
   public constructor(props: IProgressProps) {
     super(props);
-    this.state = { ...this.state, progress: 0, message: props.message as string };
+    this.state = { ...this.state, progress: 0, message: props.message! };
     setTimeout(() => {
-      this.state = { ...this.state, progress: props.progress as number };
+      this.state = { ...this.state, progress: props.progress! };
     }, 200);
   }
 
@@ -54,22 +52,22 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
     return Math.round((100 * this.state.progress) / (this.props.total as number));
   }
 
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-progress'] = true;
+    classes['indeterminate'] = !!this.props.indeterminate;
+    if (this.props.thickness) classes[`mn-thickness-${this.props.thickness}`] = true;
+    if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
+    return classes;
+  }
+
   public render() {
-    let percent = (100 * this.state.progress) / (this.props.total as number);
-    let overload = percent > 100;
+    const percent = (100 * this.state.progress) / (this.props.total as number);
+    const overload = percent > 100;
     return (
-      <div
-        id={this.props.nodeId}
-        title={this.props.hint}
-        className={classNames(
-          this.renderClasses('mn-progress'),
-          { overload },
-          `mn-thickness-${this.props.thickness}`,
-          `mn-color-${this.props.color}`
-        )}
-      >
+      <div id={this.props.nodeId} title={this.props.hint} className={classNames(this.renderClasses(), { overload })}>
         <div className='progress'>
-          <span className='bar' style={{ width: `${percent}%` }}></span>
+          <span className='bar' style={{ width: `${this.props.indeterminate ? 20 : percent}%` }}></span>
         </div>
         {!isEmpty(this.state.message) && (
           <div className='message rich-text'>

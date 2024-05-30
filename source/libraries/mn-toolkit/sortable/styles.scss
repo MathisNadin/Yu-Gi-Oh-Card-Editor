@@ -1,0 +1,38 @@
+.mn-sortable {
+  .mn-sortable-item {
+    display: flex;
+
+    > .handler {
+      width: 20px;
+      max-width: 20px;
+      align-self: center;
+      text-align: center;
+      cursor: grab;
+      * {
+        pointer-events: none;
+      }
+    }
+
+    > * {
+      flex: 1;
+    }
+
+    &[draggable='true'] {
+      > * {
+        pointer-events: none;
+      }
+
+      &:active {
+        cursor: grabbing !important;
+      }
+
+      &.mn-drag-target {
+        background: linear-gradient(to bottom, transparent calc(100% - 4px), orange calc(100% - 4px));
+      }
+
+      &.mn-drag-target-above {
+        background: linear-gradient(to top, transparent calc(100% - 4px), green calc(100% - 4px));
+      }
+    }
+  }
+}

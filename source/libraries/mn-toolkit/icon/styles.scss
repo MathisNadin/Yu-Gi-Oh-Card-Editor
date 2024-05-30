@@ -1,6 +1,15 @@
+@mixin colorizeIcon($color) {
+  fill: $color;
+
+  &.has-click {
+    &:hover {
+      color: $primary;
+    }
+  }
+}
+
 .mn-icon {
   @include mnLayoutContainable();
-  // border-radius: $themeDefaultBorderRadius;
   object-fit: cover;
   object-position: center;
 
@@ -9,52 +18,52 @@
     height: 100%;
   }
 
-  &.mn-color-neutral {
-    @include fg(1);
-    @include fill(1);
-  }
   &.mn-color-primary {
-    color: $primary;
-    fill: $primary;
+    @include colorizeIcon($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeIcon($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeIcon($tertiary);
   }
   &.mn-color-positive {
-    color: $positive;
-    fill: $positive;
+    @include colorizeIcon($positive);
   }
-  &.mn-color-calm {
-    color: $calm;
-    fill: $calm;
+  &.mn-color-negative {
+    @include colorizeIcon($negative);
   }
-  &.mn-color-balanced {
-    color: $balanced;
-    fill: $balanced;
+  &.mn-color-neutral {
+    @include colorizeIcon($neutral);
   }
-  &.mn-color-energized {
-    color: $energized;
-    fill: $energized;
+  &.mn-color-warning {
+    @include colorizeIcon($warning);
   }
-  &.mn-color-assertive {
-    color: $assertive;
-    fill: $assertive;
-  }
-  &.mn-color-royal {
-    color: $royal;
-    fill: $royal;
+  &.mn-color-info {
+    @include colorizeIcon($info);
   }
   &.mn-color-1 {
-    @include fg(1);
-    @include fill(1);
+    @include colorizeIcon(nth($theme-light-fg, 1));
+    .mn-dark-theme & {
+      @include colorizeIcon(nth($theme-dark-fg, 1));
+    }
   }
   &.mn-color-2 {
-    @include fg(2);
-    @include fill(2);
+    @include colorizeIcon(nth($theme-light-fg, 2));
+    .mn-dark-theme & {
+      @include colorizeIcon(nth($theme-dark-fg, 2));
+    }
   }
   &.mn-color-3 {
-    @include fg(3);
-    @include fill(3);
+    @include colorizeIcon(nth($theme-light-fg, 3));
+    .mn-dark-theme & {
+      @include colorizeIcon(nth($theme-dark-fg, 3));
+    }
   }
   &.mn-color-4 {
-    @include fg(4);
-    @include fill(4);
+    @include colorizeIcon(nth($theme-light-fg, 4));
+    .mn-dark-theme & {
+      @include colorizeIcon(nth($theme-dark-fg, 4));
+    }
   }
 }

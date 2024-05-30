@@ -96,7 +96,7 @@
 
         align-items: center;
 
-        // border-right: 1px solid rgba(black, 0.04);
+        border-right: 1px solid rgba(black, 0.04);
 
         .mn-dark-theme & {
           color: rgba(black, 0.7);
@@ -135,7 +135,7 @@
       }
 
       .mn-table-cell {
-        // border-right: 1px solid rgba(black, 0.04);
+        border-right: 1px solid rgba(black, 0.04);
         @include fx(background-color);
         user-select: text;
         overflow: hidden;

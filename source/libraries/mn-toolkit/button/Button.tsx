@@ -2,7 +2,7 @@ import { IContainableProps, Containable, IContainableState } from '../containabl
 import { TBackgroundColor, TForegroundColor } from '../themeSettings';
 import { Icon, TIconId } from '../icon';
 
-interface IButtonProps extends IContainableProps {
+export interface IButtonProps extends IContainableProps {
   label: string;
   color?: TForegroundColor;
   bg?: TBackgroundColor;
@@ -19,7 +19,7 @@ export class Button extends Containable<IButtonProps, IButtonState> {
       ...super.defaultProps,
       block: false,
       disabled: false,
-      color: 'neutral',
+      color: 'primary',
       iconPosition: 'left',
     };
   }
@@ -28,10 +28,11 @@ export class Button extends Containable<IButtonProps, IButtonState> {
     super(props);
   }
 
-  public renderClasses(name?: string) {
-    let classes = super.renderClasses(name);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-button'] = true;
     if (this.props.block) classes['mn-button-block'] = true;
-    if (this.props.color) classes[`mn-button-color-${this.props.color}`] = true;
+    if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
     if (this.props.bg) classes[`mn-button-bg-${this.props.bg}`] = true;
     classes['mn-button-icon-and-text'] = !!this.props.icon && !!this.props.label;
     classes[`mn-icon-position-${this.props.iconPosition}`] = true;
@@ -39,12 +40,11 @@ export class Button extends Containable<IButtonProps, IButtonState> {
   }
 
   public render() {
-    return this.renderAttributes(
-      <div>
+    return (
+      <div {...this.renderAttributes()}>
         {this.props.icon && <Icon className='icon' size={18} iconId={this.props.icon} />}
         {!!this.props.label && <span className='label'>{this.props.label}</span>}
-      </div>,
-      'mn-button'
+      </div>
     );
   }
 }

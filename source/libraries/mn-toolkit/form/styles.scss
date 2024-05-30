@@ -1,0 +1,200 @@
+$inputHeight: $themeDefaultItemHeight;
+$contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
+
+@mixin themeFormField {
+  $helper-height: 12px;
+  display: flex;
+  flex-direction: column;
+  vertical-align: top;
+  position: relative;
+
+  .field-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .input-wrapper {
+    height: $inputHeight;
+    min-height: $inputHeight;
+    max-height: $inputHeight;
+    padding: calc($themeDefaultSpacing/2);
+    display: flex;
+    flex: 1;
+    gap: calc($themeDefaultSpacing/2);
+
+    border: $fieldBorderSize solid;
+    border-color: #c3c3c3;
+    border-radius: calc($themeDefaultBorderRadius / 2);
+    @include bg(1);
+    transition: all 0.4s ease;
+
+    &.multilines {
+      height: auto;
+    }
+
+    .icon {
+      &.status-icon {
+        margin-right: 8px;
+        width: $contentHeight;
+        height: $contentHeight;
+        min-width: $contentHeight;
+        min-height: $contentHeight;
+        line-height: $contentHeight;
+        text-align: center;
+        color: black(0.5);
+        margin: 0;
+        color: black(0.15);
+      }
+    }
+
+    input {
+      border: none;
+      background-color: transparent;
+      @include fg(1);
+      margin: - calc($themeDefaultSpacing/2) 0;
+      display: block;
+      width: 100%;
+      appearance: textfield;
+
+      &::placeholder {
+        @include fg(2);
+      }
+
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    textarea {
+      @include fg(1);
+      background-color: transparent;
+      border: none;
+      line-height: 20px;
+      min-width: 100%;
+      padding: 0;
+      resize: none;
+      flex: 1;
+      &::placeholder {
+        @include fg(2);
+      }
+    }
+  }
+
+  .form-label {
+    margin-bottom: calc($themeDefaultSpacing / 2);
+
+    .form-label-with-info-icon {
+      margin-right: calc($themeDefaultSpacing/3);
+    }
+  }
+
+  .form-helper {
+    margin: calc($themeDefaultSpacing/2) 0 0 0;
+  }
+
+  &.mn-field-layout-horizontal {
+    .field-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .form-label {
+      transform: none !important;
+      position: static;
+      flex: 1;
+    }
+
+    .input-wrapper {
+      width: 150px;
+      margin-top: 0;
+    }
+  }
+
+  .mn-dark-theme & {
+    .input-wrapper {
+      input,
+      textarea {
+        color: white;
+      }
+    }
+
+    .form-helper {
+      color: white(0.6);
+    }
+  }
+
+  &.has-value {
+    .prop-icon {
+      display: inline-block;
+    }
+  }
+
+  &.focus {
+    .input-wrapper {
+      box-shadow: 0 0 10px rgba($primary, 0.26) inset;
+      border-color: $primary;
+    }
+    .form-label {
+      .mn-typography-label {
+        @include fg(1);
+      }
+    }
+  }
+
+  &.required {
+    .form-label > .mn-typography::after {
+      content: '*';
+      color: $primary;
+      font-weight: bold;
+      font-size: 20px;
+      margin-left: 4px;
+      display: inline-block;
+    }
+  }
+
+  &.error {
+    .form-label {
+      color: $negative;
+    }
+
+    .form-helper {
+      color: $negative;
+    }
+
+    .input-wrapper {
+      border-color: $negative;
+      > * {
+        color: $negative;
+      }
+    }
+  }
+
+  &.validating {
+    .status-icon {
+      animation: mn-spin 800ms infinite linear;
+      color: black(0.26);
+    }
+  }
+
+  &.validated {
+    &:not(.error) {
+      .status-icon {
+        color: $positive;
+      }
+    }
+
+    &.error {
+      .status-icon {
+        color: $negative;
+      }
+    }
+  }
+}
+
+.mn-form-field {
+  @include themeFormField;
+}

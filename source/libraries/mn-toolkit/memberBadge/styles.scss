@@ -1,0 +1,55 @@
+@mixin themeMemberBadgeSize($size) {
+}
+
+@mixin themeMemberBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  @include bg(3);
+
+  .letter {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .photo {
+    @include fill-all;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  &.mn-shape-circle {
+    border-radius: 50%;
+    .content {
+      border-radius: 50%;
+    }
+  }
+  &.mn-shape-square {
+    border-radius: $themeDefaultBorderRadius;
+    overflow: hidden;
+    .content {
+      border-radius: $themeDefaultBorderRadius;
+    }
+  }
+  @include fx(opacity);
+  &.has-click:hover {
+    opacity: 0.8;
+  }
+
+  .mn-badge {
+    position: absolute;
+    right: -6px;
+    top: -6px;
+    z-index: 1;
+  }
+
+  &.mn-disabled {
+    pointer-events: none;
+  }
+}
+
+.mn-member-badge {
+  @include themeMemberBadge();
+}

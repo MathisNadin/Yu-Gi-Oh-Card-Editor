@@ -1,4 +1,4 @@
-import { deepClone } from 'libraries/mn-tools';
+import { deepClone } from 'mn-tools';
 import { Component } from 'react';
 
 // let log = logger('$errorManager');

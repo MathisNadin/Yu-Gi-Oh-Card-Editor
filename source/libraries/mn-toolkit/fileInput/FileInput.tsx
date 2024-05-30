@@ -1,8 +1,8 @@
 import { FormEvent, MouseEvent } from 'react';
 import { IContainableProps, IContainableState, Containable } from '../containable';
-import { HorizontalStack } from '../container';
+import { HorizontalStack, IHorizontalStackProps } from '../container';
 import { Icon } from '../icon';
-import { isDefined } from 'libraries/mn-tools';
+import { isDefined } from 'mn-tools';
 import { Typography } from '../typography';
 
 interface IFileInputProps extends IContainableProps {
@@ -50,11 +50,19 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
     }
   }
 
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-file-input'] = true;
+    return classes;
+  }
+
   public render() {
-    if (!app.$device.isDesktop)
+    if (!app.$device.isDesktop) {
       return <Typography content='Impossible de choisir un chemin de fichier sur cette plateforme' />;
-    return this.renderAttributes(
-      <HorizontalStack>
+    }
+
+    return (
+      <HorizontalStack {...(this.renderAttributes() as IHorizontalStackProps)}>
         <input
           type='text'
           name={this.props.name}
@@ -64,8 +72,7 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
           onChange={(e) => this.onChange(e)}
         />
         <Icon iconId='toolkit-menu-meatballs' size={26} onTap={(e) => app.$errorManager.handlePromise(this.onTap(e))} />
-      </HorizontalStack>,
-      'mn-file-input'
+      </HorizontalStack>
     );
   }
 }

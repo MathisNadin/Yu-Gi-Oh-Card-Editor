@@ -6,7 +6,7 @@
   align-items: center;
   text-align: center;
   gap: $themeDefaultSpacing;
-  padding: $themeDefaultSpacing*2;
+  padding: $themeDefaultSpacing * 2;
 
   border-radius: $themeDefaultBorderRadius;
   border: 2px dashed;
@@ -16,7 +16,7 @@
   }
 
   &.dragged-over {
-    border-color: $energized;
+    border-color: $primary;
   }
 
   &.mn-control-disable {

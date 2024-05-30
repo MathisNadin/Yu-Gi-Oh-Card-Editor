@@ -1,18 +1,13 @@
 $button-height: $themeDefaultItemHeight;
 
-@mixin colorizePlainButton($bgColor) {
-  $darken: 15%;
-  $border: 3px;
+@mixin colorizeButton($bgColor) {
   background-color: $bgColor;
-  border: $border solid rgba($bgColor, 0);
+  border: 3px solid rgba($bgColor, 0);
   @include bgAsFg(1);
 
-  &:hover {
-    border-color: lighten($bgColor, $darken);
-  }
-
+  &:hover,
   &:active {
-    border-color: lighten($bgColor, $darken);
+    background-color: lighten($bgColor, 10%);
   }
 }
 
@@ -32,9 +27,7 @@ $button-height: $themeDefaultItemHeight;
   text-shadow: none;
   background-image: none;
   position: relative;
-  padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
   border-radius: 6px;
-  font-size: 18px;
   font-weight: 400;
   letter-spacing: 0.5px;
   transition: all 0.4s ease;
@@ -48,19 +41,13 @@ $button-height: $themeDefaultItemHeight;
   }
 
   &.mn-button-icon-and-text {
-    gap: calc($themeDefaultSpacing/2);
     &.mn-icon-position-left {
       padding-left: calc($themeDefaultSpacing/2);
-      .icon {
-        margin-right: calc($themeDefaultSpacing/2);
-      }
     }
+
     &.mn-icon-position-right {
       flex-direction: row-reverse;
       padding-right: calc($themeDefaultSpacing/2);
-      .icon {
-        margin-left: calc($themeDefaultSpacing/2);
-      }
     }
   }
 
@@ -70,10 +57,7 @@ $button-height: $themeDefaultItemHeight;
     flex: 1;
     line-height: 1em;
     text-align: center;
-
-    // Ca évite de couper les lettres un peu trop hautes ou basses
-    padding: 1px;
-    margin: -1px;
+    padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
   }
 
   .mn-badge {
@@ -88,51 +72,44 @@ $button-height: $themeDefaultItemHeight;
     text-align: center;
   }
 
-  @include colorizePlainButton(nth($theme-light-fg, 2));
-  &.mn-button-color-neutral {
-    @include colorizePlainButton(nth($theme-light-fg, 2));
+  &.mn-color-primary {
+    @include colorizeButton($primary);
   }
-  &.mn-button-color-primary {
-    @include colorizePlainButton($primary);
+  &.mn-color-secondary {
+    @include colorizeButton($secondary);
   }
-  &.mn-button-color-secondary {
-    @include colorizePlainButton($secondary);
+  &.mn-color-tertiary {
+    @include colorizeButton($tertiary);
   }
-  &.mn-button-color-positive {
-    @include colorizePlainButton($positive);
+  &.mn-color-positive {
+    @include colorizeButton($positive);
   }
-  &.mn-button-color-calm {
-    @include colorizePlainButton($calm);
+  &.mn-color-negative {
+    @include colorizeButton($negative);
   }
-  &.mn-button-color-balanced {
-    @include colorizePlainButton($balanced);
+  &.mn-color-neutral {
+    @include colorizeButton($neutral);
   }
-  &.mn-button-color-energized {
-    @include colorizePlainButton($energized);
+  &.mn-color-warning {
+    @include colorizeButton($warning);
   }
-  &.mn-button-color-assertive {
-    @include colorizePlainButton($assertive);
+  &.mn-color-info {
+    @include colorizeButton($info);
   }
-  &.mn-button-color-royal {
-    @include colorizePlainButton($royal);
+  &.mn-color-1 {
+    @include colorizeButton(nth($theme-light-fg, 1));
   }
-  &.mn-button-color-1 {
-    @include colorizePlainButton(nth($theme-light-fg, 1));
+  &.mn-color-2 {
+    @include colorizeButton(nth($theme-light-fg, 2));
   }
-  &.mn-button-color-2 {
-    @include colorizePlainButton(nth($theme-light-fg, 2));
+  &.mn-color-3 {
+    @include colorizeButton(nth($theme-light-fg, 3));
   }
-  &.mn-button-color-3 {
-    @include colorizePlainButton(nth($theme-light-fg, 3));
+  &.mn-color-4 {
+    @include colorizeButton(nth($theme-light-fg, 4));
   }
-  &.mn-button-color-4 {
-    @include colorizePlainButton(nth($theme-light-fg, 4));
-    @include fg(1);
-    &:hover {
-      @include border-color(3);
-    }
-  }
-  &.mn-disable {
+
+  &.mn-disabled {
     opacity: 0.2;
     filter: grayscale(100%);
     pointer-events: none;
@@ -143,19 +120,19 @@ $button-height: $themeDefaultItemHeight;
   @include themeButton;
 }
 
-@mixin colorize($color) {
-  border-color: $color;
-  color: $color;
-  .icon {
-    color: $color;
-  }
+@mixin colorizeButtonOutline($color) {
   transition: border-color 0.4s ease;
   border: 1px solid transparent;
-  &:hover {
-    border-color: rgba($color, 0.3);
-  }
+  border-color: $color;
+
+  &:hover,
   &:active {
-    background-color: rgba($color, 0.1);
+    background-color: $color;
+    @include bgAsFg(1);
+  }
+
+  .icon {
+    color: $color;
   }
 }
 
@@ -198,60 +175,57 @@ $button-height: $themeDefaultItemHeight;
     margin-right: calc($themeDefaultSpacing/2);
   }
 
-  &.mn-button-color-primary {
-    @include colorize($primary);
+  &.mn-color-primary {
+    @include colorizeButtonOutline($primary);
   }
-  &.mn-button-color-positive {
-    @include colorize($positive);
+  &.mn-color-secondary {
+    @include colorizeButtonOutline($secondary);
   }
-  &.mn-button-color-calm {
-    @include colorize($calm);
+  &.mn-color-tertiary {
+    @include colorizeButtonOutline($tertiary);
   }
-  &.mn-button-color-balanced {
-    @include colorize($balanced);
+  &.mn-color-positive {
+    @include colorizeButtonOutline($positive);
   }
-  &.mn-button-color-energized {
-    @include colorize($energized);
+  &.mn-color-negative {
+    @include colorizeButtonOutline($negative);
   }
-  &.mn-button-color-assertive {
-    @include colorize($assertive);
+  &.mn-color-neutral {
+    @include colorizeButtonOutline($neutral);
   }
-  &.mn-button-color-royal {
-    @include colorize($royal);
+  &.mn-color-warning {
+    @include colorizeButtonOutline($warning);
   }
-  &.mn-button-color-neutral {
-    @include colorize(nth($theme-light-fg, 1));
+  &.mn-color-info {
+    @include colorizeButtonOutline($info);
+  }
+  &.mn-color-1 {
+    @include colorizeButtonOutline(nth($theme-light-fg, 1));
     .mn-dark-theme & {
-      @include colorize(nth($theme-dark-fg, 1));
+      @include colorizeButtonOutline(nth($theme-dark-fg, 1));
     }
   }
-  &.mn-button-color-1 {
-    @include colorize(nth($theme-light-fg, 1));
+  &.mn-color-2 {
+    @include colorizeButtonOutline(nth($theme-light-fg, 2));
     .mn-dark-theme & {
-      @include colorize(nth($theme-dark-fg, 1));
+      @include colorizeButtonOutline(nth($theme-dark-fg, 2));
     }
   }
-  &.mn-button-color-2 {
-    @include colorize(nth($theme-light-fg, 2));
+  &.mn-color-3 {
+    @include colorizeButtonOutline(nth($theme-light-fg, 3));
     .mn-dark-theme & {
-      @include colorize(nth($theme-dark-fg, 2));
+      @include colorizeButtonOutline(nth($theme-dark-fg, 3));
     }
   }
-  &.mn-button-color-3 {
-    @include colorize(nth($theme-light-fg, 3));
+  &.mn-color-4 {
+    @include colorizeButtonOutline(nth($theme-light-fg, 4));
     .mn-dark-theme & {
-      @include colorize(nth($theme-dark-fg, 3));
-    }
-  }
-  &.mn-button-color-4 {
-    @include colorize(nth($theme-light-fg, 4));
-    .mn-dark-theme & {
-      @include colorize(nth($theme-dark-fg, 4));
+      @include colorizeButtonOutline(nth($theme-dark-fg, 4));
     }
   }
 
   &.disabled,
-  &.mn-disable {
+  &.mn-disabled {
     color: black(0.3);
     border-color: black(0.1);
     pointer-events: none;
@@ -267,13 +241,13 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin colorizeButtonLink($color) {
-  color: $color;
   background-color: rgba($color, 0);
+  &:hover {
+    text-decoration: underline;
+  }
+
   .icon {
     @include fill(1);
-  }
-  &:hover {
-    background-color: rgba($color, 0.1);
   }
 }
 
@@ -294,10 +268,9 @@ $button-height: $themeDefaultItemHeight;
   text-shadow: none;
   background-image: none;
   font-weight: 300;
-  font-size: 14px;
   position: relative;
   border-radius: $themeDefaultBorderRadius;
-  padding: 0 $themeDefaultSpacing;
+  padding: 0 calc($themeDefaultSpacing / 2);
 
   .label {
     @include text-overflow;
@@ -312,46 +285,44 @@ $button-height: $themeDefaultItemHeight;
     margin-right: calc($themeDefaultSpacing/2);
   }
 
-  &.mn-button-color-neutral {
-    @include colorizeButtonLink(nth($theme-light-fg, 1));
-  }
-  &.mn-button-color-primary {
+  &.mn-color-primary {
     @include colorizeButtonLink($primary);
   }
-  &.mn-button-color-secondary {
+  &.mn-color-secondary {
     @include colorizeButtonLink($secondary);
   }
-  &.mn-button-color-positive {
+  &.mn-color-tertiary {
+    @include colorizeButtonLink($tertiary);
+  }
+  &.mn-color-positive {
     @include colorizeButtonLink($positive);
   }
-  &.mn-button-color-calm {
-    @include colorizeButtonLink($calm);
+  &.mn-color-negative {
+    @include colorizeButtonLink($negative);
   }
-  &.mn-button-color-balanced {
-    @include colorizeButtonLink($balanced);
+  &.mn-color-neutral {
+    @include colorizeButtonLink($neutral);
   }
-  &.mn-button-color-energized {
-    @include colorizeButtonLink($energized);
+  &.mn-color-warning {
+    @include colorizeButtonLink($warning);
   }
-  &.mn-button-color-assertive {
-    @include colorizeButtonLink($assertive);
+  &.mn-color-info {
+    @include colorizeButtonLink($info);
   }
-  &.mn-button-color-royal {
-    @include colorizeButtonLink($royal);
-  }
-  &.mn-button-color-1 {
+  &.mn-color-1 {
     @include colorizeButtonLink(nth($theme-light-fg, 1));
   }
-  &.mn-button-color-2 {
+  &.mn-color-2 {
     @include colorizeButtonLink(nth($theme-light-fg, 2));
   }
-  &.mn-button-color-3 {
+  &.mn-color-3 {
     @include colorizeButtonLink(nth($theme-light-fg, 3));
   }
-  &.mn-button-color-4 {
+  &.mn-color-4 {
     @include colorizeButtonLink(nth($theme-light-fg, 4));
   }
-  &.mn-disable {
+
+  &.mn-disabled {
     opacity: 0.3;
     filter: grayscale(1);
     pointer-events: none;
@@ -363,160 +334,105 @@ $button-height: $themeDefaultItemHeight;
 }
 
 @mixin colorizeButtonIcon($color) {
-  color: $color;
   fill: $color;
-  &.mn-button-icon-pressed {
-    background-color: rgba($color, 0.1);
-  }
+  border-color: $color;
+
   &:hover {
-    color: $primary;
+    @include bgAsFg(1);
+    background-color: $color;
   }
 }
 
-@mixin buttonIconSize($size: $themeDefaultItemHeight, $padding: calc($themeDefaultSpacing/3)) {
-  $padding: 4px;
-  height: $size - $padding * 2;
-  width: $size - $padding * 2;
-  padding: 4px;
-  font-size: $size - 2 * $padding;
+@mixin buttonIconSize($size, $padding, $border) {
+  min-height: $size;
+  max-height: $size;
+  min-width: $size;
+  max-width: $size;
+  padding: $padding;
+
+  $iconSize: $size - $padding * 2 - $border * 2;
+  font-size: $iconSize;
+  line-height: $iconSize;
+
+  svg {
+    min-height: $iconSize;
+    max-height: $iconSize;
+    min-width: $iconSize;
+    max-width: $iconSize;
+    display: inline-block;
+  }
 }
 
 @mixin themeButtonIcon {
-  @include mnLayoutContainable();
+  position: relative;
   cursor: pointer;
   user-select: none;
-  border-radius: $themeDefaultBorderRadius;
-  padding: 0;
+  border-radius: 99px;
   text-align: center;
-  display: flex;
   transition: color 0.4s ease;
-  @include buttonIconSize();
-  &.mn-size-xs {
-    @include buttonIconSize(16px, 0px);
+
+  $border: 1px;
+  border: $border solid $primary;
+
+  @include buttonIconSize($themeDefaultItemHeight, calc($themeDefaultSpacing/4), $border);
+
+  &.mn-size-small {
+    @include buttonIconSize(calc($themeDefaultItemHeight / 2), calc($themeDefaultSpacing/8), $border);
   }
 
-  .icon {
-    object-fit: cover;
-    object-position: center;
-    svg {
-      width: 100%;
-      height: 100%;
-      display: inline-block;
-    }
-  }
-
-  position: relative;
   &.mn-color-primary {
     @include colorizeButtonIcon($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeButtonIcon($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeButtonIcon($tertiary);
   }
   &.mn-color-positive {
     @include colorizeButtonIcon($positive);
   }
-  &.mn-color-calm {
-    @include colorizeButtonIcon($calm);
+  &.mn-color-negative {
+    @include colorizeButtonIcon($negative);
   }
-  &.mn-color-balanced {
-    @include colorizeButtonIcon($balanced);
-  }
-  &.mn-color-energized {
-    @include colorizeButtonIcon($energized);
-  }
-  &.mn-color-assertive {
-    @include colorizeButtonIcon($assertive);
-  }
-  &.mn-color-royal {
-    @include colorizeButtonIcon($royal);
-  }
-
   &.mn-color-neutral {
-    @include colorizeButtonIcon(nth($theme-light-fg, 1));
+    @include colorizeButtonIcon($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeButtonIcon($warning);
+  }
+  &.mn-color-info {
+    @include colorizeButtonIcon($info);
   }
   &.mn-color-1 {
     @include colorizeButtonIcon(nth($theme-light-fg, 1));
+    .mn-dark-theme & {
+      @include colorizeButtonIcon(nth($theme-dark-fg, 1));
+    }
   }
   &.mn-color-2 {
     @include colorizeButtonIcon(nth($theme-light-fg, 2));
+    .mn-dark-theme & {
+      @include colorizeButtonIcon(nth($theme-dark-fg, 2));
+    }
   }
   &.mn-color-3 {
     @include colorizeButtonIcon(nth($theme-light-fg, 3));
+    .mn-dark-theme & {
+      @include colorizeButtonIcon(nth($theme-dark-fg, 3));
+    }
   }
   &.mn-color-4 {
     @include colorizeButtonIcon(nth($theme-light-fg, 4));
+    .mn-dark-theme & {
+      @include colorizeButtonIcon(nth($theme-dark-fg, 4));
+    }
   }
 
-  .mn-dark-theme &.mn-color-neutral {
-    @include colorizeButtonIcon(nth($theme-dark-fg, 1));
-  }
-  .mn-dark-theme &.mn-color-1 {
-    @include colorizeButtonIcon(nth($theme-dark-fg, 1));
-  }
-  .mn-dark-theme &.mn-color-2 {
-    @include colorizeButtonIcon(nth($theme-dark-fg, 2));
-  }
-  .mn-dark-theme &.mn-color-3 {
-    @include colorizeButtonIcon(nth($theme-dark-fg, 3));
-  }
-  .mn-dark-theme &.mn-color-4 {
-    @include colorizeButtonIcon(nth($theme-dark-fg, 4));
-  }
-
-  &.mn-bg-primary {
-    background-color: $primary;
-  }
-  &.mn-bg-positive {
-    background-color: $positive;
-  }
-  &.mn-bg-calm {
-    background-color: $calm;
-  }
-  &.mn-bg-balanced {
-    background-color: $balanced;
-  }
-  &.mn-bg-energized {
-    background-color: $energized;
-  }
-  &.mn-bg-assertive {
-    background-color: $assertive;
-  }
-  &.mn-bg-royal {
-    background-color: $royal;
-  }
-
-  &.mn-bg-neutral {
-    background-color: nth($theme-light-fg, 1);
-  }
-  &.mn-bg-1 {
-    background-color: nth($theme-light-fg, 1);
-  }
-  &.mn-bg-2 {
-    background-color: nth($theme-light-fg, 2);
-  }
-  &.mn-bg-3 {
-    background-color: nth($theme-light-fg, 3);
-  }
-  &.mn-bg-4 {
-    background-color: nth($theme-light-fg, 4);
-  }
-
-  .mn-dark-theme &.mn-bg-neutral {
-    background-color: nth($theme-dark-fg, 1);
-  }
-  .mn-dark-theme &.mn-bg-1 {
-    background-color: nth($theme-dark-fg, 1);
-  }
-  .mn-dark-theme &.mn-bg-2 {
-    background-color: nth($theme-dark-fg, 2);
-  }
-  .mn-dark-theme &.mn-bg-3 {
-    background-color: nth($theme-dark-fg, 3);
-  }
-  .mn-dark-theme &.mn-bg-4 {
-    background-color: nth($theme-dark-fg, 4);
-  }
-
-  &.mn-disable {
-    .mn-icon {
-      @include fg(3);
+  &.mn-disabled {
+    .icon {
+      opacity: 0.3;
+      filter: grayscale(1);
     }
     pointer-events: none;
   }
@@ -529,11 +445,12 @@ $button-height: $themeDefaultItemHeight;
 .mn-ghost {
   z-index: $z-index-content + 1;
   will-change: opacity, transform !important;
+  transform: translate3d(0, -10px, 0);
+  opacity: 0;
   transition:
     opacity 0.4s ease,
     transform 0.4s ease !important;
-  transform: translate3d(0, -10px, 0);
-  opacity: 0;
+
   &.mn-button-icon {
     &.mn-size-xs {
       padding: 0 0px;

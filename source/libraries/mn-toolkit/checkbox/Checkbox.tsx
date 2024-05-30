@@ -1,4 +1,4 @@
-import { classNames } from 'libraries/mn-tools';
+import { classNames } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 import { Typography } from '../typography';
 
@@ -8,7 +8,7 @@ interface ICheckBoxProps extends IContainableProps {
   /** Value of the check box. */
   defaultValue?: boolean;
   /** Function when changes was detected */
-  onChange: (value: boolean) => void;
+  onChange: (value: boolean) => void | Promise<void>;
   /** Position of the check box. */
   labelPosition?: 'left' | 'right';
   /** set the button to the specific style mn-checkbox-disabled. */
@@ -30,32 +30,37 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
 
   public constructor(props: ICheckBoxProps) {
     super(props);
-    this.state = { ...this.state, value: props.defaultValue as boolean };
+    this.state = { ...this.state, value: props.defaultValue! };
   }
 
-  public componentDidUpdate() {
-    if (this.props.defaultValue !== this.state.value) {
-      this.setState({ value: this.props.defaultValue as boolean });
-    }
+  public componentDidUpdate(prevProps: ICheckBoxProps) {
+    if (prevProps === this.props) return;
+    if (this.props.defaultValue === this.state.value) return;
+    this.setState({ value: this.props.defaultValue! });
+  }
+
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-checkbox'] = true;
+    if (this.state.value) classes['checked'] = true;
+    if (this.props.labelPosition === 'left') classes['label-position-left'] = true;
+    return classes;
   }
 
   public render() {
     return (
-      <div
-        className={classNames(this.renderClasses('mn-checkbox'), {
-          checked: this.state.value,
-          'label-position-left': this.props.labelPosition === 'left',
-        })}
-        onClick={() => this.onClick()}
-      >
+      <div className={classNames(this.renderClasses())} onClick={() => app.$errorManager.handlePromise(this.onClick())}>
         <div className='toggle'></div>
         {!!this.props.label && <Typography className='label' content={this.props.label} variant='help' />}
       </div>
     );
   }
 
-  private onClick() {
+  private async onClick() {
     if (this.props.disabled) return;
-    this.setState({ value: !this.state.value }, () => !!this.props.onChange && this.props.onChange(this.state.value));
+    await this.setStateAsync({ value: !this.state.value });
+    if (this.props.onChange) {
+      app.$errorManager.handlePromise(this.props.onChange(this.state.value));
+    }
   }
 }

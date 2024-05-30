@@ -1,3 +1,42 @@
+@mixin themeBreadcrumb {
+  @include fg(2);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .bread {
+    line-height: $themeDefaultItemHeight;
+    height: $themeDefaultItemHeight;
+    font-weight: 600;
+    display: block;
+    @include fg(1);
+  }
+
+  .crumb {
+    display: block;
+    height: $themeDefaultItemHeight;
+    font-weight: 400;
+    line-height: $themeDefaultItemHeight;
+    border-radius: $themeDefaultBorderRadius;
+    padding: 0 calc($themeDefaultSpacing/2);
+    @include fx(color);
+    @include fg(1);
+    &:hover {
+      color: $primary;
+    }
+  }
+
+  .separator {
+    display: block;
+    position: relative;
+    line-height: $themeDefaultItemHeight;
+    height: $themeDefaultItemHeight;
+    top: 7px;
+    margin: 0 0 0 -4px;
+    @include fg(2);
+  }
+}
+
 @mixin themeHeader() {
   $progressHeight: 5px;
   @include bg(1);
@@ -34,7 +73,7 @@
 
   .title-bar {
     z-index: $z-index-title-bar;
-    padding: 2px 8px 0 8px;
+    padding: 0 calc($themeDefaultSpacing / 2);
     display: flex;
     gap: calc($themeDefaultSpacing / 2);
     flex-direction: row;
@@ -52,7 +91,7 @@
   }
 
   .mn-header-content {
-    gap: $themeDefaultSpacing;
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
@@ -75,6 +114,10 @@
     height: 100%;
     margin-left: 8px;
   }
+}
+
+.mn-breadcrumb {
+  @include themeBreadcrumb;
 }
 
 .mn-header {

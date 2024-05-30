@@ -1,9 +1,14 @@
-import { Icon } from '../icon';
+import { classNames } from 'mn-tools';
+import { Icon, TIconId } from '../icon';
 import { IPaneProps, IPaneState, Pane } from '../pane/Pane';
+import { Typography } from '../typography';
 
 interface IMenuPaneProps extends IPaneProps {
+  showIcon?: boolean;
   dark?: boolean;
   open?: boolean;
+  dynamic?: boolean;
+  showVersion?: boolean;
   onStateChanged?: (open: boolean) => void;
 }
 
@@ -15,11 +20,14 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
   public static get defaultProps(): Partial<IMenuPaneProps> {
     return {
       ...super.defaultProps,
+      showIcon: true,
       dark: false,
       open: false,
+      dynamic: false,
       layout: 'vertical',
       gutter: true,
       margin: false,
+      showVersion: true,
     };
   }
 
@@ -58,7 +66,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
 
     if (app.$device.isSmallScreen) {
       if (open) {
-        app.$overlay.show();
+        app.$overlay.show({ withMenuMargin: true });
       } else {
         app.$overlay.hide();
       }
@@ -70,28 +78,46 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
     }, 500);
   }
 
-  public renderClasses(name: string) {
-    return {
-      ...super.renderClasses(name),
-      'mn-dark-theme': !!this.props.dark,
-      'mn-menu-pane-open': !!this.state.open,
-    };
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-menu-pane'] = true;
+    classes['mn-dark-theme'] = !!this.props.dark;
+    classes['dynamic'] = !!this.props.dynamic;
+    classes['static'] = !this.props.dynamic;
+    classes['open'] = !!this.state.open;
+    classes['close'] = !this.state.open;
+    return classes;
   }
 
-  private getCloseIcon() {
+  private getCloseIcon(): TIconId {
     if (!app.$device.isSmallScreen) {
       return this.state.open ? 'toolkit-angle-left' : 'toolkit-angle-right';
     }
-    return 'toolkit-close';
+    return 'toolkit-menu-handburger';
   }
 
-  public render() {
-    return this.renderAttributes(
-      <div>
-        <Icon className='shrink-btn' onTap={() => this.toggle()} iconId={this.getCloseIcon()} />
+  public get inside() {
+    const hasIcon = !this.props.dynamic && !!this.props.showIcon;
+    return [
+      hasIcon && (
+        <Icon
+          key='mn-menu-pane-shrink-btn'
+          className='shrink-btn'
+          onTap={() => this.toggle()}
+          iconId={this.getCloseIcon()}
+        />
+      ),
+      <div key='mn-menu-pane-inside' className={classNames('mn-container-inside', { 'with-icon': hasIcon })}>
         {this.props.children}
+        {!!this.props.showVersion && (
+          <Typography
+            key='mn-menu-pane-version'
+            variant='help'
+            className='mn-menu-pane-version'
+            content={app.version}
+          />
+        )}
       </div>,
-      'mn-menu-pane'
-    );
+    ];
   }
 }

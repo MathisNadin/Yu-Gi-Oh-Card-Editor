@@ -1,4 +1,4 @@
-import { classNames } from 'libraries/mn-tools';
+import { classNames } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 
 export interface ISpacerProps extends IContainableProps {}
@@ -13,7 +13,13 @@ export class Spacer extends Containable<ISpacerProps, ISpacerState> {
     };
   }
 
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-layout-spacer'] = true;
+    return classes;
+  }
+
   public render() {
-    return <div className={classNames(this.renderClasses('mn-layout-spacer'))} />;
+    return <div className={classNames(this.renderClasses())} />;
   }
 }

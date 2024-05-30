@@ -1,0 +1,63 @@
+.mn-rich-text-editor {
+  display: block;
+  width: 100%;
+  min-height: 22px;
+  cursor: text;
+  position: relative;
+
+  .placeholder {
+    @include fg(2);
+    pointer-events: none;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.mn-form-field.mn-field-rich-text-editor {
+  .input-wrapper {
+    height: auto;
+    max-height: none;
+    padding: calc($themeDefaultSpacing/2 - 4px) calc($themeDefaultSpacing/2);
+  }
+}
+
+.mn-rich-text-custom-color {
+  &.mn-rich-text-custom-color-primary {
+    color: $primary;
+  }
+  &.mn-rich-text-custom-color-secondary {
+    color: $secondary;
+  }
+  &.mn-rich-text-custom-color-tertiary {
+    color: $tertiary;
+  }
+  &.mn-rich-text-custom-color-positive {
+    color: $positive;
+  }
+  &.mn-rich-text-custom-color-negative {
+    color: $negative;
+  }
+  &.mn-rich-text-custom-color-neutral {
+    color: $neutral;
+  }
+  &.mn-rich-text-custom-color-warning {
+    color: $warning;
+  }
+  &.mn-rich-text-custom-color-info {
+    color: $info;
+  }
+  &.mn-rich-text-custom-color-1 {
+    @include fg(1);
+  }
+  &.mn-rich-text-custom-color-2 {
+    @include fg(2);
+  }
+  &.mn-rich-text-custom-color-3 {
+    @include fg(3);
+  }
+  &.mn-rich-text-custom-color-4 {
+    @include fg(4);
+  }
+}

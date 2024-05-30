@@ -3,7 +3,6 @@ import { IHeaderCrumb, IHeaderListener } from '.';
 import { ButtonIcon } from '../button';
 import { Container } from '../container';
 import { Progress } from '../progress';
-import { clone } from 'libraries/mn-tools';
 import { Breadcrumb } from './Breadcrumb';
 import { IXhrProgress } from '../xhr';
 
@@ -66,18 +65,17 @@ export class Header extends Component<IHeaderProps, IHeaderState> implements Par
   }
 
   public doShowPageActions(event: React.MouseEvent) {
-    app.$popover.show({
-      event,
+    app.$popover.actions(event, {
       width: 320,
       actions: app.$header.pageActions,
     });
   }
 
   public render() {
-    const crumbs = this.props.crumbs ? clone(this.props.crumbs) : [];
+    const crumbs = this.props.crumbs ? [...this.props.crumbs] : [];
     if (this.props.title) crumbs.push({ title: this.props.title });
     return (
-      <Container mainClassName='mn-header' fill={false} padding gutter>
+      <Container mainClassName='mn-header' fill={false} gutter>
         <div className='mn-header-content'>
           <div className='title-bar'>
             {app.$header.parts['left'].map((part) => part.component)}

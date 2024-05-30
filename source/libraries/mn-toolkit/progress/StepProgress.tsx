@@ -1,8 +1,9 @@
-import { classNames } from 'libraries/mn-tools';
+import { classNames } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
 import { TForegroundColor } from '../themeSettings';
+import { HorizontalStack, VerticalStack } from 'mn-toolkit/container';
 
 interface IStep<ID> {
   id: ID;
@@ -35,26 +36,27 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
   }
 
   public componentDidUpdate() {
-    if (this.props.defaultValue !== this.state.progress) this.setState({ progress: this.props.defaultValue });
+    if (this.props.defaultValue === this.state.progress) return;
+    this.setState({ progress: this.props.defaultValue });
+  }
+
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-step-progress'] = true;
+    if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
+    return classes;
   }
 
   public render() {
-    let progress = this.props.items.findIndex((x) => x.id === this.state.progress);
+    const progress = this.props.items.findIndex((x) => x.id === this.state.progress);
     return (
-      <div
-        id={this.props.nodeId}
-        title={this.props.hint}
-        className={classNames(
-          this.renderClasses('mn-step-progress'),
-          `mn-color-${this.props.color}`,
-          this.props.className
-        )}
-      >
-        {(this.props.items as IStep<number>[]).map((step, iStep) => {
+      <HorizontalStack id={this.props.nodeId} className={classNames(this.renderClasses())}>
+        {this.props.items.map((step, iStep) => {
           return (
-            <div
+            <VerticalStack
+              fill
               key={`mn-step-progress-${iStep}`}
-              onClick={() => (this.props as unknown as IProps<number>).onChange(step.id)}
+              onTap={() => this.props.onChange(step.id)}
               className={classNames('step', {
                 completed: iStep < progress,
                 active: step.id === this.props.active,
@@ -64,14 +66,15 @@ export class StepProgress<ID = string> extends Containable<IProps<ID>, IState<ID
               <div className='step-circle' data-text={iStep + 1}>
                 <Icon className='pointer' iconId='toolkit-pin' />
               </div>
-              <div className='step-text'>
-                <Typography variant='label' content={step.label} />
-                <Typography variant='caption' content={step.description} />
-              </div>
-            </div>
+
+              <VerticalStack className='step-text'>
+                <Typography color='1' variant='document' content={step.label} />
+                <Typography color='2' italic variant='help' content={step.description} />
+              </VerticalStack>
+            </VerticalStack>
           );
         })}
-      </div>
+      </HorizontalStack>
     );
   }
 }

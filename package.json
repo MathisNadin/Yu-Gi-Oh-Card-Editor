@@ -35,8 +35,10 @@
     "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish never",
     "start:web": "cross-env NODE_ENV=development PLATFORM=web webpack serve --config webpack/webpack.config.ts",
     "build:web": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack/webpack.config.ts",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
-    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "validate": "npm run format && npm run lint && npm run typecheck"
   },
   "dependencies": {
     "electron-dl": "=3.5.0"

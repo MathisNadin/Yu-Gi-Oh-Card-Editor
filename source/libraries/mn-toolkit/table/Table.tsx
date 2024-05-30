@@ -1,4 +1,4 @@
-import { isEmpty, classNames, clone } from 'libraries/mn-tools';
+import { isEmpty, classNames, clone } from 'mn-tools';
 import { IContainerProps, IContainerState, Container, VerticalStack } from '../container';
 import { Spinner } from '../spinner';
 import { ITableColumn, CellValue, ITableCell } from './interfaces';
@@ -122,8 +122,8 @@ export class Table extends Container<ITableProps, ITableState> {
           style.maxWidth = x.width;
           style.minWidth = x.width;
         } else if (ssum) {
-          style.maxWidth = `calc((${ssum}) / ${nbNoWidth} - ${themeSettings().themeDefaultSpacing}px)`;
-          style.minWidth = `calc((${ssum}) / ${nbNoWidth} - ${themeSettings().themeDefaultSpacing}px)`;
+          style.maxWidth = `calc((${ssum}) / ${nbNoWidth} - ${themeSettings().themeDefaultSpacing}px - 1px)`;
+          style.minWidth = `calc((${ssum}) / ${nbNoWidth} - ${themeSettings().themeDefaultSpacing}px - 1px)`;
         }
         if (x.rotate === '90deg') {
           style['writing-mode'] = 'vertical-rl';
@@ -172,7 +172,9 @@ export class Table extends Container<ITableProps, ITableState> {
           } else {
             resultCell = { value: cell as CellValue };
           }
-          resultCell.className = resultCell.className || `${i}`;
+          if (!resultCell.hasOwnProperty('$$typeof')) {
+            resultCell.className = resultCell.className || `${i}`;
+          }
           return resultCell;
         });
 
@@ -199,6 +201,14 @@ export class Table extends Container<ITableProps, ITableState> {
     });
   }
 
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-table'] = true;
+    classes[`mn-table-theme-${this.props.theme}`] = true;
+    classes['mn-table-scroll'] = !!this.props.visibleRows;
+    return classes;
+  }
+
   public render() {
     let tableBodyStyle: { [k: string]: string | number } = {};
 
@@ -218,12 +228,11 @@ export class Table extends Container<ITableProps, ITableState> {
       };
     }
 
-    return this.renderAttributes(
+    return (
       <div
+        {...this.renderAttributes()}
         onScroll={() => this.updateScroll()}
-        className={classNames(`mn-table-theme-${this.props.theme}`, {
-          'mn-table-scroll': !!this.props.visibleRows,
-        })}
+        className={classNames(this.renderClasses())}
       >
         {this.loading(this.props) && <Spinner overlay />}
         {this.state.hasHeader && (
@@ -291,12 +300,14 @@ export class Table extends Container<ITableProps, ITableState> {
             )}
         </VerticalStack>
         {this.props.footer ? <div className='mn-table-footer'>{this.props.footer}</div> : null}
-      </div>,
-      'mn-table'
+      </div>
     );
   }
 
-  /*   private adaptColumnStyle(): { [attribute: string]: string; } {
-        return { 'max-width': `${integer(this.state.columnStyle[0]['max-width']) + 4}%`, 'min-width': `${integer(this.state.columnStyle[0]['min-width']) + 4}%` };
-      } */
+  /* private adaptColumnStyle(): { [attribute: string]: string } {
+    return {
+      'max-width': `${integer(this.state.columnStyle[0]['max-width']) + 4}%`,
+      'min-width': `${integer(this.state.columnStyle[0]['min-width']) + 4}%`,
+    };
+  } */
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import { AllHTMLAttributes, cloneElement } from 'react';
 import { TIconId } from './Icon';
 
 export class IconService {
@@ -8,11 +8,11 @@ export class IconService {
     this._icons[name] = svg;
   }
 
-  public get(name: TIconId) {
+  public get(name: TIconId, props?: AllHTMLAttributes<HTMLElement>) {
     try {
       const icon = this._icons[name];
       // Cloner l'élément JSX pour renvoyer une nouvelle instance
-      return React.cloneElement(icon);
+      return cloneElement(icon, props);
     } catch (e) {
       throw new Error(`Erreur au chargement de l'icône ${name}\n ${(e as Error).message}`);
     }

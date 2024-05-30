@@ -1,6 +1,6 @@
 import { IContainerProps, IContainerState, Container } from './Container';
 
-interface IVerticalStackProps extends IContainerProps {}
+export interface IVerticalStackProps extends IContainerProps {}
 interface IVerticalStackState extends IContainerState {}
 
 export class VerticalStack extends Container<IVerticalStackProps, IVerticalStackState> {
@@ -9,9 +9,5 @@ export class VerticalStack extends Container<IVerticalStackProps, IVerticalStack
       ...super.defaultProps,
       layout: 'vertical',
     };
-  }
-
-  public renderClasses(name?: string) {
-    return super.renderClasses(name);
   }
 }

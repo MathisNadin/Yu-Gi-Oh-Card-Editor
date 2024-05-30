@@ -1,5 +1,5 @@
 import { IContainerProps, IContainerState, Container } from '../container/Container';
-import { isDefined, classNames, isNumber, isString } from 'libraries/mn-tools';
+import { isDefined, classNames, isNumber, isString } from 'mn-tools';
 import { ITableCell, CellValue, ITableColumn } from './interfaces';
 import { ReactNode } from 'react';
 import { ButtonIcon } from '../button';

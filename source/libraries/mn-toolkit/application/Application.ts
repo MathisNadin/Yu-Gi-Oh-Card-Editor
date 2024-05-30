@@ -1,8 +1,10 @@
-import { each, sortDependencies } from 'libraries/mn-tools';
-import { Observable } from '../observable';
+import { IRouteRecord } from 'api/main';
+import { Observable, each, sortDependencies } from 'mn-tools';
+import { App as CapacitorApp } from '@capacitor/app';
 
 export interface IApplicationListener {
   applicationReady(): void;
+  applicationWillClose(): void;
 }
 
 export interface IApplicationConfig {
@@ -11,6 +13,7 @@ export interface IApplicationConfig {
   stage: string;
   version: string;
   apiUrl?: string;
+  routerConfig?: IRouteRecord[];
   dbName?: string;
   objectStoreName?: string;
   debug?: boolean;
@@ -29,31 +32,17 @@ export interface IBootstrapOptions {
   modules: string[];
 }
 
-/**
- * Core engine to boostrap the application.
- *
- */
 export class Application extends Observable<IApplicationListener> {
-  // implements IApplicationListener
   private configurationCallBack: () => void = () => {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _services: { [name: string]: IServiceOptions<any> } = {};
   private _ready = false;
   private _conf: IApplicationConfig = {} as IApplicationConfig;
 
-  /**
-   * Default constructor.
-   */
   public constructor() {
     super();
-    // this.patchPreact();
-    // this.addListener(this);
+    this.addListener(this);
   }
-
-  /* public static initialize(conf: IApplicationConfig): Application {
-    app._conf = conf;
-    return app;
-  } */
 
   public get conf() {
     return this._conf;
@@ -74,19 +63,30 @@ export class Application extends Observable<IApplicationListener> {
     return this._conf.displayName;
   }
 
+  public get isProd() {
+    return this.stage === 'prod';
+  }
+
+  public get isReady() {
+    return this._ready;
+  }
+
   private fireReady() {
     this.dispatch('applicationReady');
   }
 
-  /**
-   * main function.
-   */
   public bootstrap() {
     this.bootstrapConfig();
     this.bootstrapServices()
       .then(() => this.fireReady())
       // eslint-disable-next-line no-console
       .catch((e: Error) => console.error(e));
+
+    window.onbeforeunload = () => {
+      const response = this.askForResponse<string>('applicationWillClose');
+      if (response) return response;
+      return undefined;
+    };
     /*     this.bootstrapDOM()
       .then(() => this.bootstrapServices())
       .then(() => this.fireReady())
@@ -98,25 +98,21 @@ export class Application extends Observable<IApplicationListener> {
     return this;
   }
 
-  /**
-   * Load the configuration.
-   */
   private bootstrapConfig() {
     window.vendors = window.vendors || ({} as IVendors);
     if (this.configurationCallBack) this.configurationCallBack();
   }
 
-  /*   public get isProd(): boolean {
-    return this.stage === 'prod';
-  } */
+  public applicationReady() {
+    setTimeout(() => app.$device.hideSplash());
+  }
 
-  /*   public get hasCordova() {
-    return typeof (window as any).cordova !== 'undefined';
-  } */
-
-  /*   public exit() {
-    if (this.hasCordova) (navigator as any).app.exitApp();
-  } */
+  public async exit() {
+    if (app.$device.isApple) return; // Programatically exiting the app is prohibited on ios
+    if (app.$device.isCapacitor) {
+      await CapacitorApp.exitApp();
+    }
+  }
 
   private async bootstrapServices() {
     const graph: { [service: string]: string[] } = {};
@@ -137,23 +133,11 @@ export class Application extends Observable<IApplicationListener> {
         // eslint-disable-next-line no-console
         console.warn(`Le service ${serviceName} n'existe pas`);
       } else if (service.setup) {
-        // eslint-disable-next-line no-console
-        service.setup().catch((e: Error) => console.error(e));
+        await service.setup();
       }
     }
   }
 
-  /*   public applicationReady() {
-    setTimeout(() => app.$device.hideSplash());
-  } */
-
-  /**
-   * Add a new service.
-   *
-   * @param {string} name
-   * @param {Class} clazz
-   * @param {Object} options
-   */
   public service<T>(name: keyof IApp, clazz: T, options: IServiceOptions<T> = {}) {
     if (!clazz) throw new Error(`Nous avons besoin d'une classe pour ${name}`);
     options.depends = options.depends || [];
@@ -202,8 +186,4 @@ export class Application extends Observable<IApplicationListener> {
       });
     });
   } */
-
-  public get isReady() {
-    return this._ready;
-  }
 }
