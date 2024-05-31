@@ -1,4 +1,3 @@
-import { classNames } from 'mn-tools';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { ITabItem, TTabPosition } from './TabSet';
 

@@ -2,7 +2,6 @@ import { Component, createRef } from 'react';
 import { classNames } from 'mn-tools';
 import { VerticalStack } from '../container';
 import { JSXElementChildren } from 'mn-toolkit/react';
-import { themeSettings } from 'mn-toolkit/themeSettings';
 
 export interface IAbstractPopoverProps {
   key?: string;

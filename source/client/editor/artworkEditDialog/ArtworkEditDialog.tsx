@@ -2,7 +2,7 @@ import { isEmpty } from 'mn-tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
-import { AbstractPopup, IAbstractPopupProps, IAbstractPopupState, Spinner, HorizontalStack } from 'mn-toolkit';
+import { AbstractPopup, IAbstractPopupProps, IAbstractPopupState, HorizontalStack } from 'mn-toolkit';
 
 export interface IArtworkEditDialogResult {
   url: string;

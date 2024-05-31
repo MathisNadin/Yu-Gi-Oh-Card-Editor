@@ -1,4 +1,4 @@
-import { MutableRefObject, createRef } from 'react';
+import { createRef } from 'react';
 import { classNames } from 'mn-tools';
 import { ButtonIcon } from '../button';
 import { VerticalStack, Container, IContainerProps, IContainerState } from '../container';

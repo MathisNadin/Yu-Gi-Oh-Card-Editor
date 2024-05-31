@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 

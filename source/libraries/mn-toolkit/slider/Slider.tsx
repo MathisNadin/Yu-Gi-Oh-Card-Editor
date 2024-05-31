@@ -69,7 +69,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     });
   }
 
-  public handleMouseDown = async (e: TMouseEvents | TTouchEvents) => {
+  public handleMouseDown = async (_e: TMouseEvents | TTouchEvents) => {
     if (this.props.disabled) return;
     await this.setStateAsync({ isDragging: true });
     window.addEventListener('mousemove', this.handleMouseMove);
