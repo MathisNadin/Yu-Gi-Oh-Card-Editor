@@ -9,7 +9,7 @@ import {
   Spacer,
   Spinner,
   VerticalStack,
-} from 'libraries/mn-toolkit';
+} from 'mn-toolkit';
 import { ISettingsListener, IUserSettings } from './SettingsService';
 
 interface ISettingsProps extends IContainableProps {}
@@ -77,8 +77,8 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
 
   public render() {
     if (!this.state.settings) return <Spinner />;
-    return this.renderAttributes(
-      <VerticalStack fill>
+    return (
+      <VerticalStack className='settings' fill>
         <VerticalStack fill gutter padding>
           <HorizontalStack verticalItemAlignment='middle'>
             <Icon className='field-icon' iconId='toolkit-millennium-puzzle' color='1' />
@@ -125,20 +125,19 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
             <Button
               fill
               label='Importer des données'
-              color='energized'
+              color='primary'
               onTap={() => app.$errorManager.handlePromise(app.$settings.importData())}
             />
 
             <Button
               fill
               label='Exporter les données'
-              color='royal'
+              color='secondary'
               onTap={() => app.$errorManager.handlePromise(app.$settings.exportData())}
             />
           </HorizontalStack>
         </VerticalStack>
-      </VerticalStack>,
-      'settings'
+      </VerticalStack>
     );
   }
 }

@@ -1,4 +1,4 @@
-import { extend, integer, uuid } from 'libraries/mn-tools';
+import { extend, integer, uuid } from 'mn-tools';
 import { load } from 'cheerio';
 import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from 'client/editor/card';
 
@@ -59,7 +59,7 @@ export class YuginewsService {
     const forceRush = slug.includes('cartes-rd-');
     let foundRush = false;
 
-    let response = await app.$api.get(`${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`);
+    let response = await app.$axios.get(`${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`);
     const htmlContent = response[0]?.content?.rendered as string;
     if (htmlContent) {
       const renderedContent = response[0].content.rendered as string;
@@ -73,7 +73,7 @@ export class YuginewsService {
         useFinalPictures = true;
       }
 
-      const matches = renderedContent.match(/var cards = (.*?];)/s);
+      const matches = renderedContent.match(/var cards = ([\s\S]*?];)/);
       if (matches?.length && matches[1]) {
         const extractedData = matches[1]
           .replaceAll('<!-- [et_pb_line_break_holder] -->', '')

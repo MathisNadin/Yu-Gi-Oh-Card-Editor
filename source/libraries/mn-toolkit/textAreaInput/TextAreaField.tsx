@@ -13,6 +13,7 @@ export class TextAreaField extends FormField<string, ITextAreaFieldProps, ITextA
   public static get defaultProps(): ITextAreaFieldProps {
     return {
       ...super.defaultProps,
+      ...TextAreaInput.defaultProps,
       defaultValue: '',
     };
   }
@@ -61,6 +62,7 @@ export class TextAreaField extends FormField<string, ITextAreaFieldProps, ITextA
         autofocus={this.props.autofocus}
         placeholder={this.props.placeholder}
         defaultValue={this.state.value}
+        spellCheck={this.props.spellCheck}
         onRef={(ref) => this.props.onRef && this.props.onRef(ref)}
         onBlur={() => this.onBlur()}
         onFocus={() => this.onFocus()}

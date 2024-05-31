@@ -3,15 +3,12 @@ import { getProjectIpcRenderer } from '../../client/electronMainPatchs';
 
 declare global {
   interface ISendChannel {}
-  type TSendChannel = keyof ISendChannel;
 
   interface IOnceChannel {}
-  type TOnceChannel = keyof IOnceChannel;
 
   interface IOnChannel {
     deleteLocalDb?: null;
   }
-  type TOnChannel = keyof IOnChannel;
 
   interface IInvokeChannel {
     getAppVersion?: null;
@@ -25,7 +22,6 @@ declare global {
     openLink?: null;
     download?: null;
   }
-  type TInvokeChannel = keyof IInvokeChannel;
 
   interface IIpcRenderer {
     send: (channel: TSendChannel, args: unknown[]) => void;

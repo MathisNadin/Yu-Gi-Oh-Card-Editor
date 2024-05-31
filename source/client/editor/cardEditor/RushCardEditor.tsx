@@ -34,8 +34,8 @@ import {
   NumberInput,
   InplaceEdit,
   Image,
-} from 'libraries/mn-toolkit';
-import { classNames, debounce, integer, isEmpty, isUndefined } from 'libraries/mn-tools';
+} from 'mn-toolkit';
+import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-tools';
 
 interface IRushCardEditorProps extends IContainableProps {
   card: ICard;
@@ -103,7 +103,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         { id: 'field', file: require(`../../../assets/images/rd-icons/st/field.png`) },
         { id: 'counter', file: require(`../../../assets/images/rd-icons/st/counter.png`) },
       ],
-      appVersion: `v. ${app.$device.getSpec().client.version}`,
+      appVersion: `v. ${app.version}`,
     };
   }
 
@@ -414,53 +414,45 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
   }
 
   private async showArtworkPopup() {
-    let result = await app.$popup.show<IArtworkEditDialogResult>({
-      id: 'edit-popup',
-      title: "Édition de l'image",
-      innerHeight: '85%',
-      innerWidth: '80%',
-      content: (
-        <ArtworkEditDialog
-          isRush
-          artworkURL={this.state.card.artwork.url}
-          crop={{
-            x: this.state.card.artwork.x,
-            y: this.state.card.artwork.y,
-            height: this.state.card.artwork.height,
-            width: this.state.card.artwork.width,
-            unit: '%',
-          }}
-          keepRatio={this.state.card.artwork.keepRatio}
-          pendulumRatio={this.state.card.pendulum && !this.state.card.artwork.pendulum}
-          hasPendulumFrame={app.$card.hasPendulumFrame(this.state.card)}
-          hasLinkFrame={this.state.card.frames.includes('link')}
-        />
-      ),
+    const result = await ArtworkEditDialog.show({
+      isRush: true,
+      artworkURL: this.state.card.artwork.url,
+      crop: {
+        x: this.state.card.artwork.x,
+        y: this.state.card.artwork.y,
+        height: this.state.card.artwork.height,
+        width: this.state.card.artwork.width,
+        unit: '%',
+      },
+      keepRatio: this.state.card.artwork.keepRatio,
+      pendulumRatio: this.state.card.pendulum && !this.state.card.artwork.pendulum,
+      hasPendulumFrame: app.$card.hasPendulumFrame(this.state.card),
+      hasLinkFrame: this.state.card.frames.includes('link'),
     });
     if (result) this.onArtworkInfoChange(result);
   }
 
   public render() {
-    return this.renderAttributes(
-      <VerticalStack fill>
+    return (
+      <VerticalStack className='card-editor' fill>
         <HorizontalStack padding className='top-options'>
           <Button
             label='Faire le rendu'
-            color='positive'
+            color='neutral'
             onTap={() => app.$errorManager.handlePromise(app.$card.renderCurrentCard())}
           />
           <Spacer />
           {!app.$card.tempCurrentCard && (
             <Button
               label='Réinitialiser'
-              color='assertive'
+              color='negative'
               onTap={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}
             />
           )}
           <Spacer />
           <Button
             label='Sauvegarder'
-            color='balanced'
+            color='positive'
             onTap={() => app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())}
           />
         </HorizontalStack>
@@ -473,8 +465,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             <Typography variant='help' content={this.state.appVersion} />
           </HorizontalStack>
         </VerticalStack>
-      </VerticalStack>,
-      'card-editor'
+      </VerticalStack>
     );
   }
 
@@ -496,7 +487,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             <Icon className='field-icon' iconId='toolkit-color-palette' color='1' />
             <Select<TNameStyle>
               fill
-              popoverMinWidth={115}
+              minWidth={115}
               items={[
                 { id: 'default', label: 'Par défaut' },
                 { id: 'white', label: 'Blanc' },
@@ -517,7 +508,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             <Icon className='field-icon' iconId='toolkit-language' color='1' />
             <Select<TCardLanguage>
               fill
-              popoverMinWidth={115}
+              minWidth={115}
               items={[
                 { id: 'fr', label: 'Français' },
                 { id: 'en', label: 'Anglais' },
@@ -697,7 +688,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
               <Icon className='field-icon' iconId='toolkit-print' color='1' />
               <Select<TRushEffectType>
                 fill
-                popoverMinWidth={150}
+                minWidth={150}
                 items={[
                   { id: 'effect', label: 'Effet' },
                   { id: 'continuous', label: 'Effet Continu' },
@@ -739,7 +730,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
               <HorizontalStack fill className='choice-effects-add' itemAlignment='right' verticalItemAlignment='middle'>
                 <Icon className='field-icon' iconId='toolkit-script' color='1' />
                 <Typography fill variant='help' content='Choix' />
-                <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddChoiceEffect()} />
+                <ButtonIcon icon='toolkit-plus' color='positive' onTap={() => this.onAddChoiceEffect()} />
               </HorizontalStack>
 
               <VerticalStack className='card-choice-effects-list'>
@@ -754,7 +745,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
                       <Typography fill variant='help' content={`• ${iChoiceEff + 1}`} />
                       <ButtonIcon
                         icon='toolkit-minus'
-                        color='assertive'
+                        color='negative'
                         onTap={() => this.onRemoveChoiceEffect(iChoiceEff)}
                       />
                       <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveChoiceEffectUp(iChoiceEff)} />
@@ -797,7 +788,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
               <HorizontalStack fill verticalItemAlignment='middle'>
                 <Select<TLegendType>
                   fill
-                  popoverMinWidth={150}
+                  minWidth={150}
                   items={[
                     { id: 'gold', label: 'Or' },
                     { id: 'goldFoil', label: 'Or Foil' },
@@ -912,7 +903,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
         <VerticalStack className='card-abilities'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
             <Typography fill variant='help' content='Types' />
-            <ButtonIcon icon='toolkit-plus' color='balanced' onTap={() => this.onAddAbility()} />
+            <ButtonIcon icon='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />
           </HorizontalStack>
 
           <VerticalStack className='card-abilities-list'>
@@ -934,7 +925,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
                 />
 
                 <HorizontalStack className='abilities-line-icons'>
-                  <ButtonIcon icon='toolkit-minus' color='assertive' onTap={() => this.onRemoveAbility(iAbility)} />
+                  <ButtonIcon icon='toolkit-minus' color='negative' onTap={() => this.onRemoveAbility(iAbility)} />
                   {this.state.card.abilities.length > 1 && (
                     <ButtonIcon icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
                   )}
@@ -970,7 +961,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             <Icon className='field-icon' iconId='toolkit-print' color='1' />
             <Select<TEdition>
               fill
-              popoverMinWidth={200}
+              minWidth={200}
               items={[
                 { id: 'unlimited', label: 'Aucune édition' },
                 { id: 'firstEdition', label: '1ère Édition' },
@@ -991,7 +982,7 @@ export class RushCardEditor extends Containable<IRushCardEditorProps, IRushCardE
             <Icon className='field-icon' iconId='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
-              popoverMinWidth={150}
+              minWidth={150}
               items={[
                 { id: 'none', label: 'Aucun sticker' },
                 { id: 'silver', label: 'Argent' },

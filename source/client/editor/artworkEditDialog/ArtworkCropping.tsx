@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default
 import ReactCrop, { Crop } from 'react-image-crop';
-import { classNames, isDefined } from 'libraries/mn-tools';
-import { IContainableProps, IContainableState, Containable, Spinner, Container } from 'libraries/mn-toolkit';
+import { classNames, isDefined } from 'mn-tools';
+import { IContainableProps, IContainableState, Containable, Spinner, Container } from 'mn-toolkit';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;

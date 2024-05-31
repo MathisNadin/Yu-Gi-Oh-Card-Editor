@@ -9,8 +9,8 @@ import {
   Spinner,
   HorizontalStack,
   Button,
-} from 'libraries/mn-toolkit';
-import { classNames } from 'libraries/mn-tools';
+} from 'mn-toolkit';
+import { classNames } from 'mn-tools';
 
 type TtabIndex = 'library' | 'settings';
 
@@ -53,22 +53,22 @@ export class HomeRightPane
   public render() {
     const { loaded, tabIndex } = this.state;
     const isLibrary = tabIndex === 'library';
-    return this.renderAttributes(
-      <VerticalStack margin gutter itemAlignment='center'>
+    return (
+      <VerticalStack className='home-right-pane' margin gutter itemAlignment='center'>
         {!loaded && <Spinner />}
         {loaded && (
           <HorizontalStack className='button-tabs' gutter itemAlignment='center'>
             {!!app.$card.localCards?.length && (
               <Button
                 className={classNames('button-tab', 'library-button-tab', { selected: isLibrary })}
-                color={isLibrary ? 'positive' : '4'}
+                color={isLibrary ? 'neutral' : '4'}
                 label='Bibliothèque'
                 onTap={() => this.onTabChange('library')}
               />
             )}
             <Button
               className={classNames('button-tab', 'settings-button-tab', { selected: !isLibrary })}
-              color={!isLibrary ? 'calm' : '4'}
+              color={!isLibrary ? 'info' : '4'}
               label='Paramètres'
               onTap={() => this.onTabChange('settings')}
             />
@@ -76,8 +76,7 @@ export class HomeRightPane
         )}
         {loaded && isLibrary && <CardsLibrary />}
         {loaded && !isLibrary && <Settings />}
-      </VerticalStack>,
-      'home-right-pane'
+      </VerticalStack>
     );
   }
 }

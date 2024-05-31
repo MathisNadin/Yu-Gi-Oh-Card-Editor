@@ -1,6 +1,6 @@
 import { ICard, ICardListener } from 'client/editor/card';
 import { CardPreview, RushCardPreview } from 'client/editor/cardPreview';
-import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner } from 'libraries/mn-toolkit';
+import { IContainableProps, IContainableState, Containable, VerticalStack, Spinner } from 'mn-toolkit';
 
 interface IHomeCenterPaneProps extends IContainableProps {}
 
@@ -41,13 +41,12 @@ export class HomeCenterPane
   public render() {
     const { loaded, currentCard, tempCurrentCard } = this.state;
     const card = tempCurrentCard || currentCard;
-    return this.renderAttributes(
-      <VerticalStack>
+    return (
+      <VerticalStack className='home-center-pane'>
         {!loaded && <Spinner />}
         {loaded && !card.rush && <CardPreview card={card} />}
         {loaded && card.rush && <RushCardPreview card={card} />}
-      </VerticalStack>,
-      'home-center-pane'
+      </VerticalStack>
     );
   }
 }

@@ -1,5 +1,5 @@
 import { ICard } from 'client/editor/card';
-import { extend, integer } from 'libraries/mn-tools';
+import { extend, integer } from 'mn-tools';
 
 export interface IReplaceMatrix {
   toReplace: string;
@@ -101,7 +101,7 @@ export class MediaWikiService {
       .replaceAll('%7D', '}')
       .replaceAll('%7E', '~');
 
-    let data: YugipediaGetCardPageApiResponse = await app.$api.get(this.baseApiUrl, {
+    let data: YugipediaGetCardPageApiResponse = await app.$axios.get(this.baseApiUrl, {
       params: {
         action: 'query',
         prop: 'revisions',
@@ -461,7 +461,7 @@ export class MediaWikiService {
       } else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
         let artworkName = this.getArtworkName(enName);
         if (artworkName) {
-          let imgData: YugipediaGetCardPageImgApiResponse = await app.$api.get(this.baseApiUrl, {
+          let imgData: YugipediaGetCardPageImgApiResponse = await app.$axios.get(this.baseApiUrl, {
             params: {
               action: 'parse',
               page: titles,
@@ -473,7 +473,7 @@ export class MediaWikiService {
           if (imgData?.parse?.images?.length) {
             let fileName = imgData.parse.images.find((image) => image.includes(artworkName));
             if (fileName) {
-              let artworkData: YugipediaGetCardImgApiResponse = await app.$api.get(this.baseApiUrl, {
+              let artworkData: YugipediaGetCardImgApiResponse = await app.$axios.get(this.baseApiUrl, {
                 params: {
                   action: 'query',
                   titles: `File:${fileName}`,

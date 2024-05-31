@@ -1,9 +1,9 @@
 import { CardBuilder, RushCardBuilder } from 'client/editor/cardBuilder';
 import { ICardListener } from 'client/editor/card/CardService';
 import { ICard } from 'client/editor/card/card-interfaces';
-import { toPng } from 'libraries/mn-html-to-image';
-import { IContainableProps, IContainableState, Containable, Container, Spinner } from 'libraries/mn-toolkit';
-import { uuid } from 'libraries/mn-tools';
+import { toPng } from 'mn-html-to-image';
+import { IContainableProps, IContainableState, Containable, Container, Spinner } from 'mn-toolkit';
+import { uuid } from 'mn-tools';
 
 interface IRushCardPreviewProps extends IContainableProps {
   card: ICard;
@@ -70,8 +70,8 @@ export class RushCardPreview
   }
 
   public render() {
-    return this.renderAttributes(
-      <Container>
+    return (
+      <Container className='card-preview'>
         {!this.state.renderCard?.rush && (
           <CardBuilder
             forRender
@@ -104,8 +104,7 @@ export class RushCardPreview
         <img className='card-preview-img img-render' src={this.state.rdCardPlaceholder} alt='cardPreview' />
 
         <Spinner className='card-preview-img rendering' />
-      </Container>,
-      'card-preview'
+      </Container>
     );
   }
 }

@@ -2,10 +2,10 @@ import { StoreService } from './StoreService';
 
 export * from './StoreService';
 
-export type TStoreValue = string | number | boolean | Date | ArrayBuffer | Blob | object;
+export type TStoreValue = string | number | boolean | Date | ArrayBuffer | Blob | object | null | undefined;
 
 export interface IStoreListener {
-  storeSet(key: string, value: TStoreValue): void;
+  storeSet<K extends string = string>(key: K, value: TStoreValue): void;
   cleared: () => void;
   dataImported: () => void;
 }
@@ -19,9 +19,9 @@ export interface IStoreOptions {
 
 export interface IStoreService {
   setup: () => Promise<void>;
-  set(key: string, value: TStoreValue): Promise<void>;
-  get<T extends TStoreValue>(key: string, defaultValue?: T): Promise<T>;
-  remove(key: string): Promise<void>;
+  set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T): Promise<void>;
+  get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T): Promise<T>;
+  remove<K extends string = string>(key: K): Promise<void>;
   clear(): Promise<void>;
   importData(jsonData: string): Promise<void>;
   exportData(): Promise<string>;

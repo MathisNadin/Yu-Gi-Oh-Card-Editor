@@ -34,7 +34,7 @@ export class IndexedDBService implements IStoreService {
     });
   }
 
-  public async set(key: string, value: TStoreValue) {
+  public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {
     return new Promise<void>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
@@ -48,7 +48,7 @@ export class IndexedDBService implements IStoreService {
     });
   }
 
-  public async get<T extends TStoreValue>(key: string, defaultValue?: T) {
+  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
     return new Promise<T>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName]);
       const objectStore = transaction.objectStore(this.objectStoreName);
@@ -62,7 +62,7 @@ export class IndexedDBService implements IStoreService {
     });
   }
 
-  public async remove(key: string) {
+  public async remove<K extends string>(key: K) {
     return new Promise<void>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);

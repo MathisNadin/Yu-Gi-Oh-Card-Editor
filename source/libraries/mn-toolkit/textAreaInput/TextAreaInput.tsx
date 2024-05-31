@@ -4,14 +4,13 @@ import { FormEvent } from 'react';
 
 export interface ITextAreaInputProps extends IContainableProps {
   rows?: number;
-  /** Set the minimum of row. */
   minRows?: number;
-  /** Set the maximum of row. */
   maxRows?: number;
   autoGrow?: boolean;
   autofocus?: boolean;
   placeholder?: string;
   defaultValue?: string;
+  spellCheck?: boolean;
   onRef?: (ref: HTMLTextAreaElement) => void;
   onChange?: (value: string) => void | Promise<void>;
 }
@@ -37,6 +36,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
       minRows: 5,
       maxRows: 10,
       autoGrow: false,
+      spellCheck: true,
     };
   }
 
@@ -79,6 +79,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
           ref={(c) => this.onDomInput(c!)}
           className={classNames('mn-textarea-input', this.props.className)}
           name={this.props.name}
+          spellCheck={this.props.spellCheck}
           disabled={this.props.disabled}
           rows={this.state.rows}
           placeholder={this.props.placeholder}

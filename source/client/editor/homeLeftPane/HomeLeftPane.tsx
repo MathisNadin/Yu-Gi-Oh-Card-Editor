@@ -10,8 +10,8 @@ import {
   HorizontalStack,
   Button,
   Typography,
-} from 'libraries/mn-toolkit';
-import { classNames } from 'libraries/mn-tools';
+} from 'mn-toolkit';
+import { classNames } from 'mn-tools';
 
 interface IVersionInfos {
   version: string;
@@ -63,9 +63,9 @@ export class HomeLeftPane
   }
 
   private async checkUpdate() {
-    if (!app.$device.isDesktop || !app.$device.isConnected()) return;
+    if (!app.$device.isDesktop || !app.$device.isConnected) return;
     try {
-      const versionInfos = await app.$api.get<IVersionInfos>(
+      const versionInfos = await app.$axios.get<IVersionInfos>(
         'https://gist.githubusercontent.com/MathisNadin/e12c2c1494081ff24fbc5463f7c49470/raw/',
         {
           params: {
@@ -74,9 +74,9 @@ export class HomeLeftPane
         }
       );
       if (versionInfos?.version) {
-        this.setState({
+        await this.setStateAsync({
           versionInfos,
-          needUpdate: app.$device.getSpec().client.version !== versionInfos.version,
+          needUpdate: app.version !== versionInfos.version,
         });
       }
     } catch (error) {
@@ -134,21 +134,21 @@ export class HomeLeftPane
     const isMaster = tabIndex === 'master';
     const card = tempCurrentCard || currentCard;
 
-    return this.renderAttributes(
-      <VerticalStack margin gutter itemAlignment='center'>
+    return (
+      <VerticalStack className='home-left-pane' margin gutter itemAlignment='center'>
         {!loaded && <Spinner />}
         {loaded && this.renderUpdate()}
         {loaded && (
           <HorizontalStack className='button-tabs' gutter itemAlignment='center'>
             <Button
               className={classNames('button-tab', 'master-button-tab', { selected: isMaster })}
-              color={isMaster ? 'royal' : '4'}
+              color={isMaster ? 'secondary' : '4'}
               label='Master'
               onTap={() => this.onTabChange('master')}
             />
             <Button
               className={classNames('button-tab', 'rush-button-tab', { selected: !isMaster })}
-              color={!isMaster ? 'assertive' : '4'}
+              color={!isMaster ? 'negative' : '4'}
               label='Rush'
               onTap={() => this.onTabChange('rush')}
             />
@@ -168,8 +168,7 @@ export class HomeLeftPane
             onCardChange={(c) => app.$errorManager.handlePromise(this.onCardChange(c))}
           />
         )}
-      </VerticalStack>,
-      'home-left-pane'
+      </VerticalStack>
     );
   }
 
@@ -184,7 +183,7 @@ export class HomeLeftPane
         {!!this.state.versionInfos.link && (
           <Button
             label='Installer'
-            color='balanced'
+            color='positive'
             onTap={() => app.$device.openExternalLink(this.state.versionInfos.link)}
           />
         )}

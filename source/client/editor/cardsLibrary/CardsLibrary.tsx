@@ -1,4 +1,4 @@
-import { deepClone } from 'libraries/mn-tools';
+import { deepClone } from 'mn-tools';
 import { MouseEvent } from 'react';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { ICardListener } from 'client/editor/card/CardService';
@@ -16,7 +16,7 @@ import {
   Spacer,
   Progress,
   Button,
-} from 'libraries/mn-toolkit';
+} from 'mn-toolkit';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
 
@@ -232,8 +232,8 @@ export class CardsLibrary
     if (!this.state.localCards?.length) return <Spinner />;
     const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } =
       this.state;
-    return this.renderAttributes(
-      <VerticalStack fill>
+    return (
+      <VerticalStack className='cards-library' fill>
         <Table
           scroll
           columns={[
@@ -328,7 +328,7 @@ export class CardsLibrary
             <Progress
               fill
               showPercent
-              color='positive'
+              color='neutral'
               message='Rendu en cours...'
               progress={cardsRendered}
               total={cardsToRender}
@@ -339,28 +339,27 @@ export class CardsLibrary
         {!cardsToRender && (
           <HorizontalStack margin gutter itemAlignment='center'>
             {selectAllMode && (
-              <Button icon='toolkit-check-mark' color='balanced' label='Tout' onTap={() => this.selectAll()} />
+              <Button icon='toolkit-check-mark' color='positive' label='Tout' onTap={() => this.selectAll()} />
             )}
             {!selectAllMode && (
-              <Button icon='toolkit-check-mark' color='assertive' label='Tout' onTap={() => this.unselectAll()} />
+              <Button icon='toolkit-check-mark' color='negative' label='Tout' onTap={() => this.unselectAll()} />
             )}
             <Button
               fill
               disabled={!selectedCardsNum}
-              color='positive'
+              color='neutral'
               label='Rendu'
               onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
             />
             <Button
               fill
-              color='energized'
+              color='primary'
               label='Importer'
               onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
             />
           </HorizontalStack>
         )}
-      </VerticalStack>,
-      'cards-library'
+      </VerticalStack>
     );
   }
 }

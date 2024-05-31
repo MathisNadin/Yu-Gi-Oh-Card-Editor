@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
-import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'libraries/mn-tools';
+import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import {
   IContainableProps,
@@ -11,7 +11,7 @@ import {
   Container,
   HorizontalStack,
   VerticalStack,
-} from 'libraries/mn-toolkit';
+} from 'mn-toolkit';
 
 interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
@@ -132,10 +132,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           y: card.artwork.y,
           height: card.artwork.height,
           width: card.artwork.width,
-          unit: '%',
         });
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
       }
     } else {
@@ -651,15 +649,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     const specificties = this.getSpecifities();
 
-    return this.renderAttributes(
-      <Container id={this.props.id} ref={() => (this.ref = document.getElementById(this.props.id) as HTMLDivElement)}>
+    return (
+      <Container
+        className='card-builder rush-card-builder'
+        id={this.props.id}
+        ref={() => (this.ref = document.getElementById(this.props.id) as HTMLDivElement)}
+      >
         <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
-        {this.renderAttributes(
-          <div>
-            <img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' />
-          </div>,
-          'card-layer artwork-container'
-        )}
+        <div className='card-layer artwork-container'>
+          <img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' />
+        </div>
 
         {this.renderFrames(this.state.cardFrames, 'card-frame')}
 
@@ -753,8 +752,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         {this.renderDescription()}
 
         {this.renderName()}
-      </Container>,
-      'card-builder rush-card-builder'
+      </Container>
     );
   }
 
@@ -784,18 +782,17 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       )
     );
 
-    return this.renderAttributes(
-      <HorizontalStack>
+    return (
+      <HorizontalStack className={hStackClassName}>
         <p className={pClassName}>{processedText}</p>
-      </HorizontalStack>,
-      hStackClassName
+      </HorizontalStack>
     );
   }
 
   private renderFrames(frames: string[], className: string) {
     const styleArray = this.getFramesStylesArray(frames.length);
-    return this.renderAttributes(
-      <HorizontalStack>
+    return (
+      <HorizontalStack className='card-layer card-frames-container'>
         {frames.map((frame, index) => {
           const style: CSSProperties = {};
           if (index)
@@ -810,8 +807,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             />
           );
         })}
-      </HorizontalStack>,
-      'card-layer card-frames-container'
+      </HorizontalStack>
     );
   }
 
@@ -830,8 +826,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     let useWhiteText = this.props.card.frames.includes('xyz');
 
-    return this.renderAttributes(
-      <HorizontalStack>
+    return (
+      <HorizontalStack className='card-layer card-abilities'>
         <p
           className={classNames('abilities-text', 'abilities-bracket', 'left-bracket', {
             'black-text': !useWhiteText,
@@ -870,8 +866,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         >
           ]
         </p>
-      </HorizontalStack>,
-      'card-layer card-abilities'
+      </HorizontalStack>
     );
   }
 
@@ -879,8 +874,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let containerClass = `card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
 
-    return this.renderAttributes(
-      <VerticalStack>
+    return (
+      <VerticalStack className={containerClass}>
         {this.state.description.map((d, i) => {
           return (
             <p
@@ -896,8 +891,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             </p>
           );
         })}
-      </VerticalStack>,
-      containerClass
+      </VerticalStack>
     );
   }
 

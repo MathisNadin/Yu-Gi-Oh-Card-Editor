@@ -10,7 +10,7 @@ export class StoreService extends Observable<IStoreListener> implements IStoreSe
   private options!: IStoreOptions;
   private storeImpl!: IStoreService;
 
-  private fireStore(key: string, value: TStoreValue) {
+  private fireStore<K extends string = string>(key: K, value: TStoreValue) {
     this.dispatch('storeSet', key, value);
   }
 
@@ -44,18 +44,18 @@ export class StoreService extends Observable<IStoreListener> implements IStoreSe
     await this.storeImpl.setup();
   }
 
-  public async set(key: string, value: TStoreValue) {
+  public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {
     log.debug(`Storing key "${key}"`, value);
     this.fireStore(key, value);
-    await this.storeImpl.set(key, value);
+    await this.storeImpl.set<T, K>(key, value);
   }
 
-  public async get<T extends TStoreValue>(key: string, defaultValue?: T) {
-    return await this.storeImpl.get<T>(key, defaultValue);
+  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
+    return await this.storeImpl.get<T, K>(key, defaultValue);
   }
 
-  public async remove(key: string) {
-    await this.storeImpl.remove(key);
+  public async remove<K extends string = string>(key: K) {
+    await this.storeImpl.remove<K>(key);
   }
 
   public async clear() {

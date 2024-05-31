@@ -35,8 +35,8 @@
         .mn-checkbox {
           &.checked {
             .toggle {
-              background-color: $assertive !important;
-              border-color: $assertive !important;
+              background-color: $negative !important;
+              border-color: $negative !important;
             }
           }
         }
@@ -122,11 +122,11 @@
         }
 
         &.mn-button-icon-pressed {
-          background-color: rgba($assertive, 0.7);
+          background-color: rgba($negative, 0.7);
         }
 
         &:hover {
-          background-color: rgba($assertive, 0.5);
+          background-color: rgba($negative, 0.5);
         }
       }
 

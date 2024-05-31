@@ -22,20 +22,20 @@ export class LocalStorageService implements IStoreService {
     }
   }
 
-  public async set(key: string, value: TStoreValue) {
+  public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {
     log.debug(`Storing item in LocalStorage: key=${key}, value=${value}`);
     localStorage.setItem(`${this.storePrefix}${key}`, JSON.stringify(value));
     return Promise.resolve();
   }
 
-  public async get<T extends TStoreValue>(key: string, defaultValue?: T): Promise<T> {
+  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T): Promise<T> {
     log.debug(`Retrieving item from LocalStorage: key=${key}`);
     const item = localStorage.getItem(`${this.storePrefix}${key}`);
     const result = item ? JSON.parse(item) : defaultValue;
     return Promise.resolve(result as T);
   }
 
-  public async remove(key: string) {
+  public async remove<K extends string = string>(key: K) {
     log.debug(`Removing item from LocalStorage: key=${key}`);
     localStorage.removeItem(`${this.storePrefix}${key}`);
     return Promise.resolve();

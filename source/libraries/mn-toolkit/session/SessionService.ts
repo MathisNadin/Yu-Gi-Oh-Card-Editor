@@ -78,7 +78,7 @@ export class SessionService extends Observable<ISessionListener> {
 
   public async start(token: string, data: ISessionData) {
     // MN : des fois on passe this._data en argument data, donc on utilise newData pour ne pas l'affecter
-    // quand on fait ensuite "await app.$indexedDB.set('session', this._data = {} as ISessionData);"
+    // quand on fait ensuite "await app.$store.set('session', this._data = {} as ISessionData);"
     const newData = data;
     log.debug(`Démarrage de la session avec le token ${token}`, newData);
     await app.$store.set('token', (this._token = token));

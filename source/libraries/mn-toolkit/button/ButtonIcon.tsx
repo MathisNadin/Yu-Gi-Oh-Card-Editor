@@ -7,6 +7,7 @@ interface IButtonIconProps extends IContainableProps {
   color?: TForegroundColor;
   bg?: TBackgroundColor;
   size?: 'normal' | 'small';
+  pressed?: boolean;
 }
 
 interface IButtonIconState extends IContainableState {}
@@ -17,6 +18,7 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> 
       ...super.defaultProps,
       color: '1',
       disabled: false,
+      pressed: false,
       size: 'normal',
     };
   }
@@ -24,6 +26,7 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> 
   public renderClasses() {
     const classes = super.renderClasses();
     classes['mn-button-icon'] = true;
+    classes['pressed'] = !!this.props.pressed;
     classes[`mn-size-${this.props.size}`] = true;
     classes[`mn-color-${this.props.color}`] = true;
     classes[`mn-bg-${this.props.bg}`] = true;

@@ -1,13 +1,7 @@
 import { HomeCenterPane } from 'client/editor/homeCenterPane';
 import { HomeLeftPane } from 'client/editor/homeLeftPane';
 import { HomeRightPane } from 'client/editor/homeRightPane';
-import {
-  IContainableProps,
-  IAbstractViewComponentState,
-  AbstractViewComponent,
-  View,
-  Content,
-} from 'libraries/mn-toolkit';
+import { IContainableProps, IAbstractViewComponentState, AbstractViewComponent, View, Content } from 'mn-toolkit';
 
 interface IHomeViewProps extends IContainableProps {}
 

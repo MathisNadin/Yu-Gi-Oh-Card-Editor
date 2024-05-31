@@ -129,7 +129,7 @@ export class CapacitorSQLiteService implements IStoreService {
     }
   }
 
-  public async set(key: string, value: TStoreValue) {
+  public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {
     await this.waitForConnection();
     const serializedValue = this.serializeDBValue(value);
     log.debug('Setting item in SQLite:', {
@@ -145,7 +145,7 @@ export class CapacitorSQLiteService implements IStoreService {
     );
   }
 
-  public async get<T extends TStoreValue>(key: string, defaultValue?: T): Promise<T> {
+  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T): Promise<T> {
     await this.waitForConnection();
     log.debug('Getting item from SQLite:', { key, defaultValue });
     const { values } = await this.db.query(`SELECT value FROM ${this.tableName} WHERE key = '${key}';`);
@@ -153,7 +153,7 @@ export class CapacitorSQLiteService implements IStoreService {
     return defaultValue!;
   }
 
-  public async remove(key: string) {
+  public async remove<K extends string = string>(key: K) {
     await this.waitForConnection();
     log.debug(`Removing item from SQLite: key=${key}`);
     await this.db.execute(`DELETE FROM ${this.tableName} WHERE key = '${key}';`, true);
