@@ -5,7 +5,6 @@ import {
   TableColumnSortOrder,
   Spinner,
   TabbedPane,
-  TabPane,
   ITableColumn,
   HorizontalStack,
   CheckBox,
@@ -16,7 +15,7 @@ import {
   Typography,
   Progress,
   TextAreaInput,
-  ButtonIcon,
+  Icon,
   FileInput,
   AbstractPopup,
   IAbstractPopupState,
@@ -287,20 +286,22 @@ export class CardImportDialog extends AbstractPopup<
 
   public renderContent() {
     return (
-      <TabbedPane
+      <TabbedPane<TTabIndex>
         className='card-import-dialog'
         tabPosition='top'
         defaultValue={this.state.tabIndex}
-        onChange={(value) => this.setState({ tabIndex: value as TTabIndex })}
-      >
-        <TabPane id='yuginews' fill={false} label='YugiNews' gutter>
-          {this.renderYuginewsTab()}
-        </TabPane>
-
-        <TabPane id='yugipedia' fill={false} label='Yugipedia' gutter>
-          {this.renderYugipediaTab()}
-        </TabPane>
-      </TabbedPane>
+        onChange={(tabIndex) => this.setState({ tabIndex })}
+        panes={[
+          {
+            props: { tabId: 'yuginews', label: 'YugiNews', gutter: true },
+            content: this.renderYuginewsTab(),
+          },
+          {
+            props: { tabId: 'yugipedia', label: 'Yugipedia', gutter: true },
+            content: this.renderYugipediaTab(),
+          },
+        ]}
+      />
     );
   }
 
@@ -494,7 +495,7 @@ export class CardImportDialog extends AbstractPopup<
                     defaultValue={m.newString}
                     onChange={(value) => this.updateReplaceMatrix(i, m.toReplace, value)}
                   />
-                  <ButtonIcon icon='toolkit-minus' color='negative' onTap={() => this.removeReplaceMatrix(i)} />
+                  <Icon size={24} iconId='toolkit-minus' color='negative' onTap={() => this.removeReplaceMatrix(i)} />
                 </HorizontalStack>
               ))}
             </VerticalStack>

@@ -1,9 +1,9 @@
 import { ICard, ICardListener } from 'client/editor/card';
 import { CardEditor, RushCardEditor } from 'client/editor/cardEditor';
 import {
-  IContainableProps,
-  IContainableState,
-  Containable,
+  IContainerProps,
+  IContainerState,
+  Container,
   IDeviceListener,
   Spinner,
   VerticalStack,
@@ -21,9 +21,9 @@ interface IVersionInfos {
 
 type TtabIndex = 'master' | 'rush';
 
-interface IHomeLeftPaneProps extends IContainableProps {}
+interface IHomeLeftPaneProps extends IContainerProps {}
 
-interface IHomeLeftPaneState extends IContainableState {
+interface IHomeLeftPaneState extends IContainerState {
   tabIndex: TtabIndex;
   currentCard: ICard;
   tempCurrentCard: ICard;
@@ -32,9 +32,18 @@ interface IHomeLeftPaneState extends IContainableState {
 }
 
 export class HomeLeftPane
-  extends Containable<IHomeLeftPaneProps, IHomeLeftPaneState>
+  extends Container<IHomeLeftPaneProps, IHomeLeftPaneState>
   implements Partial<ICardListener>, Partial<IDeviceListener>
 {
+  public static get defaultProps(): IHomeLeftPaneProps {
+    return {
+      ...super.defaultProps,
+      padding: true,
+      gutter: true,
+      layout: 'vertical',
+    };
+  }
+
   public constructor(props: IHomeLeftPaneProps) {
     super(props);
     this.state = {
@@ -96,27 +105,30 @@ export class HomeLeftPane
   public tempCurrentCardLoaded(tempCurrentCard: ICard) {
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+    } else if (this.state.currentCard) {
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard.rush ? 'rush' : 'master' });
     } else {
-      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard?.rush ? 'rush' : 'master' });
+      this.setState({ loaded: true, tempCurrentCard });
     }
   }
 
   public tempCurrentCardUpdated(tempCurrentCard: ICard) {
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
+    } else if (this.state.currentCard) {
+      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard.rush ? 'rush' : 'master' });
     } else {
-      this.setState({ loaded: true, tempCurrentCard, tabIndex: this.state.currentCard?.rush ? 'rush' : 'master' });
+      this.setState({ loaded: true, tempCurrentCard });
     }
   }
 
   private async onTabChange(tabIndex: TtabIndex) {
-    this.setState({ tabIndex }, () => {
-      if (this.state.tempCurrentCard) {
-        app.$errorManager.handlePromise(app.$card.convertTempCurrentCard());
-      } else {
-        app.$errorManager.handlePromise(app.$card.convertCurrentCard());
-      }
-    });
+    await this.setStateAsync({ tabIndex });
+    if (this.state.tempCurrentCard) {
+      await app.$card.convertTempCurrentCard();
+    } else {
+      await app.$card.convertCurrentCard();
+    }
   }
 
   private async onCardChange(card: ICard) {
@@ -127,49 +139,51 @@ export class HomeLeftPane
     }
   }
 
-  public render() {
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['home-left-pane'] = true;
+    return classes;
+  }
+
+  public get children() {
     if (!this.state.loaded) return <Spinner />;
-
-    const { loaded, tabIndex, currentCard, tempCurrentCard } = this.state;
+    const { tabIndex, currentCard, tempCurrentCard } = this.state;
     const isMaster = tabIndex === 'master';
+    const isRush = tabIndex === 'rush';
     const card = tempCurrentCard || currentCard;
-
-    return (
-      <VerticalStack className='home-left-pane' margin gutter itemAlignment='center'>
-        {!loaded && <Spinner />}
-        {loaded && this.renderUpdate()}
-        {loaded && (
-          <HorizontalStack className='button-tabs' gutter itemAlignment='center'>
-            <Button
-              className={classNames('button-tab', 'master-button-tab', { selected: isMaster })}
-              color={isMaster ? 'secondary' : '4'}
-              label='Master'
-              onTap={() => this.onTabChange('master')}
-            />
-            <Button
-              className={classNames('button-tab', 'rush-button-tab', { selected: !isMaster })}
-              color={!isMaster ? 'negative' : '4'}
-              label='Rush'
-              onTap={() => this.onTabChange('rush')}
-            />
-          </HorizontalStack>
-        )}
-        {loaded && isMaster && (
-          <CardEditor
-            id='master'
-            card={card}
-            onCardChange={(c) => app.$errorManager.handlePromise(this.onCardChange(c))}
-          />
-        )}
-        {loaded && !isMaster && (
-          <RushCardEditor
-            id='rush'
-            card={card}
-            onCardChange={(c) => app.$errorManager.handlePromise(this.onCardChange(c))}
-          />
-        )}
-      </VerticalStack>
-    );
+    return [
+      this.renderUpdate(),
+      <HorizontalStack key='button-tabs' className='button-tabs' gutter itemAlignment='center'>
+        <Button
+          className={classNames('button-tab', 'master-button-tab', { selected: isMaster })}
+          color={isMaster ? 'primary' : '4'}
+          label='Master'
+          onTap={() => this.onTabChange('master')}
+        />
+        <Button
+          className={classNames('button-tab', 'rush-button-tab', { selected: isRush })}
+          color={isRush ? 'negative' : '4'}
+          label='Rush'
+          onTap={() => this.onTabChange('rush')}
+        />
+      </HorizontalStack>,
+      isMaster && (
+        <CardEditor
+          key='master-card-editor'
+          id='master'
+          card={card}
+          onCardChange={(c) => app.$errorManager.handlePromise(this.onCardChange(c))}
+        />
+      ),
+      isRush && (
+        <RushCardEditor
+          key='rush-card-editor'
+          id='rush'
+          card={card}
+          onCardChange={(c) => app.$errorManager.handlePromise(this.onCardChange(c))}
+        />
+      ),
+    ];
   }
 
   private renderUpdate() {

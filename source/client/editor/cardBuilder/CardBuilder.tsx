@@ -3,15 +3,7 @@ import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
-import {
-  IContainableProps,
-  IContainableState,
-  Containable,
-  Spinner,
-  Container,
-  HorizontalStack,
-  VerticalStack,
-} from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable, Spinner } from 'mn-toolkit';
 
 interface ICardBuilderProps extends IContainableProps {
   forRender?: boolean;
@@ -715,8 +707,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     }
 
     return (
-      <Container
-        className='card-builder'
+      <div
+        className='custom-container card-builder'
         id={this.props.id}
         ref={() => (this.ref = document.getElementById(this.props.id) as HTMLDivElement)}
       >
@@ -769,27 +761,31 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         </p>
 
         {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && (
-          <Container
-            className={classNames('card-layer', 'atk-def', 'atk', { 'question-mark': this.props.card.atk === '?' })}
+          <div
+            className={classNames('custom-container', 'card-layer', 'atk-def', 'atk', {
+              'question-mark': this.props.card.atk === '?',
+            })}
           >
             <p className={classNames('stat-text', 'atk-text', 'black-text', { infinity: this.props.card.atk === '∞' })}>
               {this.props.card.atk}
             </p>
-          </Container>
+          </div>
         )}
 
         {app.$card.hasAbilities(this.props.card) &&
           !this.props.card.frames.includes('skill') &&
           !this.props.card.frames.includes('link') && (
-            <Container
-              className={classNames('card-layer', 'atk-def', 'def', { 'question-mark': this.props.card.def === '?' })}
+            <div
+              className={classNames('custom-container', 'card-layer', 'atk-def', 'def', {
+                'question-mark': this.props.card.def === '?',
+              })}
             >
               <p
                 className={classNames('stat-text', 'def-text', 'black-text', { infinity: this.props.card.def === '∞' })}
               >
                 {this.props.card.def}
               </p>
-            </Container>
+            </div>
           )}
 
         {this.props.card.hasCopyright && (
@@ -809,12 +805,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           <img className='card-layer card-scale right-scale' src={this.state.rightScale} alt='rightScale' />
         )}
         {this.renderName()}
-      </Container>
+      </div>
     );
   }
 
   private renderName() {
-    let hStackClassName = `card-layer card-name-container`;
+    let hStackClassName = `custom-container card-layer card-name-container`;
     let pClassName = `card-layer card-name ${this.props.card.nameStyle}`;
     if (this.props.card.frames.includes('skill')) {
       pClassName = `${pClassName} white-text skill-name`;
@@ -840,16 +836,16 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     );
 
     return (
-      <HorizontalStack className={hStackClassName}>
+      <div className={hStackClassName}>
         <p className={pClassName}>{processedText}</p>
-      </HorizontalStack>
+      </div>
     );
   }
 
   private renderFrames(frames: string[], className: string) {
     const styleArray = this.getFramesStylesArray(frames.length);
     return (
-      <HorizontalStack className='card-layer card-frames-container'>
+      <div className='custom-container card-layer card-frames-container'>
         {frames.map((frame, index) => {
           const style: CSSProperties = {};
           if (index)
@@ -864,7 +860,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
             />
           );
         })}
-      </HorizontalStack>
+      </div>
     );
   }
 
@@ -881,12 +877,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       firstIndexLowerCase = true;
     }
 
-    let containerClass = 'card-layer card-abilities';
+    let containerClass = 'custom-container card-layer card-abilities';
     if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link'))
       containerClass = `${containerClass} on-pendulum-link`;
 
     return (
-      <HorizontalStack className={containerClass}>
+      <div className={containerClass}>
         <p className='abilities-text black-text abilities-bracket left-bracket'>[</p>
         <p className='abilities-text black-text abilities'>
           {upperCaseIndexes.map((index, i) => (
@@ -901,14 +897,14 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           ))}
         </p>
         <p className='abilities-text black-text abilities-bracket right-bracket'>]</p>
-      </HorizontalStack>
+      </div>
     );
   }
 
   private renderPendulum() {
     return (
-      <VerticalStack
-        className={`card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''}${this.state.pendDone ? '' : ' hidden'}`}
+      <div
+        className={`custom-container vertical card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''}${this.state.pendDone ? '' : ' hidden'}`}
       >
         {this.state.pendEffect.map((text, i) => {
           return (
@@ -925,12 +921,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
             </p>
           );
         })}
-      </VerticalStack>
+      </div>
     );
   }
 
   private renderDescription() {
-    let containerClass = `card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
+    let containerClass = `custom-container vertical card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
     if (app.$card.hasAbilities(this.props.card)) {
       containerClass = `${containerClass} with-abilities`;
 
@@ -943,7 +939,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       containerClass = `${containerClass} on-pendulum-link`;
 
     return (
-      <VerticalStack className={containerClass}>
+      <div className={containerClass}>
         {this.state.description.map((d, i) => {
           return (
             <p
@@ -959,7 +955,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
             </p>
           );
         })}
-      </VerticalStack>
+      </div>
     );
   }
 
@@ -1014,32 +1010,72 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private renderLinkArrows() {
     return (
-      <Container className='card-layer card-link-arrows'>
+      <div className='custom-container card-layer card-link-arrows'>
         {this.props.card.linkArrows.top && (
-          <img className='card-layer link-arrow link-arrow-t' src={this.state.linkArrowT} alt='linkArrowT' />
+          <img
+            className='card-layer link-arrow link-arrow-t'
+            key='link-arrow-t'
+            src={this.state.linkArrowT}
+            alt='linkArrowT'
+          />
         )}
         {this.props.card.linkArrows.bottom && (
-          <img className='card-layer link-arrow link-arrow-b' src={this.state.linkArrowB} alt='linkArrowB' />
+          <img
+            className='card-layer link-arrow link-arrow-b'
+            key='link-arrow-b'
+            src={this.state.linkArrowB}
+            alt='linkArrowB'
+          />
         )}
         {this.props.card.linkArrows.left && (
-          <img className='card-layer link-arrow link-arrow-l' src={this.state.linkArrowL} alt='linkArrowL' />
+          <img
+            className='card-layer link-arrow link-arrow-l'
+            key='link-arrow-l'
+            src={this.state.linkArrowL}
+            alt='linkArrowL'
+          />
         )}
         {this.props.card.linkArrows.right && (
-          <img className='card-layer link-arrow link-arrow-r' src={this.state.linkArrowR} alt='linkArrowR' />
+          <img
+            className='card-layer link-arrow link-arrow-r'
+            key='link-arrow-r'
+            src={this.state.linkArrowR}
+            alt='linkArrowR'
+          />
         )}
         {this.props.card.linkArrows.topLeft && (
-          <img className='card-layer link-arrow link-arrow-tl' src={this.state.linkArrowTL} alt='linkArrowTL' />
+          <img
+            className='card-layer link-arrow link-arrow-tl'
+            key='link-arrow-tl'
+            src={this.state.linkArrowTL}
+            alt='linkArrowTL'
+          />
         )}
         {this.props.card.linkArrows.topRight && (
-          <img className='card-layer link-arrow link-arrow-tr' src={this.state.linkArrowTR} alt='linkArrowTR' />
+          <img
+            className='card-layer link-arrow link-arrow-tr'
+            key='link-arrow-tr'
+            src={this.state.linkArrowTR}
+            alt='linkArrowTR'
+          />
         )}
         {this.props.card.linkArrows.bottomLeft && (
-          <img className='card-layer link-arrow link-arrow-bl' src={this.state.linkArrowBL} alt='linkArrowBL' />
+          <img
+            className='card-layer link-arrow link-arrow-bl'
+            key='link-arrow-bl'
+            src={this.state.linkArrowBL}
+            alt='linkArrowBL'
+          />
         )}
         {this.props.card.linkArrows.bottomRight && (
-          <img className='card-layer link-arrow link-arrow-br' src={this.state.linkArrowBR} alt='linkArrowBR' />
+          <img
+            className='card-layer link-arrow link-arrow-br'
+            key='link-arrow-br'
+            src={this.state.linkArrowBR}
+            alt='linkArrowBR'
+          />
         )}
-      </Container>
+      </div>
     );
   }
 }

@@ -184,6 +184,10 @@
 
     > .mn-container-inside {
       padding-right: $scrollBarSpace;
+
+      > :last-child {
+        margin-bottom: $themeDefaultSpacing;
+      }
     }
 
     &.mn-layout-padding {

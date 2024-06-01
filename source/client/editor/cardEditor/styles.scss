@@ -4,32 +4,9 @@
 }
 
 .card-editor {
-  @include bg(1);
   $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
-  min-width: 100%;
-  max-width: 100%;
-
-  .mn-typography {
-    color: black !important;
-
-    .mn-dark-theme & {
-      color: white !important;
-    }
-  }
-
-  .top-options {
-    padding-top: calc($themeDefaultSpacing / 1.5) !important;
-    padding-bottom: calc($themeDefaultSpacing / 2) !important;
-
-    .mn-button {
-      font-size: 14px;
-    }
-  }
 
   .card-editor-sections {
-    padding-top: calc($themeDefaultSpacing / 2);
-    gap: $themeDefaultSpacing * 2 !important;
-
     .card-editor-section {
       &.link-arrows-section {
         .mn-checkbox {
@@ -110,18 +87,9 @@
 
       .pendulum-lock-icon {
         padding: 5px;
+        border-radius: $themeDefaultBorderRadius;
 
-        .icon {
-          $pendLockSize: 24px;
-          min-height: $pendLockSize;
-          height: $pendLockSize;
-          max-height: $pendLockSize;
-          min-width: $pendLockSize;
-          width: $pendLockSize;
-          max-width: $pendLockSize;
-        }
-
-        &.mn-button-icon-pressed {
+        &.locked {
           background-color: rgba($negative, 0.7);
         }
 
@@ -136,7 +104,9 @@
       }
 
       .card-abilities {
-        gap: calc($themeDefaultSpacing / 2);
+        > .mn-container-inside {
+          gap: calc($themeDefaultSpacing / 2);
+        }
 
         .abilities-add {
           margin-bottom: - calc($themeDefaultSpacing / 4);
@@ -171,14 +141,44 @@
         }
       }
 
-      .mn-tab-pane {
-        padding: calc($themeDefaultSpacing / 2);
-        border: 1px solid $borderColor;
-        border-radius: 4px;
+      .mn-tabbed-pane {
+        .mn-container-inside {
+          .mn-tabset {
+            &.mn-tabbed-pane-tab-position-top {
+              border-radius: $themeDefaultBorderRadius;
+              background-image: none;
+              padding: 0;
+              @include bg(2);
 
-        &#regular,
-        &#choice {
-          padding-bottom: $themeDefaultSpacing;
+              .item {
+                @include bg(3);
+
+                &.selected {
+                  @include bg(2);
+                }
+              }
+            }
+
+            .mn-layout-spacer {
+              background-color: transparent;
+              border-bottom: 1px solid nth($theme-light-bg, 3);
+              border-radius: $themeDefaultBorderRadius;
+            }
+          }
+
+          .mn-tab-pane {
+            border: 1px solid nth($theme-light-bg, 3);
+            border-top: transparent;
+
+            &#regular,
+            &#choice {
+              padding-bottom: $themeDefaultSpacing;
+            }
+
+            .mn-tab-button-choice {
+              box-shadow: 0 -1px 0 nth($theme-light-bg, 4);
+            }
+          }
         }
       }
 

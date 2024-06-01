@@ -1,9 +1,5 @@
 @import 'react-image-crop/src/ReactCrop.scss';
 
-.artwork-edit-dialog {
-  max-height: calc(100% - 24px - 2 * #{$themeDefaultSpacing});
-}
-
 .artwork-cropping {
   min-width: 50%;
   max-width: 50%;

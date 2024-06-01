@@ -36,6 +36,7 @@ export class Typography extends Containable<ITypographyProps, ITypographyState> 
       variant: 'document',
       alignment: 'left',
       contentType: 'text',
+      color: '1',
     };
   }
 

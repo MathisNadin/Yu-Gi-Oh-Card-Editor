@@ -1,24 +1,33 @@
 import {
-  IContainableProps,
-  IContainableState,
-  Containable,
+  IContainerProps,
+  IContainerState,
+  Container,
   Button,
   FileInput,
   HorizontalStack,
   Icon,
   Spacer,
   Spinner,
-  VerticalStack,
 } from 'mn-toolkit';
 import { ISettingsListener, IUserSettings } from './SettingsService';
 
-interface ISettingsProps extends IContainableProps {}
+interface ISettingsProps extends IContainerProps {}
 
-interface ISettingsState extends IContainableState {
+interface ISettingsState extends IContainerState {
   settings: IUserSettings;
 }
 
-export class Settings extends Containable<ISettingsProps, ISettingsState> implements Partial<ISettingsListener> {
+export class Settings extends Container<ISettingsProps, ISettingsState> implements Partial<ISettingsListener> {
+  public static get defaultProps(): ISettingsProps {
+    return {
+      ...super.defaultProps,
+      fill: true,
+      padding: true,
+      gutter: true,
+      layout: 'vertical',
+    };
+  }
+
   public constructor(props: ISettingsProps) {
     super(props);
     this.state = {
@@ -75,69 +84,71 @@ export class Settings extends Containable<ISettingsProps, ISettingsState> implem
     await app.$settings.saveSettings({ defaultImgImportPath });
   }
 
-  public render() {
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['settings'] = true;
+    return classes;
+  }
+
+  public get children() {
     if (!this.state.settings) return <Spinner />;
-    return (
-      <VerticalStack className='settings' fill>
-        <VerticalStack fill gutter padding>
-          <HorizontalStack verticalItemAlignment='middle'>
-            <Icon className='field-icon' iconId='toolkit-millennium-puzzle' color='1' />
-            {app.$device.isDesktop && (
-              <FileInput
-                fill
-                placeholder='Chemin de rendu par défaut'
-                defaultValue={this.state.settings.defaultRenderPath}
-                onChange={(url) => this.onDefaultRenderPathChanged(url)}
-                overrideOnTap={() => this.getDefaultRenderPath()}
-              />
-            )}
-          </HorizontalStack>
+    return [
+      <HorizontalStack key='default-render-path' verticalItemAlignment='middle'>
+        <Icon className='field-icon' size={24} iconId='toolkit-millennium-puzzle' color='1' />
+        {app.$device.isDesktop && (
+          <FileInput
+            fill
+            placeholder='Chemin de rendu par défaut'
+            defaultValue={this.state.settings.defaultRenderPath}
+            onChange={(url) => this.onDefaultRenderPathChanged(url)}
+            overrideOnTap={() => this.getDefaultRenderPath()}
+          />
+        )}
+      </HorizontalStack>,
 
-          <HorizontalStack verticalItemAlignment='middle'>
-            <Icon className='field-icon' iconId='toolkit-image' color='1' />
-            {app.$device.isDesktop && (
-              <FileInput
-                fill
-                placeholder="Chemin vers l'artwork par défaut"
-                defaultValue={this.state.settings.defaultArtworkPath}
-                onChange={(path) => this.onDefaultArtworkPathChanged(path)}
-                overrideOnTap={() => this.getDefaultArtworkPath()}
-              />
-            )}
-          </HorizontalStack>
+      <HorizontalStack key='default-artwork-path' verticalItemAlignment='middle'>
+        <Icon className='field-icon' size={24} iconId='toolkit-image' color='1' />
+        {app.$device.isDesktop && (
+          <FileInput
+            fill
+            placeholder="Chemin vers l'artwork par défaut"
+            defaultValue={this.state.settings.defaultArtworkPath}
+            onChange={(path) => this.onDefaultArtworkPathChanged(path)}
+            overrideOnTap={() => this.getDefaultArtworkPath()}
+          />
+        )}
+      </HorizontalStack>,
 
-          <HorizontalStack verticalItemAlignment='middle'>
-            <Icon className='field-icon' iconId='toolkit-image-sync' color='1' />
-            {app.$device.isDesktop && (
-              <FileInput
-                fill
-                placeholder="Chemin d'import d'images par défaut"
-                defaultValue={this.state.settings.defaultImgImportPath}
-                onChange={(path) => this.onDefaultImgImportPathChanged(path)}
-                overrideOnTap={() => this.getDefaultImgImportPath()}
-              />
-            )}
-          </HorizontalStack>
+      <HorizontalStack key='default-img-import' verticalItemAlignment='middle'>
+        <Icon className='field-icon' size={24} iconId='toolkit-image-sync' color='1' />
+        {app.$device.isDesktop && (
+          <FileInput
+            fill
+            placeholder="Chemin d'import d'images par défaut"
+            defaultValue={this.state.settings.defaultImgImportPath}
+            onChange={(path) => this.onDefaultImgImportPathChanged(path)}
+            overrideOnTap={() => this.getDefaultImgImportPath()}
+          />
+        )}
+      </HorizontalStack>,
 
-          <Spacer />
+      <Spacer key='spacer' />,
 
-          <HorizontalStack gutter verticalItemAlignment='middle'>
-            <Button
-              fill
-              label='Importer des données'
-              color='primary'
-              onTap={() => app.$errorManager.handlePromise(app.$settings.importData())}
-            />
+      <HorizontalStack key='import-export-data' gutter verticalItemAlignment='middle'>
+        <Button
+          fill
+          label='Importer des données'
+          color='primary'
+          onTap={() => app.$errorManager.handlePromise(app.$settings.importData())}
+        />
 
-            <Button
-              fill
-              label='Exporter les données'
-              color='secondary'
-              onTap={() => app.$errorManager.handlePromise(app.$settings.exportData())}
-            />
-          </HorizontalStack>
-        </VerticalStack>
-      </VerticalStack>
-    );
+        <Button
+          fill
+          label='Exporter les données'
+          color='secondary'
+          onTap={() => app.$errorManager.handlePromise(app.$settings.exportData())}
+        />
+      </HorizontalStack>,
+    ];
   }
 }

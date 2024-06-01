@@ -34,8 +34,8 @@ export class ArtworkEditDialog extends AbstractPopup<
 > {
   public static async show(options: IArtworkEditDialogProps) {
     options.title = options.title || "Édition de l'image";
-    options.height = options.height || '85%';
-    options.width = options.width || '80%';
+    options.height = options.height || '90%';
+    options.width = options.width || '90%';
     return await app.$popup.show<IArtworkEditDialogResult, IArtworkEditDialogProps>({
       type: 'artwork-edit',
       Component: ArtworkEditDialog,

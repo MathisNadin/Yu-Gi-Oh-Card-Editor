@@ -33,6 +33,7 @@ export interface ITabSetProps<ID> extends IContainableProps {
   addButton?: boolean;
   onAdd?: () => Promise<void> | void;
   legend?: string;
+  noSpacer?: boolean;
 }
 
 interface ITabSetState<ID> extends IContainableState {
@@ -115,7 +116,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
       <div {...this.renderAttributes()}>
         {!!this.props.legend && <Typography variant='h5' content={this.props.legend} />}
 
-        {this.props.tabPosition === 'bottom' && <Spacer />}
+        {!this.props.noSpacer && this.props.tabPosition === 'bottom' && <Spacer />}
 
         {items.map((item, index) => (
           <span
@@ -147,7 +148,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
           </span>
         ))}
 
-        {this.props.tabPosition !== 'bottom' && <Spacer />}
+        {!this.props.noSpacer && this.props.tabPosition !== 'bottom' && <Spacer />}
 
         {this.props.addButton && (
           <span className='mn-tabset-add-button-holder'>

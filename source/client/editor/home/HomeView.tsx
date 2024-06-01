@@ -1,7 +1,7 @@
-import { HomeCenterPane } from 'client/editor/homeCenterPane';
-import { HomeLeftPane } from 'client/editor/homeLeftPane';
-import { HomeRightPane } from 'client/editor/homeRightPane';
 import { IContainableProps, IAbstractViewComponentState, AbstractViewComponent, View, Content } from 'mn-toolkit';
+import { HomeCenterPane } from './HomeCenterPane';
+import { HomeLeftPane } from './HomeLeftPane';
+import { HomeRightPane } from './HomeRightPane';
 
 interface IHomeViewProps extends IContainableProps {}
 
@@ -16,9 +16,9 @@ export class HomeView extends AbstractViewComponent<IHomeViewProps, IHomeViewSta
     return (
       <View className='home'>
         <Content padding={false} itemAlignment='center' layout='horizontal'>
-          <HomeLeftPane />
-          <HomeCenterPane />
-          <HomeRightPane />
+          <HomeLeftPane key='home-left-pane' fill />
+          <HomeCenterPane key='home-center-pane' fill />
+          <HomeRightPane key='home-right-pane' fill />
         </Content>
       </View>
     );

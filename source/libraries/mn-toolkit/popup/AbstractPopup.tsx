@@ -2,10 +2,11 @@ import { Component } from 'react';
 import { classNames } from 'mn-tools';
 import { JSXElementChildren } from '../react';
 import { HorizontalStack, VerticalStack } from '../container';
-import { Button, ButtonIcon, IButtonProps } from '../button';
+import { Button, IButtonProps } from '../button';
 import { Spacer } from '../spacer';
 import { Spinner } from '../spinner';
 import { Typography } from '../typography';
+import { Icon } from '../icon';
 
 export interface IAbstractPopupProps<R> {
   key?: string;
@@ -97,7 +98,7 @@ export abstract class AbstractPopup<
       <HorizontalStack className='mn-popup-header' key='header'>
         <Typography bold variant='label' contentType='text' content={this.props.title} />
         <Spacer />
-        <ButtonIcon icon='toolkit-close' onTap={() => this.close(undefined)} />
+        <Icon iconId='toolkit-close' onTap={() => this.close(undefined)} />
       </HorizontalStack>
     );
   }

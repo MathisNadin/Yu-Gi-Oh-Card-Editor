@@ -42,6 +42,24 @@
   left: 0;
   position: absolute;
 
+  p,
+  span {
+    font-family: unset;
+    font-size: unset;
+    margin-bottom: unset;
+    line-height: 100%;
+  }
+
+  .custom-container {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+
+    &.vertical {
+      flex-direction: column;
+    }
+  }
+
   .white-text {
     color: white;
   }
@@ -175,15 +193,6 @@
 
       .card-frame {
         position: absolute;
-
-        /*         &.regular-frame {
-        }
-
-        &.cover-frame {
-        }
-
-        &.pendulum-frame {
-        } */
       }
     }
 
@@ -230,7 +239,7 @@
     }
 
     &.card-set {
-      top: 823px;
+      top: 850px;
       right: 83px;
       text-align: end;
       font-family: fontCardSet;
@@ -243,16 +252,15 @@
 
       &.on-pendulum {
         text-align: start;
-        top: 1057px;
+        top: 1085px;
         right: -68px;
       }
     }
 
     &.passcode {
-      top: 1103px;
+      top: 1129px;
       left: 36px;
       font-family: fontPasscode;
-      // font-size: 15px;
       font-size: 23px;
       text-shadow: 0 0 black;
     }
@@ -414,9 +422,6 @@
       height: 124px;
       top: 746px;
       left: 127px;
-      // width: 68%;
-      // height: 10%;
-      // top: 63.2%;
 
       &.on-link {
         width: 513px;
@@ -461,7 +466,7 @@
 
     .atk-def {
       font-family: fontRushAtkDef;
-      top: 781px;
+      top: 798px;
       min-width: 122px;
       font-size: 38px;
       text-align: end;
@@ -480,7 +485,7 @@
       }
 
       &.atk-max {
-        top: 723px;
+        top: 739px;
         left: 521px;
       }
 
@@ -499,7 +504,7 @@
 
       .stat-text {
         min-width: 122px;
-        padding: 0 2px 0 2px;
+        padding: 0 2px 8px 2px;
 
         &.infinity {
           font-family: Arial, Helvetica, sans-serif;
@@ -534,7 +539,7 @@
     }
 
     .card-set {
-      top: 1089px;
+      top: 1116px;
       right: 79px;
     }
   }

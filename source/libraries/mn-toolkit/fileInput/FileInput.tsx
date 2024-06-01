@@ -17,7 +17,7 @@ interface IFileInputState extends IContainableState {
 }
 
 export class FileInput extends Containable<IFileInputProps, IFileInputState> {
-  public static get defaultProps() {
+  public static get defaultProps(): Partial<IFileInputProps> {
     return {
       ...super.defaultProps,
       defaultValue: '',

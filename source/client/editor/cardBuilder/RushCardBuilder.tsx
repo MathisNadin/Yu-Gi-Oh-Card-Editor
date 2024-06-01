@@ -3,15 +3,7 @@ import { CSSProperties, Fragment } from 'react';
 import html2canvas from 'html2canvas';
 import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
-import {
-  IContainableProps,
-  IContainableState,
-  Containable,
-  Spinner,
-  Container,
-  HorizontalStack,
-  VerticalStack,
-} from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable, Spinner } from 'mn-toolkit';
 
 interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
@@ -650,8 +642,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     const specificties = this.getSpecifities();
 
     return (
-      <Container
-        className='card-builder rush-card-builder'
+      <div
+        className='custom-container card-builder rush-card-builder'
         id={this.props.id}
         ref={() => (this.ref = document.getElementById(this.props.id) as HTMLDivElement)}
       >
@@ -690,8 +682,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         )}
 
         {!this.props.card.dontCoverRushArt && this.props.card.maximum && app.$card.hasAbilities(this.props.card) && (
-          <Container
-            className={classNames('card-layer', 'atk-def', 'atk-max', {
+          <div
+            className={classNames('custom-container', 'card-layer', 'atk-def', 'atk-max', {
               'question-mark': this.props.card.atkMax === '?',
               compressed: this.props.card.atkMax?.length > 4,
             })}
@@ -703,12 +695,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             >
               {this.props.card.atkMax}
             </p>
-          </Container>
+          </div>
         )}
 
         {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && (
-          <Container
-            className={classNames('card-layer', 'atk-def', 'atk', {
+          <div
+            className={classNames('custom-container', 'card-layer', 'atk-def', 'atk', {
               'question-mark': this.props.card.atk === '?',
               compressed: this.props.card.atk?.length > 4,
             })}
@@ -720,12 +712,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             >
               {this.props.card.atk}
             </p>
-          </Container>
+          </div>
         )}
 
         {!this.props.card.dontCoverRushArt && app.$card.hasAbilities(this.props.card) && (
-          <Container
-            className={classNames('card-layer', 'atk-def', 'def', {
+          <div
+            className={classNames('custom-container', 'card-layer', 'atk-def', 'def', {
               'question-mark': this.props.card.def === '?',
               compressed: this.props.card.def?.length > 4,
             })}
@@ -737,7 +729,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             >
               {this.props.card.def}
             </p>
-          </Container>
+          </div>
         )}
 
         {this.props.card.hasCopyright && (
@@ -752,12 +744,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         {this.renderDescription()}
 
         {this.renderName()}
-      </Container>
+      </div>
     );
   }
 
   private renderName() {
-    let hStackClassName = `card-layer card-name-container`;
+    let hStackClassName = `custom-container card-layer card-name-container`;
     let pClassName = `card-layer card-name ${this.props.card.nameStyle}`;
     if (this.props.card.frames.includes('skill')) {
       pClassName = `${pClassName} white-text skill-name`;
@@ -783,16 +775,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     );
 
     return (
-      <HorizontalStack className={hStackClassName}>
+      <div className={hStackClassName}>
         <p className={pClassName}>{processedText}</p>
-      </HorizontalStack>
+      </div>
     );
   }
 
   private renderFrames(frames: string[], className: string) {
     const styleArray = this.getFramesStylesArray(frames.length);
     return (
-      <HorizontalStack className='card-layer card-frames-container'>
+      <div className='custom-container card-layer card-frames-container'>
         {frames.map((frame, index) => {
           const style: CSSProperties = {};
           if (index)
@@ -807,7 +799,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             />
           );
         })}
-      </HorizontalStack>
+      </div>
     );
   }
 
@@ -827,7 +819,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let useWhiteText = this.props.card.frames.includes('xyz');
 
     return (
-      <HorizontalStack className='card-layer card-abilities'>
+      <div className='custom-container card-layer card-abilities'>
         <p
           className={classNames('abilities-text', 'abilities-bracket', 'left-bracket', {
             'black-text': !useWhiteText,
@@ -866,16 +858,16 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         >
           ]
         </p>
-      </HorizontalStack>
+      </div>
     );
   }
 
   private renderDescription() {
-    let containerClass = `card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
+    let containerClass = `custom-container vertical card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
     if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
 
     return (
-      <VerticalStack className={containerClass}>
+      <div className={containerClass}>
         {this.state.description.map((d, i) => {
           return (
             <p
@@ -891,7 +883,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             </p>
           );
         })}
-      </VerticalStack>
+      </div>
     );
   }
 

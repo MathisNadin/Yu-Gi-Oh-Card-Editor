@@ -14,6 +14,7 @@ interface ITabbedPaneProps<ID = number> extends IContainerProps, ITabSetProps<ID
   panes: ITabbedPanePane<ID>[];
   tabPosition?: TTabPosition;
   tabSetMaxWidth?: string;
+  noSpacer?: boolean;
 }
 
 interface ITabbedPaneState<ID> extends IContainerState {
@@ -98,6 +99,7 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
   private renderTabSet() {
     return (
       <TabSet<ID>
+        noSpacer={this.props.noSpacer}
         maxWidth={this.props.tabSetMaxWidth}
         legend={this.props.legend}
         defaultValue={this.state.value}

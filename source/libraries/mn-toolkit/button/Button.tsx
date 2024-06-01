@@ -24,10 +24,6 @@ export class Button extends Containable<IButtonProps, IButtonState> {
     };
   }
 
-  public constructor(props: IButtonProps) {
-    super(props);
-  }
-
   public renderClasses() {
     const classes = super.renderClasses();
     classes['mn-button'] = true;

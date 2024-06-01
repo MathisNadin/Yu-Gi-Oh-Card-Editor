@@ -16,6 +16,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     return {
       ...super.defaultProps,
       size: 20,
+      color: '1',
     };
   }
 

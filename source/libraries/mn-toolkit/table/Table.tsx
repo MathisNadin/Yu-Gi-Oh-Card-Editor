@@ -8,21 +8,13 @@ import { Icon } from '../icon';
 import { themeSettings } from '../themeSettings';
 
 interface ITableProps extends IContainerProps {
-  /** Set a table of columns. */
   columns?: ITableColumn[];
-  /** Set a footer. */
   footer?: ReactNode | ReactNode[];
-  /** Set a table of rows. */
   rows?: CellValue[][] | ITableRow[];
-  /** Set the number of visible rows? */
   visibleRows?: number;
-  /** Set the number of visible rows? */
   maxVisibleRows?: number;
-  /** Set loading. */
   loading?: boolean;
-  /** Set the default width. */
   defaultWidth?: string;
-  /** Set the theme. */
   theme?: 'normal' | 'compact' | 'narrow';
 }
 
@@ -35,19 +27,6 @@ interface ITableState extends IContainerState {
   top: number;
 }
 
-/** Create a table
- *
- * Constructor need ITableProps
- * - ?columns
- * - ?footer
- * - ?rows
- * - ?visibleRows
- * - ?maxVisibleRows
- * - ?loading
- * - ?defaultWidth
- * - ?theme
- *
- */
 export class Table extends Container<ITableProps, ITableState> {
   private left!: number;
   private top!: number;
@@ -58,6 +37,7 @@ export class Table extends Container<ITableProps, ITableState> {
       ...super.defaultProps,
       theme: 'normal',
       layout: 'vertical',
+      scroll: false,
     };
   }
 
@@ -186,7 +166,7 @@ export class Table extends Container<ITableProps, ITableState> {
     return resultRows;
   }
 
-  private updateScroll() {
+  private updateScroll(e: React.UIEvent) {
     let table = document.querySelector('.mn-table');
     if (!table) return;
     this.left = table.scrollLeft || 0;
@@ -199,6 +179,7 @@ export class Table extends Container<ITableProps, ITableState> {
       let footer = document.querySelector<HTMLElement>('.mn-table-footer');
       if (footer) footer.style.bottom = `-${this.top}px`;
     });
+    if (this.props.onScroll) app.$errorManager.handlePromise(this.props.onScroll(e));
   }
 
   public renderClasses() {
@@ -209,7 +190,13 @@ export class Table extends Container<ITableProps, ITableState> {
     return classes;
   }
 
-  public render() {
+  public renderAttributes() {
+    const attributes = super.renderAttributes();
+    attributes.onScroll = (e) => this.updateScroll(e);
+    return attributes;
+  }
+
+  public get children() {
     let tableBodyStyle: { [k: string]: string | number } = {};
 
     let minBodyHeight!: number;
@@ -228,80 +215,78 @@ export class Table extends Container<ITableProps, ITableState> {
       };
     }
 
-    return (
-      <div
-        {...this.renderAttributes()}
-        onScroll={() => this.updateScroll()}
-        className={classNames(this.renderClasses())}
-      >
-        {this.loading(this.props) && <Spinner overlay />}
-        {this.state.hasHeader && (
-          <div className='mn-table-head' style={{ top: this.top }}>
-            <div className='mn-table-row'>
-              {this.state.columns
-                .map((column, i) => {
-                  return (
-                    <div
-                      key={`mn-table-header-${i}`}
-                      style={this.state.columnStyle[i]}
-                      className={classNames(
-                        column.className,
-                        'mn-table-cell',
-                        `mn-table-cell-${i}`,
-                        `mn-align-${!!column.headerAlign ? column.headerAlign : !!column.align ? column.align : 'center'}`
-                      )}
+    return [
+      this.loading(this.props) && <Spinner key='spinner' overlay />,
+      this.state.hasHeader && (
+        <div key='mn-table-head' className='mn-table-head' style={{ top: this.top }}>
+          <div className='mn-table-row'>
+            {this.state.columns
+              .map((column, i) => {
+                return (
+                  <div
+                    key={`mn-table-header-${i}`}
+                    style={this.state.columnStyle[i]}
+                    className={classNames(
+                      column.className,
+                      'mn-table-cell',
+                      `mn-table-cell-${i}`,
+                      `mn-align-${!!column.headerAlign ? column.headerAlign : !!column.align ? column.align : 'center'}`
+                    )}
+                  >
+                    <span
+                      className='mn-table-header-label'
+                      onClick={() => {
+                        if (column.onChangeOrder) app.$errorManager.handlePromise(column.onChangeOrder());
+                      }}
                     >
-                      <span
-                        className='mn-table-header-label'
-                        onClick={() => {
-                          if (column.onChangeOrder) app.$errorManager.handlePromise(column.onChangeOrder());
-                        }}
-                      >
-                        <span className='mn-table-header-text'>{column.label as ReactNode}</span>
-                        {column.order && (
-                          <Icon iconId={column.order === 'asc' ? 'toolkit-angle-up' : 'toolkit-angle-down'} />
-                        )}
-                      </span>
-                    </div>
-                  );
-                })
-                .filter((x) => !!x)}
-            </div>
+                      <span className='mn-table-header-text'>{column.label as ReactNode}</span>
+                      {column.order && (
+                        <Icon iconId={column.order === 'asc' ? 'toolkit-angle-up' : 'toolkit-angle-down'} />
+                      )}
+                    </span>
+                  </div>
+                );
+              })
+              .filter((x) => !!x)}
           </div>
-        )}
-        <VerticalStack className='mn-table-body' style={tableBodyStyle}>
-          {this.state.rows &&
-            this.state.rows.map((row, i) =>
-              [
-                <TableRow
-                  key={`mn-table-row-${i}`}
-                  row={row}
-                  columnStyle={this.state.columnStyle}
-                  columns={this.state.columns}
-                  hasSubRows={this.hasSubRows}
-                  onToggleSubRows={(row) => {
-                    row.open = !row.open;
-                    this.forceUpdate();
-                  }}
-                />,
-              ].concat(
-                row.open && row.subRows
-                  ? row.subRows.map((row, i) => (
-                      <TableRow
-                        key={`mn-table-sub-row-${i}`}
-                        row={row}
-                        columnStyle={this.state.columnStyle}
-                        columns={this.state.columns}
-                        hasSubRows={this.hasSubRows}
-                      />
-                    ))
-                  : []
-              )
-            )}
-        </VerticalStack>
-        {this.props.footer ? <div className='mn-table-footer'>{this.props.footer}</div> : null}
-      </div>
-    );
+        </div>
+      ),
+      <VerticalStack key='mn-table-body' className='mn-table-body' style={tableBodyStyle}>
+        {this.state.rows &&
+          this.state.rows.map((row, i) =>
+            [
+              <TableRow
+                key={`mn-table-row-${i}`}
+                row={row}
+                columnStyle={this.state.columnStyle}
+                columns={this.state.columns}
+                hasSubRows={this.hasSubRows}
+                onToggleSubRows={(row) => {
+                  row.open = !row.open;
+                  this.forceUpdate();
+                }}
+              />,
+            ].concat(
+              row.open && row.subRows
+                ? row.subRows.map((row, i) => (
+                    <TableRow
+                      key={`mn-table-sub-row-${i}`}
+                      row={row}
+                      columnStyle={this.state.columnStyle}
+                      columns={this.state.columns}
+                      hasSubRows={this.hasSubRows}
+                    />
+                  ))
+                : []
+            )
+          )}
+      </VerticalStack>,
+      this.props.footer && (
+        <div key='mn-table-footer' className='mn-table-footer'>
+          {this.props.footer}
+        </div>
+      ),
+    ];
   }
 
   /* private adaptColumnStyle(): { [attribute: string]: string } {

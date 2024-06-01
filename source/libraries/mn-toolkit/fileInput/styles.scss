@@ -4,7 +4,11 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: calc($themeDefaultSpacing / 2);
+
+  .mn-container-inside {
+    gap: calc($themeDefaultSpacing / 2);
+    align-items: center;
+  }
 
   input {
     flex: 1;

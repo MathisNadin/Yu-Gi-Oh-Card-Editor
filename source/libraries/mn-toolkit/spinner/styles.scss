@@ -33,8 +33,6 @@
  */
 
 .mn-spinner {
-  @include mnLayoutContainable();
-  display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -42,11 +40,13 @@
 }
 
 .spinner-circle {
-  width: 33%;
+  $width: 33%;
+  $borderSize: 7px;
+  width: $width;
   height: 0;
-  padding-bottom: 33%;
+  padding-bottom: calc($width - $borderSize * 2);
   border-radius: 50%;
-  border: 7px solid rgba(0, 0, 0, 0.1);
+  border: $borderSize solid rgba(0, 0, 0, 0.1);
   border-top-color: #000;
   animation: spinner-animation 1200ms linear infinite;
 }

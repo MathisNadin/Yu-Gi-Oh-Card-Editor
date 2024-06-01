@@ -3,8 +3,57 @@
   src: url(assets/fonts/itcStoneSerifBold.ttf);
 }
 
+@keyframes colorCycle {
+  0% {
+    background-color: nth($theme-light-bg, 1);
+  }
+  50% {
+    background-color: #fafa33;
+  }
+  100% {
+    background-color: nth($theme-light-bg, 1);
+  }
+}
+
 .home {
   .mn-content {
     @include fgAsBg(1);
+  }
+
+  .home-center-pane {
+    height: 100%;
+  }
+
+  .home-left-pane {
+    .button-tabs {
+      .button-tab {
+        width: 40%;
+        border-radius: 32px;
+
+        &.selected {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .new-version {
+      animation: colorCycle 3s infinite;
+      min-width: calc(100% - $themeDefaultSpacing * 2);
+      max-width: calc(100% - $themeDefaultSpacing * 2);
+      border-radius: $themeDefaultBorderRadius * 2;
+    }
+  }
+
+  .home-right-pane {
+    .button-tabs {
+      .button-tab {
+        width: 40%;
+        border-radius: 32px;
+
+        &.selected {
+          font-weight: bold;
+        }
+      }
+    }
   }
 }

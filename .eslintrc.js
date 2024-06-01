@@ -34,7 +34,7 @@ module.exports = {
     'no-else-return': 'off',
     'prettier/prettier': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
     'import/prefer-default-export': 'off',
     'class-methods-use-this': 'off',
     'no-undef': 'off',
