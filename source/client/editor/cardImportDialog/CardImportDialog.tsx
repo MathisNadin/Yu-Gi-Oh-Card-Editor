@@ -289,6 +289,7 @@ export class CardImportDialog extends AbstractPopup<
       <TabbedPane<TTabIndex>
         className='card-import-dialog'
         tabPosition='top'
+        noSpacer
         defaultValue={this.state.tabIndex}
         onChange={(tabIndex) => this.setState({ tabIndex })}
         panes={[
@@ -375,10 +376,9 @@ export class CardImportDialog extends AbstractPopup<
 
         {yuginewsImporting && <Spinner />}
 
-        {cardsData?.length && (
+        {!!cardsData?.length && (
           <Table
             className='yuginews-cards-table'
-            scroll
             columns={columns}
             rows={cardsData.map((card) => {
               const uuid = card.uuid as string;
@@ -422,7 +422,7 @@ export class CardImportDialog extends AbstractPopup<
           />
         )}
 
-        {cardsData?.length && this.renderUrlImporter('yuginews')}
+        {!!cardsData?.length && this.renderUrlImporter('yuginews')}
 
         <HorizontalStack itemAlignment='center'>
           {!!cardsData?.length && !importing && (
@@ -522,7 +522,7 @@ export class CardImportDialog extends AbstractPopup<
   private renderUrlImporter(origin: TTabIndex) {
     if (!app.$device.isDesktop) return undefined;
     return (
-      <HorizontalStack minHeight={32} fill={origin === 'yugipedia'} gutter>
+      <HorizontalStack fill={origin === 'yugipedia'} gutter>
         <CheckBox
           label='Importer les images'
           defaultValue={this.state.importArtwork}
