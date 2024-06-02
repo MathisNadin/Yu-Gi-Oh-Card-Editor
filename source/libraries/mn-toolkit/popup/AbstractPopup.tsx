@@ -83,7 +83,7 @@ export abstract class AbstractPopup<
         {this.state.loaded && this.renderHeader()}
 
         {this.state.loaded && (
-          <VerticalStack fill scroll className='mn-popup-content-container'>
+          <VerticalStack gutter fill scroll={this.contentScroll} className='mn-popup-content-container'>
             {this.renderContent()}
           </VerticalStack>
         )}
@@ -91,6 +91,10 @@ export abstract class AbstractPopup<
         {this.state.loaded && this.renderFooter()}
       </VerticalStack>
     );
+  }
+
+  protected get contentScroll() {
+    return true;
   }
 
   protected renderHeader() {
@@ -105,10 +109,14 @@ export abstract class AbstractPopup<
 
   protected abstract renderContent(): JSXElementChildren;
 
+  protected get buttons(): IButtonProps[] {
+    return this.state.buttons;
+  }
+
   protected renderFooter() {
     return (
       <HorizontalStack className='mn-popup-footer' key='footer' gutter itemAlignment='right'>
-        {this.state.buttons.map((props, i) => (
+        {this.buttons.map((props, i) => (
           <Button {...props} key={`popup-footer-button-${i}`} />
         ))}
       </HorizontalStack>

@@ -25,8 +25,8 @@ export class Spinner extends Containable<ISpinnerProps, ISpinnerState> {
 
   public renderStyle() {
     const style = super.renderStyle();
-    style.width = 50;
-    style.height = 50;
+    style.width = 200;
+    style.height = 200;
     return style;
   }
 

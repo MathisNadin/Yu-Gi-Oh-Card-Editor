@@ -7,7 +7,7 @@
     @include fg(1);
     background-color: transparent;
     line-height: 20px;
-    padding: 5px;
+    padding: calc($themeDefaultSpacing / 2);
     resize: none;
     flex: 1;
     min-width: 100%;

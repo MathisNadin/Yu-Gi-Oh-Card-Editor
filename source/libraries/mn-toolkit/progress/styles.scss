@@ -220,6 +220,7 @@
         top: 0;
         left: 2px;
         color: $primary;
+        visibility: hidden;
       }
 
       &::after {
@@ -236,6 +237,12 @@
         transition:
           border-color 0.3s,
           background-position 0.3s;
+      }
+    }
+
+    &.active {
+      .pointer {
+        visibility: visible;
       }
     }
 

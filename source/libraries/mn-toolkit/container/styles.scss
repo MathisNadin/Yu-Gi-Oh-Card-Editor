@@ -141,21 +141,24 @@
   }
 
   &.mn-layout-margin-horizontal {
-    > .mn-container-inside {
+    margin: 0 $themeDefaultSpacing;
+    /* > .mn-container-inside {
       margin: 0 $themeDefaultSpacing;
-    }
+    } */
   }
 
   &.mn-layout-margin-vertical {
-    > .mn-container-inside {
+    margin: $themeDefaultSpacing 0;
+    /* > .mn-container-inside {
       margin: $themeDefaultSpacing 0;
-    }
+    } */
   }
 
   &.mn-layout-margin {
-    > .mn-container-inside {
+    margin: $themeDefaultSpacing;
+    /* > .mn-container-inside {
       margin: $themeDefaultSpacing;
-    }
+    } */
   }
 
   &.mn-layout-padding-horizontal {
