@@ -8,7 +8,7 @@ const isDev = env === 'development';
 
 const entry: Configuration['entry'] = [];
 if (isDev) {
-  const port = process.env.PORT || 8080;
+  const port = process.env.PORT || 8071;
   entry.push(`webpack-dev-server/client?http://localhost:${port}/dist`);
   entry.push('webpack/hot/only-dev-server');
 }
