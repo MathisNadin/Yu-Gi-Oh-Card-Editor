@@ -33,7 +33,7 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
   }
 
   public componentDidMount() {
-    this.checkReady();
+    setTimeout(() => this.checkReady(), 100);
   }
 
   public static getDerivedStateFromProps(

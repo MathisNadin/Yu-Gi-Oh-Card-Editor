@@ -40,7 +40,7 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
   }
 
   public componentDidMount() {
-    this.checkReady();
+    setTimeout(() => this.checkReady(), 100);
   }
 
   public static getDerivedStateFromProps(

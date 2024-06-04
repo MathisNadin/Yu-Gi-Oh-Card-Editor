@@ -36,7 +36,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
   }
 
   public componentDidMount() {
-    this.checkReady();
+    setTimeout(() => this.checkReady(), 100);
   }
 
   public static getDerivedStateFromProps(

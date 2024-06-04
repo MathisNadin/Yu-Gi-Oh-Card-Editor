@@ -43,7 +43,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
   }
 
   public componentDidMount() {
-    app.$errorManager.handlePromise(this.loadArtwork());
+    setTimeout(() => app.$errorManager.handlePromise(this.loadArtwork()), 100);
   }
 
   public static getDerivedStateFromProps(

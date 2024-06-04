@@ -44,7 +44,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   }
 
   public componentDidMount() {
-    this.checkReady();
+    setTimeout(() => this.checkReady(), 100);
   }
 
   public static getDerivedStateFromProps(

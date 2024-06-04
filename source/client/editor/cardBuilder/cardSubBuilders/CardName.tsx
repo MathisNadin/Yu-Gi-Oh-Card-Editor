@@ -40,7 +40,7 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
   }
 
   public componentDidMount() {
-    this.checkReady();
+    setTimeout(() => this.checkReady(), 100);
   }
 
   public static getDerivedStateFromProps(

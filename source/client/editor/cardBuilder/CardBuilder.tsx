@@ -70,26 +70,23 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public componentDidMount() {
-    app.$errorManager.handlePromise(this.prepareState());
+    setTimeout(() => app.$errorManager.handlePromise(this.prepareState()));
   }
 
   public static getDerivedStateFromProps(
-    nextProps: ICardBuilderProps,
+    _nextProps: ICardBuilderProps,
     prevState: ICardBuilderState
   ): Partial<ICardBuilderState> | null {
-    // if (!nextProps.forRender) console.log('getDerivedStateFromProps', nextProps.card);
     return { needsUpdate: !prevState.needsUpdate };
   }
 
   public componentDidUpdate() {
-    // if (!this.props.forRender) console.log('componentDidUpdate', this.state.needsUpdate);
     if (!this.state.needsUpdate) return;
     app.$errorManager.handlePromise(this.prepareState());
   }
 
   private async prepareState() {
     const { card } = this.props;
-    // if (!this.props.forRender) console.log('prepareState', this.state.needsUpdate, card);
     if (!card) return;
 
     this.nameReady = false;
