@@ -1,644 +1,208 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { CSSProperties, Fragment } from 'react';
-import html2canvas from 'html2canvas';
-import { classNames, debounce, getCroppedArtworkBase64, isEmpty } from 'mn-tools';
+import { CSSProperties } from 'react';
+import { classNames } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
-import { IContainableProps, IContainableState, Containable, Spinner } from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable } from 'mn-toolkit';
+import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
 
 interface ICardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
-  renderId: string;
   card: ICard;
   onCardReady: () => void;
 }
 
-type TAdjustState = 'waiting' | 'todo' | 'done';
-
-type TAdjustTextState = 'unknown' | 'tooBig' | 'tooSmall';
-
 interface ICardBuilderState extends IContainableState {
-  adjustDescTextState: TAdjustTextState;
-  adjustPendTextState: TAdjustTextState;
+  needsUpdate: boolean;
 
-  nameDone: boolean;
-  atkDone: boolean;
-  defDone: boolean;
-  pendDone: boolean;
-  abilitiesDone: boolean;
-  descDone: boolean;
+  hasAbilities: boolean;
+  hasPendulumFrame: boolean;
+  hasLinkArrows: boolean;
+  isBackrow: boolean;
 
-  usePendulumFrame: boolean;
-  withLinkArrows: boolean;
+  includesNormal: boolean;
+  includesXyz: boolean;
+  includesLink: boolean;
+  includesSkill: boolean;
 
-  border: string;
   artworkBg: string;
-  croppedArtworkBase64: string;
-
   cardFrames: string[];
   pendulumCovers: string[];
-  pendulumFrame: string;
-
-  linkArrowT: string;
-  linkArrowB: string;
-  linkArrowL: string;
-  linkArrowR: string;
-  linkArrowTL: string;
-  linkArrowTR: string;
-  linkArrowBL: string;
-  linkArrowBR: string;
-
-  descFontSize: number;
-  descLineHeight: number;
-  description: JSX.Element[][];
-  pendFontSize: number;
-  pendLineHeight: number;
-  pendEffect: JSX.Element[][];
-
-  attribute: string;
-  level: string;
-  negativeLevel: string;
-  rank: string;
-  linkRating: string;
-  spellPlus: string;
-  trapPlus: string;
-  stIcon: string;
-  leftScale: string;
-  rightScale: string;
-
-  atkDefLine: string;
-  atkLinkLine: string;
-  sticker: string;
-  copyright: string;
-  edition: string;
 }
 
+type TChild = 'name' | 'desc' | 'pend' | 'atk' | 'def' | 'abilities' | 'artwork';
+
 export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderState> {
-  private adjustState: TAdjustState = 'waiting';
-  private ref: HTMLDivElement | undefined;
-  private debouncedRefreshState: (resetFontSizes: boolean) => void;
+  private nameReady: boolean;
+  private descReady: boolean;
+  private pendReady: boolean;
+  private atkReady: boolean;
+  private defReady: boolean;
+  private abilitiesReady: boolean;
+  private artworkReady: boolean;
 
   public constructor(props: ICardBuilderProps) {
     super(props);
-    this.debouncedRefreshState = debounce(
-      (resetFontSizes: boolean) => app.$errorManager.handlePromise(this.refreshState(resetFontSizes)),
-      500
-    );
-    if (!props.forRender) this.handleResize = this.handleResize.bind(this);
+
+    this.nameReady = false;
+    this.descReady = false;
+    this.pendReady = false;
+    this.atkReady = false;
+    this.defReady = false;
+    this.abilitiesReady = false;
+    this.artworkReady = false;
+
+    this.state = {
+      ...this.state,
+      loaded: false,
+      needsUpdate: false,
+      hasAbilities: false,
+      hasPendulumFrame: false,
+      hasLinkArrows: false,
+      isBackrow: false,
+      includesNormal: false,
+      includesXyz: false,
+      includesLink: false,
+      includesSkill: false,
+      artworkBg: '',
+      cardFrames: [],
+      pendulumCovers: [],
+    };
   }
 
   public componentDidMount() {
-    if (!this.props.forRender) window.addEventListener('resize', this.handleResize);
-    app.$errorManager.handlePromise(this.debouncedRefreshState(true));
+    app.$errorManager.handlePromise(this.prepareState());
   }
 
-  public componentDidUpdate(prevProps: ICardBuilderProps) {
-    if (prevProps.renderId !== this.props.renderId) {
-      this.adjustState = 'waiting';
-      this.debouncedRefreshState(prevProps.card !== this.props.card);
-    } else if (this.adjustState === 'todo') {
-      app.$errorManager.handlePromise(this.adjustAllFontSizes());
-    } else if (this.adjustState === 'done') {
-      this.adjustState = 'waiting';
-      setTimeout(() => this.props.onCardReady());
-    }
+  public static getDerivedStateFromProps(
+    nextProps: ICardBuilderProps,
+    prevState: ICardBuilderState
+  ): Partial<ICardBuilderState> | null {
+    // if (!nextProps.forRender) console.log('getDerivedStateFromProps', nextProps.card);
+    return { needsUpdate: !prevState.needsUpdate };
   }
 
-  public componentWillUnmount() {
-    if (!this.props.forRender) window.removeEventListener('resize', this.handleResize);
+  public componentDidUpdate() {
+    // if (!this.props.forRender) console.log('componentDidUpdate', this.state.needsUpdate);
+    if (!this.state.needsUpdate) return;
+    app.$errorManager.handlePromise(this.prepareState());
   }
 
-  private handleResize() {
-    this.adjustState = 'todo';
-    app.$errorManager.handlePromise(this.adjustAllFontSizes());
-  }
-
-  private async refreshState(resetFontSizes: boolean) {
+  private async prepareState() {
     const { card } = this.props;
+    // if (!this.props.forRender) console.log('prepareState', this.state.needsUpdate, card);
     if (!card) return;
 
-    let { descFontSize, descLineHeight, pendFontSize, pendLineHeight } = this.state;
-    if (resetFontSizes) {
-      descFontSize = 30;
-      descLineHeight = 1.2;
-      pendFontSize = 30;
-      pendLineHeight = 1.2;
-    }
+    this.nameReady = false;
+    this.descReady = false;
+    this.pendReady = false;
+    this.atkReady = false;
+    this.defReady = false;
+    this.abilitiesReady = false;
+    this.artworkReady = false;
 
-    const copyrightPath = `${card.oldCopyright ? '1996' : '2020'}/${(!card.pendulum && card.frames.includes('xyz')) || card.frames.includes('skill') ? 'white' : 'black'}`;
-    const usePendulumFrame = app.$card.hasPendulumFrame(card);
+    const hasAbilities = app.$card.hasAbilities(card);
+    const hasPendulumFrame = app.$card.hasPendulumFrame(card);
+    const hasLinkArrows = app.$card.hasLinkArrows(card);
+    const isBackrow = app.$card.isBackrow(card);
 
-    const artworkBg = require(
-      `../../../assets/images/whiteArtwork${usePendulumFrame ? `Pendulum${card.frames.includes('link') ? 'Link' : ''}` : ''}.png`
-    );
-    let croppedArtworkBase64: string;
-
-    let artworkExists = false;
-    if (!isEmpty(card.artwork.url) && app.$device.isDesktop) {
-      try {
-        artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
-    }
-
-    if (artworkExists) {
-      croppedArtworkBase64 = `file://${card.artwork.url}`;
-      try {
-        croppedArtworkBase64 = await window.electron.ipcRenderer.createImgFromPath(card.artwork.url);
-        croppedArtworkBase64 = await getCroppedArtworkBase64(croppedArtworkBase64, {
-          x: card.artwork.x,
-          y: card.artwork.y,
-          height: card.artwork.height,
-          width: card.artwork.width,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      croppedArtworkBase64 = artworkBg;
-    }
-
+    let includesNormal = false;
+    let includesXyz = false;
+    let includesLink = false;
+    let includesSkill = false;
     let cardFrames: string[] = [];
     let pendulumCovers: string[] = [];
-    let includesLink = false;
-
     for (const frame of card.frames) {
-      cardFrames.push(require(`../../../assets/images/card-frames/${frame}.png`));
-
-      if (frame === 'link') {
+      if (frame === 'normal') {
+        includesNormal = true;
+      } else if (frame === 'xyz') {
+        includesXyz = true;
+      } else if (frame === 'link') {
         includesLink = true;
+      } else if (frame === 'skill') {
+        includesSkill = true;
       }
 
-      if (usePendulumFrame) {
-        pendulumCovers.push(require(`../../../assets/images/pendulum-covers/${frame}.png`));
-      } else if (!pendulumCovers.length) {
-        pendulumCovers.push(require(`../../../assets/images/pendulum-covers/normal.png`));
+      cardFrames.push(app.$card.cardFramePaths[frame]);
+      if (hasPendulumFrame) {
+        pendulumCovers.push(app.$card.cardPendCoverPaths[frame]);
       }
     }
 
-    let pendulumFrame: string;
-    if (includesLink) {
-      pendulumFrame = require(`../../../assets/images/pendulum-frames/link.png`);
-    } else {
-      pendulumFrame = require(`../../../assets/images/pendulum-frames/regular.png`);
-    }
-
-    const state: ICardBuilderState = {
-      loaded: true,
-      adjustDescTextState: 'unknown',
-      adjustPendTextState: 'unknown',
-
-      nameDone: false,
-      atkDone: false,
-      defDone: false,
-      pendDone: false,
-      abilitiesDone: false,
-      descDone: false,
-
-      usePendulumFrame,
-      withLinkArrows: app.$card.hasLinkArrows(card),
-
-      border: require('assets/images/squareBorders.png'),
-      artworkBg,
-      croppedArtworkBase64,
-
-      cardFrames,
-      pendulumCovers,
-      pendulumFrame,
-
-      linkArrowT: require(`../../../assets/images/link-arrows/top${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowB: require(`../../../assets/images/link-arrows/bottom${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowL: require(`../../../assets/images/link-arrows/left${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowR: require(`../../../assets/images/link-arrows/right${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTL: require(`../../../assets/images/link-arrows/topLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowTR: require(`../../../assets/images/link-arrows/topRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBL: require(`../../../assets/images/link-arrows/bottomLeft${usePendulumFrame ? 'Pendulum' : ''}.png`),
-      linkArrowBR: require(`../../../assets/images/link-arrows/bottomRight${usePendulumFrame ? 'Pendulum' : ''}.png`),
-
-      descFontSize,
-      descLineHeight,
-      description: card.description.split('\n').map((d, i) => this.getProcessedText(d, i)),
-      pendFontSize,
-      pendLineHeight,
-      pendEffect: card.pendEffect.split('\n').map((d, i) => this.getProcessedText(d, i)),
-
-      attribute: require(
-        `../../../assets/images/attributes/${card.noTextAttribute ? 'vanilla' : card.language}/${card.attribute}.png`
-      ),
-      level: require(`../../../assets/images/levels/${card.level}.png`),
-      negativeLevel: require(`../../../assets/images/negative-levels/${card.level}.png`),
-      rank: require(`../../../assets/images/ranks/${card.level}.png`),
-      linkRating: require(`../../../assets/images/link-ratings/${card.level}.png`),
-      spellPlus: require(`../../../assets/images/st/${card.language}/spell+.png`),
-      trapPlus: require(`../../../assets/images/st/${card.language}/trap+.png`),
-      stIcon: require(
-        `../../../assets/images/st/${card.language}/${card.stType}${card.stType === 'normal' ? (card.frames.includes('spell') ? '-spell' : '-trap') : ''}.png`
-      ),
-      leftScale: require(`../../../assets/images/pendulum-scales/${includesLink ? 'L_' : ''}G_${card.scales.left}.png`),
-      rightScale: require(
-        `../../../assets/images/pendulum-scales/${includesLink ? 'L_' : ''}D_${card.scales.right}.png`
-      ),
-
-      atkDefLine: require(`../../../assets/images/atkDefLine.png`),
-      atkLinkLine: require(`../../../assets/images/atkLinkLine.png`),
-      sticker: require(`../../../assets/images/stickers/${card.sticker === 'none' ? 'silver' : card.sticker}.png`),
-      copyright: require(`../../../assets/images/limitations/${card.language}/${copyrightPath}/copyright.png`),
-      edition: require(
-        `../../../assets/images/limitations/${card.language}/${copyrightPath}/${card.edition === 'unlimited' ? 'limited' : card.edition}.png`
-      ),
-    };
-
-    this.adjustState = 'todo';
-    this.setState(state);
-  }
-
-  private getProcessedText(text: string, index: number) {
-    const parts = text.split(/(●|•)/).map((part) => part.trim());
-    if (parts.length && !parts[0]) parts.shift();
-
-    let nextHasBullet = false;
-    const processedText: JSX.Element[] = [];
-    parts.forEach((part, i) => {
-      if (part === '●' || part === '•') {
-        nextHasBullet = true;
+    let artworkBg: string;
+    if (hasPendulumFrame) {
+      if (includesLink) {
+        artworkBg = app.$card.cardWhiteArtworkPaths.whiteArtworkPendulumLink;
       } else {
-        let classes = classNames('span-text', { 'with-bullet-point': nextHasBullet, 'in-middle': i > 1 });
-        nextHasBullet = false;
-        processedText.push(
-          <span key={`processed-text-${index}-${i}`} className={classes}>
-            {part}
-          </span>
-        );
+        artworkBg = app.$card.cardWhiteArtworkPaths.whiteArtworkPendulum;
       }
-    });
-
-    return processedText;
-  }
-
-  private async adjustAllFontSizes() {
-    if (this.adjustState !== 'todo') return;
-
-    let {
-      nameDone,
-      atkDone,
-      defDone,
-      abilitiesDone,
-      pendDone,
-      adjustPendTextState,
-      pendFontSize,
-      pendLineHeight,
-      descDone,
-      adjustDescTextState,
-      descFontSize,
-      descLineHeight,
-    } = this.state;
-
-    if (!nameDone) {
-      nameDone = await this.convertNameToImg();
-    }
-
-    if (!atkDone) {
-      atkDone = await this.convertAtkToImg();
-    }
-
-    if (!defDone) {
-      defDone = await this.convertDefToImg();
-    }
-
-    if (!abilitiesDone) {
-      abilitiesDone = await this.convertAbilitiesToImg();
-    }
-
-    if (!pendDone) {
-      const response = this.adjustPendFontSize();
-      pendDone = response.pendDone;
-      adjustPendTextState = response.adjustPendTextState;
-      pendFontSize = response.pendFontSize;
-      pendLineHeight = response.pendLineHeight;
-    }
-
-    if (!descDone) {
-      const response = this.adjustDescFontSize();
-      descDone = response.descDone;
-      adjustDescTextState = response.adjustDescTextState;
-      descFontSize = response.descFontSize;
-      descLineHeight = response.descLineHeight;
-    }
-
-    if (nameDone && atkDone && defDone && abilitiesDone && pendDone && descDone) {
-      this.adjustState = 'done';
+    } else {
+      artworkBg = app.$card.cardWhiteArtworkPaths.whiteArtwork;
     }
 
     this.setState({
-      nameDone,
-      atkDone,
-      defDone,
-      abilitiesDone,
-      pendDone,
-      adjustPendTextState,
-      pendFontSize,
-      pendLineHeight,
-      descDone,
-      adjustDescTextState,
-      descFontSize,
-      descLineHeight,
+      loaded: true,
+      hasAbilities,
+      hasPendulumFrame,
+      hasLinkArrows,
+      isBackrow,
+      includesNormal,
+      includesXyz,
+      includesLink,
+      includesSkill,
+      artworkBg,
+      cardFrames,
+      pendulumCovers,
     });
   }
 
-  public async convertNameToImg(): Promise<boolean> {
-    const container = this.ref?.querySelector('.card-name-container') as HTMLDivElement;
-    if (!container) return true;
+  private onChildReady(child: TChild) {
+    switch (child) {
+      case 'name':
+        if (this.nameReady) return;
+        this.nameReady = true;
+        break;
 
-    const name = container.querySelector('.card-name') as HTMLDivElement;
-    if (!name) return true;
+      case 'desc':
+        if (this.descReady) return;
+        this.descReady = true;
+        break;
 
-    if (this.props.card.frames.includes('skill')) {
-      name.style.width = `${name.scrollWidth + 6}px`;
-      name.style.height = `${name.scrollHeight + 3}px`;
-    } else {
-      name.style.width = '';
-      name.style.height = '';
+      case 'pend':
+        if (this.pendReady) return;
+        this.pendReady = true;
+        break;
+
+      case 'atk':
+        if (this.atkReady) return;
+        this.atkReady = true;
+        break;
+
+      case 'def':
+        if (this.defReady) return;
+        this.defReady = true;
+        break;
+
+      case 'abilities':
+        if (this.abilitiesReady) return;
+        this.abilitiesReady = true;
+        break;
+
+      case 'artwork':
+        if (this.artworkReady) return;
+        this.artworkReady = true;
+        break;
     }
 
-    const canvas = await html2canvas(name, { backgroundColor: null, allowTaint: true });
-    canvas.className = 'html2canvas-name';
-    const existingCanvas = container.querySelector('.html2canvas-name');
-    if (existingCanvas) {
-      container.replaceChild(canvas, existingCanvas);
-    } else {
-      container.appendChild(canvas);
-    }
-    return true;
-  }
-
-  public async convertAtkToImg(): Promise<boolean> {
-    if (app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill')) {
-      const container = this.ref?.querySelector('.atk') as HTMLDivElement;
-      if (!container) return true;
-
-      const atk = container.querySelector('.atk-text') as HTMLParagraphElement;
-      if (!atk) return true;
-
-      const canvas = await html2canvas(atk, { backgroundColor: null, allowTaint: true });
-      canvas.className = 'html2canvas html2canvas-atk';
-      const existingCanvas = container.querySelector('.html2canvas-atk');
-      if (existingCanvas) {
-        container.replaceChild(canvas, existingCanvas);
-      } else {
-        container.appendChild(canvas);
-      }
-    }
-    return true;
-  }
-
-  public async convertDefToImg(): Promise<boolean> {
     if (
-      app.$card.hasAbilities(this.props.card) &&
-      !this.props.card.frames.includes('skill') &&
-      !this.props.card.frames.includes('link')
+      this.nameReady &&
+      this.descReady &&
+      this.pendReady &&
+      this.atkReady &&
+      this.defReady &&
+      this.abilitiesReady &&
+      this.artworkReady
     ) {
-      const container = this.ref?.querySelector('.def') as HTMLDivElement;
-      if (!container) return true;
-
-      const def = container.querySelector('.def-text') as HTMLParagraphElement;
-      if (!def) return true;
-
-      const canvas = await html2canvas(def, { backgroundColor: null, allowTaint: true });
-      canvas.className = 'html2canvas html2canvas-def';
-      const existingCanvas = container.querySelector('.html2canvas-def');
-      if (existingCanvas) {
-        container.replaceChild(canvas, existingCanvas);
-      } else {
-        container.appendChild(canvas);
-      }
-    }
-    return true;
-  }
-
-  public async convertAbilitiesToImg(): Promise<boolean> {
-    if (!app.$card.hasAbilities(this.props.card)) return true;
-
-    const container = this.ref?.querySelector('.card-abilities') as HTMLDivElement;
-    if (!container) return true;
-
-    const rightBracket = container.querySelector('.right-bracket') as HTMLDivElement;
-    const abilities = container.querySelector('.abilities') as HTMLDivElement;
-    if (!rightBracket || !abilities) return true;
-
-    const canvas = await html2canvas(abilities, { backgroundColor: null, allowTaint: true });
-    canvas.className = 'html2canvas-abilities';
-    const existingCanvas = container.querySelector('.html2canvas-abilities');
-    if (existingCanvas) {
-      container.replaceChild(canvas, existingCanvas);
-    } else {
-      container.insertBefore(canvas, rightBracket);
-    }
-    return true;
-  }
-
-  private adjustPendFontSize(): {
-    pendDone: boolean;
-    adjustPendTextState: TAdjustTextState;
-    pendFontSize: number;
-    pendLineHeight: number;
-  } {
-    if (!app.$card.hasPendulumFrame(this.props.card)) {
-      return {
-        pendDone: true,
-        adjustPendTextState: 'unknown',
-        pendFontSize: this.state.pendFontSize,
-        pendLineHeight: this.state.pendLineHeight,
-      };
-    }
-
-    const container = this.ref?.querySelector('.card-pendulum-effect-holder') as HTMLDivElement;
-    const texts = this.ref?.querySelectorAll('.pendulum-effect-text') as NodeListOf<HTMLDivElement>;
-    if (!container || !texts?.length || this.state.pendFontSize === 0) {
-      return {
-        pendDone: true,
-        adjustPendTextState: 'unknown',
-        pendFontSize: this.state.pendFontSize,
-        pendLineHeight: this.state.pendLineHeight,
-      };
-    }
-
-    let textHeight = 0;
-    let textWidth = 0;
-    textWidth = texts[0].clientWidth;
-    texts.forEach((text) => {
-      textHeight += text.clientHeight;
-    });
-    const parentHeight = container.clientHeight;
-    const parentWidth = container.clientWidth;
-    const fontSize = this.state.pendFontSize;
-
-    if (textHeight > parentHeight || textWidth > parentWidth) {
-      const newFontSize = fontSize - 0.5;
-      let newLineHeight = 1 + (12 - newFontSize) / 90;
-      if (newLineHeight < 1.05) newLineHeight = 1.05;
-
-      if (newFontSize >= 5) {
-        return {
-          pendDone: false,
-          adjustPendTextState: 'tooBig',
-          pendFontSize: newFontSize,
-          pendLineHeight: newLineHeight,
-        };
-      } else {
-        return {
-          pendDone: true,
-          adjustPendTextState: 'unknown',
-          pendFontSize: this.state.pendFontSize,
-          pendLineHeight: this.state.pendLineHeight,
-        };
-      }
-    } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustPendTextState === 'tooBig') {
-        if (this.state.pendLineHeight < 1.2) {
-          let newLineHeight = this.state.pendLineHeight + 0.1;
-          if (newLineHeight > 1.2) newLineHeight = 1.2;
-          return {
-            pendDone: false,
-            adjustPendTextState: this.state.adjustPendTextState,
-            pendFontSize: this.state.pendFontSize,
-            pendLineHeight: newLineHeight,
-          };
-        } else {
-          return {
-            pendDone: true,
-            adjustPendTextState: 'unknown',
-            pendFontSize: this.state.pendFontSize,
-            pendLineHeight: this.state.pendLineHeight,
-          };
-        }
-      } else {
-        const newFontSize = fontSize + 0.5;
-        let newLineHeight = 1 + (12 + newFontSize) / 90;
-        if (newLineHeight > 1.2) newLineHeight = 1.2;
-
-        if (newFontSize <= 30) {
-          return {
-            pendDone: false,
-            adjustPendTextState: 'tooSmall',
-            pendFontSize: newFontSize,
-            pendLineHeight: newLineHeight,
-          };
-        } else {
-          return {
-            pendDone: true,
-            adjustPendTextState: 'unknown',
-            pendFontSize: this.state.pendFontSize,
-            pendLineHeight: this.state.pendLineHeight,
-          };
-        }
-      }
-    } else {
-      return {
-        pendDone: true,
-        adjustPendTextState: 'unknown',
-        pendFontSize: this.state.pendFontSize,
-        pendLineHeight: this.state.pendLineHeight,
-      };
-    }
-  }
-
-  public adjustDescFontSize(): {
-    descDone: boolean;
-    adjustDescTextState: TAdjustTextState;
-    descFontSize: number;
-    descLineHeight: number;
-  } {
-    const container = this.ref?.querySelector('.card-description-holder') as HTMLDivElement;
-    const texts = this.ref?.querySelectorAll('.description-text') as NodeListOf<HTMLDivElement>;
-    if (!container || !texts?.length || this.state.descFontSize === 0) {
-      return {
-        descDone: true,
-        adjustDescTextState: 'unknown',
-        descFontSize: this.state.descFontSize,
-        descLineHeight: this.state.descLineHeight,
-      };
-    }
-
-    let textHeight = 0;
-    let textWidth = 0;
-    textWidth = texts[0].clientWidth;
-    texts.forEach((text) => {
-      textHeight += text.clientHeight;
-    });
-    const parentHeight = container.clientHeight;
-    const parentWidth = container.clientWidth;
-    const fontSize = this.state.descFontSize;
-
-    if (textHeight > parentHeight || textWidth > parentWidth) {
-      const newFontSize = fontSize - 0.5;
-      let newLineHeight = 1 + (12 - newFontSize) / 90;
-      if (newLineHeight < 1.05) newLineHeight = 1.05;
-
-      if (newFontSize >= 5) {
-        return {
-          descDone: false,
-          adjustDescTextState: 'tooBig',
-          descFontSize: newFontSize,
-          descLineHeight: newLineHeight,
-        };
-      } else {
-        return {
-          descDone: true,
-          adjustDescTextState: 'unknown',
-          descFontSize: this.state.descFontSize,
-          descLineHeight: this.state.descLineHeight,
-        };
-      }
-    } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustDescTextState === 'tooBig') {
-        if (this.state.descLineHeight < 1.2) {
-          let newLineHeight = this.state.descLineHeight + 0.1;
-          if (newLineHeight > 1.2) newLineHeight = 1.2;
-          this.setState({ descLineHeight: newLineHeight });
-          return {
-            descDone: false,
-            adjustDescTextState: this.state.adjustDescTextState,
-            descFontSize: this.state.descFontSize,
-            descLineHeight: newLineHeight,
-          };
-        } else {
-          return {
-            descDone: true,
-            adjustDescTextState: 'unknown',
-            descFontSize: this.state.descFontSize,
-            descLineHeight: this.state.descLineHeight,
-          };
-        }
-      } else {
-        const newFontSize = fontSize + 0.5;
-        let newLineHeight = 1 + (12 + newFontSize) / 90;
-        if (newLineHeight > 1.2) newLineHeight = 1.2;
-
-        if (newFontSize <= 30) {
-          return {
-            descDone: false,
-            adjustDescTextState: 'tooSmall',
-            descFontSize: newFontSize,
-            descLineHeight: newLineHeight,
-          };
-        } else {
-          return {
-            descDone: true,
-            adjustDescTextState: 'unknown',
-            descFontSize: this.state.descFontSize,
-            descLineHeight: this.state.descLineHeight,
-          };
-        }
-      }
-    } else {
-      return {
-        descDone: true,
-        adjustDescTextState: 'unknown',
-        descFontSize: this.state.descFontSize,
-        descLineHeight: this.state.descLineHeight,
-      };
+      setTimeout(() => this.props.onCardReady());
     }
   }
 
@@ -689,155 +253,167 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public render() {
-    if (!this.props.card) return <div></div>;
+    const { card } = this.props;
+    const {
+      loaded,
+      hasAbilities,
+      hasPendulumFrame,
+      hasLinkArrows,
+      isBackrow,
+      includesNormal,
+      includesXyz,
+      includesLink,
+      includesSkill,
+      artworkBg,
+      cardFrames,
+      pendulumCovers,
+    } = this.state;
 
-    if (!this.state.loaded) return <Spinner />;
+    if (!card || !loaded) return <div></div>;
 
-    let artworkClass = 'card-layer artwork-container';
-    if (app.$card.hasPendulumFrame(this.props.card)) {
-      if (this.props.card.frames.includes('link')) {
-        artworkClass = `${artworkClass} artwork-pendulum-link`;
-      } else {
-        artworkClass = `${artworkClass} artwork-pendulum`;
-      }
-
-      if (this.props.card.artwork.pendulum) {
-        artworkClass = `${artworkClass} in-pendulum-effect`;
-      }
-    }
+    const copyrightPath =
+      app.$card.cardLimitationsPaths[card.language][card.oldCopyright ? '1996' : '2020'][
+        (!card.pendulum && includesXyz) || includesSkill ? 'white' : 'black'
+      ];
 
     return (
-      <div
-        className='custom-container card-builder'
-        id={this.props.id}
-        ref={() => (this.ref = document.getElementById(this.props.id) as HTMLDivElement)}
-      >
-        <img className='card-layer border' src={this.state.border} alt='border' />
+      <div className='custom-container card-builder' id={this.props.id}>
+        <img className='card-layer border' src={app.$card.cardBorderPath} alt='border' />
 
-        {this.state.usePendulumFrame && this.renderFrames(this.state.cardFrames, 'card-frame')}
+        {hasPendulumFrame && this.renderFrames(cardFrames, 'card-frame')}
 
-        <img className='card-layer artworkBg' src={this.state.artworkBg} alt='artworkBg' />
-        <div className={artworkClass}>
-          <img className='artwork' src={this.state.croppedArtworkBase64} alt='artwork' />
-        </div>
+        <img className='card-layer artworkBg' src={artworkBg} alt='artworkBg' />
 
-        {!this.state.usePendulumFrame && this.renderFrames(this.state.cardFrames, 'card-frame')}
-        {this.state.usePendulumFrame && this.renderFrames(this.state.pendulumCovers, 'cover-frame')}
-        {this.state.usePendulumFrame && (
-          <img className='card-layer pendulum-frame' src={this.state.pendulumFrame} alt='pendulumFrame' />
+        <CardArtwork
+          card={card}
+          artworkBg={artworkBg}
+          hasPendulumFrame={hasPendulumFrame}
+          includesLink={includesLink}
+          onReady={() => this.onChildReady('artwork')}
+        />
+
+        {!hasPendulumFrame && this.renderFrames(cardFrames, 'card-frame')}
+
+        {hasPendulumFrame && this.renderFrames(pendulumCovers, 'cover-frame')}
+
+        {hasPendulumFrame && (
+          <img
+            className='card-layer pendulum-frame'
+            src={app.$card.cardPendFramePaths[includesLink ? 'link' : 'regular']}
+            alt='pendulumFrame'
+          />
         )}
 
-        {!this.props.card.frames.includes('skill') && (
-          <img className='card-layer attribute' src={this.state.attribute} alt='attribute' />
+        {!includesSkill && (
+          <img
+            className='card-layer attribute'
+            src={app.$card.cardAttributePaths[card.noTextAttribute ? 'vanilla' : card.language][card.attribute]}
+            alt='attribute'
+          />
         )}
+
         {this.renderLevelOrStIcon()}
+
         {this.renderStPlus()}
 
-        {this.state.withLinkArrows && this.renderLinkArrows()}
+        {this.renderLinkArrows()}
 
-        {app.$card.hasAbilities(this.props.card) &&
-          !this.props.card.frames.includes('skill') &&
-          (this.props.card.frames.includes('link') ? (
-            <img className='card-layer atk-link-line' src={this.state.atkLinkLine} alt='atkLinkLine' />
+        {hasAbilities &&
+          !includesSkill &&
+          (includesLink ? (
+            <img className='card-layer atk-link-line' src={app.$card.atkLinkLine} alt='atkLinkLine' />
           ) : (
-            <img className='card-layer atk-def-line' src={this.state.atkDefLine} alt='atkDefLine' />
+            <img className='card-layer atk-def-line' src={app.$card.atkDefLine} alt='atkDefLine' />
           ))}
 
-        {this.props.card.sticker !== 'none' && (
-          <img className='card-layer sticker' src={this.state.sticker} alt='sticker' />
+        {card.sticker !== 'none' && (
+          <img className='card-layer sticker' src={app.$card.cardStickerPaths[card.sticker]} alt='sticker' />
         )}
-        {this.props.card.edition !== 'forbidden' && (
+
+        {card.edition !== 'forbidden' && (
           <p
-            className={`card-layer passcode ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text`}
+            className={`card-layer passcode ${(!card.pendulum && includesXyz) || includesSkill ? 'white' : 'black'}-text`}
           >
-            {this.props.card.passcode}
+            {card.passcode}
           </p>
         )}
 
         <p
-          className={`card-layer card-set ${(!this.props.card.pendulum && this.props.card.frames.includes('xyz')) || this.props.card.frames.includes('skill') ? 'white' : 'black'}-text ${app.$card.hasLinkArrows(this.props.card) ? 'with-arrows' : ''} ${app.$card.hasPendulumFrame(this.props.card) ? 'on-pendulum' : ''}`}
+          className={`card-layer card-set ${(!card.pendulum && includesXyz) || includesSkill ? 'white' : 'black'}-text ${hasLinkArrows ? 'with-arrows' : ''} ${hasPendulumFrame ? 'on-pendulum' : ''}`}
         >
-          {this.props.card.cardSet}
+          {card.cardSet}
         </p>
 
-        {app.$card.hasAbilities(this.props.card) && !this.props.card.frames.includes('skill') && (
-          <div
-            className={classNames('custom-container', 'card-layer', 'atk-def', 'atk', {
-              'question-mark': this.props.card.atk === '?',
-            })}
-          >
-            <p className={classNames('stat-text', 'atk-text', 'black-text', { infinity: this.props.card.atk === '∞' })}>
-              {this.props.card.atk}
-            </p>
-          </div>
+        <CardAtk
+          card={card}
+          hasAbilities={hasAbilities}
+          includesSkill={includesSkill}
+          onReady={() => this.onChildReady('atk')}
+        />
+
+        <CardDef
+          card={card}
+          hasAbilities={hasAbilities}
+          includesLink={includesLink}
+          includesSkill={includesSkill}
+          onReady={() => this.onChildReady('def')}
+        />
+
+        {card.hasCopyright && <img className='card-layer copyright' src={copyrightPath.copyright} alt='copyright' />}
+
+        {card.edition !== 'unlimited' && (
+          <img className='card-layer edition' src={copyrightPath[card.edition]} alt='edition' />
         )}
 
-        {app.$card.hasAbilities(this.props.card) &&
-          !this.props.card.frames.includes('skill') &&
-          !this.props.card.frames.includes('link') && (
-            <div
-              className={classNames('custom-container', 'card-layer', 'atk-def', 'def', {
-                'question-mark': this.props.card.def === '?',
-              })}
-            >
-              <p
-                className={classNames('stat-text', 'def-text', 'black-text', { infinity: this.props.card.def === '∞' })}
-              >
-                {this.props.card.def}
-              </p>
-            </div>
-          )}
+        <CardAbilities
+          card={card}
+          hasAbilities={hasAbilities}
+          hasPendulumFrame={hasPendulumFrame}
+          includesLink={includesLink}
+          onReady={() => this.onChildReady('abilities')}
+        />
 
-        {this.props.card.hasCopyright && (
-          <img className='card-layer copyright' src={this.state.copyright} alt='copyright' />
+        <CardDesc
+          card={card}
+          hasAbilities={hasAbilities}
+          hasPendulumFrame={hasPendulumFrame}
+          includesNormal={includesNormal}
+          includesLink={includesLink}
+          includesSkill={includesSkill}
+          onReady={() => this.onChildReady('desc')}
+        />
+
+        <CardPend
+          card={card}
+          hasPendulumFrame={hasPendulumFrame}
+          includesLink={includesLink}
+          onReady={() => this.onChildReady('pend')}
+        />
+
+        {hasPendulumFrame && (
+          <img
+            className='card-layer card-scale left-scale'
+            src={app.$card.cardScalePaths[includesLink ? 'link' : 'regular'].left[card.scales.left]}
+            alt='leftScale'
+          />
         )}
-        {this.props.card.edition !== 'unlimited' && (
-          <img className='card-layer edition' src={this.state.edition} alt='edition' />
+
+        {hasPendulumFrame && (
+          <img
+            className='card-layer card-scale right-scale'
+            src={app.$card.cardScalePaths[includesLink ? 'link' : 'regular'].right[card.scales.right]}
+            alt='rightScale'
+          />
         )}
 
-        {app.$card.hasAbilities(this.props.card) && this.renderAbilities()}
-        {this.renderDescription()}
-        {app.$card.hasPendulumFrame(this.props.card) && this.renderPendulum()}
-        {this.state.usePendulumFrame && (
-          <img className='card-layer card-scale left-scale' src={this.state.leftScale} alt='leftScale' />
-        )}
-        {this.state.usePendulumFrame && (
-          <img className='card-layer card-scale right-scale' src={this.state.rightScale} alt='rightScale' />
-        )}
-        {this.renderName()}
-      </div>
-    );
-  }
-
-  private renderName() {
-    let hStackClassName = `custom-container card-layer card-name-container`;
-    let pClassName = `card-layer card-name ${this.props.card.nameStyle}`;
-    if (this.props.card.frames.includes('skill')) {
-      pClassName = `${pClassName} white-text skill-name`;
-      hStackClassName = `${hStackClassName} skill-name-container`;
-    } else {
-      pClassName = `${pClassName} ${this.props.card.frames.includes('xyz') || this.props.card.frames.includes('link') || app.$card.isBackrow(this.props.card) ? 'white' : 'black'}-text`;
-      if (this.props.card.frames.includes('link')) {
-        pClassName = `${pClassName} on-link`;
-      }
-    }
-
-    const specialCharsRegex = /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
-    const parts = this.props.card.name.split(specialCharsRegex);
-
-    let processedText = parts.map((part, index) =>
-      specialCharsRegex.test(part) ? (
-        <span key={index} className='special-char-span'>
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-
-    return (
-      <div className={hStackClassName}>
-        <p className={pClassName}>{processedText}</p>
+        <CardName
+          card={card}
+          includesXyz={includesXyz}
+          includesLink={includesLink}
+          includesSkill={includesSkill}
+          isBackrow={isBackrow}
+          onReady={() => this.onChildReady('name')}
+        />
       </div>
     );
   }
@@ -848,8 +424,9 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       <div className='custom-container card-layer card-frames-container'>
         {frames.map((frame, index) => {
           const style: CSSProperties = {};
-          if (index)
+          if (index) {
             style.clipPath = `polygon(100% 0%, ${styleArray[index]} 0%, 50% 50%, ${styleArray[index]} 100%, 100% 100%)`;
+          }
           return (
             <img
               key={`card-frame-${index}`}
@@ -864,111 +441,18 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     );
   }
 
-  private renderAbilities() {
-    let text = this.props.card.abilities.join(' / ');
-    const upperCaseIndexes = text
-      .split('')
-      .map((char, index) => (char === char.toUpperCase() ? index : -1))
-      .filter((i) => i !== -1);
-    const lowerCaseText = text.toLowerCase();
-    let firstIndexLowerCase: boolean;
-    if (!upperCaseIndexes.includes(0)) {
-      upperCaseIndexes.unshift(0);
-      firstIndexLowerCase = true;
-    }
-
-    let containerClass = 'custom-container card-layer card-abilities';
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link'))
-      containerClass = `${containerClass} on-pendulum-link`;
-
-    return (
-      <div className={containerClass}>
-        <p className='abilities-text black-text abilities-bracket left-bracket'>[</p>
-        <p className='abilities-text black-text abilities'>
-          {upperCaseIndexes.map((index, i) => (
-            <Fragment key={`uppercase-index-${i}`}>
-              <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
-                {text.slice(index, index + 1)}
-              </span>
-              <span className='lowercase'>
-                {lowerCaseText.slice(index + 1, upperCaseIndexes[i + 1] || text.length)}
-              </span>
-            </Fragment>
-          ))}
-        </p>
-        <p className='abilities-text black-text abilities-bracket right-bracket'>]</p>
-      </div>
-    );
-  }
-
-  private renderPendulum() {
-    return (
-      <div
-        className={`custom-container vertical card-layer card-pendulum-effect-holder ${this.props.card.frames.includes('link') ? 'on-link' : ''}${this.state.pendDone ? '' : ' hidden'}`}
-      >
-        {this.state.pendEffect.map((text, i) => {
-          return (
-            <p
-              key={`pendulum-effect-${i}`}
-              className='pendulum-effect-text black-text'
-              style={{
-                fontSize: `${this.state.pendFontSize}px`,
-                lineHeight: this.state.pendLineHeight,
-                marginBottom: this.state.pendLineHeight / 2,
-              }}
-            >
-              {text}
-            </p>
-          );
-        })}
-      </div>
-    );
-  }
-
-  private renderDescription() {
-    let containerClass = `custom-container vertical card-layer card-description-holder${this.state.descDone ? '' : ' hidden'}`;
-    if (app.$card.hasAbilities(this.props.card)) {
-      containerClass = `${containerClass} with-abilities`;
-
-      if (this.props.card.frames.includes('skill')) {
-        containerClass = `${containerClass} on-skill`;
-      }
-    }
-    if (this.props.card.frames.includes('normal')) containerClass = `${containerClass} normal-text`;
-    if (app.$card.hasPendulumFrame(this.props.card) && this.props.card.frames.includes('link'))
-      containerClass = `${containerClass} on-pendulum-link`;
-
-    return (
-      <div className={containerClass}>
-        {this.state.description.map((d, i) => {
-          return (
-            <p
-              key={`description-text-${i}`}
-              className='description-text black-text'
-              style={{
-                fontSize: `${this.state.descFontSize}px`,
-                lineHeight: this.state.descLineHeight,
-                marginBottom: this.state.descLineHeight / 2,
-              }}
-            >
-              {d}
-            </p>
-          );
-        })}
-      </div>
-    );
-  }
-
   private renderStPlus() {
-    if (
-      app.$card.isBackrow(this.props.card) &&
-      this.props.card.stType !== 'normal' &&
-      this.props.card.stType !== 'link'
-    ) {
+    const { card } = this.props;
+    const { isBackrow } = this.state;
+    if (isBackrow && card.stType !== 'normal' && card.stType !== 'link') {
       return (
         <img
           className='card-layer st-plus'
-          src={this.props.card.frames.includes('spell') ? this.state.spellPlus : this.state.trapPlus}
+          src={
+            card.frames.includes('spell')
+              ? app.$card.cardStPaths[card.language].spellPlus
+              : app.$card.cardStPaths[card.language].trapPlus
+          }
           alt='stPlus'
         />
       );
@@ -977,14 +461,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderLevelOrStIcon() {
+    const { card } = this.props;
     let includesOther = false;
     let includesXyz = false;
     let includesDarkSynchro = false;
     let includesLink = false;
 
-    for (let frame of this.props.card.frames) {
+    for (const frame of card.frames) {
       if (frame === 'spell' || frame === 'trap') {
-        return <img className='card-layer st-icon' src={this.state.stIcon} alt='stIcon' />;
+        return <img className='card-layer st-icon' src={app.$card.getStIcon(card)} alt='stIcon' />;
       } else if (frame === 'link') {
         includesLink = true;
       } else if (frame === 'xyz') {
@@ -997,81 +482,98 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     }
 
     if (includesLink) {
-      return <img className='card-layer link-rating' src={this.state.linkRating} alt='linkRating' />;
+      return (
+        <img
+          className='card-layer link-rating'
+          src={app.$card.cardLevelPaths.linkRating[card.level]}
+          alt='linkRating'
+        />
+      );
     } else if (includesOther) {
-      return <img className='card-layer level' src={this.state.level} alt='level' />;
+      return <img className='card-layer level' src={app.$card.cardLevelPaths.level[card.level]} alt='level' />;
     } else if (includesDarkSynchro) {
-      return <img className='card-layer negative-level' src={this.state.negativeLevel} alt='negativeLevel' />;
+      return (
+        <img
+          className='card-layer negative-level'
+          src={app.$card.cardLevelPaths.negativeLevel[card.level]}
+          alt='negativeLevel'
+        />
+      );
     } else if (includesXyz) {
-      return <img className='card-layer rank' src={this.state.rank} alt='rank' />;
+      return <img className='card-layer rank' src={app.$card.cardLevelPaths.rank[card.level]} alt='rank' />;
     }
     return null;
   }
 
   private renderLinkArrows() {
+    const { hasPendulumFrame, hasLinkArrows } = this.state;
+    if (!hasLinkArrows) return null;
+
+    const { card } = this.props;
+    const linkArrowPaths = app.$card.cardLinkArrowPaths[hasPendulumFrame ? 'pendulum' : 'regular'];
     return (
       <div className='custom-container card-layer card-link-arrows'>
-        {this.props.card.linkArrows.top && (
+        {card.linkArrows.top && (
           <img
             className='card-layer link-arrow link-arrow-t'
             key='link-arrow-t'
-            src={this.state.linkArrowT}
+            src={linkArrowPaths.top}
             alt='linkArrowT'
           />
         )}
-        {this.props.card.linkArrows.bottom && (
+        {card.linkArrows.bottom && (
           <img
             className='card-layer link-arrow link-arrow-b'
             key='link-arrow-b'
-            src={this.state.linkArrowB}
+            src={linkArrowPaths.bottom}
             alt='linkArrowB'
           />
         )}
-        {this.props.card.linkArrows.left && (
+        {card.linkArrows.left && (
           <img
             className='card-layer link-arrow link-arrow-l'
             key='link-arrow-l'
-            src={this.state.linkArrowL}
+            src={linkArrowPaths.left}
             alt='linkArrowL'
           />
         )}
-        {this.props.card.linkArrows.right && (
+        {card.linkArrows.right && (
           <img
             className='card-layer link-arrow link-arrow-r'
             key='link-arrow-r'
-            src={this.state.linkArrowR}
+            src={linkArrowPaths.right}
             alt='linkArrowR'
           />
         )}
-        {this.props.card.linkArrows.topLeft && (
+        {card.linkArrows.topLeft && (
           <img
             className='card-layer link-arrow link-arrow-tl'
             key='link-arrow-tl'
-            src={this.state.linkArrowTL}
+            src={linkArrowPaths.topLeft}
             alt='linkArrowTL'
           />
         )}
-        {this.props.card.linkArrows.topRight && (
+        {card.linkArrows.topRight && (
           <img
             className='card-layer link-arrow link-arrow-tr'
             key='link-arrow-tr'
-            src={this.state.linkArrowTR}
+            src={linkArrowPaths.topRight}
             alt='linkArrowTR'
           />
         )}
-        {this.props.card.linkArrows.bottomLeft && (
+        {card.linkArrows.bottomLeft && (
           <img
             className='card-layer link-arrow link-arrow-bl'
             key='link-arrow-bl'
-            src={this.state.linkArrowBL}
+            src={linkArrowPaths.bottomLeft}
             alt='linkArrowBL'
           />
         )}
-        {this.props.card.linkArrows.bottomRight && (
+        {card.linkArrows.bottomRight && (
           <img
             className='card-layer link-arrow link-arrow-br'
             key='link-arrow-br'
-            src={this.state.linkArrowBR}
+            src={linkArrowPaths.bottomRight}
             alt='linkArrowBR'
           />
         )}

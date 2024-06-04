@@ -1,5 +1,3 @@
-
-
 import path from 'path';
 import { Configuration } from 'webpack';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
@@ -42,6 +40,6 @@ const commonConfig: Configuration = {
   performance: {
     hints: false,
   },
-}
+};
 
 export default commonConfig;

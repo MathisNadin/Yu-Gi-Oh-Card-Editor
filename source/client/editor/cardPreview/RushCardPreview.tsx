@@ -75,7 +75,6 @@ export class RushCardPreview
         {!this.state.renderCard?.rush && (
           <CardBuilder
             forRender
-            renderId={uuid()}
             card={this.state.renderCard as ICard}
             onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
             id='placeholder-card-builder'

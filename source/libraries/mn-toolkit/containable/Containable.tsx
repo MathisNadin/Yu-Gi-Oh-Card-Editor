@@ -1,7 +1,7 @@
-import { AllHTMLAttributes, Component, PropsWithChildren } from 'react';
+import { AllHTMLAttributes } from 'react';
 import { classNames, isDefined, isNumber } from 'mn-tools';
 import { TBackgroundColor } from '../themeSettings';
-import { JSXElementChildren } from '../react';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from './ToolkitComponent';
 
 export type ColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
 
@@ -30,7 +30,7 @@ export type ZIndex =
   | 'toaster'
   | 'overall';
 
-export interface IContainableProps extends PropsWithChildren {
+export interface IContainableProps extends IToolkitComponentProps {
   s?: ColSpan;
   m?: ColSpan;
   l?: ColSpan;
@@ -73,11 +73,11 @@ export interface IContainableProps extends PropsWithChildren {
   style?: { [key: string]: number | boolean | string };
 }
 
-export interface IContainableState {
+export interface IContainableState extends IToolkitComponentState {
   loaded: boolean;
 }
 
-export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends Component<
+export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends ToolkitComponent<
   PROPS,
   STATE
 > {
@@ -86,19 +86,6 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
       zIndex: 'content',
       floatPosition: 'none',
     };
-  }
-
-  public constructor(props: PROPS) {
-    super(props);
-    this.state = {} as STATE;
-  }
-
-  public async forceUpdateAsync() {
-    return new Promise<void>((resolve) => this.forceUpdate(resolve));
-  }
-
-  public async setStateAsync(newState: Partial<STATE>) {
-    return new Promise<void>((resolve) => this.setState(newState as STATE, resolve));
   }
 
   public renderClasses() {
@@ -189,9 +176,5 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
 
   public render() {
     return <div {...this.renderAttributes()}>{this.children}</div>;
-  }
-
-  public get children(): JSXElementChildren {
-    return this.props.children;
   }
 }

@@ -19,6 +19,7 @@ interface ITextAreaInputState extends IContainableState {
   value: string;
   rows: number;
   activateScroll: boolean;
+  doTextAreaChange: boolean;
 }
 
 export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInputState> {
@@ -33,6 +34,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
   public static get defaultProps(): Partial<ITextAreaInputProps> {
     return {
       ...super.defaultProps,
+      defaultValue: '',
       minRows: 5,
       maxRows: 10,
       autoGrow: false,
@@ -47,25 +49,33 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
       rows: props.autoGrow ? 1 : props.minRows!,
       value: props.defaultValue!,
       activateScroll: !props.autoGrow,
+      doTextAreaChange: false,
     };
   }
 
-  public componentDidUpdate(prevProps: ITextAreaInputProps) {
-    if (prevProps !== this.props && this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue! }, () => {
-        if (this.inputElement) {
-          setTimeout(() => this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent));
-        }
-      });
+  public componentDidMount() {
+    if (!this.props.autofocus || app.$device.isNative) return;
+    setTimeout(() => this.inputElement.focus(), 100);
+  }
+
+  public static getDerivedStateFromProps(
+    nextProps: ITextAreaInputProps,
+    prevState: ITextAreaInputState
+  ): Partial<ITextAreaInputState> | null {
+    if (prevState.value !== nextProps.defaultValue) {
+      return {
+        value: nextProps.defaultValue!,
+        doTextAreaChange: true,
+      };
+    } else {
+      return null;
     }
   }
 
-  public componentDidMount() {
-    if (this.props.autofocus && !app.$device.isNative) {
-      setTimeout(() => {
-        this.inputElement.focus();
-      }, 100);
-    }
+  public componentDidUpdate(_prevProps: ITextAreaInputProps) {
+    if (!this.state.doTextAreaChange) return;
+    this.onTextAreaChange();
+    this.setState({ doTextAreaChange: false });
   }
 
   public doFocus() {
@@ -83,7 +93,8 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
           disabled={this.props.disabled}
           rows={this.state.rows}
           placeholder={this.props.placeholder}
-          defaultValue={this.state.value}
+          value={this.state.value}
+          onChange={() => {}}
           onBlur={(e) => this.props.onBlur && app.$errorManager.handlePromise(this.props.onBlur(e))}
           onFocus={(e) => this.props.onFocus && app.$errorManager.handlePromise(this.props.onFocus(e))}
           onInput={(e) => this.onChange(e)}
@@ -99,8 +110,9 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
           disabled={this.props.disabled}
           rows={this.state.rows}
           placeholder={this.props.placeholder}
-          defaultValue={this.state.value}
+          value={this.state.value}
           style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
+          onChange={() => {}}
         />
       </div>
     );
@@ -128,7 +140,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
       this.paddingBottom = integer(hiddenInputStyle.paddingBottom);
       this.borderTopWidth = integer(hiddenInputStyle.borderTopWidth);
       this.borderBottomWidth = integer(hiddenInputStyle.borderBottomWidth);
-      this.onTextAreaChange({ target: this.inputElement } as unknown as FormEvent);
+      this.onTextAreaChange();
     });
   }
 
@@ -136,16 +148,15 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     const value = e.target.value as string;
     if (value === this.state.value) return;
     this.setState({ value });
-    this.onTextAreaChange(e);
+    this.onTextAreaChange();
     if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
   }
 
-  private onTextAreaChange(event: FormEvent) {
-    if (!this.props.autoGrow) return;
-    const target = event.target as HTMLTextAreaElement;
+  private onTextAreaChange() {
+    if (!this.props.autoGrow || !this.inputElement) return;
 
     if (this.hiddenInputElement) {
-      this.hiddenInputElement.value = target.value; // Synchronisez le texte avec le textarea invisible
+      this.hiddenInputElement.value = this.inputElement.value; // Synchronisez le texte avec le textarea invisible
       this.hiddenInputElement.rows = 1;
 
       // Assurez-vous que box-sizing est pris en compte
@@ -170,7 +181,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
         activateScroll = false;
       }
 
-      target.rows = rows;
+      this.inputElement.rows = rows;
       this.hiddenInputElement.rows = rows;
       this.setState({ rows, activateScroll });
     }

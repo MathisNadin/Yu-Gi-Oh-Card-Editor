@@ -44,25 +44,24 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   private async onPlaceholderCardReady() {
     await app.$card.writeCardFile(
       'placeholder-card-builder',
-      (this.state.renderCard as ICard).uuid as string,
-      (this.state.renderCard as ICard).name
+      this.state.renderCard!.uuid as string,
+      this.state.renderCard!.name
     );
   }
 
   private async onCardReady() {
     const element = document.getElementById('main-card-builder') as HTMLElement;
-    if (element) {
-      try {
-        const dataUrl = await toPng(element);
-        const img = document.querySelector('.img-render') as HTMLImageElement;
-        img.src = dataUrl;
+    if (!element) return;
+    try {
+      const dataUrl = await toPng(element);
+      const img = document.querySelector('.img-render') as HTMLImageElement;
+      img.src = dataUrl;
 
-        const rendering = document.querySelector('.rendering') as HTMLImageElement;
-        rendering.classList.add('hidden');
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
+      const rendering = document.querySelector('.rendering') as HTMLImageElement;
+      rendering.classList.add('hidden');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
   }
 
@@ -72,8 +71,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
         {!this.state.renderCard?.rush && (
           <CardBuilder
             forRender
-            renderId={uuid()}
-            card={this.state.renderCard as ICard}
+            card={this.state.renderCard!}
             onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
             id='placeholder-card-builder'
           />
@@ -83,14 +81,13 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
           <RushCardBuilder
             forRender
             renderId={uuid()}
-            card={this.state.renderCard as ICard}
+            card={this.state.renderCard!}
             onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
             id='placeholder-card-builder'
           />
         )}
 
         <CardBuilder
-          renderId={uuid()}
           card={this.props.card}
           onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())}
           id='main-card-builder'

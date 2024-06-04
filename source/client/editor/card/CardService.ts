@@ -1,9 +1,29 @@
 import { toPng } from 'mn-html-to-image';
 import { Observable, deepClone, uuid } from 'mn-tools';
-import { ICard, CardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage } from './card-interfaces';
+import {
+  ICard,
+  CardStorageKey,
+  TFrame,
+  TAttribute,
+  TStIcon,
+  TCardLanguage,
+  TSticker,
+  TEdition,
+} from './card-interfaces';
 import { Crop } from 'react-image-crop';
 import { CardImportDialog } from 'client/editor/cardImportDialog';
 import { IStoreListener } from 'mn-toolkit';
+
+interface ICardLinkArrowPaths {
+  top: string;
+  bottom: string;
+  left: string;
+  right: string;
+  topLeft: string;
+  topRight: string;
+  bottomLeft: string;
+  bottomRight: string;
+}
 
 export interface ICardsExportData {
   'current-card': ICard;
@@ -39,29 +59,507 @@ const COMMON_FRAMES: TFrame[] = [
 
 const FRAMES_WITH_DESCRIPTION: TFrame[] = ['normal', 'token', 'monsterToken'];
 
-export class CardService extends Observable<ICardListener> implements Partial<IStoreListener> {
-  private _currentCard = {} as ICard;
-  private _tempCurrentCard: ICard | undefined = undefined;
-  private _renderCard: ICard | undefined = undefined;
-  private _renderCardsQueue: ICard[] = [];
-  private _localCards: ICard[] = [];
-  private _renderPath: string | undefined = undefined;
+type TWhiteArtwork = 'whiteArtwork' | 'whiteArtworkPendulum' | 'whiteArtworkPendulumLink';
+type TPendOrNot = 'regular' | 'pendulum';
+type TLinkOrNot = 'regular' | 'link';
+type TLanguageOrVanilla = TCardLanguage | 'vanilla';
+type TLevelKind = 'level' | 'negativeLevel' | 'rank' | 'linkRating';
+type TScaleSide = 'left' | 'right';
+type TStType =
+  | 'normalSpell'
+  | 'normalTrap'
+  | 'ritual'
+  | 'quickplay'
+  | 'field'
+  | 'continuous'
+  | 'equip'
+  | 'counter'
+  | 'link'
+  | 'spellPlus'
+  | 'trapPlus';
+type TCopyrightYear = '1996' | '2020';
+type TCopyrightColor = 'black' | 'white';
+type TLimitation = TEdition | 'copyright';
 
+export class CardService extends Observable<ICardListener> implements Partial<IStoreListener> {
+  private _cardBorderPath: string;
+  public get cardBorderPath() {
+    return this._cardBorderPath;
+  }
+  private _atkDefLine: string;
+  public get atkDefLine() {
+    return this._atkDefLine;
+  }
+  private _atkLinkLine: string;
+  public get atkLinkLine() {
+    return this._atkLinkLine;
+  }
+  private _cardWhiteArtworkPaths: { [key in TWhiteArtwork]: string };
+  public get cardWhiteArtworkPaths() {
+    return this._cardWhiteArtworkPaths;
+  }
+  private _cardFramePaths: { [key in TFrame]: string };
+  public get cardFramePaths() {
+    return this._cardFramePaths;
+  }
+  private _cardAttributePaths: { [key in TLanguageOrVanilla]: { [attribute in TAttribute]: string } };
+  public get cardAttributePaths() {
+    return this._cardAttributePaths;
+  }
+  private _cardLevelPaths: { [levelKind in TLevelKind]: { [level: number]: string } };
+  public get cardLevelPaths() {
+    return this._cardLevelPaths;
+  }
+  private _cardStPaths: { [language in TCardLanguage]: { [stType in TStType]: string } };
+  public get cardStPaths() {
+    return this._cardStPaths;
+  }
+  private _cardScalePaths: { [key in TLinkOrNot]: { [side in TScaleSide]: { [scale: number]: string } } };
+  public get cardScalePaths() {
+    return this._cardScalePaths;
+  }
+  private _cardPendFramePaths: { [key in TLinkOrNot]: string };
+  public get cardPendFramePaths() {
+    return this._cardPendFramePaths;
+  }
+  private _cardPendCoverPaths: { [key in TFrame]: string };
+  public get cardPendCoverPaths() {
+    return this._cardPendCoverPaths;
+  }
+  private _cardLinkArrowPaths: { [key in TPendOrNot]: ICardLinkArrowPaths };
+  public get cardLinkArrowPaths() {
+    return this._cardLinkArrowPaths;
+  }
+  private _cardStickerPaths: { [sticket in TSticker]: string };
+  public get cardStickerPaths() {
+    return this._cardStickerPaths;
+  }
+  private _cardLimitationsPaths: {
+    [language in TCardLanguage]: {
+      [year in TCopyrightYear]: { [color in TCopyrightColor]: { [limitation in TLimitation]: string } };
+    };
+  };
+  public get cardLimitationsPaths() {
+    return this._cardLimitationsPaths;
+  }
+
+  private _currentCard;
   public get currentCard() {
     return this._currentCard;
   }
-
+  private _tempCurrentCard?: ICard;
   public get tempCurrentCard() {
     return this._tempCurrentCard;
   }
-
+  private _localCards: ICard[];
   public get localCards() {
     return this._localCards;
   }
+  private _renderCard?: ICard;
+  private _renderCardsQueue: ICard[];
+  private _renderPath?: string;
 
   public constructor() {
     super();
     app.$store.addListener(this);
+
+    this._cardBorderPath = require('assets/images/squareBorders.png');
+    this._atkDefLine = require('assets/images/atkDefLine.png');
+    this._atkLinkLine = require('assets/images/atkLinkLine.png');
+
+    this._cardWhiteArtworkPaths = {
+      whiteArtwork: require('assets/images/whiteArtwork.png'),
+      whiteArtworkPendulum: require('assets/images/whiteArtworkPendulum.png'),
+      whiteArtworkPendulumLink: require('assets/images/whiteArtworkPendulumLink.png'),
+    };
+
+    this._cardFramePaths = {
+      normal: require('assets/images/card-frames/normal.png'),
+      effect: require('assets/images/card-frames/effect.png'),
+      ritual: require('assets/images/card-frames/ritual.png'),
+      fusion: require('assets/images/card-frames/fusion.png'),
+      synchro: require('assets/images/card-frames/synchro.png'),
+      darkSynchro: require('assets/images/card-frames/darkSynchro.png'),
+      xyz: require('assets/images/card-frames/xyz.png'),
+      link: require('assets/images/card-frames/link.png'),
+      spell: require('assets/images/card-frames/spell.png'),
+      trap: require('assets/images/card-frames/trap.png'),
+      legendaryDragon: require('assets/images/card-frames/legendaryDragon.png'),
+      obelisk: require('assets/images/card-frames/obelisk.png'),
+      slifer: require('assets/images/card-frames/slifer.png'),
+      ra: require('assets/images/card-frames/ra.png'),
+      token: require('assets/images/card-frames/token.png'),
+      monsterToken: require('assets/images/card-frames/monsterToken.png'),
+      skill: require('assets/images/card-frames/skill.png'),
+    };
+
+    this._cardAttributePaths = {
+      fr: {
+        dark: require('assets/images/attributes/fr/dark.png'),
+        light: require('assets/images/attributes/fr/light.png'),
+        water: require('assets/images/attributes/fr/water.png'),
+        earth: require('assets/images/attributes/fr/earth.png'),
+        wind: require('assets/images/attributes/fr/wind.png'),
+        fire: require('assets/images/attributes/fr/fire.png'),
+        divine: require('assets/images/attributes/fr/divine.png'),
+        spell: require('assets/images/attributes/fr/spell.png'),
+        trap: require('assets/images/attributes/fr/trap.png'),
+      },
+      en: {
+        dark: require('assets/images/attributes/en/dark.png'),
+        light: require('assets/images/attributes/en/light.png'),
+        water: require('assets/images/attributes/en/water.png'),
+        earth: require('assets/images/attributes/en/earth.png'),
+        wind: require('assets/images/attributes/en/wind.png'),
+        fire: require('assets/images/attributes/en/fire.png'),
+        divine: require('assets/images/attributes/en/divine.png'),
+        spell: require('assets/images/attributes/en/spell.png'),
+        trap: require('assets/images/attributes/en/trap.png'),
+      },
+      vanilla: {
+        dark: require('assets/images/attributes/vanilla/dark.png'),
+        light: require('assets/images/attributes/vanilla/light.png'),
+        water: require('assets/images/attributes/vanilla/water.png'),
+        earth: require('assets/images/attributes/vanilla/earth.png'),
+        wind: require('assets/images/attributes/vanilla/wind.png'),
+        fire: require('assets/images/attributes/vanilla/fire.png'),
+        divine: require('assets/images/attributes/vanilla/divine.png'),
+        spell: require('assets/images/attributes/vanilla/spell.png'),
+        trap: require('assets/images/attributes/vanilla/trap.png'),
+      },
+    };
+
+    this._cardLevelPaths = {
+      level: {
+        0: require('assets/images/levels/0.png'),
+        1: require('assets/images/levels/1.png'),
+        2: require('assets/images/levels/2.png'),
+        3: require('assets/images/levels/3.png'),
+        4: require('assets/images/levels/4.png'),
+        5: require('assets/images/levels/5.png'),
+        6: require('assets/images/levels/6.png'),
+        7: require('assets/images/levels/7.png'),
+        8: require('assets/images/levels/8.png'),
+        9: require('assets/images/levels/9.png'),
+        10: require('assets/images/levels/10.png'),
+        11: require('assets/images/levels/11.png'),
+        12: require('assets/images/levels/12.png'),
+        13: require('assets/images/levels/13.png'),
+      },
+      negativeLevel: {
+        0: require('assets/images/negative-levels/0.png'),
+        1: require('assets/images/negative-levels/1.png'),
+        2: require('assets/images/negative-levels/2.png'),
+        3: require('assets/images/negative-levels/3.png'),
+        4: require('assets/images/negative-levels/4.png'),
+        5: require('assets/images/negative-levels/5.png'),
+        6: require('assets/images/negative-levels/6.png'),
+        7: require('assets/images/negative-levels/7.png'),
+        8: require('assets/images/negative-levels/8.png'),
+        9: require('assets/images/negative-levels/9.png'),
+        10: require('assets/images/negative-levels/10.png'),
+        11: require('assets/images/negative-levels/11.png'),
+        12: require('assets/images/negative-levels/12.png'),
+        13: require('assets/images/negative-levels/13.png'),
+      },
+      rank: {
+        0: require('assets/images/ranks/0.png'),
+        1: require('assets/images/ranks/1.png'),
+        2: require('assets/images/ranks/2.png'),
+        3: require('assets/images/ranks/3.png'),
+        4: require('assets/images/ranks/4.png'),
+        5: require('assets/images/ranks/5.png'),
+        6: require('assets/images/ranks/6.png'),
+        7: require('assets/images/ranks/7.png'),
+        8: require('assets/images/ranks/8.png'),
+        9: require('assets/images/ranks/9.png'),
+        10: require('assets/images/ranks/10.png'),
+        11: require('assets/images/ranks/11.png'),
+        12: require('assets/images/ranks/12.png'),
+        13: require('assets/images/ranks/13.png'),
+      },
+      linkRating: {
+        0: require('assets/images/link-ratings/0.png'),
+        1: require('assets/images/link-ratings/1.png'),
+        2: require('assets/images/link-ratings/2.png'),
+        3: require('assets/images/link-ratings/3.png'),
+        4: require('assets/images/link-ratings/4.png'),
+        5: require('assets/images/link-ratings/5.png'),
+        6: require('assets/images/link-ratings/6.png'),
+        7: require('assets/images/link-ratings/7.png'),
+        8: require('assets/images/link-ratings/8.png'),
+        9: require('assets/images/link-ratings/9.png'),
+        10: require('assets/images/link-ratings/10.png'),
+        11: require('assets/images/link-ratings/11.png'),
+        12: require('assets/images/link-ratings/12.png'),
+        13: require('assets/images/link-ratings/13.png'),
+      },
+    };
+
+    this._cardStPaths = {
+      fr: {
+        normalSpell: require('assets/images/st/fr/normal-spell.png'),
+        normalTrap: require('assets/images/st/fr/normal-trap.png'),
+        ritual: require('assets/images/st/fr/ritual.png'),
+        quickplay: require('assets/images/st/fr/quickplay.png'),
+        field: require('assets/images/st/fr/field.png'),
+        continuous: require('assets/images/st/fr/continuous.png'),
+        equip: require('assets/images/st/fr/equip.png'),
+        counter: require('assets/images/st/fr/counter.png'),
+        link: require('assets/images/st/fr/link.png'),
+        spellPlus: require('assets/images/st/fr/spell+.png'),
+        trapPlus: require('assets/images/st/fr/trap+.png'),
+      },
+      en: {
+        normalSpell: require('assets/images/st/en/normal-spell.png'),
+        normalTrap: require('assets/images/st/en/normal-trap.png'),
+        ritual: require('assets/images/st/en/ritual.png'),
+        quickplay: require('assets/images/st/en/quickplay.png'),
+        field: require('assets/images/st/en/field.png'),
+        continuous: require('assets/images/st/en/continuous.png'),
+        equip: require('assets/images/st/en/equip.png'),
+        counter: require('assets/images/st/en/counter.png'),
+        link: require('assets/images/st/en/link.png'),
+        spellPlus: require('assets/images/st/en/spell+.png'),
+        trapPlus: require('assets/images/st/en/trap+.png'),
+      },
+    };
+
+    this._cardScalePaths = {
+      regular: {
+        left: {
+          0: require('assets/images/pendulum-scales/G_0.png'),
+          1: require('assets/images/pendulum-scales/G_1.png'),
+          2: require('assets/images/pendulum-scales/G_2.png'),
+          3: require('assets/images/pendulum-scales/G_3.png'),
+          4: require('assets/images/pendulum-scales/G_4.png'),
+          5: require('assets/images/pendulum-scales/G_5.png'),
+          6: require('assets/images/pendulum-scales/G_6.png'),
+          7: require('assets/images/pendulum-scales/G_7.png'),
+          8: require('assets/images/pendulum-scales/G_8.png'),
+          9: require('assets/images/pendulum-scales/G_9.png'),
+          10: require('assets/images/pendulum-scales/G_10.png'),
+          11: require('assets/images/pendulum-scales/G_11.png'),
+          12: require('assets/images/pendulum-scales/G_12.png'),
+          13: require('assets/images/pendulum-scales/G_13.png'),
+          14: require('assets/images/pendulum-scales/G_14.png'),
+        },
+        right: {
+          0: require('assets/images/pendulum-scales/D_0.png'),
+          1: require('assets/images/pendulum-scales/D_1.png'),
+          2: require('assets/images/pendulum-scales/D_2.png'),
+          3: require('assets/images/pendulum-scales/D_3.png'),
+          4: require('assets/images/pendulum-scales/D_4.png'),
+          5: require('assets/images/pendulum-scales/D_5.png'),
+          6: require('assets/images/pendulum-scales/D_6.png'),
+          7: require('assets/images/pendulum-scales/D_7.png'),
+          8: require('assets/images/pendulum-scales/D_8.png'),
+          9: require('assets/images/pendulum-scales/D_9.png'),
+          10: require('assets/images/pendulum-scales/D_10.png'),
+          11: require('assets/images/pendulum-scales/D_11.png'),
+          12: require('assets/images/pendulum-scales/D_12.png'),
+          13: require('assets/images/pendulum-scales/D_13.png'),
+          14: require('assets/images/pendulum-scales/D_14.png'),
+        },
+      },
+      link: {
+        left: {
+          0: require('assets/images/pendulum-scales/L_G_0.png'),
+          1: require('assets/images/pendulum-scales/L_G_1.png'),
+          2: require('assets/images/pendulum-scales/L_G_2.png'),
+          3: require('assets/images/pendulum-scales/L_G_3.png'),
+          4: require('assets/images/pendulum-scales/L_G_4.png'),
+          5: require('assets/images/pendulum-scales/L_G_5.png'),
+          6: require('assets/images/pendulum-scales/L_G_6.png'),
+          7: require('assets/images/pendulum-scales/L_G_7.png'),
+          8: require('assets/images/pendulum-scales/L_G_8.png'),
+          9: require('assets/images/pendulum-scales/L_G_9.png'),
+          10: require('assets/images/pendulum-scales/L_G_10.png'),
+          11: require('assets/images/pendulum-scales/L_G_11.png'),
+          12: require('assets/images/pendulum-scales/L_G_12.png'),
+          13: require('assets/images/pendulum-scales/L_G_13.png'),
+          14: require('assets/images/pendulum-scales/L_G_14.png'),
+        },
+        right: {
+          0: require('assets/images/pendulum-scales/L_D_0.png'),
+          1: require('assets/images/pendulum-scales/L_D_1.png'),
+          2: require('assets/images/pendulum-scales/L_D_2.png'),
+          3: require('assets/images/pendulum-scales/L_D_3.png'),
+          4: require('assets/images/pendulum-scales/L_D_4.png'),
+          5: require('assets/images/pendulum-scales/L_D_5.png'),
+          6: require('assets/images/pendulum-scales/L_D_6.png'),
+          7: require('assets/images/pendulum-scales/L_D_7.png'),
+          8: require('assets/images/pendulum-scales/L_D_8.png'),
+          9: require('assets/images/pendulum-scales/L_D_9.png'),
+          10: require('assets/images/pendulum-scales/L_D_10.png'),
+          11: require('assets/images/pendulum-scales/L_D_11.png'),
+          12: require('assets/images/pendulum-scales/L_D_12.png'),
+          13: require('assets/images/pendulum-scales/L_D_13.png'),
+          14: require('assets/images/pendulum-scales/L_D_14.png'),
+        },
+      },
+    };
+
+    this._cardPendFramePaths = {
+      regular: require('assets/images/pendulum-frames/regular.png'),
+      link: require('assets/images/pendulum-frames/link.png'),
+    };
+
+    this._cardPendCoverPaths = {
+      normal: require('assets/images/pendulum-covers/normal.png'),
+      effect: require('assets/images/pendulum-covers/effect.png'),
+      ritual: require('assets/images/pendulum-covers/ritual.png'),
+      fusion: require('assets/images/pendulum-covers/fusion.png'),
+      synchro: require('assets/images/pendulum-covers/synchro.png'),
+      darkSynchro: require('assets/images/pendulum-covers/darkSynchro.png'),
+      xyz: require('assets/images/pendulum-covers/xyz.png'),
+      link: require('assets/images/pendulum-covers/link.png'),
+      monsterToken: require('assets/images/pendulum-covers/monsterToken.png'),
+      obelisk: require('assets/images/pendulum-covers/obelisk.png'),
+      slifer: require('assets/images/pendulum-covers/slifer.png'),
+      ra: require('assets/images/pendulum-covers/ra.png'),
+      spell: '',
+      trap: '',
+      legendaryDragon: '',
+      token: '',
+      skill: '',
+    };
+
+    this._cardLinkArrowPaths = {
+      regular: {
+        top: require('assets/images/link-arrows/top.png'),
+        bottom: require('assets/images/link-arrows/bottom.png'),
+        left: require('assets/images/link-arrows/left.png'),
+        right: require('assets/images/link-arrows/right.png'),
+        topLeft: require('assets/images/link-arrows/topLeft.png'),
+        topRight: require('assets/images/link-arrows/topRight.png'),
+        bottomLeft: require('assets/images/link-arrows/bottomLeft.png'),
+        bottomRight: require('assets/images/link-arrows/bottomRight.png'),
+      },
+      pendulum: {
+        top: require('assets/images/link-arrows/topPendulum.png'),
+        bottom: require('assets/images/link-arrows/bottomPendulum.png'),
+        left: require('assets/images/link-arrows/leftPendulum.png'),
+        right: require('assets/images/link-arrows/rightPendulum.png'),
+        topLeft: require('assets/images/link-arrows/topLeftPendulum.png'),
+        topRight: require('assets/images/link-arrows/topRightPendulum.png'),
+        bottomLeft: require('assets/images/link-arrows/bottomLeftPendulum.png'),
+        bottomRight: require('assets/images/link-arrows/bottomRightPendulum.png'),
+      },
+    };
+
+    this._cardStickerPaths = {
+      none: '',
+      silver: require('assets/images/stickers/silver.png'),
+      gold: require('assets/images/stickers/gold.png'),
+      grey: require('assets/images/stickers/grey.png'),
+      white: require('assets/images/stickers/white.png'),
+      lightBlue: require('assets/images/stickers/lightBlue.png'),
+      skyBlue: require('assets/images/stickers/skyBlue.png'),
+      cyan: require('assets/images/stickers/cyan.png'),
+      aqua: require('assets/images/stickers/aqua.png'),
+      green: require('assets/images/stickers/green.png'),
+    };
+
+    this._cardLimitationsPaths = {
+      fr: {
+        '1996': {
+          black: {
+            unlimited: '',
+            limited: require('assets/images/limitations/fr/1996/black/limited.png'),
+            forbidden: require('assets/images/limitations/fr/1996/black/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/fr/1996/black/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/fr/1996/black/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/fr/1996/black/duelTerminal.png'),
+            anime: require('assets/images/limitations/fr/1996/black/anime.png'),
+            copyright: require('assets/images/limitations/fr/1996/black/copyright.png'),
+          },
+          white: {
+            unlimited: '',
+            limited: require('assets/images/limitations/fr/1996/white/limited.png'),
+            forbidden: require('assets/images/limitations/fr/1996/white/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/fr/1996/white/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/fr/1996/white/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/fr/1996/white/duelTerminal.png'),
+            anime: require('assets/images/limitations/fr/1996/white/anime.png'),
+            copyright: require('assets/images/limitations/fr/1996/white/copyright.png'),
+          },
+        },
+        '2020': {
+          black: {
+            unlimited: '',
+            limited: require('assets/images/limitations/fr/2020/black/limited.png'),
+            forbidden: require('assets/images/limitations/fr/2020/black/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/fr/2020/black/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/fr/2020/black/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/fr/2020/black/duelTerminal.png'),
+            anime: require('assets/images/limitations/fr/2020/black/anime.png'),
+            copyright: require('assets/images/limitations/fr/2020/black/copyright.png'),
+          },
+          white: {
+            unlimited: '',
+            limited: require('assets/images/limitations/fr/2020/white/limited.png'),
+            forbidden: require('assets/images/limitations/fr/2020/white/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/fr/2020/white/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/fr/2020/white/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/fr/2020/white/duelTerminal.png'),
+            anime: require('assets/images/limitations/fr/2020/white/anime.png'),
+            copyright: require('assets/images/limitations/fr/2020/white/copyright.png'),
+          },
+        },
+      },
+      en: {
+        '1996': {
+          black: {
+            unlimited: '',
+            limited: require('assets/images/limitations/en/1996/black/limited.png'),
+            forbidden: require('assets/images/limitations/en/1996/black/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/en/1996/black/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/en/1996/black/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/en/1996/black/duelTerminal.png'),
+            anime: require('assets/images/limitations/en/1996/black/anime.png'),
+            copyright: require('assets/images/limitations/en/1996/black/copyright.png'),
+          },
+          white: {
+            unlimited: '',
+            limited: require('assets/images/limitations/en/1996/white/limited.png'),
+            forbidden: require('assets/images/limitations/en/1996/white/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/en/1996/white/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/en/1996/white/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/en/1996/white/duelTerminal.png'),
+            anime: require('assets/images/limitations/en/1996/white/anime.png'),
+            copyright: require('assets/images/limitations/en/1996/white/copyright.png'),
+          },
+        },
+        '2020': {
+          black: {
+            unlimited: '',
+            limited: require('assets/images/limitations/en/2020/black/limited.png'),
+            forbidden: require('assets/images/limitations/en/2020/black/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/en/2020/black/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/en/2020/black/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/en/2020/black/duelTerminal.png'),
+            anime: require('assets/images/limitations/en/2020/black/anime.png'),
+            copyright: require('assets/images/limitations/en/2020/black/copyright.png'),
+          },
+          white: {
+            unlimited: '',
+            limited: require('assets/images/limitations/en/2020/white/limited.png'),
+            forbidden: require('assets/images/limitations/en/2020/white/forbidden.png'),
+            forbiddenDeck: require('assets/images/limitations/en/2020/white/forbiddenDeck.png'),
+            firstEdition: require('assets/images/limitations/en/2020/white/firstEdition.png'),
+            duelTerminal: require('assets/images/limitations/en/2020/white/duelTerminal.png'),
+            anime: require('assets/images/limitations/en/2020/white/anime.png'),
+            copyright: require('assets/images/limitations/en/2020/white/copyright.png'),
+          },
+        },
+      },
+    };
+
+    this._currentCard = {} as ICard;
+    this._localCards = [];
+    this._renderCardsQueue = [];
+
     app.$errorManager.handlePromise(this.load(true));
   }
 
@@ -616,6 +1114,30 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
       result = `${result}${Math.floor(Math.random() * 10)}`;
     }
     return result;
+  }
+
+  public getStIcon(card: ICard) {
+    switch (card.stType) {
+      case 'normal':
+        if (card.frames.includes('spell')) return this._cardStPaths[card.language].normalSpell;
+        else return this._cardStPaths[card.language].normalTrap;
+      case 'ritual':
+        return this._cardStPaths[card.language].ritual;
+      case 'quickplay':
+        return this._cardStPaths[card.language].quickplay;
+      case 'field':
+        return this._cardStPaths[card.language].field;
+      case 'continuous':
+        return this._cardStPaths[card.language].continuous;
+      case 'equip':
+        return this._cardStPaths[card.language].equip;
+      case 'counter':
+        return this._cardStPaths[card.language].counter;
+      case 'link':
+        return this._cardStPaths[card.language].link;
+      default:
+        return '';
+    }
   }
 
   public getStIconName(icon: TStIcon) {

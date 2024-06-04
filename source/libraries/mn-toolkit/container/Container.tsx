@@ -69,19 +69,15 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     return classes;
   }
 
-  public shouldComponentUpdate() {
-    return true;
-  }
-
-  public get inside(): JSXElementChildren {
-    return <div className='mn-container-inside'>{this.children}</div>;
-  }
-
   public render() {
     return (
       <div {...this.renderAttributes()} ref={this.containerRef}>
         {this.inside}
       </div>
     );
+  }
+
+  public get inside(): JSXElementChildren {
+    return <div className='mn-container-inside'>{this.children}</div>;
   }
 }
