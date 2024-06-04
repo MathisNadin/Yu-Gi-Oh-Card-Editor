@@ -1,43 +1,43 @@
-import { ICard } from 'client/editor/card/card-interfaces';
+import { ICard, TCardLanguage, TRushEffectType, TRushTextMode } from 'client/editor/card/card-interfaces';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, JSXElementChild } from 'mn-toolkit';
-import { classNames } from 'mn-tools';
 import { createRef } from 'react';
 
-interface ICardPendProps extends IToolkitComponentProps {
+interface IRushCardDescProps extends IToolkitComponentProps {
   card: ICard;
-  hasPendulumFrame: boolean;
-  includesLink: boolean;
+  description: JSXElementChild[][];
+  includesNormal: boolean;
   onReady: () => void;
 }
 
-interface ICardPendState extends IToolkitComponentState {
-  pendEffect: string;
-  hasPendulumFrame: boolean;
-  includesLink: boolean;
+interface IRushCardDescState extends IToolkitComponentState {
+  description: JSXElementChild[][];
+  includesNormal: boolean;
   checkState: boolean;
   adjustState: 'unknown' | 'tooBig' | 'tooSmall';
-  splitPendEff: JSXElementChild[];
   fontSize: number;
   lineHeight: number;
 }
 
-export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
+export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCardDescState> {
   public ref = createRef<HTMLDivElement>();
 
-  public constructor(props: ICardPendProps) {
+  public constructor(props: IRushCardDescProps) {
     super(props);
-    const { fontSize, lineHeight } = CardPend.predictSizes(
-      props.card.pendEffect,
-      props.hasPendulumFrame,
-      props.includesLink
+    const { fontSize, lineHeight } = RushCardDesc.predictSizes(
+      props.card.language,
+      props.card.description,
+      props.card.rushTextMode,
+      props.card.rushOtherEffects,
+      props.card.rushCondition,
+      props.card.rushEffect,
+      props.card.rushEffectType,
+      props.card.rushChoiceEffects
     );
     this.state = {
-      pendEffect: props.card.pendEffect,
-      hasPendulumFrame: props.hasPendulumFrame,
-      includesLink: props.includesLink,
+      description: [...props.description],
+      includesNormal: props.includesNormal,
       checkState: true,
       adjustState: 'unknown',
-      splitPendEff: props.card.pendEffect.split('\n').map((d, i) => CardPend.getProcessedText(d, i)),
       fontSize,
       lineHeight,
     };
@@ -48,26 +48,33 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   }
 
   public static getDerivedStateFromProps(
-    nextProps: ICardPendProps,
-    prevState: ICardPendState
-  ): Partial<ICardPendState> | null {
+    nextProps: IRushCardDescProps,
+    prevState: IRushCardDescState
+  ): Partial<IRushCardDescState> | null {
     if (
-      prevState.hasPendulumFrame !== nextProps.hasPendulumFrame ||
-      prevState.includesLink !== nextProps.includesLink ||
-      prevState.pendEffect !== nextProps.card.pendEffect
+      prevState.includesNormal !== nextProps.includesNormal ||
+      prevState.description.length !== nextProps.description.length ||
+      !prevState.description.every(
+        (innerArray, index) =>
+          innerArray.length === nextProps.description[index].length &&
+          innerArray.every((value, idx) => value === nextProps.description[index][idx])
+      )
     ) {
-      const { fontSize, lineHeight } = CardPend.predictSizes(
-        nextProps.card.pendEffect,
-        nextProps.hasPendulumFrame,
-        nextProps.includesLink
+      const { fontSize, lineHeight } = RushCardDesc.predictSizes(
+        nextProps.card.language,
+        nextProps.card.description,
+        nextProps.card.rushTextMode,
+        nextProps.card.rushOtherEffects,
+        nextProps.card.rushCondition,
+        nextProps.card.rushEffect,
+        nextProps.card.rushEffectType,
+        nextProps.card.rushChoiceEffects
       );
       return {
         checkState: true,
-        pendEffect: nextProps.card.pendEffect,
-        hasPendulumFrame: nextProps.hasPendulumFrame,
-        includesLink: nextProps.includesLink,
+        description: [...nextProps.description],
+        includesNormal: nextProps.includesNormal,
         adjustState: 'unknown',
-        splitPendEff: nextProps.card.pendEffect.split('\n').map((d, i) => CardPend.getProcessedText(d, i)),
         fontSize,
         lineHeight,
       };
@@ -76,14 +83,76 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     }
   }
 
-  public static predictSizes(pendEff: string, hasPendulumFrame: boolean, includesLink: boolean) {
+  public static predictSizes(
+    language: TCardLanguage,
+    description: string,
+    rushTextMode: TRushTextMode,
+    rushOtherEffects: string,
+    rushCondition: string,
+    rushEffect: string,
+    rushEffectType: TRushEffectType,
+    rushChoiceEffects: string[]
+  ) {
+    let lines: string[] = [];
+    switch (rushTextMode) {
+      case 'vanilla':
+        if (!description) break;
+        lines = description.split('\n');
+        break;
+
+      case 'regular':
+        if (rushOtherEffects) {
+          lines.push(...rushOtherEffects.split('\n'));
+        }
+        rushCondition.split('\n').forEach((line, i) => {
+          if (!i) lines.push(`[Condition] ${line}`);
+          else lines.push(line);
+        });
+
+        let effectLabel = '';
+        switch (rushEffectType) {
+          case 'effect':
+            effectLabel = language === 'fr' ? '[Effet] ' : '[Effect] ';
+            break;
+
+          case 'continuous':
+            effectLabel = language === 'fr' ? '[Effet Continu] ' : '[Continuous Effect] ';
+            break;
+
+          default:
+            break;
+        }
+        rushEffect.split('\n').forEach((line, i) => {
+          if (!i) lines.push(`${effectLabel} ${line}`);
+          else lines.push(line);
+        });
+        break;
+
+      case 'choice':
+        if (rushOtherEffects) {
+          lines.push(...rushOtherEffects.split('\n'));
+        }
+        rushCondition.split('\n').forEach((line, i) => {
+          if (!i) lines.push(`[Condition] ${line}`);
+          else lines.push(line);
+        });
+
+        lines.push(language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ');
+        for (const choice of rushChoiceEffects) {
+          lines.push(...choice.split('\n'));
+        }
+        break;
+
+      default:
+        break;
+    }
+
     let fontSize = 30;
     let lineHeight = 1.2;
-    if (!pendEff || !hasPendulumFrame) return { fontSize, lineHeight };
+    if (!lines.length) return { fontSize, lineHeight };
 
-    let maxHeight = 124;
-    let maxWidth = 556;
-    if (includesLink) maxWidth = 513;
+    const maxWidth = 700;
+    const maxHeight = 194;
 
     let estimatedWidth: number;
     let estimatedHeight: number;
@@ -94,7 +163,6 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       return newLineHeight;
     }
 
-    const lines = pendEff.split('\n');
     do {
       const averageCharWidth = fontSize * 0.6;
       const charsPerLine = Math.floor(maxWidth / averageCharWidth);
@@ -117,29 +185,6 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     return { fontSize, lineHeight };
   }
 
-  public static getProcessedText(text: string, index: number) {
-    const parts = text.split(/(●|•)/).map((part) => part.trim());
-    if (parts.length && !parts[0]) parts.shift();
-
-    let nextHasBullet = false;
-    const processedText: JSX.Element[] = [];
-    parts.forEach((part, i) => {
-      if (part === '●' || part === '•') {
-        nextHasBullet = true;
-      } else {
-        let classes = classNames('span-text', { 'with-bullet-point': nextHasBullet, 'in-middle': i > 1 });
-        nextHasBullet = false;
-        processedText.push(
-          <span key={`processed-text-${index}-${i}`} className={classes}>
-            {part}
-          </span>
-        );
-      }
-    });
-
-    return processedText;
-  }
-
   public componentDidUpdate() {
     if (this.state.checkState) {
       this.checkReady();
@@ -149,14 +194,14 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   }
 
   private get isEmpty() {
-    const { pendEffect, hasPendulumFrame } = this.state;
-    return !hasPendulumFrame || !pendEffect;
+    const { description } = this.state;
+    return !description.length;
   }
 
   private checkReady() {
     if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
 
-    const texts = this.ref.current.querySelectorAll<HTMLParagraphElement>('.pendulum-effect-text');
+    const texts = this.ref.current.querySelectorAll<HTMLParagraphElement>('.description-text');
     if (!texts?.length || this.state.fontSize === 0) {
       return this.setState({
         checkState: false,
@@ -200,6 +245,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
         if (this.state.lineHeight < 1.2) {
           let newLineHeight = this.state.lineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
+          this.setState({ lineHeight: newLineHeight });
           return this.setState({
             adjustState: this.state.adjustState,
             fontSize: this.state.fontSize,
@@ -246,26 +292,25 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   public render() {
     if (this.isEmpty) return null;
 
-    const { includesLink, splitPendEff, fontSize, lineHeight } = this.state;
+    const { includesNormal, description, fontSize, lineHeight } = this.state;
+
+    let containerClass = `custom-container vertical card-layer card-description-holder`;
+    if (includesNormal) containerClass = `${containerClass} normal-text`;
+
     return (
-      <div
-        ref={this.ref}
-        className={classNames('custom-container', 'vertical', 'card-layer', 'card-pendulum-effect-holder', {
-          'on-link': includesLink,
-        })}
-      >
-        {splitPendEff.map((text, i) => {
+      <div className={containerClass} ref={this.ref}>
+        {description.map((d, i) => {
           return (
             <p
-              key={`pendulum-effect-${i}`}
-              className='pendulum-effect-text black-text'
+              key={`rush-description-text-${i}`}
+              className='description-text black-text'
               style={{
                 fontSize: `${fontSize}px`,
                 lineHeight: lineHeight,
                 marginBottom: lineHeight / 2,
               }}
             >
-              {text}
+              {d}
             </p>
           );
         })}

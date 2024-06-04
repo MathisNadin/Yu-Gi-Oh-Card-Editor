@@ -97,6 +97,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     this.abilitiesReady = false;
     this.artworkReady = false;
 
+    const paths = app.$card.paths.master;
     const hasAbilities = app.$card.hasAbilities(card);
     const hasPendulumFrame = app.$card.hasPendulumFrame(card);
     const hasLinkArrows = app.$card.hasLinkArrows(card);
@@ -119,21 +120,21 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         includesSkill = true;
       }
 
-      cardFrames.push(app.$card.cardFramePaths[frame]);
+      cardFrames.push(paths.frames[frame]);
       if (hasPendulumFrame) {
-        pendulumCovers.push(app.$card.cardPendCoverPaths[frame]);
+        pendulumCovers.push(paths.pendCovers[frame]);
       }
     }
 
     let artworkBg: string;
     if (hasPendulumFrame) {
       if (includesLink) {
-        artworkBg = app.$card.cardWhiteArtworkPaths.whiteArtworkPendulumLink;
+        artworkBg = paths.whiteArtworks.whiteArtworkPendulumLink;
       } else {
-        artworkBg = app.$card.cardWhiteArtworkPaths.whiteArtworkPendulum;
+        artworkBg = paths.whiteArtworks.whiteArtworkPendulum;
       }
     } else {
-      artworkBg = app.$card.cardWhiteArtworkPaths.whiteArtwork;
+      artworkBg = paths.whiteArtworks.whiteArtwork;
     }
 
     this.setState({
@@ -199,7 +200,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       this.abilitiesReady &&
       this.artworkReady
     ) {
-      setTimeout(() => this.props.onCardReady());
+      setTimeout(() => this.props.onCardReady(), 200);
     }
   }
 
@@ -268,14 +269,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     if (!card || !loaded) return <div></div>;
 
+    const paths = app.$card.paths.master;
     const copyrightPath =
-      app.$card.cardLimitationsPaths[card.language][card.oldCopyright ? '1996' : '2020'][
+      paths.limitations[card.language][card.oldCopyright ? '1996' : '2020'][
         (!card.pendulum && includesXyz) || includesSkill ? 'white' : 'black'
       ];
 
     return (
       <div className='custom-container card-builder' id={this.props.id}>
-        <img className='card-layer border' src={app.$card.cardBorderPath} alt='border' />
+        <img className='card-layer border' src={paths.border} alt='border' />
 
         {hasPendulumFrame && this.renderFrames(cardFrames, 'card-frame')}
 
@@ -296,7 +298,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {hasPendulumFrame && (
           <img
             className='card-layer pendulum-frame'
-            src={app.$card.cardPendFramePaths[includesLink ? 'link' : 'regular']}
+            src={paths.pendFrames[includesLink ? 'link' : 'regular']}
             alt='pendulumFrame'
           />
         )}
@@ -304,7 +306,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {!includesSkill && (
           <img
             className='card-layer attribute'
-            src={app.$card.cardAttributePaths[card.noTextAttribute ? 'vanilla' : card.language][card.attribute]}
+            src={paths.attributes[card.noTextAttribute ? 'vanilla' : card.language][card.attribute]}
             alt='attribute'
           />
         )}
@@ -318,13 +320,13 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {hasAbilities &&
           !includesSkill &&
           (includesLink ? (
-            <img className='card-layer atk-link-line' src={app.$card.atkLinkLine} alt='atkLinkLine' />
+            <img className='card-layer atk-link-line' src={paths.atkLinkLine} alt='atkLinkLine' />
           ) : (
-            <img className='card-layer atk-def-line' src={app.$card.atkDefLine} alt='atkDefLine' />
+            <img className='card-layer atk-def-line' src={paths.atkDefLine} alt='atkDefLine' />
           ))}
 
         {card.sticker !== 'none' && (
-          <img className='card-layer sticker' src={app.$card.cardStickerPaths[card.sticker]} alt='sticker' />
+          <img className='card-layer sticker' src={paths.stickers[card.sticker]} alt='sticker' />
         )}
 
         {card.edition !== 'forbidden' && (
@@ -390,7 +392,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {hasPendulumFrame && (
           <img
             className='card-layer card-scale left-scale'
-            src={app.$card.cardScalePaths[includesLink ? 'link' : 'regular'].left[card.scales.left]}
+            src={paths.scales[includesLink ? 'link' : 'regular'].left[card.scales.left]}
             alt='leftScale'
           />
         )}
@@ -398,7 +400,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         {hasPendulumFrame && (
           <img
             className='card-layer card-scale right-scale'
-            src={app.$card.cardScalePaths[includesLink ? 'link' : 'regular'].right[card.scales.right]}
+            src={paths.scales[includesLink ? 'link' : 'regular'].right[card.scales.right]}
             alt='rightScale'
           />
         )}
@@ -441,14 +443,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   private renderStPlus() {
     const { card } = this.props;
     const { isBackrow } = this.state;
+    const paths = app.$card.paths.master;
     if (isBackrow && card.stType !== 'normal' && card.stType !== 'link') {
       return (
         <img
           className='card-layer st-plus'
           src={
             card.frames.includes('spell')
-              ? app.$card.cardStPaths[card.language].spellPlus
-              : app.$card.cardStPaths[card.language].trapPlus
+              ? paths.spellTraps[card.language].spellPlus
+              : paths.spellTraps[card.language].trapPlus
           }
           alt='stPlus'
         />
@@ -459,14 +462,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   private renderLevelOrStIcon() {
     const { card } = this.props;
+    const paths = app.$card.paths.master;
+
     let includesOther = false;
     let includesXyz = false;
     let includesDarkSynchro = false;
     let includesLink = false;
-
     for (const frame of card.frames) {
       if (frame === 'spell' || frame === 'trap') {
-        return <img className='card-layer st-icon' src={app.$card.getStIcon(card)} alt='stIcon' />;
+        return <img className='card-layer st-icon' src={app.$card.getMasterStIcon(card)} alt='stIcon' />;
       } else if (frame === 'link') {
         includesLink = true;
       } else if (frame === 'xyz') {
@@ -479,25 +483,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     }
 
     if (includesLink) {
-      return (
-        <img
-          className='card-layer link-rating'
-          src={app.$card.cardLevelPaths.linkRating[card.level]}
-          alt='linkRating'
-        />
-      );
+      return <img className='card-layer link-rating' src={paths.levels.linkRating[card.level]} alt='linkRating' />;
     } else if (includesOther) {
-      return <img className='card-layer level' src={app.$card.cardLevelPaths.level[card.level]} alt='level' />;
+      return <img className='card-layer level' src={paths.levels.level[card.level]} alt='level' />;
     } else if (includesDarkSynchro) {
       return (
-        <img
-          className='card-layer negative-level'
-          src={app.$card.cardLevelPaths.negativeLevel[card.level]}
-          alt='negativeLevel'
-        />
+        <img className='card-layer negative-level' src={paths.levels.negativeLevel[card.level]} alt='negativeLevel' />
       );
     } else if (includesXyz) {
-      return <img className='card-layer rank' src={app.$card.cardLevelPaths.rank[card.level]} alt='rank' />;
+      return <img className='card-layer rank' src={paths.levels.rank[card.level]} alt='rank' />;
     }
     return null;
   }
@@ -507,7 +501,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     if (!hasLinkArrows) return null;
 
     const { card } = this.props;
-    const linkArrowPaths = app.$card.cardLinkArrowPaths[hasPendulumFrame ? 'pendulum' : 'regular'];
+    const paths = app.$card.paths.master;
+    const linkArrowPaths = paths.linkArrows[hasPendulumFrame ? 'pendulum' : 'regular'];
     return (
       <div className='custom-container card-layer card-link-arrows'>
         {card.linkArrows.top && (

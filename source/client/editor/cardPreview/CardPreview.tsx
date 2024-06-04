@@ -3,7 +3,6 @@ import { ICardListener } from 'client/editor/card/CardService';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { toPng } from 'mn-html-to-image';
 import { IContainableProps, IContainableState, Containable, Container, Spinner } from 'mn-toolkit';
-import { uuid } from 'mn-tools';
 
 interface ICardPreviewProps extends IContainableProps {
   card: ICard;
@@ -80,7 +79,6 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
         {!!this.state.renderCard?.rush && (
           <RushCardBuilder
             forRender
-            renderId={uuid()}
             card={this.state.renderCard!}
             onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
             id='placeholder-card-builder'

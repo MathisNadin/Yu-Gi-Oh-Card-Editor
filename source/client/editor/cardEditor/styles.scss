@@ -179,6 +179,13 @@
               box-shadow: 0 -1px 0 nth($theme-light-bg, 4);
             }
           }
+
+          .mn-tab-panes {
+            .mn-textarea-input,
+            .mn-text-input {
+              background-color: white;
+            }
+          }
         }
       }
 

@@ -121,11 +121,14 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       return newLineHeight;
     }
 
+    const lines = description.split('\n');
     do {
       const averageCharWidth = fontSize * 0.6;
       const charsPerLine = Math.floor(maxWidth / averageCharWidth);
-      const explicitLineBreaks = (description.match(/\n/g) || []).length;
-      const lineCount = Math.ceil(description.length / charsPerLine) + explicitLineBreaks;
+      let lineCount = 0;
+      for (const line of lines) {
+        lineCount += Math.ceil(line.length / charsPerLine);
+      }
 
       estimatedWidth = charsPerLine * averageCharWidth;
       estimatedHeight = lineCount * lineHeight * fontSize;
