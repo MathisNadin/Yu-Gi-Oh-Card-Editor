@@ -1,5 +1,5 @@
 import { Component, PropsWithChildren } from 'react';
-import { markdownToHtml } from 'libraries/mn-tools';
+import { markdownToHtml } from 'mn-tools';
 import { IHeaderCrumb } from '.';
 import { ButtonIcon } from '../button';
 import { IState } from '../router';
@@ -25,9 +25,9 @@ export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState> {
   }
 
   public render() {
-    let crumbs = this.props.crumbs.map((x) => ({ ...x }));
+    const crumbs = this.props.crumbs.map((x) => ({ ...x }));
     app.$header.alterBreadCrumb(crumbs);
-    if (app.$device.isSmallScreen)
+    if (app.$device.isSmallScreen) {
       return (
         <div className='mn-breadcrumb'>
           <ButtonIcon icon='toolkit-angle-left' />
@@ -37,6 +37,7 @@ export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState> {
           />
         </div>
       );
+    }
 
     return (
       <div className='mn-breadcrumb'>
@@ -51,7 +52,9 @@ export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState> {
                 className='crumb'
                 dangerouslySetInnerHTML={{ __html: markdownToHtml(crumb.title, true) }}
               />,
-              i < crumbs.length - 1 && <Icon className='separator' iconId='toolkit-angle-right' />,
+              i < crumbs.length - 1 && (
+                <Icon key={`mn-breadcrumb-separator-${i}`} className='separator' iconId='toolkit-angle-right' />
+              ),
             ];
           } else {
             return (

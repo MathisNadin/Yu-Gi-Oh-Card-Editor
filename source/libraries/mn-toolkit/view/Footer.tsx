@@ -11,14 +11,15 @@ export class Footer extends Container<IFooterProps, IFooterState> {
       layout: 'horizontal',
       gutter: true,
       padding: true,
-      mainClassName: 'mn-footer',
       verticalItemAlignment: 'middle',
       itemAlignment: 'right',
       bg: '2',
     };
   }
 
-  public constructor(props: IFooterProps) {
-    super(props);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-footer'] = true;
+    return classes;
   }
 }

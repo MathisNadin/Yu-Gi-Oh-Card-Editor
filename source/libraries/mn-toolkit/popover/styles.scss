@@ -1,430 +1,62 @@
-@keyframes mn-popover-effect {
+@keyframes mn-popover-appear {
   0% {
     opacity: 0;
-    transform: scale(0);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
-@mixin themePopover {
-  display: flex;
-  flex-direction: column;
-  $border-color: black(0.2);
-  pointer-events: auto;
-  position: fixed;
+.mn-popovers {
+  @include fill-all;
+  pointer-events: none;
+  transition: background-color 0.1s ease;
   z-index: $z-index-popover;
-  border-radius: $themeDefaultBorderRadius;
-  box-shadow: black(0.2) 0px 1px 0.25rem 0px;
-  background-color: white;
-  transform: scale(0);
-  will-change: transform, opacity;
-  padding: $themeDefaultSpacing;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  &:focus-visible {
-    outline: none;
-  }
-
-  .mn-popover-wrapper {
-    flex: 1;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  .content {
-    .menu {
-      .menu-item {
-        padding: 10px 0;
-      }
-    }
-  }
-
-  .buttons {
-    text-align: right;
-  }
-
-  .actions {
-    display: flex;
-    gap: calc($themeDefaultSpacing / 2);
-    flex-direction: column;
-
-    .separator {
-      display: flex;
-      height: 1px;
-
-      background-color: black(0.3);
-      .mn-dark-theme & {
-        background-color: white(0.3);
-      }
-    }
-
-    .action {
-      display: flex;
-      cursor: pointer;
-      align-items: center;
-      padding: 0 8px;
-      @include fg(1);
-      height: $themeDefaultItemHeight;
-      &.selected {
-        pointer-events: none;
-        @include fg(3);
-      }
-
-      .mn-icon {
-        @include set-height($themeDefaultItemHeight);
-        text-align: center;
-        margin-right: 8px;
-        width: 40px;
-      }
-
-      .text {
-        flex: 1;
-        @include set-height($themeDefaultItemHeight);
-        display: block;
-        position: relative;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        > .text.table {
-          display: flex;
-          justify-content: space-between;
-        }
-      }
-
-      &:hover {
-        @include bg(3);
-      }
-
-      &.separator {
-        border-bottom: 1px solid black(0.1);
-      }
-
-      &.disabled {
-        pointer-events: none;
-        @include fg(3);
-      }
-
-      &.title {
-        pointer-events: none;
-        font-weight: bold;
-      }
-
-      &.sub-title {
-        padding-left: $themeDefaultSpacing * 2;
-      }
-
-      &.mn-color-primary {
-        color: $primary;
-        .mn-icon {
-          color: $primary;
-        }
-      }
-      &.mn-color-positive {
-        color: $positive;
-        .mn-icon {
-          color: $positive;
-        }
-      }
-      &.mn-color-calm {
-        color: $calm;
-        .mn-icon {
-          color: $calm;
-        }
-      }
-      &.mn-color-balanced {
-        color: $balanced;
-        .mn-icon {
-          color: $balanced;
-        }
-      }
-      &.mn-color-energized {
-        color: $energized;
-        .mn-icon {
-          color: $energized;
-        }
-      }
-      &.mn-color-assertive {
-        color: $assertive;
-        .mn-icon {
-          color: $assertive;
-        }
-      }
-      &.mn-color-royal {
-        color: $royal;
-        .mn-icon {
-          color: $royal;
-        }
-      }
-      &.mn-color-1 {
-        color: nth($theme-light-fg, 1);
-        .mn-icon {
-          color: nth($theme-light-fg, 1);
-        }
-      }
-      &.mn-color-2 {
-        color: nth($theme-light-fg, 2);
-        .mn-icon {
-          color: nth($theme-light-fg, 2);
-        }
-      }
-      &.mn-color-3 {
-        color: nth($theme-light-fg, 3);
-        .mn-icon {
-          color: nth($theme-light-fg, 3);
-        }
-      }
-      &.mn-color-4 {
-        color: nth($theme-light-fg, 4);
-        .mn-icon {
-          color: nth($theme-light-fg, 4);
-        }
-      }
-    }
-
-    &:last-child a {
-      border-bottom: none;
-    }
-  }
-
-  &.active {
-    animation-name: mn-popover-effect;
-    animation-duration: 240ms;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  .mn-abstract-popover {
+    position: absolute;
+    animation-name: mn-popover-appear;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in-out;
     animation-fill-mode: both;
-    transform-origin: top left;
-    &.bottom {
-      transform-origin: bottom left;
-    }
-    &.right {
-      transform-origin: top right;
-    }
-    &.right.bottom {
-      transform-origin: bottom right;
-    }
-  }
+    pointer-events: auto;
+    @include bg(1);
+    border-radius: $themeDefaultBorderRadius;
+    box-shadow: black(0.2) 0px 1px 0.25rem 0px;
 
-  $color: white;
-  $border-color: black(0.1);
-  $border-width: 1px;
-  $triangle-width: 25px;
-  $triangle-height: 15px;
-
-  &.mn-top-bottom {
-    &:before {
-      @include triangle('top', 'bottom', $border-color, $triangle-width, $triangle-height);
-      top: -$triangle-height;
-      left: 50%;
-      margin-left: - calc($triangle-width/2);
-    }
-    &:after {
-      @include triangle('top', 'bottom', $color, $triangle-width - 2 * $border-width, $triangle-height - $border-width);
-      top: -$triangle-height + 2 * $border-width;
-      left: 50%;
-      margin-left: - calc($triangle-width/2) + $border-width;
-    }
-  }
-
-  &.mn-bottom-top {
-    &:before {
-      @include triangle('bottom', 'top', $border-color, $triangle-width, $triangle-height);
-      bottom: -$triangle-height;
-      left: 50%;
-      margin-left: - calc($triangle-width/2);
-    }
-    &:after {
-      @include triangle('bottom', 'top', $color, $triangle-width - 2 * $border-width, $triangle-height - $border-width);
-      bottom: -$triangle-height + 2 * $border-width;
-      left: 50%;
-      margin-left: - calc($triangle-width/2) + $border-width;
-    }
-  }
-
-  &.mn-left-right {
-    &:before {
-      @include triangle('left', 'right', $border-color, $triangle-width, $triangle-height);
-      left: -$triangle-height;
-      top: 50%;
-      margin-top: - calc($triangle-height/2);
-    }
-    &:after {
-      @include triangle('left', 'right', $color, $triangle-width - 2 * $border-width, $triangle-height - $border-width);
-      left: -$triangle-height + 2 * $border-width;
-      top: 50%;
-      margin-top: - calc($triangle-height/2) + $border-width;
-    }
-  }
-
-  &.mn-right-left {
-    &:before {
-      @include triangle('right', 'left', $border-color, $triangle-width, $triangle-height);
-      right: -$triangle-height;
-      top: 50%;
-      margin-top: - calc($triangle-height/2);
-    }
-    &:after {
-      @include triangle('right', 'left', $color, $triangle-width - 2 * $border-width, $triangle-height - $border-width);
-      right: -$triangle-height + 2 * $border-width;
-      top: 50%;
-      margin-top: - calc($triangle-height/2) + $border-width;
-    }
-  }
-
-  &.mn-type-walktrough {
-    background-color: $secondary;
-    $border-color: transparent;
-    $color: $secondary;
-    color: white;
-
-    .mn-typography {
-      color: white;
-    }
-
-    .mn-button-link {
-      color: white;
-      font-weight: bold;
-    }
-
-    &.mn-top-bottom {
-      &:before {
-        @include triangle('top', 'bottom', $border-color, $triangle-width, $triangle-height);
-        top: -$triangle-height;
-        left: 50%;
-        margin-left: - calc($triangle-width/2);
+    &.actions {
+      > .mn-container-inside {
+        padding-right: 0px;
       }
 
-      &:after {
-        @include triangle(
-          'top',
-          'bottom',
-          $color,
-          $triangle-width - 2 * $border-width,
-          $triangle-height - $border-width
-        );
-        top: -$triangle-height + 2 * $border-width;
-        left: 50%;
-        margin-left: - calc($triangle-width/2) + $border-width;
-      }
-    }
+      .action {
+        min-height: $themeDefaultItemHeight;
+        max-height: $themeDefaultItemHeight;
+        padding: 0 calc($themeDefaultSpacing / 2);
 
-    &.mn-bottom-top {
-      &:before {
-        @include triangle('bottom', 'top', $border-color, $triangle-width, $triangle-height);
-        bottom: -$triangle-height;
-        left: 50%;
-        margin-left: - calc($triangle-width/2);
-      }
+        &.separator {
+          min-height: 1px;
+          max-height: 1px;
+          background-color: black(0.3);
 
-      &:after {
-        @include triangle(
-          'bottom',
-          'top',
-          $color,
-          $triangle-width - 2 * $border-width,
-          $triangle-height - $border-width
-        );
-        bottom: -$triangle-height + 2 * $border-width;
-        left: 50%;
-        margin-left: - calc($triangle-width/2) + $border-width;
-      }
-    }
-
-    &.mn-left-right {
-      &:before {
-        @include triangle('left', 'right', $border-color, $triangle-width, $triangle-height);
-        left: -$triangle-height;
-        top: 50%;
-        margin-top: - calc($triangle-height/2);
-      }
-
-      &:after {
-        @include triangle(
-          'left',
-          'right',
-          $color,
-          $triangle-width - 2 * $border-width,
-          $triangle-height - $border-width
-        );
-        left: -$triangle-height + 2 * $border-width;
-        top: 50%;
-        margin-top: - calc($triangle-height/2) + $border-width;
-      }
-    }
-
-    &.mn-right-left {
-      &:before {
-        @include triangle('right', 'left', $border-color, $triangle-width, $triangle-height);
-        right: -$triangle-height;
-        top: 50%;
-        margin-top: - calc($triangle-height/2);
-      }
-
-      &:after {
-        @include triangle(
-          'right',
-          'left',
-          $color,
-          $triangle-width - 2 * $border-width,
-          $triangle-height - $border-width
-        );
-        right: -$triangle-height + 2 * $border-width;
-        top: 50%;
-        margin-top: - calc($triangle-height/2) + $border-width;
-      }
-    }
-  }
-
-  &.mn-no-scroll {
-    .mn-popover-wrapper {
-      overflow-y: hidden;
-    }
-  }
-
-  &.search-popover {
-    .menu-items > span {
-      > .title {
-        font-size: 12px;
-        padding: 0 $themeDefaultSpacing;
-        line-height: 200%;
-      }
-      div.action {
-        > .label {
-          font-size: 14px;
+          .mn-dark-theme & {
+            background-color: white(0.3);
+          }
         }
-      }
-      div.action.keyword {
-        > .label {
-          height: auto;
-          line-height: 175%;
-          font-weight: 500;
-          color: #9a9a9a;
+
+        &:not(.mn-disabled):not(.separator) {
+          &:hover {
+            @include bg(3);
+          }
         }
-      }
-      div.action:not(.keyword) {
-        > label {
-          font-weight: normal;
+
+        &.selected {
+          @include bg(3);
         }
       }
     }
   }
-}
-
-.mn-popover {
-  @include themePopover();
-}
-
-.mn-popover-focus {
-  box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.5);
-  border-radius: $themeDefaultBorderRadius;
-  z-index: $z-index-popover-overlay;
-}
-
-.mn-popover-overlay {
-  pointer-events: auto;
-  z-index: $z-index-popover-overlay;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
 }

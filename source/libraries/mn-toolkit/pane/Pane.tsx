@@ -17,12 +17,9 @@ export class Pane<P extends IPaneProps, S extends IPaneState> extends Container<
     };
   }
 
-  public constructor(props: P) {
-    super(props);
-  }
-
-  public renderClasses(name: string): { [k: string]: boolean } {
-    const classes = super.renderClasses(name);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-pane'] = true;
     if (!this.props.layout) {
       classes['mn-layout-horizontal-stack'] = false;
       classes['mn-layout-vertical-stack'] = false;
@@ -32,9 +29,5 @@ export class Pane<P extends IPaneProps, S extends IPaneState> extends Container<
     }
     classes[`mn-pane-${this.props.position}`] = true;
     return classes;
-  }
-
-  public render() {
-    return this.renderAttributes(<div>{this.props.children}</div>, 'mn-pane');
   }
 }

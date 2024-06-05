@@ -1,8 +1,8 @@
-import { isEmpty } from 'libraries/mn-tools';
+import { isEmpty } from 'mn-tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
-import { IDialogProps, IContainableState, Containable, Spinner, HorizontalStack } from 'libraries/mn-toolkit';
+import { AbstractPopup, IAbstractPopupProps, IAbstractPopupState, HorizontalStack } from 'mn-toolkit';
 
 export interface IArtworkEditDialogResult {
   url: string;
@@ -10,7 +10,7 @@ export interface IArtworkEditDialogResult {
   keepRatio: boolean;
 }
 
-interface IArtworkEditDialogProps extends IDialogProps<IArtworkEditDialogResult> {
+interface IArtworkEditDialogProps extends IAbstractPopupProps<IArtworkEditDialogResult> {
   artworkURL: string;
   pendulumRatio: boolean;
   hasPendulumFrame: boolean;
@@ -20,14 +20,29 @@ interface IArtworkEditDialogProps extends IDialogProps<IArtworkEditDialogResult>
   keepRatio: boolean;
 }
 
-interface IArtworkEditDialogState extends IContainableState {
+interface IArtworkEditDialogState extends IAbstractPopupState {
   artworkURL: string;
   artworkBase64: string;
   crop: Crop;
   keepRatio: boolean;
 }
 
-export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArtworkEditDialogState> {
+export class ArtworkEditDialog extends AbstractPopup<
+  IArtworkEditDialogResult,
+  IArtworkEditDialogProps,
+  IArtworkEditDialogState
+> {
+  public static async show(options: IArtworkEditDialogProps) {
+    options.title = options.title || "Édition de l'image";
+    options.height = options.height || '90%';
+    options.width = options.width || '90%';
+    return await app.$popup.show<IArtworkEditDialogResult, IArtworkEditDialogProps>({
+      type: 'artwork-edit',
+      Component: ArtworkEditDialog,
+      componentProps: options,
+    });
+  }
+
   public constructor(props: IArtworkEditDialogProps) {
     super(props);
     this.state = {
@@ -45,7 +60,8 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
   }
 
   public componentDidUpdate(prevProps: IArtworkEditDialogProps) {
-    if (prevProps !== this.props) app.$errorManager.handlePromise(this.loadArtworkBase64());
+    if (prevProps === this.props) return;
+    app.$errorManager.handlePromise(this.loadArtworkBase64());
   }
 
   private async loadArtworkBase64(artworkURL?: string, usePropsCrops?: boolean) {
@@ -58,7 +74,6 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
           artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
       }
     }
@@ -80,11 +95,6 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     });
   }
 
-  private onValidate(url: string, crop: Crop, keepRatio: boolean) {
-    if (this.props.popupId) app.$popup.remove(this.props.popupId);
-    if (this.props.resolve) this.props.resolve({ url, crop, keepRatio });
-  }
-
   private onCroppingChange(crop: Crop) {
     if (this.state.keepRatio && crop.height !== crop.width) {
       if (crop.height !== this.state.crop.height) {
@@ -96,10 +106,9 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
     this.setState({ crop });
   }
 
-  public render() {
-    if (!this.state.loaded) return <Spinner />;
-    return this.renderAttributes(
-      <HorizontalStack gutter>
+  public renderContent() {
+    return (
+      <HorizontalStack className='artwork-edit-dialog' gutter>
         <ArtworkCropping
           artworkBase64={this.state.artworkBase64}
           hasPendulumFrame={this.props.hasPendulumFrame}
@@ -120,10 +129,9 @@ export class ArtworkEditDialog extends Containable<IArtworkEditDialogProps, IArt
           onKeepRatioChange={(keepRatio) => this.setState({ keepRatio })}
           onCroppingChange={(crop) => this.setState({ crop })}
           onArtworkURLChange={(url) => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
-          onValidate={(url, crop, keepRatio) => this.onValidate(url, crop, keepRatio)}
+          onValidate={(url, crop, keepRatio) => this.close({ url, crop, keepRatio })}
         />
-      </HorizontalStack>,
-      'artwork-edit-dialog'
+      </HorizontalStack>
     );
   }
 }

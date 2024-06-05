@@ -1,5 +1,5 @@
-import { IContainableProps, IContainableState, Containable } from 'libraries/mn-toolkit/containable';
-import { VerticalStack } from 'libraries/mn-toolkit/container';
+import { IContainableProps, IContainableState, Containable } from '../containable';
+import { IVerticalStackProps, VerticalStack } from '../container';
 import { KeyboardEvent, MouseEvent, createRef } from 'react';
 
 interface InplaceEditProps extends IContainableProps {
@@ -66,14 +66,19 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
   }
 
   private onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (this.props.validateOnEnter && e.key === 'Enter') {
-      this.doBlur();
-    }
+    if (!this.props.validateOnEnter || e.key !== 'Enter') return;
+    this.doBlur();
+  }
+
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-inplace-edit'] = true;
+    return classes;
   }
 
   public render() {
-    return this.renderAttributes(
-      <VerticalStack>
+    return (
+      <VerticalStack {...(this.renderAttributes() as IVerticalStackProps)}>
         {this.state.isFocused ? (
           <input
             className='value'
@@ -89,8 +94,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
             {this.tempValue || '<vide>'}
           </div>
         )}
-      </VerticalStack>,
-      'mn-inplace-edit'
+      </VerticalStack>
     );
   }
 }

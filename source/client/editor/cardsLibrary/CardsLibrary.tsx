@@ -1,14 +1,13 @@
-import { deepClone } from 'libraries/mn-tools';
+import { deepClone } from 'mn-tools';
 import { MouseEvent } from 'react';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { ICardListener } from 'client/editor/card/CardService';
 import {
-  IContainableProps,
-  IContainableState,
+  IContainerProps,
+  IContainerState,
   TableColumnSortOrder,
-  Containable,
+  Container,
   Spinner,
-  VerticalStack,
   Table,
   HorizontalStack,
   Typography,
@@ -16,13 +15,13 @@ import {
   Spacer,
   Progress,
   Button,
-} from 'libraries/mn-toolkit';
+} from 'mn-toolkit';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
 
-interface ICardsLibraryProps extends IContainableProps {}
+interface ICardsLibraryProps extends IContainerProps {}
 
-interface ICardsLibraryState extends IContainableState {
+interface ICardsLibraryState extends IContainerState {
   localCards: ICard[];
   sortOption: TCardSortOption;
   sortOrder: TableColumnSortOrder;
@@ -35,10 +34,15 @@ interface ICardsLibraryState extends IContainableState {
   cardsToRender: number;
 }
 
-export class CardsLibrary
-  extends Containable<ICardsLibraryProps, ICardsLibraryState>
-  implements Partial<ICardListener>
-{
+export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibraryState> implements Partial<ICardListener> {
+  public static get defaultProps(): ICardsLibraryProps {
+    return {
+      ...super.defaultProps,
+      fill: true,
+      layout: 'vertical',
+    };
+  }
+
   public constructor(props: ICardsLibraryProps) {
     super(props);
     this.state = {
@@ -228,139 +232,143 @@ export class CardsLibrary
     await app.$card.renderCards(cards);
   }
 
-  public render() {
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['cards-library'] = true;
+    return classes;
+  }
+
+  public get children() {
     if (!this.state.localCards?.length) return <Spinner />;
     const { cardsToRender, cardsRendered, selectAllMode, selectedCardsNum, localCards, sortOption, sortOrder } =
       this.state;
-    return this.renderAttributes(
-      <VerticalStack fill>
-        <Table
-          scroll
-          columns={[
-            {
-              label: 'Format',
-              order: sortOption === 'game' ? sortOrder : undefined,
-              width: '70px',
-              onChangeOrder: () => this.onChangeOrder('game'),
-            },
-            {
-              label: 'Nom',
-              order: sortOption === 'name' ? sortOrder : undefined,
-              onChangeOrder: () => this.onChangeOrder('name'),
-            },
-            {
-              label: 'Modifiée',
-              order: sortOption === 'modified' ? sortOrder : undefined,
-              width: '90px',
-              onChangeOrder: () => this.onChangeOrder('modified'),
-            },
-            {
-              label: '',
-              width: '25px',
-            },
-            {
-              label: '',
-              width: '25px',
-            },
-          ]}
-          rows={localCards.map((card) => {
-            const uuid = card.uuid as string;
-            const isEdited = this.state.edited === card.uuid;
-            const isCurrent = this.state.current === card.uuid;
-            return {
-              className: isCurrent ? 'current' : '',
-              selected: this.state.selectedCards[card.uuid as string],
-              cells: [
-                {
-                  value: (
-                    <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
-                      <Typography content={card.rush ? 'Rush' : 'Master'} variant='help' />
-                    </HorizontalStack>
-                  ),
-                },
-                {
-                  value: (
-                    <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
-                      <Typography content={card.name} variant='help' />
-                    </HorizontalStack>
-                  ),
-                },
-                {
-                  value: (
-                    <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleSelectCard(uuid)}>
-                      <Typography content={this.formatDate(card.modified)} variant='help' />
-                    </HorizontalStack>
-                  ),
-                },
-                {
-                  value: (
-                    <HorizontalStack
-                      fill
-                      itemAlignment='center'
-                      verticalItemAlignment='middle'
-                      onTap={() => (isEdited ? this.saveEdit() : this.startEdit(card))}
-                    >
-                      <Icon iconId={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
-                    </HorizontalStack>
-                  ),
-                },
-                {
-                  value: (
-                    <HorizontalStack
-                      fill
-                      itemAlignment='center'
-                      verticalItemAlignment='middle'
-                      onTap={() => (isEdited ? this.abordEdit() : this.deleteCard(card))}
-                    >
-                      <Icon iconId={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
-                    </HorizontalStack>
-                  ),
-                },
-              ],
-            };
-          })}
-        />
+    return [
+      <Table
+        key='cards-table'
+        columns={[
+          {
+            label: 'Format',
+            order: sortOption === 'game' ? sortOrder : undefined,
+            width: '70px',
+            onChangeOrder: () => this.onChangeOrder('game'),
+          },
+          {
+            label: 'Nom',
+            order: sortOption === 'name' ? sortOrder : undefined,
+            onChangeOrder: () => this.onChangeOrder('name'),
+          },
+          {
+            label: 'Modifiée',
+            order: sortOption === 'modified' ? sortOrder : undefined,
+            width: '90px',
+            onChangeOrder: () => this.onChangeOrder('modified'),
+          },
+          {
+            label: '',
+            width: '42px',
+          },
+          {
+            label: '',
+            width: '42px',
+          },
+        ]}
+        rows={localCards.map((card) => {
+          const uuid = card.uuid as string;
+          const isEdited = this.state.edited === card.uuid;
+          const isCurrent = this.state.current === card.uuid;
+          return {
+            className: isCurrent ? 'current' : '',
+            selected: this.state.selectedCards[card.uuid as string],
+            cells: [
+              {
+                onTap: () => this.toggleSelectCard(uuid),
+                value: (
+                  <HorizontalStack fill verticalItemAlignment='middle'>
+                    <Typography content={card.rush ? 'Rush' : 'Master'} variant='help' />
+                  </HorizontalStack>
+                ),
+              },
+              {
+                onTap: () => this.toggleSelectCard(uuid),
+                value: (
+                  <HorizontalStack fill verticalItemAlignment='middle'>
+                    <Typography content={card.name} variant='help' />
+                  </HorizontalStack>
+                ),
+              },
+              {
+                onTap: () => this.toggleSelectCard(uuid),
+                value: (
+                  <HorizontalStack fill verticalItemAlignment='middle'>
+                    <Typography content={this.formatDate(card.modified)} variant='help' />
+                  </HorizontalStack>
+                ),
+              },
+              {
+                value: (
+                  <HorizontalStack
+                    itemAlignment='center'
+                    verticalItemAlignment='middle'
+                    onTap={() => (isEdited ? this.saveEdit() : this.startEdit(card))}
+                  >
+                    <Icon size={24} iconId={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
+                  </HorizontalStack>
+                ),
+              },
+              {
+                value: (
+                  <HorizontalStack
+                    itemAlignment='center'
+                    verticalItemAlignment='middle'
+                    onTap={() => (isEdited ? this.abordEdit() : this.deleteCard(card))}
+                  >
+                    <Icon size={24} iconId={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
+                  </HorizontalStack>
+                ),
+              },
+            ],
+          };
+        })}
+      />,
 
-        <Spacer />
+      <Spacer key='spacer' />,
 
-        {!!cardsToRender && (
-          <HorizontalStack margin itemAlignment='center'>
-            <Progress
-              fill
-              showPercent
-              color='positive'
-              message='Rendu en cours...'
-              progress={cardsRendered}
-              total={cardsToRender}
-            />
-          </HorizontalStack>
-        )}
+      !!cardsToRender && (
+        <HorizontalStack key='render-progress' margin itemAlignment='center'>
+          <Progress
+            fill
+            showPercent
+            color='neutral'
+            message='Rendu en cours...'
+            progress={cardsRendered}
+            total={cardsToRender}
+          />
+        </HorizontalStack>
+      ),
 
-        {!cardsToRender && (
-          <HorizontalStack margin gutter itemAlignment='center'>
-            {selectAllMode && (
-              <Button icon='toolkit-check-mark' color='balanced' label='Tout' onTap={() => this.selectAll()} />
-            )}
-            {!selectAllMode && (
-              <Button icon='toolkit-check-mark' color='assertive' label='Tout' onTap={() => this.unselectAll()} />
-            )}
-            <Button
-              fill
-              disabled={!selectedCardsNum}
-              color='positive'
-              label='Rendu'
-              onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
-            />
-            <Button
-              fill
-              color='energized'
-              label='Importer'
-              onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
-            />
-          </HorizontalStack>
-        )}
-      </VerticalStack>,
-      'cards-library'
-    );
+      !cardsToRender && (
+        <HorizontalStack key='buttons' padding gutter itemAlignment='center'>
+          {selectAllMode && (
+            <Button icon='toolkit-check-mark' color='positive' label='Tout' onTap={() => this.selectAll()} />
+          )}
+          {!selectAllMode && (
+            <Button icon='toolkit-check-mark' color='negative' label='Tout' onTap={() => this.unselectAll()} />
+          )}
+          <Button
+            fill
+            disabled={!selectedCardsNum}
+            color='neutral'
+            label='Rendu'
+            onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
+          />
+          <Button
+            fill
+            color='primary'
+            label='Importer'
+            onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
+          />
+        </HorizontalStack>
+      ),
+    ];
   }
 }

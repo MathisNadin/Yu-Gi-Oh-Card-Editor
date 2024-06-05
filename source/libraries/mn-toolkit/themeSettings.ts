@@ -13,32 +13,20 @@ export function themeSettings(): IThemeSettings {
   return theme as IThemeSettings;
 }
 
-export type TForegroundColor =
+export type TBaseColor =
   | 'primary'
   | 'secondary'
-  | 'neutral'
+  | 'tertiary'
   | 'positive'
-  | 'calm'
-  | 'balanced'
-  | 'energized'
-  | 'assertive'
-  | 'royal'
+  | 'negative'
+  | 'neutral'
+  | 'warning'
+  | 'info'
   | '1'
   | '2'
   | '3'
   | '4';
 
-export type TBackgroundColor =
-  | 'primary'
-  | 'secondary'
-  | 'neutral'
-  | 'positive'
-  | 'calm'
-  | 'balanced'
-  | 'energized'
-  | 'assertive'
-  | 'royal'
-  | '1'
-  | '2'
-  | '3'
-  | '4';
+export type TForegroundColor = TBaseColor;
+
+export type TBackgroundColor = TBaseColor;

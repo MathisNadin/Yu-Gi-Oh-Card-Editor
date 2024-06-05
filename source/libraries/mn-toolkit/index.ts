@@ -1,19 +1,25 @@
+import { extendNativeObjects } from 'mn-tools';
 import { ApiService } from './api';
+import { AxiosService } from './axios';
 import { Application, IApplicationConfig } from './application';
 import { DeviceService } from './device';
 import { ErrorManagerService } from './errorManager';
 import { IconService, loadSvgs } from './icon';
-import { IndexedDBService } from './indexedDB';
+import { StoreService } from './store';
 import { PopoverService } from './popover';
 import { PopupService } from './popup';
 import { HeaderService } from './view';
+import { SessionService } from './session';
 import { ReactService } from './react';
 import { FilePickerService } from './filePicker';
-import { extendNativeObjects } from 'libraries/mn-tools';
 import { RouterService } from './router';
 import { XhrService } from './xhr';
 import { DrawerService } from './drawer';
 import { OverlayService } from './overlay';
+import { PermissionService } from './permission';
+import { ToasterService } from './toaster';
+import { GalleryService } from './gallery';
+import { SavingManagerService } from './savingManager';
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   extendNativeObjects();
@@ -22,20 +28,26 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 
   window.app.conf = conf;
 
-  app.service('$react', ReactService);
-  app.service('$router', RouterService, { depends: ['$react'] });
   app.service('$errorManager', ErrorManagerService);
   app.service('$device', DeviceService);
-  app.service('$indexedDB', IndexedDBService, { depends: ['$device'] });
+  app.service('$react', ReactService);
+  app.service('$router', RouterService, { depends: ['$react'] });
+  app.service('$toaster', ToasterService, { depends: ['$react'] });
+  app.service('$store', StoreService, { depends: ['$device', '$core'] });
+  app.service('$permission', PermissionService);
+  app.service('$session', SessionService, { depends: ['$store', '$permission', '$api'] });
   app.service('$xhr', XhrService);
   app.service('$header', HeaderService);
   app.service('$api', ApiService);
+  app.service('$axios', AxiosService);
   app.service('$drawer', DrawerService);
   app.service('$overlay', OverlayService);
   app.service('$icon', IconService);
   app.service('$popup', PopupService);
-  app.service('$popover', PopoverService);
+  app.service('$popover', PopoverService, { depends: ['$react'] });
   app.service('$filePicker', FilePickerService);
+  app.service('$gallery', GalleryService, { depends: ['$react'] });
+  app.service('$savingManager', SavingManagerService);
 
   if (beforeBootstrap) beforeBootstrap();
 
@@ -45,32 +57,45 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 }
 
 export * from './themeSettings';
+export * from './containable';
+export * from './container';
+export * from './memberBadge';
+export * from './gallery';
+export * from './pager';
+export * from './slider';
+export * from './searchBar';
+export * from './savingManager';
+export * from './toaster';
 export * from './drawer';
 export * from './overlay';
+export * from './form';
+export * from './colorPicker';
+export * from './richText';
+export * from './picture';
 export * from './pane';
+export * from './splitPane';
+export * from './sortable';
 export * from './router';
 export * from './view';
 export * from './xhr';
+export * from './toolbar';
 export * from './menu';
 export * from './api';
 export * from './application';
 export * from './button';
 export * from './checkbox';
 export * from './fileUploader';
-export * from './containable';
-export * from './container';
 export * from './device';
-export * from './dropdown';
 export * from './errorManager';
 export * from './fileInput';
 export * from './icon';
 export * from './image';
-export * from './indexedDB';
+export * from './store';
 export * from './inplaceEdit';
 export * from './numberInput';
-export * from './observable';
 export * from './popover';
 export * from './popup';
+export * from './toggle';
 export * from './progress';
 export * from './react';
 export * from './select';
@@ -81,3 +106,6 @@ export * from './tabs';
 export * from './textAreaInput';
 export * from './textInput';
 export * from './typography';
+export * from './session';
+export * from './axios';
+export * from './permission';

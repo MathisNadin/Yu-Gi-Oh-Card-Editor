@@ -1,7 +1,7 @@
 {
   "themeDefaultSpacing": 16,
   "themeDefaultItemHeight": 32,
-  "themeDefaultBorderRadius": 6,
+  "themeDefaultBorderRadius": 12,
   "themeDefaultFontSize": 16,
   "themeMaxContentWidth": 750,
   "themeMaxListWidth": 749,

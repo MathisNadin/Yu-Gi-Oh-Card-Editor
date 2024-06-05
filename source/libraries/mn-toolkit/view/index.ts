@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { IPopoverAction } from '../popover';
+import { IActionsPopoverAction } from '../popover';
 import { HeaderService } from './HeaderService';
 
 export * from './AbstractViewComponent';
@@ -27,7 +27,7 @@ export interface IHeaderCrumb {
 }
 
 export interface IHeaderListener {
-  headerGetPageActions(actions: IPopoverAction[]): void;
+  headerGetPageActions(actions: IActionsPopoverAction[]): void;
   headerGetButtons(buttons: IHeaderComponent[]): void;
   headerUpdated(): void;
   breadcrumbAlter(crumbs: IHeaderCrumb[]): void;

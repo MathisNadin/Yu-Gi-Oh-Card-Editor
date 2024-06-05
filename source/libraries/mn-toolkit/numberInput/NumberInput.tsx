@@ -1,14 +1,14 @@
 import { IContainableProps, IContainableState, Containable } from '../containable';
-import { integer } from 'libraries/mn-tools';
+import { integer } from 'mn-tools';
 import { FormEvent } from 'react';
 
-interface INumberInputProps extends IContainableProps {
+export interface INumberInputProps extends IContainableProps {
   autofocus?: boolean;
   placeholder?: string;
-  defaultValue: number;
+  defaultValue?: number;
   min?: number;
   max?: number;
-  onChange: (value: number) => void | Promise<void>;
+  onChange?: (value: number) => void | Promise<void>;
 }
 
 interface INumberInputState extends IContainableState {
@@ -29,12 +29,12 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
 
   public constructor(props: INumberInputProps) {
     super(props);
-    this.state = { ...this.state, value: props.defaultValue };
+    this.state = { ...this.state, value: props.defaultValue! };
   }
 
   public componentDidUpdate() {
     if (this.props.defaultValue !== this.state.value) {
-      this.setState({ value: this.props.defaultValue });
+      this.setState({ value: this.props.defaultValue! });
     }
   }
 
@@ -52,31 +52,44 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     this.forceUpdate();
   }
 
+  public doFocus() {
+    if (this.inputElement) this.inputElement.focus();
+  }
+
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-number-input'] = true;
+    return classes;
+  }
+
   public render() {
-    return this.renderAttributes(
+    return (
       <input
+        {...this.renderAttributes()}
         type='number'
         ref={(c) => !!c && this.onDomInput(c)}
         name={this.props.name}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         value={this.state.value}
-        onBlur={() => this.onBlur()}
-        onFocus={() => this.onFocus()}
-        onChange={(e) => this.onChange(e)}
         min={this.props.min}
         max={this.props.max}
-      />,
-      'mn-number-input'
+        onKeyDown={(e) => this.props.onKeyDown && this.props.onKeyDown(e)}
+        onBlur={(e) => app.$errorManager.handlePromise(this.onBlur(e))}
+        onFocus={(e) => app.$errorManager.handlePromise(this.onFocus(e))}
+        onChange={(e) => this.onChange(e)}
+      />
     );
   }
 
-  protected onBlur() {
-    this.setState({ focus: false });
+  protected async onBlur(e: React.FocusEvent) {
+    await this.setStateAsync({ focus: false });
+    if (this.props.onBlur) await this.props.onBlur(e);
   }
 
-  protected onFocus() {
-    this.setState({ focus: true });
+  protected async onFocus(e: React.FocusEvent) {
+    await this.setStateAsync({ focus: true });
+    if (this.props.onFocus) await this.props.onFocus(e);
   }
 
   private onChange(e: FormEvent<HTMLInputElement>) {

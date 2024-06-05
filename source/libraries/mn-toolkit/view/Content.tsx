@@ -14,11 +14,12 @@ export class Content extends Container<IContentProps, IContentState> {
       margin: false,
       padding: true,
       bg: '2',
-      mainClassName: 'mn-content',
     };
   }
 
-  public constructor(props: IContentProps) {
-    super(props);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-content'] = true;
+    return classes;
   }
 }

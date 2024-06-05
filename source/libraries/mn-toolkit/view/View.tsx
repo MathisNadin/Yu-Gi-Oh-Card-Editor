@@ -1,5 +1,5 @@
 import { Container, IContainerProps, IContainerState } from '../container';
-import { classNames } from 'libraries/mn-tools';
+import { classNames } from 'mn-tools';
 
 interface IViewProps extends IContainerProps {}
 
@@ -14,14 +14,16 @@ export class View extends Container<IViewProps, IViewState> {
     };
   }
 
-  public constructor(props: IViewProps) {
-    super(props);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-view'] = true;
+    return classes;
   }
 
   public render() {
     return (
-      <div id={this.props.nodeId} className={classNames(this.renderClasses('mn-view'))}>
-        {this.props.children}
+      <div id={this.props.nodeId} className={classNames(this.renderClasses())}>
+        {this.inside}
       </div>
     );
   }

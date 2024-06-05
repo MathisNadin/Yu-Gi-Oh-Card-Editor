@@ -1,13 +1,10 @@
-import { classNames } from 'libraries/mn-tools';
+import { classNames } from 'mn-tools';
 import { IContainableProps, IContainableState, Containable } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 
 interface IButtonOutlineProps extends IContainableProps {
-  /** Set the text in front of the button. */
   label: string;
-  /** Set the position of the icon on the button. syntax :  "right" | "left" | "top" | "bottom" */
   color?: TForegroundColor;
-  /* set the button to the specific style mn-button-block. */
   block?: boolean;
 }
 
@@ -17,14 +14,18 @@ export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutli
   public static get defaultProps(): Partial<IButtonOutlineProps> {
     return {
       ...super.defaultProps,
-      color: 'neutral',
+      color: 'primary',
       block: false,
       disabled: false,
     };
   }
 
-  public constructor(props: IButtonOutlineProps) {
-    super(props);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-button-outline'] = true;
+    if (this.props.block) classes['mn-button-block'] = true;
+    if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
+    return classes;
   }
 
   public render() {
@@ -32,14 +33,14 @@ export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutli
       <div
         id={this.props.nodeId}
         title={this.props.hint}
-        className={classNames(
-          this.renderClasses('mn-button-outline'),
-          { 'mn-button-block': this.props.block },
-          `mn-button-color-${this.props.color}`
-        )}
-        onClick={(e) => {
-          if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(e));
-        }}
+        className={classNames(this.renderClasses())}
+        onClick={
+          !this.props.onTap
+            ? undefined
+            : (e) => {
+                app.$errorManager.handlePromise(this.props.onTap!(e));
+              }
+        }
       >
         {!!this.props.label && <span className='label'>{this.props.label}</span>}
       </div>

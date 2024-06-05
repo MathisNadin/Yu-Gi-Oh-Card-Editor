@@ -1,6 +1,6 @@
 import { ICardsExportData } from 'client/editor/card';
-import { Observable, IIndexedDBListener } from 'libraries/mn-toolkit';
-import { deepClone, isObject } from 'libraries/mn-tools';
+import { IStoreListener } from 'mn-toolkit';
+import { Observable, deepClone, isObject, isString } from 'mn-tools';
 
 interface IExportData {
   settings: IUserSettings;
@@ -20,7 +20,7 @@ export interface ISettingsListener {
   settingsUpdated: (settings: IUserSettings) => void;
 }
 
-export class SettingsService extends Observable<ISettingsListener> implements Partial<IIndexedDBListener> {
+export class SettingsService extends Observable<ISettingsListener> implements Partial<IStoreListener> {
   private _settings: IUserSettings = {} as IUserSettings;
 
   public get settings() {
@@ -37,7 +37,7 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
 
   public constructor() {
     super();
-    app.$indexedDB.addListener(this);
+    app.$store.addListener(this);
     app.$errorManager.handlePromise(this.load(true));
   }
 
@@ -52,7 +52,7 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
     });
   }
 
-  public allDeleted() {
+  public cleared() {
     app.$errorManager.handlePromise(this.load(false));
   }
 
@@ -63,10 +63,10 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
   }
 
   private async load(initial: boolean) {
-    this._settings = await app.$indexedDB.get<IUserSettings, SettingsStorageKey>('user-settings');
+    this._settings = await app.$store.get<IUserSettings, SettingsStorageKey>('user-settings');
     if (!this._settings) this._settings = {} as IUserSettings;
     this.correct(this._settings);
-    await app.$indexedDB.save<SettingsStorageKey, IUserSettings>('user-settings', this._settings);
+    await app.$store.set<IUserSettings, SettingsStorageKey>('user-settings', this._settings);
     if (initial) {
       this.fireSettingsLoaded();
     } else {
@@ -76,7 +76,7 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
 
   public async saveSettings(settings: Partial<IUserSettings>) {
     this._settings = { ...this.settings, ...settings };
-    await app.$indexedDB.save<SettingsStorageKey, IUserSettings>('user-settings', this._settings);
+    await app.$store.set<IUserSettings, SettingsStorageKey>('user-settings', this._settings);
     this.fireSettingsUpdated();
   }
 
@@ -91,10 +91,11 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
   public async importData() {
     try {
       const result = await app.$device.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
-      if (!result?.content) return;
+      const resultIsString = isString(result);
+      if (!result || (!resultIsString && !result.content)) return;
 
       const decoder = new TextDecoder('utf-8');
-      const stringContent = decoder.decode(result.content);
+      const stringContent = resultIsString ? result : decoder.decode(result.content);
       if (!stringContent) return;
 
       const data = JSON.parse(stringContent);
@@ -104,13 +105,12 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
         const settings = deepClone((data as IExportData).settings);
         this.correct(settings);
         this._settings = settings;
-        await app.$indexedDB.save<SettingsStorageKey, IUserSettings>('user-settings', this._settings);
+        await app.$store.set<IUserSettings, SettingsStorageKey>('user-settings', this._settings);
         this.fireSettingsUpdated();
       }
 
       if (data.cards) await app.$card.importCardData(data.cards);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
   }

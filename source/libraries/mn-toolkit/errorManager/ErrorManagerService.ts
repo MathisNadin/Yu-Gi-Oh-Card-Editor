@@ -1,4 +1,4 @@
-import { deepClone } from 'libraries/mn-tools';
+import { deepClone } from 'mn-tools';
 import { Component } from 'react';
 
 // let log = logger('$errorManager');
@@ -85,7 +85,6 @@ export class ErrorManagerService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public handlePromise(result: Promise<any> | any) {
-    // eslint-disable-next-line no-console
     if (result instanceof Promise) result.catch((e: Error) => console.error(e));
   }
 }

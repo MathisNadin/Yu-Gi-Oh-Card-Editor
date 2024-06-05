@@ -1,25 +1,3 @@
-/*
-$normal: #C4AA75;
-$effect: #BA693A;
-$ritual: #5E80BE;
-$fusion: #8C4695;
-$synchro: #EEECEA;
-$darkSynchro: #564A4A;
-$xyz: #000000;
-$pendulum: #1d9e74;
-$link: #00639D;
-$spell: #008674;
-$trap: #AD377A;
-$tokenColor: #7D7270;
-$monsterToken: $tokenColor;
-$token: $tokenColor;
-$skill: #0180C1;
-$obelisk: #4F4FB4;
-$slifer: #BF5541;
-$ra: #B6A331;
-$legendaryDragon: #4A9CBF;
-*/
-
 $normal: #e7d8a0;
 $effect: #e08151;
 $ritual: #82a9d6;
@@ -40,80 +18,75 @@ $slifer: #d9654b;
 $ra: #d4b055;
 $legendaryDragon: #82b8d4;
 
-.mn-popup[id='import-popup'] {
-  .mn-popup-inner {
-    max-height: 90%;
+.mn-abstract-popup.import {
+  .card-import-dialog-content {
+    &.websites {
+      gap: calc($themeDefaultSpacing * 2);
 
-    .card-import-dialog {
-      $dialogHeight: calc(100% - 2 *#{$themeDefaultSpacing} - 24px);
-      min-height: $dialogHeight;
-      max-height: $dialogHeight;
+      .logo {
+        padding: $themeDefaultSpacing;
+        width: 75%;
+        max-height: 45%;
 
-      .mn-tab-panes {
-        min-height: 400px;
+        &.selected {
+          border: 2px solid $primary;
+          border-radius: $themeDefaultBorderRadius;
+        }
+      }
+    }
 
-        .card-import-dialog-content {
-          height: calc(100% - 2 * #{$themeDefaultSpacing});
+    &.yuginews {
+      .mn-table-body {
+        .mn-table-row {
+          @each $class,
+            $color
+              in (
+                Normal: $normal,
+                Effet: $effect,
+                Rituel: $ritual,
+                Fusion: $fusion,
+                Synchro: $synchro,
+                Xyz: $xyz,
+                Lien: $link,
+                Magie: $spell,
+                Piège: $trap,
+                Jeton: $token
+              )
+          {
+            &.#{$class} {
+              background: $color;
 
-          &.yuginews {
-            .yuginews-cards-table {
-              height: calc(100% - 3 *#{$themeDefaultSpacing} - 3 * 32px);
-            }
-
-            .mn-table-body {
-              .mn-table-row {
-                @each $class,
-                  $color
-                    in (
-                      Normal: $normal,
-                      Effet: $effect,
-                      Rituel: $ritual,
-                      Fusion: $fusion,
-                      Synchro: $synchro,
-                      Xyz: $xyz,
-                      Lien: $link,
-                      Magie: $spell,
-                      Piège: $trap,
-                      Jeton: $token
-                    )
-                {
-                  &.#{$class} {
-                    background: $color;
-
-                    &.Pendule {
-                      background: linear-gradient(250deg, green -29%, aquamarine 35%, $color 82%);
-                    }
-                  }
-                }
-
-                .mn-typography {
-                  display: block;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  min-width: 100%;
-                  max-width: 100%;
-                  user-select: none;
-                  color: black;
-                }
-
-                filter: brightness(0.8);
-                &.selected {
-                  filter: brightness(1.2);
-                }
+              &.Pendule {
+                background: linear-gradient(250deg, green -29%, aquamarine 35%, $color 82%);
               }
             }
           }
 
-          &.yugipedia {
-            .mn-scroller-container {
-              $scrollerHeight: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
-              min-height: 150px;
-              max-height: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
-              width: 80%;
-            }
+          .mn-typography {
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            min-width: 100%;
+            max-width: 100%;
+            user-select: none;
+            color: black;
+          }
+
+          filter: brightness(0.8);
+          &.selected {
+            filter: brightness(1.2);
           }
         }
+      }
+    }
+
+    &.yugipedia {
+      .mn-scroller-container {
+        $scrollerHeight: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
+        min-height: 150px;
+        max-height: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
+        width: 80%;
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Spinner, RouterViewPort } from 'libraries/mn-toolkit';
+import { Spinner, RouterViewPort, HorizontalStack, Popovers, Popups, Toasters } from 'mn-toolkit';
 import { Component } from 'react';
 
 interface IPageProps {}
@@ -16,6 +16,13 @@ export class Page extends Component<IPageProps, IPageState> {
 
   public render() {
     if (!app.$router.ready) return <Spinner />;
-    return <RouterViewPort />;
+    return (
+      <HorizontalStack fill>
+        <RouterViewPort />
+        <Popups />
+        <Popovers />
+        <Toasters />
+      </HorizontalStack>
+    );
   }
 }

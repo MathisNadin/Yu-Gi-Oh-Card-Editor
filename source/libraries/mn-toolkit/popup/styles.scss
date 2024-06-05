@@ -1,64 +1,54 @@
-@keyframes scaleIn {
+@keyframes mn-popup-scale-in {
   0% {
-    transform: translate(-50%, -50%) scale(0.3);
+    transform: scale(0.3);
     opacity: 0;
   }
   100% {
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
     opacity: 1;
   }
 }
 
-.mn-popup {
+@keyframes mn-popup-scale-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
+.mn-popups {
   @include fill-all;
-  background-color: black(0.3);
-  z-index: $z-index-popup !important;
+  pointer-events: none;
+  transition: background-color 0.1s ease;
+  z-index: $z-index-popup;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  .mn-popup-inner {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    @include bg(1);
-    min-height: 100px;
-    min-width: 100px;
-    border: 1px solid #0052a3;
+  &.active {
+    transition: background-color 0.4s ease;
+    background-color: black(0.3);
+    pointer-events: auto;
+  }
+
+  .mn-abstract-popup {
+    position: absolute;
+    border-radius: $themeDefaultBorderRadius;
+    box-shadow: 0 0 10px black(0.26);
+    animation-name: mn-popup-scale-in;
     animation-duration: 0.2s;
-    animation-name: scaleIn;
-    max-height: 100%;
-    max-width: 100%;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
 
-    .mn-popup-header {
-      $title-height: 24px;
-      @include bg(1);
-      margin: $themeDefaultSpacing;
-      max-width: 100%;
-
-      .mn-popup-title {
-        color: black;
-        flex: 1;
-        font-size: 18px;
-        font-weight: 600;
-        letter-spacing: -0.014em;
-        position: relative;
-        line-height: $title-height;
-      }
-
-      .mn-popup-close {
-        width: $title-height;
-        height: $title-height;
-        cursor: pointer;
-        height: 100%;
-      }
-    }
-
-    .mn-popup-content {
-      $contentWidth: calc(100% - 2 * #{$themeDefaultSpacing});
-      min-width: $contentWidth;
-      max-width: $contentWidth;
-      padding: 0 $themeDefaultSpacing;
-      align-self: center;
-      flex: 1;
+    &.hidding {
+      animation-name: mn-popup-scale-out;
+      animation-duration: 0.2s;
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
     }
   }
 }

@@ -1,5 +1,4 @@
 .mn-text-input {
-  @include mnLayoutContainable();
   line-height: $themeDefaultItemHeight - 2px;
   min-height: $themeDefaultItemHeight - 2px;
 
@@ -20,5 +19,11 @@
   &::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+}
+
+.mn-form-field.mn-field-password {
+  .input-wrapper {
+    align-items: center;
   }
 }

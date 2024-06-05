@@ -1,8 +1,8 @@
 import { IContainerProps, IContainerState, Container } from '../container/Container';
-import { isDefined, classNames, isNumber, isString } from 'libraries/mn-tools';
+import { isDefined, classNames, isNumber, isString } from 'mn-tools';
 import { ITableCell, CellValue, ITableColumn } from './interfaces';
 import { ReactNode } from 'react';
-import { ButtonIcon } from '../button';
+import { Icon } from 'mn-toolkit/icon';
 
 export interface ITableRow {
   /** Set the name of the class. */
@@ -59,7 +59,7 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
         style={style}
         onClick={
           this.props.row.onTap
-            ? () => app.$errorManager.handlePromise(this.props.row.onTap && this.props.row.onTap(this.props.row))
+            ? () => app.$errorManager.handlePromise(this.props.row.onTap!(this.props.row))
             : undefined
         }
       >
@@ -82,9 +82,11 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
                 {!i && this.props.hasSubRows && (
                   <div className='mn-table-toggle-sub-rows'>
                     {!!this.props.row.subRows?.length && (
-                      <ButtonIcon
-                        icon={this.props.row.open ? 'toolkit-angle-down' : 'toolkit-angle-right'}
-                        onTap={() => this.props.onToggleSubRows && this.props.onToggleSubRows(this.props.row)}
+                      <Icon
+                        iconId={this.props.row.open ? 'toolkit-angle-down' : 'toolkit-angle-right'}
+                        onTap={
+                          this.props.onToggleSubRows ? () => this.props.onToggleSubRows!(this.props.row) : undefined
+                        }
                       />
                     )}
                   </div>
@@ -93,7 +95,11 @@ export class TableRow extends Container<ITableRowProps, ITableRowState> {
                 {isString(cell.value) ? (
                   <div className='mn-table-cell-wrapper' dangerouslySetInnerHTML={{ __html: cell.value }} />
                 ) : (
-                  <div key={`${cell.value}-${cell.className}`} className='mn-table-cell-wrapper'>
+                  <div
+                    key={`${cell.value}-${cell.className}`}
+                    className={classNames('mn-table-cell-wrapper', cell.className, { 'has-click': !!cell.onTap })}
+                    onClick={cell.onTap ? () => app.$errorManager.handlePromise(cell.onTap!()) : undefined}
+                  >
                     {cell.value as ReactNode}
                   </div>
                 )}

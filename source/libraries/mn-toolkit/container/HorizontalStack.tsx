@@ -1,6 +1,6 @@
 import { IContainerProps, IContainerState, Container } from './Container';
 
-interface IHorizontalStackProps extends IContainerProps {}
+export interface IHorizontalStackProps extends IContainerProps {}
 interface IHorizontalStackState extends IContainerState {}
 
 export class HorizontalStack extends Container<IHorizontalStackProps, IHorizontalStackState> {
@@ -9,9 +9,5 @@ export class HorizontalStack extends Container<IHorizontalStackProps, IHorizonta
       ...super.defaultProps,
       layout: 'horizontal',
     };
-  }
-
-  public renderClasses(name?: string) {
-    return super.renderClasses(name);
   }
 }

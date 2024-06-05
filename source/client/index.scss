@@ -5,7 +5,7 @@
   }
 }
 
-@import 'libraries/mn-toolkit/index.scss';
+@import 'mn-toolkit/index.scss';
 @import './kernel/styles.scss';
 @import './editor/styles.scss';
 
@@ -25,7 +25,6 @@ html {
 body {
   margin: 0;
   position: relative;
-  color: white;
   height: 100vh;
   font-family: sans-serif;
   overflow-y: hidden;
@@ -86,14 +85,14 @@ textarea,
 input,
 textarea {
   &:focus-visible {
-    outline-color: rgba($positive, 0.7);
+    outline-color: rgba($neutral, 0.7);
     outline-width: 1px;
   }
 }
 
 .mn-checkbox.checked {
   .toggle {
-    background-color: $positive !important;
-    border-color: $positive !important;
+    background-color: $neutral !important;
+    border-color: $neutral !important;
   }
 }

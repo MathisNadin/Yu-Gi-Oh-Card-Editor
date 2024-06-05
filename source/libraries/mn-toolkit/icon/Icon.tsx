@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 
@@ -17,36 +16,31 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     return {
       ...super.defaultProps,
       size: 20,
+      color: '1',
     };
   }
 
-  public constructor(props: P) {
-    super(props);
+  public renderStyle() {
+    const style = super.renderStyle();
+    style.width = `${this.props.size}px`;
+    style.height = `${this.props.size}px`;
+    style.maxWidth = `${this.props.size}px`;
+    style.maxHeight = `${this.props.size}px`;
+    style.minWidth = `${this.props.size}px`;
+    style.minHeight = `${this.props.size}px`;
+    return style;
   }
 
-  public renderAttributes(node: ReactElement, mainClassName: string) {
-    const updatedNode = super.renderAttributes(node, mainClassName);
-    if (this.props.size) {
-      updatedNode.props.style.width = `${this.props.size}px`;
-      updatedNode.props.style.height = `${this.props.size}px`;
-      updatedNode.props.style.maxWidth = `${this.props.size}px`;
-      updatedNode.props.style.maxHeight = `${this.props.size}px`;
-      updatedNode.props.style.minWidth = `${this.props.size}px`;
-      updatedNode.props.style.minHeight = `${this.props.size}px`;
-    }
-    return updatedNode;
-  }
-
-  public renderClasses(name?: string) {
-    let classes = super.renderClasses(name);
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-icon'] = true;
     classes[`mn-icon-${this.props.iconId}`] = true;
     if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
     return classes;
   }
 
   public render() {
-    const icon = app.$icon.get(this.props.iconId);
-    if (!icon) return <div>{this.props.iconId}</div>;
-    return this.renderAttributes(icon, 'mn-icon');
+    const icon = app.$icon.get(this.props.iconId, this.renderAttributes());
+    return icon || <div>{this.props.iconId}</div>;
   }
 }

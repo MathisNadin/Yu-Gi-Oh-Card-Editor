@@ -1,5 +1,5 @@
 import { ICard } from 'client/editor/card';
-import { extend, integer } from 'libraries/mn-tools';
+import { extend, integer } from 'mn-tools';
 
 export interface IReplaceMatrix {
   toReplace: string;
@@ -101,7 +101,7 @@ export class MediaWikiService {
       .replaceAll('%7D', '}')
       .replaceAll('%7E', '~');
 
-    let data: YugipediaGetCardPageApiResponse = await app.$api.get(this.baseApiUrl, {
+    let data: YugipediaGetCardPageApiResponse = await app.$axios.get(this.baseApiUrl, {
       params: {
         action: 'query',
         prop: 'revisions',
@@ -160,7 +160,7 @@ export class MediaWikiService {
     let frSet: string | undefined;
     let jpSet: string | undefined;
 
-    let wikitextArray = wikitext.split('\n');
+    const wikitextArray = wikitext.split('\n');
     wikitextArray.forEach((t, i) => {
       if (t.includes('| rush_duel') && t.includes('true')) {
         card.rush = true;
@@ -390,6 +390,15 @@ export class MediaWikiService {
     }
 
     enName = (name || enName || title) as string;
+    if (enName && card.frames.length === 1 && card.frames[0] === 'normal') {
+      if (enName === 'Token') card.frames = ['token'];
+      else if (enName.includes('Token')) card.frames = ['monsterToken'];
+    }
+
+    if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
+      card.edition = 'forbiddenDeck';
+    }
+
     if (useFr) {
       card.cardSet = frSet as string;
       if (!card.rush && card.cardSet.startsWith('RD/')) {
@@ -461,7 +470,7 @@ export class MediaWikiService {
       } else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
         let artworkName = this.getArtworkName(enName);
         if (artworkName) {
-          let imgData: YugipediaGetCardPageImgApiResponse = await app.$api.get(this.baseApiUrl, {
+          let imgData: YugipediaGetCardPageImgApiResponse = await app.$axios.get(this.baseApiUrl, {
             params: {
               action: 'parse',
               page: titles,
@@ -473,7 +482,7 @@ export class MediaWikiService {
           if (imgData?.parse?.images?.length) {
             let fileName = imgData.parse.images.find((image) => image.includes(artworkName));
             if (fileName) {
-              let artworkData: YugipediaGetCardImgApiResponse = await app.$api.get(this.baseApiUrl, {
+              let artworkData: YugipediaGetCardImgApiResponse = await app.$axios.get(this.baseApiUrl, {
                 params: {
                   action: 'query',
                   titles: `File:${fileName}`,
@@ -488,17 +497,27 @@ export class MediaWikiService {
                 if (keys?.length) {
                   let pageInfo = artworkData?.query?.pages[keys[0]];
                   if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
-                    const filePath =
-                      (await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath)) || '';
+                    const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath);
                     if (filePath) {
                       card.artwork.url = filePath;
                       if (card.rush) {
                         card.dontCoverRushArt = true;
-                        extend(card.artwork, app.$card.getFullRushCardPreset());
-                      } else if (card.pendulum) {
-                        extend(card.artwork, app.$card.getFullPendulumCardPreset());
-                      } else {
-                        extend(card.artwork, app.$card.getFullCardPreset());
+                      }
+
+                      if (
+                        !filePath.endsWith('-OW.webp') &&
+                        !filePath.endsWith('-OW.png') &&
+                        !filePath.endsWith('-OW.jpg') &&
+                        !filePath.endsWith('-OW.jpeg')
+                      ) {
+                        if (card.rush) {
+                          card.dontCoverRushArt = true;
+                          extend(card.artwork, app.$card.getFullRushCardPreset());
+                        } else if (card.pendulum) {
+                          extend(card.artwork, app.$card.getFullPendulumCardPreset());
+                        } else {
+                          extend(card.artwork, app.$card.getFullCardPreset());
+                        }
                       }
                     }
                   }
@@ -509,7 +528,6 @@ export class MediaWikiService {
         }
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
 
@@ -551,7 +569,7 @@ export class MediaWikiService {
     text = text.replaceAll(/\s+/g, ' ');
 
     // Remplacer les balises <br /> par un saut de ligne
-    text = text.replaceAll(/<br \/>/g, '\n');
+    text = text.replaceAll(/<br\s*\/?>/gi, '\n');
 
     text = text.replaceAll("''", '');
 

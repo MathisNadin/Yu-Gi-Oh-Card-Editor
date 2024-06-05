@@ -1,21 +1,27 @@
-import { Component, createElement } from 'react';
-import { IRouterListener, IState } from '../router';
+import { Component, DOMElement, createElement } from 'react';
+import { IRouterListener } from '../router';
 import { Spinner } from '../spinner';
-import { classNames } from 'libraries/mn-tools';
+import { classNames, logger } from 'mn-tools';
+
+const log = logger('router');
 
 interface IRouterViewPortProps {
   className?: string;
+  withLeftMargin?: boolean;
 }
 
 interface IRouterViewPortState {
   loaded: boolean;
-  fragment: string;
 }
 
 export class RouterViewPort
   extends Component<IRouterViewPortProps, IRouterViewPortState>
   implements Partial<IRouterListener>
 {
+  private currentContentKey!: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private currentComponent!: DOMElement<any, any>;
+
   public static get defaultProps(): Partial<IRouterViewPortProps> {
     return {
       className: '',
@@ -29,7 +35,6 @@ export class RouterViewPort
   }
 
   public routerStateChanged() {
-    // console.log('changed');
     this.setState({ loaded: false });
   }
 
@@ -38,22 +43,43 @@ export class RouterViewPort
   }
 
   public render() {
-    const currentState = app.$router.currentState as IState;
-    if (!app.$router.ready)
+    const currentState = app.$router.currentState!;
+    if (!app.$router.ready) {
       return (
         <div>
           <Spinner />
         </div>
       );
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const c: Component<any, any> = currentState.component;
-    const key = currentState.name + JSON.stringify(app.$router.parameters);
-    const content = createElement(c as unknown as string, app.$router.parameters);
-    // console.log('render', key, content);
+    let c: Component<any, any> = currentState.component;
+    const routerKey = `${currentState.name}${JSON.stringify(app.$router.parameters)}`;
+    const newContentKey = `${app.$router.parameters?.key || ''}${routerKey}content`;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let content: DOMElement<any, any>;
+    if (this.currentContentKey !== newContentKey) {
+      content = createElement(c as unknown as string, { ...app.$router.parameters, key: newContentKey });
+      this.currentComponent = content;
+      this.currentContentKey = newContentKey;
+    } else {
+      content = this.currentComponent;
+    }
+
+    log.debug('render', routerKey, content);
     return (
-      <div key={key} className={classNames({ ['loaded']: this.state.loaded }, 'mn-router', this.props.className)}>
+      <div
+        key={routerKey}
+        className={classNames(
+          'mn-router',
+          {
+            loaded: this.state.loaded,
+            'with-left-margin': this.props.withLeftMargin,
+          },
+          this.props.className
+        )}
+      >
         {content}
       </div>
     );

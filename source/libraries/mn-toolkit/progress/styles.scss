@@ -1,26 +1,59 @@
+@keyframes indeterminateProgress {
+  0% {
+    left: 0%;
+  }
+  50% {
+    left: 80%;
+  }
+  100% {
+    left: 0%;
+  }
+}
+
+@mixin colorizeProgressBar($color) {
+  color: unset;
+
+  .progress {
+    background: rgba($color, 0.3);
+
+    .bar {
+      background: $color;
+    }
+  }
+
+  .message {
+    color: $color;
+  }
+}
+
 @mixin themeProgressBar() {
   @include mnLayoutContainable();
   $overloadColor: #d32902;
   display: flex;
   flex-direction: column;
+
   .message {
     margin: 5px 0 0 0;
     font-size: 12px;
     padding: 0;
     text-align: right;
+
     p {
       margin: 0;
       padding: 0;
     }
+
     .percent {
       float: right;
       color: gray;
+      padding-left: 0.5em;
+
       &:after {
         content: '%';
       }
-      padding-left: 0.5em;
     }
   }
+
   .progress {
     position: relative;
     height: 7px;
@@ -28,6 +61,7 @@
     background: rgba($primary, 0.3);
     overflow: hidden;
     @include fx(background-color);
+
     .bar {
       @include fill-all;
       border-radius: 7px;
@@ -35,134 +69,61 @@
       background: $primary;
     }
   }
+
   &.overload {
     .progress {
       background: rgba($overloadColor, 0.3);
+
       .bar {
         background-color: $overloadColor;
       }
     }
   }
-  &.mn-color-primary {
+
+  &.indeterminate {
     .progress {
-      background: rgba($primary, 0.3);
       .bar {
-        background: $primary;
+        animation: indeterminateProgress 3s linear infinite;
+        width: 20%;
       }
     }
-    .message {
-      color: $primary;
-    }
+  }
+
+  &.mn-color-primary {
+    @include colorizeProgressBar($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeProgressBar($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeProgressBar($tertiary);
   }
   &.mn-color-positive {
-    .progress {
-      background: rgba($positive, 0.3);
-      .bar {
-        background: $positive;
-      }
-    }
-    .message {
-      color: $positive;
-    }
+    @include colorizeProgressBar($positive);
   }
-  &.mn-color-calm {
-    .progress {
-      background: rgba($calm, 0.3);
-      .bar {
-        background: $calm;
-      }
-    }
-    .message {
-      color: $calm;
-    }
+  &.mn-color-negative {
+    @include colorizeProgressBar($negative);
   }
-  &.mn-color-balanced {
-    .progress {
-      background: rgba($balanced, 0.3);
-      .bar {
-        background: $balanced;
-      }
-    }
-    .message {
-      color: $balanced;
-    }
+  &.mn-color-neutral {
+    @include colorizeProgressBar($neutral);
   }
-  &.mn-color-energized {
-    .progress {
-      background: rgba($energized, 0.3);
-      .bar {
-        background: $energized;
-      }
-    }
-    .message {
-      color: $energized;
-    }
+  &.mn-color-warning {
+    @include colorizeProgressBar($warning);
   }
-  &.mn-color-assertive {
-    .progress {
-      background: rgba($assertive, 0.3);
-      .bar {
-        background: $assertive;
-      }
-    }
-    .message {
-      color: $assertive;
-    }
-  }
-  &.mn-color-royal {
-    .progress {
-      background: rgba($royal, 0.3);
-      .bar {
-        background: $royal;
-      }
-    }
-    .message {
-      color: $royal;
-    }
+  &.mn-color-info {
+    @include colorizeProgressBar($info);
   }
   &.mn-color-1 {
-    .progress {
-      background: rgba(nth($theme-light-bg, 1), 0.3);
-      .bar {
-        background: nth($theme-light-bg, 1);
-      }
-    }
-    .message {
-      color: nth($theme-light-bg, 1);
-    }
+    @include colorizeProgressBar(nth($theme-light-bg, 1));
   }
   &.mn-color-2 {
-    .progress {
-      background: rgba(nth($theme-light-bg, 2), 0.3);
-      .bar {
-        background: nth($theme-light-bg, 2);
-      }
-    }
-    .message {
-      color: nth($theme-light-bg, 2);
-    }
+    @include colorizeProgressBar(nth($theme-light-bg, 2));
   }
   &.mn-color-3 {
-    .progress {
-      background: rgba(nth($theme-light-bg, 3), 0.3);
-      .bar {
-        background: nth($theme-light-bg, 3);
-      }
-    }
-    .message {
-      color: nth($theme-light-bg, 3);
-    }
+    @include colorizeProgressBar(nth($theme-light-bg, 3));
   }
   &.mn-color-4 {
-    .progress {
-      background: rgba(nth($theme-light-bg, 4), 0.3);
-      .bar {
-        background: nth($theme-light-bg, 4);
-      }
-    }
-    .message {
-      color: nth($theme-light-bg, 4);
-    }
+    @include colorizeProgressBar(nth($theme-light-bg, 4));
   }
 
   &.mn-thickness-l {
@@ -196,10 +157,21 @@
   }
 }
 
-@mixin themeStepProgressBar() {
-  display: flex;
-  padding-top: 26px;
+.mn-progress {
+  @include themeProgressBar();
+}
 
+@mixin colorizeStepProgressBar($color) {
+  .segment,
+  .step {
+    &.mn-step-progress-on {
+      border-color: $color;
+      background-color: $color;
+    }
+  }
+}
+
+@mixin themeStepProgressBar() {
   .step {
     flex: 1 1 0%;
     margin: 0;
@@ -216,7 +188,7 @@
     }
 
     .step-text {
-      width: 90%;
+      margin: calc($themeDefaultSpacing / 2);
     }
 
     .step-circle {
@@ -224,6 +196,7 @@
       position: relative;
       z-index: $z-index-content;
       content: 'xxx';
+      padding-top: 26px;
 
       &::before {
         content: attr(data-text);
@@ -244,10 +217,10 @@
 
       .pointer {
         position: absolute;
+        top: 0;
         left: 2px;
-        top: -25px;
-        color: $energized;
-        display: none;
+        color: $primary;
+        visibility: hidden;
       }
 
       &::after {
@@ -255,7 +228,7 @@
         display: block;
         position: absolute;
         z-index: $z-index-content - 1;
-        top: 10px;
+        top: 36px;
         right: -12px;
         width: 100%;
         height: 4px;
@@ -264,9 +237,15 @@
         transition:
           border-color 0.3s,
           background-position 0.3s;
-        // background-color: ;
       }
     }
+
+    &.active {
+      .pointer {
+        visibility: visible;
+      }
+    }
+
     &:not(.disabled) {
       .step-circle {
         &:before {
@@ -277,6 +256,7 @@
         border-left: 3px dotted $primary;
       }
     }
+
     &.completed {
       .step-circle {
         &:after,
@@ -289,6 +269,7 @@
         border-left: 3px dotted transparent;
       }
     }
+
     &.active {
       .step-circle {
         &:before {
@@ -299,6 +280,7 @@
         display: block;
       }
     }
+
     &.disabled {
       pointer-events: none;
       cursor: pointer;
@@ -324,77 +306,34 @@
     border-left: 3px solid transparent;
     padding-left: 4px;
     display: block;
-    margin: 8px 0;
+    margin: calc($themeDefaultSpacing / 2) 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    @include fg(1);
-    .mn-typography-caption {
-      font-size: 12px;
-    }
   }
 
   &.mn-color-primary {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $primary;
-        background-color: $primary;
-      }
-    }
+    @include colorizeStepProgressBar($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeStepProgressBar($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeStepProgressBar($tertiary);
   }
   &.mn-color-positive {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $positive;
-        background-color: $positive;
-      }
-    }
+    @include colorizeStepProgressBar($positive);
   }
-  &.mn-color-calm {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $calm;
-        background-color: $calm;
-      }
-    }
+  &.mn-color-negative {
+    @include colorizeStepProgressBar($negative);
   }
-  &.mn-color-balanced {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $balanced;
-        background-color: $balanced;
-      }
-    }
+  &.mn-color-neutral {
+    @include colorizeStepProgressBar($neutral);
   }
-  &.mn-color-energized {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $energized;
-        background-color: $energized;
-      }
-    }
+  &.mn-color-warning {
+    @include colorizeStepProgressBar($warning);
   }
-  &.mn-color-assertive {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $assertive;
-        background-color: $assertive;
-      }
-    }
-  }
-  &.mn-color-royal {
-    .segment,
-    .step {
-      &.mn-step-progress-on {
-        border-color: $royal;
-        background-color: $royal;
-      }
-    }
+  &.mn-color-info {
+    @include colorizeStepProgressBar($info);
   }
   &.mn-color-1 {
     .segment,
@@ -434,6 +373,6 @@
   }
 }
 
-.mn-progress {
-  @include themeProgressBar();
+.mn-step-progress {
+  @include themeStepProgressBar();
 }

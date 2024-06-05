@@ -1,6 +1,6 @@
-import { classNames } from 'libraries/mn-tools';
-import { ScrollContainer } from './ScrollContainer';
-import { Containable, IContainableProps, IContainableState } from 'libraries/mn-toolkit/containable';
+import { JSXElementChildren } from '../react';
+import { Containable, IContainableProps, IContainableState } from '../containable';
+import { createRef } from 'react';
 
 export type TContainerLayout = 'vertical' | 'horizontal' | 'grid';
 
@@ -36,15 +36,21 @@ export interface IContainerProps extends IContainableProps {
 export interface IContainerState extends IContainableState {}
 
 export class Container<PROPS extends IContainerProps, STATE extends IContainerState> extends Containable<PROPS, STATE> {
-  public static get defaultProps(): Partial<IContainerProps> {
+  public containerRef = createRef<HTMLDivElement>();
+
+  public get base() {
+    return this.containerRef;
+  }
+
+  public static get defaultProps(): IContainerProps {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
     };
   }
 
-  public renderClasses(name?: string) {
-    let classes = super.renderClasses(name);
+  public renderClasses() {
+    const classes = super.renderClasses();
     classes['mn-container'] = true;
     if (this.props.layout) classes[`mn-layout-${this.props.layout}-stack`] = true;
     if (this.props.gutter) classes['mn-layout-gutter'] = true;
@@ -63,25 +69,15 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     return classes;
   }
 
-  public shouldComponentUpdate() {
-    return true;
+  public render() {
+    return (
+      <div {...this.renderAttributes()} ref={this.containerRef}>
+        {this.inside}
+      </div>
+    );
   }
 
-  public render() {
-    if (!this.props.scroll && !this.props.scrollX)
-      return this.renderAttributes(<div>{this.props.children}</div>, 'mn-container');
-    return (
-      <ScrollContainer
-        style={this.renderStyle()}
-        className={classNames(super.renderClasses())}
-        viewClassName={classNames(this.renderClasses('mn-container'))}
-        onContainerScroll={this.props.onContainerScroll}
-        onScrollRef={this.props.onScrollRef}
-        scroll={!!this.props.scroll}
-        scrollX={!!this.props.scrollX}
-      >
-        {this.props.children}
-      </ScrollContainer>
-    );
+  public get inside(): JSXElementChildren {
+    return <div className='mn-container-inside'>{this.children}</div>;
   }
 }

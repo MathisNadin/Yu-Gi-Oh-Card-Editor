@@ -3,8 +3,56 @@
   src: url(assets/fonts/itcStoneSerifBold.ttf);
 }
 
+@keyframes colorCycle {
+  0% {
+    color: nth($theme-light-bg, 1);
+  }
+  50% {
+    color: $warning;
+  }
+  100% {
+    color: nth($theme-light-bg, 1);
+  }
+}
+
 .home {
   .mn-content {
     @include fgAsBg(1);
+  }
+
+  .home-center-pane {
+    height: 100%;
+  }
+
+  .home-left-pane {
+    .button-tabs {
+      .button-tab {
+        width: 40%;
+        border-radius: 32px;
+
+        &.selected {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .new-version {
+      .mn-typography {
+        animation: colorCycle 3s infinite;
+      }
+    }
+  }
+
+  .home-right-pane {
+    .button-tabs {
+      .button-tab {
+        width: 40%;
+        border-radius: 32px;
+
+        &.selected {
+          font-weight: bold;
+        }
+      }
+    }
   }
 }

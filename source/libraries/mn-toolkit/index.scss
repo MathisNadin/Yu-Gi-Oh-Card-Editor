@@ -1,24 +1,24 @@
-$positive: #387ef5 !default;
-$calm: #11c1f3 !default;
-$balanced: #33cd5f !default;
-$energized: #ffc900 !default;
-$assertive: #ef473a !default;
-$royal: #886aea !default;
-$primary: $royal !default;
-$secondary: $calm !default;
+$themeDefaultSpacing: 16px;
+$themeDefaultItemHeight: 32px;
+$themeDefaultBorderRadius: 12px;
+$themeDefaultFontSize: 16px;
+$themeMaxContentWidth: 750px;
+$themeMaxListWidth: 749px;
+$fieldBorderSize: 1px;
+
+$primary: #fabd2f;
+$secondary: #563d7c;
+$tertiary: #f88379;
+$positive: #28a745;
+$negative: #dc3545;
+$neutral: #1e90ff;
+$warning: #ffca2c;
+$info: #17a2b8;
 
 $theme-dark-bg: (#181818 #414141 #555555 #9d9d9d) !default;
 $theme-dark-fg: (#e9e9e9 #b8b8b8 #696969 #707070) !default;
 $theme-light-bg: (#ffffff #f6f8f9 #eef0f2 #e5e9eb) !default;
 $theme-light-fg: (#474747 #8a8a8a #9e9e9e #e4e4e4) !default;
-
-$themeDefaultSpacing: 16px;
-$themeDefaultItemHeight: 32px;
-$themeDefaultBorderRadius: 6px;
-$themeDefaultFontSize: 16px;
-$themeMaxContentWidth: 750px;
-$themeMaxListWidth: 749px;
-$fieldBorderSize: 1px;
 
 @mixin bg($index: 1) {
   background-color: nth($theme-light-bg, $index);
@@ -45,15 +45,6 @@ $fieldBorderSize: 1px;
   fill: nth($theme-light-fg, $index);
   .mn-dark-theme & {
     fill: nth($theme-dark-fg, $index);
-  }
-}
-
-@mixin bgAsFill($index: 1) {
-  fill: nth($theme-light-bg, $index);
-  color: nth($theme-light-bg, $index);
-  .mn-dark-theme & {
-    fill: nth($theme-dark-bg, $index);
-    color: nth($theme-dark-bg, $index);
   }
 }
 
@@ -134,9 +125,7 @@ $fieldBorderSize: 1px;
   }
 }
 
-$energized: $assertive !default;
-
-$theme-default-font-name: Verdana, Helvetica, sans-serif !default;
+$theme-default-font-name: Tahoma, Helvetica, sans-serif !default;
 
 $theme-small-ratio: 0.7;
 
@@ -149,11 +138,71 @@ $z-index-view-above: 3;
 $z-index-overlay: 6;
 $z-index-drawer: 7;
 $z-index-popup: 7;
-$z-index-toaster: 7;
-$z-index-popover-overlay: 8;
-$z-index-popover: 9;
+$z-index-popover: 8;
+$z-index-toaster: 9;
 $z-index-overall: 100;
 
+.mn-color-primary {
+  color: $primary;
+}
+.mn-color-secondary {
+  color: $secondary;
+}
+.mn-color-tertiary {
+  color: $tertiary;
+}
+.mn-color-positive {
+  color: $positive;
+}
+.mn-color-negative {
+  color: $negative;
+}
+.mn-color-neutral {
+  color: $neutral;
+}
+.mn-color-warning {
+  color: $warning;
+}
+.mn-color-info {
+  color: $info;
+}
+.mn-color-1 {
+  @include fg(1);
+}
+.mn-color-2 {
+  @include fg(2);
+}
+.mn-color-3 {
+  @include fg(3);
+}
+.mn-color-4 {
+  @include fg(4);
+}
+
+.mn-bg-primary {
+  background-color: $primary;
+}
+.mn-bg-secondary {
+  background-color: $secondary;
+}
+.mn-bg-tertiary {
+  background-color: $tertiary;
+}
+.mn-bg-positive {
+  background-color: $positive;
+}
+.mn-bg-negative {
+  background-color: $negative;
+}
+.mn-bg-neutral {
+  background-color: $neutral;
+}
+.mn-bg-warning {
+  background-color: $warning;
+}
+.mn-bg-info {
+  background-color: $info;
+}
 .mn-bg-1 {
   @include bg(1);
 }
@@ -165,30 +214,6 @@ $z-index-overall: 100;
 }
 .mn-bg-4 {
   @include bg(4);
-}
-.mn-bg-primary {
-  background-color: $primary;
-}
-.mn-bg-secondary {
-  background-color: $secondary;
-}
-.mn-bg-positive {
-  background-color: $positive;
-}
-.mn-bg-calm {
-  background-color: $calm;
-}
-.mn-bg-balanced {
-  background-color: $balanced;
-}
-.mn-bg-energized {
-  background-color: $energized;
-}
-.mn-bg-assertive {
-  background-color: $assertive;
-}
-.mn-bg-royal {
-  background-color: $royal;
 }
 
 .mn-zindex-content {
@@ -236,20 +261,11 @@ $z-index-overall: 100;
   display: flex;
   position: relative;
 
-  &.mn-fill {
-    flex: 1;
-    overflow: hidden;
-  }
-
-  &.has-click {
-    cursor: pointer;
-  }
-
   $float-margin: 5px;
 
   &.mn-float-left {
     position: absolute !important;
-    left: $float-margin
+    left: $float-margin;
   }
 
   &.mn-float-right {
@@ -292,6 +308,15 @@ $z-index-overall: 100;
     left: $float-margin;
     top: 50%;
   }
+}
+
+.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
+
+.has-click {
+  cursor: pointer;
 }
 
 @mixin mnLayoutHorizontalStack {
@@ -360,7 +385,6 @@ $z-index-overall: 100;
     right: -32px + $size;
     top: -32px + $size;
     bottom: -32px + $size;
-    /*background-color: rgba(red, 0.3);*/
   }
 }
 
@@ -376,7 +400,6 @@ $z-index-overall: 100;
 }
 
 @mixin ios-top($prop, $adding: 0) {
-  /* ios-top #{$prop} #{$adding} */
   @include on(ios) {
     @if ($adding == 0) {
       #{$prop}: constant(safe-area-inset-top);
@@ -451,22 +474,24 @@ $z-index-overall: 100;
 
 @import './containable/styles.scss';
 @import './container/styles.scss';
+@import './form/styles.scss';
 @import './pane/styles.scss';
 @import './menu/styles.scss';
 @import './router/styles.scss';
 @import './view/styles.scss';
 @import './button/styles.scss';
 @import './checkbox/styles.scss';
-@import './dropdown/styles.scss';
 @import './fileUploader/styles.scss';
 @import './fileInput/styles.scss';
 @import './icon/styles.scss';
+@import './splitPane/styles.scss';
 @import './image/styles.scss';
 @import './inplaceEdit/styles.scss';
 @import './numberInput/styles.scss';
 @import './popover/styles.scss';
 @import './popup/styles.scss';
 @import './progress/styles.scss';
+@import './sortable/styles.scss';
 @import './select/styles.scss';
 @import './spacer/styles.scss';
 @import './spinner/styles.scss';
@@ -477,3 +502,280 @@ $z-index-overall: 100;
 @import './typography/styles.scss';
 @import './overlay/styles.scss';
 @import './drawer/styles.scss';
+@import './pager/styles.scss';
+@import './memberBadge/styles.scss';
+@import './toaster/styles.scss';
+@import './toggle/styles.scss';
+@import './richText/styles.scss';
+@import './picture/styles.scss';
+@import './colorPicker/styles.scss';
+@import './gallery/styles.scss';
+@import './slider/styles.scss';
+@import './toolbar/styles.scss';
+@import './searchBar/styles.scss';
+
+@mixin resetBlockTag {
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  font-style: inherit;
+  font-variant: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  font-size-adjust: inherit;
+  font-stretch: inherit;
+  -moz-font-feature-settings: inherit;
+  -moz-font-language-override: inherit;
+  vertical-align: baseline;
+  line-height: 100%;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+@mixin resetElements {
+  applet,
+  object,
+  iframe,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  a,
+  abbr,
+  acronym,
+  address,
+  big,
+  cite,
+  code,
+  del,
+  dfn,
+  em,
+  img,
+  ins,
+  kbd,
+  q,
+  s,
+  samp,
+  small,
+  strike,
+  strong,
+  sub,
+  sup,
+  tt,
+  var,
+  b,
+  u,
+  i,
+  center,
+  dl,
+  dt,
+  dd,
+  ol,
+  ul,
+  li,
+  fieldset,
+  form,
+  label,
+  legend,
+  table,
+  caption,
+  tbody,
+  tfoot,
+  thead,
+  tr,
+  th,
+  td,
+  article,
+  aside,
+  canvas,
+  details,
+  embed,
+  figure,
+  figcaption,
+  footer,
+  header,
+  hgroup,
+  menu,
+  nav,
+  output,
+  ruby,
+  section,
+  summary,
+  time,
+  mark,
+  audio,
+  video,
+  ul,
+  li {
+    @include resetBlockTag;
+    flex-shrink: 0;
+  }
+
+  article,
+  aside,
+  details,
+  figcaption,
+  figure,
+  footer,
+  header,
+  hgroup,
+  menu,
+  nav,
+  section {
+    display: block;
+  }
+
+  audio,
+  canvas,
+  video {
+    display: inline-block;
+  }
+
+  h1 {
+    @include themeTypographyH1();
+  }
+  h2 {
+    @include themeTypographyH2();
+  }
+  h3 {
+    @include themeTypographyH3();
+  }
+  h4 {
+    @include themeTypographyH4();
+  }
+  h5 {
+    @include themeTypographyH5();
+  }
+  h6 {
+    @include themeTypographyH6();
+  }
+  ol {
+    @include themeTypographyOL();
+  }
+  ul {
+    @include themeTypographyUL();
+  }
+
+  blockquote,
+  q {
+    @include themeTypographyBlockquote();
+  }
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  a {
+    text-decoration: none;
+    @include fg(1);
+  }
+
+  .emoji {
+    width: 1em;
+    height: 1em;
+    display: inline;
+    position: relative;
+    top: 0.2em;
+  }
+
+  * {
+    outline: none;
+  }
+
+  .element-invisible {
+    display: none !important;
+  }
+
+  :focus {
+    outline: 0;
+  }
+
+  a,
+  [ng-click] {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  p {
+    @include themeTypographyParagraph;
+  }
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+
+  input,
+  textarea {
+    @include themeTypographyText;
+  }
+}
+
+@mixin resetHtml {
+  html {
+    @include resetBlockTag;
+    touch-action: pan-y;
+    overflow: hidden;
+    @include fgAsBg(1);
+  }
+
+  body {
+    @include resetBlockTag;
+
+    -webkit-touch-callout: none;
+    font-smooth: always;
+    text-size-adjust: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    margin: 0;
+    padding: 0;
+    word-wrap: break-word;
+    text-rendering: optimizeLegibility;
+    backface-visibility: hidden;
+    -webkit-user-drag: none;
+    -ms-content-zooming: none;
+    touch-action: none;
+
+    @include themeTypographyText;
+    @include themeTypographyEnrichment();
+
+    @include fill-all;
+    display: flex;
+    flex-direction: column;
+
+    background-color: nth($theme-light-bg, 1);
+    &.mn-dark-theme {
+      background-color: nth($theme-dark-bg, 1);
+    }
+
+    color: nth($theme-light-fg, 1);
+    &.mn-dark-theme {
+      color: nth($theme-dark-fg, 1);
+    }
+  }
+
+  #root {
+    height: 100%;
+    width: 100%;
+    display: flex;
+  }
+}
+
+@mixin reset {
+  @include resetHtml;
+  @include resetElements;
+}
+
+@include reset;

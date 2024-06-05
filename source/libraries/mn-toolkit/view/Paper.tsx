@@ -18,11 +18,9 @@ export class Paper extends Container<IPaperProps, IPaperState> {
     };
   }
 
-  public constructor(props: IPaperProps) {
-    super(props);
-  }
-
-  public render() {
-    return this.renderAttributes(<div>{this.inside()}</div>, 'mn-paper');
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-paper'] = true;
+    return classes;
   }
 }

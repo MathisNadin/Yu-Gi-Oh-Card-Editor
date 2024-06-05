@@ -35,13 +35,28 @@
     "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish never",
     "start:web": "cross-env NODE_ENV=development PLATFORM=web webpack serve --config webpack/webpack.config.ts",
     "build:web": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack/webpack.config.ts",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
-    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "validate": "npm run format && npm run lint && npm run typecheck"
   },
   "dependencies": {
     "electron-dl": "=3.5.0"
   },
   "devDependencies": {
+    "@capacitor-community/sqlite": "=6.0.0-alpha.1",
+    "@capacitor/android": "=6.0.0",
+    "@capacitor/app": "=6.0.0",
+    "@capacitor/camera": "=6.0.0",
+    "@capacitor/cli": "=6.0.0",
+    "@capacitor/core": "=6.0.0",
+    "@capacitor/device": "=6.0.0",
+    "@capacitor/ios": "=6.0.0",
+    "@capacitor/keyboard": "=6.0.0",
+    "@capacitor/network": "=6.0.0",
+    "@capacitor/push-notifications": "=6.0.0",
+    "@capacitor/splash-screen": "=6.0.0",
+    "@capacitor/status-bar": "=6.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "=0.5.11",
     "@types/node": "=18.15.7",
     "@types/node-sass": "=4.11.3",
@@ -59,7 +74,7 @@
     "css-loader": "=6.9.1",
     "css-minimizer-webpack-plugin": "=6.0.0",
     "electron": "=28.1.1",
-    "electron-builder": "=24.9.1",
+    "electron-builder": "^24.13.3",
     "electronmon": "=2.0.2",
     "eslint": "=8.56.0",
     "eslint-config-prettier": "=9.1.0",

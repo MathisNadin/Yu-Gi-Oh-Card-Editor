@@ -1,0 +1,9 @@
+.mn-color-picker {
+  .mn-color-swatch {
+    $size: 20px;
+    height: $size;
+    width: $size;
+    border-radius: $size;
+    margin-right: 10px;
+  }
+}

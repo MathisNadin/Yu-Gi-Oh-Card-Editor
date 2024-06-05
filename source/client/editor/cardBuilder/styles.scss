@@ -42,6 +42,24 @@
   left: 0;
   position: absolute;
 
+  p,
+  span {
+    font-family: unset;
+    font-size: unset;
+    margin-bottom: unset;
+    line-height: 100%;
+  }
+
+  .custom-container {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+
+    &.vertical {
+      flex-direction: column;
+    }
+  }
+
   .white-text {
     color: white;
   }
@@ -109,11 +127,15 @@
         font-weight: bold;
       }
 
+      &.token-name-container,
       &.skill-name-container {
         width: 690px;
+      }
+
+      &.skill-name-container {
         font-family: Arial, Helvetica, sans-serif;
         font-weight: bold;
-        top: 55px;
+        top: 61px;
         font-size: 62px;
         letter-spacing: -4px;
 
@@ -129,7 +151,7 @@
         overflow-x: visible;
         white-space: nowrap;
         position: absolute;
-        z-index: -1;
+        transform-origin: left;
 
         &.white {
           color: white;
@@ -163,10 +185,6 @@
           color: #d3fcfc;
         }
       }
-
-      .html2canvas-name {
-        max-width: 100%;
-      }
     }
 
     &.card-frames-container {
@@ -175,20 +193,11 @@
 
       .card-frame {
         position: absolute;
-
-        /*         &.regular-frame {
-        }
-
-        &.cover-frame {
-        }
-
-        &.pendulum-frame {
-        } */
       }
     }
 
     &.atk-def {
-      top: 1077px;
+      top: 1078px;
       min-width: 74px;
       font-family: fontAtkDef;
       font-size: 37px;
@@ -214,8 +223,8 @@
       .stat-text {
         margin: 0;
         position: absolute;
-        z-index: -1;
         min-width: 74px;
+        transform-origin: left;
 
         &.infinity {
           font-family: Arial, Helvetica, sans-serif;
@@ -223,14 +232,10 @@
           line-height: 37px;
         }
       }
-
-      canvas {
-        max-width: 74px;
-      }
     }
 
     &.card-set {
-      top: 823px;
+      top: 850px;
       right: 83px;
       text-align: end;
       font-family: fontCardSet;
@@ -243,16 +248,15 @@
 
       &.on-pendulum {
         text-align: start;
-        top: 1057px;
+        top: 1085px;
         right: -68px;
       }
     }
 
     &.passcode {
-      top: 1103px;
+      top: 1129px;
       left: 36px;
       font-family: fontPasscode;
-      // font-size: 15px;
       font-size: 23px;
       text-shadow: 0 0 black;
     }
@@ -262,7 +266,6 @@
       align-items: center;
       width: $width;
       height: $height;
-      // width: 100%;
     }
 
     &.card-abilities {
@@ -275,48 +278,27 @@
       width: 689px;
       height: 37px;
       gap: 3px;
-      // width: 84.5%;
-      // height: 3%;
-      // top: 75%;
 
       &.on-pendulum-link {
         top: 920px;
-        // top: 77.5%;
-      }
-
-      .html2canvas-abilities {
-        max-width: 95%;
       }
 
       .abilities-text {
         margin: 0;
 
         &.abilities {
-          // margin-top: 0.25%;
           margin-top: 3px;
           text-transform: uppercase;
-          // font-size: 17px;
           font-size: 26px;
-          overflow-x: visible;
-          white-space: nowrap;
-          position: absolute;
-          z-index: -1;
+          transform-origin: left;
 
           .uppercase {
             font-size: 30px;
-            // font-size: 20px;
           }
         }
 
         &.abilities-bracket {
           font-size: 30px;
-          // font-size: 20px;
-
-          /*           &.left-bracket {
-          }
-
-          &.right-bracket {
-          } */
         }
 
         &.with-st-icon {
@@ -343,9 +325,6 @@
       left: 65px;
       width: 680px;
       height: 214px;
-      // width: 84%;
-      // top: 75%;
-      // height: 18.4%;
 
       &.normal-text {
         font-style: italic;
@@ -354,8 +333,6 @@
       &.with-abilities {
         top: 924px;
         height: 147px;
-        // top: 78%;
-        // height: 12.5%;
 
         &.on-skill {
           height: 178px;
@@ -365,8 +342,6 @@
       &.on-pendulum-link {
         top: 957px;
         height: 115px;
-        // top: 80.5%;
-        // height: 9.5%;
       }
 
       .description-text {
@@ -412,15 +387,12 @@
       justify-content: flex-start;
       width: 556px;
       height: 124px;
-      top: 746px;
+      top: 748px;
       left: 127px;
-      // width: 68%;
-      // height: 10%;
-      // top: 63.2%;
 
       &.on-link {
         width: 513px;
-        top: 743px;
+        top: 744px;
         left: 148px;
       }
 
@@ -461,7 +433,7 @@
 
     .atk-def {
       font-family: fontRushAtkDef;
-      top: 781px;
+      top: 802px;
       min-width: 122px;
       font-size: 38px;
       text-align: end;
@@ -480,7 +452,7 @@
       }
 
       &.atk-max {
-        top: 723px;
+        top: 744px;
         left: 521px;
       }
 
@@ -499,7 +471,7 @@
 
       .stat-text {
         min-width: 122px;
-        padding: 0 2px 0 2px;
+        padding: 0 2px;
 
         &.infinity {
           font-family: Arial, Helvetica, sans-serif;
@@ -507,14 +479,6 @@
 
         &.hidden {
           visibility: hidden;
-        }
-      }
-
-      canvas {
-        max-width: 122px;
-
-        &.compressed {
-          max-width: 155px;
         }
       }
     }
@@ -534,7 +498,7 @@
     }
 
     .card-set {
-      top: 1089px;
+      top: 1116px;
       right: 79px;
     }
   }

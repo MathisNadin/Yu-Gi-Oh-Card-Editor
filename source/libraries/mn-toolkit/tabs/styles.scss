@@ -1,17 +1,12 @@
-$tabs-selector-height: 4px;
+$decay: calc($themeDefaultSpacing / 4);
+$tabBorderSize: 1px;
 
-.mn-tab-pane {
+@mixin themeTabSet {
   display: flex;
-  width: 100%;
-}
 
-$decay: 4px;
-.mn-tabset {
-  @include mnLayoutContainable();
-  display: flex;
-  @include bg(1);
-  padding: $themeDefaultSpacing;
-  gap: $themeDefaultSpacing;
+  .mn-layout-spacer {
+    @include bg(2);
+  }
 
   .item {
     padding: 0 $themeDefaultSpacing;
@@ -23,24 +18,12 @@ $decay: 4px;
     font-size: 15px;
     font-weight: 300;
     position: relative;
-    border-radius: $themeDefaultBorderRadius;
-    transition:
-      transform 0.2s ease,
-      background-color 0.2s ease;
-    will-change: transform, background-color;
-    transform: translateX(0);
-
-    .icon {
-      margin-right: 3px;
-    }
+    transition: background-color 0.2s;
+    gap: calc($themeDefaultSpacing / 2);
 
     .mn-indicators {
-      margin: 0 calc($themeDefaultSpacing/2);
+      margin: 0 calc($themeDefaultSpacing / 2);
       display: flex;
-    }
-
-    &:hover .mn-close {
-      opacity: 1;
     }
 
     .mn-close {
@@ -58,58 +41,92 @@ $decay: 4px;
       @include text-overflow;
       font-size: 14px;
       flex: 1;
-      color: black;
     }
 
     @include bg(2);
-    &:hover {
-      @include bg(3);
+    z-index: 0;
+    border: $tabBorderSize solid nth($theme-light-bg, 3);
+
+    &:hover,
+    &.selected {
+      @include bg(1);
+      z-index: 1;
     }
 
     &.selected {
-      @include bg(4);
+      border-color: transparent;
+    }
+
+    &:hover {
+      .mn-close {
+        opacity: 1;
+      }
     }
 
     &.disabled {
+      pointer-events: none;
       @include fg(2);
+
       .icon {
         @include fg(2);
       }
-
-      pointer-events: none;
     }
   }
 
   &.mn-tabbed-pane-tab-position-left,
   &.mn-tabbed-pane-tab-position-right {
     flex-direction: column;
+
     .item {
       align-items: center;
+    }
+
+    .mn-layout-spacer {
+      min-width: 100%;
+      max-width: 100%;
     }
   }
 
   &.mn-tabbed-pane-tab-position-left {
-    border-right-width: 1px;
-    padding-right: $decay;
+    background-image: linear-gradient(to right, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    .mn-dark-theme & {
+      background-image: linear-gradient(to right, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+    }
+    padding-left: $decay;
+
     .item {
       text-align: right;
-      &.selected {
-        border-radius: $themeDefaultBorderRadius 0 0 $themeDefaultBorderRadius;
-        transform: translateX($decay);
+      border-radius: $themeDefaultBorderRadius 0 0 $themeDefaultBorderRadius;
+      &.before-selected {
+        border-radius: $themeDefaultBorderRadius 0 $themeDefaultBorderRadius * 1.5 $themeDefaultBorderRadius;
+      }
+      &.after-selected {
+        border-radius: $themeDefaultBorderRadius $themeDefaultBorderRadius * 1.5 0 $themeDefaultBorderRadius;
+      }
+      &:not(.selected) {
+        box-shadow: -1px 0 0 nth($theme-light-bg, 4);
       }
     }
-    .icon {
-      margin-right: 6px;
-    }
   }
+
   &.mn-tabbed-pane-tab-position-right {
-    border-left-width: 1px;
-    padding-left: $decay;
+    background-image: linear-gradient(to left, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    .mn-dark-theme & {
+      background-image: linear-gradient(to left, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+    }
+    padding-right: $decay;
+
     .item {
       text-align: left;
-      &.selected {
-        border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
-        transform: translateX(-$decay);
+      border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
+      &.before-selected {
+        border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius $themeDefaultBorderRadius * 1.5;
+      }
+      &.after-selected {
+        border-radius: $themeDefaultBorderRadius * 1.5 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
+      }
+      &:not(.selected) {
+        box-shadow: 1px 0 0 nth($theme-light-bg, 4);
       }
     }
   }
@@ -118,30 +135,56 @@ $decay: 4px;
   &.mn-tabbed-pane-tab-position-bottom {
     flex-direction: row;
     align-items: center;
+
     .item {
       align-items: center;
       text-align: center;
     }
+
+    .mn-layout-spacer {
+      min-height: 100%;
+      max-height: 100%;
+    }
   }
 
   &.mn-tabbed-pane-tab-position-top {
-    border-bottom-width: 1px;
+    background-image: linear-gradient(to bottom, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    .mn-dark-theme & {
+      background-image: linear-gradient(to bottom, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+    }
     padding-top: $decay;
-    padding-bottom: $decay;
+
     .item {
-      &.selected {
-        border-radius: $themeDefaultBorderRadius $themeDefaultBorderRadius 0 0;
-        transform: translateY($decay);
+      border-radius: $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 0 0;
+      &.before-selected {
+        border-radius: $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 0;
+      }
+      &.after-selected {
+        border-radius: $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 0 $themeDefaultBorderRadius * 2;
+      }
+      &:not(.selected) {
+        box-shadow: 0 -1px 0 nth($theme-light-bg, 4);
       }
     }
   }
+
   &.mn-tabbed-pane-tab-position-bottom {
-    border-top-width: 1px;
-    padding-top: $decay;
+    background-image: linear-gradient(to top, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    .mn-dark-theme & {
+      background-image: linear-gradient(to top, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+    }
+    padding-bottom: $decay;
+
     .item {
-      &.selected {
-        border-radius: 0 0 $themeDefaultBorderRadius $themeDefaultBorderRadius;
-        transform: translateY(-$decay);
+      border-radius: 0 0 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2;
+      &.before-selected {
+        border-radius: 0 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2;
+      }
+      &.after-selected {
+        border-radius: $themeDefaultBorderRadius * 2 0 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2;
+      }
+      &:not(.selected) {
+        box-shadow: 0 1px 0 nth($theme-light-bg, 4);
       }
     }
   }
@@ -158,4 +201,8 @@ $decay: 4px;
   &.mn-bg-4 {
     background-color: transparent;
   }
+}
+
+.mn-tabset {
+  @include themeTabSet;
 }

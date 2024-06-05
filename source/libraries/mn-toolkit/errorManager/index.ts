@@ -1,4 +1,4 @@
-import { isArray } from 'libraries/mn-tools';
+import { isArray } from 'mn-tools';
 import { ErrorManagerService } from './ErrorManagerService';
 
 export * from './ErrorManagerService';

@@ -1,47 +1,32 @@
-import { IContainerProps, IContainerState, Container } from 'libraries/mn-toolkit/container';
-import { classNames } from 'libraries/mn-tools';
-import { ITabSetProps, TabPosition, TabSet, ITabItem } from './TabSet';
-import { ReactNode } from 'react';
-import { Spinner } from 'libraries/mn-toolkit/spinner';
+import { classNames } from 'mn-tools';
+import { Container, IContainerProps, IContainerState } from '../container';
+import { ITabSetProps, TabSet, TTabPosition } from './TabSet';
+import { ITabPaneProps, TabPane } from './TabPane';
+import { JSXElementChildren } from 'mn-toolkit/react';
+import { IContainableProps } from 'mn-toolkit/containable';
 
-export type INodeWithProps = ReactNode & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  props: any;
-};
-
-interface ITabbedPaneProps<TAbstractTabIndex> extends IContainerProps, ITabSetProps<TAbstractTabIndex> {
-  tabPosition?: TabPosition;
+export interface ITabbedPanePane<ID = number> {
+  props: ITabPaneProps<ID>;
+  content: JSXElementChildren;
 }
 
-interface ITabbedPaneState<TAbstractTabIndex> extends IContainerState {
-  value: TAbstractTabIndex;
+interface ITabbedPaneProps<ID = number> extends IContainerProps, ITabSetProps<ID> {
+  panes: ITabbedPanePane<ID>[];
+  tabPosition?: TTabPosition;
+  tabSetMaxWidth?: string;
+  noSpacer?: boolean;
 }
 
-/** Create a TabSet.
- *
- * Constructor need a ITabbedPaneProps.
- * - items
- * - defaultValue
- * - ?classname
- * - ?disabled
- * - ?onChange
- */
-export class TabbedPane<TAbstractTabIndex> extends Container<
-  ITabbedPaneProps<TAbstractTabIndex>,
-  ITabbedPaneState<TAbstractTabIndex>
-> {
-  public constructor(props: ITabbedPaneProps<TAbstractTabIndex>) {
-    super(props);
-    this.state = {
-      loaded: true,
-      value: this.props.defaultValue,
-    };
-  }
+interface ITabbedPaneState<ID> extends IContainerState {
+  value: ID;
+}
 
-  public static get defaultProps(): Partial<ITabbedPaneProps<string>> {
+export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITabbedPaneState<ID>> {
+  public static get defaultProps(): Partial<ITabbedPaneProps> {
     return {
       ...super.defaultProps,
-      // name: '',
+      panes: [],
+      name: '',
       className: '',
       disabled: false,
       layout: 'vertical',
@@ -54,74 +39,110 @@ export class TabbedPane<TAbstractTabIndex> extends Container<
     return this.state.value;
   }
 
-  public componentDidUpdate() {
-    if (this.props.defaultValue !== this.state.value) this.setState({ value: this.props.defaultValue });
+  public constructor(props: ITabbedPaneProps<ID>) {
+    super(props);
+    this.state = { ...this.state, value: this.props.defaultValue };
+  }
+
+  public componentDidUpdate(prevProps: ITabbedPaneProps<ID>) {
+    if (prevProps.defaultValue === this.props.defaultValue) return;
+    this.setState({ value: this.props.defaultValue });
+  }
+
+  public renderClasses(): { [name: string]: boolean } {
+    const classes = super.renderClasses();
+    classes['mn-tabbed-pane'] = true;
+    classes[`mn-layout-horizontal-stack`] = this.props.tabPosition === 'left' || this.props.tabPosition === 'right';
+    classes[`mn-layout-vertical-stack`] = this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom';
+    return classes;
+  }
+
+  private get filteredPanes() {
+    return this.props.panes.filter((pane) => !!pane?.content && !!pane.props && !pane.props.hidden);
   }
 
   public render() {
-    if (!this.state.loaded) return <Spinner />;
-
-    let x = (this.props.children as ReactNode[]).filter((node, i) => {
-      /*       console.log(node);
-      if (!node || (node as INodeWithProps).props.hidden) return false;
-      // (node as INodeWithProps).props.bg = this.props.bg;
-      (node as INodeWithProps).props.isFirst = i === 0;
-      (node as INodeWithProps).props.tabPosition = this.props.tabPosition;
-      (node as INodeWithProps).props.isLast = i === ((this.props.children as any).length - 1); */
-      return (node as INodeWithProps).props.id === this.state.value;
+    const panesToShow = this.filteredPanes.filter((pane, i) => {
+      pane.props.bg = this.props.bg;
+      pane.props.isFirst = i === 0;
+      pane.props.tabPosition = this.props.tabPosition;
+      pane.props.isLast = i === this.props.panes.length - 1;
+      return pane.props.tabId === this.state.value;
     });
 
     return (
       <Container
-        id={this.props.nodeId}
-        name={this.props.name as string}
-        layout={['left', 'right'].includes(this.props.tabPosition as string) ? 'horizontal' : 'vertical'}
-        className={classNames('mn-tabbed-pane', this.props.className, { 'mn-disable': this.props.disabled })}
+        {...(this.renderAttributes() as IContainableProps)}
+        nodeId={this.props.nodeId}
+        name={this.props.name}
+        disabled={this.props.disabled}
+        fill={this.props.fill}
+        scroll={this.props.scroll && (this.props.tabPosition === 'right' || this.props.tabPosition === 'left')}
+        scrollX={this.props.scrollX && (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom')}
+        className={classNames(this.renderClasses())}
       >
-        <TabSet
-          items={(this.props.children as ReactNode[])
-            .filter((node) => !!node && !(node as INodeWithProps).props.hidden)
-            .map((node) => {
-              return {
-                id: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).id,
-                label: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).label,
-                // icon: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).icon,
-                // iconColor: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).iconColor,
-                stateIcon: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).stateIcon,
-                stateIconColor: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).stateIconColor,
-                badge: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).badge,
-                onTap: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).onTap,
-                selected: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).selected,
-                disabled: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).disabled,
-                closable: ((node as INodeWithProps).props as ITabItem<TAbstractTabIndex>).closable,
-                // selectedBg: this.props.bg,
-              };
-            })}
-          // legend={this.props.legend}
-          defaultValue={this.state.value}
-          tabPosition={this.props.tabPosition}
-          disabled={this.props.disabled}
-          onClose={(id: string) => this.onClose(id)}
-          // addButton={this.props.addButton}
-          // onAdd={() => this.onAdd()}
-          onChange={(value: TAbstractTabIndex) => this.onChange(value)}
-        />
-        <Container className='mn-tab-panes' fill>
-          {x}
+        {(this.props.tabPosition === 'top' || this.props.tabPosition === 'left') && this.renderTabSet()}
+
+        <Container className='mn-tab-panes' fill bg='1'>
+          {panesToShow.map((pane, i) => (
+            <TabPane key={i} {...pane.props}>
+              {pane.content}
+            </TabPane>
+          ))}
         </Container>
+
+        {(this.props.tabPosition === 'bottom' || this.props.tabPosition === 'right') && this.renderTabSet()}
       </Container>
     );
   }
 
-  /*   private onAdd(): void {
-    if (this.props.onAdd) app.$errorManager.handlePromise(this.props.onAdd());
-  } */
-
-  private onClose(id: string) {
-    if (this.props.onClose) app.$errorManager.handlePromise(this.props.onClose(id));
+  private renderTabSet() {
+    return (
+      <TabSet<ID>
+        noSpacer={this.props.noSpacer}
+        maxWidth={this.props.tabSetMaxWidth}
+        legend={this.props.legend}
+        defaultValue={this.state.value}
+        tabPosition={this.props.tabPosition}
+        disabled={this.props.disabled}
+        onClose={(id: ID) => this.onClose(id)}
+        addButton={this.props.addButton}
+        onAdd={() => this.onAdd()}
+        onChange={(value: ID) => this.onChange(value)}
+        items={this.filteredPanes.map((pane) => {
+          return {
+            tabId: pane.props.tabId,
+            label: pane.props.label,
+            icon: pane.props.icon,
+            iconColor: pane.props.iconColor,
+            stateIcon: pane.props.stateIcon,
+            stateIconColor: pane.props.stateIconColor,
+            badge: pane.props.badge,
+            onTap: pane.props.onTap,
+            selected: pane.props.selected,
+            disabled: pane.props.disabled,
+            closable: pane.props.closable,
+            selectedBg: this.props.bg,
+          };
+        })}
+      />
+    );
   }
 
-  public onChange(value: TAbstractTabIndex) {
-    this.setState({ value }, () => !!this.props.onChange && this.props.onChange(this.state.value));
+  private onAdd(): void {
+    if (!this.props.onAdd) return;
+    app.$errorManager.handlePromise(this.props.onAdd());
+  }
+
+  private onClose(id: ID) {
+    if (!this.props.onClose) return;
+    app.$errorManager.handlePromise(this.props.onClose(id));
+  }
+
+  public async onChange(value: ID) {
+    if (this.state.value === value) return;
+    await this.setStateAsync({ value });
+    if (!this.props.onChange) return;
+    app.$errorManager.handlePromise(this.props.onChange(this.state.value));
   }
 }

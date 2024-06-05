@@ -1,58 +1,6 @@
 import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electron';
 import { getProjectIpcRenderer } from '../../client/electronMainPatchs';
 
-declare global {
-  interface ISendChannel {}
-  type TSendChannel = keyof ISendChannel;
-
-  interface IOnceChannel {}
-  type TOnceChannel = keyof IOnceChannel;
-
-  interface IOnChannel {
-    deleteLocalDb?: null;
-  }
-  type TOnChannel = keyof IOnChannel;
-
-  interface IInvokeChannel {
-    getAppVersion?: null;
-    checkFileExists?: null;
-    getFilePath?: null;
-    getDirectoryPath?: null;
-    readFileUtf8?: null;
-    writePngFile?: null;
-    writeJsonFile?: null;
-    createImgFromPath?: null;
-    openLink?: null;
-    download?: null;
-  }
-  type TInvokeChannel = keyof IInvokeChannel;
-
-  interface IIpcRenderer {
-    send: (channel: TSendChannel, args: unknown[]) => void;
-    on: (channel: TOnChannel, func: (...args: unknown[]) => void) => () => void;
-    once: (channel: TOnceChannel, func: (...args: unknown[]) => void) => void;
-    invoke: (channel: TInvokeChannel, ...args: unknown[]) => Promise<unknown>;
-    openLink: (link: string) => Promise<void>;
-    download: (directoryPath: string, url: string) => Promise<string>;
-    getAppVersion: () => Promise<string>;
-    readFileUtf8: (filters?: FileFilter[]) => Promise<Buffer>;
-    getFilePath: (defaultPath?: string) => Promise<string>;
-    getDirectoryPath: (defaultPath?: string) => Promise<string>;
-    checkFileExists: (path: string) => Promise<boolean>;
-    createImgFromPath: (path: string) => Promise<string>;
-    writePngFile: (defaultFileName: string, base64: string, filePath?: string) => Promise<void>;
-    writeJsonFile: (defaultFileName: string, jsonData: string, filePath?: string) => Promise<void>;
-  }
-
-  interface IElectronHandler {
-    ipcRenderer: IIpcRenderer;
-  }
-
-  interface Window {
-    electron: IElectronHandler;
-  }
-}
-
 const defaultIpcRenderer: Partial<IIpcRenderer> = {
   send(channel: TSendChannel, args: unknown[]) {
     ipcRenderer.send(channel, args);

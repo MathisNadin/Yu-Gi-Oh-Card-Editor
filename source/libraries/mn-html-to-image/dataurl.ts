@@ -86,7 +86,6 @@ export async function resourceToDataURL(resourceUrl: string, contentType: string
     }
 
     if (msg) {
-      // eslint-disable-next-line no-console
       console.warn(msg);
     }
   }

@@ -1,6 +1,7 @@
-import { Component, MouseEvent, PropsWithChildren, ReactElement, cloneElement } from 'react';
-import { classNames, isDefined, isNumber } from 'libraries/mn-tools';
+import { AllHTMLAttributes } from 'react';
+import { classNames, isDefined, isNumber } from 'mn-tools';
 import { TBackgroundColor } from '../themeSettings';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from './ToolkitComponent';
 
 export type ColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
 
@@ -29,7 +30,7 @@ export type ZIndex =
   | 'toaster'
   | 'overall';
 
-export interface IContainableProps extends PropsWithChildren {
+export interface IContainableProps extends IToolkitComponentProps {
   s?: ColSpan;
   m?: ColSpan;
   l?: ColSpan;
@@ -37,7 +38,6 @@ export interface IContainableProps extends PropsWithChildren {
   xxl?: ColSpan;
   nodeId?: string;
   className?: string;
-  mainClassName?: string;
   name?: string;
   id?: string;
   hint?: string;
@@ -46,6 +46,7 @@ export interface IContainableProps extends PropsWithChildren {
   fill?: boolean;
   ghost?: boolean;
   zIndex?: ZIndex;
+  tabIndex?: number;
   floatPosition?: FloatPosition;
   height?: number | string;
   maxHeight?: number | string;
@@ -55,24 +56,28 @@ export interface IContainableProps extends PropsWithChildren {
   minWidth?: number | string;
   scrollerPositionY?: number;
   draggable?: boolean;
-  onDrop?: (event: DragEvent) => void | Promise<void>;
-  onDragStart?: (event: DragEvent) => void | Promise<void>;
-  onDragEnd?: (event: DragEvent) => void | Promise<void>;
-  onDragEnter?: (event: DragEvent) => void | Promise<void>;
-  onDragOver?: (event: DragEvent) => void | Promise<void>;
-  onDragLeave?: (event: DragEvent) => void | Promise<void>;
-  onMouseEnter?: (event: MouseEvent) => void;
-  onMouseLeave?: (event: MouseEvent) => void;
-  onTap?: (e: MouseEvent) => void | Promise<void>;
-  onScroll?: (event: UIEvent) => void | Promise<void>;
+  onDrop?: (event: React.DragEvent) => void | Promise<void>;
+  onDragStart?: (event: React.DragEvent) => void | Promise<void>;
+  onDragEnd?: (event: React.DragEvent) => void | Promise<void>;
+  onDragEnter?: (event: React.DragEvent) => void | Promise<void>;
+  onDragOver?: (event: React.DragEvent) => void | Promise<void>;
+  onDragLeave?: (event: React.DragEvent) => void | Promise<void>;
+  onMouseEnter?: (event: React.MouseEvent) => void;
+  onMouseLeave?: (event: React.MouseEvent) => void;
+  onTap?: (event: React.MouseEvent) => void | Promise<void>;
+  onScroll?: (event: React.UIEvent) => void | Promise<void>;
+  onFocus?: (event: React.FocusEvent) => void | Promise<void>;
+  onBlur?: (event: React.FocusEvent) => void | Promise<void>;
+  onKeyUp?: (event: React.KeyboardEvent) => void | Promise<void>;
+  onKeyDown?: (event: React.KeyboardEvent) => void | Promise<void>;
   style?: { [key: string]: number | boolean | string };
 }
 
-export interface IContainableState {
+export interface IContainableState extends IToolkitComponentState {
   loaded: boolean;
 }
 
-export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends Component<
+export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends ToolkitComponent<
   PROPS,
   STATE
 > {
@@ -83,23 +88,14 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     };
   }
 
-  public constructor(props: PROPS) {
-    super(props);
-    this.state = {} as STATE;
-  }
-
-  public renderClasses(name?: string) {
+  public renderClasses() {
     const classes: { [key: string]: boolean } = {};
+    classes['mn-containable'] = true;
     if (this.props.className) classes[this.props.className] = true;
-    if (!!this.props.mainClassName) {
-      classes[this.props.mainClassName] = true;
-    } else if (!!name) {
-      classes[name] = true;
-    }
     classes['has-click'] = !!this.props.onTap;
     classes['mn-fill'] = !!this.props.fill;
     classes['mn-ghost'] = !!this.props.ghost;
-    classes['mn-disable'] = !!this.props.disabled;
+    classes['mn-disabled'] = !!this.props.disabled;
     classes['mn-draggable'] = !!this.props.draggable;
     if (this.props.bg) classes[`mn-bg-${this.props.bg}`] = true;
     if (this.props.zIndex) classes[`mn-zindex-${this.props.zIndex}`] = true;
@@ -107,29 +103,33 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
     return classes;
   }
 
-  public renderAttributes(fc: ReactElement, name?: string) {
-    let newProps = {
-      ...fc.props,
-      className: classNames(this.renderClasses(name)),
+  public renderAttributes(): AllHTMLAttributes<HTMLElement> {
+    const attributes: AllHTMLAttributes<HTMLElement> = {
+      className: classNames(this.renderClasses()),
       style: this.renderStyle(),
-      onClick: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onTap?.(e)),
-      onScroll: (e: UIEvent) => app.$errorManager.handlePromise(this.props.onScroll?.(e)),
+      tabIndex: this.props.tabIndex,
       draggable: this.props.draggable,
-      onMouseEnter: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseEnter?.(e)),
-      onMouseLeave: (e: MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseLeave?.(e)),
-      onDragStart: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragStart?.(e)),
-      onDragEnd: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnd?.(e)),
-      onDragLeave: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragLeave?.(e)),
-      onDragEnter: (e: DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnter?.(e)),
+      onClick: (e: React.MouseEvent) => app.$errorManager.handlePromise(this.props.onTap?.(e)),
+      onScroll: (e: React.UIEvent) => app.$errorManager.handlePromise(this.props.onScroll?.(e)),
+      onMouseEnter: (e: React.MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseEnter?.(e)),
+      onMouseLeave: (e: React.MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseLeave?.(e)),
+      onDragStart: (e: React.DragEvent) => app.$errorManager.handlePromise(this.props.onDragStart?.(e)),
+      onDragEnd: (e: React.DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnd?.(e)),
+      onDragLeave: (e: React.DragEvent) => app.$errorManager.handlePromise(this.props.onDragLeave?.(e)),
+      onDragEnter: (e: React.DragEvent) => app.$errorManager.handlePromise(this.props.onDragEnter?.(e)),
+      onFocus: (e: React.FocusEvent) => app.$errorManager.handlePromise(this.props.onFocus?.(e)),
+      onBlur: (e: React.FocusEvent) => app.$errorManager.handlePromise(this.props.onBlur?.(e)),
+      onKeyUp: (e: React.KeyboardEvent) => app.$errorManager.handlePromise(this.props.onKeyUp?.(e)),
+      onKeyDown: (e: React.KeyboardEvent) => app.$errorManager.handlePromise(this.props.onKeyDown?.(e)),
     };
 
     if (this.props.onDrop || this.props.onDragOver) {
       if (this.props.onDrop)
-        newProps.onDrop = (e: DragEvent) => {
+        attributes.onDrop = (e: React.DragEvent) => {
           e.preventDefault();
           app.$errorManager.handlePromise(this.props.onDrop?.(e));
         };
-      newProps.onDragOver = (e: DragEvent) => {
+      attributes.onDragOver = (e: React.DragEvent) => {
         // Nécessaire pour que l'event onDrop fonctionne bien
         if (this.props.onDrop) {
           e.stopPropagation();
@@ -139,11 +139,11 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
       };
     }
 
-    if (this.props.id) newProps.id = this.props.id;
-    if (this.props.name) newProps.name = this.props.name;
-    if (this.props.hint) newProps.title = this.props.hint;
+    if (this.props.id) attributes.id = this.props.id;
+    if (this.props.name) attributes.name = this.props.name;
+    if (this.props.hint) attributes.title = this.props.hint;
 
-    return cloneElement(fc, newProps, fc.props.children) as ReactElement;
+    return attributes;
   }
 
   public renderStyle() {
@@ -153,26 +153,28 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
         style[k] = this.props.style[k];
       }
     }
-    if (isDefined(this.props.height))
+    if (isDefined(this.props.height)) {
       style.height = isNumber(this.props.height) ? `${this.props.height}px` : (this.props.height as string);
-    if (isDefined(this.props.maxHeight))
+    }
+    if (isDefined(this.props.maxHeight)) {
       style.maxHeight = isNumber(this.props.maxHeight) ? `${this.props.maxHeight}px` : (this.props.maxHeight as string);
-    if (isDefined(this.props.minHeight))
+    }
+    if (isDefined(this.props.minHeight)) {
       style.minHeight = isNumber(this.props.minHeight) ? `${this.props.minHeight}px` : (this.props.minHeight as string);
-    if (isDefined(this.props.width))
+    }
+    if (isDefined(this.props.width)) {
       style.width = isNumber(this.props.width) ? `${this.props.width}px` : (this.props.width as string);
-    if (isDefined(this.props.maxWidth))
+    }
+    if (isDefined(this.props.maxWidth)) {
       style.maxWidth = isNumber(this.props.maxWidth) ? `${this.props.maxWidth}px` : (this.props.maxWidth as string);
-    if (isDefined(this.props.minWidth))
+    }
+    if (isDefined(this.props.minWidth)) {
       style.minWidth = isNumber(this.props.minWidth) ? `${this.props.minWidth}px` : (this.props.minWidth as string);
+    }
     return style;
   }
 
   public render() {
-    return this.renderAttributes(<div>{this.props.children}</div>, 'mn-containable');
-  }
-
-  public inside() {
-    return this.props.children;
+    return <div {...this.renderAttributes()}>{this.children}</div>;
   }
 }

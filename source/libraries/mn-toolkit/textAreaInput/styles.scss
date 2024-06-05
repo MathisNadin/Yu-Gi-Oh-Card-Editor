@@ -1,24 +1,22 @@
 .mn-textarea-input-container {
+  position: relative;
   display: flex;
   flex: 1;
-  position: relative;
 
   .mn-textarea-input {
     @include fg(1);
     background-color: transparent;
-    border: none;
     line-height: 20px;
-    padding: 5px;
+    padding: calc($themeDefaultSpacing / 2);
     resize: none;
     flex: 1;
+    min-width: 100%;
+    max-width: 100%;
 
     border-width: 1px;
     border-style: solid;
     @include border-color(4);
     border-radius: $themeDefaultBorderRadius;
-
-    min-width: calc(100% - 10px);
-    max-width: calc(100% - 10px);
 
     &::placeholder {
       @include fg(2);
@@ -28,6 +26,17 @@
       visibility: hidden;
       position: absolute;
       z-index: -1;
+    }
+  }
+}
+
+.mn-form-field.mn-field-textarea {
+  .input-wrapper {
+    height: auto;
+    max-height: none;
+
+    .mn-textarea-input-container {
+      min-width: 100%;
     }
   }
 }

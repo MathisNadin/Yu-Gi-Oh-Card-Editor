@@ -1,5 +1,5 @@
 import { Crop } from 'react-image-crop';
-import { classNames, getCroppedArtworkBase64 } from 'libraries/mn-tools';
+import { classNames, getCroppedArtworkBase64 } from 'mn-tools';
 import {
   IContainableProps,
   IContainableState,
@@ -13,7 +13,7 @@ import {
   Button,
   Typography,
   NumberInput,
-} from 'libraries/mn-toolkit';
+} from 'mn-toolkit';
 
 interface IArtworkEditingProps extends IContainableProps {
   artworkURL: string;
@@ -163,8 +163,8 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
 
   public render() {
     if (!this.state.loaded) return <Spinner />;
-    return this.renderAttributes(
-      <VerticalStack fill scroll gutter>
+    return (
+      <VerticalStack className='artwork-editing' fill scroll gutter>
         {app.$device.isDesktop && (
           <FileInput
             placeholder="Chemin vers l'artwork"
@@ -249,12 +249,11 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
         <HorizontalStack itemAlignment='center' className='validate'>
           <Button
             label='OK'
-            color='balanced'
+            color='positive'
             onTap={() => this.props.onValidate(this.state.artworkURL, this.state.crop, this.state.keepRatio)}
           />
         </HorizontalStack>
-      </VerticalStack>,
-      'artwork-editing'
+      </VerticalStack>
     );
   }
 }

@@ -1,0 +1,326 @@
+$theme-menu-icon-size: 40px;
+$menu-width: 200px !default;
+// Padding du pane + padding de l'inside + taille des icones + bordure
+$menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
+
+@mixin themeMenuPane {
+  z-index: $z-index-drawer;
+  @include shadow(2);
+  overflow: visible;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: $menu-contracted-width;
+  border-right: 1px solid black(0.1);
+  padding: calc($themeDefaultSpacing/2) 0;
+  @include fg(2);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease-in-out;
+
+  .mn-menu-pane-version {
+    white-space: nowrap;
+    margin-left: - calc($themeDefaultSpacing / 2);
+  }
+
+  &.dynamic {
+    &:hover {
+      width: $menu-width;
+    }
+  }
+
+  &.open {
+    width: $menu-width;
+  }
+
+  background-color: nth($theme-light-bg, 1);
+  &.mn-dark-theme {
+    background-color: nth($theme-dark-bg, 1);
+  }
+
+  .shrink-btn {
+    position: absolute;
+    top: 20px;
+    height: 30px;
+    width: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px -3px rgba(70, 46, 118, 0.3);
+    right: -00px;
+    transform: translateY(-50%) translateX(-8px);
+    transition: 0.3s;
+    z-index: $z-index-drawer;
+
+    .mn-icon {
+      transition: 0.3s;
+      color: white;
+    }
+
+    &:hover {
+      background-color: $primary;
+      color: white;
+    }
+  }
+
+  &:hover .mn-menu-pane-tabs-btn,
+  .mn-menu-pane-tabs-btn.hovered {
+    transform: translateY(-50%) translateX(0px);
+    opacity: 1;
+    pointer-events: all;
+    > svg {
+      .mn-menu-pane-tabs & {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .hide {
+    transition: opacity 0.3s 0.2s;
+  }
+
+  .mn-container-inside {
+    &.with-icon {
+      $marginTop: calc($themeDefaultSpacing * 1.5);
+      margin-top: $marginTop;
+      $height: calc(100% - $marginTop);
+      height: $height;
+      min-height: $height;
+      max-height: $height;
+    }
+  }
+
+  &.open {
+    width: $menu-width;
+  }
+
+  &.close {
+    .mn-left-menu-label {
+      opacity: 0;
+      height: 0 !important;
+      min-height: 0 !important;
+      max-height: 0 !important;
+    }
+  }
+}
+
+$item-height: 53px;
+
+@mixin themeLeftMenu {
+  overflow: visible;
+  overflow-y: auto;
+
+  .mn-left-menu-group {
+    margin-bottom: calc($themeDefaultItemHeight/2);
+
+    .mn-left-menu-label {
+      padding-left: $themeDefaultSpacing;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      height: $themeDefaultItemHeight;
+      min-height: $themeDefaultItemHeight;
+      max-height: $themeDefaultItemHeight;
+
+      .mn-menu-pane-tabs & {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .mn-left-menu-subitems {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 2s ease;
+    cursor: pointer;
+  }
+
+  .open {
+    .mn-left-menu-label {
+      &.hide {
+        display: none;
+      }
+    }
+
+    .mn-left-menu-subitems {
+      transition: max-height 2s ease;
+      max-height: 5000px;
+    }
+  }
+
+  .mn-left-menu-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mn-left-menu-subitem {
+    height: $themeDefaultItemHeight;
+    display: flex;
+    align-items: center;
+    gap: calc($themeDefaultSpacing / 2);
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease;
+    will-change: transform, background-color;
+
+    .mn-left-menu-subitem-text {
+      opacity: 1;
+      transition: opacity 0.2s ease;
+
+      .mn-menu-pane-tabs & {
+        opacity: 0;
+      }
+    }
+
+    &:hover,
+    &.active {
+      .mn-left-menu-icon {
+        color: $primary;
+
+        // Pour certains svg
+        path,
+        rect,
+        polyline,
+        line {
+          color: $primary;
+        }
+      }
+
+      .mn-left-menu-subitem-text {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+@mixin themeTopMenu {
+  $topMenuHeight: calc(#{$themeDefaultItemHeight} + 2 * #{$themeDefaultSpacing});
+  height: $topMenuHeight;
+  min-height: $topMenuHeight;
+  max-height: $topMenuHeight;
+
+  background-color: nth($theme-light-bg, 1);
+  &.mn-dark-theme {
+    background-color: nth($theme-dark-bg, 1);
+  }
+
+  .mn-top-menu-group {
+    cursor: pointer;
+
+    .mn-top-menu-group-container {
+      :hover {
+        color: $primary;
+
+        .mn-top-menu-label {
+          color: $primary;
+        }
+
+        .mn-icon {
+          color: $primary;
+
+          // Pour certains svg
+          path,
+          rect,
+          polyline,
+          line {
+            color: $primary;
+          }
+        }
+      }
+    }
+  }
+}
+
+body.mn-menu-pane-tabs {
+  .mn-menu-pane {
+    .hide {
+      opacity: 0;
+      pointer-events: none;
+      transition-delay: 0s;
+    }
+  }
+
+  .account {
+    opacity: 1;
+    pointer-events: all;
+    transition:
+      opacity 0.3s 0.3s,
+      color 0.3s 0s;
+  }
+  .admin-profile {
+    max-width: 0;
+    transition:
+      opacity 0.3s 0s,
+      max-width 0.7s 0s ease-in-out;
+  }
+  .tooltip {
+    display: grid;
+  }
+}
+
+.mn-menu-pane {
+  @include themeMenuPane;
+}
+.mn-left-menu {
+  @include themeLeftMenu;
+}
+.mn-top-menu {
+  @include themeTopMenu;
+}
+
+.mn-popover.mn-top-menu-below-popover {
+  $actionColor: nth($theme-light-bg, 1);
+  $borderColor: rgba(nth($theme-light-bg, 1), 0.5);
+
+  border-radius: 0;
+  background-color: nth($theme-dark-bg, 1);
+  border: 1px solid;
+  border-top: 0;
+  border-color: $borderColor;
+
+  .actions {
+    .action {
+      border-radius: 0;
+      border-top: 1px solid;
+      border-color: $borderColor;
+
+      .mn-icon {
+        color: $actionColor;
+
+        // Pour certains svg
+        path,
+        rect,
+        polyline,
+        line {
+          color: $actionColor;
+        }
+      }
+
+      .text {
+        font-weight: bold;
+        color: $actionColor;
+      }
+
+      &:hover {
+        background-color: nth($theme-dark-bg, 1);
+
+        .mn-icon {
+          color: $primary;
+
+          // Pour certains svg
+          path,
+          rect,
+          polyline,
+          line {
+            color: $primary;
+          }
+        }
+
+        .text {
+          color: $primary;
+        }
+      }
+    }
+  }
+}

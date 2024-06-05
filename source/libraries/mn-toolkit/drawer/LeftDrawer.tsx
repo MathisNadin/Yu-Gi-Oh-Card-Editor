@@ -1,4 +1,4 @@
-import { integer, classNames } from 'libraries/mn-tools';
+import { integer, classNames } from 'mn-tools';
 import { Component, createRef } from 'react';
 import { IDrawerProps, IDrawer } from '.';
 import { IDeviceListener } from '../device';
@@ -141,6 +141,10 @@ export class LeftDrawer
     this.element?.current?.classList.add('active');
   }
 
+  public get inside() {
+    return <div className='mn-container-inside'>{this.props.children}</div>;
+  }
+
   public render() {
     let handleStyle = {
       right: `${-(this.props.handleSize as number)}px`,
@@ -158,7 +162,7 @@ export class LeftDrawer
           this.props.className
         )}
       >
-        {this.props.children}
+        {this.inside}
         <div
           className='handle'
           style={handleStyle}

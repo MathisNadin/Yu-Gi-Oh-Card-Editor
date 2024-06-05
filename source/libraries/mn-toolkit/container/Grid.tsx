@@ -1,5 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { IContainerProps, IContainerState, Container } from './Container';
+import { JSXElementChildren } from '../react';
 
 export interface IGridProps extends IContainerProps {}
 export interface IGridState extends IContainerState {}
@@ -14,19 +15,20 @@ export class Grid extends Container<IGridProps, IGridState> {
     };
   }
 
-  public render() {
-    return this.renderAttributes(
-      <div>
-        {(this.props.children as unknown as ReactNode[])
-          .filter((x) => !!x)
-          .map((x, i) => (
-            <div key={`mn-grid-item-${i}`} className={this.getGridItemClasses(x as ReactElement)}>
-              {x}
-            </div>
-          ))}
-      </div>,
-      'mn-container'
-    );
+  public renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-grid'] = true;
+    return classes;
+  }
+
+  public get children(): JSXElementChildren {
+    return (this.props.children as unknown as ReactNode[])
+      .filter((x) => !!x)
+      .map((x, i) => (
+        <div key={`mn-grid-item-${i}`} className={this.getGridItemClasses(x as ReactElement)}>
+          {x}
+        </div>
+      ));
   }
 
   private getGridItemClasses(x: ReactElement): string {

@@ -9,7 +9,6 @@ export abstract class AbstractViewComponent<
   P,
   S extends IAbstractViewComponentState = IAbstractViewComponentState,
 > extends Component<P, S> {
-  protected onLoad?(): Promise<void>;
   protected onViewEnter?(): Promise<void>;
   protected onViewLeave?(): Promise<void>;
 
@@ -28,8 +27,11 @@ export abstract class AbstractViewComponent<
     }
   }
 
+  public async setStateAsync(newState: Partial<S>) {
+    return new Promise<void>((resolve) => this.setState(newState as S, resolve));
+  }
+
   public componentDidMount() {
-    // console.log('Enter');
     if (this.onViewEnter) {
       this.onViewEnter()
         .then(() => {
@@ -40,7 +42,6 @@ export abstract class AbstractViewComponent<
   }
 
   public componentWillUnmount() {
-    // console.log('Leave');
     if (this.onViewLeave) app.$errorManager.handlePromise(this.onViewLeave());
   }
 }

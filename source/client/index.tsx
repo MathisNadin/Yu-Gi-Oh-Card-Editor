@@ -1,6 +1,6 @@
 import './index.scss';
 import * as confJson from '../../package.json';
-import { setupAppAndToolkit } from 'libraries/mn-toolkit';
+import { setupAppAndToolkit } from 'mn-toolkit';
 import { CoreService } from './kernel';
 import { SettingsService, MediaWikiService, CardService, YuginewsService, HomeView } from './editor';
 
@@ -42,10 +42,10 @@ setupAppAndToolkit(
   },
   () => {
     app.service('$core', CoreService);
-    app.service('$settings', SettingsService, { depends: ['$indexedDB'] });
-    app.service('$mediaWiki', MediaWikiService, { depends: ['$api'] });
-    app.service('$card', CardService, { depends: ['$indexedDB'] });
-    app.service('$yuginews', YuginewsService, { depends: ['$api'] });
+    app.service('$settings', SettingsService, { depends: ['$store'] });
+    app.service('$mediaWiki', MediaWikiService, { depends: ['$axios'] });
+    app.service('$card', CardService, { depends: ['$store'] });
+    app.service('$yuginews', YuginewsService, { depends: ['$axios'] });
   }
 );
 

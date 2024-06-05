@@ -80,7 +80,7 @@
   .drop-icon {
     @include bg(3);
     @include fg(1);
-    height: $themeDefaultItemHeight - 2px;
+    height: $themeDefaultItemHeight;
     width: $themeDefaultItemHeight;
     cursor: pointer;
     justify-content: center;
@@ -125,25 +125,32 @@
   }
 }
 
-.mn-form-field.mn-select-field .input-wrapper {
+.mn-form-field.mn-field-select .input-wrapper {
   padding: 0;
   overflow: hidden;
+  min-height: $themeDefaultItemHeight;
+  height: $themeDefaultItemHeight;
+  max-height: $themeDefaultItemHeight;
+
+  .mn-select {
+    border: 0;
+    flex: 1;
+  }
 }
 
-.mn-form-field.mn-select-field.error .input-wrapper {
+.mn-form-field.mn-field-select.error .input-wrapper {
   .mn-select {
-    border: 1px solid rgba($assertive, 0.2);
-    background-color: rgba($assertive, 0.1);
+    border: 1px solid rgba($negative, 0.2);
+    background-color: rgba($negative, 0.1);
 
     .drop-icon {
-      background-color: rgba($assertive, 0.1);
+      background-color: rgba($negative, 0.1);
     }
   }
 }
 
 .mn-popover.mn-select-popover {
   border-radius: $themeDefaultBorderRadius;
-  // margin-top: calc($themeDefaultSpacing/4);
 }
 
 .mn-select {

@@ -1,10 +1,7 @@
-import { extend, isUndefined } from 'libraries/mn-tools';
+import { Observable, extend, isUndefined } from 'mn-tools';
 import { IRouterListener, IResolvedState, IState, IStateParameters, IStateCrumb } from '.';
-import { Observable } from '../observable';
+import { ConfirmationDialog } from '../popup';
 
-/**
- * Router service.
- */
 export class RouterService extends Observable<IRouterListener> {
   // private historyCursor: number;
   private currentResolvedState!: IResolvedState;
@@ -131,8 +128,8 @@ export class RouterService extends Observable<IRouterListener> {
     if (this.currentResolvedState) {
       let message = this.fireStateWillLeave(this.currentResolvedState);
       if (!!message) {
-        let response = await app.$popup.ask(message);
-        if (!response) return;
+        const confirm = await ConfirmationDialog.show({ title: message });
+        if (!confirm) return;
       }
       window.history.replaceState(this.currentResolvedState.historyData, '', document.location.href);
     }
@@ -284,7 +281,7 @@ export class RouterService extends Observable<IRouterListener> {
     return '/' + (match ? match[1] : '').replace(/[\/]*$/, '').replace(/^[\!\/]*/, '');
   }
 
-  private resolvePath(): IResolvedState {
+  public resolvePath(): IResolvedState {
     let path = this.processPath(window.location.href);
     for (let routeName in this.states) {
       let resolvedState = this.testState(this.states[routeName], path);

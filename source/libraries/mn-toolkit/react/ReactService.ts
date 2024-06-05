@@ -10,7 +10,7 @@ export class ReactService {
       root.render(divContent);
 
       // Utilise une micro-tâche pour s'assurer que le rendu est terminé
-      queueMicrotask(() => {
+      setTimeout(() => {
         resolve(parent.lastChild as HTMLElement);
       });
     });
@@ -95,5 +95,25 @@ export class ReactService {
         if (document.readyState !== 'loading') fn();
       });
     }
+  }
+
+  public async waitForTransition(element: Element) {
+    return new Promise<void>((resolve) => {
+      const process = () => {
+        element.removeEventListener('transitionend', process);
+        resolve();
+      };
+      element.addEventListener('transitionend', process);
+    });
+  }
+
+  public async waitForAnimation(element: Element) {
+    return new Promise<void>((resolve) => {
+      const process = () => {
+        element.removeEventListener('animationend', process);
+        resolve();
+      };
+      element.addEventListener('animationend', process);
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { IDrawerListener, IDrawer } from '.';
-import { Observable } from '../observable';
+import { Observable } from 'mn-tools';
 
 export class DrawerService extends Observable<IDrawerListener> {
   private panes: IDrawer[] = [];

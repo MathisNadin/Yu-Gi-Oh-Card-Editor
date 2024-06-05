@@ -12,7 +12,6 @@
     min-width: 1500px;
     width: 100%;
     position: absolute;
-    // background-color: aliceblue;
     @include fgAsBg(1);
   }
 
@@ -25,14 +24,10 @@
     max-width: 100%;
     z-index: 1;
 
-    /*     &.img-render {
-    } */
-
     &.rendering {
       z-index: 2 !important;
-      width: 100%;
-      height: 100%;
-      // background-color: rgba(240, 248, 255, 0.5);
+      width: 100% !important;
+      height: 100% !important;
 
       &.hidden {
         visibility: hidden;
