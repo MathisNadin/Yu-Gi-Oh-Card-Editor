@@ -52,7 +52,7 @@ declare global {
     openLink: (link: string) => Promise<void>;
     download: (directoryPath: string, url: string) => Promise<string>;
     getAppVersion: () => Promise<string>;
-    readFileUtf8: (filters?: TFileFilter[]) => Promise<Buffer>;
+    readFileUtf8: (filters?: TFileFilter[]) => Promise<string | Buffer>;
     getFilePath: (defaultPath?: string) => Promise<string>;
     getDirectoryPath: (defaultPath?: string) => Promise<string>;
     checkFileExists: (path: string) => Promise<boolean>;

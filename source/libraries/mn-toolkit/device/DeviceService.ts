@@ -1,4 +1,4 @@
-import { extend, isDefined, LanguageLocale, logger, Observable } from 'mn-tools';
+import { extend, isDefined, isString, LanguageLocale, logger, Observable } from 'mn-tools';
 import { IApplicationListener } from '../application';
 import { Capacitor as CapacitorCore } from '@capacitor/core';
 import { Network as CapacitorNetwork } from '@capacitor/network';
@@ -553,15 +553,16 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     }
   }
 
-  public async readFileUtf8(filters: TFileFilter[]): Promise<{ content: ArrayBuffer; name?: string } | undefined> {
+  public async readFileUtf8(
+    filters: TFileFilter[]
+  ): Promise<string | { content: ArrayBuffer; name?: string } | undefined> {
     if (this.isDesktop) {
       const buffer = await window.electron.ipcRenderer.readFileUtf8(filters);
-      if (buffer) {
-        // Supposant que result est le contenu du fichier en tant que Buffer
-        // Convertissez le Buffer (Node.js) en ArrayBuffer si nécessaire
-        return { content: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) };
-      }
-      return undefined;
+      if (!buffer) return undefined;
+      if (isString(buffer)) return buffer;
+      // Supposant que result est le contenu du fichier en tant que Buffer
+      // Convertissez le Buffer (Node.js) en ArrayBuffer si nécessaire
+      return { content: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) };
     } else {
       // Mode web: Lire le fichier et renvoyer un objet avec ArrayBuffer
       return new Promise<{ content: ArrayBuffer; name?: string } | undefined>((resolve, reject) => {

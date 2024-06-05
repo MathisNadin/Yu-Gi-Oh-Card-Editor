@@ -1,6 +1,6 @@
 import { ICardsExportData } from 'client/editor/card';
 import { IStoreListener } from 'mn-toolkit';
-import { Observable, deepClone, isObject } from 'mn-tools';
+import { Observable, deepClone, isObject, isString } from 'mn-tools';
 
 interface IExportData {
   settings: IUserSettings;
@@ -91,10 +91,11 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
   public async importData() {
     try {
       const result = await app.$device.readFileUtf8([{ extensions: ['json'], name: 'JSON File' }]);
-      if (!result?.content) return;
+      const resultIsString = isString(result);
+      if (!result || (!resultIsString && !result.content)) return;
 
       const decoder = new TextDecoder('utf-8');
-      const stringContent = decoder.decode(result.content);
+      const stringContent = resultIsString ? result : decoder.decode(result.content);
       if (!stringContent) return;
 
       const data = JSON.parse(stringContent);
