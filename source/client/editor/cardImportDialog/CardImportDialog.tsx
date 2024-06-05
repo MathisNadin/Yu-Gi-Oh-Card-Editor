@@ -426,7 +426,7 @@ export class CardImportDialog extends AbstractPopup<
       ...[
         {
           label: 'ID',
-          width: '50px',
+          width: '60px',
           order: cardsDataSortOption === 'id' ? cardsDataSortOrder : undefined,
           onChangeOrder: () => this.onChangeOrder('id'),
         },

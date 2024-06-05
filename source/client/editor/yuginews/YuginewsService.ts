@@ -1,4 +1,4 @@
-import { extend, integer, uuid } from 'mn-tools';
+import { extend, integer, isDefined, isUndefined, uuid } from 'mn-tools';
 import { load } from 'cheerio';
 import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from 'client/editor/card';
 
@@ -117,8 +117,9 @@ export class YuginewsService {
             }
             if (Object.keys(parsedCardData)?.length) {
               if (!parsedCardData.setId && setId) parsedCardData.setId = setId;
-              if (parsedCardData.id && !/\D/g.test(`${parsedCardData.id}`))
+              if (isDefined(parsedCardData.id) && !/\D/g.test(`${parsedCardData.id}`)) {
                 parsedCardData.id = integer(parsedCardData.id);
+              }
               parsedCardData.uuid = uuid();
               parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
 
@@ -313,7 +314,7 @@ export class YuginewsService {
               parsedCardData.uuid = uuid();
               if (artworkUrl) parsedCardData.artworkUrl = artworkUrl;
               if (!parsedCardData.setId) parsedCardData.setId = '';
-              if (!parsedCardData.id) parsedCardData.id = '';
+              if (isUndefined(parsedCardData.id)) parsedCardData.id = '';
               cards.push(parsedCardData);
             }
           });
@@ -451,16 +452,27 @@ export class YuginewsService {
       }
 
       if (importArtworks && cardData.artworkUrl?.length && artworkDirectoryPath?.length) {
-        const filePath = (await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath)) || '';
+        const filePath = await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath);
         if (filePath) {
           card.artwork.url = filePath;
           if (card.rush) {
             card.dontCoverRushArt = true;
-            extend(card.artwork, app.$card.getFullRushCardPreset());
-          } else if (card.pendulum) {
-            extend(card.artwork, app.$card.getFullPendulumCardPreset());
-          } else {
-            extend(card.artwork, app.$card.getFullCardPreset());
+          }
+
+          if (
+            !filePath.endsWith('-OW.webp') &&
+            !filePath.endsWith('-OW.png') &&
+            !filePath.endsWith('-OW.jpg') &&
+            !filePath.endsWith('-OW.jpeg')
+          ) {
+            if (card.rush) {
+              card.dontCoverRushArt = true;
+              extend(card.artwork, app.$card.getFullRushCardPreset());
+            } else if (card.pendulum) {
+              extend(card.artwork, app.$card.getFullPendulumCardPreset());
+            } else {
+              extend(card.artwork, app.$card.getFullCardPreset());
+            }
           }
         }
       }
@@ -497,13 +509,13 @@ export class YuginewsService {
 
     if (cardData.normalText) {
       description = cardData.normalText;
-    } else if ((cardData.effects as string[])?.length) {
-      let effects = cardData.effects as string[];
+    } else if (cardData.effects?.length) {
       let lastHasLineBreak = false;
-      effects.forEach((eff, i) => {
+      let lastHasBulletPoint = false;
+      cardData.effects.forEach((eff, i) => {
         if (!i) {
           description = eff;
-        } else if (!lastHasLineBreak && eff.startsWith('●')) {
+        } else if (!lastHasLineBreak && (lastHasBulletPoint || eff.startsWith('●'))) {
           description = `${description}\n${eff}`;
         } else {
           description = `${description}${lastHasLineBreak ? '' : ' '}${eff}`;
@@ -515,6 +527,8 @@ export class YuginewsService {
         } else {
           lastHasLineBreak = false;
         }
+
+        lastHasBulletPoint = eff.startsWith('●') || eff.includes('\n●');
       });
     }
 

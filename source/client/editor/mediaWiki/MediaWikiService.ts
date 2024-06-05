@@ -497,17 +497,27 @@ export class MediaWikiService {
                 if (keys?.length) {
                   let pageInfo = artworkData?.query?.pages[keys[0]];
                   if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
-                    const filePath =
-                      (await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath)) || '';
+                    const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath);
                     if (filePath) {
                       card.artwork.url = filePath;
                       if (card.rush) {
                         card.dontCoverRushArt = true;
-                        extend(card.artwork, app.$card.getFullRushCardPreset());
-                      } else if (card.pendulum) {
-                        extend(card.artwork, app.$card.getFullPendulumCardPreset());
-                      } else {
-                        extend(card.artwork, app.$card.getFullCardPreset());
+                      }
+
+                      if (
+                        !filePath.endsWith('-OW.webp') &&
+                        !filePath.endsWith('-OW.png') &&
+                        !filePath.endsWith('-OW.jpg') &&
+                        !filePath.endsWith('-OW.jpeg')
+                      ) {
+                        if (card.rush) {
+                          card.dontCoverRushArt = true;
+                          extend(card.artwork, app.$card.getFullRushCardPreset());
+                        } else if (card.pendulum) {
+                          extend(card.artwork, app.$card.getFullPendulumCardPreset());
+                        } else {
+                          extend(card.artwork, app.$card.getFullCardPreset());
+                        }
                       }
                     }
                   }
