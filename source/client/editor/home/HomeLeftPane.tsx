@@ -12,12 +12,7 @@ import {
   Typography,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-
-interface IVersionInfos {
-  version: string;
-  link: string;
-  note: string;
-}
+import { IVersionInfos, UpdateDialog } from './UpdateDialog';
 
 type TtabIndex = 'master' | 'rush';
 
@@ -53,6 +48,9 @@ export class HomeLeftPane
 
     app.$card.addListener(this);
     app.$device.addListener(this);
+  }
+
+  public componentDidMount() {
     app.$errorManager.handlePromise(this.checkUpdate());
   }
 
@@ -185,21 +183,20 @@ export class HomeLeftPane
     ];
   }
 
+  private async openUpdateDialog() {
+    await UpdateDialog.show({ infos: this.state.versionInfos });
+  }
+
   private renderUpdate() {
     if (!this.state.needUpdate) return null;
     return (
-      <VerticalStack className='new-version' padding gutter itemAlignment='center'>
-        {!!this.state.versionInfos.version && (
-          <Typography variant='label' content={`Nouvelle version disponible : ${this.state.versionInfos.version}`} />
-        )}
-        {!!this.state.versionInfos.note && <Typography variant='help' content={this.state.versionInfos.note} />}
-        {!!this.state.versionInfos.link && (
-          <Button
-            label='Installer'
-            color='positive'
-            onTap={() => app.$device.openExternalLink(this.state.versionInfos.link)}
-          />
-        )}
+      <VerticalStack key='new-version' className='new-version' gutter itemAlignment='center'>
+        <Typography
+          underlined
+          variant='label'
+          content='Nouvelle version disponible'
+          onTap={() => this.openUpdateDialog()}
+        />
       </VerticalStack>
     );
   }

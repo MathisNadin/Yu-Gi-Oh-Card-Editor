@@ -5,13 +5,13 @@
 
 @keyframes colorCycle {
   0% {
-    background-color: nth($theme-light-bg, 1);
+    color: nth($theme-light-bg, 1);
   }
   50% {
-    background-color: #fafa33;
+    color: $warning;
   }
   100% {
-    background-color: nth($theme-light-bg, 1);
+    color: nth($theme-light-bg, 1);
   }
 }
 
@@ -37,10 +37,9 @@
     }
 
     .new-version {
-      animation: colorCycle 3s infinite;
-      min-width: calc(100% - $themeDefaultSpacing * 2);
-      max-width: calc(100% - $themeDefaultSpacing * 2);
-      border-radius: $themeDefaultBorderRadius * 2;
+      .mn-typography {
+        animation: colorCycle 3s infinite;
+      }
     }
   }
 
