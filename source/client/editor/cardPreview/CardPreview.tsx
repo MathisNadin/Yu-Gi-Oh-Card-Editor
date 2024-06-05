@@ -40,23 +40,17 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     this.setState({ renderCard });
   }
 
-  private async onPlaceholderCardReady() {
-    await app.$card.writeCardFile(
-      'placeholder-card-builder',
-      this.state.renderCard!.uuid as string,
-      this.state.renderCard!.name
-    );
+  private async onPlaceholderCardReady(element: HTMLDivElement) {
+    await app.$card.writeCardFile(element, this.state.renderCard!.uuid as string, this.state.renderCard!.name);
   }
 
-  private async onCardReady() {
-    const element = document.getElementById('main-card-builder') as HTMLElement;
-    if (!element) return;
+  private async onCardReady(element: HTMLDivElement) {
     try {
       const dataUrl = await toPng(element);
-      const img = document.querySelector('.img-render') as HTMLImageElement;
+      const img = document.querySelector<HTMLImageElement>('.img-render')!;
       img.src = dataUrl;
 
-      const rendering = document.querySelector('.rendering') as HTMLImageElement;
+      const rendering = document.querySelector<HTMLImageElement>('.rendering')!;
       rendering.classList.add('hidden');
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -71,7 +65,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
           <CardBuilder
             forRender
             card={this.state.renderCard!}
-            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            onCardReady={(element) => app.$errorManager.handlePromise(this.onPlaceholderCardReady(element))}
             id='placeholder-card-builder'
           />
         )}
@@ -80,14 +74,14 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
           <RushCardBuilder
             forRender
             card={this.state.renderCard!}
-            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            onCardReady={(element) => app.$errorManager.handlePromise(this.onPlaceholderCardReady(element))}
             id='placeholder-card-builder'
           />
         )}
 
         <CardBuilder
           card={this.props.card}
-          onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())}
+          onCardReady={(element) => app.$errorManager.handlePromise(this.onCardReady(element))}
           id='main-card-builder'
         />
 

@@ -31,7 +31,7 @@ export class RushCardPreview
   }
 
   public componentDidUpdate() {
-    const rendering = document.querySelector('.rendering') as HTMLImageElement;
+    const rendering = document.querySelector('.rendering')!;
     rendering.classList.remove('hidden');
   }
 
@@ -43,28 +43,25 @@ export class RushCardPreview
     this.setState({ renderCard });
   }
 
-  private async onPlaceholderCardReady() {
+  private async onPlaceholderCardReady(element: HTMLDivElement) {
     await app.$card.writeCardFile(
-      'placeholder-card-builder',
+      element,
       (this.state.renderCard as ICard).uuid as string,
       (this.state.renderCard as ICard).name
     );
   }
 
-  private async onCardReady() {
-    const element = document.getElementById('main-card-builder') as HTMLElement;
-    if (element) {
-      try {
-        const dataUrl = await toPng(element);
-        const img = document.querySelector('.img-render') as HTMLImageElement;
-        img.src = dataUrl;
+  private async onCardReady(element: HTMLDivElement) {
+    try {
+      const dataUrl = await toPng(element);
+      const img = document.querySelector<HTMLImageElement>('.img-render')!;
+      img.src = dataUrl;
 
-        const rendering = document.querySelector('.rendering') as HTMLImageElement;
-        rendering.classList.add('hidden');
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
+      const rendering = document.querySelector<HTMLImageElement>('.rendering')!;
+      rendering.classList.add('hidden');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
   }
 
@@ -75,7 +72,7 @@ export class RushCardPreview
           <CardBuilder
             forRender
             card={this.state.renderCard as ICard}
-            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            onCardReady={(element) => app.$errorManager.handlePromise(this.onPlaceholderCardReady(element))}
             id='placeholder-card-builder'
           />
         )}
@@ -84,14 +81,14 @@ export class RushCardPreview
           <RushCardBuilder
             forRender
             card={this.state.renderCard as ICard}
-            onCardReady={() => app.$errorManager.handlePromise(this.onPlaceholderCardReady())}
+            onCardReady={(element) => app.$errorManager.handlePromise(this.onPlaceholderCardReady(element))}
             id='placeholder-card-builder'
           />
         )}
 
         <RushCardBuilder
           card={this.props.card}
-          onCardReady={() => app.$errorManager.handlePromise(this.onCardReady())}
+          onCardReady={(element) => app.$errorManager.handlePromise(this.onCardReady(element))}
           id='main-card-builder'
         />
 

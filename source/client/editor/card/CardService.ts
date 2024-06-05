@@ -909,7 +909,9 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   public async renderCurrentCard() {
     const cardUuid = (this._tempCurrentCard ? this._tempCurrentCard.uuid : this._currentCard.uuid) as string;
     const cardName = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
-    await this.writeCardFile('main-card-builder', cardUuid, cardName);
+    const element = document.getElementById('main-card-builder') as HTMLDivElement;
+    if (!element) return;
+    await this.writeCardFile(element, cardUuid, cardName);
   }
 
   private setRenderCard() {
@@ -927,23 +929,20 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     this.setRenderCard();
   }
 
-  public async writeCardFile(id: string, cardUuid: string, cardName: string) {
+  public async writeCardFile(element: HTMLDivElement, cardUuid: string, cardName: string) {
     if (!app.$device.isDesktop) return;
 
-    const element = document.getElementById(id) as HTMLElement;
-    if (element) {
-      try {
-        const dataUrl = await toPng(element);
-        if (!dataUrl) return;
-        await window.electron.ipcRenderer.writePngFile(
-          cardName.replace(/[\\/:"*?<>|]/g, '') || 'Sans nom',
-          dataUrl.replace(/^data:image\/\w+;base64,/, ''),
-          this._renderPath
-        );
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
+    try {
+      const dataUrl = await toPng(element);
+      if (!dataUrl) return;
+      await window.electron.ipcRenderer.writePngFile(
+        cardName.replace(/[\\/:"*?<>|]/g, '') || 'Sans nom',
+        dataUrl.replace(/^data:image\/\w+;base64,/, ''),
+        this._renderPath
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
     }
 
     if (this._renderCardsQueue.length) {

@@ -97,6 +97,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
           'question-mark': atk === '?',
           compressed: atk?.length > 4,
         })}
+        ref={this.ref}
       >
         <p
           className={classNames('stat-text', 'atk-text', 'white-text', {

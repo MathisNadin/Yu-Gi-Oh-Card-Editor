@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { CSSProperties } from 'react';
+import { createRef, CSSProperties } from 'react';
 import { classNames } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild } from 'mn-toolkit';
@@ -17,7 +17,7 @@ interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
   card: ICard;
-  onCardReady: () => void;
+  onCardReady: (element: HTMLDivElement) => void;
 }
 
 interface IRushCardBuilderState extends IContainableState {
@@ -41,6 +41,7 @@ interface IRushCardBuilderState extends IContainableState {
 type TChild = 'name' | 'desc' | 'atkMax' | 'atk' | 'def' | 'abilities' | 'artwork';
 
 export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCardBuilderState> {
+  private ref = createRef<HTMLDivElement>();
   private nameReady: boolean;
   private descReady: boolean;
   private atkMaxReady: boolean;
@@ -276,7 +277,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       this.abilitiesReady &&
       this.artworkReady
     ) {
-      setTimeout(() => this.props.onCardReady(), 200);
+      setTimeout(() => this.props.onCardReady(this.ref.current!), 200);
     }
   }
 
@@ -375,7 +376,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     const specificties = this.getSpecifities();
 
     return (
-      <div className='custom-container card-builder rush-card-builder' id={this.props.id}>
+      <div className='custom-container card-builder rush-card-builder' id={this.props.id} ref={this.ref}>
         <img className='card-layer artworkBg' src={artworkBg} alt='artworkBg' />
 
         <RushCardArtwork card={card} artworkBg={artworkBg} onReady={() => this.onChildReady('artwork')} />
@@ -438,6 +439,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         <RushCardAbilities
           card={card}
           abilities={abilities}
+          hasAbilities={hasAbilities}
           includesXyz={includesXyz}
           hasStIcon={hasStIcon}
           onReady={() => this.onChildReady('abilities')}

@@ -102,6 +102,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
           'question-mark': def === '?',
           compressed: def?.length > 4,
         })}
+        ref={this.ref}
       >
         <p
           className={classNames('stat-text', 'def-text', 'white-text', {

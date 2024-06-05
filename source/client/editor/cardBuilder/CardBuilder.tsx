@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { createRef, CSSProperties } from 'react';
 import { classNames } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit';
@@ -8,7 +8,7 @@ interface ICardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
   card: ICard;
-  onCardReady: () => void;
+  onCardReady: (element: HTMLDivElement) => void;
 }
 
 interface ICardBuilderState extends IContainableState {
@@ -32,6 +32,7 @@ interface ICardBuilderState extends IContainableState {
 type TChild = 'name' | 'desc' | 'pend' | 'atk' | 'def' | 'abilities' | 'artwork';
 
 export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderState> {
+  private ref = createRef<HTMLDivElement>();
   private nameReady: boolean;
   private descReady: boolean;
   private pendReady: boolean;
@@ -200,7 +201,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       this.abilitiesReady &&
       this.artworkReady
     ) {
-      setTimeout(() => this.props.onCardReady(), 200);
+      setTimeout(() => this.props.onCardReady(this.ref.current!), 200);
     }
   }
 
@@ -276,7 +277,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       ];
 
     return (
-      <div className='custom-container card-builder' id={this.props.id}>
+      <div className='custom-container card-builder' id={this.props.id} ref={this.ref}>
         <img className='card-layer border' src={paths.border} alt='border' />
 
         {hasPendulumFrame && this.renderFrames(cardFrames, 'card-frame')}
@@ -461,13 +462,15 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderLevelOrStIcon() {
+    if (this.state.includesSkill) return null;
+
     const { card } = this.props;
     const paths = app.$card.paths.master;
 
-    let includesOther = false;
-    let includesXyz = false;
     let includesDarkSynchro = false;
+    let includesXyz = false;
     let includesLink = false;
+    let includesOther = false;
     for (const frame of card.frames) {
       if (frame === 'spell' || frame === 'trap') {
         return <img className='card-layer st-icon' src={app.$card.getMasterStIcon(card)} alt='stIcon' />;

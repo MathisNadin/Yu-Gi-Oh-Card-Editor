@@ -101,6 +101,7 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
           'question-mark': atkMax === '?',
           compressed: atkMax?.length > 4,
         })}
+        ref={this.ref}
       >
         <p
           className={classNames('stat-text', 'atk-max-text', 'white-text', {
