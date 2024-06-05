@@ -79,7 +79,7 @@ export class Application extends Observable<IApplicationListener> {
     this.bootstrapConfig();
     this.bootstrapServices()
       .then(() => this.fireReady())
-      // eslint-disable-next-line no-console
+
       .catch((e: Error) => console.error(e));
 
     window.onbeforeunload = () => {
@@ -130,7 +130,6 @@ export class Application extends Observable<IApplicationListener> {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const service = (app as any)[serviceName];
       if (!service) {
-        // eslint-disable-next-line no-console
         console.warn(`Le service ${serviceName} n'existe pas`);
       } else if (service.setup) {
         await service.setup();
@@ -152,7 +151,6 @@ export class Application extends Observable<IApplicationListener> {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this._services[name].instance = new (clazz as any)();
           } catch (e) {
-            // eslint-disable-next-line no-console
             console.error(e);
           }
         }

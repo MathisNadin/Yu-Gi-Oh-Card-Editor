@@ -138,7 +138,6 @@ export class Table extends Container<ITableProps, ITableState> {
         });
       }
       if (resultRow.cells.length !== columns.length) {
-        // eslint-disable-next-line no-console
         console.error('On doit avoir autant de cellule sur une ligne que de colonnes définies.');
         return [];
       }

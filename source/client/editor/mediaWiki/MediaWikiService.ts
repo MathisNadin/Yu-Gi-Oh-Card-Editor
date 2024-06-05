@@ -509,7 +509,6 @@ export class MediaWikiService {
         }
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
 
@@ -551,7 +550,7 @@ export class MediaWikiService {
     text = text.replaceAll(/\s+/g, ' ');
 
     // Remplacer les balises <br /> par un saut de ligne
-    text = text.replaceAll(/<br \/>/g, '\n');
+    text = text.replaceAll(/<br\s*\/?>/gi, '\n');
 
     text = text.replaceAll("''", '');
 

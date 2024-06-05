@@ -595,7 +595,6 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   }
 
   private doColor(id: TForegroundColor) {
-    console.log('doColor', id);
     // Ferme le popover du palette
     app.$popover.remove(this.palettePopoverId);
 
@@ -807,7 +806,6 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     document.execCommand('underline', false, undefined);
   }
   public doItalic() {
-    console.log('italic');
     document.execCommand('italic', false, undefined);
   }
   public doBlockQuote() {

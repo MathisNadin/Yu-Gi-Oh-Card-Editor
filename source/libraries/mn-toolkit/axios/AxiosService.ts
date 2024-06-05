@@ -17,7 +17,6 @@ export class AxiosService {
       const response: AxiosResponse<any> = await this.axiosInstance.get(url, options);
       return response.data;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error requesting API:', error);
       throw error;
     }

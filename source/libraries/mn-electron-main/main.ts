@@ -248,4 +248,4 @@ app
       if (!BrowserWindow.getAllWindows().length) createWindow();
     });
   })
-  .catch(console.log);
+  .catch(console.error);

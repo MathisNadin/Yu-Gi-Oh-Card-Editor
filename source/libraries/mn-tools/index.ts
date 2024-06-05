@@ -139,7 +139,6 @@ export function removeMarkdown(source: string, options?: IRemoveMarkdownOptions)
       // Replace two or more newlines with exactly two? Not entirely sure this belongs here...
       .replace(/\n{2,}/g, '\n\n');
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error(e);
     return source;
   }

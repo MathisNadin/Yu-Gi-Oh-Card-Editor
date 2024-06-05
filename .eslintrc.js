@@ -72,7 +72,7 @@ module.exports = {
     'no-bitwise': 'off',
     'no-shadow': 'off',
     'operator-assignment': 'off',
-    'no-continue': 'off',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-void': 'off',
     'no-return-await': 'off',
     'no-nested-ternary': 'off',

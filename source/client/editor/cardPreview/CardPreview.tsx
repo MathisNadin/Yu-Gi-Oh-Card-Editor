@@ -53,7 +53,6 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
       const rendering = document.querySelector<HTMLImageElement>('.rendering')!;
       rendering.classList.add('hidden');
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
   }

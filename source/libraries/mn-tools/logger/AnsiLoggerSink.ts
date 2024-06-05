@@ -113,13 +113,13 @@ export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
 
       case LogLevel.ERROR:
         prefix = ansi.red(prefix);
-        // eslint-disable-next-line no-console
+
         output = console.error;
         break;
 
       case LogLevel.WARNING:
         prefix = ansi.yellow(prefix);
-        // eslint-disable-next-line no-console
+
         output = console.error;
         break;
 

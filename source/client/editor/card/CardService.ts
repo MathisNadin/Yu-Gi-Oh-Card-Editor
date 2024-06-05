@@ -941,7 +941,6 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
         this._renderPath
       );
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
 

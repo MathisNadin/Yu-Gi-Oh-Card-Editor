@@ -110,7 +110,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       try {
         artworkExists = await window.electron.ipcRenderer.checkFileExists(card.artwork.url);
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
       }
     }

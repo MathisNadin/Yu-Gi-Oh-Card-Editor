@@ -195,7 +195,6 @@ export class PictureCropperDialog extends AbstractPopup<
         crop: { ...prevState.cropEffect.crop, left: newLeft * -1, top: newTop * -1 },
       };
 
-      console.log(cropEffect);
       return { cropEffect };
     });
   }

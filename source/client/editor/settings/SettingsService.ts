@@ -110,7 +110,6 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
 
       if (data.cards) await app.$card.importCardData(data.cards);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
     }
   }

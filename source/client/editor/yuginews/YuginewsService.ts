@@ -108,7 +108,6 @@ export class YuginewsService {
                   .replaceAll('(L)', '[L]')
                   .replaceAll('(R)', '[R]');
                 value = JSON.parse(cleanValue) as string[];
-                // value = array.map(t => t.replaceAll('\\\\"', '"'));
               }
 
               if (typeof value === 'string') {

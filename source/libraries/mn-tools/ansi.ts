@@ -129,23 +129,28 @@ class Ansi {
     });
 
     const topLine = '┌' + columnWidths.map((width) => '─'.repeat(width)).join('┬') + '┐';
+    // eslint-disable-next-line no-console
     console.log(topLine);
 
     const headerRow =
       '│' + headers.map((header, index) => (' ' + header + ' ').padEnd(columnWidths[index])).join('│') + '│';
+    // eslint-disable-next-line no-console
     console.log(headerRow);
 
     const separatorLine = '├' + columnWidths.map((width) => '─'.repeat(width)).join('┼') + '┤';
+    // eslint-disable-next-line no-console
     console.log(separatorLine);
 
     rows.forEach((row) => {
       const rowString =
         '│' +
         row.map((value, index) => ' ' + this.formatValue(value) + ' ' + this.pad(value, columnWidths[index])).join('│'); // Remove ANSI formatting codes
+      // eslint-disable-next-line no-console
       console.log(rowString + '│');
     });
 
     const bottomLine = '└' + columnWidths.map((width) => '─'.repeat(width)).join('┴') + '┘';
+    // eslint-disable-next-line no-console
     console.log(bottomLine);
   }
   public filterAnsi(value: JSONValue) {

@@ -74,7 +74,6 @@ export class ArtworkEditDialog extends AbstractPopup<
           artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error(error);
       }
     }
