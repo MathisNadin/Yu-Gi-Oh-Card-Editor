@@ -49,7 +49,7 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
   }
 
   private getPercents() {
-    return Math.round((100 * this.state.progress) / (this.props.total as number));
+    return Math.round((100 * this.state.progress) / (this.props.total || 1));
   }
 
   public renderClasses() {
@@ -62,7 +62,7 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
   }
 
   public render() {
-    const percent = (100 * this.state.progress) / (this.props.total as number);
+    const percent = (100 * this.state.progress) / (this.props.total || 1);
     const overload = percent > 100;
     return (
       <div id={this.props.nodeId} title={this.props.hint} className={classNames(this.renderClasses(), { overload })}>
