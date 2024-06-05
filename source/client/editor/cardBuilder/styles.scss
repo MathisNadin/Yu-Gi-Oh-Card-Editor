@@ -127,8 +127,12 @@
         font-weight: bold;
       }
 
+      &.token-name-container,
       &.skill-name-container {
         width: 690px;
+      }
+
+      &.skill-name-container {
         font-family: Arial, Helvetica, sans-serif;
         font-weight: bold;
         top: 61px;

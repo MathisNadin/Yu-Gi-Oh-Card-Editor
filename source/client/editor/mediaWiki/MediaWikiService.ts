@@ -160,7 +160,7 @@ export class MediaWikiService {
     let frSet: string | undefined;
     let jpSet: string | undefined;
 
-    let wikitextArray = wikitext.split('\n');
+    const wikitextArray = wikitext.split('\n');
     wikitextArray.forEach((t, i) => {
       if (t.includes('| rush_duel') && t.includes('true')) {
         card.rush = true;
@@ -390,6 +390,15 @@ export class MediaWikiService {
     }
 
     enName = (name || enName || title) as string;
+    if (enName && card.frames.length === 1 && card.frames[0] === 'normal') {
+      if (enName === 'Token') card.frames = ['token'];
+      else if (enName.includes('Token')) card.frames = ['monsterToken'];
+    }
+
+    if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
+      card.edition = 'forbiddenDeck';
+    }
+
     if (useFr) {
       card.cardSet = frSet as string;
       if (!card.rush && card.cardSet.startsWith('RD/')) {

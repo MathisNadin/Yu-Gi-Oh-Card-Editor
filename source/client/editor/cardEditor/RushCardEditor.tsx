@@ -578,7 +578,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           </Grid>
         </VerticalStack>
 
-        {!app.$card.isOnlySkill(this.state.card) && (
+        {!this.state.card.frames.includes('skill') && !this.state.card.frames.includes('token') && (
           <VerticalStack gutter>
             <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
               <Typography fill variant='help' content='Icône' />

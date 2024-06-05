@@ -1525,10 +1525,6 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     return false;
   }
 
-  public isOnlySkill(card: ICard) {
-    return card.frames.length === 1 && card.frames.includes('skill');
-  }
-
   public getDescriptionPlaceholder(card: ICard) {
     if (card.frames.length === 1 && FRAMES_WITH_DESCRIPTION.includes(card.frames[0])) return 'Description';
     return 'Effet';

@@ -201,8 +201,9 @@ export class YuginewsService {
 
                           if (setIdMatch && idMatch) {
                             parsedCardData.setId = setIdMatch[1].replaceAll('&nbsp;', ' ').trim();
-                            if (parsedCardData.setId && parsedCardData.setId.startsWith('RD/'))
+                            if (parsedCardData.setId && parsedCardData.setId.startsWith('RD/')) {
                               parsedCardData.isRush = true;
+                            }
                             parsedCardData.id = integer(
                               idMatch[1].slice(-3).replace(/\D/g, '').replaceAll('&nbsp;', ' ').trim()
                             );
@@ -210,6 +211,8 @@ export class YuginewsService {
                           }
                         } else {
                           parsedCardData.nameFR = line
+                            .replaceAll('<span>', '')
+                            .replaceAll('</span>', '')
                             .replaceAll('<strong>', '')
                             .replaceAll('</strong>', '')
                             .replaceAll('<b>', '')
@@ -443,6 +446,10 @@ export class YuginewsService {
       app.$card.correct(card as ICard);
       card.description = this.getDescription(card as ICard, cardData);
 
+      if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
+        card.edition = 'forbiddenDeck';
+      }
+
       if (importArtworks && cardData.artworkUrl?.length && artworkDirectoryPath?.length) {
         const filePath = (await app.$card.importArtwork(cardData.artworkUrl, artworkDirectoryPath)) || '';
         if (filePath) {
@@ -543,6 +550,10 @@ export class YuginewsService {
         frame.push('spell');
       } else if (cardData.cardType === '3') {
         frame.push('trap');
+      } else if (cardData.nameEN === 'Token') {
+        frame.push('token');
+      } else if (cardData.nameEN?.includes('Token')) {
+        frame.push('monsterToken');
       }
     }
 

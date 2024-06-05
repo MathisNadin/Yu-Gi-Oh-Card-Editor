@@ -26,6 +26,7 @@ interface IRushCardBuilderState extends IContainableState {
   hasAbilities: boolean;
   isBackrow: boolean;
 
+  includesToken: boolean;
   includesNormal: boolean;
   includesXyz: boolean;
   includesLink: boolean;
@@ -67,6 +68,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       needsUpdate: false,
       hasAbilities: false,
       isBackrow: false,
+      includesToken: false,
       includesNormal: false,
       includesXyz: false,
       includesLink: false,
@@ -116,6 +118,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let includesLink = false;
     let includesSkill = false;
     let includesSpell = false;
+    let includesToken = false;
     let cardFrames: string[] = [];
     for (const frame of card.frames) {
       if (frame === 'spell') {
@@ -128,6 +131,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         includesLink = true;
       } else if (frame === 'skill') {
         includesSkill = true;
+      } else if (frame === 'token') {
+        includesToken = true;
       }
 
       cardFrames.push(paths.frames[frame]);
@@ -218,6 +223,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       loaded: true,
       hasAbilities,
       isBackrow,
+      includesToken,
       includesNormal,
       includesXyz,
       includesLink,
@@ -360,6 +366,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       hasAbilities,
       isBackrow,
       hasStIcon,
+      includesToken,
       includesNormal,
       includesXyz,
       includesLink,
@@ -387,7 +394,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           <img className='card-layer legend' src={paths.legends[card.legendType]} alt='legend' />
         )}
 
-        <img className='card-layer attribute' src={paths.attributes[card.language][card.attribute]} alt='attribute' />
+        {!includesToken && (
+          <img className='card-layer attribute' src={paths.attributes[card.language][card.attribute]} alt='attribute' />
+        )}
 
         {hasAbilities && !card.dontCoverRushArt && card.maximum && (
           <img className='card-layer atk-max-line' src={paths.atkMaxLine} alt='atkMaxLine' />
@@ -454,6 +463,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
         <RushCardName
           card={card}
+          includesToken={includesToken}
           includesXyz={includesXyz}
           includesLink={includesLink}
           includesSkill={includesSkill}

@@ -19,6 +19,7 @@ interface ICardBuilderState extends IContainableState {
   hasLinkArrows: boolean;
   isBackrow: boolean;
 
+  includesToken: boolean;
   includesNormal: boolean;
   includesXyz: boolean;
   includesLink: boolean;
@@ -60,6 +61,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       hasPendulumFrame: false,
       hasLinkArrows: false,
       isBackrow: false,
+      includesToken: false,
       includesNormal: false,
       includesXyz: false,
       includesLink: false,
@@ -104,6 +106,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const hasLinkArrows = app.$card.hasLinkArrows(card);
     const isBackrow = app.$card.isBackrow(card);
 
+    let includesToken = false;
     let includesNormal = false;
     let includesXyz = false;
     let includesLink = false;
@@ -119,6 +122,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
         includesLink = true;
       } else if (frame === 'skill') {
         includesSkill = true;
+      } else if (frame === 'token') {
+        includesToken = true;
       }
 
       cardFrames.push(paths.frames[frame]);
@@ -144,6 +149,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       hasPendulumFrame,
       hasLinkArrows,
       isBackrow,
+      includesToken,
       includesNormal,
       includesXyz,
       includesLink,
@@ -259,6 +265,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       hasPendulumFrame,
       hasLinkArrows,
       isBackrow,
+      includesToken,
       includesNormal,
       includesXyz,
       includesLink,
@@ -304,7 +311,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           />
         )}
 
-        {!includesSkill && (
+        {!includesSkill && !includesToken && (
           <img
             className='card-layer attribute'
             src={paths.attributes[card.noTextAttribute ? 'vanilla' : card.language][card.attribute]}
@@ -408,6 +415,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
         <CardName
           card={card}
+          includesToken={includesToken}
           includesXyz={includesXyz}
           includesLink={includesLink}
           includesSkill={includesSkill}

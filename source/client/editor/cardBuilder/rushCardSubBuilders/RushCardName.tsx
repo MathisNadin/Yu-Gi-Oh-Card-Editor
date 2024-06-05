@@ -4,6 +4,7 @@ import { createRef } from 'react';
 
 interface IRushCardNameProps extends IToolkitComponentProps {
   card: ICard;
+  includesToken: boolean;
   includesXyz: boolean;
   includesLink: boolean;
   includesSkill: boolean;
@@ -14,6 +15,7 @@ interface IRushCardNameProps extends IToolkitComponentProps {
 interface IRushCardNameState extends IToolkitComponentState {
   cardName: string;
   nameStyle: TNameStyle;
+  includesToken: boolean;
   includesXyz: boolean;
   includesLink: boolean;
   includesSkill: boolean;
@@ -30,6 +32,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     this.state = {
       cardName: props.card.name,
       nameStyle: props.card.nameStyle,
+      includesToken: props.includesToken,
       includesXyz: props.includesXyz,
       includesLink: props.includesLink,
       includesSkill: props.includesSkill,
@@ -48,6 +51,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     prevState: IRushCardNameState
   ): Partial<IRushCardNameState> | null {
     if (
+      prevState.includesToken !== nextProps.includesToken ||
       prevState.includesXyz !== nextProps.includesXyz ||
       prevState.includesLink !== nextProps.includesLink ||
       prevState.includesSkill !== nextProps.includesSkill ||
@@ -59,6 +63,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
         checkState: true,
         cardName: nextProps.card.name,
         nameStyle: nextProps.card.nameStyle,
+        includesToken: nextProps.includesToken,
         includesXyz: nextProps.includesXyz,
         includesLink: nextProps.includesLink,
         includesSkill: nextProps.includesSkill,
@@ -97,11 +102,15 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
   public render() {
     if (this.isEmpty) return null;
 
-    const { cardName, nameStyle, includesXyz, includesLink, includesSkill, isBackrow, xScale } = this.state;
+    const { cardName, nameStyle, includesXyz, includesLink, includesToken, includesSkill, isBackrow, xScale } =
+      this.state;
 
     let containerClass = `custom-container card-layer card-name-container`;
     let pClass = `card-layer card-name ${nameStyle}`;
-    if (includesSkill) {
+    if (includesToken) {
+      containerClass = `${containerClass} token-name-container`;
+      pClass = `${pClass} black-text token-name`;
+    } else if (includesSkill) {
       pClass = `${pClass} white-text skill-name`;
       containerClass = `${containerClass} skill-name-container`;
     } else {
