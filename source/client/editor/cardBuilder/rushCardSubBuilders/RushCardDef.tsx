@@ -5,7 +5,7 @@ import { createRef } from 'react';
 
 interface IRushCardDefProps extends IToolkitComponentProps {
   card: ICard;
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   includesLink: boolean;
   includesSkill: boolean;
   onReady: () => void;
@@ -14,7 +14,7 @@ interface IRushCardDefProps extends IToolkitComponentProps {
 interface IRushCardDefState extends IToolkitComponentState {
   def: string;
   dontCoverRushArt: boolean;
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   includesLink: boolean;
   includesSkill: boolean;
   checkState: boolean;
@@ -29,7 +29,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
     this.state = {
       def: props.card.def,
       dontCoverRushArt: props.card.dontCoverRushArt,
-      hasAbilities: props.hasAbilities,
+      hasRushMonsterDetails: props.hasRushMonsterDetails,
       includesLink: props.includesLink,
       includesSkill: props.includesSkill,
       checkState: true,
@@ -47,7 +47,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
   ): Partial<IRushCardDefState> | null {
     if (
       prevState.dontCoverRushArt !== nextProps.card.dontCoverRushArt ||
-      prevState.hasAbilities !== nextProps.hasAbilities ||
+      prevState.hasRushMonsterDetails !== nextProps.hasRushMonsterDetails ||
       prevState.includesLink !== nextProps.includesLink ||
       prevState.includesSkill !== nextProps.includesSkill ||
       prevState.def !== nextProps.card.def
@@ -56,7 +56,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
         checkState: false,
         def: nextProps.card.def,
         dontCoverRushArt: nextProps.card.dontCoverRushArt,
-        hasAbilities: nextProps.hasAbilities,
+        hasRushMonsterDetails: nextProps.hasRushMonsterDetails,
         includesLink: nextProps.includesLink,
         includesSkill: nextProps.includesSkill,
         xScale: 1,
@@ -75,8 +75,8 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
   }
 
   private get isEmpty() {
-    const { def, hasAbilities, dontCoverRushArt, includesLink, includesSkill } = this.state;
-    return !hasAbilities || dontCoverRushArt || includesLink || includesSkill || !def;
+    const { def, hasRushMonsterDetails, dontCoverRushArt, includesLink, includesSkill } = this.state;
+    return !hasRushMonsterDetails || dontCoverRushArt || includesLink || includesSkill || !def;
   }
 
   private checkReady() {

@@ -6,7 +6,6 @@ import { createRef, Fragment } from 'react';
 interface IRushCardAbilitiesProps extends IToolkitComponentProps {
   card: ICard;
   abilities: string[];
-  hasAbilities: boolean;
   includesXyz: boolean;
   hasStIcon: boolean;
   onReady: () => void;
@@ -15,7 +14,6 @@ interface IRushCardAbilitiesProps extends IToolkitComponentProps {
 interface IRushCardAbilitiesState extends IToolkitComponentState {
   abilities: string[];
   stType: TStIcon;
-  hasAbilities: boolean;
   includesXyz: boolean;
   hasStIcon: boolean;
   checkState: boolean;
@@ -34,7 +32,6 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
     this.state = {
       abilities: [...props.abilities],
       stType: props.card.stType,
-      hasAbilities: props.hasAbilities,
       includesXyz: props.includesXyz,
       hasStIcon: props.hasStIcon,
       checkState: true,
@@ -53,7 +50,6 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
   ): Partial<IRushCardAbilitiesState> | null {
     if (
       prevState.stType !== nextProps.card.stType ||
-      prevState.hasAbilities !== nextProps.hasAbilities ||
       prevState.includesXyz !== nextProps.includesXyz ||
       prevState.hasStIcon !== nextProps.hasStIcon ||
       prevState.abilities.length !== nextProps.abilities.length ||
@@ -62,7 +58,6 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
       return {
         checkState: true,
         abilities: [...nextProps.abilities],
-        hasAbilities: nextProps.hasAbilities,
         stType: nextProps.card.stType,
         includesXyz: nextProps.includesXyz,
         hasStIcon: nextProps.hasStIcon,
@@ -83,8 +78,8 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
   }
 
   private get isEmpty() {
-    const { abilities, hasAbilities } = this.state;
-    return !hasAbilities || !abilities.length;
+    const { abilities } = this.state;
+    return !abilities.length;
   }
 
   private checkReady() {

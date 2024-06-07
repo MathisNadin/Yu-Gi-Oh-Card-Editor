@@ -17,6 +17,7 @@ interface IRushCardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
   card: ICard;
+  onUpdating?: () => void;
   onCardReady: (element: HTMLDivElement) => void;
 }
 
@@ -24,7 +25,7 @@ interface IRushCardBuilderState extends IContainableState {
   needsUpdate: boolean;
   card: ICard;
 
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   isBackrow: boolean;
 
   includesToken: boolean;
@@ -68,7 +69,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       loaded: false,
       card: { ...props.card },
       needsUpdate: false,
-      hasAbilities: false,
+      hasRushMonsterDetails: false,
       isBackrow: false,
       includesToken: false,
       includesNormal: false,
@@ -97,6 +98,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
   public componentDidUpdate() {
     if (!this.state.needsUpdate) return;
+    if (this.props.onUpdating) this.props.onUpdating();
     app.$errorManager.handlePromise(this.prepareState());
   }
 
@@ -113,7 +115,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     this.artworkReady = false;
 
     const paths = app.$card.paths.rush;
-    const hasAbilities = app.$card.hasAbilities(card);
+    const hasRushMonsterDetails = app.$card.hasRushMonsterDetails(card);
     const isBackrow = app.$card.isBackrow(card);
 
     let includesNormal = false;
@@ -143,7 +145,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     let hasStIcon = false;
     let abilities: string[] = [];
-    if (hasAbilities) {
+    if (hasRushMonsterDetails) {
       abilities = card.abilities;
     } else if (includesSpell) {
       abilities.push(card.language === 'fr' ? 'Carte Magie' : 'Spell Card');
@@ -225,7 +227,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     this.setState({
       loaded: true,
       needsUpdate: false,
-      hasAbilities,
+      hasRushMonsterDetails,
       isBackrow,
       includesToken,
       includesNormal,
@@ -367,7 +369,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     const {
       loaded,
       card,
-      hasAbilities,
+      hasRushMonsterDetails,
       isBackrow,
       hasStIcon,
       includesToken,
@@ -402,10 +404,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           <img className='card-layer attribute' src={paths.attributes[card.language][card.attribute]} alt='attribute' />
         )}
 
-        {hasAbilities && !card.dontCoverRushArt && card.maximum && (
+        {hasRushMonsterDetails && !card.dontCoverRushArt && card.maximum && (
           <img className='card-layer atk-max-line' src={paths.atkMaxLine} alt='atkMaxLine' />
         )}
-        {hasAbilities && !card.dontCoverRushArt && (
+        {hasRushMonsterDetails && !card.dontCoverRushArt && (
           <img className='card-layer atk-def-line' src={paths.atkDefLine} alt='atkDefLine' />
         )}
 
@@ -423,21 +425,21 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
         <RushCardAtkMax
           card={card}
-          hasAbilities={hasAbilities}
+          hasRushMonsterDetails={hasRushMonsterDetails}
           includesSkill={includesSkill}
           onReady={() => this.onChildReady('atkMax')}
         />
 
         <RushCardAtk
           card={card}
-          hasAbilities={hasAbilities}
+          hasRushMonsterDetails={hasRushMonsterDetails}
           includesSkill={includesSkill}
           onReady={() => this.onChildReady('atk')}
         />
 
         <RushCardDef
           card={card}
-          hasAbilities={hasAbilities}
+          hasRushMonsterDetails={hasRushMonsterDetails}
           includesLink={includesLink}
           includesSkill={includesSkill}
           onReady={() => this.onChildReady('def')}
@@ -452,7 +454,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         <RushCardAbilities
           card={card}
           abilities={abilities}
-          hasAbilities={hasAbilities}
           includesXyz={includesXyz}
           hasStIcon={hasStIcon}
           onReady={() => this.onChildReady('abilities')}
@@ -497,24 +498,13 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private getSpecifities(): { lv: boolean; rk: boolean } {
-    const { card } = this.state;
-    let includesXyz = false;
-    for (const frame of card.frames) {
-      if (frame === 'spell' || frame === 'trap' || frame === 'token') {
-        return { lv: false, rk: false };
-      } else if (frame === 'xyz') {
-        includesXyz = true;
-      }
-    }
-
-    if (!card.dontCoverRushArt) {
-      if (includesXyz) {
-        return { lv: false, rk: true };
-      } else {
-        return { lv: true, rk: false };
-      }
-    } else {
+    const { card, hasRushMonsterDetails } = this.state;
+    if (!hasRushMonsterDetails || card.dontCoverRushArt) {
       return { lv: false, rk: false };
+    } else if (card.frames.find((f) => f === 'xyz')) {
+      return { lv: false, rk: true };
+    } else {
+      return { lv: true, rk: false };
     }
   }
 }

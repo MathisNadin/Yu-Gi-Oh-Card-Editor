@@ -5,7 +5,7 @@ import { createRef } from 'react';
 
 interface IRushCardAtkMaxProps extends IToolkitComponentProps {
   card: ICard;
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   includesSkill: boolean;
   onReady: () => void;
 }
@@ -14,7 +14,7 @@ interface IRushCardAtkMaxState extends IToolkitComponentState {
   atkMax: string;
   dontCoverRushArt: boolean;
   isMaximum: boolean;
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   includesSkill: boolean;
   checkState: boolean;
   xScale: number;
@@ -29,7 +29,7 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
       atkMax: props.card.atkMax,
       dontCoverRushArt: props.card.dontCoverRushArt,
       isMaximum: props.card.maximum,
-      hasAbilities: props.hasAbilities,
+      hasRushMonsterDetails: props.hasRushMonsterDetails,
       includesSkill: props.includesSkill,
       checkState: true,
       xScale: 1,
@@ -47,7 +47,7 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
     if (
       prevState.dontCoverRushArt !== nextProps.card.dontCoverRushArt ||
       prevState.isMaximum !== nextProps.card.maximum ||
-      prevState.hasAbilities !== nextProps.hasAbilities ||
+      prevState.hasRushMonsterDetails !== nextProps.hasRushMonsterDetails ||
       prevState.includesSkill !== nextProps.includesSkill ||
       prevState.atkMax !== nextProps.card.atkMax
     ) {
@@ -56,7 +56,7 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
         atkMax: nextProps.card.atkMax,
         dontCoverRushArt: nextProps.card.dontCoverRushArt,
         isMaximum: nextProps.card.maximum,
-        hasAbilities: nextProps.hasAbilities,
+        hasRushMonsterDetails: nextProps.hasRushMonsterDetails,
         includesSkill: nextProps.includesSkill,
         xScale: 1,
       };
@@ -74,8 +74,8 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
   }
 
   private get isEmpty() {
-    const { atkMax, hasAbilities, includesSkill, dontCoverRushArt, isMaximum } = this.state;
-    return !hasAbilities || dontCoverRushArt || !isMaximum || includesSkill || !atkMax;
+    const { atkMax, hasRushMonsterDetails, includesSkill, dontCoverRushArt, isMaximum } = this.state;
+    return !hasRushMonsterDetails || dontCoverRushArt || !isMaximum || includesSkill || !atkMax;
   }
 
   private checkReady() {

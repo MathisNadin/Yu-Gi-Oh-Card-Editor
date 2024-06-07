@@ -471,7 +471,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
       <VerticalStack key='card-editor-sections' scroll padding gutter className='card-editor-sections'>
         {this.renderBasicCardDetails()}
-        {app.$card.hasAbilities(this.state.card) && this.renderMonsterCardDetails()}
+        {app.$card.hasRushMonsterDetails(this.state.card) && this.renderMonsterCardDetails()}
         {this.renderMiscDetails()}
         <HorizontalStack itemAlignment='right'>
           <Typography variant='help' content={this.state.appVersion} />

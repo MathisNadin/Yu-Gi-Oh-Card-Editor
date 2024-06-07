@@ -5,7 +5,7 @@ import { createRef } from 'react';
 
 interface IRushCardAtkProps extends IToolkitComponentProps {
   card: ICard;
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   includesSkill: boolean;
   onReady: () => void;
 }
@@ -13,7 +13,7 @@ interface IRushCardAtkProps extends IToolkitComponentProps {
 interface IRushCardAtkState extends IToolkitComponentState {
   atk: string;
   dontCoverRushArt: boolean;
-  hasAbilities: boolean;
+  hasRushMonsterDetails: boolean;
   includesSkill: boolean;
   checkState: boolean;
   xScale: number;
@@ -27,7 +27,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
     this.state = {
       atk: props.card.atk,
       dontCoverRushArt: props.card.dontCoverRushArt,
-      hasAbilities: props.hasAbilities,
+      hasRushMonsterDetails: props.hasRushMonsterDetails,
       includesSkill: props.includesSkill,
       checkState: true,
       xScale: 1,
@@ -44,7 +44,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
   ): Partial<IRushCardAtkState> | null {
     if (
       prevState.dontCoverRushArt !== nextProps.card.dontCoverRushArt ||
-      prevState.hasAbilities !== nextProps.hasAbilities ||
+      prevState.hasRushMonsterDetails !== nextProps.hasRushMonsterDetails ||
       prevState.includesSkill !== nextProps.includesSkill ||
       prevState.atk !== nextProps.card.atk
     ) {
@@ -52,7 +52,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
         checkState: true,
         atk: nextProps.card.atk,
         dontCoverRushArt: nextProps.card.dontCoverRushArt,
-        hasAbilities: nextProps.hasAbilities,
+        hasRushMonsterDetails: nextProps.hasRushMonsterDetails,
         includesSkill: nextProps.includesSkill,
         xScale: 1,
       };
@@ -70,8 +70,8 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
   }
 
   private get isEmpty() {
-    const { atk, hasAbilities, dontCoverRushArt, includesSkill } = this.state;
-    return !hasAbilities || dontCoverRushArt || includesSkill || !atk;
+    const { atk, hasRushMonsterDetails, dontCoverRushArt, includesSkill } = this.state;
+    return !hasRushMonsterDetails || dontCoverRushArt || includesSkill || !atk;
   }
 
   private checkReady() {

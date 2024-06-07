@@ -82,6 +82,7 @@ type TCopyrightYear = '1996' | '2020';
 type TCopyrightColor = 'black' | 'white';
 type TLimitation = TEdition | 'copyright';
 interface IMasterPaths {
+  placeholder: string;
   border: string;
   atkDefLine: string;
   atkLinkLine: string;
@@ -108,6 +109,7 @@ interface IMasterPaths {
 
 type TRushLevelKind = 'level' | 'rank';
 interface IRushPaths {
+  placeholder: string;
   atkDefLine: string;
   atkMaxLine: string;
   whiteArtwork: string;
@@ -154,6 +156,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
 
     this._paths = {
       master: {
+        placeholder: require('assets/images/cardPlaceholder.png'),
         border: require('assets/images/squareBorders.png'),
         atkDefLine: require('assets/images/atkDefLine.png'),
         atkLinkLine: require('assets/images/atkLinkLine.png'),
@@ -537,6 +540,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
         },
       },
       rush: {
+        placeholder: require('assets/images/rdCardPlaceholder.png'),
         atkDefLine: require('assets/images/rdAtkDefLine.png'),
         atkMaxLine: require('assets/images/rdAtkMaxLine.png'),
         whiteArtwork: require('assets/images/rdWhiteArtwork.png'),
@@ -1478,7 +1482,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     let includesSkill = false;
     let includesLegendaryDragon = false;
 
-    for (let frame of card.frames) {
+    for (const frame of card.frames) {
       if (frame === 'spell') {
         includesSpell = true;
       } else if (frame === 'trap') {
@@ -1496,6 +1500,31 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public hasAbilities(card: ICard): boolean {
+    if (card.rush) return true;
+
+    let includesSpell = false;
+    let includesTrap = false;
+    let includesToken = false;
+    let includesLegendaryDragon = false;
+
+    for (let frame of card.frames) {
+      if (frame === 'spell') {
+        includesSpell = true;
+      } else if (frame === 'trap') {
+        includesTrap = true;
+      } else if (frame === 'token') {
+        includesToken = true;
+      } else if (frame === 'legendaryDragon') {
+        includesLegendaryDragon = true;
+      }
+    }
+
+    return !includesSpell && !includesTrap && !includesToken && !includesLegendaryDragon;
+  }
+
+  public hasRushMonsterDetails(card: ICard): boolean {
+    if (!card.rush) return false;
+
     let includesSpell = false;
     let includesTrap = false;
     let includesToken = false;

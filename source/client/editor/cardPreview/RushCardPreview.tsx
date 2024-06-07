@@ -3,36 +3,33 @@ import { ICardListener } from 'client/editor/card/CardService';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { toPng } from 'mn-html-to-image';
 import { IContainableProps, IContainableState, Containable, Container, Spinner } from 'mn-toolkit';
+import { classNames } from 'mn-tools';
+import { createRef } from 'react';
 
 interface IRushCardPreviewProps extends IContainableProps {
   card: ICard;
 }
 
 interface IRushCardPreviewState extends IContainableState {
-  rdCardPlaceholder: string;
-  rendering: string;
-  renderCard: ICard | undefined;
+  hideSpinner: boolean;
+  renderCard?: ICard;
 }
 
 export class RushCardPreview
   extends Containable<IRushCardPreviewProps, IRushCardPreviewState>
   implements Partial<ICardListener>
 {
+  private renderRef = createRef<HTMLImageElement>();
+
   public constructor(props: IRushCardPreviewProps) {
     super(props);
     app.$card.addListener(this);
     this.state = {
       ...this.state,
       loaded: true,
-      rdCardPlaceholder: require(`../../../assets/images/rdCardPlaceholder.png`),
-      rendering: require(`../../../assets/images/rendering.png`),
+      hideSpinner: false,
       renderCard: undefined,
     };
-  }
-
-  public componentDidUpdate() {
-    const rendering = document.querySelector('.rendering')!;
-    rendering.classList.remove('hidden');
   }
 
   public componentWillUnmount() {
@@ -44,42 +41,37 @@ export class RushCardPreview
   }
 
   private async onPlaceholderCardReady(element: HTMLDivElement) {
-    await app.$card.writeCardFile(
-      element,
-      (this.state.renderCard as ICard).uuid as string,
-      (this.state.renderCard as ICard).name
-    );
+    await app.$card.writeCardFile(element, this.state.renderCard!.uuid!, this.state.renderCard!.name);
   }
 
   private async onCardReady(element: HTMLDivElement) {
+    if (!this.renderRef.current) return this.setState({ hideSpinner: true });
     try {
       const dataUrl = await toPng(element);
-      const img = document.querySelector<HTMLImageElement>('.img-render')!;
-      img.src = dataUrl;
-
-      const rendering = document.querySelector<HTMLImageElement>('.rendering')!;
-      rendering.classList.add('hidden');
+      this.renderRef.current.src = dataUrl;
     } catch (error) {
       console.error(error);
+    } finally {
+      this.setState({ hideSpinner: true });
     }
   }
 
   public render() {
     return (
       <Container className='card-preview'>
-        {!this.state.renderCard?.rush && (
+        {!!this.state.renderCard && !this.state.renderCard.rush && (
           <CardBuilder
             forRender
-            card={this.state.renderCard as ICard}
+            card={this.state.renderCard}
             onCardReady={(element) => app.$errorManager.handlePromise(this.onPlaceholderCardReady(element))}
             id='placeholder-card-builder'
           />
         )}
 
-        {!!this.state.renderCard?.rush && (
+        {!!this.state.renderCard && this.state.renderCard.rush && (
           <RushCardBuilder
             forRender
-            card={this.state.renderCard as ICard}
+            card={this.state.renderCard}
             onCardReady={(element) => app.$errorManager.handlePromise(this.onPlaceholderCardReady(element))}
             id='placeholder-card-builder'
           />
@@ -87,15 +79,21 @@ export class RushCardPreview
 
         <RushCardBuilder
           card={this.props.card}
+          onUpdating={() => this.state.hideSpinner && this.setState({ hideSpinner: false })}
           onCardReady={(element) => app.$errorManager.handlePromise(this.onCardReady(element))}
           id='main-card-builder'
         />
 
         <Container className='cover' />
 
-        <img className='card-preview-img img-render' src={this.state.rdCardPlaceholder} alt='cardPreview' />
+        <img
+          ref={this.renderRef}
+          className='card-preview-img img-render'
+          src={app.$card.paths.rush.placeholder}
+          alt='cardPreview'
+        />
 
-        <Spinner className='card-preview-img rendering' />
+        <Spinner className={classNames('card-preview-img', 'rendering', { hidden: this.state.hideSpinner })} />
       </Container>
     );
   }

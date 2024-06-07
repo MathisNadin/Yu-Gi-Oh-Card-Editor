@@ -8,6 +8,7 @@ interface ICardBuilderProps extends IContainableProps {
   forRender?: boolean;
   id: string;
   card: ICard;
+  onUpdating?: () => void;
   onCardReady: (element: HTMLDivElement) => void;
 }
 
@@ -88,6 +89,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
   public componentDidUpdate() {
     if (!this.state.needsUpdate) return;
+    if (this.props.onUpdating) this.props.onUpdating();
     app.$errorManager.handlePromise(this.prepareState());
   }
 

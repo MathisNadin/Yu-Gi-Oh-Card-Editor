@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default
 import ReactCrop, { Crop } from 'react-image-crop';
 import { classNames, isDefined } from 'mn-tools';
-import { IContainableProps, IContainableState, Containable, Spinner, Container } from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable, Spinner, Container, IContainerState } from 'mn-toolkit';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;
@@ -18,6 +18,11 @@ interface IArtworkCroppingState extends IContainableState {
 }
 
 export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtworkCroppingState> {
+  private croppingRef?: Container<
+    { children: false | JSX.Element; ref: unknown; className: string; margin: true },
+    IContainerState
+  > | null;
+
   public constructor(props: IArtworkCroppingProps) {
     super(props);
     this.state = {
@@ -60,7 +65,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
       });
     }
 
-    const container = document.querySelector('.artwork-cropping') as HTMLElement;
+    const container = this.croppingRef?.containerRef.current;
     if (!container) return;
     const containerisHigher = container.clientHeight > container.clientWidth;
 
@@ -88,7 +93,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   public render() {
     if (!this.state.loaded) return <Spinner />;
     return (
-      <Container className='artwork-cropping' margin>
+      <Container ref={(ref) => (this.croppingRef = ref)} className='artwork-cropping' margin>
         {!!this.state.artworkBase64 && (
           <ReactCrop
             className={classNames('cropping-interface', { higher: this.state.higher, larger: !this.state.higher })}
