@@ -42,18 +42,9 @@ interface ICardEditorState extends IContainerState {
   import: string;
   lockPend: boolean;
   card: ICard;
-  cardFrames: {
-    id: TFrame;
-    file: string;
-  }[];
-  cardAttributes: {
-    id: TAttribute;
-    file: string;
-  }[];
-  cardStTypes: {
-    id: TStIcon;
-    file: string;
-  }[];
+  cardFrames: TFrame[];
+  cardAttributes: TAttribute[];
+  cardStTypes: TStIcon[];
   appVersion: string;
 }
 
@@ -81,45 +72,26 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
       lockPend: props.card.scales.left === props.card.scales.right,
       card: props.card,
       cardFrames: [
-        { id: 'normal', file: require(`../../../assets/images/menu-card-frames/normal.png`) },
-        { id: 'effect', file: require(`../../../assets/images/menu-card-frames/effect.png`) },
-        { id: 'ritual', file: require(`../../../assets/images/menu-card-frames/ritual.png`) },
-        { id: 'fusion', file: require(`../../../assets/images/menu-card-frames/fusion.png`) },
-        { id: 'synchro', file: require(`../../../assets/images/menu-card-frames/synchro.png`) },
-        { id: 'darkSynchro', file: require(`../../../assets/images/menu-card-frames/darkSynchro.png`) },
-        { id: 'xyz', file: require(`../../../assets/images/menu-card-frames/xyz.png`) },
-        { id: 'link', file: require(`../../../assets/images/menu-card-frames/link.png`) },
-        { id: 'obelisk', file: require(`../../../assets/images/menu-card-frames/obelisk.png`) },
-        { id: 'slifer', file: require(`../../../assets/images/menu-card-frames/slifer.png`) },
-        { id: 'ra', file: require(`../../../assets/images/menu-card-frames/ra.png`) },
-        { id: 'legendaryDragon', file: require(`../../../assets/images/menu-card-frames/legendaryDragon.png`) },
-        { id: 'spell', file: require(`../../../assets/images/menu-card-frames/spell.png`) },
-        { id: 'trap', file: require(`../../../assets/images/menu-card-frames/trap.png`) },
-        { id: 'monsterToken', file: require(`../../../assets/images/menu-card-frames/monsterToken.png`) },
-        { id: 'token', file: require(`../../../assets/images/menu-card-frames/token.png`) },
-        { id: 'skill', file: require(`../../../assets/images/menu-card-frames/skill.png`) },
+        'normal',
+        'effect',
+        'ritual',
+        'fusion',
+        'synchro',
+        'darkSynchro',
+        'xyz',
+        'link',
+        'obelisk',
+        'slifer',
+        'ra',
+        'legendaryDragon',
+        'spell',
+        'trap',
+        'monsterToken',
+        'token',
+        'skill',
       ],
-      cardAttributes: [
-        { id: 'light', file: require(`../../../assets/images/icons/vanilla/attributeLight.png`) },
-        { id: 'dark', file: require(`../../../assets/images/icons/vanilla/attributeDark.png`) },
-        { id: 'water', file: require(`../../../assets/images/icons/vanilla/attributeWater.png`) },
-        { id: 'fire', file: require(`../../../assets/images/icons/vanilla/attributeFire.png`) },
-        { id: 'earth', file: require(`../../../assets/images/icons/vanilla/attributeEarth.png`) },
-        { id: 'wind', file: require(`../../../assets/images/icons/vanilla/attributeWind.png`) },
-        { id: 'divine', file: require(`../../../assets/images/icons/vanilla/attributeDivine.png`) },
-        { id: 'spell', file: require(`../../../assets/images/icons/vanilla/attributeSpell.png`) },
-        { id: 'trap', file: require(`../../../assets/images/icons/vanilla/attributeTrap.png`) },
-      ],
-      cardStTypes: [
-        { id: 'normal', file: require(`../../../assets/images/icons/st/normal.png`) },
-        { id: 'ritual', file: require(`../../../assets/images/icons/st/ritual.png`) },
-        { id: 'quickplay', file: require(`../../../assets/images/icons/st/quickplay.png`) },
-        { id: 'continuous', file: require(`../../../assets/images/icons/st/continuous.png`) },
-        { id: 'equip', file: require(`../../../assets/images/icons/st/equip.png`) },
-        { id: 'field', file: require(`../../../assets/images/icons/st/field.png`) },
-        { id: 'counter', file: require(`../../../assets/images/icons/st/counter.png`) },
-        { id: 'link', file: require(`../../../assets/images/icons/st/link.png`) },
-      ],
+      cardAttributes: ['light', 'dark', 'water', 'fire', 'earth', 'wind', 'divine', 'spell', 'trap'],
+      cardStTypes: ['normal', 'ritual', 'quickplay', 'continuous', 'equip', 'field', 'counter', 'link'],
       appVersion: `v. ${app.version}`,
     };
   }
@@ -471,6 +443,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   private renderBasicCardDetails() {
+    const paths = app.$card.paths.master;
     return (
       <VerticalStack gutter className='card-editor-section basic-section'>
         <HorizontalStack fill verticalItemAlignment='middle'>
@@ -556,7 +529,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           <Grid>
             {this.state.cardFrames.map((frame, i) => {
               let className = 'card-frame';
-              const frameIndex = this.state.card.frames.indexOf(frame.id);
+              const frameIndex = this.state.card.frames.indexOf(frame);
               if (frameIndex >= 0) {
                 className = `${className} selected`;
                 if (this.state.card.multipleFrames) {
@@ -566,10 +539,10 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               return (
                 <HorizontalStack key={`card-frame-${i}`} className={className} s='12' m='6' l='3' xl='2' xxl='1'>
                   <Image
-                    src={frame.file}
-                    alt={`frame-${frame.id}`}
-                    title={app.$card.getFrameName(frame.id)}
-                    onTap={() => this.onFrameChange(frame.id)}
+                    src={paths.frames[frame]}
+                    alt={`frame-${frame}`}
+                    title={app.$card.getFrameName(frame)}
+                    onTap={() => this.onFrameChange(frame)}
                     maxHeight={60}
                   />
                 </HorizontalStack>
@@ -593,7 +566,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               {this.state.cardAttributes.map((attribute, i) => (
                 <HorizontalStack
                   key={`card-attribute-${i}`}
-                  className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`}
+                  className={`card-attribute${this.state.card.attribute === attribute ? ' selected' : ''}`}
                   s='12'
                   m='6'
                   l='3'
@@ -601,10 +574,10 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   xxl='1'
                 >
                   <Image
-                    src={attribute.file}
-                    alt={`attribute-${attribute.id}`}
-                    title={app.$card.getAttributeName(attribute.id)}
-                    onTap={() => this.onAttributeChange(attribute.id)}
+                    src={paths.attributeIcons[attribute]}
+                    alt={`attribute-${attribute}`}
+                    title={app.$card.getAttributeName(attribute)}
+                    onTap={() => this.onAttributeChange(attribute)}
                     maxHeight={40}
                   />
                 </HorizontalStack>
@@ -620,7 +593,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               {this.state.cardStTypes.map((stType, i) => (
                 <HorizontalStack
                   key={`card-st-icon-${i}`}
-                  className={classNames('card-st-icon', { selected: this.state.card.stType === stType.id })}
+                  className={classNames('card-st-icon', { selected: this.state.card.stType === stType })}
                   s='12'
                   m='6'
                   l='3'
@@ -628,10 +601,10 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   xxl='1'
                 >
                   <Image
-                    src={stType.file}
-                    alt={`st-icon-${stType.id}`}
-                    title={app.$card.getStIconName(stType.id)}
-                    onTap={() => this.onStTypeChange(stType.id)}
+                    src={paths.stIcons[stType]}
+                    alt={`st-icon-${stType}`}
+                    title={app.$card.getStIconName(stType)}
+                    onTap={() => this.onStTypeChange(stType)}
                     maxHeight={40}
                   />
                 </HorizontalStack>

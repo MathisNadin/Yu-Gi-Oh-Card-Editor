@@ -43,18 +43,9 @@ interface IRushCardEditorProps extends IContainerProps {
 interface IRushCardEditorState extends IContainerState {
   import: string;
   card: ICard;
-  cardFrames: {
-    id: TFrame;
-    file: string;
-  }[];
-  cardAttributes: {
-    id: TAttribute;
-    file: string;
-  }[];
-  cardStTypes: {
-    id: TStIcon;
-    file: string;
-  }[];
+  cardFrames: TFrame[];
+  cardAttributes: TAttribute[];
+  cardStTypes: TStIcon[];
   appVersion: string;
 }
 
@@ -79,37 +70,9 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       loaded: true,
       import: '',
       card: props.card,
-      cardFrames: [
-        { id: 'normal', file: require(`../../../assets/images/menu-rd-card-frames/normal.png`) },
-        { id: 'effect', file: require(`../../../assets/images/menu-rd-card-frames/effect.png`) },
-        { id: 'ritual', file: require(`../../../assets/images/menu-rd-card-frames/ritual.png`) },
-        { id: 'fusion', file: require(`../../../assets/images/menu-rd-card-frames/fusion.png`) },
-        { id: 'synchro', file: require(`../../../assets/images/menu-rd-card-frames/synchro.png`) },
-        { id: 'xyz', file: require(`../../../assets/images/menu-rd-card-frames/xyz.png`) },
-        { id: 'spell', file: require(`../../../assets/images/menu-rd-card-frames/spell.png`) },
-        { id: 'trap', file: require(`../../../assets/images/menu-rd-card-frames/trap.png`) },
-        { id: 'monsterToken', file: require(`../../../assets/images/menu-rd-card-frames/monsterToken.png`) },
-        { id: 'token', file: require(`../../../assets/images/menu-rd-card-frames/token.png`) },
-      ],
-      cardAttributes: [
-        { id: 'light', file: require(`../../../assets/images/rd-icons/vanilla/attributeLight.png`) },
-        { id: 'dark', file: require(`../../../assets/images/rd-icons/vanilla/attributeDark.png`) },
-        { id: 'water', file: require(`../../../assets/images/rd-icons/vanilla/attributeWater.png`) },
-        { id: 'fire', file: require(`../../../assets/images/rd-icons/vanilla/attributeFire.png`) },
-        { id: 'earth', file: require(`../../../assets/images/rd-icons/vanilla/attributeEarth.png`) },
-        { id: 'wind', file: require(`../../../assets/images/rd-icons/vanilla/attributeWind.png`) },
-        { id: 'spell', file: require(`../../../assets/images/rd-icons/vanilla/attributeSpell.png`) },
-        { id: 'trap', file: require(`../../../assets/images/rd-icons/vanilla/attributeTrap.png`) },
-      ],
-      cardStTypes: [
-        { id: 'normal', file: require(`../../../assets/images/rd-icons/st/normal.png`) },
-        { id: 'ritual', file: require(`../../../assets/images/rd-icons/st/ritual.png`) },
-        { id: 'quickplay', file: require(`../../../assets/images/rd-icons/st/quickplay.png`) },
-        { id: 'continuous', file: require(`../../../assets/images/rd-icons/st/continuous.png`) },
-        { id: 'equip', file: require(`../../../assets/images/rd-icons/st/equip.png`) },
-        { id: 'field', file: require(`../../../assets/images/rd-icons/st/field.png`) },
-        { id: 'counter', file: require(`../../../assets/images/rd-icons/st/counter.png`) },
-      ],
+      cardFrames: ['normal', 'effect', 'ritual', 'fusion', 'synchro', 'xyz', 'spell', 'trap', 'monsterToken', 'token'],
+      cardAttributes: ['light', 'dark', 'water', 'fire', 'earth', 'wind', 'spell', 'trap'],
+      cardStTypes: ['normal', 'ritual', 'quickplay', 'continuous', 'equip', 'field', 'counter'],
       appVersion: `v. ${app.version}`,
     };
   }
@@ -480,6 +443,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
   }
 
   private renderBasicCardDetails() {
+    const paths = app.$card.paths.rush;
     return (
       <VerticalStack gutter className='card-editor-section basic-section'>
         <HorizontalStack verticalItemAlignment='middle'>
@@ -555,7 +519,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           <Grid>
             {this.state.cardFrames.map((frame, i) => {
               let className = 'card-frame';
-              const frameIndex = this.state.card.frames.indexOf(frame.id);
+              const frameIndex = this.state.card.frames.indexOf(frame);
               if (frameIndex >= 0) {
                 className = `${className} selected`;
                 if (this.state.card.multipleFrames) {
@@ -565,10 +529,10 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               return (
                 <HorizontalStack key={`card-frame-${i}`} className={className} s='12' m='6' l='3' xl='2' xxl='1'>
                   <Image
-                    src={frame.file}
-                    alt={`frame-${frame.id}`}
-                    title={app.$card.getFrameName(frame.id)}
-                    onTap={() => this.onFrameChange(frame.id)}
+                    src={paths.frames[frame]}
+                    alt={`frame-${frame}`}
+                    title={app.$card.getFrameName(frame)}
+                    onTap={() => this.onFrameChange(frame)}
                     maxHeight={60}
                   />
                 </HorizontalStack>
@@ -587,7 +551,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               {this.state.cardAttributes.map((attribute, i) => (
                 <HorizontalStack
                   key={`card-attribute-${i}`}
-                  className={`card-attribute${this.state.card.attribute === attribute.id ? ' selected' : ''}`}
+                  className={`card-attribute${this.state.card.attribute === attribute ? ' selected' : ''}`}
                   s='12'
                   m='6'
                   l='3'
@@ -595,10 +559,10 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   xxl='1'
                 >
                   <Image
-                    src={attribute.file}
-                    alt={`attribute-${attribute.id}`}
-                    title={app.$card.getAttributeName(attribute.id)}
-                    onTap={() => this.onAttributeChange(attribute.id)}
+                    src={paths.attributeIcons[attribute]}
+                    alt={`attribute-${attribute}`}
+                    title={app.$card.getAttributeName(attribute)}
+                    onTap={() => this.onAttributeChange(attribute)}
                     maxHeight={40}
                   />
                 </HorizontalStack>
@@ -614,7 +578,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               {this.state.cardStTypes.map((stType, i) => (
                 <HorizontalStack
                   key={`card-st-icon-${i}`}
-                  className={classNames('card-st-icon', { selected: this.state.card.stType === stType.id })}
+                  className={classNames('card-st-icon', { selected: this.state.card.stType === stType })}
                   s='12'
                   m='6'
                   l='3'
@@ -622,10 +586,10 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   xxl='1'
                 >
                   <Image
-                    src={stType.file}
-                    alt={`st-icon-${stType.id}`}
-                    title={app.$card.getStIconName(stType.id)}
-                    onTap={() => this.onStTypeChange(stType.id)}
+                    src={paths.spellTraps[stType]}
+                    alt={`st-icon-${stType}`}
+                    title={app.$card.getStIconName(stType)}
+                    onTap={() => this.onStTypeChange(stType)}
                     maxHeight={40}
                   />
                 </HorizontalStack>

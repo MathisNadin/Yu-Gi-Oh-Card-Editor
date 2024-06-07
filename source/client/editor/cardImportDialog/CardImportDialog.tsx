@@ -59,8 +59,8 @@ export class CardImportDialog extends AbstractPopup<
   ICardImportDialogProps,
   ICardImportDialogState
 > {
-  private yugipediaLogo = require(`../../../assets/images/yugipediaLogo.png`);
-  private yuginewsLogo = require(`../../../assets/images/yuginewsLogo.png`);
+  private yugipediaLogo = require(`assets/images/yugipediaLogo.png`);
+  private yuginewsLogo = require(`assets/images/yuginewsLogo.png`);
 
   public static async show(options: ICardImportDialogProps = {}) {
     options.title = options.title || 'Importer depuis un site';

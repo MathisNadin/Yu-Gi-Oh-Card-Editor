@@ -89,8 +89,10 @@ interface IMasterPaths {
   whiteArtworks: { [key in TWhiteArtwork]: string };
   frames: { [key in TFrame]: string };
   attributes: { [key in TLanguageOrVanilla]: { [attribute in TAttribute]: string } };
+  attributeIcons: { [attribute in TAttribute]: string };
   levels: { [levelKind in TLevelKind]: { [level: number]: string } };
   spellTraps: { [language in TCardLanguage]: { [stType in TStType]: string } };
+  stIcons: { [attribute in TStIcon]: string };
   scales: { [key in TLinkOrNot]: { [side in TScaleSide]: { [scale: number]: string } } };
   pendFrames: { [key in TLinkOrNot]: string };
   pendCovers: { [key in TFrame]: string };
@@ -116,6 +118,7 @@ interface IRushPaths {
   frames: { [key in TFrame]: string };
   legends: { [key in TLegendType]: string };
   attributes: { [key in TCardLanguage]: { [attribute in TAttribute]: string } };
+  attributeIcons: { [attribute in TAttribute]: string };
   levelStars: { [levelKind in TRushLevelKind]: string };
   levels: { [levelKind in TRushLevelKind]: { [level: number]: string } };
   spellTraps: { [stType in TStIcon]: string };
@@ -219,6 +222,17 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
             trap: require('assets/images/attributes/vanilla/trap.png'),
           },
         },
+        attributeIcons: {
+          dark: require('assets/images/icons/vanilla/attributeDark.png'),
+          light: require('assets/images/icons/vanilla/attributeLight.png'),
+          water: require('assets/images/icons/vanilla/attributeWater.png'),
+          earth: require('assets/images/icons/vanilla/attributeEarth.png'),
+          wind: require('assets/images/icons/vanilla/attributeWind.png'),
+          fire: require('assets/images/icons/vanilla/attributeFire.png'),
+          divine: require('assets/images/icons/vanilla/attributeDivine.png'),
+          spell: require('assets/images/icons/vanilla/attributeSpell.png'),
+          trap: require('assets/images/icons/vanilla/attributeTrap.png'),
+        },
         levels: {
           level: {
             0: require('assets/images/levels/0.png'),
@@ -312,6 +326,16 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
             spellPlus: require('assets/images/st/en/spell+.png'),
             trapPlus: require('assets/images/st/en/trap+.png'),
           },
+        },
+        stIcons: {
+          normal: require(`assets/images/icons/st/normal.png`),
+          ritual: require(`assets/images/icons/st/ritual.png`),
+          quickplay: require(`assets/images/icons/st/quickplay.png`),
+          continuous: require(`assets/images/icons/st/continuous.png`),
+          equip: require(`assets/images/icons/st/equip.png`),
+          field: require(`assets/images/icons/st/field.png`),
+          counter: require(`assets/images/icons/st/counter.png`),
+          link: require(`assets/images/icons/st/link.png`),
         },
         scales: {
           regular: {
@@ -592,6 +616,17 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
             trap: require('assets/images/rd-attributes/en/trap.png'),
             divine: '',
           },
+        },
+        attributeIcons: {
+          dark: require('assets/images/rd-icons/vanilla/attributeDark.png'),
+          light: require('assets/images/rd-icons/vanilla/attributeLight.png'),
+          water: require('assets/images/rd-icons/vanilla/attributeWater.png'),
+          earth: require('assets/images/rd-icons/vanilla/attributeEarth.png'),
+          wind: require('assets/images/rd-icons/vanilla/attributeWind.png'),
+          fire: require('assets/images/rd-icons/vanilla/attributeFire.png'),
+          spell: require('assets/images/rd-icons/vanilla/attributeSpell.png'),
+          trap: require('assets/images/rd-icons/vanilla/attributeTrap.png'),
+          divine: '',
         },
         levelStars: {
           level: require('assets/images/rd-levels/star.png'),
