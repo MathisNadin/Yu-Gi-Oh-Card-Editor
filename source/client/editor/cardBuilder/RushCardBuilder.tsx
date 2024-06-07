@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
-import { classNames } from 'mn-tools';
+import { classNames, isDeepEqual } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild } from 'mn-toolkit';
 import {
@@ -22,6 +22,7 @@ interface IRushCardBuilderProps extends IContainableProps {
 
 interface IRushCardBuilderState extends IContainableState {
   needsUpdate: boolean;
+  card: ICard;
 
   hasAbilities: boolean;
   isBackrow: boolean;
@@ -65,6 +66,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     this.state = {
       ...this.state,
       loaded: false,
+      card: { ...props.card },
       needsUpdate: false,
       hasAbilities: false,
       isBackrow: false,
@@ -86,10 +88,11 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public static getDerivedStateFromProps(
-    _nextProps: IRushCardBuilderProps,
+    nextProps: IRushCardBuilderProps,
     prevState: IRushCardBuilderState
   ): Partial<IRushCardBuilderState> | null {
-    return { needsUpdate: !prevState.needsUpdate };
+    if (isDeepEqual(nextProps.card, prevState.card)) return null;
+    return { needsUpdate: true, card: { ...nextProps.card } };
   }
 
   public componentDidUpdate() {
@@ -98,7 +101,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private async prepareState() {
-    const { card } = this.props;
+    const { card } = this.state;
     if (!card) return;
 
     this.nameReady = false;
@@ -221,6 +224,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     this.setState({
       loaded: true,
+      needsUpdate: false,
       hasAbilities,
       isBackrow,
       includesToken,
@@ -360,9 +364,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public render() {
-    const { card } = this.props;
     const {
       loaded,
+      card,
       hasAbilities,
       isBackrow,
       hasStIcon,
@@ -493,7 +497,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   private getSpecifities(): { lv: boolean; rk: boolean } {
-    const { card } = this.props;
+    const { card } = this.state;
     let includesXyz = false;
     for (const frame of card.frames) {
       if (frame === 'spell' || frame === 'trap' || frame === 'token') {

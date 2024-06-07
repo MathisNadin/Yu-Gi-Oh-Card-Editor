@@ -60,7 +60,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
   public render() {
     return (
       <Container className='card-preview'>
-        {!this.state.renderCard?.rush && (
+        {!!this.state.renderCard && !this.state.renderCard.rush && (
           <CardBuilder
             forRender
             card={this.state.renderCard!}
@@ -69,7 +69,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
           />
         )}
 
-        {!!this.state.renderCard?.rush && (
+        {!!this.state.renderCard && this.state.renderCard.rush && (
           <RushCardBuilder
             forRender
             card={this.state.renderCard!}

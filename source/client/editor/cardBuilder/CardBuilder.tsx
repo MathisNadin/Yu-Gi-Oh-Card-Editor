@@ -1,5 +1,5 @@
 import { createRef, CSSProperties } from 'react';
-import { classNames } from 'mn-tools';
+import { classNames, isDeepEqual } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit';
 import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
@@ -13,6 +13,7 @@ interface ICardBuilderProps extends IContainableProps {
 
 interface ICardBuilderState extends IContainableState {
   needsUpdate: boolean;
+  card: ICard;
 
   hasAbilities: boolean;
   hasPendulumFrame: boolean;
@@ -56,6 +57,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     this.state = {
       ...this.state,
       loaded: false,
+      card: { ...props.card },
       needsUpdate: false,
       hasAbilities: false,
       hasPendulumFrame: false,
@@ -77,10 +79,11 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public static getDerivedStateFromProps(
-    _nextProps: ICardBuilderProps,
+    nextProps: ICardBuilderProps,
     prevState: ICardBuilderState
   ): Partial<ICardBuilderState> | null {
-    return { needsUpdate: !prevState.needsUpdate };
+    if (isDeepEqual(nextProps.card, prevState.card)) return null;
+    return { needsUpdate: true, card: { ...nextProps.card } };
   }
 
   public componentDidUpdate() {
@@ -89,7 +92,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private async prepareState() {
-    const { card } = this.props;
+    const { card } = this.state;
     if (!card) return;
 
     this.nameReady = false;
@@ -145,6 +148,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
 
     this.setState({
       loaded: true,
+      needsUpdate: false,
       hasAbilities,
       hasPendulumFrame,
       hasLinkArrows,
@@ -258,9 +262,9 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public render() {
-    const { card } = this.props;
     const {
       loaded,
+      card,
       hasAbilities,
       hasPendulumFrame,
       hasLinkArrows,
@@ -450,8 +454,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   private renderStPlus() {
-    const { card } = this.props;
-    const { isBackrow } = this.state;
+    const { card, isBackrow } = this.state;
     const paths = app.$card.paths.master;
     if (isBackrow && card.stType !== 'normal' && card.stType !== 'link') {
       return (
@@ -472,7 +475,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   private renderLevelOrStIcon() {
     if (this.state.includesSkill) return null;
 
-    const { card } = this.props;
+    const { card } = this.state;
     const paths = app.$card.paths.master;
 
     let includesDarkSynchro = false;
@@ -511,7 +514,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     const { hasPendulumFrame, hasLinkArrows } = this.state;
     if (!hasLinkArrows) return null;
 
-    const { card } = this.props;
+    const { card } = this.state;
     const paths = app.$card.paths.master;
     const linkArrowPaths = paths.linkArrows[hasPendulumFrame ? 'pendulum' : 'regular'];
     return (

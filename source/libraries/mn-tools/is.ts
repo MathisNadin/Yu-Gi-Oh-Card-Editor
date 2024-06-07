@@ -205,6 +205,53 @@ export function isDifferent(subject: any, reference: any): boolean {
 }
 
 /**
+ * Check if the subject is differente that the reference with a checking of every possible key
+ * Thus ignoring basic object comparison
+ *
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isDeepEqual(obj1: any, obj2: any): boolean {
+  // if (obj1 === obj2) return true;
+  if (isUndefined(obj1) || isUndefined(obj2)) return obj1 === obj2;
+  if (obj1 === null || obj2 === null) return obj1 === obj2;
+
+  const obj1Type = typeof obj1;
+  const obj2Type = typeof obj2;
+
+  if (obj1Type !== obj2Type) return false; // Early exit if types differ
+
+  // Handling Dates specifically
+  if (obj1 instanceof Date && obj2 instanceof Date) {
+    return obj1.getTime() === obj2.getTime();
+  }
+
+  // Handle Arrays
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) return false;
+    for (let i = 0; i < obj1.length; i++) {
+      if (!isDeepEqual(obj1[i], obj2[i])) return false;
+    }
+    return true;
+  }
+
+  // Handle objects and any potential deep nesting
+  if (isObject(obj1) && isObject(obj2)) {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) return false;
+
+    for (const key of keys1) {
+      if (!keys2.includes(key)) return false;
+      if (!isDeepEqual(obj1[key], obj2[key])) return false;
+    }
+    return true;
+  }
+
+  // Default to strict equality check for primitives
+  return obj1 === obj2;
+}
+
+/**
  * Check if the subject is a regexp
  *
  * @param {object} subject the subject
