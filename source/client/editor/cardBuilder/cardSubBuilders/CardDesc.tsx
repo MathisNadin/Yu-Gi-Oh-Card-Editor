@@ -171,7 +171,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

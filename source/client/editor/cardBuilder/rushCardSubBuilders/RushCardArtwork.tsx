@@ -73,7 +73,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     if (this.state.loadArtwork) {
       app.$errorManager.handlePromise(this.loadArtwork());
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 
@@ -84,7 +84,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
 
   private async loadArtwork() {
     if (this.isEmpty) {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
       this.setState({ loadArtwork: false });
     }
 

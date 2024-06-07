@@ -79,7 +79,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

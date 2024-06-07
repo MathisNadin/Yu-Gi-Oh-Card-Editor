@@ -83,7 +83,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     if (this.state.loadArtwork) {
       app.$errorManager.handlePromise(this.loadArtwork());
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 
@@ -94,7 +94,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
 
   private async loadArtwork() {
     if (this.isEmpty) {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
       this.setState({ loadArtwork: false });
     }
 

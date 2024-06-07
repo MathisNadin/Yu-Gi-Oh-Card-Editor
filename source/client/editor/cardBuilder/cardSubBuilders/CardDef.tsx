@@ -66,7 +66,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

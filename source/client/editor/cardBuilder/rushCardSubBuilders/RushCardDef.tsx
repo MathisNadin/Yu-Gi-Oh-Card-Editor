@@ -70,7 +70,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

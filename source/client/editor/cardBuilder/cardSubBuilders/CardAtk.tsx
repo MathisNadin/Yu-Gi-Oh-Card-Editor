@@ -61,7 +61,7 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

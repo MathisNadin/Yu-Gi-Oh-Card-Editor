@@ -69,7 +69,7 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

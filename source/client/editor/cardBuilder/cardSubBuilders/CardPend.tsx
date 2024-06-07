@@ -144,7 +144,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

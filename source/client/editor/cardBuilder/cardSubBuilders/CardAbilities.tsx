@@ -72,7 +72,7 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

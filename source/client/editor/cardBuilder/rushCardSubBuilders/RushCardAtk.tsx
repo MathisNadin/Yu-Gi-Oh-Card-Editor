@@ -65,7 +65,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 

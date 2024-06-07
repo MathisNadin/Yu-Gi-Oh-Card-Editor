@@ -189,7 +189,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     if (this.state.checkState) {
       this.checkReady();
     } else {
-      this.props.onReady();
+      setTimeout(() => this.props.onReady());
     }
   }
 
