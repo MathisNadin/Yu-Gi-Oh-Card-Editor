@@ -115,9 +115,8 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
   }
 
   public componentDidUpdate() {
-    if (this.props.card !== this.state.card) {
-      this.setState({ card: this.props.card });
-    }
+    if (this.props.card === this.state.card) return;
+    this.setState({ card: this.props.card });
   }
 
   private onLanguageChange(language: TCardLanguage) {

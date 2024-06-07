@@ -915,6 +915,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     const cardName = this._tempCurrentCard ? this._tempCurrentCard.name : this._currentCard.name;
     const element = document.getElementById('main-card-builder') as HTMLDivElement;
     if (!element) return;
+    await this.askRenderPath();
     await this.writeCardFile(element, cardUuid, cardName);
   }
 
@@ -923,10 +924,14 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     this.fireRenderCardChanged();
   }
 
+  public async askRenderPath() {
+    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
+  }
+
   public async renderCards(cards: ICard[]) {
     if (!cards?.length || !app.$device.isDesktop) return;
 
-    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
+    await this.askRenderPath();
     if (!this._renderPath) return;
 
     this._renderCardsQueue.push(...cards);
@@ -934,7 +939,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public async writeCardFile(element: HTMLDivElement, cardUuid: string, cardName: string) {
-    if (!app.$device.isDesktop) return;
+    if (!app.$device.isDesktop || !this._renderPath) return;
 
     try {
       const dataUrl = await toPng(element);

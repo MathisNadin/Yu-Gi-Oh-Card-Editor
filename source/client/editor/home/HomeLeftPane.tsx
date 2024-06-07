@@ -14,12 +14,12 @@ import {
 import { classNames } from 'mn-tools';
 import { IVersionInfos, UpdateDialog } from './UpdateDialog';
 
-type TtabIndex = 'master' | 'rush';
+type TTabIndex = 'master' | 'rush';
 
 interface IHomeLeftPaneProps extends IContainerProps {}
 
 interface IHomeLeftPaneState extends IContainerState {
-  tabIndex: TtabIndex;
+  tabIndex: TTabIndex;
   currentCard: ICard;
   tempCurrentCard: ICard;
   needUpdate: boolean;
@@ -119,7 +119,7 @@ export class HomeLeftPane
     }
   }
 
-  private async onTabChange(tabIndex: TtabIndex) {
+  private async onTabChange(tabIndex: TTabIndex) {
     await this.setStateAsync({ tabIndex });
     if (this.state.tempCurrentCard) {
       await app.$card.convertTempCurrentCard();

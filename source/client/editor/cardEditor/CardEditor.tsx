@@ -38,6 +38,7 @@ interface ICardEditorProps extends IContainerProps {
 }
 
 interface ICardEditorState extends IContainerState {
+  rendering: boolean;
   import: string;
   lockPend: boolean;
   card: ICard;
@@ -75,6 +76,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     this.state = {
       ...this.state,
       loaded: true,
+      rendering: false,
       import: '',
       lockPend: props.card.scales.left === props.card.scales.right,
       card: props.card,
@@ -123,9 +125,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   public componentDidUpdate() {
-    if (this.props.card !== this.state.card) {
-      this.setState({ card: this.props.card });
-    }
+    if (this.props.card === this.state.card) return;
+    this.setState({ card: this.props.card });
   }
 
   private onLanguageChange(language: TCardLanguage) {
@@ -418,6 +419,12 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     if (result) this.onArtworkInfoChange(result);
   }
 
+  private async renderCurrentCard() {
+    await this.setStateAsync({ rendering: true });
+    await app.$card.renderCurrentCard();
+    await this.setStateAsync({ rendering: false });
+  }
+
   public renderClasses() {
     const classes = super.renderClasses();
     classes['card-editor'] = true;
@@ -428,13 +435,15 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     return [
       <HorizontalStack key='top-options' padding className='top-options'>
         <Button
-          label='Faire le rendu'
+          disabled={this.state.rendering}
+          label={this.state.rendering ? 'Rendu en cours...' : 'Faire le rendu'}
           color='neutral'
-          onTap={() => app.$errorManager.handlePromise(app.$card.renderCurrentCard())}
+          onTap={() => app.$errorManager.handlePromise(this.renderCurrentCard())}
         />
         <Spacer />
         {!app.$card.tempCurrentCard && (
           <Button
+            disabled={this.state.rendering}
             label='Réinitialiser'
             color='negative'
             onTap={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}
@@ -442,6 +451,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         )}
         <Spacer />
         <Button
+          disabled={this.state.rendering}
           label='Sauvegarder'
           color='positive'
           onTap={() => app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())}
