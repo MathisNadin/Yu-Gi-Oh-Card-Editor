@@ -44,7 +44,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -142,9 +142,9 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -156,7 +156,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   private checkReady() {
     if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
 
-    const texts = this.ref.current.querySelectorAll<HTMLParagraphElement>('.pendulum-effect-text');
+    const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
     if (!texts?.length || this.state.fontSize === 0) {
       return this.setState({
         checkState: false,

@@ -20,7 +20,8 @@ interface IRushCardAtkState extends IToolkitComponentState {
 }
 
 export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAtkState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public atkRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: IRushCardAtkProps) {
     super(props);
@@ -35,7 +36,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -63,9 +64,9 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -76,14 +77,18 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
 
   private checkReady() {
     const { atk } = this.state;
-    if (this.isEmpty || atk === '?' || atk === '∞' || integer(atk) < 10000 || !this.ref.current) {
+    if (
+      this.isEmpty ||
+      atk === '?' ||
+      atk === '∞' ||
+      integer(atk) < 10000 ||
+      !this.containerRef.current ||
+      !this.atkRef.current
+    ) {
       return this.setState({ checkState: false });
     }
 
-    const paragraph = this.ref.current.querySelector('p');
-    if (!paragraph) return this.setState({ checkState: false });
-
-    let xScale = this.ref.current.clientWidth / paragraph.clientWidth;
+    let xScale = this.containerRef.current.clientWidth / this.atkRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
     this.setState({ xScale, checkState: false });
   }
@@ -97,13 +102,14 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
           'question-mark': atk === '?',
           compressed: atk?.length > 4,
         })}
-        ref={this.ref}
+        ref={this.containerRef}
       >
         <p
           className={classNames('stat-text', 'atk-text', 'white-text', {
             infinity: atk === '∞',
           })}
           style={{ transform: `scaleX(${xScale})` }}
+          ref={this.atkRef}
         >
           {atk}
         </p>

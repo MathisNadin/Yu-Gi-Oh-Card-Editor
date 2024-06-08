@@ -25,7 +25,8 @@ interface ICardNameState extends IToolkitComponentState {
 }
 
 export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public nameRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: ICardNameProps) {
     super(props);
@@ -43,7 +44,7 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -77,9 +78,9 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -89,12 +90,11 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
   }
 
   private checkReady() {
-    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
+    if (this.isEmpty || !this.containerRef.current || !this.nameRef.current) {
+      return this.setState({ checkState: false });
+    }
 
-    const paragraph = this.ref.current.querySelector('p');
-    if (!paragraph) return this.setState({ checkState: false });
-
-    let xScale = this.ref.current.clientWidth / paragraph.clientWidth;
+    let xScale = this.containerRef.current.clientWidth / this.nameRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
     this.setState({ xScale, checkState: false });
   }
@@ -133,8 +133,8 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
     );
 
     return (
-      <div className={containerClass} ref={this.ref}>
-        <p className={pClass} style={{ transform: `scaleX(${xScale})` }}>
+      <div className={containerClass} ref={this.containerRef}>
+        <p className={pClass} style={{ transform: `scaleX(${xScale})` }} ref={this.nameRef}>
           {processedText}
         </p>
       </div>

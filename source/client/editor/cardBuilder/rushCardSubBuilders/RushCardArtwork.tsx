@@ -37,7 +37,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
   }
 
   public componentDidMount() {
-    setTimeout(() => app.$errorManager.handlePromise(this.loadArtwork()), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
   }
 
   public static getDerivedStateFromProps(
@@ -71,9 +71,9 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
 
   public componentDidUpdate() {
     if (this.state.loadArtwork) {
-      app.$errorManager.handlePromise(this.loadArtwork());
+      requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -83,10 +83,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
   }
 
   private async loadArtwork() {
-    if (this.isEmpty) {
-      setTimeout(() => this.props.onReady());
-      this.setState({ loadArtwork: false });
-    }
+    if (this.isEmpty) return this.setState({ loadArtwork: false });
 
     const { url, x, y, height, width, artworkBg } = this.state;
 

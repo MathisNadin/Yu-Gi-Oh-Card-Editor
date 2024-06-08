@@ -21,7 +21,8 @@ interface ICardDefState extends IToolkitComponentState {
 }
 
 export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public defRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: ICardDefProps) {
     super(props);
@@ -36,7 +37,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -64,9 +65,9 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -77,14 +78,18 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
 
   private checkReady() {
     const { def } = this.state;
-    if (this.isEmpty || def === '?' || def === '∞' || integer(def) < 10000 || !this.ref.current) {
+    if (
+      this.isEmpty ||
+      def === '?' ||
+      def === '∞' ||
+      integer(def) < 10000 ||
+      !this.containerRef.current ||
+      !this.defRef.current
+    ) {
       return this.setState({ checkState: false });
     }
 
-    const paragraph = this.ref.current.querySelector('p');
-    if (!paragraph) return this.setState({ checkState: false });
-
-    let xScale = this.ref.current.clientWidth / paragraph.clientWidth;
+    let xScale = this.containerRef.current.clientWidth / this.defRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
     this.setState({ xScale, checkState: false });
   }
@@ -94,7 +99,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
     const { def, xScale } = this.state;
     return (
       <div
-        ref={this.ref}
+        ref={this.containerRef}
         className={classNames('custom-container', 'card-layer', 'atk-def', 'def', {
           'question-mark': def === '?',
         })}
@@ -102,6 +107,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
         <p
           className={classNames('stat-text', 'def-text', 'black-text', { infinity: def === '∞' })}
           style={{ transform: `scaleX(${xScale})` }}
+          ref={this.defRef}
         >
           {def}
         </p>

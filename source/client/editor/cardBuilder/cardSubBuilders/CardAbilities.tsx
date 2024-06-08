@@ -24,7 +24,10 @@ const GAP = 3;
 const MAX_WIDTH = 689;
 
 export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAbilitiesState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public leftBracketRef = createRef<HTMLParagraphElement>();
+  public rightBracketRef = createRef<HTMLParagraphElement>();
+  public abilitiesRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: ICardAbilitiesProps) {
     super(props);
@@ -40,7 +43,7 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -70,9 +73,9 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -82,18 +85,22 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
   }
 
   private checkReady() {
-    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
+    if (
+      this.isEmpty ||
+      !this.containerRef.current ||
+      !this.leftBracketRef.current ||
+      !this.rightBracketRef.current ||
+      !this.abilitiesRef.current
+    ) {
+      return this.setState({ checkState: false });
+    }
 
-    const leftBracketP = this.ref.current.querySelector('.left-bracket');
-    const rightBracketP = this.ref.current.querySelector('.right-bracket');
-    const abilitiesP = this.ref.current.querySelector('.abilities');
-    if (!leftBracketP || !rightBracketP || !abilitiesP) return this.setState({ checkState: false });
-
-    const abilitiesMaxWidth = MAX_WIDTH - leftBracketP.clientWidth - rightBracketP.clientWidth - GAP * 2;
-    let xScale = abilitiesMaxWidth / abilitiesP.clientWidth;
+    const abilitiesMaxWidth =
+      MAX_WIDTH - this.leftBracketRef.current.clientWidth - this.rightBracketRef.current.clientWidth - GAP * 2;
+    let xScale = abilitiesMaxWidth / this.abilitiesRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
 
-    let rightBracketMargin = abilitiesMaxWidth - abilitiesP.clientWidth;
+    let rightBracketMargin = abilitiesMaxWidth - this.abilitiesRef.current.clientWidth;
     if (rightBracketMargin > 0) rightBracketMargin = 0;
     this.setState({ xScale, rightBracketMargin, checkState: false });
   }
@@ -121,9 +128,15 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
     }
 
     return (
-      <div className={containerClass} ref={this.ref}>
-        <p className='abilities-text black-text abilities-bracket left-bracket'>[</p>
-        <p className='abilities-text black-text abilities' style={{ transform: `scaleX(${xScale})` }}>
+      <div className={containerClass} ref={this.containerRef}>
+        <p className='abilities-text black-text abilities-bracket left-bracket' ref={this.leftBracketRef}>
+          [
+        </p>
+        <p
+          className='abilities-text black-text abilities'
+          style={{ transform: `scaleX(${xScale})` }}
+          ref={this.abilitiesRef}
+        >
           {upperCaseIndexes.map((index, i) => (
             <Fragment key={`uppercase-index-${i}`}>
               <span className={i === 0 && firstIndexLowerCase ? 'lowercase' : 'uppercase'}>
@@ -138,6 +151,7 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
         <p
           className='abilities-text black-text abilities-bracket right-bracket'
           style={{ marginLeft: `${rightBracketMargin}px` }}
+          ref={this.rightBracketRef}
         >
           ]
         </p>

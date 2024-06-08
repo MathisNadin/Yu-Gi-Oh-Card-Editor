@@ -21,7 +21,8 @@ interface IRushCardAtkMaxState extends IToolkitComponentState {
 }
 
 export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRushCardAtkMaxState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public atkMaxRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: IRushCardAtkMaxProps) {
     super(props);
@@ -37,7 +38,7 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -67,9 +68,9 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -80,14 +81,18 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
 
   private checkReady() {
     const { atkMax } = this.state;
-    if (this.isEmpty || atkMax === '?' || atkMax === '∞' || integer(atkMax) < 10000 || !this.ref.current) {
+    if (
+      this.isEmpty ||
+      atkMax === '?' ||
+      atkMax === '∞' ||
+      integer(atkMax) < 10000 ||
+      !this.containerRef.current ||
+      !this.atkMaxRef.current
+    ) {
       return this.setState({ checkState: false });
     }
 
-    const paragraph = this.ref.current.querySelector('p');
-    if (!paragraph) return this.setState({ checkState: false });
-
-    let xScale = this.ref.current.clientWidth / paragraph.clientWidth;
+    let xScale = this.containerRef.current.clientWidth / this.atkMaxRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
     this.setState({ xScale, checkState: false });
   }
@@ -101,13 +106,14 @@ export class RushCardAtkMax extends ToolkitComponent<IRushCardAtkMaxProps, IRush
           'question-mark': atkMax === '?',
           compressed: atkMax?.length > 4,
         })}
-        ref={this.ref}
+        ref={this.containerRef}
       >
         <p
           className={classNames('stat-text', 'atk-max-text', 'white-text', {
             infinity: atkMax === '∞',
           })}
           style={{ transform: `scaleX(${xScale})` }}
+          ref={this.atkMaxRef}
         >
           {atkMax}
         </p>

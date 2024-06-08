@@ -85,7 +85,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   }
 
   public componentDidMount() {
-    setTimeout(() => app.$errorManager.handlePromise(this.prepareState()));
+    requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.prepareState())));
   }
 
   public static getDerivedStateFromProps(
@@ -289,7 +289,9 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       this.abilitiesReady &&
       this.artworkReady
     ) {
-      setTimeout(() => this.props.onCardReady(this.ref.current!), 200);
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => this.ref.current && this.props.onCardReady(this.ref.current))
+      );
     }
   }
 

@@ -19,7 +19,8 @@ interface ICardAtkState extends IToolkitComponentState {
 }
 
 export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public atkRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: ICardAtkProps) {
     super(props);
@@ -33,7 +34,7 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -59,9 +60,9 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -72,14 +73,18 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
 
   private checkReady() {
     const { atk } = this.state;
-    if (this.isEmpty || atk === '?' || atk === '∞' || integer(atk) < 10000 || !this.ref.current) {
+    if (
+      this.isEmpty ||
+      atk === '?' ||
+      atk === '∞' ||
+      integer(atk) < 10000 ||
+      !this.containerRef.current ||
+      !this.atkRef.current
+    ) {
       return this.setState({ checkState: false });
     }
 
-    const paragraph = this.ref.current.querySelector('p');
-    if (!paragraph) return this.setState({ checkState: false });
-
-    let xScale = this.ref.current.clientWidth / paragraph.clientWidth;
+    let xScale = this.containerRef.current.clientWidth / this.atkRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
     this.setState({ xScale, checkState: false });
   }
@@ -89,7 +94,7 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
     const { atk, xScale } = this.state;
     return (
       <div
-        ref={this.ref}
+        ref={this.containerRef}
         className={classNames('custom-container', 'card-layer', 'atk-def', 'atk', {
           'question-mark': atk === '?',
         })}
@@ -97,6 +102,7 @@ export class CardAtk extends ToolkitComponent<ICardAtkProps, ICardAtkState> {
         <p
           className={classNames('stat-text', 'atk-text', 'black-text', { infinity: atk === '∞' })}
           style={{ transform: `scaleX(${xScale})` }}
+          ref={this.atkRef}
         >
           {atk}
         </p>

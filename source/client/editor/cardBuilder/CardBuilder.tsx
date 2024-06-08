@@ -76,7 +76,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
   }
 
   public componentDidMount() {
-    setTimeout(() => app.$errorManager.handlePromise(this.prepareState()));
+    requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.prepareState())));
   }
 
   public static getDerivedStateFromProps(
@@ -213,7 +213,9 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       this.abilitiesReady &&
       this.artworkReady
     ) {
-      setTimeout(() => this.props.onCardReady(this.ref.current!), 200);
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => this.ref.current && this.props.onCardReady(this.ref.current))
+      );
     }
   }
 

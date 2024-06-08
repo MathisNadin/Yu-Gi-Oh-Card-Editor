@@ -22,7 +22,8 @@ interface IRushCardDefState extends IToolkitComponentState {
 }
 
 export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDefState> {
-  public ref = createRef<HTMLDivElement>();
+  public containerRef = createRef<HTMLDivElement>();
+  public defRef = createRef<HTMLParagraphElement>();
 
   public constructor(props: IRushCardDefProps) {
     super(props);
@@ -38,7 +39,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
   }
 
   public componentDidMount() {
-    setTimeout(() => this.checkReady(), 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
   public static getDerivedStateFromProps(
@@ -68,9 +69,9 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
 
   public componentDidUpdate() {
     if (this.state.checkState) {
-      this.checkReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      setTimeout(() => this.props.onReady());
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -81,14 +82,18 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
 
   private checkReady() {
     const { def } = this.state;
-    if (this.isEmpty || def === '?' || def === '∞' || integer(def) < 10000 || !this.ref.current) {
+    if (
+      this.isEmpty ||
+      def === '?' ||
+      def === '∞' ||
+      integer(def) < 10000 ||
+      !this.containerRef.current ||
+      !this.defRef.current
+    ) {
       return this.setState({ checkState: false });
     }
 
-    const paragraph = this.ref.current.querySelector('p');
-    if (!paragraph) return this.setState({ checkState: false });
-
-    let xScale = this.ref.current.clientWidth / paragraph.clientWidth;
+    let xScale = this.containerRef.current.clientWidth / this.defRef.current.clientWidth;
     if (xScale > 1) xScale = 1;
     this.setState({ xScale, checkState: false });
   }
@@ -102,13 +107,14 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
           'question-mark': def === '?',
           compressed: def?.length > 4,
         })}
-        ref={this.ref}
+        ref={this.containerRef}
       >
         <p
           className={classNames('stat-text', 'def-text', 'white-text', {
             infinity: def === '∞',
           })}
           style={{ transform: `scaleX(${xScale})` }}
+          ref={this.defRef}
         >
           {def}
         </p>

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-named-as-default
 import ReactCrop, { Crop } from 'react-image-crop';
-import { classNames, isDefined } from 'mn-tools';
+import { classNames, isUndefined } from 'mn-tools';
 import { IContainableProps, IContainableState, Containable, Spinner, Container, IContainerState } from 'mn-toolkit';
 
 interface IArtworkCroppingProps extends IContainableProps {
@@ -34,7 +34,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   }
 
   public componentDidMount() {
-    setTimeout(() => this.loadHigher());
+    requestAnimationFrame(() => requestAnimationFrame(() => this.loadHigher()));
   }
 
   private prevPropsIsDifferent(prevProps: IArtworkCroppingProps) {
@@ -50,13 +50,12 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
   }
 
   public componentDidUpdate(prevProps: IArtworkCroppingProps) {
-    if (isDefined(this.state.higher) && this.prevPropsIsDifferent(prevProps)) {
-      setTimeout(() => this.loadHigher());
-    }
+    if (isUndefined(this.state.higher) || !this.prevPropsIsDifferent(prevProps)) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => this.loadHigher()));
   }
 
   private loadHigher() {
-    if (!this.props.artworkBase64) {
+    if (!this.props.artworkBase64 || !this.croppingRef?.containerRef.current) {
       return this.setState({
         loaded: true,
         higher: false,
@@ -65,8 +64,7 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
       });
     }
 
-    const container = this.croppingRef?.containerRef.current;
-    if (!container) return;
+    const container = this.croppingRef.containerRef.current;
     const containerisHigher = container.clientHeight > container.clientWidth;
 
     const image = new Image();
