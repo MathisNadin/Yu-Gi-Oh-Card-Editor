@@ -402,17 +402,24 @@
         text-align: justify;
         text-shadow: 0 0 black;
 
-        &.with-bullet-point {
+        .with-bullet-point {
+          $bulletSize: 1rem;
+          $margin: calc($bulletSize / 3);
+
           &::before {
-            $bulletSize: 0.8rem;
             display: inline-block;
             content: '';
             height: $bulletSize;
             width: $bulletSize;
             border-radius: calc($bulletSize / 2);
-            margin-right: calc($bulletSize / 2);
-            margin-bottom: calc((1rem - $bulletSize) / 2);
+            margin-right: $margin;
             background-color: black;
+          }
+
+          &.in-middle {
+            &::before {
+              margin-left: $margin;
+            }
           }
         }
       }
