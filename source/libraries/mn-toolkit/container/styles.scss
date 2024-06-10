@@ -1,7 +1,10 @@
+$scrollBarSize: 5px;
+
 @mixin mnScrollBar() {
   .with-webkit & {
     &::-webkit-scrollbar {
-      width: 5px;
+      width: $scrollBarSize;
+      height: $scrollBarSize;
       background-color: transparent;
     }
 
@@ -140,43 +143,12 @@
     }
   }
 
-  &.mn-layout-margin-horizontal {
-    margin: 0 $themeDefaultSpacing;
-    /* > .mn-container-inside {
-      margin: 0 $themeDefaultSpacing;
-    } */
-  }
-
-  &.mn-layout-margin-vertical {
-    margin: $themeDefaultSpacing 0;
-    /* > .mn-container-inside {
-      margin: $themeDefaultSpacing 0;
-    } */
-  }
-
   &.mn-layout-margin {
     margin: $themeDefaultSpacing;
-    /* > .mn-container-inside {
-      margin: $themeDefaultSpacing;
-    } */
   }
 
-  &.mn-layout-padding-horizontal {
-    > .mn-container-inside {
-      padding: 0 $themeDefaultSpacing;
-    }
-  }
-
-  &.mn-layout-padding-vertical {
-    > .mn-container-inside {
-      padding: $themeDefaultSpacing 0;
-    }
-  }
-
-  .mn-layout-padding {
-    > .mn-container-inside {
-      padding: $themeDefaultSpacing;
-    }
+  &.mn-layout-padding {
+    padding: $themeDefaultSpacing;
   }
 
   $scrollBarSpace: calc($themeDefaultSpacing / 2);
@@ -186,32 +158,83 @@
     @include mnScrollBar();
 
     > .mn-container-inside {
-      padding-right: $scrollBarSpace;
+      padding-right: $scrollBarSize;
 
-      > :last-child {
-        margin-bottom: $themeDefaultSpacing;
+      .without-webkit & {
+        padding-right: $scrollBarSpace;
       }
     }
 
     &.mn-layout-padding {
+      padding-right: 0;
+
       > .mn-container-inside {
-        padding-right: $themeDefaultSpacing + $scrollBarSpace;
-        padding-bottom: 0;
+        padding-right: 0;
+        width: calc(100% - $themeDefaultSpacing / 2);
+        min-width: calc(100% - $themeDefaultSpacing / 2);
+        max-width: calc(100% - $themeDefaultSpacing / 2);
+
+        .without-webkit & {
+          width: calc(100% - $themeDefaultSpacing);
+          min-width: calc(100% - $themeDefaultSpacing);
+          max-width: calc(100% - $themeDefaultSpacing);
+        }
+
+        &:after {
+          content: ' ';
+          min-height: $themeDefaultSpacing;
+        }
+      }
+
+      &.mn-layout-gutter {
+        > .mn-container-inside {
+          &:after {
+            margin-top: -$themeDefaultSpacing;
+          }
+        }
       }
     }
   }
 
-  &.mn-scrollX {
+  &.mn-scroll-x {
     overflow-x: auto;
     @include mnScrollBar();
 
-    .mn-container-inside {
-      padding-bottom: $scrollBarSpace;
+    > .mn-container-inside {
+      padding-bottom: $scrollBarSize;
+
+      .without-webkit & {
+        padding-bottom: $scrollBarSpace;
+      }
     }
 
     &.mn-layout-padding {
+      padding-bottom: 0;
+
       > .mn-container-inside {
-        padding-bottom: $themeDefaultSpacing + $scrollBarSpace;
+        padding-bottom: 0;
+        height: calc(100% - $themeDefaultSpacing / 2);
+        min-height: calc(100% - $themeDefaultSpacing / 2);
+        max-height: calc(100% - $themeDefaultSpacing / 2);
+
+        .without-webkit & {
+          height: calc(100% - $themeDefaultSpacing);
+          min-height: calc(100% - $themeDefaultSpacing);
+          max-height: calc(100% - $themeDefaultSpacing);
+        }
+
+        &:after {
+          content: ' ';
+          min-width: $themeDefaultSpacing;
+        }
+      }
+
+      &.mn-layout-gutter {
+        > .mn-container-inside {
+          &:after {
+            margin-left: -$themeDefaultSpacing;
+          }
+        }
       }
     }
   }
@@ -323,12 +346,8 @@ $COLUMNS: (
 
   .group-label-container {
     position: absolute;
-    top: - calc($themeDefaultSpacing/2);
+    top: -20px - calc($themeDefaultSpacing/2);
     left: calc($themeDefaultSpacing/2);
     padding: 0 $themeDefaultSpacing;
-  }
-
-  .labeled-group-content {
-    margin-top: calc($themeDefaultSpacing/2);
   }
 }

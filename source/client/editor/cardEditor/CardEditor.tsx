@@ -950,17 +950,18 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-copyright' color='1' />
-            <CheckBox
-              fill
-              label='Copyright'
-              defaultValue={this.state.card.hasCopyright}
-              onChange={() => this.onCopyrightChange()}
-            />
-            <CheckBox
-              label='1996'
-              defaultValue={this.state.card.oldCopyright}
-              onChange={() => this.onOldCopyrightChange()}
-            />
+            <HorizontalStack gutter fill verticalItemAlignment='middle'>
+              <CheckBox
+                label='Copyright'
+                defaultValue={this.state.card.hasCopyright}
+                onChange={() => this.onCopyrightChange()}
+              />
+              <CheckBox
+                label='1996'
+                defaultValue={this.state.card.oldCopyright}
+                onChange={() => this.onOldCopyrightChange()}
+              />
+            </HorizontalStack>
           </HorizontalStack>
         </Grid>
       </VerticalStack>
