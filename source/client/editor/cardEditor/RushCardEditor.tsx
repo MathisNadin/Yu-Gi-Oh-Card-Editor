@@ -268,7 +268,6 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
   }
 
   private onArtworkURLChange(url: string) {
-    if (isEmpty(url)) return;
     this.state.card.artwork = {
       url,
       x: 0,
@@ -949,8 +948,8 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       <VerticalStack gutter className='card-editor-section misc-section'>
         <Typography fill className='sub-title' variant='help' content='Autres' />
 
-        <HorizontalStack gutter>
-          <HorizontalStack fill verticalItemAlignment='middle'>
+        <Grid>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-id' color='1' />
             <TextInput
               fill
@@ -960,7 +959,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             />
           </HorizontalStack>
 
-          <HorizontalStack fill verticalItemAlignment='middle'>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-print' color='1' />
             <Select<TEdition>
               fill
@@ -978,10 +977,10 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               onChange={(edition) => this.onEditionChange(edition)}
             />
           </HorizontalStack>
-        </HorizontalStack>
+        </Grid>
 
-        <HorizontalStack gutter>
-          <HorizontalStack fill verticalItemAlignment='middle'>
+        <Grid>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
@@ -1003,7 +1002,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             />
           </HorizontalStack>
 
-          <HorizontalStack fill verticalItemAlignment='middle'>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-copyright' color='1' />
             <CheckBox
               fill
@@ -1012,13 +1011,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               onChange={() => this.onCopyrightChange()}
             />
             <CheckBox
-              fill
               label='1996'
               defaultValue={this.state.card.oldCopyright}
               onChange={() => this.onOldCopyrightChange()}
             />
           </HorizontalStack>
-        </HorizontalStack>
+        </Grid>
       </VerticalStack>
     );
   }

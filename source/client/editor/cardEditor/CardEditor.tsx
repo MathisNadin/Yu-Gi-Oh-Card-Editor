@@ -284,7 +284,6 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   private onArtworkURLChange(url: string) {
-    if (isEmpty(url)) return;
     this.state.card.artwork = {
       url,
       x: 0,
@@ -700,9 +699,10 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   private renderMonsterCardDetails() {
+    const includesLink = this.state.card.frames.includes('link');
     let levelPlaceholder: string;
     let max: number;
-    if (this.state.card.frames.includes('link')) {
+    if (includesLink) {
       levelPlaceholder = 'Classification Lien';
       max = 8;
     } else {
@@ -735,8 +735,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
       <VerticalStack gutter className='card-editor-section abilities-section'>
         <Typography fill className='sub-title' variant='help' content='Détails' />
 
-        <HorizontalStack gutter>
-          <HorizontalStack fill verticalItemAlignment='middle'>
+        <Grid>
+          <HorizontalStack xl='12' xxl={includesLink ? '6' : '4'} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-star' color='1' />
             <NumberInput
               fill
@@ -748,7 +748,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <HorizontalStack fill verticalItemAlignment='middle'>
+          <HorizontalStack xl='12' xxl={includesLink ? '6' : '4'} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-sword' color='1' />
             <TextInput
               fill
@@ -758,8 +758,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          {!this.state.card.frames.includes('link') && (
-            <HorizontalStack fill verticalItemAlignment='middle'>
+          {!includesLink && (
+            <HorizontalStack xl='12' xxl='4' verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} iconId='toolkit-shield' color='1' />
               <TextInput
                 fill
@@ -769,7 +769,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               />
             </HorizontalStack>
           )}
-        </HorizontalStack>
+        </Grid>
 
         <VerticalStack className='card-abilities'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
@@ -881,8 +881,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
       <VerticalStack gutter className='card-editor-section misc-section'>
         <Typography fill className='sub-title' variant='help' content='Autres' />
 
-        <HorizontalStack gutter>
-          <HorizontalStack fill verticalItemAlignment='middle'>
+        <Grid>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-id' color='1' />
             <TextInput
               fill
@@ -892,11 +892,10 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <HorizontalStack fill verticalItemAlignment='middle'>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-print' color='1' />
             <Select<TEdition>
               fill
-              minWidth={200}
               items={[
                 { id: 'unlimited', label: 'Aucune édition' },
                 { id: 'firstEdition', label: '1ère Édition' },
@@ -910,7 +909,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               onChange={(edition) => this.onEditionChange(edition)}
             />
           </HorizontalStack>
-        </HorizontalStack>
+        </Grid>
 
         <HorizontalStack gutter verticalItemAlignment='middle'>
           <HorizontalStack fill verticalItemAlignment='middle'>
@@ -927,12 +926,11 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           <Button color='positive' label='Générer' onTap={() => this.generatePasscode()} />
         </HorizontalStack>
 
-        <HorizontalStack gutter>
-          <HorizontalStack fill verticalItemAlignment='middle'>
+        <Grid>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
-              minWidth={150}
               items={[
                 { id: 'none', label: 'Aucun sticker' },
                 { id: 'silver', label: 'Argent' },
@@ -950,7 +948,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <HorizontalStack fill verticalItemAlignment='middle'>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} iconId='toolkit-copyright' color='1' />
             <CheckBox
               fill
@@ -959,13 +957,12 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               onChange={() => this.onCopyrightChange()}
             />
             <CheckBox
-              fill
               label='1996'
               defaultValue={this.state.card.oldCopyright}
               onChange={() => this.onOldCopyrightChange()}
             />
           </HorizontalStack>
-        </HorizontalStack>
+        </Grid>
       </VerticalStack>
     );
   }

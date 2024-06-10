@@ -41,21 +41,19 @@ export class TextField<PROPS extends ITextFieldProps, STATE extends ITextFieldSt
   }
 
   public componentDidMount() {
-    if (this.props.autofocus && !app.$device.isNative) {
-      setTimeout(() => {
-        if (this.inputElement?.current) this.inputElement.current.doFocus();
-      }, 100);
-    }
+    if (!this.props.autofocus || app.$device.isNative) return;
+    setTimeout(() => {
+      if (this.inputElement.current) this.inputElement.current.doFocus();
+    }, 100);
   }
 
   public componentDidUpdate(prevProps: ITextFieldProps) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue! });
+    if (prevProps === this.props || this.props.defaultValue?.trim() === this.state.value?.trim()) return;
+    this.setState({ value: this.props.defaultValue! }, () => {
       if (this.validators.length && this.props.required) {
         app.$errorManager.handlePromise(this.doValidation());
       }
-    }
+    });
   }
 
   public renderControl() {
@@ -80,20 +78,21 @@ export class TextField<PROPS extends ITextFieldProps, STATE extends ITextFieldSt
   protected async onChange(value: string) {
     await this.setStateAsync({ value } as Partial<STATE>);
     this.fireValueChanged();
-    if (!!this.props.onChange) this.props.onChange(value);
+    if (!this.props.onChange) return;
+    this.props.onChange(value);
   }
 
   protected onKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      (e.target as HTMLElement).blur();
-      setTimeout(() => {
-        if (this.hasValue) this.observers.dispatch('formFieldSubmit', this);
-        if (this.props.onSubmit) app.$errorManager.handlePromise(this.props.onSubmit(e));
-      });
-    }
+    if (e.key !== 'Enter') return;
+    (e.target as HTMLElement).blur();
+    setTimeout(() => {
+      if (this.hasValue) this.observers.dispatch('formFieldSubmit', this);
+      if (this.props.onSubmit) app.$errorManager.handlePromise(this.props.onSubmit(e));
+    });
   }
 
   public doClickItem(_e: React.MouseEvent) {
-    if (this.inputElement?.current) this.inputElement.current.doFocus();
+    if (!this.inputElement.current) return;
+    this.inputElement.current.doFocus();
   }
 }

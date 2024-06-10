@@ -26,8 +26,8 @@ interface IArtworkEditingProps extends IContainableProps {
   crop: Crop;
   onKeepRatioChange: (keepRatio: boolean) => void;
   onCroppingChange: (crop: Crop) => void;
-  onArtworkURLChange: (url: string) => void;
-  onValidate: (url: string, crop: Crop, keepRatio: boolean) => void;
+  onArtworkURLChange: (url: string) => void | Promise<void>;
+  onValidate: (url: string, crop: Crop, keepRatio: boolean) => void | Promise<void>;
 }
 
 interface IArtworkEditingState extends IContainableState {
@@ -52,12 +52,13 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   public componentDidUpdate(prevProps: IArtworkEditingProps) {
-    if (prevProps !== this.props) app.$errorManager.handlePromise(this.load());
+    if (prevProps === this.props) return;
+    app.$errorManager.handlePromise(this.load());
   }
 
   private async load() {
     const croppedArtworkBase64 = await getCroppedArtworkBase64(this.props.artworkBase64, this.props.crop);
-    this.setState({
+    await this.setStateAsync({
       crop: this.props.crop,
       artworkURL: this.props.artworkURL,
       croppedArtworkBase64,
@@ -65,8 +66,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     });
   }
 
-  private onArtworkURLChange(artworkURL: string) {
-    if (!artworkURL) return;
+  private async onArtworkURLChange(artworkURL: string) {
     const crop: Crop = {
       x: 0,
       y: 0,
@@ -74,13 +74,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       width: 100,
       unit: '%',
     };
-    this.setState(
-      { artworkURL, crop },
-      () => !!this.props.onArtworkURLChange && this.props.onArtworkURLChange(this.state.artworkURL)
-    );
+    await this.setStateAsync({ artworkURL, crop });
+    if (!this.props.onArtworkURLChange) return;
+    await this.props.onArtworkURLChange(this.state.artworkURL);
   }
 
-  private onCropXChange(x: number) {
+  private async onCropXChange(x: number) {
     if (x > 100) {
       x = 100;
     } else if (x < 0) {
@@ -88,10 +87,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     }
     const crop = this.state.crop;
     crop.x = x;
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+    await this.setStateAsync({ crop });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
-  private onCropYChange(y: number) {
+  private async onCropYChange(y: number) {
     if (y > 100) {
       y = 100;
     } else if (y < 0) {
@@ -99,10 +100,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     }
     const crop = this.state.crop;
     crop.y = y;
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+    await this.setStateAsync({ crop });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
-  private onCropWidthChange(width: number) {
+  private async onCropWidthChange(width: number) {
     if (width < 1) {
       width = 1;
     }
@@ -111,10 +114,12 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (this.state.keepRatio && crop.width !== crop.height) {
       crop.height = width;
     }
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+    await this.setStateAsync({ crop });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
-  private onCropHeightChange(height: number) {
+  private async onCropHeightChange(height: number) {
     if (height < 1) {
       height = 1;
     }
@@ -123,42 +128,47 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     if (this.state.keepRatio && crop.height !== crop.width) {
       crop.width = height;
     }
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+    await this.setStateAsync({ crop });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
   private async doSelectImgPath() {
-    const path = await window.electron.ipcRenderer.getFilePath(app.$settings.settings.defaultArtworkPath);
+    const path = await window.electron.ipcRenderer.getFilePath(
+      this.state.artworkURL || app.$settings.settings.defaultArtworkPath
+    );
     if (!path) return;
-    this.onArtworkURLChange(path);
+    await this.onArtworkURLChange(path);
   }
 
-  private switchKeepRatio() {
-    this.setState({ keepRatio: !this.state.keepRatio }, () => {
-      if (this.props.onKeepRatioChange) this.props.onKeepRatioChange(this.state.keepRatio);
+  private async switchKeepRatio() {
+    await this.setStateAsync({ keepRatio: !this.state.keepRatio });
+    if (this.props.onKeepRatioChange) this.props.onKeepRatioChange(this.state.keepRatio);
 
-      if (this.state.keepRatio) {
-        if (this.state.crop.height > this.state.crop.width) {
-          this.onCropHeightChange(this.state.crop.width);
-        } else if (this.state.crop.height < this.state.crop.width) {
-          this.onCropWidthChange(this.state.crop.height);
-        }
-      }
-    });
+    if (!this.state.keepRatio) return;
+    if (this.state.crop.height > this.state.crop.width) {
+      await this.onCropHeightChange(this.state.crop.width);
+    } else if (this.state.crop.height < this.state.crop.width) {
+      await this.onCropWidthChange(this.state.crop.height);
+    }
   }
 
-  private setFullCardPreset() {
-    let crop = app.$card.getFullCardPreset();
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+  private async setFullCardPreset() {
+    await this.setStateAsync({ crop: app.$card.getFullCardPreset() });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
-  private setFullPendulumCardPreset() {
-    let crop = app.$card.getFullPendulumCardPreset();
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+  private async setFullPendulumCardPreset() {
+    await this.setStateAsync({ crop: app.$card.getFullPendulumCardPreset() });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
-  private setFullRushCardPreset() {
-    let crop = app.$card.getFullRushCardPreset();
-    this.setState({ crop }, () => !!this.props.onCroppingChange && this.props.onCroppingChange(this.state.crop));
+  private async setFullRushCardPreset() {
+    await this.setStateAsync({ crop: app.$card.getFullRushCardPreset() });
+    if (!this.props.onCroppingChange) return;
+    this.props.onCroppingChange(this.state.crop);
   }
 
   public render() {

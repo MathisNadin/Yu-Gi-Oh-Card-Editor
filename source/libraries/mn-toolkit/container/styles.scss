@@ -196,6 +196,7 @@
     &.mn-layout-padding {
       > .mn-container-inside {
         padding-right: $themeDefaultSpacing + $scrollBarSpace;
+        padding-bottom: 0;
       }
     }
   }

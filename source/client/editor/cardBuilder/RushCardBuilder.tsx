@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
-import { classNames, isDeepEqual } from 'mn-tools';
+import { classNames, deepClone, isDeepEqual } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild } from 'mn-toolkit';
 import {
@@ -67,7 +67,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     this.state = {
       ...this.state,
       loaded: false,
-      card: { ...props.card },
+      card: deepClone(props.card),
       needsUpdate: false,
       hasRushMonsterDetails: false,
       isBackrow: false,
@@ -93,7 +93,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     prevState: IRushCardBuilderState
   ): Partial<IRushCardBuilderState> | null {
     if (isDeepEqual(nextProps.card, prevState.card)) return null;
-    return { needsUpdate: true, card: { ...nextProps.card } };
+    return { needsUpdate: true, card: deepClone(nextProps.card) };
   }
 
   public componentDidUpdate() {

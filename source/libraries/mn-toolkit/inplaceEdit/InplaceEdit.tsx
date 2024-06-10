@@ -6,9 +6,9 @@ interface InplaceEditProps extends IContainableProps {
   value: string;
   focusOnSingleClick?: boolean;
   validateOnEnter?: boolean;
-  onChange?: (newValue: string) => void;
-  onSingleClick?: (e: MouseEvent) => void;
-  onDoubleClick?: (e: MouseEvent) => void;
+  onChange?: (newValue: string) => void | Promise<void>;
+  onSingleClick?: (e: MouseEvent) => void | Promise<void>;
+  onDoubleClick?: (e: MouseEvent) => void | Promise<void>;
 }
 
 interface InplaceEditState extends IContainableState {
@@ -36,16 +36,17 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
     }, 100);
   }
 
-  private doBlur() {
+  private async doBlur() {
     this.clickTimer = undefined;
-    this.setState({ isFocused: false }, () => !!this.props.onChange && this.props.onChange(this.tempValue));
+    await this.setState({ isFocused: false });
+    if (!this.props.onChange) return;
+    await this.props.onChange(this.tempValue);
   }
 
   private doFocus() {
     this.setState({ isFocused: true }, () => {
-      if (this.inputRef.current) {
-        this.inputRef.current.focus();
-      }
+      if (!this.inputRef.current) return;
+      this.inputRef.current.focus();
     });
   }
 
@@ -53,21 +54,24 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
     if (this.clickTimer) return;
     if (this.props.focusOnSingleClick) this.doFocus();
     this.clickTimer = setTimeout(() => {
-      if (this.props.onSingleClick) this.props.onSingleClick(e);
+      if (this.props.onSingleClick) {
+        app.$errorManager.handlePromise(this.props.onSingleClick(e));
+      }
       this.clickTimer = undefined;
     }, 200);
   }
 
-  private onDoubleClick(e: MouseEvent) {
+  private async onDoubleClick(e: MouseEvent) {
     clearTimeout(this.clickTimer);
     if (!this.props.focusOnSingleClick) this.doFocus();
     this.clickTimer = undefined;
-    if (this.props.onDoubleClick) this.props.onDoubleClick(e);
+    if (!this.props.onDoubleClick) return;
+    await this.props.onDoubleClick(e);
   }
 
-  private onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  private async onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (!this.props.validateOnEnter || e.key !== 'Enter') return;
-    this.doBlur();
+    await this.doBlur();
   }
 
   public renderClasses() {
@@ -86,11 +90,15 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
             ref={this.inputRef}
             defaultValue={this.tempValue}
             onChange={(e) => (this.tempValue = e.target.value)}
-            onKeyDown={(e) => this.onKeyDown(e)}
+            onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
             onBlur={() => this.doBlur()}
           />
         ) : (
-          <div className='value' onClick={(e) => this.onSingleClick(e)} onDoubleClick={(e) => this.onDoubleClick(e)}>
+          <div
+            className='value'
+            onClick={(e) => this.onSingleClick(e)}
+            onDoubleClick={(e) => app.$errorManager.handlePromise(this.onDoubleClick(e))}
+          >
             {this.tempValue || '<vide>'}
           </div>
         )}

@@ -77,22 +77,24 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
         onKeyDown={(e) => this.props.onKeyDown && this.props.onKeyDown(e)}
         onBlur={(e) => app.$errorManager.handlePromise(this.onBlur(e))}
         onFocus={(e) => app.$errorManager.handlePromise(this.onFocus(e))}
-        onChange={(e) => this.onChange(e)}
+        onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
       />
     );
   }
 
   protected async onBlur(e: React.FocusEvent) {
     await this.setStateAsync({ focus: false });
-    if (this.props.onBlur) await this.props.onBlur(e);
+    if (!this.props.onBlur) return;
+    await this.props.onBlur(e);
   }
 
   protected async onFocus(e: React.FocusEvent) {
     await this.setStateAsync({ focus: true });
-    if (this.props.onFocus) await this.props.onFocus(e);
+    if (!this.props.onFocus) return;
+    await this.props.onFocus(e);
   }
 
-  private onChange(e: FormEvent<HTMLInputElement>) {
+  private async onChange(e: FormEvent<HTMLInputElement>) {
     if (!e.target) return;
     let value = integer(e.target.value);
     if (this.props.max && this.props.max < value) {
@@ -100,7 +102,8 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     } else if (this.props.min && this.props.min > value) {
       value = this.props.min;
     }
-    if (!!this.props.onChange) this.props.onChange(value);
-    this.setState({ value });
+    await this.setStateAsync({ value });
+    if (!this.props.onChange) return;
+    await this.props.onChange(value);
   }
 }

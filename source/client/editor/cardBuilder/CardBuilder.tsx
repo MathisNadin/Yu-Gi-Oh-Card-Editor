@@ -1,5 +1,5 @@
 import { createRef, CSSProperties } from 'react';
-import { classNames, isDeepEqual } from 'mn-tools';
+import { classNames, deepClone, isDeepEqual } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable } from 'mn-toolkit';
 import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
@@ -58,7 +58,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     this.state = {
       ...this.state,
       loaded: false,
-      card: { ...props.card },
+      card: deepClone(props.card),
       needsUpdate: false,
       hasAbilities: false,
       hasPendulumFrame: false,
@@ -84,7 +84,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     prevState: ICardBuilderState
   ): Partial<ICardBuilderState> | null {
     if (isDeepEqual(nextProps.card, prevState.card)) return null;
-    return { needsUpdate: true, card: { ...nextProps.card } };
+    return { needsUpdate: true, card: deepClone(nextProps.card) };
   }
 
   public componentDidUpdate() {

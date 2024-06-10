@@ -63,7 +63,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
         value={this.state.value}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
-        onChange={(e) => this.onChange(e)}
+        onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
         onKeyUp={(e) => this.props.onKeyUp && app.$errorManager.handlePromise(this.props.onKeyUp(e))}
         onKeyDown={(e) => this.props.onKeyDown && app.$errorManager.handlePromise(this.props.onKeyDown(e))}
         onBlur={(e) => this.props.onBlur && app.$errorManager.handlePromise(this.props.onBlur(e))}
@@ -72,14 +72,10 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
     );
   }
 
-  private onChange(e: FormEvent<HTMLInputElement>) {
+  private async onChange(e: FormEvent<HTMLInputElement>) {
     const value = e.target.value as string;
-    this.setState({ value }, () => {
-      setTimeout(() => {
-        if (this.props.onChange) {
-          app.$errorManager.handlePromise(this.props.onChange(this.state.value));
-        }
-      });
-    });
+    await this.setStateAsync({ value });
+    if (!this.props.onChange) return;
+    await this.props.onChange(value);
   }
 }

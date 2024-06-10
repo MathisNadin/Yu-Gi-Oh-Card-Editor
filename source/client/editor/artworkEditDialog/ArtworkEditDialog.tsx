@@ -128,7 +128,7 @@ export class ArtworkEditDialog extends AbstractPopup<
           crop={this.state.crop}
           onKeepRatioChange={(keepRatio) => this.setState({ keepRatio })}
           onCroppingChange={(crop) => this.setState({ crop })}
-          onArtworkURLChange={(url) => app.$errorManager.handlePromise(this.loadArtworkBase64(url))}
+          onArtworkURLChange={(url) => this.loadArtworkBase64(url)}
           onValidate={(url, crop, keepRatio) => this.close({ url, crop, keepRatio })}
         />
       </HorizontalStack>
