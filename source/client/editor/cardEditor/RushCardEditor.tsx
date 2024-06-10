@@ -33,7 +33,7 @@ import {
   InplaceEdit,
   Image,
 } from 'mn-toolkit';
-import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-tools';
+import { classNames, integer, isEmpty, isUndefined } from 'mn-tools';
 
 interface IRushCardEditorProps extends IContainerProps {
   card: ICard;
@@ -50,7 +50,7 @@ interface IRushCardEditorState extends IContainerState {
 }
 
 export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEditorState> {
-  private debouncedOnCardChange: (card: ICard) => void;
+  private debouncedOnCardChange: (card: ICard, delay?: number) => void;
 
   public static get defaultProps(): Partial<IRushCardEditorProps> {
     return {
@@ -61,9 +61,24 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     };
   }
 
+  private flexibleDebounce(func: (card: ICard) => void): (card: ICard, delay?: number) => void {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    return (card: ICard, delay: number = 100) => {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        func(card);
+        timeoutId = null;
+      }, delay);
+    };
+  }
+
   public constructor(props: IRushCardEditorProps) {
     super(props);
-    this.debouncedOnCardChange = debounce((card: ICard) => this.props.onCardChange(card), 100);
+    this.debouncedOnCardChange = this.flexibleDebounce(this.props.onCardChange);
 
     this.state = {
       ...this.state,
@@ -147,7 +162,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (level > max) return;
     this.state.card.level = level;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   private onMaximumChange() {
@@ -161,7 +176,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (atkMax && atkMax !== '?' && integer(atkMax) === 0) atkMax = '0';
     this.state.card.atkMax = atkMax;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   public onAtkChange(atk: string) {
@@ -169,7 +184,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (atk && atk !== '?' && atk !== '∞' && !atk.startsWith('X') && integer(atk) === 0) atk = '0';
     this.state.card.atk = atk;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   public onDefChange(def: string) {
@@ -177,21 +192,21 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (def && def !== '?' && def !== '∞' && !def.startsWith('X') && integer(def) === 0) def = '0';
     this.state.card.def = def;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   private onNameChange(name: string) {
     if (isUndefined(name)) return;
     this.state.card.name = name;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onDescChange(description: string) {
     if (isUndefined(description)) return;
     this.state.card.description = description;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onDontCoverRushArtChange() {
@@ -228,28 +243,28 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (isUndefined(rushOtherEffects)) return;
     this.state.card.rushOtherEffects = rushOtherEffects;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onRushConditionChange(rushCondition: string) {
     if (isUndefined(rushCondition)) return;
     this.state.card.rushCondition = rushCondition;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onRushEffectChange(rushEffect: string) {
     if (isUndefined(rushEffect)) return;
     this.state.card.rushEffect = rushEffect;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onCardSetChange(cardSet: string) {
     if (isUndefined(cardSet)) return;
     this.state.card.cardSet = cardSet;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onArtworkInfoChange(infos: IArtworkEditDialogResult) {
@@ -284,7 +299,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
   private onRushChoiceEffectsChange(newValue: string, iChoiceEffect: number) {
     this.state.card.rushChoiceEffects[iChoiceEffect] = newValue;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onAbilityChange(newValue: string, iAbility: number) {

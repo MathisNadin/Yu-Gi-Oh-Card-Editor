@@ -30,7 +30,7 @@ import {
   InplaceEdit,
   Image,
 } from 'mn-toolkit';
-import { classNames, debounce, integer, isEmpty, isUndefined } from 'mn-tools';
+import { classNames, integer, isEmpty, isUndefined } from 'mn-tools';
 
 interface ICardEditorProps extends IContainerProps {
   card: ICard;
@@ -49,7 +49,7 @@ interface ICardEditorState extends IContainerState {
 }
 
 export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
-  private debouncedOnCardChange: (card: ICard) => void;
+  private debouncedOnCardChange: (card: ICard, delay?: number) => void;
 
   public static get defaultProps(): Partial<ICardEditorProps> {
     return {
@@ -60,9 +60,24 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     };
   }
 
+  private flexibleDebounce(func: (card: ICard) => void): (card: ICard, delay?: number) => void {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    return (card: ICard, delay: number = 100) => {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        func(card);
+        timeoutId = null;
+      }, delay);
+    };
+  }
+
   public constructor(props: ICardEditorProps) {
     super(props);
-    this.debouncedOnCardChange = debounce((card: ICard) => this.props.onCardChange(card), 100);
+    this.debouncedOnCardChange = this.flexibleDebounce(this.props.onCardChange);
 
     this.state = {
       ...this.state,
@@ -176,7 +191,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     if (level > max) return;
     this.state.card.level = level;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   public onAtkChange(atk: string) {
@@ -184,7 +199,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     if (atk && atk !== '?' && atk !== '∞' && !atk.startsWith('X') && integer(atk) === 0) atk = '0';
     this.state.card.atk = atk;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   public onDefChange(def: string) {
@@ -192,21 +207,21 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     if (def && def !== '?' && def !== '∞' && !def.startsWith('X') && integer(def) === 0) def = '0';
     this.state.card.def = def;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   private onNameChange(name: string) {
     if (isUndefined(name)) return;
     this.state.card.name = name;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onDescChange(description: string) {
     if (isUndefined(description)) return;
     this.state.card.description = description;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onPendChange() {
@@ -236,7 +251,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     this.state.card.scales.left = left;
     if (this.state.lockPend) this.state.card.scales.right = left;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   public onRightScaleChange(right: number) {
@@ -244,28 +259,28 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     this.state.card.scales.right = right;
     if (this.state.lockPend) this.state.card.scales.left = right;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 200);
   }
 
   private onPendEffChange(pendEffect: string) {
     if (isUndefined(pendEffect)) return;
     this.state.card.pendEffect = pendEffect;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onCardSetChange(cardSet: string) {
     if (isUndefined(cardSet)) return;
     this.state.card.cardSet = cardSet;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onPasscodeChange(passcode: string) {
     if (isUndefined(passcode)) return;
     this.state.card.passcode = passcode;
     this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    this.debouncedOnCardChange(this.state.card, 300);
   }
 
   private onArtworkInfoChange(infos: IArtworkEditDialogResult) {
