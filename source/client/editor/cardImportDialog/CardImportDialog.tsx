@@ -137,7 +137,7 @@ export class CardImportDialog extends AbstractPopup<
     const newCards: ICard[] = [];
     for (const importLink of importLinks) {
       if (isEmpty(importLink)) continue;
-      const splitImport = importLink.split('/');
+      const splitImport = importLink.split('yugipedia.com/wiki/');
       const newCard = await app.$mediaWiki.getCardInfo(
         splitImport[splitImport.length - 1],
         this.state.useFr,

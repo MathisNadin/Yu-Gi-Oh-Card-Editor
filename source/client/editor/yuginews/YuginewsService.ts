@@ -337,20 +337,20 @@ export class YuginewsService {
       .replace(/:/g, '');
     // Remplacer les caractères accentués
     const accents = [
-      /[\300-\306]/g,
-      /[\340-\346]/g, // A, a
-      /[\310-\313]/g,
-      /[\350-\353]/g, // E, e
-      /[\314-\317]/g,
-      /[\354-\357]/g, // I, i
-      /[\322-\330]/g,
-      /[\362-\370]/g, // O, o
-      /[\331-\334]/g,
-      /[\371-\374]/g, // U, u
-      /[\321]/g,
-      /[\361]/g, // N, n
-      /[\307]/g,
-      /[\347]/g, // C, c
+      /[\u00C0-\u00C6]/g, // A avec accents majuscules
+      /[\u00E0-\u00E6]/g, // a avec accents minuscules
+      /[\u00C8-\u00CB]/g, // E avec accents majuscules
+      /[\u00E8-\u00EB]/g, // e avec accents minuscules
+      /[\u00CC-\u00CF]/g, // I avec accents majuscules
+      /[\u00EC-\u00EF]/g, // i avec accents minuscules
+      /[\u00D2-\u00D8]/g, // O avec accents majuscules
+      /[\u00F2-\u00F8]/g, // o avec accents minuscules
+      /[\u00D9-\u00DC]/g, // U avec accents majuscules
+      /[\u00F9-\u00FC]/g, // u avec accents minuscules
+      /[\u00D1]/g, // N avec tilde majuscule
+      /[\u00F1]/g, // n avec tilde minuscule
+      /[\u00C7]/g, // C cédille majuscule
+      /[\u00E7]/g, // c cédille minuscule
     ];
     const noAccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
     for (let i = 0; i < accents.length; i++) {
