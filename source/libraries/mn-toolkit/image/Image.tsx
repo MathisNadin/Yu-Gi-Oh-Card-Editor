@@ -15,7 +15,7 @@ export class Image extends Containable<IImageProps, IImageState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-image'] = true;
     return classes;

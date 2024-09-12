@@ -1,4 +1,4 @@
-import { IContainableProps, IContainableState, Containable } from '../containable';
+import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
 import { integer } from 'mn-tools';
 import { FormEvent } from 'react';
 
@@ -32,13 +32,20 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     this.state = { ...this.state, value: props.defaultValue! };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<INumberInputProps>,
+    prevState: Readonly<INumberInputState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.defaultValue !== this.state.value) {
       this.setState({ value: this.props.defaultValue! });
     }
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     if (this.props.autofocus && !app.$device.isNative) {
       setTimeout(() => {
         this.inputElement.focus();
@@ -56,7 +63,7 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     if (this.inputElement) this.inputElement.focus();
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-number-input'] = true;
     return classes;

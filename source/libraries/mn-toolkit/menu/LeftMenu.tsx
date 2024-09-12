@@ -1,9 +1,10 @@
-import { classNames } from 'mn-tools';
+import { classNames, isNumber } from 'mn-tools';
 import { IContainerProps, IContainerState, Container } from '../container';
 import { Icon } from '../icon';
-import { IStateParameters } from '../router';
+import { TRouterParams, TRouterState } from '../router';
 import { IMenuItem } from '.';
 import { Typography } from '../typography';
+import { TDidUpdateSnapshot } from '../containable';
 
 interface ILeftMenuProps extends IContainerProps {
   items: IMenuItem[];
@@ -31,7 +32,13 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     this.state = { ...this.state, items: props.items, open: [] };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ILeftMenuProps>,
+    prevState: Readonly<ILeftMenuState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.items !== this.state.items) {
       this.setState({ items: this.props.items });
     }
@@ -42,35 +49,34 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     if (app.$overlay.active) app.$overlay.hide();
   }
 
-  private isSameParameters(params: IStateParameters) {
-    params = params || {};
-    if (app.$router.currentState) {
-      for (let record of app.$router.currentState.pathKeys) {
-        let k = record.name;
-        let routerParam = app.$router.parameters[k];
-        let param = params[k];
+  private isSameParameters<T extends TRouterState = TRouterState>(params?: TRouterParams<T>) {
+    if (!app.$router.currentState) return true;
 
-        // Pour éviter les return false qui n'ont en vérité pas lieu d'être
-        if (typeof routerParam === 'number') routerParam = `${routerParam}`;
-        if (typeof param === 'number') param = `${param}`;
+    params = params || ({} as TRouterParams<T>);
+    for (const record of app.$router.currentState.pathKeys) {
+      const k = record.name as keyof TRouterParams<T>;
+      const routerParameters = app.$router.getParameters<T>();
+      const routerParam = isNumber(routerParameters[k]) ? `${routerParameters[k]}` : routerParameters[k];
+      const param = isNumber(params[k]) ? `${params[k]}` : params[k];
 
-        // log.debug(k, routerParam, param);
-        if (routerParam !== param) return false;
-      }
+      // To avoir incorrect comparison between number and string
+      if (routerParam !== param) return false;
     }
     return true;
   }
 
   private hasSameState(item: IMenuItem) {
     const currentState = app.$router.currentState;
-    return currentState && item.state === currentState.name && this.isSameParameters(item.stateParameters as object);
+    return (
+      !!currentState && !!item.href && item.href.state === currentState.name && this.isSameParameters(item.href.params)
+    );
   }
 
   private isItemActive(item: IMenuItem) {
-    return item.selected || this.hasSameState(item); // || (item.below && !!item.below.find(item => this.hasSameState(item)));
+    return item.selected || this.hasSameState(item);
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-left-menu'] = true;
     return classes;
@@ -85,7 +91,7 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     return (
       <div
         key={`mn-left-menu-group-${item.id}-${item.label}`}
-        onClick={() => item.collapsable && this.openGroup(item)}
+        onClick={() => item.collapsable && app.$errorManager.handlePromise(this.openGroup(item))}
         className={classNames(
           'mn-left-menu-group',
           { open: !item.collapsable || this.groupOpen(item) },
@@ -97,6 +103,7 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
           bold
           color='4'
           content={item.label}
+          href={item.href}
         />
         <div className='mn-left-menu-subitems'>
           {!!item.below && item.below.map((subItems) => this.renderSubItem(subItems))}{' '}
@@ -105,11 +112,11 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     );
   }
 
-  private openGroup(item: IMenuItem) {
+  private async openGroup(item: IMenuItem) {
     if (!this.groupOpen(item)) {
-      this.setState({ open: this.state.open.concat([item]) });
+      await this.setStateAsync({ open: this.state.open.concat([item]) });
     } else {
-      this.setState({ open: this.state.open.filter((x) => x !== item) });
+      await this.setStateAsync({ open: this.state.open.filter((x) => x !== item) });
     }
   }
 
@@ -121,14 +128,7 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     if (item.onTap) {
       this.hideBeforeClick();
       item.onTap(e);
-    } else if (item.state) {
-      this.hideBeforeClick();
-      app.$router.go(item.state, item.stateParameters);
-    } else if (item.defaultState) {
-      this.hideBeforeClick();
-      app.$router.go(item.defaultState, item.defaultStateParameters);
     }
-    this.forceUpdate();
     if (this.props.onClickItem) this.props.onClickItem(item);
   }
 
@@ -141,12 +141,22 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
         className={classNames('mn-left-menu-subitem', { active: isActive })}
         onClick={(e) => this.onClickItem(subItem, e)}
       >
-        {subItem.icon ? (
-          <Icon iconId={subItem.icon} className='mn-left-menu-icon' />
-        ) : (
-          <span className='mn-left-menu-icon' />
+        {!subItem.icon && <span className='mn-left-menu-icon' />}
+        {!!subItem.icon && (
+          <Icon
+            icon={subItem.icon}
+            className='mn-left-menu-icon'
+            onTap={!subItem.href ? undefined : () => app.$router.go(subItem.href!.state, subItem.href!.params)}
+          />
         )}
-        <Typography className='mn-left-menu-subitem-text' bold={isActive} color='1' content={subItem.label} />
+
+        <Typography
+          className='mn-left-menu-subitem-text'
+          href={subItem.href}
+          bold={isActive}
+          color='1'
+          content={subItem.label}
+        />
       </div>
     );
   }

@@ -1,3 +1,4 @@
+import { unserialize } from 'mn-tools';
 import { IStoreOptions, IStoreService, TStoreValue } from '.';
 
 export class IndexedDBService implements IStoreService {
@@ -94,7 +95,7 @@ export class IndexedDBService implements IStoreService {
     return new Promise<void>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
-      const data = JSON.parse(jsonData);
+      const data = unserialize(jsonData);
       const clearRequest = objectStore.clear();
       clearRequest.onerror = () => {
         reject(new Error(`Failed to clear object store ${this.objectStoreName}`));

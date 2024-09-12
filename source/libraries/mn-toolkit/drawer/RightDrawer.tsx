@@ -34,7 +34,8 @@ export class RightDrawer
     this.state = { ...this.state, position: 0 };
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    if (super.componentWillUnmount) super.componentWillUnmount();
     app.$drawer.unregisterPane(this);
     app.$device.removeListener(this);
     app.$overlay.removeListener(this);
@@ -48,8 +49,7 @@ export class RightDrawer
   public deviceScreenSpecificationChanged(): void {
     // console.log('$device::screenSpecChanged');
     app.$overlay.hide();
-    this.setState({ position: 0, active: false });
-    app.$drawer.fireClose(this);
+    this.setState({ position: 0, active: false }, () => app.$drawer.fireClose(this));
   }
 
   public showOverlay(x: boolean) {
@@ -102,8 +102,7 @@ export class RightDrawer
   public retract() {
     if (!this.state.active) return;
     this.showOverlay(false);
-    this.setState({ position: 0, active: false });
-    app.$drawer.fireClose(this);
+    this.setState({ position: 0, active: false }, () => app.$drawer.fireClose(this));
   }
 
   public expand() {

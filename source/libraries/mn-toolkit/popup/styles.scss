@@ -1,25 +1,3 @@
-@keyframes mn-popup-scale-in {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes mn-popup-scale-out {
-  from {
-    transform: scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-}
-
 .mn-popups {
   @include fill-all;
   pointer-events: none;
@@ -35,20 +13,51 @@
     pointer-events: auto;
   }
 
-  .mn-abstract-popup {
+  .mn-popup {
     position: absolute;
     border-radius: $themeDefaultBorderRadius;
     box-shadow: 0 0 10px black(0.26);
-    animation-name: mn-popup-scale-in;
-    animation-duration: 0.2s;
-    animation-timing-function: ease-in-out;
-    animation-fill-mode: both;
+    backface-visibility: hidden;
+    visibility: hidden;
+    transform: translateZ(0);
 
-    &.hidding {
-      animation-name: mn-popup-scale-out;
-      animation-duration: 0.2s;
+    &.active {
+      display: flex;
+      visibility: visible;
       animation-timing-function: ease-in-out;
       animation-fill-mode: both;
+
+      @include on(small) {
+        animation-name: mn-enter-in;
+        animation-duration: 0.4s;
+      }
+
+      @include on(medium) {
+        animation-name: mn-scale-in;
+        animation-duration: 0.2s;
+      }
+    }
+
+    &.hidding {
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
+
+      @include on(small) {
+        animation-name: mn-leave-out;
+        animation-duration: 0.4s;
+      }
+
+      @include on(medium) {
+        animation-name: mn-scale-out;
+        animation-duration: 0.2s;
+      }
+    }
+
+    .mn-popup-header {
+      .mn-popup-title {
+        font-size: 18px;
+        font-weight: 600;
+      }
     }
   }
 }

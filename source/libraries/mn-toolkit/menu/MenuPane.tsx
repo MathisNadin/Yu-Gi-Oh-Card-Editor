@@ -37,7 +37,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
 
     app.$overlay.addListener({
       overlayClick: () => {
-        this.toggle();
+        app.$errorManager.handlePromise(this.toggle());
       },
     });
 
@@ -48,21 +48,21 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
     });
   }
 
-  public close() {
-    this.update(false);
+  public async close() {
+    await this.update(false);
   }
 
-  public open() {
-    this.update(true);
+  public async open() {
+    await this.update(true);
   }
 
-  public toggle() {
-    this.update(!this.state.open);
+  public async toggle() {
+    await this.update(!this.state.open);
   }
 
-  public update(open: boolean, initial?: boolean) {
+  public async update(open: boolean, initial?: boolean) {
     if (initial) this.state = { ...this.state, open };
-    else this.setState({ open });
+    else await this.setStateAsync({ open });
 
     if (app.$device.isSmallScreen) {
       if (open) {
@@ -78,7 +78,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
     }, 500);
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-menu-pane'] = true;
     classes['mn-dark-theme'] = !!this.props.dark;
@@ -104,7 +104,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
           key='mn-menu-pane-shrink-btn'
           className='shrink-btn'
           onTap={() => this.toggle()}
-          iconId={this.getCloseIcon()}
+          icon={this.getCloseIcon()}
         />
       ),
       <div key='mn-menu-pane-inside' className={classNames('mn-container-inside', { 'with-icon': hasIcon })}>

@@ -56,10 +56,11 @@ export class ArtworkEditDialog extends AbstractPopup<
   }
 
   public componentDidMount() {
+    super.componentDidMount();
     app.$errorManager.handlePromise(this.loadArtworkBase64(undefined, true));
   }
 
-  public componentDidUpdate(prevProps: IArtworkEditDialogProps) {
+  public componentDidUpdate(prevProps: Readonly<IArtworkEditDialogProps>) {
     if (prevProps === this.props) return;
     app.$errorManager.handlePromise(this.loadArtworkBase64());
   }
@@ -106,9 +107,13 @@ export class ArtworkEditDialog extends AbstractPopup<
     this.setState({ crop });
   }
 
+  protected override get scrollInContent() {
+    return true;
+  }
+
   public renderContent() {
     return (
-      <HorizontalStack className='artwork-edit-dialog' gutter>
+      <HorizontalStack className='artwork-edit-dialog' fill gutter>
         <ArtworkCropping
           artworkBase64={this.state.artworkBase64}
           hasPendulumFrame={this.props.hasPendulumFrame}

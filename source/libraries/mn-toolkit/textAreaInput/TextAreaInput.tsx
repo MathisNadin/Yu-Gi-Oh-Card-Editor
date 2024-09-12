@@ -1,4 +1,4 @@
-import { IContainableProps, Containable, IContainableState } from '../containable';
+import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { classNames, integer } from 'mn-tools';
 import { FormEvent } from 'react';
 
@@ -53,7 +53,8 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     if (!this.props.autofocus || app.$device.isNative) return;
     setTimeout(() => this.inputElement.focus(), 100);
   }
@@ -72,7 +73,12 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     }
   }
 
-  public componentDidUpdate(_prevProps: ITextAreaInputProps) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ITextAreaInputProps>,
+    prevState: Readonly<ITextAreaInputState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (!this.state.doTextAreaChange) return;
     this.onTextAreaChange();
     this.setState({ doTextAreaChange: false });
@@ -97,8 +103,8 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
           onChange={() => {}}
           onBlur={(e) => this.props.onBlur && app.$errorManager.handlePromise(this.props.onBlur(e))}
           onFocus={(e) => this.props.onFocus && app.$errorManager.handlePromise(this.props.onFocus(e))}
-          onInput={(e) => this.onChange(e)}
-          onKeyUp={(e) => this.onChange(e)}
+          onInput={(e) => app.$errorManager.handlePromise(this.onChange(e))}
+          onKeyUp={(e) => app.$errorManager.handlePromise(this.onChange(e))}
           // FIXME MN : Un peu bâtard, ça empêche le scroll tant qu'on n'a pas dépassé le nombre de maxRows
           // Utile notamment quand on force une police/lineHeight plus haut qu'à la normale
           style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
@@ -144,10 +150,10 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     });
   }
 
-  private onChange(e: FormEvent) {
+  private async onChange(e: FormEvent) {
     const value = e.target.value as string;
     if (value === this.state.value) return;
-    this.setState({ value });
+    await this.setStateAsync({ value });
     this.onTextAreaChange();
     if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
   }

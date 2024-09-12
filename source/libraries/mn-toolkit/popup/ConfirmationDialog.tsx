@@ -1,40 +1,97 @@
-import { Typography } from 'mn-toolkit/typography';
+import { TControlTextContentType, Typography } from '../typography';
+import { Icon, TIconId } from '../icon';
+import { JSXElementChild } from '../react';
+import { TForegroundColor } from '../themeSettings';
 import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './AbstractPopup';
+import { HorizontalStack, VerticalStack } from '../container';
+import { TextInputField } from '../textInput';
 
-interface IConfirmationDialogProps extends IAbstractPopupProps<boolean> {
+export interface IConfirmationDialogProps extends IAbstractPopupProps<boolean> {
   message?: string;
+  messageContentType?: TControlTextContentType;
+  confirmationWord?: string;
+  icon?: TIconId;
+  iconColor?: TForegroundColor;
 }
 
-interface IConfirmationDialogState extends IAbstractPopupState {}
+interface IConfirmationDialogState extends IAbstractPopupState {
+  confirmationLabel: string;
+  confirmationResponse: string;
+  confirmationError: string;
+}
 
 export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDialogProps, IConfirmationDialogState> {
-  public static async show(options: IConfirmationDialogProps) {
-    options.title = options.title || 'Confirmez';
-    options.height = options.height || '150px';
-    options.width = options.width || '325px';
-    return await app.$popup.show<boolean, IConfirmationDialogProps>({
-      type: 'confirmation',
-      Component: ConfirmationDialog,
-      componentProps: options,
-    });
+  public static get defaultProps(): Partial<IConfirmationDialogProps> {
+    return {
+      ...super.defaultProps,
+      messageContentType: 'markdown',
+    };
   }
 
-  protected onInitializePopup = async () => {
+  protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
       label: 'Annuler',
+      color: 'neutral',
       onTap: () => this.close(false),
     });
     buttons.push({
       label: 'Valider',
       color: 'primary',
-      onTap: () => this.close(true),
+      onTap: async () => {
+        if (
+          this.props.confirmationWord &&
+          this.state.confirmationResponse.toLowerCase() !== this.props.confirmationWord.toLowerCase()
+        ) {
+          await this.setStateAsync({ confirmationError: "Vous n'avez pas saisi le même mot, veuillez recommencer" });
+        } else {
+          await this.close(true);
+        }
+      },
     });
-    await this.setStateAsync({ buttons });
-  };
 
-  public renderContent() {
-    if (!this.props.message) return null;
-    return <Typography content={this.props.message} />;
+    let confirmationLabel = '';
+    if (this.props.confirmationWord) {
+      confirmationLabel = `Tapez le mot&nbsp;: **${this.props.confirmationWord}**`;
+    }
+
+    await this.setStateAsync({ buttons, confirmationLabel, confirmationResponse: '', confirmationError: '' });
+  }
+
+  // By default there is no title, and in this Popup there is no need for the close button
+  protected override renderHeader(): JSXElementChild {
+    return !!this.props.title ? super.renderHeader() : null;
+  }
+
+  public override renderContent() {
+    const { message, messageContentType, icon, iconColor, confirmationWord } = this.props;
+    if (!message) return null;
+
+    const { confirmationError, confirmationLabel, confirmationResponse } = this.state;
+    return [
+      <HorizontalStack gutter key='message'>
+        {!!icon && <Icon icon={icon} color={iconColor} size={128} />}
+        <Typography fill variant='document' contentType={messageContentType} content={message} />
+      </HorizontalStack>,
+      !!confirmationWord && (
+        <VerticalStack gutter className='confirmator' key='confirmator'>
+          <Typography
+            className='confirmation-message'
+            variant='label'
+            contentType='markdown'
+            content={confirmationLabel}
+          />
+          <TextInputField
+            autofocus
+            hideLabel
+            defaultValue={confirmationResponse}
+            onChange={(confirmationResponse) => this.setState({ confirmationResponse })}
+          />
+          {!!confirmationError && (
+            <Typography className='confirmation-error' variant='help' contentType='html' content={confirmationError} />
+          )}
+        </VerticalStack>
+      ),
+    ];
   }
 }

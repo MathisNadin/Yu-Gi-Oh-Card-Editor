@@ -15,7 +15,7 @@ export class Spinner extends Containable<ISpinnerProps, ISpinnerState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-spinner'] = true;
     classes['mn-fullscreen'] = !!this.props.fullscreen;

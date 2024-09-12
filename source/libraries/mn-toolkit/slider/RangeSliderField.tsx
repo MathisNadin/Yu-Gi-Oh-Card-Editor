@@ -1,3 +1,4 @@
+import { isDefined } from 'mn-tools';
 import { IFormFieldProps, IFormFieldState, FormField } from '../form';
 import { HorizontalStack } from '../container';
 import { IRangeSliderProps, IRangeSliderValues, RangeSlider } from './RangeSlider';
@@ -6,19 +7,12 @@ interface IRangeSliderFieldProps extends IFormFieldProps<IRangeSliderValues>, IR
 
 interface IRangeSliderFieldState extends IFormFieldState<IRangeSliderValues> {}
 
-/** Create RangeSlider field.
- *
- * Constructeur need IRangeSliderFieldProps.
- *
- * For more options look FormField.
- */
 export class RangeSliderField extends FormField<IRangeSliderValues, IRangeSliderFieldProps, IRangeSliderFieldState> {
   public static get defaultProps(): IRangeSliderFieldProps {
     return {
       ...super.defaultProps,
-      showLabel: false,
-      showDecoration: false,
       ...RangeSlider.defaultProps,
+      hideLabel: true,
     };
   }
 
@@ -30,26 +24,18 @@ export class RangeSliderField extends FormField<IRangeSliderValues, IRangeSlider
     };
   }
 
-  public componentDidUpdate() {
+  protected async updateFromNewProps(prevProps: Readonly<IRangeSliderFieldProps>) {
+    if (prevProps === this.props) return;
     if (this.props.defaultValue === this.state.value) return;
-    this.setState({ value: this.props.defaultValue || { lower: this.props.min, upper: this.props.max } });
+    await this.setStateAsync({ value: this.props.defaultValue || { lower: this.props.min, upper: this.props.max } });
+    if (this.hasValue) await this.doValidation();
   }
 
-  public get hasValue() {
-    return true;
+  public override get hasValue() {
+    return isDefined(this.value?.lower) && isDefined(this.value?.upper);
   }
 
-  public get value() {
-    return this.state.value;
-  }
-
-  private async onChange(value: IRangeSliderValues) {
-    await this.setStateAsync({ value });
-    this.fireValueChanged();
-    if (this.props.onChange) await this.props.onChange(value);
-  }
-
-  public renderControl() {
+  protected override renderControl() {
     return (
       <HorizontalStack verticalItemAlignment='middle' width='100%' gutter>
         {this.renderLabel()}

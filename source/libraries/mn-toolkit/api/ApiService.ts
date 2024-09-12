@@ -1,13 +1,13 @@
-import { extend, isDefined, logger, Observable, parseUri } from 'mn-tools';
+import { extend, isDefined, isString, logger, Observable, parseUri } from 'mn-tools';
 import { HttpMethod, IFileApiDownloadFileOptions, IFileEffect, IFileEntity, IJobResponse } from 'api/main';
-import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
 import { IXhrRequestOptions } from '../xhr';
+import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
 import { ApiJob } from './ApiJob';
-import { IPicture } from '../picture';
 
-interface IFileGetUrlOptions extends Omit<IFileApiDownloadFileOptions, 'oid' | 'effects'> {
+interface IFileGetUrlOptions extends Omit<IFileApiDownloadFileOptions, 'oid' | 'effects' | 'instance'> {
   oid?: number;
   effects?: IFileEffect[];
+  instance?: number;
 }
 
 const BYTES_PER_CHUNK = 1048576; // 1MB chunk sizes.
@@ -55,8 +55,8 @@ export class ApiService extends Observable<IApiListener> {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (this as any)[record.className].list = ((self, record) => {
             return async (data: object, options: IApiRequestOptions) => {
-              let path = record.path.replace(/^\/api\//, '');
-              let response = await self.post<object, { result: object }>(path, data, options);
+              const path = record.path.replace(/^\/api\//, '');
+              const response = await self.post<object, { result: object }>(path, data, options);
               if (response.result) return response.result;
               return undefined;
             };
@@ -66,16 +66,6 @@ export class ApiService extends Observable<IApiListener> {
     }
   }
 
-  /**
-   * Internal method to send an API request.
-   *
-   * @param {string} method API method
-   * @param {string} path API request path.
-   * @param {object} request object to send
-   * @param {function} callback Request callback
-   * @param {object} options Request options
-   * @return {void}
-   */
   private async http<RES>(
     method: HttpMethod,
     path: string,
@@ -83,16 +73,16 @@ export class ApiService extends Observable<IApiListener> {
     options?: IApiRequestOptions
   ) {
     options = options || {};
-    let url;
+    let url: string;
     if (path.startsWith('http')) {
       url = path;
     } else if (path[0] === '/') {
-      let parsedUrl = parseUri(this._settings.apiUrl);
+      const parsedUrl = parseUri(this._settings.apiUrl);
       url = parsedUrl.protocol + '://' + parsedUrl.host + path;
     } else {
       url = this._settings.apiUrl + '/' + path;
     }
-    let request: IXhrRequestOptions = {
+    const request: IXhrRequestOptions = {
       method: method.toUpperCase(),
       url,
       data: requestData,
@@ -109,13 +99,13 @@ export class ApiService extends Observable<IApiListener> {
       }
     }
     log.debug('Envoi', request);
-    let data = await app.$xhr.request(request);
+    const data = await app.$xhr.request(request);
     log.debug('Résultat', data);
     if (data.result && typeof data.result.job === 'object') {
       log.debug('Job', data.result.job);
-      let job = new ApiJob((data.result as IJobResponse).job.id);
+      const job = new ApiJob((data.result as IJobResponse).job.id);
       app.$api.dispatch('apiJobStarted', job);
-      let res = await job.wait<RES>();
+      const res = await job.wait<RES>();
       log.debug('Réponse Job', res);
       return { result: res };
     } else {
@@ -124,71 +114,66 @@ export class ApiService extends Observable<IApiListener> {
     }
   }
 
-  /**
-   * Send a POST API request.
-   *
-   * @param {string} path API request path.
-   * @param {object} request object to send
-   * @param {function} callback Request callback
-   * @param {object} options Request options
-   * @return {void}
-   */
   public async post<REQ = object, RES = object>(path: string, request: REQ, options?: IApiRequestOptions) {
     return await this.http<RES>('post', path, request as unknown as { [k: string]: string }, options);
   }
 
-  /**
-   * Send a PUT API request.
-   *
-   * @param {string} path API request path.
-   * @param {object} request object to send
-   * @param {function} callback Request callback
-   * @param {object} options Request options
-   * @return {void}
-   */
   public async put<REQ = object, RES = object>(path: string, request: REQ, options?: IApiRequestOptions) {
     return await this.http<RES>('put', path, request as unknown as { [k: string]: string }, options);
   }
 
-  /**
-   * Send a GET API request.
-   *
-   * @param {string} path API request path.
-   * @param {function} callback Request callback
-   * @param {object} options Request options
-   * @return {void}
-   */
   public async get<REQ = object, RES = object>(path: string, request?: REQ, options?: IApiRequestOptions) {
     return await this.http<RES>('get', path, request as unknown as { [k: string]: string }, options);
   }
 
-  /**
-   * Send a DELETE API request.
-   *
-   * @param {string} path API request path.
-   * @param {function} callback Request callback
-   * @param {object} options Request options
-   * @return {void}
-   */
   public async del<REQ = object, RES = object>(path: string, request: REQ, options?: IApiRequestOptions) {
     return this.http<RES>('delete', path, request as unknown as { [k: string]: string }, options);
   }
 
-  public async fileToBuffer(file: File | null, outputType: 'url' | 'string' | undefined) {
+  public async fileToDataURL(file?: File): Promise<string> {
+    if (!file) return '';
+    const reader = new FileReader();
     return new Promise<string>((resolve, reject) => {
-      let reader = new FileReader();
-      reader.onload = (event) => resolve((event.target as FileReader).result as string);
-      reader.onerror = (error) => reject(error);
-      if (outputType === 'url') {
-        reader.readAsDataURL(file as File);
-      } else {
-        reader.readAsText(file as File);
-      }
+      reader.onload = () => {
+        const result = reader.result;
+        if (isString(result)) {
+          resolve(result);
+        } else {
+          reject(new Error('Unexpected result type'));
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error('Error reading file'));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  public async fileToString(file: File): Promise<string> {
+    if (!file) return '';
+    const reader = new FileReader();
+    return new Promise<string>((resolve, reject) => {
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result === 'string') {
+          resolve(result);
+        } else {
+          reject(new Error('Unexpected result type'));
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error('Error reading file'));
+      };
+
+      reader.readAsText(file);
     });
   }
 
   public async uploadFileToFile(fileBlob: File, file: number, appInstance: number) {
-    let ud: IUploadDescriptor = {
+    const ud: IUploadDescriptor = {
       fileBlob,
       offset: 0,
       size: fileBlob.size,
@@ -202,12 +187,12 @@ export class ApiService extends Observable<IApiListener> {
   }
 
   private async uploadNextChunk(ud: IUploadDescriptor) {
-    let chunkData = ud.fileBlob.slice(ud.offset, ud.offset + BYTES_PER_CHUNK);
+    const chunkData = ud.fileBlob.slice(ud.offset, ud.offset + BYTES_PER_CHUNK);
     log.debug('chunk', ud.fileBlob.size, ud.offset, BYTES_PER_CHUNK, chunkData.size);
     ud.chunkIndex++;
 
     return new Promise<void>((resolve) => {
-      let fd = new FormData();
+      const fd = new FormData();
       fd.append('chunkData', chunkData);
       fd.append('chunkCount', ud.chunkCount.toString());
       fd.append('targetFileId', `${ud.targetFileId}`);
@@ -215,12 +200,12 @@ export class ApiService extends Observable<IApiListener> {
 
       this.dispatch('apiUploadProgress', ud);
 
-      let xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
 
       xhr.addEventListener(
         'load',
         () => {
-          // On a fini, on part;..
+          // On a fini, on part...
           if (ud.offset > ud.size) return resolve();
 
           // Sinon on upload le suivant...
@@ -249,9 +234,12 @@ export class ApiService extends Observable<IApiListener> {
   // A éviter de mettre à jour à chaque render, sinon ça requête l'image à nouveau à chaque fois
   // Uniquement quand il y a un sens à vouloir rafraichir l'image affichée
   public getFileUrl(options: IFileGetUrlOptions) {
-    const { oid, derivative, effects, timestamp } = options;
+    let { oid, derivative, effects, timestamp, instance } = options;
     if (!oid) return undefined;
-    const url = new URL(`${this._settings.apiUrl}/file/download/${oid}`);
+
+    instance = instance || app.$session.data?.member?.applicationInstance || 1;
+
+    const url = new URL(`${this._settings.apiUrl}/file/download/${instance}/${oid}`);
     url.searchParams.set('token', app.$session.token);
 
     if (derivative) url.searchParams.set('derivative', derivative);
@@ -277,23 +265,13 @@ export class ApiService extends Observable<IApiListener> {
     return `${this._settings.apiUrl}/file/stream/${appInstance}/${oid}?token=${app.$session.token}`;
   }
 
-  public createFileFromFile(file: File) {
-    return app.$api.file.store({ mimeType: file.type, fileName: file.name } as IFileEntity);
-  }
-
-  public async createFileFromIPicture(picture: IPicture, formerFileOid?: number) {
-    if (picture?.changed) {
-      const file = await this.createFileFromDataUrl(picture.url, {}, formerFileOid);
-      return file?.oid;
-    } else {
-      return formerFileOid;
-    }
-  }
-
-  public async createFileFromDataUrl(data: string, spec: Partial<IFileEntity>, formerFileOid?: number) {
-    if (!data) return undefined;
-    const file = await app.$api.file.createFromDataUrl({ data, spec });
-    if (formerFileOid) await app.$api.file.trash({ oid: formerFileOid });
+  public async createFileFromFile(fileBlob: File) {
+    const file = await app.$api.file.store({ mimeType: fileBlob.type, fileName: fileBlob.name });
+    await this.uploadFileToFile(fileBlob, file.oid, file.applicationInstance);
     return file;
+  }
+
+  public async createFileFromDataUrl(data: string, spec?: Partial<IFileEntity>) {
+    return await app.$api.file.createFromDataUrl({ data, spec });
   }
 }

@@ -1,357 +1,304 @@
-import { classNames, isEmpty, isUndefined, Observable } from 'mn-tools';
-import { IFormFieldListener } from '.';
-import { Containable, IContainableProps, IContainableState } from '../containable';
-import { HorizontalStack } from '../container';
-import { TIconId, Icon } from '../icon';
+import { JSXElementChildren } from '../react';
+import { classNames, isEmpty, Observable } from 'mn-tools';
 import { TForegroundColor } from '../themeSettings';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
+import { HorizontalStack, VerticalStack } from '../container';
+import { TIconId, Icon } from '../icon';
 import { Typography } from '../typography';
-import { ReactElement } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TFormField = FormField<any, IFormFieldProps<any>, IFormFieldState<any>>;
+type TFormFieldData = string | number | boolean | object;
+export type TFormFieldDataType = TFormFieldData | TFormFieldData[];
 
-export enum ValidationState {
-  validating = 'validating',
-  validated = 'validated',
+export type TFormField = FormField<
+  TFormFieldDataType,
+  IFormFieldProps<TFormFieldDataType>,
+  IFormFieldState<TFormFieldDataType>
+>;
+
+export interface IFormFieldListener {
+  formFieldValidated(field: TFormField): void;
+  formFieldSubmit(field: TFormField): void;
 }
 
-export interface IFormFieldProps<DATA_TYPE> extends IContainableProps {
-  /** Function when user validate. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onValidate?: (field: IFormField) => void | Promise<void>;
+export interface IFormField {
+  addError(message: string): Promise<void>;
+  validate(): Promise<void>;
+  invalidate(): Promise<void>;
+}
 
-  /** Enter has be pressed or something like this */
+export interface IFormFieldProps<TFormFieldDataType> extends IContainableProps {
+  disabled?: boolean;
+  autofocus?: boolean;
+
+  defaultValue?: TFormFieldDataType;
+  onChange?: (value: TFormFieldDataType) => void | Promise<void>;
+
+  required?: boolean;
+  onValidate?: (field: IFormField) => void | Promise<void>;
   onSubmit?: (event: React.KeyboardEvent) => void | Promise<void>;
 
-  /** Set the default value. */
-  defaultValue?: DATA_TYPE;
-  /** Function when changes was detected. */
-  onChange?: (value: DATA_TYPE) => void | Promise<void>;
-  /** Text to help the user. */
-  helper?: string;
-  helperColor?: TForegroundColor;
-  helperIcon?: TIconId;
-  /** Text in front of the field. */
+  hideLabel?: boolean;
   label?: string;
-  /** Set requirement. */
-  required?: boolean;
-  /** Set disable. */
-  disabled?: boolean;
-  /** Set autofocus. */
-  autofocus?: boolean;
-  /** Set icon. */
-  icon?: TIconId;
-  /** Set default icon color. */
-  defaultIconColor?: TForegroundColor;
-  /** Set placeholder. */
-  placeholder?: string;
-  /** Set errorMessage. */
-  errorMessage?: string;
-  name?: string;
-  notAnimated?: boolean;
-  showLabel: boolean;
-  showDecoration: boolean;
 
-  showInfoIcon?: boolean;
-  infoTIconId?: TIconId;
-  infoIconClassName?: string;
-  infoIconSize?: number;
-  infoIconHint?: string;
-  onTapInfoIcon?: () => void | Promise<void>;
-  validationDelay: number;
+  infoIcon?: {
+    icon: TIconId;
+    hint: string;
+    className?: string;
+    size?: number;
+    onTap?: () => void | Promise<void>;
+  };
+
+  propIcon?: {
+    icon: TIconId;
+    color?: TForegroundColor;
+    hint?: string;
+    className?: string;
+    size?: number;
+    onTap?: () => void | Promise<void>;
+  };
+
+  helper?: {
+    text: string;
+    color?: TForegroundColor;
+    icon?: TIconId;
+  };
 }
 
 export interface IFormFieldState<K> extends IContainableState {
   value: K;
   focus: boolean;
-  autofill: boolean;
   error: boolean;
   errorMessage: string;
-  validationState: ValidationState;
-  showDecoration: boolean;
-  showLabel: boolean;
-}
-
-class Validator<DATA_TYPE> implements IFormField {
-  private field: TFormField;
-  private resolve: (value?: void | Promise<void>) => void;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public constructor(field: any, resolve: (value?: void | Promise<void>) => void) {
-    this.field = field;
-    this.resolve = resolve;
-  }
-
-  public addError(message: string) {
-    this.field.addError(message);
-    this.resolve();
-  }
-
-  public validate() {
-    this.field.validate();
-    this.resolve();
-  }
-
-  public invalidate() {
-    this.field.invalidate();
-    this.resolve();
-  }
-
-  public get value(): DATA_TYPE {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-explicit-any
-    return (this.field as any).value;
-  }
-}
-
-export interface IFormField {
-  addError(message: string): void;
-  validate(): void;
+  validationState?: 'validating' | 'validated';
 }
 
 export abstract class FormField<
-    DATA_TYPE,
-    PROPS extends IFormFieldProps<DATA_TYPE>,
-    STATE extends IFormFieldState<DATA_TYPE>,
+    TFormFieldDataType,
+    PROPS extends IFormFieldProps<TFormFieldDataType>,
+    STATE extends IFormFieldState<TFormFieldDataType>,
   >
   extends Containable<PROPS, STATE>
   implements IFormField
 {
   private type: string;
-  private validationTimeout!: NodeJS.Timeout;
-  protected validators: ((field: IFormField, value?: void | Promise<void>) => void | Promise<void>)[] = [];
+  protected validators: ((field: this) => void | Promise<void>)[];
   protected observers = new Observable<IFormFieldListener>();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static get defaultProps(): IFormFieldProps<any> {
-    return {
-      disabled: false,
-      required: false,
-      autofocus: false,
-      showDecoration: true,
-      showLabel: true,
-      validationDelay: 0,
-      defaultIconColor: undefined,
-    };
-  }
-
-  public constructor(props: PROPS, type?: string) {
-    super(props);
-    this.type = type!;
-    if (props.onValidate) this.validators.push(props.onValidate);
-  }
-
-  public get hasValue() {
-    return !isEmpty(this.state.value);
-  }
 
   public get value() {
     return this.state.value;
   }
 
-  private get showDecoration() {
-    if (isUndefined(this.props.showDecoration)) {
-      return false;
-    } else {
-      return this.props.showDecoration;
-    }
+  public get hasValue() {
+    return !isEmpty(this.value);
+  }
+
+  public constructor(props: PROPS, type: string) {
+    super(props);
+    this.state = {
+      ...this.state,
+      value: props.defaultValue!,
+      error: false,
+      focus: false,
+      errorMessage: '',
+      validationState: undefined,
+    };
+
+    this.type = type;
+    this.validators = [];
+    if (props.onValidate) this.validators.push(props.onValidate);
+    this.validators.push((field) => {
+      if (!field.isRequired || field.hasValue) field.validate();
+      else field.addError('Nous avons besoin de quelque chose ici');
+    });
+  }
+
+  public componentDidMount() {
+    super.componentDidMount();
+    if (this.hasValue) app.$errorManager.handlePromise(this.doValidation());
+  }
+
+  public override componentDidUpdate(
+    prevProps: Readonly<PROPS>,
+    prevState: Readonly<STATE>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    app.$errorManager.handlePromise(this.updateFromNewProps(prevProps));
+  }
+
+  protected async updateFromNewProps(prevProps: Readonly<PROPS>) {
+    if (prevProps === this.props) return;
+    if (this.props.defaultValue === this.state.value) return;
+    await this.setStateAsync({ value: this.props.defaultValue! });
+    if (this.hasValue) await this.doValidation();
   }
 
   public addListener(listener: IFormFieldListener) {
     this.observers.addListener(listener);
   }
 
-  public fireValueChanged() {
-    const validate = async () => {
-      await this.doValidation();
-      this.observers.dispatch('formFieldValidated', this);
-    };
+  protected async fireValueChanged() {
+    await this.doValidation();
+    this.observers.dispatch('formFieldValidated', this);
+  }
 
-    if (this.props.validationDelay) {
-      clearTimeout(this.validationTimeout);
-      this.validationTimeout = setTimeout(() => {
-        validate().catch((e) => app.$errorManager.trigger(e));
-      }, 500);
-    } else {
-      return app.$errorManager.handlePromise(validate());
-    }
+  public get isRequired() {
+    return !!this.props.required;
+  }
+
+  public get hasError() {
+    return this.state.validationState === 'validated' && !!this.state.error;
+  }
+
+  public get isValid() {
+    return this.state.validationState === 'validated' && !this.state.error;
   }
 
   public async doValidation() {
-    this.setState({ validationState: ValidationState.validating, error: false, errorMessage: undefined! });
+    await this.setStateAsync({ validationState: 'validating', error: false, errorMessage: '' });
 
-    if (!this.validators.length) {
-      this.validate();
-      return;
-    }
+    if (!this.validators.length) return await this.validate();
 
     for (const validator of this.validators) {
-      this.setState({ validationState: ValidationState.validating });
-      const promise = new Promise<void>((resolve) => {
-        app.$errorManager.handlePromise(validator(new Validator(this, resolve)));
-      });
-      await promise;
+      await validator(this);
       if (this.hasError) break;
     }
-    if (!this.hasError) {
-      this.setState({ validationState: ValidationState.validated });
-    }
+
+    if (this.hasError) return;
+    await this.setStateAsync({ validationState: 'validated' });
   }
 
-  public addError(errorMessage: string) {
-    this.setState({
-      validationState: ValidationState.validated,
+  public async addError(errorMessage: string) {
+    await this.setStateAsync({
+      validationState: 'validated',
       error: true,
       errorMessage,
     });
   }
 
-  public validate() {
-    this.setState({
-      validationState: ValidationState.validated,
+  public async validate() {
+    await this.setStateAsync({
+      validationState: 'validated',
       error: false,
-      errorMessage: undefined!,
+      errorMessage: '',
     });
   }
 
-  public invalidate() {
-    this.setState({
-      validationState: undefined!,
+  public async invalidate() {
+    await this.setStateAsync({
+      validationState: undefined,
       error: false,
-      errorMessage: undefined!,
+      errorMessage: '',
     });
   }
 
-  public get hasError() {
-    return !!this.state.error;
-  }
-
-  public get isValid() {
-    return this.state.validationState === ValidationState.validated;
-  }
-
-  protected onBlur() {
-    this.setState({ focus: false });
-  }
-
-  protected onFocus() {
-    this.setState({ focus: true });
-  }
-
-  public onAutoFill(value: boolean) {
-    if (this.state.autofill === value) return;
-    this.setState({ autofill: value });
-  }
-
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-form-field'] = true;
     if (!!this.type) classes[`mn-field-${this.type}`] = true;
-    classes['focus'] = this.state.focus;
-    classes['autofill'] = this.state.autofill;
-    classes['has-value'] = this.hasValue || !!this.props.placeholder;
-    classes['mn-control-disabled'] = !!this.props.disabled;
-    classes['required'] = !!this.props.required;
-    classes['error'] = this.state.error;
-    classes['not-animated'] = !!this.props.notAnimated;
-    classes['has-validator'] = !!this.props.onValidate;
-    classes['validating'] = this.state.validationState === ValidationState.validating;
-    classes['validated'] = this.state.validationState === ValidationState.validated;
-    classes['mn-containable-item-fill'] = !!this.props.fill;
+    classes['mn-focus'] = this.state.focus;
+    classes['mn-disabled'] = !!this.props.disabled;
+    classes['has-value'] = this.hasValue;
+    classes['required'] = !!this.isRequired;
+    classes['error'] = this.hasError;
+    if (!!this.state.validationState) classes[this.state.validationState] = true;
     return classes;
   }
 
-  protected abstract renderControl(): ReactElement;
+  public override get children() {
+    return [
+      <VerticalStack key='field-wrapper' className='field-wrapper' fill>
+        {!this.props.hideLabel && this.renderLabel()}
 
-  public renderStatusIcon() {
-    let statusIcon!: TIconId;
-    if (this.props.onValidate) {
-      if (this.state.validationState === ValidationState.validating) {
+        <HorizontalStack fill className='input-wrapper' verticalItemAlignment='middle'>
+          {this.renderPropIcon()}
+          {this.renderControl()}
+          {this.renderStatusIcon()}
+        </HorizontalStack>
+      </VerticalStack>,
+
+      !this.state.error && !!this.props.helper?.text && (
+        <HorizontalStack key='form-helper' className='form-helper helper-message'>
+          {!!this.props.helper.icon && (
+            <Icon size={128} icon={this.props.helper.icon} color={this.props.helper.color} />
+          )}
+          <Typography variant='help' color={this.props.helper.color} content={this.props.helper.text} />
+        </HorizontalStack>
+      ),
+
+      !!this.state.error && !!this.state.errorMessage && (
+        <HorizontalStack key='form-error-message' className='form-helper helper-error'>
+          <Typography color='negative' variant='help' content={this.state.errorMessage} />
+        </HorizontalStack>
+      ),
+    ];
+  }
+
+  protected renderPropIcon(): JSXElementChildren {
+    if (!this.props.propIcon) return null;
+    return (
+      <Icon
+        className={classNames('prop-icon', this.props.propIcon.className)}
+        icon={this.props.propIcon.icon}
+        color={this.props.propIcon.color}
+        hint={this.props.propIcon.hint}
+        size={this.props.propIcon.size}
+        onTap={this.props.propIcon.onTap}
+      />
+    );
+  }
+
+  protected abstract renderControl(): JSXElementChildren;
+
+  protected renderStatusIcon(): JSXElementChildren {
+    if (!this.props.onValidate) return;
+    let statusIcon: TIconId;
+    switch (this.state.validationState) {
+      case 'validating':
         statusIcon = 'toolkit-sync';
-      } else if (this.state.validationState === ValidationState.validated) {
-        if (this.state.error) {
-          statusIcon = 'toolkit-close-disc';
-        } else {
-          statusIcon = 'toolkit-check-disc';
-        }
-      }
+        break;
+      case 'validated':
+        statusIcon = this.state.error ? 'toolkit-close-disc' : 'toolkit-check-disc';
+        break;
+      default:
+        return null;
     }
-    if (statusIcon) {
-      return [
-        <Icon
-          key={`status-icon-${this.props.nodeId}`}
-          style={{ position: 'relative', top: -3 }}
-          iconId={statusIcon}
-          className='status-icon'
-          onTap={(e) => this.onStatusIconClick(e)}
-        />,
-      ];
-    }
-    return null;
-  }
-
-  public renderIcon() {
     return (
-      !!this.props.icon && <Icon className='prop-icon' color={this.props.defaultIconColor} iconId={this.props.icon} />
+      <Icon
+        key='status-icon'
+        className='status-icon'
+        icon={statusIcon}
+        onTap={!this.onStatusIconTap ? undefined : (e) => this.onStatusIconTap!(e)}
+      />
     );
   }
 
-  public render() {
-    return (
-      <div {...this.renderAttributes()} onClick={(e) => this.doClickItem(e)}>
-        <div
-          id={this.props.nodeId}
-          title={this.props.hint}
-          className={classNames('field-wrapper', { decorated: this.showDecoration })}
-        >
-          {this.renderLabel()}
-
-          <div className='input-wrapper'>
-            {this.renderIcon()}
-            {this.renderControl()}
-            {this.renderStatusIcon()}
-          </div>
-        </div>
-
-        {!!this.state.error && <div className='form-helper'>{this.state.errorMessage}</div>}
-
-        {!this.state.error && this.props.helper && (
-          <HorizontalStack className='form-helper'>
-            {this.props.helperIcon && <Icon size={128} iconId={this.props.helperIcon} color={this.props.helperColor} />}
-            <Typography variant='help' color={this.props.helperColor} content={this.props.helper} />
-          </HorizontalStack>
-        )}
-      </div>
-    );
-  }
+  protected onStatusIconTap?(_e: React.MouseEvent): Promise<void>;
 
   protected renderLabel() {
-    if (!this.props.label || !this.props.showLabel) return undefined;
+    if (!this.props.label) return null;
     return (
       <HorizontalStack verticalItemAlignment='middle' className='form-label'>
         <Typography
-          fill={!this.props.showInfoIcon}
+          fill={!this.props.infoIcon}
           bold
           variant='document'
           content={this.props.label}
-          className={this.props.showInfoIcon ? 'form-label-with-info-icon' : ''}
+          className={classNames({ 'form-label-with-info-icon': !!this.props.infoIcon })}
         />
 
-        {this.props.showInfoIcon && (
+        {!!this.props.infoIcon && (
           <HorizontalStack
             fill
-            hint={this.props.infoIconHint}
+            hint={this.props.infoIcon.hint}
             className='form-field-info-icon-tip'
-            height={this.props.infoIconSize || 18}
+            height={this.props.infoIcon.size || 18}
           >
             <Icon
-              className={classNames('form-field-info-icon', this.props.infoIconClassName)}
-              iconId={this.props.infoTIconId || 'toolkit-info-circle'}
-              size={this.props.infoIconSize || 18}
-              onTap={
-                this.props.onTapInfoIcon
-                  ? () => app.$errorManager.handlePromise(this.props.onTapInfoIcon!())
-                  : undefined
-              }
+              className={classNames('form-field-info-icon', this.props.infoIcon.className)}
+              icon={this.props.infoIcon.icon || 'toolkit-info-circle'}
+              size={this.props.infoIcon.size || 18}
+              onTap={this.props.infoIcon.onTap}
             />
           </HorizontalStack>
         )}
@@ -359,7 +306,17 @@ export abstract class FormField<
     );
   }
 
-  protected doClickItem(_e: React.MouseEvent): void {}
+  protected async onBlur() {
+    await this.setStateAsync({ focus: false });
+  }
 
-  protected onStatusIconClick(_e: React.MouseEvent): void {}
+  protected async onFocus() {
+    await this.setStateAsync({ focus: true });
+  }
+
+  protected async onChange(value: TFormFieldDataType) {
+    await this.setStateAsync({ value });
+    if (this.props.onChange) await this.props.onChange(this.state.value);
+    await this.fireValueChanged();
+  }
 }

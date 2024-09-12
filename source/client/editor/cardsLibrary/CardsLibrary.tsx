@@ -51,7 +51,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
       current: app.$card.tempCurrentCard?.uuid as string,
       edited: app.$card.tempCurrentCard?.uuid as string,
       sortOption: 'modified',
-      sortOrder: 'asc',
+      sortOrder: 'desc',
       localCards: app.$card.localCards,
       selectAllMode: true,
       selectedCardsNum: 0,
@@ -311,7 +311,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
                     verticalItemAlignment='middle'
                     onTap={() => (isEdited ? this.saveEdit() : this.startEdit(card))}
                   >
-                    <Icon size={24} iconId={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
+                    <Icon size={24} icon={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
                   </HorizontalStack>
                 ),
               },
@@ -322,7 +322,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
                     verticalItemAlignment='middle'
                     onTap={() => (isEdited ? this.abordEdit() : this.deleteCard(card))}
                   >
-                    <Icon size={24} iconId={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
+                    <Icon size={24} icon={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
                   </HorizontalStack>
                 ),
               },

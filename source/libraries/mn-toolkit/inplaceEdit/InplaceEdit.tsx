@@ -1,108 +1,109 @@
-import { IContainableProps, IContainableState, Containable } from '../containable';
-import { IVerticalStackProps, VerticalStack } from '../container';
-import { KeyboardEvent, MouseEvent, createRef } from 'react';
+import { createRef } from 'react';
+import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
+import { Icon } from 'mn-toolkit/icon';
 
 interface InplaceEditProps extends IContainableProps {
-  value: string;
-  focusOnSingleClick?: boolean;
   validateOnEnter?: boolean;
-  onChange?: (newValue: string) => void | Promise<void>;
-  onSingleClick?: (e: MouseEvent) => void | Promise<void>;
-  onDoubleClick?: (e: MouseEvent) => void | Promise<void>;
+  placeholder?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void | Promise<void>;
 }
 
 interface InplaceEditState extends IContainableState {
+  value: string;
   isFocused: boolean;
 }
 
 export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState> {
   private inputRef = createRef<HTMLInputElement>();
-  private clickTimer: ReturnType<typeof setTimeout> | undefined;
-  private tempValue: string;
+
+  public static get defaultProps(): InplaceEditProps {
+    return {
+      ...super.defaultProps,
+      validateOnEnter: true,
+      placeholder: 'Cliquez pour modifier...',
+      defaultValue: '',
+    };
+  }
 
   public constructor(props: InplaceEditProps) {
     super(props);
-
     this.state = {
-      loaded: true,
+      ...this.state,
       isFocused: false,
+      value: props.defaultValue!,
     };
-    this.tempValue = props.value;
   }
 
-  public componentDidUpdate() {
-    setTimeout(() => {
-      if (this.state.isFocused) this.inputRef.current?.focus();
-    }, 100);
+  public override componentDidUpdate(
+    prevProps: Readonly<InplaceEditProps>,
+    prevState: Readonly<InplaceEditState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    const doFocus = () =>
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (!this.inputRef.current || !this.state.isFocused) return;
+          this.inputRef.current.focus();
+        })
+      );
+    if (prevProps !== this.props && this.state.value !== this.props.defaultValue) {
+      this.setState({ value: this.props.defaultValue! }, doFocus);
+    } else {
+      doFocus();
+    }
   }
 
-  private async doBlur() {
-    this.clickTimer = undefined;
-    await this.setState({ isFocused: false });
-    if (!this.props.onChange) return;
-    await this.props.onChange(this.tempValue);
-  }
-
-  private doFocus() {
-    this.setState({ isFocused: true }, () => {
-      if (!this.inputRef.current) return;
-      this.inputRef.current.focus();
-    });
-  }
-
-  private onSingleClick(e: MouseEvent) {
-    if (this.clickTimer) return;
-    if (this.props.focusOnSingleClick) this.doFocus();
-    this.clickTimer = setTimeout(() => {
-      if (this.props.onSingleClick) {
-        app.$errorManager.handlePromise(this.props.onSingleClick(e));
-      }
-      this.clickTimer = undefined;
-    }, 200);
-  }
-
-  private async onDoubleClick(e: MouseEvent) {
-    clearTimeout(this.clickTimer);
-    if (!this.props.focusOnSingleClick) this.doFocus();
-    this.clickTimer = undefined;
-    if (!this.props.onDoubleClick) return;
-    await this.props.onDoubleClick(e);
-  }
-
-  private async onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  private async onKeyDown(e: React.KeyboardEvent) {
     if (!this.props.validateOnEnter || e.key !== 'Enter') return;
     await this.doBlur();
   }
 
-  public renderClasses() {
+  private async doBlur() {
+    await this.setStateAsync({ isFocused: false });
+    if (this.props.onChange) await this.props.onChange(this.state.value);
+  }
+
+  private async onChange(e: React.FormEvent<HTMLInputElement>) {
+    const value = (e.target.value as string) || '';
+    await this.setStateAsync({ value });
+    if (this.props.onChange) await this.props.onChange(this.state.value);
+  }
+
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-inplace-edit'] = true;
+    classes['with-placeholder'] = !this.state.value;
     return classes;
   }
 
-  public render() {
-    return (
-      <VerticalStack {...(this.renderAttributes() as IVerticalStackProps)}>
-        {this.state.isFocused ? (
-          <input
-            className='value'
-            type='text'
-            ref={this.inputRef}
-            defaultValue={this.tempValue}
-            onChange={(e) => (this.tempValue = e.target.value)}
-            onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
-            onBlur={() => this.doBlur()}
-          />
-        ) : (
-          <div
-            className='value'
-            onClick={(e) => this.onSingleClick(e)}
-            onDoubleClick={(e) => app.$errorManager.handlePromise(this.onDoubleClick(e))}
-          >
-            {this.tempValue || '<vide>'}
-          </div>
-        )}
-      </VerticalStack>
-    );
+  public override render() {
+    if (this.state.isFocused) {
+      return (
+        <input
+          {...this.renderAttributes()}
+          key='input'
+          ref={this.inputRef}
+          type='text'
+          name={this.props.name}
+          disabled={this.props.disabled}
+          placeholder={this.props.placeholder}
+          value={this.state.value}
+          onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
+          onKeyUp={(e) => this.props.onKeyUp && app.$errorManager.handlePromise(this.props.onKeyUp(e))}
+          onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
+          onBlur={() => app.$errorManager.handlePromise(this.doBlur())}
+          onFocus={(e) => this.props.onFocus && app.$errorManager.handlePromise(this.props.onFocus(e))}
+        />
+      );
+    } else {
+      return (
+        <div {...this.renderAttributes()} key='value' onClick={() => this.setState({ isFocused: true })}>
+          <div className='value'>{this.state.value || this.props.placeholder}</div>
+          <Icon color='2' icon='toolkit-pen' />
+        </div>
+      );
+    }
   }
 }

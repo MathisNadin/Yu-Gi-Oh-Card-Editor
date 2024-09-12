@@ -1,6 +1,5 @@
-import { isEmpty } from 'mn-tools';
-import { IRichTextEditorProps, RichTextEditor } from '.';
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
+import { IRichTextEditorProps, RichTextEditor } from '.';
 
 interface IRichTextFieldProps extends IFormFieldProps<string>, IRichTextEditorProps {}
 
@@ -16,46 +15,32 @@ export class RichTextEditorField extends FormField<string, IRichTextFieldProps, 
 
   public constructor(props: IRichTextFieldProps) {
     super(props, 'rich-text-editor');
-    this.state = { ...this.state, value: props.defaultValue! };
-
-    if (props.required) {
-      this.validators.unshift((field) => {
-        if (isEmpty((field as RichTextEditorField).value)) {
-          return field.addError('Nous avons besoin de quelque chose ici');
-        }
-        field.validate();
-      });
-    }
   }
 
-  public componentDidUpdate(prevProps: IRichTextFieldProps) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue! });
-      if (this.validators.length && this.props.required) {
-        app.$errorManager.handlePromise(this.doValidation());
-      }
-    }
+  public override get hasValue() {
+    return !RichTextEditor.isEmpty(this.value);
   }
 
-  public get hasValue() {
-    return true;
+  // onBlur est aussi appelé quand on clique sur sur une option du popover du RichTextEditor
+  // Or ici ça provoque un re-render qui déclenche le onReceiveProps et fait perdre la modification
+  // On setTimeout le render avec un léger décalage pour passer après le onInput
+  protected override async onBlur() {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    await super.onBlur();
   }
 
-  private async onChange(value: string) {
-    await this.setStateAsync({ value });
-    this.fireValueChanged();
-    if (!!this.props.onChange) this.props.onChange(value);
+  protected override async onFocus() {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    await super.onFocus();
   }
 
-  public renderControl() {
+  protected override renderControl() {
     return (
       <RichTextEditor
         height={this.props.height}
         width={this.props.width}
         defaultValue={this.state.value}
         toolsSettings={this.props.toolsSettings}
-        textColors={this.props.textColors}
         placeholder={this.props.placeholder}
         bg={this.props.bg}
         onBlur={() => this.onBlur()}

@@ -1,7 +1,6 @@
 import { classNames } from 'mn-tools';
-import { Containable, IContainableProps, IContainableState } from '../containable';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { JSXElementChild } from '../react';
-import { ButtonIcon } from '../button';
 import { TIconId, Icon } from '../icon';
 import { Spacer } from '../spacer';
 import { TForegroundColor, TBackgroundColor } from '../themeSettings';
@@ -16,7 +15,6 @@ export interface ITabItem<ID = string> {
   iconColor?: TForegroundColor;
   stateIcon?: string;
   stateIconColor?: string;
-  badge?: string | number;
   selected?: boolean;
   disabled?: boolean;
   closable?: boolean;
@@ -60,7 +58,12 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
     this.state = { ...this.state, value: props.defaultValue, items: props.items };
   }
 
-  public componentDidUpdate(prevProps: ITabSetProps<ID>) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ITabSetProps<ID>>,
+    prevState: Readonly<ITabSetState<ID>>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps.defaultValue === this.props.defaultValue && prevProps.items === this.props.items) return;
     this.setState({ value: this.props.defaultValue, items: this.props.items });
   }
@@ -76,7 +79,6 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
         selected: this.state.value === item.tabId,
         icon: item.icon,
         iconColor: item.iconColor,
-        badge: item.badge,
         disabled: item.disabled,
         closable: item.closable,
         selectedBg: item.selectedBg,
@@ -99,7 +101,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
   public async selectItem(item: ITabItem<ID>) {
     await this.setStateAsync({ value: item.tabId });
     if (!this.props.onChange) return;
-    app.$errorManager.handlePromise(this.props.onChange(this.state.value));
+    await this.props.onChange(this.state.value);
   }
 
   public renderClasses(): { [name: string]: boolean } {
@@ -134,13 +136,12 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
               `mn-bg-${item.selectedBg}`
             )}
           >
-            {!!item.icon && <Icon className='icon' iconId={item.icon} color={item.iconColor} />}
+            {!!item.icon && <Icon className='icon' icon={item.icon} color={item.iconColor} />}
 
             <span className='label'>{item.label}</span>
 
-            {(!!item.badge || !!item.closable || !!item.stateIcon) && (
+            {(!!item.closable || !!item.stateIcon) && (
               <span className='mn-indicators'>
-                {!!item.badge && <span className='mn-badge'>{item.badge}</span>}
                 {!!item.stateIcon && <span className={`icon ${item.stateIcon} mn-color-${item.stateIconColor}`} />}
                 {item.closable && <span className='mn-close' onClick={() => this.onClose(item.tabId)} />}
               </span>
@@ -152,7 +153,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
 
         {this.props.addButton && (
           <span className='mn-tabset-add-button-holder'>
-            <ButtonIcon icon='toolkit-plus' onTap={() => this.onAddButton()} />
+            <Icon icon='toolkit-plus' onTap={() => this.onAddButton()} />
           </span>
         )}
       </div>

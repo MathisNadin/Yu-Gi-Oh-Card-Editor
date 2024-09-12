@@ -12,24 +12,28 @@ declare global {
   interface IRouter {}
 }
 
-export interface IStateCrumb {
-  state: string;
+export type TRouterState = keyof IRouter;
+
+export type TRouterParams<T extends TRouterState> = IRouter[T] extends (options: infer P) => void ? P : never;
+
+export interface IRouterHrefParams<T extends TRouterState = TRouterState> {
+  state: T;
+  params: TRouterParams<T>;
+}
+
+export interface IStateCrumb<T extends TRouterState = TRouterState> {
   title: string;
-  parameters?: IStateParameters;
+  state: T;
+  parameters?: TRouterParams<T>;
 }
 
-export interface IStateParameters {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [name: string]: any;
-}
-
-export interface IResolvedState {
+export interface IResolvedState<T extends TRouterState = TRouterState> {
   path: string;
   state: IState;
-  parameters: IStateParameters;
-  historyData?: IStateParameters;
+  parameters: TRouterParams<T>;
+  historyData?: object;
   title?: string;
-  parentParameters?: IStateParameters;
+  parentParameters?: object;
   breadcrumb?: IStateCrumb[];
 }
 
@@ -39,14 +43,14 @@ export interface IStatePathKey {
   type: 'qs' | 'path';
 }
 
-export interface IState {
-  name: string;
+export interface IState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState> {
+  name: T;
   path: string;
   pathKeys: IStatePathKey[];
-  parentState?: string;
+  parentState?: P;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: any;
-  params: IStateParameters;
+  params: TRouterParams<T>;
   regExp: RegExp;
   resolver?: (state: IResolvedState) => Promise<void>;
   describe?: (state: IResolvedState) => Promise<void>;

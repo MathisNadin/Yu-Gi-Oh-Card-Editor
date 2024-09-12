@@ -41,7 +41,8 @@ export class SplitPane extends Component<ISplitPaneProps, ISplitPaneState> {
     this.state = { ...this.state, resizing: false };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    if (super.componentDidMount) super.componentDidMount();
     window.addEventListener('resize', this.windowResizeHandler);
     document.addEventListener('mouseup', this.documentMouseUpHandler);
     document.addEventListener('mousedown', this.documentMouseDownHandler);
@@ -51,7 +52,8 @@ export class SplitPane extends Component<ISplitPaneProps, ISplitPaneState> {
     }
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    if (super.componentWillUnmount) super.componentWillUnmount();
     window.removeEventListener('resize', this.windowResizeHandler);
     document.removeEventListener('mouseup', this.documentMouseUpHandler);
     document.removeEventListener('mousemove', this.documentMouseMoveHandler);

@@ -1,9 +1,12 @@
-import { isDefined, classNames } from 'mn-tools';
-import { IContainableProps, IContainableState, Containable } from '../containable';
+import { isDefined } from 'mn-tools';
+import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
 import { TForegroundColor } from '../themeSettings';
+import { AllHTMLAttributes } from 'react';
+import { IRouterHrefParams } from 'mn-toolkit/router';
 
 interface IButtonLinkProps extends IContainableProps {
   label: string;
+  href?: IRouterHrefParams;
   color?: TForegroundColor;
   pressed?: boolean;
 }
@@ -28,12 +31,18 @@ export class ButtonLink extends Containable<IButtonLinkProps, IButtonLinkState> 
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IButtonLinkProps>,
+    prevState: Readonly<IButtonLinkState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.pressed === this.state.pressed) return;
     this.setState({ pressed: this.props.pressed as boolean });
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-button-link'] = true;
     if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
@@ -49,22 +58,15 @@ export class ButtonLink extends Containable<IButtonLinkProps, IButtonLinkState> 
     return classes;
   }
 
-  public render() {
-    return (
-      <div
-        id={this.props.nodeId}
-        title={this.props.hint}
-        className={classNames(this.renderClasses())}
-        onClick={
-          !this.props.onTap
-            ? undefined
-            : (e) => {
-                app.$errorManager.handlePromise(this.props.onTap!(e));
-              }
-        }
-      >
-        {!!this.props.label && <span className='label'>{this.props.label}</span>}
-      </div>
-    );
+  public renderAttributes(): AllHTMLAttributes<HTMLElement> {
+    const attributes = super.renderAttributes();
+    if (this.props.href) {
+      attributes.href = app.$router.getLink(this.props.href);
+    }
+    return attributes;
+  }
+
+  public override render() {
+    return <a {...this.renderAttributes()}>{this.props.label}</a>;
   }
 }

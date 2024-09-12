@@ -97,7 +97,7 @@ $sliderHeight: 20px;
   &.mn-color-4 {
     @include colorizeSlider(nth($theme-light-fg, 4));
   }
-  &.mn-control-disable {
+  &.mn-disabled {
     opacity: 0.3;
     filter: grayscale(1);
     pointer-events: none;
@@ -194,7 +194,7 @@ $sliderHeight: 20px;
   &.mn-color-4 {
     @include colorizeSlider(nth($theme-light-fg, 4));
   }
-  &.mn-control-disable {
+  &.mn-disabled {
     opacity: 0.3;
     filter: grayscale(1);
     pointer-events: none;
@@ -214,6 +214,7 @@ $sliderHeight: 20px;
     margin: $themeDefaultSpacing 0;
     padding-top: 0;
     padding-bottom: 0;
+    overflow: visible;
 
     > .mn-container {
       height: $wrapperHeight;

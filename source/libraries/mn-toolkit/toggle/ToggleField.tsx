@@ -10,35 +10,20 @@ export class ToggleField extends FormField<boolean, IToggleFieldProps, IToggleFi
   public static get defaultProps(): IToggleFieldProps {
     return {
       ...super.defaultProps,
-      showLabel: false,
-      showDecoration: false,
+      hideLabel: true,
+      defaultValue: false,
     };
   }
 
   public constructor(props: IToggleFieldProps) {
     super(props, 'toggle');
-    this.state = {
-      ...this.state,
-      value: props.defaultValue ?? false,
-    };
   }
 
-  public componentDidUpdate() {
-    if (this.props.defaultValue === this.state.value) return;
-    this.setState({ value: this.props.defaultValue ?? false });
-  }
-
-  public get hasValue() {
+  public override get hasValue() {
     return true;
   }
 
-  private onChange(value: boolean) {
-    if (!!this.props.onChange) this.props.onChange(value);
-    this.setState({ value });
-    this.fireValueChanged();
-  }
-
-  public renderControl() {
+  protected override renderControl() {
     return (
       <HorizontalStack verticalItemAlignment='middle' width='100%' gutter>
         {this.renderLabel()}

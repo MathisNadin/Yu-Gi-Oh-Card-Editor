@@ -17,7 +17,7 @@ export class Toolbar extends Container<IToolbarProps, IToolbarState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-toolbar'] = true;
     classes['mn-bordered'] = this.props.bordered;

@@ -1,5 +1,5 @@
 import { classNames } from 'mn-tools';
-import { Containable, IContainableProps, IContainableState } from '../containable';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { Typography } from '../typography';
 
 interface ICheckBoxProps extends IContainableProps {
@@ -33,13 +33,18 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
     this.state = { ...this.state, value: props.defaultValue! };
   }
 
-  public componentDidUpdate(prevProps: ICheckBoxProps) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICheckBoxProps>,
+    prevState: Readonly<ICheckBoxState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
     if (this.props.defaultValue === this.state.value) return;
     this.setState({ value: this.props.defaultValue! });
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-checkbox'] = true;
     if (this.state.value) classes['checked'] = true;

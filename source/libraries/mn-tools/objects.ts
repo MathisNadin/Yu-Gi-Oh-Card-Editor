@@ -1,6 +1,6 @@
 import { isArray, isObject } from './is';
 
-const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 export type __Dictionary<T> = { [key: string]: T } | { [oid: number]: T };
 /**
@@ -33,7 +33,7 @@ export function unserialize(json: string) {
   try {
     return JSON.parse(json, (_key, value) => {
       if (typeof value === 'string' && DATE_REGEXP.exec(value)) {
-        // let ns = value.substr(0, value.length- 1)+'-07:00';
+        // let ns = value.substring(0, value.length- 1)+'-07:00';
         // console.log(ns);
         // return new Date(ns);
         return new Date(value);
@@ -323,3 +323,7 @@ export function monkeyPatchGet(obj: any, name: string, fn: { get: () => number }
     Object.defineProperty(obj, name, fn);
   }
 }
+
+export type TForbidTypeChanges<T, U> = {
+  [K in keyof T]: K extends keyof U ? (T[K] extends U[K] ? (U[K] extends T[K] ? T[K] : never) : never) : T[K];
+};

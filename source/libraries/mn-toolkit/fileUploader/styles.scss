@@ -19,7 +19,7 @@
     border-color: $primary;
   }
 
-  &.mn-control-disable {
+  &.mn-disabled {
     opacity: 0.2;
     filter: grayscale(100%);
     pointer-events: none;

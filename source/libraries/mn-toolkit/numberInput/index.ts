@@ -1,2 +1,2 @@
 export * from './NumberInput';
-export * from './NumberField';
+export * from './NumberInputField';

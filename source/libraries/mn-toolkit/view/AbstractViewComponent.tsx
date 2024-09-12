@@ -31,7 +31,8 @@ export abstract class AbstractViewComponent<
     return new Promise<void>((resolve) => this.setState(newState as S, resolve));
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    if (super.componentDidMount) super.componentDidMount();
     if (this.onViewEnter) {
       this.onViewEnter()
         .then(() => {
@@ -41,7 +42,8 @@ export abstract class AbstractViewComponent<
     }
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    if (super.componentWillUnmount) super.componentWillUnmount();
     if (this.onViewLeave) app.$errorManager.handlePromise(this.onViewLeave());
   }
 }

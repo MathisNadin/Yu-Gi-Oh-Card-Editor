@@ -110,8 +110,8 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     if (artworkExists) {
       artworkData = `file://${url}`;
       try {
-        const img = await window.electron.ipcRenderer.createImgFromPath(url);
-        artworkData = await getCroppedArtworkBase64(img, { x, y, height, width });
+        const src = await window.electron.ipcRenderer.createImgFromPath(url);
+        artworkData = await getCroppedArtworkBase64({ src, x, y, height, width });
       } catch (error) {
         console.error(error);
       }

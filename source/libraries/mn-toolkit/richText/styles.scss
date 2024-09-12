@@ -1,7 +1,7 @@
 .mn-rich-text-editor {
   display: block;
   width: 100%;
-  min-height: 22px;
+  min-height: calc(22px + #{$themeDefaultSpacing});
   cursor: text;
   position: relative;
 
@@ -10,8 +10,8 @@
     pointer-events: none;
   }
 
-  p {
-    margin: 0;
+  .mn-rich-text {
+    cursor: text;
   }
 }
 
@@ -19,45 +19,47 @@
   .input-wrapper {
     height: auto;
     max-height: none;
-    padding: calc($themeDefaultSpacing/2 - 4px) calc($themeDefaultSpacing/2);
+    position: relative;
+
+    .status-icon {
+      position: absolute !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      top: auto !important;
+    }
+
+    .mn-rich-text-editor {
+      min-height: 100%;
+
+      .mn-rich-text {
+        min-height: 100%;
+      }
+    }
   }
 }
 
-.mn-rich-text-custom-color {
-  &.mn-rich-text-custom-color-primary {
-    color: $primary;
+blockquote.mn-blockquote-callout {
+  &:not(.code-block) {
+    border-left: none !important;
+
+    &:before {
+      display: none;
+    }
   }
-  &.mn-rich-text-custom-color-secondary {
-    color: $secondary;
-  }
-  &.mn-rich-text-custom-color-tertiary {
-    color: $tertiary;
-  }
-  &.mn-rich-text-custom-color-positive {
-    color: $positive;
-  }
-  &.mn-rich-text-custom-color-negative {
-    color: $negative;
-  }
-  &.mn-rich-text-custom-color-neutral {
-    color: $neutral;
-  }
-  &.mn-rich-text-custom-color-warning {
-    color: $warning;
-  }
-  &.mn-rich-text-custom-color-info {
-    color: $info;
-  }
-  &.mn-rich-text-custom-color-1 {
-    @include fg(1);
-  }
-  &.mn-rich-text-custom-color-2 {
-    @include fg(2);
-  }
-  &.mn-rich-text-custom-color-3 {
-    @include fg(3);
-  }
-  &.mn-rich-text-custom-color-4 {
-    @include fg(4);
+
+  display: flex;
+  flex-direction: row;
+  gap: $themeDefaultSpacing;
+
+  > .mn-blockquote-callout-icon {
+    > svg {
+      $size: 20px;
+      width: $size !important;
+      min-width: $size !important;
+      max-width: $size !important;
+      height: $size !important;
+      min-height: $size !important;
+      max-height: $size !important;
+    }
   }
 }

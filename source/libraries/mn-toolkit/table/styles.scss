@@ -175,39 +175,6 @@
     display: flex;
     flex-direction: column;
   }
-  &.mn-containable-item-fill-scroll {
-    @include fill-all;
-    overflow-x: auto;
-    overflow-y: auto;
-
-    .mn-table-head {
-      position: relative;
-      z-index: 2;
-
-      .mn-table-row {
-        @include bg(1);
-      }
-    }
-
-    .mn-table-body {
-      height: calc(100% - 56px);
-    }
-
-    .mn-table-cell-0 {
-      position: relative;
-      @include bg(1);
-      z-index: 1;
-    }
-
-    .mn-table-footer {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 3;
-      @include bg(1);
-    }
-  }
 }
 
 .mn-table {

@@ -1,0 +1,14 @@
+.mn-popup.camera-picker {
+  video {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    width: auto;
+    max-height: calc(100% - #{$themeDefaultSpacing} * 2);
+    max-width: 100%;
+    margin: $themeDefaultSpacing 0;
+    border-radius: $themeDefaultBorderRadius;
+    @include shadow(2);
+  }
+}

@@ -1,5 +1,5 @@
 import { Container } from '../container';
-import { Containable, IContainableProps, IContainableState } from '../containable';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { classNames } from 'mn-tools';
 
 export interface IToggleProps extends IContainableProps {
@@ -23,13 +23,19 @@ export class Toggle extends Containable<IToggleProps, IToggleState> {
     super(props);
     this.state = {
       ...this.state,
-      value: props.defaultValue ?? false,
+      value: props.defaultValue!,
     };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IToggleProps>,
+    prevState: Readonly<IToggleState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.defaultValue === this.state.value) return;
-    this.setState({ value: this.props.defaultValue ?? false });
+    this.setState({ value: this.props.defaultValue! });
   }
 
   private async doToggle() {

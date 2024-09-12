@@ -1,6 +1,9 @@
 import { Component, PropsWithChildren } from 'react';
 import { JSXElementChild, JSXElementChildren } from '../react';
 
+type TDidUpdateSnapshotType = string | number | boolean | object | null | undefined;
+export type TDidUpdateSnapshot = TDidUpdateSnapshotType | TDidUpdateSnapshotType[];
+
 export interface IToolkitComponentProps extends PropsWithChildren {}
 
 export interface IToolkitComponentState {}
@@ -18,9 +21,19 @@ export class ToolkitComponent<
     return new Promise<void>((resolve) => this.forceUpdate(resolve));
   }
 
-  public async setStateAsync(newState: Partial<STATE>) {
-    return new Promise<void>((resolve) => this.setState(newState as STATE, resolve));
+  public async setStateAsync<K extends keyof STATE>(newState: Pick<STATE, K> | STATE | null) {
+    return new Promise<void>((resolve) => this.setState(newState, resolve));
   }
+
+  public override componentDidMount() {}
+
+  public override componentDidUpdate(
+    _prevProps: Readonly<PROPS>,
+    _prevState: Readonly<STATE>,
+    _snapshot?: TDidUpdateSnapshot
+  ) {}
+
+  public override componentWillUnmount() {}
 
   public render(): JSXElementChild {
     return <div>{this.children}</div>;

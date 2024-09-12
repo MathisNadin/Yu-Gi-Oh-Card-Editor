@@ -212,7 +212,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       isMediumScreen: width > smallBreakpoint && width < mediumBreakpoint,
       isLargeScreen: width > mediumBreakpoint && width < largeBreakpoint,
       isXLargeScreen: width > largeBreakpoint && width < xlargeBreakpoint,
-      isXXLargeScreen: width > xlargeBreakpoint,
+      isXXLargeScreen: width >= xlargeBreakpoint,
       isPortrait,
       isLandscape: !isPortrait,
     });
@@ -223,7 +223,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       'mn-screen-xlarge',
       'mn-screen-xxlarge'
     );
-    if (width <= smallBreakpoint) document.body.classList.add('mn-screen-small');
+    document.body.classList.add('mn-screen-small');
     if (width > smallBreakpoint) document.body.classList.add('mn-screen-medium');
     if (width > mediumBreakpoint) document.body.classList.add('mn-screen-large');
     if (width > largeBreakpoint) document.body.classList.add('mn-screen-xlarge');
@@ -274,6 +274,12 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
   public get isLargeScreen() {
     return this._screenSpec.isLargeScreen;
+  }
+  public get isXLargeScreen() {
+    return this._screenSpec.isXLargeScreen;
+  }
+  public get isXXLargeScreen() {
+    return this._screenSpec.isXXLargeScreen;
   }
 
   private async setupStatusBar() {

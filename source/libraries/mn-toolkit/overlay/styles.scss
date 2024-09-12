@@ -7,6 +7,7 @@
   will-change: opacity;
   @include fx(opacity);
   pointer-events: none;
+  transition: 0.4s;
 
   &.active {
     opacity: 0.2;

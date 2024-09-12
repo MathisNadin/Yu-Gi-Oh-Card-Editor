@@ -65,6 +65,7 @@ export class CardImportDialog extends AbstractPopup<
   public static async show(options: ICardImportDialogProps = {}) {
     options.title = options.title || 'Importer depuis un site';
     options.width = options.width || '70%';
+    options.height = options.height || '80%';
     return await app.$popup.show<ICardImportDialogResult, ICardImportDialogProps>({
       type: 'import',
       Component: CardImportDialog,
@@ -568,7 +569,7 @@ export class CardImportDialog extends AbstractPopup<
                     defaultValue={m.newString}
                     onChange={(value) => this.updateReplaceMatrix(i, m.toReplace, value)}
                   />
-                  <Icon size={24} iconId='toolkit-minus' color='negative' onTap={() => this.removeReplaceMatrix(i)} />
+                  <Icon size={24} icon='toolkit-minus' color='negative' onTap={() => this.removeReplaceMatrix(i)} />
                 </HorizontalStack>
               ))}
             </VerticalStack>

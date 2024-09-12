@@ -698,7 +698,7 @@ prototype.endsWith = function (this: string, suffix: string) {
 
 prototype.ucfirst = function (this: string) {
   if (this.length < 1) return this;
-  return this[0].toUpperCase() + this.substr(1).toLowerCase();
+  return this[0].toUpperCase() + this.substring(1).toLowerCase();
 };
 
 prototype.compare = function (this: string, to: string) {
@@ -737,7 +737,7 @@ prototype.format = function (this: string, ...tokens: Object[]) {
 };
 
 prototype.toUnderscore = function (this: string, separator = '_') {
-  return (this[0].toLowerCase() + this.substr(1)).replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase());
+  return (this[0].toLowerCase() + this.substring(1)).replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase());
 };
 
 prototype.toKebabCase = function (this: string) {
@@ -745,16 +745,16 @@ prototype.toKebabCase = function (this: string) {
 };
 
 prototype.toIdentifierCase = function (this: string) {
-  return this[0].toLowerCase() + this.substr(1);
+  return this[0].toLowerCase() + this.substring(1);
 };
 
 prototype.toClassCase = function (this: string) {
-  return this[0].toUpperCase() + this.substr(1);
+  return this[0].toUpperCase() + this.substring(1);
 };
 
 prototype.toSnakeCase = function (this: string, separator?: string) {
   separator = separator || '_';
-  return (this[0].toLowerCase() + this.substr(1)).replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase());
+  return (this[0].toLowerCase() + this.substring(1)).replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase());
 };
 
 prototype.stripTags = function (this: string) {

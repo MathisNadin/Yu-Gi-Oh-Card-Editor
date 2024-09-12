@@ -58,7 +58,7 @@ $menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
 
     &:hover {
       background-color: $primary;
-      color: white;
+      color: black !important;
     }
   }
 
@@ -168,6 +168,12 @@ $item-height: 53px;
       opacity: 1;
       transition: opacity 0.2s ease;
 
+      &.mn-typography-anchor {
+        &:hover {
+          text-decoration: none;
+        }
+      }
+
       .mn-menu-pane-tabs & {
         opacity: 0;
       }
@@ -209,11 +215,17 @@ $item-height: 53px;
     cursor: pointer;
 
     .mn-top-menu-group-container {
-      :hover {
+      &:hover {
         color: $primary;
 
         .mn-top-menu-label {
           color: $primary;
+
+          &.mn-typography-anchor {
+            &:hover {
+              text-decoration: none;
+            }
+          }
         }
 
         .mn-icon {
@@ -269,56 +281,43 @@ body.mn-menu-pane-tabs {
   @include themeTopMenu;
 }
 
-.mn-popover.mn-top-menu-below-popover {
-  $actionColor: nth($theme-light-bg, 1);
-  $borderColor: rgba(nth($theme-light-bg, 1), 0.5);
+.mn-popovers {
+  .mn-popover.actions.mn-top-menu-below-popover {
+    background: transparent;
+    border-top: 0;
 
-  border-radius: 0;
-  background-color: nth($theme-dark-bg, 1);
-  border: 1px solid;
-  border-top: 0;
-  border-color: $borderColor;
+    .mn-popup-actions-container {
+      .action {
+        background-color: nth($theme-light-bg, 1);
+        border-radius: 0;
 
-  .actions {
-    .action {
-      border-radius: 0;
-      border-top: 1px solid;
-      border-color: $borderColor;
+        &:not(.mn-disabled):not(.separator) {
+          &:hover {
+            background-color: nth($theme-dark-bg, 1);
+            box-shadow: white(0.2) 0px 1px 0.25rem 0px;
 
-      .mn-icon {
-        color: $actionColor;
+            .mn-icon {
+              color: $primary;
 
-        // Pour certains svg
-        path,
-        rect,
-        polyline,
-        line {
-          color: $actionColor;
-        }
-      }
+              // Pour certains svg
+              path,
+              rect,
+              polyline,
+              line {
+                color: $primary;
+              }
+            }
 
-      .text {
-        font-weight: bold;
-        color: $actionColor;
-      }
+            .mn-typography.mn-content-type-text {
+              color: $primary;
 
-      &:hover {
-        background-color: nth($theme-dark-bg, 1);
-
-        .mn-icon {
-          color: $primary;
-
-          // Pour certains svg
-          path,
-          rect,
-          polyline,
-          line {
-            color: $primary;
+              &.mn-typography-anchor {
+                &:hover {
+                  text-decoration: none;
+                }
+              }
+            }
           }
-        }
-
-        .text {
-          color: $primary;
         }
       }
     }

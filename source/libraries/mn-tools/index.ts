@@ -1,3 +1,6 @@
+import { shortnameToImage } from './emojies';
+
+export * from './emojies';
 export * from './patch';
 export * from './is';
 export * from './objects';
@@ -70,8 +73,8 @@ export function markdownToHtml(input: string, noParagraph = false) {
   // FIXME on devrait aussi faire les ! et les :. Dans $locales ?
   input = input.replace(/\s+\?/g, '&nbsp;?');
   input = input.replace(/<a/g, '<a target="_blank"');
-  // FIXME : manque an-emojies
-  // input = shortnameToImage(input);
+
+  input = shortnameToImage(input);
   return input;
 }
 

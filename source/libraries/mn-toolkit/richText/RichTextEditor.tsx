@@ -1,16 +1,17 @@
-import { classNames, isEmpty, logger } from 'mn-tools';
-import { ButtonIcon } from '../button';
-import { ColorPicker } from '../colorPicker';
-import { Containable, IContainableProps, IContainableState } from '../containable';
-import { HorizontalStack } from '../container';
-import { TForegroundColor, TBackgroundColor } from '../themeSettings';
 import { ReactElement } from 'react';
+import { classNames, isEmpty, logger } from 'mn-tools';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
+import { HorizontalStack } from '../container';
+import { Icon, TIconId } from '../icon';
+import { ColorPicker } from '../colorPicker';
+import { TBackgroundColor } from '../themeSettings';
+import { createRoot } from 'react-dom/client';
 
 const log = logger('RichTextEditor');
 
 const EMPTY_VALUE = '<p><br/></p>';
 
-export type TRichTextToolId =
+type TRichTextToolId =
   | 'bold'
   | 'blockquote'
   | 'italic'
@@ -20,6 +21,7 @@ export type TRichTextToolId =
   | 'ol'
   | 'indent'
   | 'unindent'
+  | 'callout'
   | 'h1'
   | 'h2'
   | 'h3'
@@ -33,15 +35,14 @@ export type TRichTextToolId =
 export interface IRichTextEditorProps extends IContainableProps {
   defaultValue?: string;
   toolsSettings?: { [key in TRichTextToolId]: boolean };
-  textColors?: TForegroundColor[];
+  textColors?: string[];
   placeholder?: string;
   bg?: TBackgroundColor;
   onChange?: (value: string) => void | Promise<void>;
-  onFocus?: (event: React.FocusEvent) => void | Promise<void>;
   onSelectionChanged?: (selection: Selection) => void;
 }
 
-export interface IRichtextEditorState extends IContainableState {}
+interface IRichtextEditorState extends IContainableState {}
 
 export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextEditorState> {
   private _element!: HTMLElement;
@@ -53,23 +54,11 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   private _selectionTimeout!: NodeJS.Timeout;
   private palettePopoverId!: string;
 
-  private constructor(props: IRichTextEditorProps) {
-    super(props);
-  }
-
-  private getCurrentSelectionRect(): DOMRect | null {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return null; // Aucune sélection actuelle
-    }
-    const range = selection.getRangeAt(0);
-    return range.getBoundingClientRect();
-  }
-
   public static get defaultProps(): Partial<IRichTextEditorProps> {
     return {
       ...super.defaultProps,
       placeholder: '<br/>',
+      textColors: ColorPicker.defaultProps.colors,
       toolsSettings: {
         bold: true,
         italic: true,
@@ -80,6 +69,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
         ol: true,
         indent: true,
         unindent: true,
+        callout: true,
         h1: true,
         h2: true,
         h3: true,
@@ -90,20 +80,29 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
         link: true,
         unlink: true,
       },
-      textColors: ['primary', 'secondary', 'tertiary', 'positive', 'negative', 'neutral', 'warning', 'info'],
     };
   }
 
-  public componentDidUpdate(prevProps: IRichTextEditorProps) {
+  private constructor(props: IRichTextEditorProps) {
+    super(props);
+  }
+
+  public override componentDidUpdate(
+    prevProps: Readonly<IRichTextEditorProps>,
+    prevState: Readonly<IRichtextEditorState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
-    if (!this.isEmpty(this.props.defaultValue!)) {
+    if (!RichTextEditor.isEmpty(this.props.defaultValue!)) {
       this._value = this.props.defaultValue!;
       this.setValueToEditor(this._value);
     }
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
     log.debug('componentDidMount');
+    super.componentDidMount();
     if (this._hasbeensetup) return;
 
     this._editor.classList.add('mn-rich-text');
@@ -115,19 +114,20 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     this._value = EMPTY_VALUE;
     this.setValueToEditor(this._value);
 
-    if (!this.isEmpty(this.props.defaultValue!)) {
+    if (!RichTextEditor.isEmpty(this.props.defaultValue!)) {
       this._value = this.props.defaultValue!;
       this.setValueToEditor(this._value);
     }
 
-    if (this.isEmpty(this._editor.textContent!) && !this.isEmpty(this.props.placeholder!)) {
+    if (RichTextEditor.isEmpty(this._editor.textContent!) && !RichTextEditor.isEmpty(this.props.placeholder!)) {
       this._placeholder = true;
       this._value = EMPTY_VALUE;
       this.setPlaceHolderToEditor();
     }
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     document.removeEventListener('selectionchange', this.onDocumentSelectionChange);
   }
 
@@ -156,15 +156,15 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     }
   };
 
-  private removeEmptyParagraphs(str: string) {
+  public static removeEmptyParagraphs(str: string) {
     log.debug('removeEmptyParagraphs - start string', str);
     const result = str.replace(/<p[^>]*>(?:\s|&nbsp;|<br>|<br\/>)*<\/p>/gi, '');
     log.debug('removeEmptyParagraphs - end string', result);
     return result;
   }
 
-  private isEmpty(value: string) {
-    return isEmpty(value) || isEmpty(this.removeEmptyParagraphs(value));
+  public static isEmpty(value: string) {
+    return isEmpty(value) || isEmpty(RichTextEditor.removeEmptyParagraphs(value));
   }
 
   private removeAttributes(node: HTMLElement) {
@@ -284,6 +284,15 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     }
   }
 
+  private getCurrentSelectionRect(): DOMRect | null {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return null; // Aucune sélection actuelle
+    }
+    const range = selection.getRangeAt(0);
+    return range.getBoundingClientRect();
+  }
+
   private applyDocumentSelectionChanged() {
     log.debug('selection changed');
     const selection = document.getSelection();
@@ -297,16 +306,14 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
       if (this.props.onSelectionChanged) this.props.onSelectionChanged(selection);
       const targetRectangle = this.getCurrentSelectionRect();
       if (targetRectangle && !app.$popover.visible) {
-        app.$popover.bubble(undefined!, {
+        app.$popover.bubble(targetRectangle, {
           ignoreFocus: true,
-          targetRectangle,
           content: (
-            <HorizontalStack wrap gutter>
+            <HorizontalStack wrap gutter padding>
               {tools}
             </HorizontalStack>
           ),
-          height: 80,
-          width: 388,
+          width: 348,
         });
       }
     }, 200);
@@ -322,11 +329,49 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     }
   }
 
-  private getToolIds() {
-    return Object.keys(this.props.toolsSettings!).filter((x) => !!this.props.toolsSettings![x as TRichTextToolId]);
-  }
+  // Handle event when pressing just "Enter" inside a callout block
+  private handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key !== 'Enter' || event.shiftKey) return;
 
-  public renderClasses() {
+    const selection = window.getSelection();
+    if (!selection) return;
+    const range = selection.getRangeAt(0);
+    const blockquoteElement = this.findAncestor(range.commonAncestorContainer, 'blockquote');
+
+    if (blockquoteElement && blockquoteElement.classList.contains('mn-blockquote-callout')) {
+      event.preventDefault(); // Empêcher le comportement par défaut de "Enter"
+
+      // Créer un nouveau paragraphe en dehors du blockquote
+      const newParagraph = document.createElement('p');
+      newParagraph.innerHTML = '<br>'; // Paragraphe vide
+
+      // Insérer le nouveau paragraphe après le blockquote
+      const parent = blockquoteElement.parentNode!;
+      parent.insertBefore(newParagraph, blockquoteElement.nextSibling);
+
+      // Positionner le curseur dans le nouveau paragraphe
+      const newRange = document.createRange();
+      newRange.setStart(newParagraph, 0);
+      newRange.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
+    }
+  };
+
+  private handleOnClick = (event: React.MouseEvent) => {
+    // Vérifier si l'élément cliqué est .mn-blockquote-callout-icon ou un de ses enfants
+    const target = event.target as HTMLElement;
+    const iconElement = target.closest<HTMLDivElement>('.mn-blockquote-callout-icon');
+
+    if (iconElement) {
+      // Gérer le clic sur l'icône ou ses enfants
+      this.onCalloutIconClick(iconElement);
+    }
+
+    if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(event));
+  };
+
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-rich-text-editor'] = true;
     classes['mn-focus'] = this._focus;
@@ -350,10 +395,11 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
           // setTimeout nécessaire pour que les document.execCommand aient la possibilité
           // d'effectuer des manipulations avant que onInput soit créé, par exemple ce que fait onLink()
           onInput={() => setTimeout(() => this.onInput())}
+          onKeyDown={this.handleKeyDown}
           onFocus={(e) => this.onFocus(e)}
           onBlur={(e) => this.onBlur(e)}
           onPaste={(e) => this.onPaste(e)}
-          onClick={this.props.onTap ? (e) => app.$errorManager.handlePromise(this.props.onTap!(e)) : undefined}
+          onClick={this.handleOnClick}
           ref={(c) => {
             if (c && this._editor !== c) {
               this._editor = c;
@@ -363,6 +409,10 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
         />
       </div>
     );
+  }
+
+  private getToolIds() {
+    return Object.keys(this.props.toolsSettings!).filter((x) => !!this.props.toolsSettings![x as TRichTextToolId]);
   }
 
   public getTools(): ReactElement[] {
@@ -381,7 +431,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     switch (id) {
       case 'bold':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-bold'
@@ -393,7 +443,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'blockquote':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-blockquote'
@@ -405,7 +455,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'italic':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-italic'
@@ -417,7 +467,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'underline':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-underline'
@@ -429,7 +479,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'color':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-color'
@@ -441,7 +491,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'ul':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-ul'
@@ -453,7 +503,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'ol':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-ol'
@@ -465,7 +515,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'indent':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-indent'
@@ -475,9 +525,20 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
         );
         break;
 
+      case 'callout':
+        return (
+          <Icon
+            key={id}
+            disabled={!range}
+            icon='toolkit-format-callout'
+            hint='Transformer en encadré'
+            onTap={() => this.doCallout()}
+          />
+        );
+
       case 'h1':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-header-1'
@@ -489,7 +550,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'h2':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-header-2'
@@ -501,7 +562,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'h3':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-header-3'
@@ -513,7 +574,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'paragraph':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-paragraph'
@@ -525,7 +586,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'alignLeft':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-align-left'
@@ -537,7 +598,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'alignCenter':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-align-center'
@@ -549,7 +610,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'unformat':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-unformat'
@@ -561,7 +622,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'link':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-link'
@@ -573,7 +634,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
       case 'unlink':
         tool = (
-          <ButtonIcon
+          <Icon
             key={id}
             disabled={!range}
             icon='toolkit-format-unlink'
@@ -588,13 +649,11 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
   private async showColors(event: React.MouseEvent) {
     this.palettePopoverId = await app.$popover.bubble(event, {
-      height: 52,
-      width: 275,
       content: <ColorPicker colors={this.props.textColors} onSelectColor={(c) => this.doColor(c)} />,
     });
   }
 
-  private doColor(id: TForegroundColor) {
+  private doColor(color?: string) {
     // Ferme le popover du palette
     app.$popover.remove(this.palettePopoverId);
 
@@ -615,14 +674,13 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
     let newNode: HTMLSpanElement | Text;
 
-    // Si un ID est donné
-    if (id) {
+    // Si une couleur est donnée
+    if (color) {
       // Crée un nouvel élément de type <span>
       newNode = document.createElement('span');
 
-      // Ajoute des classes à nouvel élément <span>
-      newNode.classList.add('mn-rich-text-custom-color');
-      newNode.classList.add(`mn-rich-text-custom-color-${id || 'none'}`);
+      // Applique directement le style de couleur sur l'élément <span>
+      newNode.style.color = color;
 
       // Définit le texte du nouvel élément <span>
       newNode.textContent = selectedText;
@@ -652,14 +710,14 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
       } else {
         // Insère le nouvel élément avant l'élément <span> de début
         const startSpan = range.startContainer.parentNode!;
-        const parentNode = startSpan.parentElement!;
+        let parentNode = startSpan.parentElement!;
         parentNode.insertBefore(newNode, startSpan);
 
         // Supprime les éléments <span> existants avec la même classe à l'intérieur du nœud sélectionné
         const selectedNode = range.commonAncestorContainer.parentElement!;
-        const existingSpans = selectedNode.querySelectorAll('span.mn-rich-text-custom-color');
+        const existingSpans = selectedNode.querySelectorAll<HTMLSpanElement>('span');
         existingSpans.forEach((span) => {
-          if (span !== newNode) parentNode.removeChild(span);
+          if (span !== newNode && span.style.color) parentNode.removeChild(span);
         });
       }
     } else {
@@ -669,7 +727,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
       const selectedNode = range.commonAncestorContainer.parentElement!;
 
       // Récupère les éléments <span> existants avec la même classe à l'intérieur du nœud sélectionné
-      const existingSpans = selectedNode.querySelectorAll('span.mn-rich-text-custom-color');
+      const existingSpans = selectedNode.querySelectorAll<HTMLSpanElement>('span');
 
       existingSpans.forEach((span) => {
         // Crée une plage pour l'élément <span> actuel
@@ -683,8 +741,8 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
           // Clone l'élément <span> et divise le texte aux points d'intersection
           const spanClone = span.cloneNode(true);
           const remainingText = document.createElement('span');
-          remainingText.textContent = spanClone.textContent!.substring(intersection.endOffset);
-          spanClone.textContent = spanClone.textContent!.substring(0, intersection.startOffset);
+          remainingText.textContent = (spanClone.textContent || '').substring(intersection.endOffset);
+          spanClone.textContent = (spanClone.textContent || '').substring(0, intersection.startOffset);
 
           // Insère le span cloné avant l'élément original
           if (spanClone.textContent.length > 0) {
@@ -698,7 +756,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
         }
       });
 
-      // Supprime le contenu de la
+      // Supprime le contenu de la range
       range.deleteContents();
       range.insertNode(newNode);
     }
@@ -754,6 +812,120 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
       selectedElement.target = '_blank';
       selectedElement.rel = 'noopener noreferrer';
     }
+  }
+
+  private doCallout() {
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+
+    const range = selection.getRangeAt(0);
+    let blockquoteElement = this.findAncestor(range.commonAncestorContainer, 'blockquote');
+
+    if (blockquoteElement?.classList.contains('mn-blockquote-callout')) {
+      // Supprimer l'icône SVG et le contenu avant de retirer le blockquote
+      const iconContainer = blockquoteElement.querySelector('.mn-blockquote-callout-icon');
+      if (iconContainer) {
+        blockquoteElement.removeChild(iconContainer); // Retirer le conteneur d'icône
+      }
+
+      const contentContainer = blockquoteElement.querySelector('.mn-blockquote-callout-content');
+      if (contentContainer) {
+        const innerContentContainers = contentContainer.querySelectorAll('.mn-blockquote-callout-inner-content');
+        const parent = blockquoteElement.parentNode!;
+
+        innerContentContainers.forEach((innerContentContainer) => {
+          // Retirer le contenu de l'inner-content et l'insérer avant le blockquote
+          while (innerContentContainer.firstChild) {
+            parent.insertBefore(innerContentContainer.firstChild, blockquoteElement);
+          }
+          contentContainer.removeChild(innerContentContainer); // Supprimer le conteneur inner-content
+        });
+
+        blockquoteElement.removeChild(contentContainer); // Supprimer le conteneur de contenu
+        parent.removeChild(blockquoteElement); // Supprimer le blockquote
+      }
+    } else {
+      // Créer un nouveau blockquote avec la classe 'mn-blockquote-callout'
+      document.execCommand('formatBlock', false, 'blockquote');
+
+      const newRange = selection.getRangeAt(0);
+      blockquoteElement = this.findAncestor(newRange.commonAncestorContainer, 'blockquote');
+      if (blockquoteElement) {
+        blockquoteElement.classList.add('mn-blockquote-callout');
+
+        // Ajouter les conteneurs d'icône et de contenu
+        this.addIconToBlockquote(blockquoteElement, 'toolkit-info-circle');
+      }
+    }
+
+    app.$popover.removeAll();
+    this.onInput();
+  }
+
+  private addIconToBlockquote(blockquoteElement: HTMLElement, iconId: TIconId) {
+    // Obtenir l'élément SVG à partir de l'application
+    const iconJSX = app.$icon.get(iconId);
+
+    // Créer un conteneur pour l'icône
+    const iconContainer = document.createElement('div');
+    iconContainer.className = 'mn-blockquote-callout-icon';
+
+    // Rendre le SVG dans le conteneur de l'icône
+    const root = createRoot(iconContainer);
+    root.render(iconJSX);
+
+    // Insérer le conteneur de l'icône dans le blockquote
+    blockquoteElement.appendChild(iconContainer);
+
+    // Créer un conteneur pour le contenu principal
+    const contentContainer = document.createElement('div');
+    contentContainer.className = 'mn-blockquote-callout-content';
+
+    // Créer une div intermédiaire pour contenir le contenu réel
+    const innerContentContainer = document.createElement('div');
+    innerContentContainer.className = 'mn-blockquote-callout-inner-content';
+
+    // Déplacer le contenu existant dans la div intermédiaire
+    while (blockquoteElement.firstChild && blockquoteElement.firstChild !== iconContainer) {
+      innerContentContainer.appendChild(blockquoteElement.firstChild);
+    }
+
+    // Insérer la div intermédiaire dans le conteneur principal de contenu
+    contentContainer.appendChild(innerContentContainer);
+
+    // Insérer le conteneur de contenu dans le blockquote
+    blockquoteElement.appendChild(contentContainer);
+  }
+
+  // Example on how to replace the icon
+  // => implement an icon selector
+  private onCalloutIconClick(_iconElement: HTMLElement) {
+    // Trouver le conteneur de l'icône
+    /* const iconContainer = iconElement.closest('.mn-blockquote-callout-icon');
+
+    if (iconContainer) {
+      // Obtenir le nouveau JSX.Element de l'icône
+      const newIconJSX = app.$icon.get('toolkit-info-edit');
+
+      // Vider le conteneur de l'icône actuel
+      iconContainer.innerHTML = '';
+
+      // Rendre le nouvel élément JSX dans le conteneur
+      render(newIconJSX, iconContainer);
+
+      this.onInput();
+    } */
+  }
+
+  // Fonction utilitaire pour trouver l'ancêtre le plus proche de type tagName
+  private findAncestor(node: Node, tagName: string): HTMLElement | null {
+    while (node) {
+      if (node.nodeType === 1 && (node as HTMLElement).tagName.toLowerCase() === tagName.toLowerCase()) {
+        return node as HTMLElement;
+      }
+      node = node.parentNode!;
+    }
+    return null;
   }
 
   public doRemoveFormat() {

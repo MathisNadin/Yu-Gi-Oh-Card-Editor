@@ -1,11 +1,11 @@
 import { isEmail } from 'mn-tools';
-import { ITextFieldProps, ITextFieldState, TextField } from './TextField';
+import { ITextInputFieldProps, ITextInputFieldState, TextInputField } from './TextInputField';
 
-interface IEmailFieldProps extends ITextFieldProps {}
+interface IEmailFieldProps extends ITextInputFieldProps {}
 
-interface IEmailFieldState extends ITextFieldState {}
+interface IEmailFieldState extends ITextInputFieldState {}
 
-export class EmailField extends TextField<IEmailFieldProps, IEmailFieldState> {
+export class EmailField extends TextInputField<IEmailFieldProps, IEmailFieldState> {
   public static get defaultProps(): IEmailFieldProps {
     return {
       ...super.defaultProps,
@@ -16,8 +16,8 @@ export class EmailField extends TextField<IEmailFieldProps, IEmailFieldState> {
   public constructor(props: IEmailFieldProps) {
     super(props, 'email');
     this.validators.unshift((field) => {
-      if (!isEmail((field as EmailField).value)) return field.addError("Ceci n'est pas un email");
-      field.validate();
+      if (isEmail(field.value)) field.validate();
+      else field.addError("Ceci n'est pas un email");
     });
   }
 }

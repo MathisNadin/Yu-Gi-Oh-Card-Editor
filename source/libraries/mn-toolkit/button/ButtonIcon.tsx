@@ -1,3 +1,4 @@
+import { ButtonHTMLAttributes } from 'react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TForegroundColor, TBackgroundColor } from '../themeSettings';
 import { TIconId } from '../icon';
@@ -8,6 +9,7 @@ interface IButtonIconProps extends IContainableProps {
   bg?: TBackgroundColor;
   size?: 'normal' | 'small';
   pressed?: boolean;
+  buttonType?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
 }
 
 interface IButtonIconState extends IContainableState {}
@@ -20,10 +22,11 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> 
       disabled: false,
       pressed: false,
       size: 'normal',
+      buttonType: 'button',
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-button-icon'] = true;
     classes['pressed'] = !!this.props.pressed;
@@ -33,7 +36,11 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState> 
     return classes;
   }
 
-  public render() {
-    return <div {...this.renderAttributes()}>{app.$icon.get(this.props.icon)}</div>;
+  public override render() {
+    return (
+      <button {...this.renderAttributes()} type={this.props.buttonType}>
+        {app.$icon.get(this.props.icon)}
+      </button>
+    );
   }
 }

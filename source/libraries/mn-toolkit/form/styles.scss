@@ -8,45 +8,32 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
   vertical-align: top;
   position: relative;
 
-  .field-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-
   .input-wrapper {
     height: $inputHeight;
     min-height: $inputHeight;
     max-height: $inputHeight;
     padding: calc($themeDefaultSpacing/2);
-    display: flex;
-    flex: 1;
-    gap: calc($themeDefaultSpacing/2);
 
-    border: $fieldBorderSize solid;
-    border-color: #c3c3c3;
+    border: $fieldBorderSize solid #c3c3c3;
     border-radius: calc($themeDefaultBorderRadius / 2);
     @include bg(1);
     transition: all 0.4s ease;
 
-    &.multilines {
-      height: auto;
+    > .mn-container-inside {
+      gap: calc($themeDefaultSpacing/2);
     }
 
-    .icon {
-      &.status-icon {
-        margin-right: 8px;
-        width: $contentHeight;
-        height: $contentHeight;
-        min-width: $contentHeight;
-        min-height: $contentHeight;
-        line-height: $contentHeight;
-        text-align: center;
-        color: black(0.5);
-        margin: 0;
-        color: black(0.15);
-      }
+    .status-icon {
+      position: relative;
+      top: -3px;
+      margin: 0;
+      width: $contentHeight;
+      height: $contentHeight;
+      min-width: $contentHeight;
+      min-height: $contentHeight;
+      line-height: $contentHeight;
+      text-align: center;
+      color: black(0.15);
     }
 
     input {
@@ -72,6 +59,7 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
       @include fg(1);
       background-color: transparent;
       border: none;
+      border-radius: 0;
       line-height: 20px;
       min-width: 100%;
       padding: 0;
@@ -127,13 +115,28 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
     }
   }
 
-  &.has-value {
-    .prop-icon {
-      display: inline-block;
+  .input-wrapper {
+    > .mn-container-inside {
+      > .prop-icon-container-button,
+      > .prop-icon {
+        margin: -$themeDefaultSpacing * 0.5 0;
+      }
     }
   }
 
-  &.focus {
+  &:not(.mn-focus) {
+    .prop-icon {
+      visibility: hidden;
+    }
+  }
+
+  &.has-value {
+    .prop-icon {
+      visibility: visible;
+    }
+  }
+
+  &.mn-focus {
     .input-wrapper {
       box-shadow: 0 0 10px rgba($primary, 0.26) inset;
       border-color: $primary;

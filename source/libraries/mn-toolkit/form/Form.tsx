@@ -1,19 +1,31 @@
-import { classNames } from 'mn-tools';
-import { IFormFieldListener, TFormField } from '.';
+import { createRef } from 'react';
 import { Container, IContainerProps, IContainerState } from '../container';
+import { IFormFieldListener, TFormField } from './FormField';
 
 export interface IFormProps extends IContainerProps {
-  onSubmit?: () => void | Promise<void>;
-  onChange?: (form: Form) => void | Promise<void>;
+  onFieldChange?: (field: TFormField) => void | Promise<void>;
+  onFieldSubmit?: (field: TFormField) => void | Promise<void>;
 }
 
-export interface IFormState extends IContainerState {
-  valid: boolean;
-}
+interface IFormState extends IContainerState {}
 
 export class Form extends Container<IFormProps, IFormState> implements IFormFieldListener {
-  private formElement!: HTMLFormElement;
+  public formRef = createRef<HTMLFormElement>();
   private fields: TFormField[] = [];
+
+  public get hasError() {
+    for (const field of this.fields) {
+      if (field.hasError) return true;
+    }
+    return false;
+  }
+
+  public get isValid() {
+    for (const field of this.fields) {
+      if (!field.isValid) return false;
+    }
+    return true;
+  }
 
   public static get defaultProps(): Partial<IFormProps> {
     return {
@@ -29,28 +41,31 @@ export class Form extends Container<IFormProps, IFormState> implements IFormFiel
     super(props);
   }
 
-  public componentDidMount() {
-    const children = this.formElement!.querySelectorAll('.mn-form-field *');
+  public override componentDidMount() {
+    super.componentDidMount();
+    if (!this.formRef.current) return;
+
+    this.formRef.current.addEventListener('submit', this.defaultSubmitListener);
+
+    const children = this.formRef.current.querySelectorAll<HTMLDivElement>('.mn-form-field');
     const childrenComponents: TFormField[] = [];
-    children.forEach((x) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((x as any)._component) childrenComponents.push((x as any)._component as TFormField);
+    children.forEach((child) => {
+      const reactComponent = this.findReactComponent<TFormField>(child);
+      if (reactComponent) childrenComponents.push(reactComponent);
     });
+
     for (const field of childrenComponents) {
       this.fields.push(field);
       field.addListener(this);
     }
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     this.fields = [];
-    this.formElement.removeEventListener('submit', this.defaultSubmitListener);
-  }
-
-  public registerFormElement(e: HTMLFormElement | null) {
-    if (!e) return;
-    this.formElement = e;
-    e.addEventListener('submit', this.defaultSubmitListener);
+    if (this.formRef.current) {
+      this.formRef.current.removeEventListener('submit', this.defaultSubmitListener);
+    }
   }
 
   private defaultSubmitListener = (e: Event) => {
@@ -58,11 +73,23 @@ export class Form extends Container<IFormProps, IFormState> implements IFormFiel
     return false;
   };
 
-  public formFieldValidated(_field: TFormField) {
-    if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(this));
+  private findReactComponent<T>(domNode: HTMLDivElement): T | null {
+    const key = Object.keys(domNode).find(
+      (key) => key.startsWith('__reactFiber$') || key.startsWith('__reactInternalInstance$')
+    );
+    const internalInstance = (
+      domNode as unknown as Record<
+        typeof key,
+        {
+          return?: {
+            stateNode: T;
+          };
+        }
+      >
+    )[key];
+    if (internalInstance?.return?.stateNode) return internalInstance.return.stateNode;
+    return null;
   }
-
-  public formFieldSubmit(_field: TFormField) {}
 
   public async validate() {
     for (const field of this.fields) {
@@ -70,42 +97,25 @@ export class Form extends Container<IFormProps, IFormState> implements IFormFiel
     }
   }
 
-  public submit() {
-    if (this.props.onSubmit) app.$errorManager.handlePromise(this.props.onSubmit());
+  public formFieldValidated(field: TFormField) {
+    if (!this.props.onFieldChange) return;
+    app.$errorManager.handlePromise(this.props.onFieldChange(field));
   }
 
-  public get hasError() {
-    for (const field of this.fields) {
-      if (field.hasError) return true;
-    }
-    return false;
+  public formFieldSubmit(field: TFormField) {
+    if (!this.props.onFieldSubmit) return;
+    app.$errorManager.handlePromise(this.props.onFieldSubmit(field));
   }
 
-  public get isValid() {
-    for (const field of this.fields) {
-      if (!field.isValid) return false;
-    }
-    return !this.hasError;
-  }
-
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-form'] = true;
-    classes['mn-fieldset'] = true;
-    if (this.hasError) classes['has-error'] = true;
-    if (this.isValid) classes['is-valid'] = true;
     return classes;
   }
 
   public render() {
     return (
-      <form
-        ref={(c) => this.registerFormElement(c)}
-        name={this.props.name}
-        id={this.props.nodeId}
-        title={this.props.hint}
-        className={classNames(this.renderClasses())}
-      >
+      <form ref={this.formRef} {...this.renderAttributes()}>
         {this.inside}
       </form>
     );

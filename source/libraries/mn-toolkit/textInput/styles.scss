@@ -24,6 +24,8 @@
 
 .mn-form-field.mn-field-password {
   .input-wrapper {
-    align-items: center;
+    > .mn-container-inside {
+      align-items: center;
+    }
   }
 }

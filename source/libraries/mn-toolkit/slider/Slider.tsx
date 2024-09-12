@@ -1,5 +1,5 @@
 import { TForegroundColor } from '../themeSettings';
-import { Containable, IContainableProps, IContainableState } from '../containable';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { classNames } from 'mn-tools';
 import { createRef } from 'react';
 
@@ -55,7 +55,13 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     };
   }
 
-  public componentDidUpdate(prevProps: ISliderProps) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ISliderProps>,
+    prevState: Readonly<ISliderState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (
       (!this.props.onChange || prevProps.defaultValue === this.props.defaultValue) &&
       prevProps.step === this.props.step
@@ -129,7 +135,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     return ((mark - min) / (max - min)) * 100;
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-slider'] = true;
     if (this.props.color) classes[`mn-color-${this.props.color}`] = true;

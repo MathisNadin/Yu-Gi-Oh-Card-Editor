@@ -94,7 +94,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
     if (!this.state.settings) return <Spinner />;
     return [
       <HorizontalStack key='default-render-path' verticalItemAlignment='middle'>
-        <Icon className='field-icon' size={24} iconId='toolkit-millennium-puzzle' color='1' />
+        <Icon className='field-icon' size={24} icon='toolkit-millennium-puzzle' color='1' />
         {app.$device.isDesktop && (
           <FileInput
             fill
@@ -107,7 +107,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
       </HorizontalStack>,
 
       <HorizontalStack key='default-artwork-path' verticalItemAlignment='middle'>
-        <Icon className='field-icon' size={24} iconId='toolkit-image' color='1' />
+        <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
         {app.$device.isDesktop && (
           <FileInput
             fill
@@ -120,7 +120,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
       </HorizontalStack>,
 
       <HorizontalStack key='default-img-import' verticalItemAlignment='middle'>
-        <Icon className='field-icon' size={24} iconId='toolkit-image-sync' color='1' />
+        <Icon className='field-icon' size={24} icon='toolkit-image-sync' color='1' />
         {app.$device.isDesktop && (
           <FileInput
             fill

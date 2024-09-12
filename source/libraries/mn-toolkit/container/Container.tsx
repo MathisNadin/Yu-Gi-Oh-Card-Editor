@@ -1,6 +1,5 @@
 import { JSXElementChildren } from '../react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
-import { createRef } from 'react';
 
 export type TContainerLayout = 'vertical' | 'horizontal' | 'grid';
 
@@ -32,12 +31,6 @@ export interface IContainerProps extends IContainableProps {
 export interface IContainerState extends IContainableState {}
 
 export class Container<PROPS extends IContainerProps, STATE extends IContainerState> extends Containable<PROPS, STATE> {
-  public containerRef = createRef<HTMLDivElement>();
-
-  public get base() {
-    return this.containerRef;
-  }
-
   public static get defaultProps(): IContainerProps {
     return {
       ...super.defaultProps,
@@ -45,7 +38,7 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-container'] = true;
     if (this.props.layout) classes[`mn-layout-${this.props.layout}-stack`] = true;
@@ -63,7 +56,7 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
 
   public render() {
     return (
-      <div {...this.renderAttributes()} ref={this.containerRef}>
+      <div {...this.renderAttributes()} ref={this.base}>
         {this.inside}
       </div>
     );

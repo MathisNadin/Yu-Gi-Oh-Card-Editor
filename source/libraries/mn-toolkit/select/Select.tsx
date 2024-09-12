@@ -2,6 +2,7 @@ import { classNames } from 'mn-tools';
 import { Icon } from '../icon';
 import { IActionsPopoverAction } from '../popover';
 import { Container, IContainerProps, IContainerState } from '../container';
+import { TDidUpdateSnapshot } from '../containable';
 
 export function DefaultSelectLabelDecorator(label: string) {
   return <span>{label}</span>;
@@ -57,19 +58,24 @@ export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectStat
     this.state = { ...this.state, value: props.defaultValue as ID, items: props.items };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ISelectProps<ID>>,
+    prevState: Readonly<ISelectState<ID>>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.defaultValue !== this.state.value || this.props.items !== this.state.items) {
-      this.setState({ value: this.props.defaultValue as ID, items: this.props.items });
+      this.setState({ value: this.props.defaultValue!, items: this.props.items });
     }
   }
 
   private generatePopOverActions() {
-    let result: IActionsPopoverAction<ID>[] = [];
-    let listItem: IActionsPopoverAction<ID>;
-    let first: IActionsPopoverAction<ID>;
-    if (!this.state.items) return result;
-    this.state.items.forEach((item) => {
-      listItem = {
+    const result: IActionsPopoverAction<ID>[] = [];
+    if (!this.state.items?.length) return result;
+
+    for (const item of this.state.items) {
+      const listItem: IActionsPopoverAction<ID> = {
         id: item.id,
         label: item.label,
         selected: this.state.value === item.id,
@@ -77,22 +83,21 @@ export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectStat
         separator: item.separator,
         disabled: item.disabled,
       };
+
       listItem.onTap = ((x) => () => {
         app.$errorManager.handlePromise(this.selectItem(x));
       })(listItem);
-      if (!first) first = listItem as IActionsPopoverAction<ID>;
+
       result.push(listItem);
-    });
+    }
     return result;
   }
 
   private async selectItem(item: IActionsPopoverAction<ID>) {
     await this.hideList();
-    const value = item.id as ID;
-    this.setState(
-      { value },
-      () => !!this.props.onChange && app.$errorManager.handlePromise(this.props.onChange(this.state.value))
-    );
+    await this.setStateAsync({ value: item.id as ID });
+    if (!this.props.onChange) return;
+    await this.props.onChange(this.state.value);
   }
 
   private async hideList() {
@@ -100,13 +105,11 @@ export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectStat
     this.container.blur();
   }
 
-  public showListItems(event: React.MouseEvent) {
+  public showListItems(_event: React.MouseEvent) {
     if (this.props.disabled) return;
     let actions = this.generatePopOverActions();
     if (actions.length === 0) return;
-    const targetRectangle = this.container.getBoundingClientRect();
-    app.$popover.actions(event, {
-      targetRectangle,
+    app.$popover.actions(this.container.getBoundingClientRect(), {
       syncWidth: true,
       actions,
       className: 'mn-select-popover',
@@ -126,11 +129,10 @@ export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectStat
     return actions.find((action) => action.selected);
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-select'] = true;
-    classes['mn-containable-item-fill'] = !!this.props.fill;
-    classes['disabled'] = !!this.props.disabled;
+    classes['mn-disabled'] = !!this.props.disabled;
     return classes;
   }
 
@@ -150,7 +152,7 @@ export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectStat
         </div>
 
         <span className='drop-icon' onClick={(e) => this.showListItems(e)}>
-          <Icon iconId='toolkit-angle-down' />
+          <Icon icon='toolkit-angle-down' />
         </span>
       </div>
     );

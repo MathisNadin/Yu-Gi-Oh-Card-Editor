@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { Button, ButtonIcon } from '../button';
+import { Button } from '../button';
 import { IContainableProps, Containable, IContainableState } from '../containable/Containable';
 import { HorizontalStack } from '../container/HorizontalStack';
 import { VerticalStack } from '../container/VerticalStack';
@@ -7,6 +7,8 @@ import { Progress } from '../progress';
 import { TForegroundColor } from '../themeSettings';
 import { Typography } from '../typography/Typography';
 import { IFilePickerOptions } from '../filePicker';
+import { Icon } from '../icon';
+import { TDidUpdateSnapshot } from '../containable';
 
 // Fourni sur File par Electron, là pour éviter les erreurs de typing en son absence
 interface FileWithPath extends File {
@@ -67,7 +69,13 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       };
   }
 
-  public componentDidUpdate(_prevProps: Readonly<IFileUploaderProps>) {
+  public override componentDidUpdate(
+    prevProps: Readonly<IFileUploaderProps>,
+    prevState: Readonly<IFileUploaderState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.files !== this.state.files) {
       this.setState({ files: this.props.files! });
     }
@@ -88,7 +96,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
           for (const orgFile of fileListArray) {
             this.setState({ loadingProgress: this.state.loadingProgress + 1 });
             try {
-              const url = await app.$api.fileToBuffer(orgFile, 'url');
+              const url = await app.$api.fileToDataURL(orgFile);
               const match = orgFile.name?.match(/\.[0-9a-z]+$/i);
               const file: IFile = {
                 url,
@@ -127,7 +135,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
     this.fireOnFilesChanged();
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-file-uploader'] = true;
     return classes;
@@ -175,11 +183,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
                   </HorizontalStack>
 
                   <HorizontalStack>
-                    <ButtonIcon
-                      icon='toolkit-close'
-                      disabled={this.state.loadingFiles}
-                      onTap={() => this.onRemoveFile(i)}
-                    />
+                    <Icon icon='toolkit-close' disabled={this.state.loadingFiles} onTap={() => this.onRemoveFile(i)} />
                   </HorizontalStack>
                 </HorizontalStack>
               ))}
@@ -235,10 +239,10 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
   private async onPickFile() {
     const options: IFilePickerOptions = {
       multiple: this.props.multiple,
-      outputType: 'files',
+      accept: this.props.accept,
     };
-    if (this.props.accept) options.accept = this.props.accept;
-    const files = (await app.$filePicker.show(options)) as FileList;
+    const files = await app.$filePicker.pickFileList(options);
+    if (!files) return;
     await this.onFileListImported(files);
   }
 }

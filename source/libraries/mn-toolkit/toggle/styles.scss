@@ -1,18 +1,19 @@
 @mixin themeToggle() {
   @include fx(background-color);
 
-  > .toggle {
+  .toggle {
     display: inline-block;
     min-width: 32px;
     max-width: 32px;
     @include bg(3);
     border-radius: 10px;
 
-    > .handle {
+    .handle {
       display: inline-block;
       @include bg(1);
       width: 12px;
       height: 12px;
+      margin: 3px;
       border-radius: 50%;
       @include fx(margin-left);
       position: relative;
@@ -22,15 +23,15 @@
   }
 
   &:hover {
-    > .toggle {
+    .toggle {
       @include bg(4);
     }
   }
 
   &.checked {
-    > .toggle {
+    .toggle {
       background: $primary;
-      > .handle {
+      .handle {
         margin-left: 15px;
       }
     }
@@ -38,16 +39,16 @@
 
   &.disabled {
     pointer-events: none;
-    > .toggle {
+    .toggle {
       @include border-color(3);
-      > .handle {
+      .handle {
         @include bg(3);
       }
     }
   }
 
   .error & {
-    > .toggle {
+    .toggle {
       border-color: $negative;
       border: 1px solid $negative;
       background-color: rgba($negative, 0.1);

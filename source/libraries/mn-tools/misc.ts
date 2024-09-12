@@ -1,30 +1,58 @@
 import { isEmpty, isBoolean, isString, isObject } from './is';
 import { each } from './objects';
 
-export interface ICrop {
+export interface ICropBase64Options {
+  /**
+   * Source of the original image (base64 string or URL)
+   */
+  src: string;
+
+  /**
+   * X position of the crop area as a percentage of the total image width
+   */
   x: number;
+
+  /**
+   * Y position of the crop area as a percentage of the total image height
+   */
   y: number;
+
+  /**
+   * Width of the crop area as a percentage of the total image width
+   */
   width: number;
+
+  /**
+   * Height of the crop area as a percentage of the total image height
+   */
   height: number;
+
+  /**
+   * MIME type of the output image (e.g., 'image/jpeg', 'image/png')
+   */
+  mimeType?: string;
 }
 
-export async function getCroppedArtworkBase64(src: string, crop: ICrop) {
-  if (!src?.length) return '';
+export async function getCroppedArtworkBase64(options: ICropBase64Options) {
+  if (!options.src?.length) return '';
+
   const image = new Image();
-  image.src = src;
-  await new Promise<void>((resolve) => {
-    image.onload = () => {
-      resolve();
-    };
+  image.src = options.src;
+  await new Promise<void>((resolve, reject) => {
+    image.onload = () => resolve();
+    image.onerror = (err) => reject(err);
   });
+
   const canvas = document.createElement('canvas');
-  canvas.width = (image.width * crop.width) / 100;
-  canvas.height = (image.height * crop.height) / 100;
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  canvas.width = (image.width * options.width) / 100;
+  canvas.height = (image.height * options.height) / 100;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+
   ctx.drawImage(
     image,
-    (image.width * crop.x) / 100,
-    (image.height * crop.y) / 100,
+    (image.width * options.x) / 100,
+    (image.height * options.y) / 100,
     canvas.width,
     canvas.height,
     0,
@@ -32,7 +60,7 @@ export async function getCroppedArtworkBase64(src: string, crop: ICrop) {
     canvas.width,
     canvas.height
   );
-  return canvas.toDataURL();
+  return canvas.toDataURL(options.mimeType);
 }
 
 /**
@@ -265,7 +293,7 @@ export function md5(string: string) {
     for (lCount = 0; lCount <= 3; lCount++) {
       lByte = (lValue >>> (lCount * 8)) & 255;
       wordToHexValueTemp = `0${lByte.toString(16)}`;
-      wordToHexValue = wordToHexValue + wordToHexValueTemp.substr(wordToHexValueTemp.length - 2, 2);
+      wordToHexValue = wordToHexValue + wordToHexValueTemp.substring(wordToHexValueTemp.length - 2, 2);
     }
     return wordToHexValue;
   }
@@ -860,12 +888,12 @@ export function classNames(...args: any[]): string {
 
 export function dataFromDataUrl(dataUrl: string) {
   const ipos = dataUrl.indexOf(',');
-  return dataUrl.substr(ipos + 1);
+  return dataUrl.substring(ipos + 1);
 }
 
 export function mimeTypeFromDataUrl(dataUrl: string) {
   const ipos = dataUrl.indexOf(',');
-  return dataUrl.substr(5, ipos - 12);
+  return dataUrl.substring(5, ipos - 12);
 }
 
 const MIME_TO_EXT: { [mime: string]: string[] } = {
@@ -1043,6 +1071,19 @@ const MIME_TO_EXT: { [mime: string]: string[] } = {
   'application/winhlp': ['hlp'],
   'application/wsdl+xml': ['wsdl'],
   'application/wspolicy+xml': ['wspolicy'],
+  'application/wps-office.doc': ['wps'],
+  'application/wps-office.docx': ['wpt'],
+  'application/wps-office.pdf': ['pdf'],
+  'application/wps-office.xls': ['et'],
+  'application/wps-office.xlsx': ['ett'],
+  'application/wps-office.ppt': ['dps'],
+  'application/wps-office.pptx': ['dpt'],
+  'application/wps-office.template.doc': ['dot'],
+  'application/wps-office.template.xls': ['xlt'],
+  'application/wps-office.template.ppt': ['pot'],
+  'application/wps-office.template.docx': ['dotx'],
+  'application/wps-office.template.xlsx': ['xltx'],
+  'application/wps-office.template.pptx': ['potx'],
   'application/xaml+xml': ['xaml'],
   'application/xcap-att+xml': ['xav'],
   'application/xcap-caps+xml': ['xca'],
@@ -1185,11 +1226,19 @@ const MIME_TO_EXT: { [mime: string]: string[] } = {
   'video/quicktime': ['qt', 'mov'],
   'video/webm': ['webm'],
 };
+
 export function mimetype(filename: string) {
-  let match = /\.(.+)$/.exec(filename);
-  if (match)
-    for (let mime in MIME_TO_EXT) {
-      if (MIME_TO_EXT[mime].indexOf(match[1]) !== -1) return mime;
+  const match = /\.(.+)$/.exec(filename);
+  if (match) {
+    for (const mime in MIME_TO_EXT) {
+      if (MIME_TO_EXT[mime].includes(match[1])) return mime;
     }
+  }
   return 'unknown';
+}
+
+export function mimetypeToExt(mimetype: string) {
+  const exts = MIME_TO_EXT[mimetype];
+  if (!exts.length) return '';
+  return exts[0];
 }

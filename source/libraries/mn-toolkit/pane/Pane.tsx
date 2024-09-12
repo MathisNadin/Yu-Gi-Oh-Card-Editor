@@ -17,7 +17,7 @@ export class Pane<P extends IPaneProps, S extends IPaneState> extends Container<
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-pane'] = true;
     if (!this.props.layout) {

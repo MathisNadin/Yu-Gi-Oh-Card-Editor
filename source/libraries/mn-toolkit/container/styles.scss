@@ -40,6 +40,25 @@ $scrollBarSize: 5px;
 }
 
 .mn-container {
+  &.mn-layout-gutter {
+    > .mn-container-inside {
+      gap: $themeDefaultSpacing;
+    }
+  }
+
+  &.mn-layout-wrap {
+    > .mn-container-inside {
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    &.mn-layout-gutter {
+      > .mn-container-inside {
+        row-gap: calc($themeDefaultSpacing / 2);
+      }
+    }
+  }
+
   &.mn-layout-item-valign-top {
     > .mn-container-inside {
       align-items: flex-start;
@@ -127,19 +146,6 @@ $scrollBarSize: 5px;
       > .mn-container-inside {
         justify-content: flex-end;
       }
-    }
-  }
-
-  &.mn-layout-wrap {
-    > .mn-container-inside {
-      flex-wrap: wrap;
-      align-items: center;
-    }
-  }
-
-  &.mn-layout-gutter {
-    > .mn-container-inside {
-      gap: $themeDefaultSpacing;
     }
   }
 
@@ -291,6 +297,10 @@ $COLUMNS: (
   }
 
   @include gridset('-s');
+
+  @include on(small) {
+    @include gridset('-s');
+  }
 
   @include on(medium) {
     @include gridset('-m');

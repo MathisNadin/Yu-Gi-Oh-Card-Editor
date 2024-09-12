@@ -1,9 +1,15 @@
 import { Observable, extend, isUndefined } from 'mn-tools';
-import { IRouterListener, IResolvedState, IState, IStateParameters, IStateCrumb } from '.';
-import { ConfirmationDialog } from '../popup';
+import {
+  IRouterListener,
+  IResolvedState,
+  IState,
+  IStateCrumb,
+  TRouterState,
+  IRouterHrefParams,
+  TRouterParams,
+} from '.';
 
 export class RouterService extends Observable<IRouterListener> {
-  // private historyCursor: number;
   private currentResolvedState!: IResolvedState;
   private states: { [name: string]: IState } = {};
   private resolving!: boolean;
@@ -11,23 +17,13 @@ export class RouterService extends Observable<IRouterListener> {
 
   public goto: IRouter = {} as IRouter;
 
-  /**
-   * Return the current state.
-   *
-   * @returns {State}
-   */
   public get currentState() {
     if (!this.currentResolvedState) return undefined;
     return this.currentResolvedState.state;
   }
 
-  /**
-   * Returns the parameters object for the current state.
-   *
-   * @returns parameters
-   */
-  public get parameters(): { [name: string]: string } {
-    return this.currentResolvedState.parameters;
+  public getParameters<T extends TRouterState = TRouterState>() {
+    return this.currentResolvedState.parameters as TRouterParams<T>;
   }
 
   public get hasHistory() {
@@ -54,9 +50,6 @@ export class RouterService extends Observable<IRouterListener> {
     return this.states[name];
   }
 
-  /**
-   * Default constructor.
-   */
   public constructor() {
     super();
     window.addEventListener('hashchange', () => this.documentUrlToState());
@@ -78,7 +71,7 @@ export class RouterService extends Observable<IRouterListener> {
     this.dispatch('routerStateLoaded', resolvedState);
   }
 
-  public documentUrlToState(fallBackState?: keyof IRouter) {
+  public documentUrlToState(fallBackState?: TRouterState) {
     let resolvedState = this.resolvePath();
     if (resolvedState) {
       app.$errorManager.handlePromise(this.resolveState(resolvedState));
@@ -93,42 +86,49 @@ export class RouterService extends Observable<IRouterListener> {
     return resolvedState.state.name === stateName;
   }
 
-  /**
-   * Move the view to a new specific state.
-   *
-   * @param {State} state
-   * @param {mixed} params
-   */
-  public go(stateName: string, params: object = {}) {
-    this.go_async(stateName, params).catch((e) => app.$errorManager.trigger(e));
-  }
+  public getLink(options: IRouterHrefParams) {
+    let { state, params } = options;
+    params = params || {};
 
-  public async go_async(stateName: string, params: object = {}) {
-    let currentState = this.states[stateName];
-    if (!currentState) throw new Error(`No state defined for ${stateName}`);
+    const currentState = this.states[state];
+    if (!currentState) throw new Error(`No state defined for ${state}`);
+
     let path = window.location.href.replace(/#.*$/, '') + '#!' + currentState.path;
     let qs: string[] = [];
-    currentState.pathKeys.forEach((key) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (isUndefined((params as any)[key.name])) {
-        if (!key.optional) throw new Error(`param '${key.name}' for route '${stateName}' is not optional`);
+    for (const key of currentState.pathKeys) {
+      const parameters = params as TRouterParams<TRouterState>;
+      const keyName = key.name as keyof TRouterParams<TRouterState>;
+      if (isUndefined(parameters[keyName])) {
+        if (!key.optional) throw new Error(`param '${keyName}' for route '${state}' is not optional`);
         return;
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      let value = encodeURIComponent((params as any)[key.name]);
+
+      const value = encodeURIComponent(parameters[keyName]);
+
       if (key.type === 'path') {
         path = path.replace(':' + key.name, value);
       } else {
         qs.push(key.name + '=' + value);
       }
-    });
-    if (qs.length) path += '?' + qs.join('&');
-    // if (path === location.href) return cb?cb(): undefined;
+    }
 
+    if (qs.length) path += '?' + qs.join('&');
+
+    return path;
+  }
+
+  public go<T extends TRouterState = TRouterState>(stateName: T, params?: TRouterParams<T>) {
+    params = params || ({} as TRouterParams<T>);
+    app.$errorManager.handlePromise(this.go_async(stateName, params));
+  }
+
+  public async go_async<T extends TRouterState = TRouterState>(stateName: T, params?: TRouterParams<T>) {
+    params = params || ({} as TRouterParams<T>);
+    const path = this.getLink({ state: stateName, params: params as TRouterParams<TRouterState> });
     if (this.currentResolvedState) {
       let message = this.fireStateWillLeave(this.currentResolvedState);
       if (!!message) {
-        const confirm = await ConfirmationDialog.show({ title: message });
+        const confirm = await app.$popup.confirm(message);
         if (!confirm) return;
       }
       window.history.replaceState(this.currentResolvedState.historyData, '', document.location.href);
@@ -140,7 +140,7 @@ export class RouterService extends Observable<IRouterListener> {
     if (!resolvedState) {
       throw new Error(`no state for ${stateName}`);
     }
-    resolvedState.parameters = params;
+    resolvedState.parameters = params as TRouterParams<TRouterState>;
     this.fireStateStart(resolvedState);
     await this.resolveState(resolvedState);
     app.$react.domReady(() => {
@@ -157,7 +157,7 @@ export class RouterService extends Observable<IRouterListener> {
   }
 
   public reload() {
-    this.go((this.currentState as IState).name, this.parameters);
+    this.go((this.currentState as IState).name, this.getParameters());
   }
 
   private populateState(record: IState) {
@@ -166,12 +166,12 @@ export class RouterService extends Observable<IRouterListener> {
     let iQs = record.path.indexOf('?');
     if (iQs !== -1) {
       record.path
-        .substr(iQs + 1)
+        .substring(iQs + 1)
         .split('&')
         .forEach((q) => {
           record.pathKeys.push({ name: q, type: 'qs', optional: true });
         });
-      record.path = record.path.substr(0, iQs);
+      record.path = record.path.substring(0, iQs);
     }
     let path = record.path.replace(/:([a-zA-Z]+)/g, (_, key) => {
       record.pathKeys.push({ name: key, type: 'path', optional: false });
@@ -182,34 +182,42 @@ export class RouterService extends Observable<IRouterListener> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public register(name: keyof IRouter, path: string, component: any, options: Partial<IState> = {}) {
-    // console.log('register', name, path, component.name);
-    let route = {
+  public register(name: TRouterState, path: string, component: any, options: Partial<IState> = {}) {
+    let route: IState = {
       name,
       path,
       component,
-    } as unknown as IState;
+      params: undefined!,
+      pathKeys: undefined!,
+      regExp: undefined!,
+    };
     if (options) extend(route, options);
     this.populateState(route);
+
     if (this.states[name]) throw new Error(`route ${name} already exists`);
+
     this.states[name] = route;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.goto as any)[name] = (props: object) => {
-      this.go(name, props);
+      this.go(name, props as TRouterParams<TRouterState>);
     };
+
     return route;
   }
 
-  private getStatesTrail(stateName: string, parameters: IStateParameters): IResolvedState[] {
+  private getStatesTrail<T extends TRouterState = TRouterState>(
+    stateName: T,
+    parameters: TRouterParams<T>
+  ): IResolvedState[] {
     let state = this.getByName(stateName);
     let rs: IResolvedState = {
       state,
-      parameters,
+      parameters: parameters as TRouterParams<TRouterState>,
       path: 'fake',
     };
     let parents: IResolvedState[] = [];
     if (rs.state.parentState) {
-      parents = this.getStatesTrail(rs.state.parentState, {});
+      parents = this.getStatesTrail(rs.state.parentState, {} as TRouterParams<TRouterState>);
     }
     parents.unshift(rs);
     return parents;
@@ -219,7 +227,7 @@ export class RouterService extends Observable<IRouterListener> {
     let bc = this.getStatesTrail((this.currentState as IState).name, this.currentResolvedState.parameters);
     let last!: IResolvedState;
     for (const rc of bc) {
-      if (last) rc.parameters = last.parentParameters || {};
+      if (last) rc.parameters = (last.parentParameters as TRouterParams<TRouterState>) || {};
       last = rc;
       if (!!rc.state.describe) await rc.state.describe(rc);
     }
@@ -234,30 +242,33 @@ export class RouterService extends Observable<IRouterListener> {
     return result;
   }
 
-  private testState(eligible: IState, path: string): IResolvedState {
+  private testState<T extends TRouterState = TRouterState>(
+    eligible: IState<T>,
+    path: string
+  ): IResolvedState<T> | undefined {
     let key;
     let val;
 
     let iqs = path.indexOf('?');
     let qs;
     if (iqs !== -1) {
-      qs = path.substr(iqs + 1);
-      path = path.substr(0, iqs);
+      qs = path.substring(iqs + 1);
+      path = path.substring(0, iqs);
     }
     let match = eligible.regExp.exec(path);
-    if (!match) return null as unknown as IResolvedState;
+    if (!match) return undefined;
 
-    let state: IResolvedState = {
+    let state: IResolvedState<T> = {
       path,
       state: eligible,
-      parameters: {},
+      parameters: {} as TRouterParams<T>,
       historyData: {},
     };
 
     if (qs) {
       qs.split('&').forEach((q) => {
         let [name, value] = q.split('=');
-        state.parameters[name] = value;
+        (state.parameters as { [key in typeof name]: string })[name] = value;
       });
     }
 
@@ -271,7 +282,9 @@ export class RouterService extends Observable<IRouterListener> {
         throw new Error("Failed to decode param '" + match[i] + "'");
       }
 
-      if (key) state.parameters[key.name] = val;
+      if (key) {
+        (state.parameters as { [key in typeof key.name]: string })[key.name] = val;
+      }
     }
     return state;
   }
@@ -290,12 +303,15 @@ export class RouterService extends Observable<IRouterListener> {
     return undefined as unknown as IResolvedState;
   }
 
-  public setHistoryState(name: string, value: string | number) {
-    if (this.currentResolvedState.historyData) this.currentResolvedState.historyData[name] = value;
+  public setHistoryState(name: string, value: string) {
+    if (!this.currentResolvedState.historyData) return;
+    const key = name as keyof TRouterParams<TRouterState>;
+    (this.currentResolvedState.historyData as TRouterParams<TRouterState>)[key] = value;
   }
 
   public getHistoryState(name: string) {
-    return this.currentResolvedState.historyData ? this.currentResolvedState.historyData[name] : undefined;
+    if (!this.currentResolvedState.historyData) return undefined;
+    return (this.currentResolvedState.historyData as { [key in typeof name]: string })[name];
   }
 
   private async resolveState(state: IResolvedState) {
@@ -305,9 +321,9 @@ export class RouterService extends Observable<IRouterListener> {
     if (!!this.currentResolvedState.state.describe) await this.currentResolvedState.state.describe(state);
     let breadcrumb = await this.buildBreadcrumb();
     this.currentResolvedState.breadcrumb = breadcrumb;
-    if (!!this.currentResolvedState.state.resolver)
+    if (!!this.currentResolvedState.state.resolver) {
       await this.currentResolvedState.state.resolver(this.currentResolvedState);
-    // console.log('resolved, now go', this.currentResolvedState.path);
+    }
     this.resolving = false;
     this.fireStateChanged(this.currentResolvedState);
   }

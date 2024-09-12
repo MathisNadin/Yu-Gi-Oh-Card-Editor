@@ -1,21 +1,22 @@
-import { Component, PropsWithChildren } from 'react';
-import { IHeaderCrumb, IHeaderListener } from '.';
-import { ButtonIcon } from '../button';
+import { IToolkitComponentProps, IToolkitComponentState, ToolkitComponent } from '../containable';
 import { Container } from '../container';
+import { Icon } from '../icon';
 import { Progress } from '../progress';
-import { Breadcrumb } from './Breadcrumb';
 import { IXhrProgress } from '../xhr';
+import { Breadcrumb } from './Breadcrumb';
+import { IHeaderCrumb, IHeaderListener } from '.';
 
-interface IHeaderProps extends PropsWithChildren {
+interface IHeaderProps extends IToolkitComponentProps {
   crumbs?: IHeaderCrumb[];
+  onlyShowLastCrumb?: boolean;
   title?: string;
 }
 
-interface IHeaderState {}
+interface IHeaderState extends IToolkitComponentState {}
 
-export class Header extends Component<IHeaderProps, IHeaderState> implements Partial<IHeaderListener> {
-  private downloadTotal!: number;
-  private downloadProgress!: number;
+export class Header extends ToolkitComponent<IHeaderProps, IHeaderState> implements Partial<IHeaderListener> {
+  private downloadTotal?: number;
+  private downloadProgress?: number;
 
   public static get defaultProps(): Partial<IHeaderProps> {
     return {
@@ -28,13 +29,15 @@ export class Header extends Component<IHeaderProps, IHeaderState> implements Par
     super(props);
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     app.$xhr.addListener(this);
     app.$header.addListener(this);
     app.$header.update();
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$xhr.removeListener(this);
     app.$header.removeListener(this);
   }
@@ -75,24 +78,24 @@ export class Header extends Component<IHeaderProps, IHeaderState> implements Par
     const crumbs = this.props.crumbs ? [...this.props.crumbs] : [];
     if (this.props.title) crumbs.push({ title: this.props.title });
     return (
-      <Container mainClassName='mn-header' fill={false} gutter>
+      <Container className='mn-header' fill={false} gutter>
         <div className='mn-header-content'>
           <div className='title-bar'>
-            {app.$header.parts['left'].map((part) => part.component)}
+            {app.$header.parts.left.map((part) => part.component)}
 
             <div className='center-part'>
-              <Breadcrumb crumbs={crumbs} />
-              {app.$header.parts['center'].map((part) => part.component)}
+              <Breadcrumb crumbs={crumbs} onlyShowLastCrumb={this.props.onlyShowLastCrumb} />
+              {app.$header.parts.center.map((part) => part.component)}
             </div>
 
-            {app.$header.parts['right'].map((part) => part.component)}
+            {app.$header.parts.right.map((part) => part.component)}
 
-            {this.hasPageActions() && <ButtonIcon icon='toolkit-menu-kebab' onTap={(e) => this.doShowPageActions(e)} />}
+            {this.hasPageActions() && <Icon icon='toolkit-menu-kebab' onTap={(e) => this.doShowPageActions(e)} />}
           </div>
 
           {!!this.downloadTotal && <Progress total={this.downloadTotal} progress={this.downloadProgress} />}
 
-          {this.props.children}
+          {this.children}
         </div>
       </Container>
     );

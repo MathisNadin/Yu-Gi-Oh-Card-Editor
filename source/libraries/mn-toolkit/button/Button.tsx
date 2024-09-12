@@ -1,3 +1,4 @@
+import { ButtonHTMLAttributes } from 'react';
 import { IContainableProps, Containable, IContainableState } from '../containable';
 import { TBackgroundColor, TForegroundColor } from '../themeSettings';
 import { Icon, TIconId } from '../icon';
@@ -9,6 +10,7 @@ export interface IButtonProps extends IContainableProps {
   block?: boolean;
   icon?: TIconId;
   iconPosition?: 'left' | 'right';
+  buttonType?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
 }
 
 interface IButtonState extends IContainableState {}
@@ -21,10 +23,11 @@ export class Button extends Containable<IButtonProps, IButtonState> {
       disabled: false,
       color: 'primary',
       iconPosition: 'left',
+      buttonType: 'button',
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-button'] = true;
     if (this.props.block) classes['mn-button-block'] = true;
@@ -35,12 +38,12 @@ export class Button extends Containable<IButtonProps, IButtonState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
-      <div {...this.renderAttributes()}>
-        {this.props.icon && <Icon className='icon' size={18} iconId={this.props.icon} />}
+      <button {...this.renderAttributes()} type={this.props.buttonType}>
+        {this.props.icon && <Icon className='icon' size={18} icon={this.props.icon} />}
         {!!this.props.label && <span className='label'>{this.props.label}</span>}
-      </div>
+      </button>
     );
   }
 }

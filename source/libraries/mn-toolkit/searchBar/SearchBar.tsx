@@ -1,15 +1,14 @@
 import { classNames } from 'mn-tools';
-import { Containable, IContainableProps, IContainableState } from '../containable';
+import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { Icon } from '../icon';
 import { ISelectItem, Select } from '../select';
 import { TextInput } from '../textInput';
+import React from 'react';
 
 interface ISearchBarProps extends IContainableProps {
   defaultValue: string;
   dropdownOptions?: ISelectItem[];
   onSearch: (value: string) => void | Promise<void>;
-  onFocus?: (e: React.FocusEvent) => void | Promise<void>;
-  onBlur?: () => void | Promise<void>;
 }
 
 interface ISearchBarState extends IContainableState {
@@ -32,7 +31,12 @@ export class SearchBar extends Containable<ISearchBarProps, ISearchBarState> {
     };
   }
 
-  public componentDidUpdate(prevProps: ISearchBarProps) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ISearchBarProps>,
+    prevState: Readonly<ISearchBarState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
     if (this.props.defaultValue === this.state.value) return;
     this.setState({ value: this.props.defaultValue });
@@ -74,14 +78,14 @@ export class SearchBar extends Containable<ISearchBarProps, ISearchBarState> {
         })}
       >
         <Select fill className='mn-search-bar-select' items={this.props.dropdownOptions || []} defaultValue={1} />
-        <Icon className='search-icon' iconId='toolkit-search' onTap={() => this.doSearch()} />
+        <Icon className='search-icon' icon='toolkit-search' onTap={() => this.doSearch()} />
         <TextInput
           placeholder='rechercher...'
           defaultValue={this.state.value}
           onKeyUp={(e) => this.onKeyUp(e)}
           onChange={(value) => this.onInput(value)}
           onFocus={(e) => this.onFocus(e)}
-          onBlur={() => this.onBlur()}
+          onBlur={(e) => this.onBlur(e)}
         />
       </div>
     );
@@ -90,22 +94,22 @@ export class SearchBar extends Containable<ISearchBarProps, ISearchBarState> {
   private renderNormalBar() {
     return (
       <div className={classNames('mn-search-bar', this.renderClasses(), { 'mn-focus': this.state.focus })}>
-        <Icon className='search-icon' iconId='toolkit-search' onTap={() => this.doSearch()} />
+        <Icon className='search-icon' icon='toolkit-search' onTap={() => this.doSearch()} />
         <TextInput
           placeholder='rechercher...'
           defaultValue={this.state.value}
           onKeyUp={(e) => this.onKeyUp(e)}
           onChange={(value) => this.onInput(value)}
           onFocus={(e) => this.onFocus(e)}
-          onBlur={() => this.onBlur()}
+          onBlur={(e) => this.onBlur(e)}
         />
       </div>
     );
   }
 
-  private async onBlur() {
+  private async onBlur(e: React.FocusEvent) {
     await this.setStateAsync({ focus: false });
-    if (this.props.onBlur) app.$errorManager.handlePromise(this.props.onBlur());
+    if (this.props.onBlur) app.$errorManager.handlePromise(this.props.onBlur(e));
   }
 
   private async onFocus(e: React.FocusEvent) {

@@ -54,13 +54,15 @@ export class RouterViewPort
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let c: Component<any, any> = currentState.component;
-    const routerKey = `${currentState.name}${JSON.stringify(app.$router.parameters)}`;
-    const newContentKey = `${app.$router.parameters?.key || ''}${routerKey}content`;
+    const routerParameters = app.$router.getParameters() as object;
+    const routerKey = `${currentState.name}${JSON.stringify(routerParameters)}`;
+    const key = 'key' in routerParameters ? routerParameters.key : '';
+    const newContentKey = `${key}${routerKey}content`;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let content: DOMElement<any, any>;
     if (this.currentContentKey !== newContentKey) {
-      content = createElement(c as unknown as string, { ...app.$router.parameters, key: newContentKey });
+      content = createElement(c as unknown as string, { ...routerParameters, key: newContentKey });
       this.currentComponent = content;
       this.currentContentKey = newContentKey;
     } else {

@@ -1,34 +1,60 @@
-import { IFilePickerOptions } from './index';
+export interface IFilePickerOptions {
+  accept?: string;
+  multiple?: boolean;
+  imageQuality?: number;
+  imageMimeType?: string;
+}
 
 export class FilePickerService {
-  public async show(options: IFilePickerOptions = {}) {
-    options.outputType = options.outputType || 'files';
-    options.imageQuality = options.imageQuality || 100;
-    options.imageMimeType = options.imageMimeType || 'image/jpeg';
-    options.multiple = options.multiple || options.outputType === 'files';
-    return await this.html5(options);
+  // Méthode pour récupérer une FileList
+  public async pickFileList(options: IFilePickerOptions = {}): Promise<FileList | undefined> {
+    return await this.html5FileList(options);
   }
 
-  private async html5(options: IFilePickerOptions) {
-    return new Promise<FileList | string | null>((resolve, reject) => {
-      const fileInput = document.createElement('input');
-      fileInput.setAttribute('type', 'file');
-      if (options.accept) fileInput.setAttribute('accept', options.accept);
-      if (options.multiple) fileInput.setAttribute('multiple', options.multiple ? 'true' : 'false');
+  // Méthode pour récupérer une chaîne de caractères (string) à partir d'un fichier
+  public async pickString(options: IFilePickerOptions = {}): Promise<string | undefined> {
+    const fileList = await this.html5FileList({ ...options, multiple: false });
+    if (!fileList) return undefined;
+    try {
+      const result = await app.$api.fileToString(fileList[0]);
+      return result;
+    } catch (error) {
+      console.error('Error converting file to string:', error);
+      return undefined;
+    }
+  }
+
+  // Méthode pour récupérer un buffer à partir d'un fichier
+  public async pickBuffer(options: IFilePickerOptions = {}): Promise<string | undefined> {
+    const fileList = await this.html5FileList({ ...options, multiple: false });
+    if (!fileList) return undefined;
+    try {
+      const result = await app.$api.fileToDataURL(fileList[0]);
+      return result;
+    } catch (error) {
+      console.error('Error converting file to buffer:', error);
+      return undefined;
+    }
+  }
+
+  // Fonction privée pour gérer la sélection de fichiers HTML5
+  private async html5FileList(options: IFilePickerOptions): Promise<FileList | undefined> {
+    const fileInput = document.createElement('input');
+    const fileList = await new Promise<FileList | undefined>((resolve) => {
+      fileInput.type = 'file';
+      if (options.accept) fileInput.accept = options.accept;
+      if (options.multiple) fileInput.multiple = options.multiple;
       fileInput.style.display = 'none';
+
       fileInput.addEventListener('change', (event) => {
         const input = event.currentTarget as HTMLInputElement;
-        fileInput.remove();
-        if (options.outputType === 'files') return resolve(input.files);
-        app.$api
-          .fileToBuffer((input.files as FileList)[0], options.outputType)
-          .then((result) => {
-            resolve(result);
-          })
-          .catch((error: Error) => reject(error));
+        resolve(input.files || undefined);
       });
+
       document.body.appendChild(fileInput);
       fileInput.click();
     });
+    if (fileInput.parentNode) fileInput.remove();
+    return fileList;
   }
 }

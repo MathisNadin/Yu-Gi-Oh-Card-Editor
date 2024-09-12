@@ -1,71 +1,69 @@
 import { classNames } from 'mn-tools';
-import { Containable, IContainableProps, IContainableState } from '../containable';
-import { HorizontalStack } from '../container';
+import { Container, IContainerProps, IContainerState, HorizontalStack } from '../container';
 import { Icon } from '../icon';
-import { TForegroundColor } from '../themeSettings';
 
-interface IColorPickerProps extends IContainableProps {
-  colors?: TForegroundColor[];
-  onSelectColor?: (color: TForegroundColor) => void;
+interface IColorPickerProps extends IContainerProps {
+  colors?: string[];
+  onSelectColor?: (color?: string) => void | Promise<void>;
 }
 
-interface IColorPickerState extends IContainableState {
-  selectedColor: TForegroundColor;
+interface IColorPickerState extends IContainerState {
+  selectedColor: string;
 }
 
-export class ColorPicker extends Containable<IColorPickerProps, IColorPickerState> {
+export class ColorPicker extends Container<IColorPickerProps, IColorPickerState> {
   public static get defaultProps(): Partial<IColorPickerProps> {
     return {
       ...super.defaultProps,
+      wrap: true,
+      padding: true,
       colors: [
-        'primary',
-        'secondary',
-        'tertiary',
-        'positive',
-        'negative',
-        'neutral',
-        'warning',
-        'info',
-        /* '1',
-        '2',
-        '3',
-        '4' */
+        '#000000', // Noir
+        '#808080', // Gris
+        '#C0C0C0', // Argent
+        '#FFFFFF', // Blanc
+        '#800000', // Marron
+        '#FF0000', // Rouge
+        '#FFA500', // Orange
+        '#FFFF00', // Jaune
+        '#00FF00', // Vert
+        '#008000', // Vert foncé
+        '#00FFFF', // Cyan
+        '#0000FF', // Bleu
+        '#000080', // Bleu marine
+        '#FF00FF', // Magenta
+        '#800080', // Violet
       ],
     };
   }
 
-  public constructor(props: IColorPickerProps) {
-    super(props);
+  private async onSelectColor(selectedColor?: string) {
+    await this.setStateAsync({ selectedColor: selectedColor! });
+    if (this.props.onSelectColor) await this.props.onSelectColor(selectedColor);
   }
 
-  private onSelectColor(selectedColor: TForegroundColor) {
-    this.setState({ selectedColor });
-    if (this.props.onSelectColor) this.props.onSelectColor(selectedColor);
+  public override renderClasses() {
+    const classes = super.renderClasses();
+    classes['mn-color-picker'] = true;
+    return classes;
   }
 
-  public render() {
-    return (
-      <HorizontalStack className='mn-color-picker' wrap padding>
-        {this.props.colors!.map((c) => {
-          return this.renderColorSwatch(c);
-        })}
-        <Icon
-          size={20}
-          iconId='toolkit-format-unformat'
-          className='mn-color-picker-remove-button'
-          onTap={() => this.onSelectColor(undefined!)}
-        />
-      </HorizontalStack>
-    );
+  public override get children() {
+    return [
+      ...this.props.colors!.map((c) => this.renderColorSwatch(c)),
+      <Icon key='unformat' icon='toolkit-format-unformat' onTap={() => this.onSelectColor()} />,
+    ];
   }
 
-  private renderColorSwatch(color: TForegroundColor) {
+  private renderColorSwatch(color: string) {
     return (
       <HorizontalStack
         s='6'
         m='4'
         l='3'
-        className={classNames('mn-color-swatch', `mn-bg-${color}`)}
+        key={color}
+        className={classNames('mn-color-swatch', { selected: this.state.selectedColor === color })}
+        style={{ backgroundColor: color }}
         onTap={() => this.onSelectColor(color)}
       />
     );

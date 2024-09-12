@@ -168,7 +168,7 @@ export class CapacitorSQLiteService implements IStoreService {
 
   public async importData(jsonData: string) {
     await this.waitForConnection();
-    const data = JSON.parse(jsonData);
+    const data = unserialize(jsonData);
     for (const key in data) {
       await this.set(key, data[key]);
     }

@@ -42,7 +42,7 @@ export class LabeledGroup extends Container<ILabeledGroupProps, ILabeledGroupSta
     ];
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-labeled-group'] = true;
     return classes;

@@ -3,6 +3,7 @@ import { Icon } from '../icon';
 import { IMenuItem } from '.';
 import { Typography } from '../typography';
 import { IActionsPopoverAction } from '../popover';
+import { TDidUpdateSnapshot } from '../containable';
 
 interface ITopMenuProps extends IContainerProps {
   items: IMenuItem[];
@@ -14,6 +15,8 @@ interface ITopMenuState extends IContainerState {
 }
 
 export class TopMenu extends Container<ITopMenuProps, ITopMenuState> {
+  private currentlyShown?: IMenuItem;
+
   public static get defaultProps(): Partial<ITopMenuProps> {
     return {
       ...super.defaultProps,
@@ -29,13 +32,19 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> {
     this.state = { ...this.state, items: props.items };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ITopMenuProps>,
+    prevState: Readonly<ITopMenuState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.items !== this.state.items) {
       this.setState({ items: this.props.items });
     }
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-top-menu'] = true;
     classes['mn-dark-theme'] = !!this.props.dark;
@@ -75,10 +84,11 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> {
             variant='document'
             color='1'
             content={item.label}
-            onTap={hasBelow ? undefined : (e) => this.onClickItem(item, e)}
+            href={item.href}
+            onTap={hasBelow || !item.onTap ? undefined : (e) => item.onTap!(e)}
           />
 
-          {hasBelow && <Icon iconId='toolkit-angle-down' size={16} color='1' />}
+          {hasBelow && <Icon icon='toolkit-angle-down' size={16} color='1' />}
         </HorizontalStack>
       </HorizontalStack>
     );
@@ -88,16 +98,29 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> {
     if (!app.$popover.visible) return;
 
     const relatedTarget = event?.relatedTarget as HTMLDivElement;
+    if (!relatedTarget?.className?.includes) return;
+
     const relatedTargetParent = relatedTarget?.parentElement;
-    if (relatedTarget?.className?.includes('action') || relatedTargetParent?.className?.includes('action')) {
+    if (!relatedTargetParent?.className?.includes) return;
+
+    if (relatedTarget.className.includes('action') || relatedTargetParent.className.includes('action')) {
       return;
     }
 
     app.$popover.removeAll();
+    this.currentlyShown = undefined;
   }
 
   private showBelow(event: React.MouseEvent, item: IMenuItem) {
-    this.closePopover();
+    if (app.$popover.visible && this.currentlyShown === item) return;
+
+    const eventTarget = event.target as HTMLDivElement;
+    const eventTargetParent = eventTarget?.parentElement as HTMLDivElement;
+    if (!eventTargetParent) return;
+
+    app.$popover.removeAll();
+
+    this.currentlyShown = item;
 
     const actions: IActionsPopoverAction[] = [];
     for (const subItem of item.below!) {
@@ -106,34 +129,22 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> {
         icon: subItem.icon,
         iconColor: '1',
         label: subItem.label,
-        onTap: (e) => this.onClickItem(subItem, e),
+        href: subItem.href,
       });
     }
 
     // Même longueur que le menu qu'on vient de survoler
-    let width = (event?.target as HTMLDivElement)?.parentElement?.offsetWidth;
-
+    let width = eventTargetParent.offsetWidth;
     if (item.groupMinWidth && (!width || width < item.groupMinWidth)) {
       width = item.groupMinWidth;
     }
 
-    app.$popover.actions(event, {
+    app.$popover.actions(eventTargetParent.getBoundingClientRect(), {
       actions,
       width,
       className: 'mn-top-menu-below-popover',
-      targetRectangle: (event.target as HTMLDivElement)?.parentElement?.getBoundingClientRect(),
+      onBlurClose: () => (this.currentlyShown = undefined),
     });
-  }
-
-  private onClickItem(item: IMenuItem, e: React.MouseEvent) {
-    if (item.onTap) {
-      item.onTap(e);
-    } else if (item.state) {
-      app.$router.go(item.state, item.stateParameters);
-    } else if (item.defaultState) {
-      app.$router.go(item.defaultState, item.defaultStateParameters);
-    }
-    this.forceUpdate();
   }
 
   private hasPermission(item: IMenuItem) {

@@ -44,7 +44,8 @@ export class LeftDrawer
     }
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    if (super.componentWillUnmount) super.componentWillUnmount();
     app.$drawer.unregisterPane(this);
     app.$device.removeListener(this);
     app.$overlay.removeListener(this);

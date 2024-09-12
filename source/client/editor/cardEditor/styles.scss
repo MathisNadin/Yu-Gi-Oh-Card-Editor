@@ -118,6 +118,9 @@
           @include bg(1);
 
           .mn-inplace-edit {
+            border-radius: 0;
+            margin: calc($themeDefaultSpacing/8) calc($themeDefaultSpacing/4);
+            @include border-color(2);
             @include bg(1);
 
             input {

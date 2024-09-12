@@ -15,7 +15,7 @@ export class Grid extends Container<IGridProps, IGridState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-grid'] = true;
     return classes;

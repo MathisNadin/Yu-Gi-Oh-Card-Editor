@@ -18,7 +18,7 @@ export class Paper extends Container<IPaperProps, IPaperState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-paper'] = true;
     return classes;

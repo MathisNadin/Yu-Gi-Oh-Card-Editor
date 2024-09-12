@@ -5,6 +5,9 @@ export * from './PopupService';
 export * from './Popups';
 export * from './AbstractPopup';
 export * from './ConfirmationDialog';
+export * from './PromptDialog';
+export * from './InformDialog';
+export * from './ChoiceDialog';
 
 export interface IPopupListener {
   popupsChanged(): void;

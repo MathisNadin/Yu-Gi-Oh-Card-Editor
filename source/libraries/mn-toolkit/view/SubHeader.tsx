@@ -14,7 +14,7 @@ export class SubHeader extends Container<ISubHeaderProps, ISubHeaderState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-sub-header'] = true;
     return classes;

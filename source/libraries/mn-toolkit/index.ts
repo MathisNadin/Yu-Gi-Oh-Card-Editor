@@ -19,10 +19,14 @@ import { OverlayService } from './overlay';
 import { PermissionService } from './permission';
 import { ToasterService } from './toaster';
 import { GalleryService } from './gallery';
+import { TipService } from './tip';
 import { SavingManagerService } from './savingManager';
+import { DateTimePickerService } from './dateTime';
+import { CameraPickerService } from './cameraPicker';
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   extendNativeObjects();
+  Date.setFirstDayOfWeek(1);
 
   window.app = new Application() as IApp;
 
@@ -48,6 +52,9 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$filePicker', FilePickerService);
   app.service('$gallery', GalleryService, { depends: ['$react'] });
   app.service('$savingManager', SavingManagerService);
+  app.service('$tips', TipService);
+  app.service('$dateTimePicker', DateTimePickerService);
+  app.service('$cameraPicker', CameraPickerService);
 
   if (beforeBootstrap) beforeBootstrap();
 
@@ -65,6 +72,7 @@ export * from './pager';
 export * from './slider';
 export * from './searchBar';
 export * from './savingManager';
+export * from './cameraPicker';
 export * from './toaster';
 export * from './drawer';
 export * from './overlay';
@@ -77,6 +85,8 @@ export * from './splitPane';
 export * from './sortable';
 export * from './router';
 export * from './view';
+export * from './chip';
+export * from './dateTime';
 export * from './xhr';
 export * from './toolbar';
 export * from './menu';

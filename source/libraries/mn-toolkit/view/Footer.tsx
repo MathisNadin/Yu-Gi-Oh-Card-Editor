@@ -17,7 +17,7 @@ export class Footer extends Container<IFooterProps, IFooterState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-footer'] = true;
     return classes;

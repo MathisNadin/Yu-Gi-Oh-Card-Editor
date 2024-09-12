@@ -461,7 +461,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     return (
       <VerticalStack gutter className='card-editor-section basic-section'>
         <HorizontalStack fill verticalItemAlignment='middle'>
-          <Icon className='field-icon' size={24} iconId='toolkit-title' color='1' />
+          <Icon className='field-icon' size={24} icon='toolkit-title' color='1' />
           <TextInput
             fill
             placeholder='Nom'
@@ -472,7 +472,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <HorizontalStack gutter>
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-color-palette' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-color-palette' color='1' />
             <Select<TNameStyle>
               fill
               minWidth={115}
@@ -493,7 +493,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </HorizontalStack>
 
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-language' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-language' color='1' />
             <Select<TCardLanguage>
               fill
               minWidth={115}
@@ -509,7 +509,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <HorizontalStack gutter verticalItemAlignment='middle'>
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-image' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
             {app.$device.isDesktop && (
               <FileInput
                 fill
@@ -628,7 +628,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         )}
 
         <HorizontalStack>
-          <Icon className='field-icon' size={24} iconId='toolkit-script' color='1' />
+          <Icon className='field-icon' size={24} icon='toolkit-script' color='1' />
           <TextAreaInput
             autoGrow
             minRows={5}
@@ -752,7 +752,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <Grid>
           <HorizontalStack xl='12' xxl={includesLink ? '6' : '4'} fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-star' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />
             <NumberInput
               fill
               min={0}
@@ -764,7 +764,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </HorizontalStack>
 
           <HorizontalStack xl='12' xxl={includesLink ? '6' : '4'} fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-sword' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
             <TextInput
               fill
               placeholder='ATK'
@@ -775,7 +775,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
           {!includesLink && (
             <HorizontalStack xl='12' xxl='4' verticalItemAlignment='middle'>
-              <Icon className='field-icon' size={24} iconId='toolkit-shield' color='1' />
+              <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
               <TextInput
                 fill
                 placeholder='DEF'
@@ -789,7 +789,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <VerticalStack className='card-abilities'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
             <Typography fill variant='help' content='Types' />
-            <Icon size={24} iconId='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />
+            <Icon size={24} icon='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />
           </HorizontalStack>
 
           <VerticalStack className='card-abilities-list' gutter={false}>
@@ -803,25 +803,19 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               >
                 <InplaceEdit
                   fill
-                  focusOnSingleClick
                   validateOnEnter
                   key={`${iAbility}-${ability}`}
-                  value={ability}
+                  defaultValue={ability}
                   onChange={(ability) => this.onAbilityChange(ability, iAbility)}
                 />
 
                 <HorizontalStack className='abilities-line-icons'>
-                  <Icon
-                    size={24}
-                    iconId='toolkit-minus'
-                    color='negative'
-                    onTap={() => this.onRemoveAbility(iAbility)}
-                  />
+                  <Icon size={24} icon='toolkit-minus' color='negative' onTap={() => this.onRemoveAbility(iAbility)} />
                   {this.state.card.abilities.length > 1 && (
-                    <Icon size={24} iconId='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
+                    <Icon size={24} icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
                   )}
                   {this.state.card.abilities.length > 1 && (
-                    <Icon size={24} iconId='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
+                    <Icon size={24} icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
                   )}
                 </HorizontalStack>
               </HorizontalStack>
@@ -859,7 +853,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           <Icon
             size={32}
             className={classNames('pendulum-lock-icon', { locked: this.state.lockPend })}
-            iconId={this.state.lockPend ? 'toolkit-lock-closed' : 'toolkit-lock-opened'}
+            icon={this.state.lockPend ? 'toolkit-lock-closed' : 'toolkit-lock-opened'}
             onTap={() => this.onPendLockChange()}
           />
 
@@ -876,7 +870,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         </HorizontalStack>
 
         <HorizontalStack>
-          <Icon className='field-icon' size={24} iconId='toolkit-small-script' color='1' />
+          <Icon className='field-icon' size={24} icon='toolkit-small-script' color='1' />
           <TextAreaInput
             autoGrow
             minRows={5}
@@ -898,7 +892,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <Grid>
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-id' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-id' color='1' />
             <TextInput
               fill
               placeholder='Set'
@@ -908,7 +902,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </HorizontalStack>
 
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-print' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-print' color='1' />
             <Select<TEdition>
               fill
               items={[
@@ -928,7 +922,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <HorizontalStack gutter verticalItemAlignment='middle'>
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-hash' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-hash' color='1' />
             <TextInput
               fill
               maxLength={8}
@@ -943,7 +937,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <Grid>
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-sticker' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
               items={[
@@ -964,7 +958,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </HorizontalStack>
 
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-copyright' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
               <CheckBox
                 label='Copyright'

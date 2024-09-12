@@ -1,4 +1,4 @@
-import { IContainableProps, Containable, IContainableState } from '../containable';
+import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 import { classNames, isEmpty } from 'mn-tools';
 
@@ -39,11 +39,17 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
     }, 200);
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IProgressProps>,
+    prevState: Readonly<IProgressState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (this.props.progress !== this.state.progress || this.props.message !== this.state.message) {
       this.setState({
-        progress: this.props.progress as number,
-        message: this.props.message as string,
+        progress: this.props.progress!,
+        message: this.props.message!,
       });
     }
   }
@@ -52,7 +58,7 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
     return Math.round((100 * this.state.progress) / (this.props.total || 1));
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-progress'] = true;
     classes['indeterminate'] = !!this.props.indeterminate;

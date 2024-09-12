@@ -33,6 +33,10 @@
         &.selected {
           font-weight: bold;
         }
+
+        &:not(.selected) {
+          @include fg(1);
+        }
       }
     }
 
@@ -51,6 +55,10 @@
 
         &.selected {
           font-weight: bold;
+        }
+
+        &:not(.selected) {
+          @include fg(1);
         }
       }
     }

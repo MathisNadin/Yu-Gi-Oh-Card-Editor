@@ -8,15 +8,9 @@
   }
 }
 
-.mn-icon {
-  @include mnLayoutContainable();
+@mixin themeIcon() {
   object-fit: cover;
   object-position: center;
-
-  &.mn-containable-item-fill-absolute {
-    width: 100%;
-    height: 100%;
-  }
 
   &.mn-color-primary {
     @include colorizeIcon($primary);
@@ -66,4 +60,18 @@
       @include colorizeIcon(nth($theme-dark-fg, 4));
     }
   }
+
+  &.mn-disabled {
+    opacity: 0.3;
+    filter: grayscale(1);
+    pointer-events: none;
+  }
+}
+
+.mn-icon {
+  @include themeIcon();
+}
+
+.mn-icon-container-button {
+  border: none;
 }

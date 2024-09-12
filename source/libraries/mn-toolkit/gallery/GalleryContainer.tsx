@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import { classNames } from 'mn-tools';
-import { ButtonIcon } from '../button';
+import { Icon } from '../icon';
 import { VerticalStack, Container, IContainerProps, IContainerState } from '../container';
 import { Spacer } from '../spacer';
 import { Toolbar } from '../toolbar';
@@ -30,10 +30,11 @@ export class GalleryContainer extends Container<IGalleryContainerProps, IGallery
 
   public constructor(props: IGalleryContainerProps) {
     super(props);
-    this.setState({ images: [], current: 0 });
+    this.state = { ...this.state, images: [], current: 0 };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     setTimeout(() => {
       if (!this.container?.current?.base?.current) return;
       const containerSize = this.container.current.base.current.getBoundingClientRect();
@@ -59,7 +60,7 @@ export class GalleryContainer extends Container<IGalleryContainerProps, IGallery
         })
       );
     }
-    this.setState({ images: _images, current: 0 });
+    await this.setStateAsync({ images: _images, current: 0 });
   }
 
   public render() {
@@ -97,12 +98,12 @@ export class GalleryContainer extends Container<IGalleryContainerProps, IGallery
       <VerticalStack className='mn-gallery mn-dark-theme'>
         <Toolbar>
           <Spacer />
-          <ButtonIcon className='close' icon='toolkit-close' onTap={() => this.onClose()} />
+          <Icon className='close' icon='toolkit-close' onTap={() => this.onClose()} />
         </Toolbar>
 
         <Container fill ref={this.container} verticalItemAlignment='middle' itemAlignment='center'>
           {multiple && (
-            <ButtonIcon
+            <Icon
               disabled={leftDisabled}
               floatPosition='middle-left'
               icon='toolkit-angle-left'
@@ -112,7 +113,7 @@ export class GalleryContainer extends Container<IGalleryContainerProps, IGallery
           )}
 
           {multiple && (
-            <ButtonIcon
+            <Icon
               disabled={rightDisabled}
               floatPosition='middle-right'
               icon='toolkit-angle-right'
@@ -134,19 +135,19 @@ export class GalleryContainer extends Container<IGalleryContainerProps, IGallery
     );
   }
 
-  private onClose() {
-    this.setState({ images: [] });
+  private async onClose() {
+    await this.setStateAsync({ images: [] });
   }
 
-  private onGoRight() {
+  private async onGoRight() {
     let current = this.state.current + 1;
     if (current === this.state.images.length) current = 0;
-    this.setState({ current });
+    await this.setStateAsync({ current });
   }
 
-  private onGoLeft() {
+  private async onGoLeft() {
     let current = this.state.current - 1;
     if (current === -1) current = this.state.images.length - 1;
-    this.setState({ current });
+    await this.setStateAsync({ current });
   }
 }

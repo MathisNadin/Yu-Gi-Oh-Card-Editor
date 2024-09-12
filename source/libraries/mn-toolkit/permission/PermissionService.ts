@@ -17,7 +17,7 @@ export class PermissionService extends Observable<IPermissionListener> implement
   }
 
   public sessionUpdated() {
-    this.load(app.$session.data.member.permissions!);
+    this.load(app.$session.data.permissions);
   }
 
   public sessionDropped() {

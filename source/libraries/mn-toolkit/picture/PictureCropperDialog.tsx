@@ -1,21 +1,23 @@
-import React, { createRef, CSSProperties } from 'react';
-import { Slider } from '../slider';
-import { AbstractPopup, IAbstractPopupProps, IAbstractPopupState } from '../popup';
-import { IFileCropEffect } from 'api/main';
+import { createRef } from 'react';
 import { classNames } from 'mn-tools';
-import { VerticalStack } from 'mn-toolkit/container';
+import { IFileCropEffect } from 'api/main';
+import { AbstractPopup, IAbstractPopupProps, IAbstractPopupState } from '../popup';
+import { Slider } from '../slider';
 
-export type PictureCropperAreaType = 'circle' | 'square';
+export type TPictureCropperAreaType = 'circle' | 'square';
 
 interface IPictureCropperDialogProps extends IAbstractPopupProps<IFileCropEffect> {
   imageUrl: string;
   cropEffect?: IFileCropEffect;
-  areaType?: PictureCropperAreaType;
+  areaType?: TPictureCropperAreaType;
 }
 
 interface IPictureCropperDialogState extends IAbstractPopupState {
-  cropEffect: IFileCropEffect;
-  orientation: 'landscape' | 'portrait';
+  scale: number;
+  position: { x: number; y: number };
+  containerDimensions: { width: number; height: number };
+  imageDimensions: { width: number; height: number };
+  cropAreaDimensions: { width: number; height: number };
 }
 
 export class PictureCropperDialog extends AbstractPopup<
@@ -23,217 +25,292 @@ export class PictureCropperDialog extends AbstractPopup<
   IPictureCropperDialogProps,
   IPictureCropperDialogState
 > {
+  private originalImageDimensions: { width: number; height: number } = { width: 0, height: 0 };
+  private lastClientX: number = 0;
+  private lastClientY: number = 0;
+  private isDragging: boolean = false;
   private containerRef = createRef<HTMLDivElement>();
-  private imageRef = createRef<HTMLImageElement>();
-  private dragging: boolean = false;
-  private dragStartX: number = 0;
-  private dragStartY: number = 0;
-
-  public static EFFECT_ID: IFileCropEffect['uuid'] = 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
 
   public static async show(options: IPictureCropperDialogProps) {
     options.title = "Recadrer l'image";
     options.areaType = options.areaType || 'circle';
-    return await app.$popup.show<IFileCropEffect, IPictureCropperDialogProps>({
+    options.height = options.height || '90%';
+    options.width = options.width || (app.$device.isSmallScreen ? '90%' : '80%');
+    return await app.$popup.show({
       type: 'picture-cropper',
       Component: PictureCropperDialog,
       componentProps: options,
     });
   }
 
-  protected onInitializePopup = async () => {
-    window.addEventListener('mouseup', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('touchend', this.handleTouchEnd);
-    window.addEventListener('touchmove', this.handleTouchMove);
-
+  protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
       label: 'Valider',
       color: 'primary',
-      onTap: () => this.close(this.state.cropEffect),
+      onTap: () => this.onValidate(),
     });
 
-    const img = new Image();
-    img.src = this.props.imageUrl;
-    return await new Promise<void>((resolve, reject) => {
-      img.onload = () => {
-        const cropEffect: IFileCropEffect = this.props.cropEffect || {
-          uuid: PictureCropperDialog.EFFECT_ID,
-          mimeType: 'image/png',
-          scale: 1,
-          crop: {
-            left: 0,
-            top: 0,
-            width: img.width,
-            height: img.height,
-          },
-          original: {
-            width: img.width,
-            height: img.height,
-          },
-          changed: new Date(),
-        };
-
-        this.setState(
-          {
-            buttons,
-            orientation: img.width > img.height ? 'landscape' : 'portrait',
-            cropEffect,
-          },
-          () => resolve()
-        );
-      };
-
-      img.onerror = (e) => {
-        const error = new Error(e as string);
-        app.$errorManager.trigger(error);
-        reject(error);
-      };
-    });
-  };
-
-  public componentWillUnmount() {
-    window.removeEventListener('mouseup', this.handleMouseUp);
-    window.removeEventListener('mousemove', this.handleMouseMove);
-    window.removeEventListener('touchend', this.handleTouchEnd);
-    window.removeEventListener('touchmove', this.handleTouchMove);
-  }
-
-  private handleMouseDown = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-    e.preventDefault();
-    this.dragging = true;
-    this.dragStartX = e.clientX;
-    this.dragStartY = e.clientY;
-  };
-
-  private handleTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
-    e.preventDefault();
-    if (e.touches.length > 0) {
-      this.dragging = true;
-      this.dragStartX = e.touches[0].clientX;
-      this.dragStartY = e.touches[0].clientY;
+    if (this.props.cropEffect?.original) {
+      this.originalImageDimensions.width = this.props.cropEffect.original.width;
+      this.originalImageDimensions.height = this.props.cropEffect.original.height;
+    } else {
+      try {
+        const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.src = this.props.imageUrl;
+          img.onload = () => resolve(img);
+          img.onerror = (err) => reject(err);
+        });
+        this.originalImageDimensions.width = img.width;
+        this.originalImageDimensions.height = img.height;
+      } catch (error) {
+        console.error('Error loading image:', error);
+        app.$errorManager.trigger(error as Error);
+      }
     }
-  };
 
-  private handleMouseMove = (e: MouseEvent) => {
-    if (!this.dragging) return;
-    const moveX = e.clientX - this.dragStartX;
-    const moveY = e.clientY - this.dragStartY;
-    this.adjustImagePosition(moveX, moveY);
-    this.dragStartX = e.clientX;
-    this.dragStartY = e.clientY;
-  };
-
-  private handleTouchMove = (e: TouchEvent) => {
-    if (!this.dragging || e.touches.length === 0) return;
-    const touch = e.touches[0];
-    const moveX = touch.clientX - this.dragStartX;
-    const moveY = touch.clientY - this.dragStartY;
-    this.adjustImagePosition(moveX, moveY);
-    this.dragStartX = touch.clientX;
-    this.dragStartY = touch.clientY;
-  };
-
-  private handleMouseUp = () => {
-    this.dragging = false;
-  };
-
-  private handleTouchEnd = () => {
-    this.dragging = false;
-  };
-
-  public handleSliderChange = (newScale: number) => {
-    this.setState((prevState) => ({
-      cropEffect: {
-        ...prevState.cropEffect,
-        scale: newScale,
-      },
-    }));
-  };
-
-  private adjustImagePosition(moveX: number, moveY: number) {
-    this.setState((prevState) => {
-      let newLeft = prevState.cropEffect.crop.left * -1 + moveX;
-      let newTop = prevState.cropEffect.crop.top * -1 + moveY;
-
-      const scale = prevState.cropEffect.scale;
-      const orientation = prevState.orientation;
-      const originalWidth = prevState.cropEffect.original.width;
-      const originalHeight = prevState.cropEffect.original.height;
-      let containerWidth = 0;
-      let containerHeight = 0;
-      if (this.containerRef.current) {
-        containerWidth = this.containerRef.current.clientWidth;
-        containerHeight = this.containerRef.current.clientHeight;
-      }
-
-      // Détermination de la taille réelle de l'image dans le conteneur
-      let displayedImageWidth, displayedImageHeight;
-      if (orientation === 'landscape') {
-        displayedImageHeight = containerHeight; // Hauteur fixée à 100% du conteneur
-        displayedImageWidth = (originalWidth / originalHeight) * displayedImageHeight; // Largeur ajustée selon le ratio
-      } else {
-        // 'portrait'
-        displayedImageWidth = containerWidth; // Largeur fixée à 100% du conteneur
-        displayedImageHeight = (originalHeight / originalWidth) * displayedImageWidth; // Hauteur ajustée selon le ratio
-      }
-
-      // Ajustement selon l'échelle
-      displayedImageWidth *= scale;
-      displayedImageHeight *= scale;
-
-      // Assurer que l'image reste dans les limites du conteneur
-      newLeft = Math.max(newLeft, containerWidth - displayedImageWidth);
-      newTop = Math.max(newTop, containerHeight - displayedImageHeight);
-      newLeft = Math.min(newLeft, 0); // Éviter que l'image ne se déplace trop à droite
-      newTop = Math.min(newTop, 0); // Éviter que l'image ne se déplace trop en bas
-
-      // Mettre à jour les valeurs de crop en tenant compte de l'échelle et de la position
-      const cropEffect = {
-        ...prevState.cropEffect,
-        crop: { ...prevState.cropEffect.crop, left: newLeft * -1, top: newTop * -1 },
-      };
-
-      return { cropEffect };
-    });
+    await this.setStateAsync({ buttons });
   }
 
-  public renderContent = () => {
-    const { imageUrl, areaType } = this.props;
-    const { cropEffect, orientation } = this.state;
+  protected override async checkSize() {
+    await super.checkSize();
+    await this.calculateDimensions();
+  }
 
-    const imageStyles: CSSProperties = {
-      transform: `translate(${cropEffect.crop.left * -1}px, ${cropEffect.crop.top * -1}px) scale(${cropEffect.scale})`,
-      transformOrigin: 'top left',
-      maxHeight: orientation === 'landscape' ? '100%' : undefined,
-      maxWidth: orientation === 'portrait' ? '100%' : undefined,
+  private async calculateDimensions() {
+    if (!this.containerRef.current) throw new Error('Container ref current not defined');
+
+    const { cropEffect } = this.props;
+    const containerDimensions = {
+      width: this.containerRef.current.clientWidth || 0,
+      height: this.containerRef.current.clientHeight || 0,
     };
 
-    return (
-      <VerticalStack className='mn-picture-cropper-content' itemAlignment='center' gutter>
-        <div className={classNames('mn-crop-area', areaType)}>
-          <div className='image-container' ref={this.containerRef}>
-            {/* Conteneur fixe pour la shadow */}
-            <div className='shadow-container'>
-              <img src={imageUrl} alt='Croppable shadow' className='shadow' style={imageStyles} />
-            </div>
+    const imageAspectRatio = this.originalImageDimensions.width / this.originalImageDimensions.height;
+    const cropAreaSize = Math.min(containerDimensions.width, containerDimensions.height);
 
-            {/* Image principale pour le crop */}
-            <img
-              ref={this.imageRef}
-              src={imageUrl}
-              className='croppable'
-              alt='Croppable'
-              style={imageStyles}
-              onMouseDown={this.handleMouseDown}
-              onTouchStart={this.handleTouchStart}
-            />
-          </div>
-        </div>
+    let scaledWidth: number;
+    let scaledHeight: number;
+    if (this.originalImageDimensions.width > this.originalImageDimensions.height) {
+      scaledHeight = cropAreaSize;
+      scaledWidth = scaledHeight * imageAspectRatio;
+    } else {
+      scaledWidth = cropAreaSize;
+      scaledHeight = scaledWidth / imageAspectRatio;
+    }
 
-        <Slider min={1} max={3} step={0.1} defaultValue={cropEffect.scale} onChange={this.handleSliderChange} />
-      </VerticalStack>
-    );
+    let initialScale = 1;
+    let initialPosition = { x: 0, y: 0 };
+
+    if (cropEffect) {
+      const cropWidthAtScale1 = (cropEffect.crop.width / 100) * scaledWidth;
+      const cropHeightAtScale1 = (cropEffect.crop.height / 100) * scaledHeight;
+
+      initialScale = Math.max(1, Math.min(3, cropAreaSize / Math.max(cropWidthAtScale1, cropHeightAtScale1)));
+
+      initialPosition = {
+        x: -(cropEffect.crop.left / 100) * (scaledWidth * initialScale),
+        y: -(cropEffect.crop.top / 100) * (scaledHeight * initialScale),
+      };
+    }
+
+    await this.setStateAsync({
+      imageDimensions: { width: scaledWidth, height: scaledHeight },
+      containerDimensions,
+      cropAreaDimensions: { width: cropAreaSize, height: cropAreaSize },
+      position: initialPosition,
+      scale: initialScale,
+    });
+  }
+
+  private isReactTouchEvent(event: React.MouseEvent | React.TouchEvent): event is React.TouchEvent {
+    return event.type.startsWith('touch');
+  }
+
+  private startDrag(event: React.MouseEvent | React.TouchEvent) {
+    const isTouch = this.isReactTouchEvent(event);
+    this.lastClientX = isTouch ? event.touches[0].clientX : event.clientX;
+    this.lastClientY = isTouch ? event.touches[0].clientY : event.clientY;
+    this.isDragging = true;
+
+    document.addEventListener(isTouch ? 'touchmove' : 'mousemove', this.handleDrag);
+    document.addEventListener(isTouch ? 'touchend' : 'mouseup', this.endDrag);
+  }
+
+  private isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
+    return event.type.startsWith('touch');
+  }
+
+  private handleDrag = (event: MouseEvent | TouchEvent) => {
+    if (!this.isDragging) return;
+
+    const { scale, imageDimensions, cropAreaDimensions, position } = this.state;
+
+    const isTouch = this.isTouchEvent(event);
+    const clientX = isTouch ? event.touches[0].clientX : event.clientX;
+    const clientY = isTouch ? event.touches[0].clientY : event.clientY;
+
+    const deltaX = clientX - this.lastClientX;
+    const deltaY = clientY - this.lastClientY;
+
+    const scaledWidth = imageDimensions.width * scale;
+    const scaledHeight = imageDimensions.height * scale;
+
+    // Calculer les limites de déplacement
+    const minX = cropAreaDimensions.width - scaledWidth;
+    const minY = cropAreaDimensions.height - scaledHeight;
+    const maxX = 0;
+    const maxY = 0;
+
+    const newPosition = {
+      x: Math.max(Math.min(position.x + deltaX, maxX), minX),
+      y: Math.max(Math.min(position.y + deltaY, maxY), minY),
+    };
+
+    this.lastClientX = clientX;
+    this.lastClientY = clientY;
+
+    this.setState({ position: newPosition });
   };
+
+  private endDrag = () => {
+    this.isDragging = false;
+    document.removeEventListener('mousemove', this.handleDrag);
+    document.removeEventListener('mouseup', this.endDrag);
+    document.removeEventListener('touchmove', this.handleDrag);
+    document.removeEventListener('touchend', this.endDrag);
+  };
+
+  private async onValidate() {
+    const { position, scale, imageDimensions } = this.state;
+
+    // Retirer le concept de scale, ramener les dimensions à une échelle de 1
+    const scaledWidth = imageDimensions.width * scale;
+    const scaledHeight = imageDimensions.height * scale;
+
+    const left = Math.round((Math.abs(position.x) / scaledWidth) * 10000) / 100;
+    const top = Math.round((Math.abs(position.y) / scaledHeight) * 10000) / 100;
+
+    const cropWidth = Math.round((this.state.cropAreaDimensions.width / scaledWidth) * 10000) / 100;
+    const cropHeight = Math.round((this.state.cropAreaDimensions.height / scaledHeight) * 10000) / 100;
+
+    const cropEffect: IFileCropEffect = {
+      uuid: 'a9339c53-7084-4a6a-be2f-92c257bcd2be',
+      mimeType: 'image/png',
+      crop: {
+        height: cropHeight,
+        width: cropWidth,
+        left,
+        top,
+      },
+      original: this.originalImageDimensions,
+      changed: new Date(),
+    };
+
+    await this.close(cropEffect);
+  }
+
+  private async onChangeScale(scale: number) {
+    const { position, imageDimensions, cropAreaDimensions } = this.state;
+
+    const scaledWidth = imageDimensions.width * scale;
+    const scaledHeight = imageDimensions.height * scale;
+
+    // Calculer les nouvelles limites de déplacement
+    const minX = cropAreaDimensions.width - scaledWidth;
+    const minY = cropAreaDimensions.height - scaledHeight;
+    const maxX = 0;
+    const maxY = 0;
+
+    // Vérifier si la nouvelle position dépasse les limites
+    let newPosition = { ...position };
+
+    if (position.x < minX) {
+      newPosition.x = minX;
+    } else if (position.x > maxX) {
+      newPosition.x = maxX;
+    }
+
+    if (position.y < minY) {
+      newPosition.y = minY;
+    } else if (position.y > maxY) {
+      newPosition.y = maxY;
+    }
+
+    await this.setStateAsync({ scale, position: newPosition });
+  }
+
+  protected override get scrollInContent() {
+    return false;
+  }
+
+  public override renderContent() {
+    const { imageUrl, areaType } = this.props;
+    const { position, scale, containerDimensions, cropAreaDimensions, imageDimensions } = this.state;
+
+    let containerIsHigher = false;
+    if (containerDimensions) {
+      containerIsHigher = containerDimensions.height > containerDimensions.width;
+    }
+
+    return [
+      <div
+        key='picture'
+        className='image-container'
+        ref={this.containerRef}
+        onMouseDown={(e) => this.startDrag(e)}
+        onTouchStart={(e) => this.startDrag(e)}
+      >
+        {!!containerDimensions && (
+          <div
+            className='area'
+            style={{
+              width: containerIsHigher ? `${containerDimensions.width}px` : `${containerDimensions.height}px`,
+              height: containerIsHigher ? `${containerDimensions.width}px` : `${containerDimensions.height}px`,
+            }}
+          >
+            {/* Image en arrière-plan avec opacité réduite */}
+            <img
+              src={imageUrl}
+              alt='Croppable Background'
+              className='background-image'
+              style={{
+                width: `${imageDimensions.width * scale}px`,
+                height: `${imageDimensions.height * scale}px`,
+                transform: `translate(${position.x}px, ${position.y}px)`,
+              }}
+            />
+            {/* Zone de crop avec image en opacité normale */}
+            <div
+              className={classNames('crop-area', areaType)}
+              style={{
+                width: `${cropAreaDimensions.width}px`,
+                height: `${cropAreaDimensions.height}px`,
+              }}
+            >
+              <img
+                src={imageUrl}
+                alt='Croppable'
+                style={{
+                  width: `${imageDimensions.width * scale}px`,
+                  height: `${imageDimensions.height * scale}px`,
+                  transform: `translate(${position.x}px, ${position.y}px)`,
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>,
+      <Slider
+        key='scale'
+        min={1}
+        max={3}
+        step={0.1}
+        valueDisplayMode='auto'
+        defaultValue={scale}
+        onChange={(scale) => this.onChangeScale(scale)}
+      />,
+    ];
+  }
 }

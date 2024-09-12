@@ -12,7 +12,7 @@ export class Spacer extends Containable<ISpacerProps, ISpacerState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-layout-spacer'] = true;
     return classes;

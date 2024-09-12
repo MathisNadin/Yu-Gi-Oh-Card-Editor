@@ -2,8 +2,8 @@ import { classNames } from 'mn-tools';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { ITabSetProps, TabSet, TTabPosition } from './TabSet';
 import { ITabPaneProps, TabPane } from './TabPane';
-import { JSXElementChildren } from 'mn-toolkit/react';
-import { IContainableProps } from 'mn-toolkit/containable';
+import { JSXElementChildren } from '../react';
+import { IContainableProps, TDidUpdateSnapshot } from '../containable';
 
 export interface ITabbedPanePane<ID = number> {
   props: ITabPaneProps<ID>;
@@ -44,7 +44,12 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
     this.state = { ...this.state, value: this.props.defaultValue };
   }
 
-  public componentDidUpdate(prevProps: ITabbedPaneProps<ID>) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ITabbedPaneProps<ID>>,
+    prevState: Readonly<ITabbedPaneState<ID>>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps.defaultValue === this.props.defaultValue) return;
     this.setState({ value: this.props.defaultValue });
   }
@@ -105,10 +110,10 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
         defaultValue={this.state.value}
         tabPosition={this.props.tabPosition}
         disabled={this.props.disabled}
-        onClose={(id: ID) => this.onClose(id)}
+        onClose={(id) => this.onClose(id)}
         addButton={this.props.addButton}
         onAdd={() => this.onAdd()}
-        onChange={(value: ID) => this.onChange(value)}
+        onChange={(value) => this.onChange(value)}
         items={this.filteredPanes.map((pane) => {
           return {
             tabId: pane.props.tabId,
@@ -117,7 +122,6 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
             iconColor: pane.props.iconColor,
             stateIcon: pane.props.stateIcon,
             stateIconColor: pane.props.stateIconColor,
-            badge: pane.props.badge,
             onTap: pane.props.onTap,
             selected: pane.props.selected,
             disabled: pane.props.disabled,
@@ -129,20 +133,20 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
     );
   }
 
-  private onAdd(): void {
+  private async onAdd() {
     if (!this.props.onAdd) return;
-    app.$errorManager.handlePromise(this.props.onAdd());
+    await this.props.onAdd();
   }
 
-  private onClose(id: ID) {
+  private async onClose(id: ID) {
     if (!this.props.onClose) return;
-    app.$errorManager.handlePromise(this.props.onClose(id));
+    await this.props.onClose(id);
   }
 
   public async onChange(value: ID) {
     if (this.state.value === value) return;
     await this.setStateAsync({ value });
     if (!this.props.onChange) return;
-    app.$errorManager.handlePromise(this.props.onChange(this.state.value));
+    await this.props.onChange(this.state.value);
   }
 }

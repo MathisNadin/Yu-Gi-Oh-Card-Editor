@@ -1,16 +1,19 @@
-import { classNames } from 'mn-tools';
-import { IMemberEntity } from 'api/main';
+import { AllHTMLAttributes } from 'react';
+import { isDefined } from 'mn-tools';
+import { IMemberEntity, TDerivative } from 'api/main';
+import { JSXElementChildren } from '../react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 
-export type BadgeShape = 'circle' | 'square';
+export type TMemberBadgeShape = 'circle' | 'square';
 
 interface IMemberBadgeProps extends IContainableProps {
   member: IMemberEntity;
-  shape?: BadgeShape;
+  shape?: TMemberBadgeShape;
   size?: number;
   color?: TForegroundColor;
-  badge?: number;
+  derivative?: TDerivative;
+  display?: 'personNames' | 'userName';
 }
 
 interface IMemberBadgeState extends IContainableState {}
@@ -21,11 +24,13 @@ export class MemberBadge extends Containable<IMemberBadgeProps, IMemberBadgeStat
       ...super.defaultProps,
       shape: 'circle',
       size: 32,
+      derivative: 'default',
       color: 'primary',
+      display: 'personNames',
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-member-badge'] = true;
     if (this.props.shape) classes[`mn-shape-${this.props.shape}`] = true;
@@ -33,39 +38,45 @@ export class MemberBadge extends Containable<IMemberBadgeProps, IMemberBadgeStat
     return classes;
   }
 
-  public render() {
-    if (!this.props.member) return null!;
+  public override renderAttributes(): AllHTMLAttributes<HTMLElement> {
+    const attributes = super.renderAttributes();
+    if (isDefined(this.props.size)) {
+      attributes.style = {
+        width: this.props.size,
+        minWidth: this.props.size,
+        height: this.props.size,
+        minHeight: this.props.size,
+        fontSize: this.props.size / 2,
+      };
+    }
+    return attributes;
+  }
+
+  public override get children(): JSXElementChildren {
+    const { member, derivative } = this.props;
+    if (!member) return [];
 
     const picture = app.$api.getFileUrl({
-      oid: this.props.member.picture,
-      effects: this.props.member.pictureEffects,
-      derivative: 'avatar',
-    })!;
+      oid: member.picture,
+      effects: member.pictureEffects,
+      derivative,
+    });
 
-    return (
-      <div
-        id={this.props.nodeId}
-        title={this.props.hint}
-        style={{
-          width: this.props.size,
-          minWidth: this.props.size,
-          height: this.props.size,
-          minHeight: this.props.size,
-          fontSize: this.props.size! / 2,
-        }}
-        className={classNames(this.renderClasses())}
-        onClick={(e: React.MouseEvent) => {
-          if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(e));
-        }}
-      >
-        {!!this.props.badge && <span className='mn-badge'>{this.props.badge}</span>}
+    let letters: string;
+    if (this.props.display === 'userName') {
+      const userName = member.userName || '';
+      letters = `${userName[0]}${userName[1]}`;
+    } else {
+      letters = `${(member.firstName || '?')[0]}${(member.lastName || '?')[0]}`;
+    }
 
-        {picture ? (
-          <div className='content photo' style={{ backgroundImage: `url(${picture})` }} />
-        ) : (
-          <div className='content letter'>{`${this.props.member.firstName[0]}${this.props.member.lastName[0]}`}</div>
-        )}
-      </div>
-    );
+    return [
+      !!picture && <div key='photo' className='content photo' style={{ backgroundImage: `url(${picture})` }} />,
+      !picture && (
+        <div key='letter' className='content letter'>
+          {letters}
+        </div>
+      ),
+    ];
   }
 }

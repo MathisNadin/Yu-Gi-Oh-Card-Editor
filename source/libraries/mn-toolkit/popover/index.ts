@@ -6,13 +6,14 @@ export * from './Popovers';
 export * from './AbstractPopover';
 export * from './ActionsPopover';
 export * from './BubblePopover';
+export * from './WalkthroughPopover';
 
 export interface IPopoverListener {
   popoversChanged(): void;
 }
 
 export interface IPopoverOptions<P extends IAbstractPopoverProps> {
-  event: React.MouseEvent;
+  eventOrRect: React.MouseEvent | DOMRect;
   type: string;
   Component: new (...args: P[]) => AbstractPopover;
   componentProps: P;

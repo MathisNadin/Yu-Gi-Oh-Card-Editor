@@ -6,6 +6,7 @@ import { ITableRow, TableRow } from './TableRow';
 import { ReactNode } from 'react';
 import { Icon } from '../icon';
 import { themeSettings } from '../themeSettings';
+import { TDidUpdateSnapshot } from '../containable';
 
 interface ITableProps extends IContainerProps {
   columns?: ITableColumn[];
@@ -46,19 +47,25 @@ export class Table extends Container<ITableProps, ITableState> {
     this.state = { left: 0, top: 0 } as ITableState;
   }
 
-  public componentDidMount() {
-    this.processxProps();
+  public override componentDidMount() {
+    super.componentDidMount();
+    app.$errorManager.handlePromise(this.processxProps());
   }
 
-  public componentDidUpdate(prevProps: ITableProps) {
-    if (prevProps !== this.props) this.processxProps();
+  public override componentDidUpdate(
+    prevProps: Readonly<ITableProps>,
+    prevState: Readonly<ITableState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps !== this.props) app.$errorManager.handlePromise(this.processxProps());
   }
 
   private loading(props: ITableProps) {
     return props.loading || !props.columns || !props.rows;
   }
 
-  public processxProps() {
+  public async processxProps() {
     const { props } = this;
     if (this.loading(props)) return;
     let nbNoWidth = 0;
@@ -92,7 +99,7 @@ export class Table extends Container<ITableProps, ITableState> {
       : [];
 
     let ssum = sum.length ? `100% - (${sum.join(' + ')})` : '100%';
-    this.setState({
+    await this.setStateAsync({
       columns,
       hasHeader: !!nbHeaderLabel,
       columnStyle: columns.map((x) => {
@@ -116,7 +123,7 @@ export class Table extends Container<ITableProps, ITableState> {
         return style;
       }),
     });
-    this.setState({
+    await this.setStateAsync({
       rows: props.rows ? this.rebuildRows(props.rows, props.columns || [], hiddenIndexes) : [],
     });
   }
@@ -181,7 +188,7 @@ export class Table extends Container<ITableProps, ITableState> {
     if (this.props.onScroll) app.$errorManager.handlePromise(this.props.onScroll(e));
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-table'] = true;
     classes[`mn-table-theme-${this.props.theme}`] = true;
@@ -233,14 +240,16 @@ export class Table extends Container<ITableProps, ITableState> {
                     )}
                   >
                     <span
-                      className='mn-table-header-label'
-                      onClick={() => {
-                        if (column.onChangeOrder) app.$errorManager.handlePromise(column.onChangeOrder());
-                      }}
+                      className={classNames('mn-table-header-label', { 'has-click': !!column.onChangeOrder })}
+                      onClick={
+                        !column.onChangeOrder
+                          ? undefined
+                          : () => app.$errorManager.handlePromise(column.onChangeOrder!())
+                      }
                     >
                       <span className='mn-table-header-text'>{column.label as ReactNode}</span>
                       {column.order && (
-                        <Icon iconId={column.order === 'asc' ? 'toolkit-angle-up' : 'toolkit-angle-down'} />
+                        <Icon icon={column.order === 'asc' ? 'toolkit-angle-up' : 'toolkit-angle-down'} />
                       )}
                     </span>
                   </div>

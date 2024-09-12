@@ -1,14 +1,15 @@
+import { JSXElementChildren } from '../react';
 import { Icon } from '../icon';
-import { ITextFieldProps, ITextFieldState, TextField } from './TextField';
+import { ITextInputFieldProps, ITextInputFieldState, TextInputField } from './TextInputField';
 import { TextInput } from './TextInput';
 
-interface IPasswordFieldProps extends ITextFieldProps {}
+interface IPasswordFieldProps extends ITextInputFieldProps {}
 
-interface IPasswordFieldState extends ITextFieldState {
+interface IPasswordFieldState extends ITextInputFieldState {
   revealPassword: boolean;
 }
 
-export class PasswordField extends TextField<IPasswordFieldProps, IPasswordFieldState> {
+export class PasswordField extends TextInputField<IPasswordFieldProps, IPasswordFieldState> {
   public static get defaultProps(): IPasswordFieldProps {
     return {
       ...super.defaultProps,
@@ -20,21 +21,17 @@ export class PasswordField extends TextField<IPasswordFieldProps, IPasswordField
     super(props, 'password');
   }
 
-  public renderIcon() {
+  protected override renderPropIcon(): JSXElementChildren {
     return (
       <Icon
         className='prop-icon'
-        iconId={this.state.revealPassword ? 'toolkit-eye-close' : 'toolkit-eye-open'}
-        onTap={(e) => this.onStatusIconClick(e)}
+        icon={this.state.revealPassword ? 'toolkit-eye-close' : 'toolkit-eye-open'}
+        onTap={() => this.setStateAsync({ revealPassword: !this.state.revealPassword })}
       />
     );
   }
 
-  public onStatusIconClick(_e: React.MouseEvent) {
-    this.setState({ revealPassword: !this.state.revealPassword });
-  }
-
-  public renderControl() {
+  protected override renderControl() {
     return (
       <TextInput
         ref={this.inputElement}

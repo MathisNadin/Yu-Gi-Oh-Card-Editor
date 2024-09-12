@@ -1,4 +1,4 @@
 export * from './TextInput';
-export * from './TextField';
+export * from './TextInputField';
 export * from './EmailField';
 export * from './PasswordField';

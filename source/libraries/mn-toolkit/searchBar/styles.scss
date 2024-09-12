@@ -26,13 +26,7 @@
   }
 
   .search-icon {
-    &.search-icon-right {
-      margin-right: $themeDefaultSpacing;
-    }
-
-    &.search-icon-left {
-      margin-left: $themeDefaultSpacing;
-    }
+    margin-left: $themeDefaultSpacing;
   }
 
   input {

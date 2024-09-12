@@ -1,4 +1,7 @@
-@mixin themeMemberBadgeSize($size) {
+@mixin colorizeMemberBadge($color) {
+  .content.letter {
+    color: $color;
+  }
 }
 
 @mixin themeMemberBadge {
@@ -7,6 +10,43 @@
   justify-content: center;
   position: relative;
   @include bg(3);
+
+  &.mn-color-primary {
+    @include colorizeMemberBadge($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeMemberBadge($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeMemberBadge($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeMemberBadge($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeMemberBadge($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeMemberBadge($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeMemberBadge($warning);
+  }
+  &.mn-color-info {
+    @include colorizeMemberBadge($info);
+  }
+  &.mn-color-1 {
+    @include colorizeMemberBadge(nth($theme-light-fg, 1));
+  }
+  &.mn-color-2 {
+    @include colorizeMemberBadge(nth($theme-light-fg, 2));
+  }
+  &.mn-color-3 {
+    @include colorizeMemberBadge(nth($theme-light-fg, 3));
+  }
+  &.mn-color-4 {
+    @include colorizeMemberBadge(nth($theme-light-fg, 4));
+  }
 
   .letter {
     font-weight: bold;
@@ -26,6 +66,7 @@
       border-radius: 50%;
     }
   }
+
   &.mn-shape-square {
     border-radius: $themeDefaultBorderRadius;
     overflow: hidden;
@@ -33,16 +74,10 @@
       border-radius: $themeDefaultBorderRadius;
     }
   }
+
   @include fx(opacity);
   &.has-click:hover {
     opacity: 0.8;
-  }
-
-  .mn-badge {
-    position: absolute;
-    right: -6px;
-    top: -6px;
-    z-index: 1;
   }
 
   &.mn-disabled {

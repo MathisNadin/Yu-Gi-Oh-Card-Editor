@@ -32,7 +32,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
     this.state = { ...this.state, handlerDown: false };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-sortable'] = true;
     return classes;
@@ -75,7 +75,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
         onMouseUp={() => this.setState({ handlerDown: false })}
         onTouchEnd={() => this.setState({ handlerDown: false })}
       >
-        <Icon iconId='toolkit-drag-vertical' />
+        <Icon icon='toolkit-drag-vertical' />
       </div>
     );
   }

@@ -1,73 +1,82 @@
-import { Component, PropsWithChildren } from 'react';
-import { markdownToHtml } from 'mn-tools';
-import { IHeaderCrumb } from '.';
-import { ButtonIcon } from '../button';
+import { IToolkitComponentProps, IToolkitComponentState, ToolkitComponent } from '../containable';
 import { IState } from '../router';
+import { HorizontalStack } from '../container';
 import { Icon } from '../icon';
+import { Typography } from '../typography';
+import { IHeaderCrumb } from '.';
 
-interface IBreadcrumbProps extends PropsWithChildren {
+interface IBreadcrumbProps extends IToolkitComponentProps {
   crumbs: IHeaderCrumb[];
+  onlyShowLastCrumb?: boolean;
 }
 
-interface IBreadcrumbState {
+interface IBreadcrumbState extends IToolkitComponentState {
   state: IState;
 }
 
-export class Breadcrumb extends Component<IBreadcrumbProps, IBreadcrumbState> {
+export class Breadcrumb extends ToolkitComponent<IBreadcrumbProps, IBreadcrumbState> {
   public static get defaultProps(): Partial<IBreadcrumbProps> {
     return {
       crumbs: [],
+      onlyShowLastCrumb: false,
     };
-  }
-
-  public constructor(props: IBreadcrumbProps) {
-    super(props);
   }
 
   public render() {
     const crumbs = this.props.crumbs.map((x) => ({ ...x }));
     app.$header.alterBreadCrumb(crumbs);
-    if (app.$device.isSmallScreen) {
+
+    if (this.props.onlyShowLastCrumb || app.$device.isSmallScreen) {
       return (
-        <div className='mn-breadcrumb'>
-          <ButtonIcon icon='toolkit-angle-left' />
-          <span
+        <HorizontalStack key='breadcrumbs' className='mn-breadcrumb' verticalItemAlignment='middle'>
+          {crumbs.length > 1 && (
+            <Icon
+              key='back'
+              icon='toolkit-angle-left'
+              onTap={!crumbs[crumbs.length - 2]?.onTap ? undefined : () => crumbs[crumbs.length - 2].onTap!()}
+            />
+          )}
+          <Typography
+            key='bread'
             className='bread'
-            dangerouslySetInnerHTML={{ __html: markdownToHtml(crumbs[crumbs.length - 1]?.title, true) }}
+            variant='document'
+            contentType='markdown'
+            content={crumbs[crumbs.length - 1]?.title}
           />
-        </div>
+        </HorizontalStack>
       );
     }
 
     return (
-      <div className='mn-breadcrumb'>
+      <HorizontalStack className='mn-breadcrumb' verticalItemAlignment='middle'>
         {crumbs.map((crumb, i) => {
           if (!!crumb.onTap) {
             return [
-              <span
-                key={`mn-breadcrumb-${i}`}
-                onClick={() => {
-                  if (crumb.onTap) app.$errorManager.handlePromise(crumb.onTap());
-                }}
+              <Typography
+                key={`${i}-crumb-clickable-${crumb.title}`}
                 className='crumb'
-                dangerouslySetInnerHTML={{ __html: markdownToHtml(crumb.title, true) }}
+                variant='document'
+                contentType='markdown'
+                content={crumb.title}
+                onTap={!crumb.onTap ? undefined : () => app.$errorManager.handlePromise(crumb.onTap!())}
               />,
-              i < crumbs.length - 1 && (
-                <Icon key={`mn-breadcrumb-separator-${i}`} className='separator' iconId='toolkit-angle-right' />
-              ),
+              i < crumbs.length - 1 && <Icon key='separator' className='separator' icon='toolkit-angle-right' />,
             ];
           } else {
             return (
-              <span
-                key={`mn-breadcrumb-${i}`}
+              <Typography
+                key={`${i}-crumb-${crumb.title}`}
                 className='bread'
-                dangerouslySetInnerHTML={{ __html: markdownToHtml(crumb.title, true) }}
+                variant='document'
+                contentType='markdown'
+                content={crumb.title}
               />
             );
           }
         })}
-        {this.props.children}
-      </div>
+
+        {this.children}
+      </HorizontalStack>
     );
   }
 }

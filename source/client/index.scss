@@ -9,13 +9,40 @@
 @import './kernel/styles.scss';
 @import './editor/styles.scss';
 
-#root {
-  height: 100%;
-  width: 100%;
-}
-
 .mn-router {
   height: 100%;
+}
+
+input,
+textarea,
+.mn-inplace-edit div {
+  font-family:
+    Encode Sans Semi Condensed,
+    Verdana,
+    Helvetica,
+    sans-serif;
+  font-size: 14px;
+  line-height: 130%;
+}
+
+input,
+textarea {
+  &:focus-visible {
+    outline-color: rgba($neutral, 0.7);
+    outline-width: 1px;
+  }
+}
+
+.mn-checkbox.checked {
+  .toggle {
+    background-color: $neutral !important;
+    border-color: $neutral !important;
+  }
+}
+
+/* #root {
+  height: 100%;
+  width: 100%;
 }
 
 html {
@@ -68,31 +95,4 @@ a {
 a:hover {
   opacity: 1;
   text-decoration: none;
-}
-
-input,
-textarea,
-.mn-inplace-edit div {
-  font-family:
-    Encode Sans Semi Condensed,
-    Verdana,
-    Helvetica,
-    sans-serif;
-  font-size: 14px;
-  line-height: 130%;
-}
-
-input,
-textarea {
-  &:focus-visible {
-    outline-color: rgba($neutral, 0.7);
-    outline-width: 1px;
-  }
-}
-
-.mn-checkbox.checked {
-  .toggle {
-    background-color: $neutral !important;
-    border-color: $neutral !important;
-  }
-}
+} */

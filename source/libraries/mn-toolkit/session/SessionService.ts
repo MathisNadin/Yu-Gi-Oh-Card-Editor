@@ -46,7 +46,7 @@ export class SessionService extends Observable<ISessionListener> {
       log.debug('Nous avons un token:', this._token);
       if (this._data) {
         log.debug('Nous avons des données:', this._data);
-        await this.start(this._token, this._data);
+        await this.start(this._token, this._data, true);
       } else {
         log.debug(`Pas de data, il faudrait une tentative de reconnection avec le token ${this._token}`);
       }
@@ -76,7 +76,7 @@ export class SessionService extends Observable<ISessionListener> {
     return this._token;
   }
 
-  public async start(token: string, data: ISessionData) {
+  public async start(token: string, data: ISessionData, fromPreexistingData = false) {
     // MN : des fois on passe this._data en argument data, donc on utilise newData pour ne pas l'affecter
     // quand on fait ensuite "await app.$store.set('session', this._data = {} as ISessionData);"
     const newData = data;
@@ -84,10 +84,27 @@ export class SessionService extends Observable<ISessionListener> {
     await app.$store.set('token', (this._token = token));
     await app.$store.set('session', (this._data = {} as ISessionData));
     this._active = true;
-    if (newData.member) {
-      const response = await app.$api.member.getPermissions({ member: newData.member.oid });
-      newData.member.permissions = response.permissions;
+
+    // If from preexisting data (retrieved from storage during initial setup) then we update the entire member
+    if (fromPreexistingData && newData.member) {
+      try {
+        const [member] = await app.$api.member.list({ oids: [newData.member.oid] });
+        if (!member) return this.drop();
+        newData.member = member;
+
+        const response = await app.$api.member.getPermissions({
+          member: newData.member.oid,
+          applicationInstance: newData.member.applicationInstance,
+        });
+        newData.roles = response.roles;
+        newData.permissions = response.permissions;
+      } catch (e) {
+        // We may have data, but if the session's expired this will fail, so we drop the session
+        app.$errorManager.trigger(e as Error);
+        return this.drop();
+      }
     }
+
     await this.update(newData);
     this.fireSessionCreated();
     this.fireSessionUpdated();

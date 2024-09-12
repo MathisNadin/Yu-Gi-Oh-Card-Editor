@@ -17,7 +17,7 @@ export class Content extends Container<IContentProps, IContentState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-content'] = true;
     return classes;

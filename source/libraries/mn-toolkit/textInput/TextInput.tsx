@@ -1,5 +1,5 @@
 import { FormEvent, HTMLInputTypeAttribute } from 'react';
-import { IContainableProps, IContainableState, Containable } from '../containable';
+import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
 
 export interface ITextInputProps extends IContainableProps {
   inputType?: HTMLInputTypeAttribute;
@@ -30,8 +30,14 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
     this.state = { ...this.state, value: props.defaultValue! };
   }
 
-  public componentDidUpdate(prevProps: ITextInputProps) {
-    if (prevProps !== this.props && this.props.defaultValue?.trim() !== this.state.value?.trim()) {
+  public override componentDidUpdate(
+    prevProps: Readonly<ITextInputProps>,
+    prevState: Readonly<ITextInputState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
+    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
       this.setState({ value: this.props.defaultValue! });
     }
   }
@@ -45,13 +51,13 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState> {
     this.inputElement = c;
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-text-input'] = true;
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <input
         {...this.renderAttributes()}

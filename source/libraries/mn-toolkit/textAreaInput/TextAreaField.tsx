@@ -1,6 +1,5 @@
 import { createRef } from 'react';
-import { isEmpty } from 'mn-tools';
-import { FormField, IFormFieldProps, IFormFieldState } from '../form/FormField';
+import { FormField, IFormFieldProps, IFormFieldState } from '../form';
 import { ITextAreaInputProps, TextAreaInput } from './TextAreaInput';
 
 interface ITextAreaFieldProps extends IFormFieldProps<string>, ITextAreaInputProps {}
@@ -20,36 +19,15 @@ export class TextAreaField extends FormField<string, ITextAreaFieldProps, ITextA
 
   public constructor(props: ITextAreaFieldProps) {
     super(props, 'textarea');
-    this.state = {
-      ...this.state,
-      value: props.defaultValue!,
-    };
-
-    if (props.required) {
-      this.validators.unshift((field) => {
-        if (isEmpty((field as TextAreaField).value)) return field.addError('Nous avons besoin de quelque chose ici');
-        field.validate();
-      });
-    }
   }
 
-  public componentDidUpdate(prevProps: ITextAreaFieldProps) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue! });
-      if (this.validators.length && this.props.required) {
-        app.$errorManager.handlePromise(this.doValidation());
-      }
-    }
-  }
-
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['multilines'] = true;
     return classes;
   }
 
-  public renderControl() {
+  protected override renderControl() {
     return (
       <TextAreaInput
         ref={this.textareaElement}
@@ -69,15 +47,5 @@ export class TextAreaField extends FormField<string, ITextAreaFieldProps, ITextA
         onChange={(value) => this.onChange(value)}
       />
     );
-  }
-
-  private onChange(value: string) {
-    this.setState({ value });
-    this.fireValueChanged();
-    if (!!this.props.onChange) this.props.onChange(value);
-  }
-
-  public doClickItem() {
-    if (this.textareaElement?.current) this.textareaElement.current.doFocus();
   }
 }

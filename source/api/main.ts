@@ -1,15 +1,327 @@
-import { LanguageLocale, JSONValue } from 'mn-tools';
+/* eslint-disable import/export */
+
+import { TForbidTypeChanges, LanguageLocale, JSONValue } from 'mn-tools';
+
+// Pour faire de ceci un module
+export interface IDummy {}
 
 declare global {
   interface IDerivatives {
-    thumbnail?: null;
-    media?: null;
-    avatar?: null;
-    navigationHeader?: null;
+    thumbnail: null;
+    media: null;
+    avatar: null;
   }
 }
 
-export interface INotificationEntity extends IAbstractEntity {
+export interface IVariableEntity extends TAbstractEntity {
+  name: string;
+  value: string;
+}
+
+export type TVariableTableIndexes = 'name' | 'value';
+
+export interface IVariableTable extends IAbstractTable<IVariableEntity, TVariableTableIndexes> {
+  name: 'Variable';
+  useDataField: false;
+  indexes: TTableIndexDefinitions & {
+    name: ITableIndexDefinition<IVariableEntity, IVariableEntity['name']>;
+    value: ITableIndexDefinition<IVariableEntity, IVariableEntity['value']>;
+  };
+}
+
+interface IAbstractEntity {
+  oid: number;
+  created: Date;
+  creator: TAbstractEntity['oid'];
+  applicationInstance: TAbstractEntity['oid'];
+  changed: Date;
+  userChanged: Date;
+  deleted?: Date;
+  deletedBy?: TAbstractEntity['oid'];
+}
+
+export type TAbstractEntity = TForbidTypeChanges<IAbstractEntity, IAbstractEntity>;
+
+export interface ITableIndexDefinition<E extends TAbstractEntity, V extends TSQLValue> {
+  type: TPostgresType<V>;
+  getter: (entity: E) => V;
+}
+
+interface ITableIndexDefinitions {
+  oid: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['oid']>;
+  created: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['created']>;
+  creator: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['creator']>;
+  applicationInstance: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['applicationInstance']>;
+  changed: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['changed']>;
+  userChanged: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['userChanged']>;
+  deleted: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['deleted']>;
+  deletedBy: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['deletedBy']>;
+}
+
+export type TTableIndexDefinitions = TForbidTypeChanges<ITableIndexDefinitions, ITableIndexDefinitions>;
+
+export type TAbstractTableIndexes =
+  | 'oid'
+  | 'created'
+  | 'creator'
+  | 'applicationInstance'
+  | 'changed'
+  | 'userChanged'
+  | 'deleted'
+  | 'deletedBy';
+
+export type TTableOtherIndexes<E extends TAbstractEntity, K extends string> = {
+  [index in K extends TAbstractTableIndexes ? never : K]: ITableIndexDefinition<E, TSQLValue>;
+};
+
+export interface IAbstractTable<E extends TAbstractEntity = TAbstractEntity, K extends string = never> {
+  query: IQuery<E, this, K>;
+  name: string;
+  useDataField: boolean;
+  indexes: TTableIndexDefinitions & TTableOtherIndexes<E, K>;
+  normalize: (entity: Partial<E>) => void;
+  store: (entity: Partial<E>) => Promise<E>;
+  reindex: (entity: Partial<E>) => Promise<void>;
+  drop: (entity: E) => Promise<void>;
+  restore: (entity: E) => Promise<void>;
+  onBeforeStore: (entity: E, changedByAdmin: boolean) => Promise<void>;
+  onAfterStore: (entity: E) => Promise<void>;
+  onBeforeDrop: (entity: E) => Promise<void>;
+  onBeforeRestore: (entity: E) => Promise<void>;
+}
+
+export interface IPostgresTypeMapping {
+  string: 'text' | 'varchar' | 'char';
+  number: 'integer' | 'float' | 'double precision' | 'numeric';
+  boolean: 'boolean';
+  Date: 'timestamp without time zone' | 'date';
+  null: 'text'; // Peut-être changé selon le contexte
+  undefined: 'text'; // Peut-être changé selon le contexte
+  stringArray: 'text[]' | 'varchar[]' | 'char[]';
+  numberArray: 'integer[]' | 'float[]' | 'double precision[]' | 'numeric[]';
+  booleanArray: 'boolean[]';
+  DateArray: 'timestamp[]' | 'date[]';
+}
+
+export type TPostgresBaseType<T> = T extends string
+  ? IPostgresTypeMapping['string']
+  : T extends number
+    ? IPostgresTypeMapping['number']
+    : T extends boolean
+      ? IPostgresTypeMapping['boolean']
+      : T extends Date
+        ? IPostgresTypeMapping['Date']
+        : T extends null
+          ? IPostgresTypeMapping['null']
+          : T extends undefined
+            ? IPostgresTypeMapping['undefined']
+            : never;
+
+export type TPostgresArrayType<T> = T extends (infer U)[]
+  ? U extends string
+    ? IPostgresTypeMapping['stringArray']
+    : U extends number
+      ? IPostgresTypeMapping['numberArray']
+      : U extends boolean
+        ? IPostgresTypeMapping['booleanArray']
+        : U extends Date
+          ? IPostgresTypeMapping['DateArray']
+          : never
+  : never;
+
+export type TPostgresType<T> = TPostgresBaseType<T> | TPostgresArrayType<T>;
+
+export type TSQLBaseValue = string | number | boolean | Date | null | undefined;
+
+export type TSQLValue = TSQLBaseValue | TSQLBaseValue[];
+
+export type TValidIndexKeys<E extends TAbstractEntity, K extends string> = keyof (TTableIndexDefinitions &
+  TTableOtherIndexes<E, K>);
+
+export type TTableIndexReturnType<
+  E extends TAbstractEntity,
+  T extends IAbstractTable<E, K>,
+  I extends TValidIndexKeys<E, K> = TValidIndexKeys<E, never>,
+  K extends string = never,
+> = T['indexes'][I] extends ITableIndexDefinition<E, infer R> ? R : never;
+
+export type TJoinOperator =
+  | 'equals'
+  | 'notEquals'
+  | 'greaterThan'
+  | 'greaterThanOrEqualTo'
+  | 'lowerThan'
+  | 'lowerThanOrEqualTo'
+  | 'in'
+  | 'notIn'
+  | 'like'
+  | 'notLike';
+
+export interface IJoinCondition<
+  E extends TAbstractEntity,
+  K extends string,
+  A extends TAbstractEntity,
+  O extends string,
+> {
+  homeField: TValidIndexKeys<E, K>;
+  externalField: TValidIndexKeys<A, O>;
+  operator: TJoinOperator;
+}
+
+export type TQueryConditionOperator =
+  | '='
+  | '!='
+  | '>'
+  | '>='
+  | '<'
+  | '<='
+  | 'IN'
+  | 'NOT IN'
+  | 'LIKE'
+  | 'NOT LIKE'
+  | 'IS NULL'
+  | 'IS NOT NULL'
+  | 'BETWEEN'
+  | '&&'
+  | 'NOT &&'
+  | '@@ to_tsquery';
+
+export interface IQueryCondition {
+  field: string;
+  operator: TQueryConditionOperator;
+  value?: TSQLValue;
+}
+
+export type TQueryJoinType = 'JOIN' | 'INNER JOIN' | 'LEFT JOIN' | 'RIGHT JOIN' | 'FULL JOIN';
+
+export interface IQueryJoin {
+  joinType: TQueryJoinType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  otherQuery: IQuery<any, any>;
+  joinConditions: string[];
+}
+
+export interface IQuery<E extends TAbstractEntity, T extends IAbstractTable<E, K>, K extends string = never> {
+  table: T;
+  conditions: IQueryCondition[];
+  joins: IQueryJoin[];
+  fields: string[];
+  distinctField?: string;
+  orderConditions: string[];
+  parameters: TSQLValue[];
+  distinct(field: keyof T): this;
+  equals<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  notEquals<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  in<I extends TValidIndexKeys<E, K>>(
+    field: I,
+    value: TTableIndexReturnType<E, T, I, K> | TTableIndexReturnType<E, T, I, K>[]
+  ): this;
+  notIn<I extends TValidIndexKeys<E, K>>(
+    field: I,
+    value: TTableIndexReturnType<E, T, I, K> | TTableIndexReturnType<E, T, I, K>[]
+  ): this;
+  like<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  notLike<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  true(field: TValidIndexKeys<E, K>): this;
+  false(field: TValidIndexKeys<E, K>): this;
+  null(field: TValidIndexKeys<E, K>): this;
+  notNull(field: TValidIndexKeys<E, K>): this;
+  greaterThan<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  lowerThan<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  greaterThanOrEqualTo<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  lowerThanOrEqualTo<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  between<I extends TValidIndexKeys<E, K>>(
+    field: I,
+    min: TTableIndexReturnType<E, T, I, K>,
+    max: TTableIndexReturnType<E, T, I, K>
+  ): this;
+  arrayOverlap<I extends TValidIndexKeys<E, K>>(field: I, values: TTableIndexReturnType<E, T, I, K>): this;
+  arrayNoOverlap<I extends TValidIndexKeys<E, K>>(field: I, values: TTableIndexReturnType<E, T, I, K>): this;
+  textSearch<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  orderBy(field: TValidIndexKeys<E, K>, direction?: TEntitySortOrder): this;
+  join<A extends TAbstractEntity, J extends IAbstractTable<A, O>, O extends string = never>(
+    otherQuery: IQuery<A, J, O>,
+    joinConditions: IJoinCondition<E, K, A, O>[]
+  ): this;
+  innerJoin<A extends TAbstractEntity, J extends IAbstractTable<A, O>, O extends string = never>(
+    otherQuery: IQuery<A, J, O>,
+    joinConditions: IJoinCondition<E, K, A, O>[]
+  ): this;
+  leftJoin<A extends TAbstractEntity, J extends IAbstractTable<A, O>, O extends string = never>(
+    otherQuery: IQuery<A, J, O>,
+    joinConditions: IJoinCondition<E, K, A, O>[]
+  ): this;
+  rightJoin<A extends TAbstractEntity, J extends IAbstractTable<A, O>, O extends string = never>(
+    otherQuery: IQuery<A, J, O>,
+    joinConditions: IJoinCondition<E, K, A, O>[]
+  ): this;
+  fullJoin<A extends TAbstractEntity, J extends IAbstractTable<A, O>, O extends string = never>(
+    otherQuery: IQuery<A, J, O>,
+    joinConditions: IJoinCondition<E, K, A, O>[]
+  ): this;
+  buildConditionClause(condition: IQueryCondition, startIndex: number): string;
+  count(): Promise<number>;
+  grabIds(options?: IQueryPagerOptions): Promise<number[]>;
+  grabId(options?: IQueryPagerOptions): Promise<number | undefined>;
+  grab(options?: IQueryPagerOptions): Promise<E[]>;
+  grabOne(options?: IQueryPagerOptions): Promise<E | undefined>;
+}
+
+export type TEntitySortOrder = 'asc' | 'desc';
+
+export interface IEntityListSortOption<E extends TAbstractEntity, K extends string> {
+  field: TValidIndexKeys<E, K>;
+  order: TEntitySortOrder;
+}
+
+export interface IQueryPagerOptions {
+  from: number;
+  count: number;
+}
+
+export interface IEntityListOptions<E extends TAbstractEntity, K extends string = never> {
+  sort?: IEntityListSortOption<E, K>[];
+  oids?: TTableIndexReturnType<TAbstractEntity, IAbstractTable<TAbstractEntity, 'oid'>, 'oid'>[];
+  excludeOids?: TTableIndexReturnType<TAbstractEntity, IAbstractTable<TAbstractEntity, 'oid'>, 'oid'>[];
+  deleted?: boolean;
+  creator?: TTableIndexReturnType<TAbstractEntity, IAbstractTable<TAbstractEntity, 'creator'>, 'creator'>;
+  pager?: IQueryPagerOptions;
+}
+
+export interface IEntityTrashOptions {
+  oid: TTableIndexReturnType<IAbstractEntity, IAbstractTable<IAbstractEntity, 'oid'>, 'oid'>;
+}
+
+export interface IEntityListAllOptions {}
+
+export interface IEntityIndex {
+  name: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type: TPostgresType<any>;
+}
+
+export interface IEntityListResult {
+  name: string;
+  count?: number;
+  indexes: IEntityIndex[];
+}
+
+export interface IEntityReindexOptions {
+  entityName: string;
+}
+
+export interface IEntityApi {
+  list(request?: IEntityListAllOptions): Promise<IEntityListResult[]>;
+  reindex(request: IEntityReindexOptions): Promise<IJobResponse>;
+}
+
+declare global {
+  interface IAPI {
+    entity: IEntityApi;
+  }
+}
+
+export interface INotificationEntity extends TAbstractEntity {
   timestamp: Date;
   sender: number;
   recipient: number;
@@ -20,20 +332,31 @@ export interface INotificationEntity extends IAbstractEntity {
   target: string;
 }
 
-export type NotificationTarget = 'SMS' | 'mail' | 'push';
+export type TNotificationTableIndexes = 'recipient' | 'seen';
 
-export interface INotificationApiListOptions {
-  recipient: number;
+export interface INotificationTable extends IAbstractTable<INotificationEntity, TNotificationTableIndexes> {
+  name: 'Notification';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    recipient: ITableIndexDefinition<INotificationEntity, INotificationEntity['recipient']>;
+    seen: ITableIndexDefinition<INotificationEntity, INotificationEntity['seen']>;
+  };
+}
+
+export interface INotificationListOptions extends IEntityListOptions<INotificationEntity, TNotificationTableIndexes> {
+  recipient?: TTableIndexReturnType<INotificationEntity, INotificationTable, 'recipient', TNotificationTableIndexes>;
 }
 
 export interface INotificationApiSeenOptions {
-  notificationIds: number[];
+  notificationIds: TTableIndexReturnType<INotificationEntity, INotificationTable, 'oid', TNotificationTableIndexes>[];
 }
 
 export interface INotificationApi {
-  list(request: INotificationApiListOptions): Promise<INotificationEntity[]>;
+  count(options?: INotificationListOptions): Promise<number>;
+  list(options?: INotificationListOptions): Promise<INotificationEntity[]>;
+  store(entitySpec: Partial<INotificationEntity>): Promise<INotificationEntity>;
+  trash(options: IEntityTrashOptions): Promise<INotificationEntity>;
   seen(request: INotificationApiSeenOptions): Promise<void>;
-  store(entity: INotificationEntity): Promise<INotificationEntity>;
 }
 
 declare global {
@@ -43,7 +366,7 @@ declare global {
 }
 
 export interface IPushServerApiRegisterOptions {
-  provider: PushProvider;
+  provider: TPushProvider;
   token: string;
   client: {
     name: string;
@@ -54,7 +377,7 @@ export interface IPushServerApiRegisterOptions {
   };
 }
 
-export type PushProvider = 'fcm' | 'apn' | 'ws';
+export type TPushProvider = 'fcm' | 'apn' | 'ws';
 
 export interface IPushServerApiRegisterResponse {}
 
@@ -78,9 +401,8 @@ export interface IPushMessagePayload {
   type: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IPushMessage<PAYLOAD extends IPushMessagePayload = IPushMessagePayload> {
-  title?: string;
+  targetIosAppId?: string; // Example : 'com.joerisama.codexygo'
   body?: string;
   nbNotifications?: number;
   payload?: PAYLOAD;
@@ -93,16 +415,33 @@ interface IPushMessageReleasePayload {
 
 export interface IPushMessageRelease extends IPushMessage<IPushMessageReleasePayload> {}
 
-export interface ISessionEntity extends IAbstractEntity {
+export interface ISessionEntity extends TAbstractEntity {
   token: string;
-  member: number;
   device: IRemodeDeviceSpec;
   foreground: boolean;
-  push: { token: string; provider: PushProvider; timestamp: Date };
-  created: Date;
+  push: { token: string; provider: TPushProvider; timestamp: Date };
   lastAccess: Date;
   closed: Date;
   saving: boolean;
+}
+
+export type TSessionTableIndexes = 'lastAccess' | 'token' | 'pushToken' | 'pushProvider' | 'pushTimestamp' | 'closed';
+
+export interface ISessionTable extends IAbstractTable<ISessionEntity, TSessionTableIndexes> {
+  name: 'Session';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    lastAccess: ITableIndexDefinition<ISessionEntity, ISessionEntity['lastAccess']>;
+    token: ITableIndexDefinition<ISessionEntity, ISessionEntity['token']>;
+    pushToken: ITableIndexDefinition<ISessionEntity, ISessionEntity['push']['token']>;
+    pushProvider: ITableIndexDefinition<ISessionEntity, ISessionEntity['push']['provider']>;
+    pushTimestamp: ITableIndexDefinition<ISessionEntity, ISessionEntity['push']['timestamp']>;
+    closed: ITableIndexDefinition<ISessionEntity, ISessionEntity['closed']>;
+  };
+}
+
+export interface ISessionListOptions extends IEntityListOptions<ISessionEntity, TSessionTableIndexes> {
+  token?: TTableIndexReturnType<ISessionEntity, ISessionTable, 'token', TSessionTableIndexes>;
 }
 
 export interface IBatchCategory {
@@ -197,38 +536,6 @@ declare global {
   }
 }
 
-export interface IMemberSettings {
-  darkTheme: boolean;
-  tips: { [uuid: string]: boolean };
-}
-
-export interface IMemberEntity extends IAbstractEntity {
-  firstName: string;
-  lastName: string;
-  picture: number;
-  pictureEffects: IFileEffect[];
-  language: LanguageLocale;
-  timeZone: string;
-  mail: string;
-  password?: string;
-  settings: IMemberSettings;
-  insights: IInsighsStorage;
-  permissions?: string[];
-  roles?: number[];
-}
-
-export interface IMemberApiListOptions extends IEntityListOptions {
-  mail?: string | string[];
-  role?: number | number[];
-  searchTerms?: string;
-}
-
-export interface IMemberAPILoginResponse {
-  error?: string;
-  member?: IMemberEntity;
-  token?: string;
-}
-
 export interface IRemodeDeviceSpec {
   device: {
     id: string;
@@ -254,57 +561,72 @@ export interface IRemodeDeviceSpec {
   };
 }
 
-export type MemberInsightPartAction = 'stop' | 'next' | 'skip' | 'later' | 'doneOnce';
-
-export interface IMemberInsightPart {
-  action?: MemberInsightPartAction;
-  date?: Date;
+export interface IMemberEntity extends TAbstractEntity {
+  mail: string;
+  password?: string;
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
+  picture?: number;
+  pictureEffects: IFileEffect[];
+  language: LanguageLocale;
+  timeZone?: string;
+  darkTheme: boolean;
+  tips: { [uuid: string]: boolean };
 }
 
-export interface IInsightStop {
-  count: number;
-  date: Date;
+export interface IMemberTableIndexes {
+  mail: ITableIndexDefinition<IMemberEntity, IMemberEntity['mail']>;
+  searchContent: ITableIndexDefinition<IMemberEntity, string>;
 }
 
-export interface IInsightLater {
-  date: Date;
+export type TMemberTableIndexes = keyof IMemberTableIndexes;
+
+export interface IMemberTable extends IAbstractTable<IMemberEntity, TMemberTableIndexes> {
+  name: 'Member';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & IMemberTableIndexes;
 }
 
-export interface IInsight {
-  stop?: IInsightStop;
-  later?: IInsightLater;
-  parts: {
-    [id: string]: IMemberInsightPart;
-  };
+export interface IMemberListOptions extends IEntityListOptions<IMemberEntity, TMemberTableIndexes> {
+  mails?: TTableIndexReturnType<IMemberEntity, IMemberTable, 'mail', TMemberTableIndexes>[];
+  roles?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'roles', IEntityRolesTableIndexes>;
+  searchContent?: TTableIndexReturnType<IMemberEntity, IMemberTable, 'searchContent', TMemberTableIndexes>;
 }
 
-export interface IInsighsStorage {
-  [group: string]: IInsight;
+export interface IMemberAPILoginResponse {
+  error?: string;
+  member?: IMemberEntity;
+  token?: ISessionEntity['token'];
+  roles?: IRoleEntity['oid'][];
+  permissions?: IPermission['permission'][];
 }
 
 export interface IMemberApiLoginOptions {
-  mail: string;
+  mail: IMemberEntity['mail'];
   password: string;
-  instance: number;
+  instance: IMemberEntity['applicationInstance'];
   device: IRemodeDeviceSpec;
 }
 
 export interface IMemberApiRegisterOptions {
-  lastName: string;
-  firstName: string;
-  mail: string;
+  userName?: IMemberEntity['userName'];
+  lastName?: IMemberEntity['lastName'];
+  firstName?: IMemberEntity['firstName'];
+  mail: IMemberEntity['mail'];
   password: string;
-  instance: number;
+  instance: IMemberEntity['applicationInstance'];
   device: IRemodeDeviceSpec;
 }
 
 export interface IMemberApiFinalizeRegisterOptions {
-  oid: number;
-  lastName: string;
-  firstName: string;
-  mail: string;
+  oid: IMemberEntity['oid'];
+  userName?: IMemberEntity['userName'];
+  lastName?: IMemberEntity['lastName'];
+  firstName?: IMemberEntity['firstName'];
+  mail: IMemberEntity['mail'];
   password: string;
-  instance: number;
+  instance: IMemberEntity['applicationInstance'];
   device: IRemodeDeviceSpec;
 }
 
@@ -327,10 +649,12 @@ export interface IMemberApiCheckMailResponse {
 
 export interface IMemberApiGetPermissionsOptions {
   member: number;
+  applicationInstance: number;
 }
 
 export interface IMemberApiGetPermissionsResponse {
-  permissions: string[];
+  roles: IRoleEntity['oid'][];
+  permissions: IPermission['permission'][];
 }
 
 export interface IMemberApiForgotPasswordOptions {
@@ -341,19 +665,16 @@ export interface IMemberApiForgotPasswordResponse {
   sent: boolean;
 }
 
-export interface IMemberApiImportOptions {
-  members: Partial<IMemberEntity>[];
-}
-
 export interface IMemberApiImportResponse {
   created: number;
   invited: IMemberEntity[];
 }
 
 export interface IMemberApi {
-  count(request?: IMemberApiListOptions): Promise<number>;
-  list(request?: IMemberApiListOptions): Promise<IMemberEntity[]>;
+  count(request?: IMemberListOptions): Promise<number>;
+  list(request?: IMemberListOptions): Promise<IMemberEntity[]>;
   store(entitySpec: Partial<IMemberEntity>): Promise<IMemberEntity>;
+  trash(options: IEntityTrashOptions): Promise<IMemberEntity>;
   getInstances(request: IMemberApiGetInstancesOptions): Promise<IMemberApiGetInstancesResponse>;
   checkMail(request: IMemberApiCheckMailOptions): Promise<IMemberApiCheckMailResponse>;
   login(request: IMemberApiLoginOptions): Promise<IMemberAPILoginResponse>;
@@ -362,7 +683,6 @@ export interface IMemberApi {
   forgotPassword(request: IMemberApiForgotPasswordOptions): Promise<IMemberApiForgotPasswordResponse>;
   logout(): Promise<void>;
   getPermissions(request: IMemberApiGetPermissionsOptions): Promise<IMemberApiGetPermissionsResponse>;
-  import(options: IMemberApiImportOptions): Promise<IMemberApiImportResponse>;
 }
 
 declare global {
@@ -370,6 +690,8 @@ declare global {
     member: IMemberApi;
   }
 }
+
+export type TMailStatus = 'sent' | 'new' | 'error';
 
 export interface IMailTemplateVariables {
   language?: LanguageLocale;
@@ -381,10 +703,10 @@ export interface IMailTemplateVariables {
   [key: string]: any;
 }
 
-export interface IMailEntity extends IAbstractEntity {
+export interface IMailEntity extends TAbstractEntity {
   domain: string;
   mid: string;
-  status: 'sent' | 'new' | 'error';
+  status: TMailStatus;
   from: string;
   cc: string;
   recipients: string;
@@ -394,13 +716,79 @@ export interface IMailEntity extends IAbstractEntity {
   links: string[];
 }
 
-export interface ILogRecordEntity extends IAbstractEntity {
+export type TMailTableIndexes = 'mid' | 'status' | 'recipients';
+
+export interface IMailTable extends IAbstractTable<IMailEntity, TMailTableIndexes> {
+  name: 'Mail';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    mid: ITableIndexDefinition<IMailEntity, IMailEntity['mid']>;
+    status: ITableIndexDefinition<IMailEntity, IMailEntity['status']>;
+    recipients: ITableIndexDefinition<IMailEntity, IMailEntity['recipients']>;
+  };
+}
+
+export interface IMailEventEntity extends TAbstractEntity {
+  timestamp: Date;
+  mid: string;
+  recipient: string;
+  mailClass: string;
+  status: TMailStatus;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: { [key: string]: any };
+}
+
+export type TMailEventTableIndexes = 'timestamp' | 'mid' | 'recipient' | 'mailClass' | 'status';
+
+export interface IMailEventTable extends IAbstractTable<IMailEventEntity, TMailEventTableIndexes> {
+  name: 'MailEvent';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    timestamp: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['timestamp']>;
+    mid: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['mid']>;
+    recipient: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['recipient']>;
+    mailClass: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['mailClass']>;
+    status: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['status']>;
+  };
+}
+
+export interface ILogRecordEntity extends TAbstractEntity {
   timestamp: Date;
   bulk: string;
   logLevel: number;
   message: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: { [key: string]: any };
+  data: {
+    action?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  };
+}
+
+export type TLogRecordTableIndexes = 'timestamp' | 'bulk' | 'logLevel' | 'action';
+
+export interface ILogRecordTable extends IAbstractTable<ILogRecordEntity, TLogRecordTableIndexes> {
+  name: 'LogRecord';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    timestamp: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['timestamp']>;
+    bulk: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['bulk']>;
+    logLevel: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['logLevel']>;
+    action: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['data']['action']>;
+  };
+}
+
+export interface ILogRecordApi {
+  count(options?: IEntityListOptions<ILogRecordEntity, TLogRecordTableIndexes>): Promise<number>;
+  list(options?: IEntityListOptions<ILogRecordEntity, TLogRecordTableIndexes>): Promise<ILogRecordEntity[]>;
+  store(entitySpec: Partial<ILogRecordEntity>): Promise<ILogRecordEntity>;
+  trash(options: IEntityTrashOptions): Promise<ILogRecordEntity>;
+  flushRecordStack(exception?: object): Promise<void>;
+}
+
+declare global {
+  interface IAPI {
+    logRecord: ILogRecordApi;
+  }
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface IJob<R = any> {
@@ -435,16 +823,27 @@ declare global {
   }
 }
 
-export interface IException extends IEntity {
-  terminal: { version: string };
+export interface IExceptionEntity extends TAbstractEntity {
   timestamp: Date;
   source: string;
-  version: number;
+  terminal: { version: string };
   os: { name: string; version: string };
 }
 
+export type TExceptionTableIndexes = 'timestamp' | 'source' | 'version';
+
+export interface IExceptionTable extends IAbstractTable<IExceptionEntity, TExceptionTableIndexes> {
+  name: 'Exception';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    timestamp: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['timestamp']>;
+    source: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['source']>;
+    version: ITableIndexDefinition<IExceptionEntity, number>;
+  };
+}
+
 export interface IExceptionApi {
-  log(exception: IException): Promise<void>;
+  log(exception: IExceptionEntity): Promise<void>;
 }
 
 declare global {
@@ -453,13 +852,24 @@ declare global {
   }
 }
 
-export interface IFileEntity extends IAbstractEntity {
+export interface IFileEntity extends TAbstractEntity {
+  public: boolean;
   fileName: string;
   fileSize: number;
   mimeType: string;
   caption?: string;
   data?: string;
   duration?: number;
+}
+
+export type TFileTableIndexes = 'public';
+
+export interface IFileTable extends IAbstractTable<IFileEntity, TFileTableIndexes> {
+  name: 'File';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    public: ITableIndexDefinition<IFileEntity, IFileEntity['public']>;
+  };
 }
 
 export interface IFileDerivative<E extends IFileEffect> {
@@ -471,14 +881,13 @@ export interface IFileEffect {
   mimeType: string;
 
   // Utilisé pour les effets portés par les Entités, notamment pour pouvoir fixer un timestamp lors de la requête.
-  // Mettre undefined pour les derivatives définies sur le serveur
-  changed: Date;
+  // Laisser undefined pour les derivatives définies sur le serveur
+  changed?: Date;
 }
 
 export interface IFileCropEffect extends IFileEffect {
   uuid: 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
   mimeType: 'image/png';
-  scale: number;
   crop: {
     height: number;
     width: number;
@@ -502,13 +911,16 @@ export interface IFileThumbnailEffect extends IFileEffect {
 }
 
 export interface IFileApiDownloadFileOptions {
+  instance: number;
   oid: number;
   timestamp?: string;
   derivative?: TDerivative;
   effects?: string; // un IFileEffect[] stringifié
 }
 
-export interface IFileListOptions extends IEntityListOptions {}
+export interface IFileListOptions extends IEntityListOptions<IFileEntity, TFileTableIndexes> {
+  public?: TTableIndexReturnType<IFileEntity, IFileTable, 'public', TFileTableIndexes>;
+}
 
 export interface IFileApiCreateFromDataUrlOptions {
   spec?: Partial<IFileEntity>;
@@ -524,13 +936,11 @@ export interface IFileApiCreateFromExternalUrlResponse {
   fileOid: number;
 }
 
-export interface IFileTrashOptions extends IEntityTrashOptions {}
-
 export interface IFileApi {
   count(request?: IFileListOptions): Promise<number>;
   list(request?: IFileListOptions): Promise<IFileEntity[]>;
   store(entitySpec: Partial<IFileEntity>): Promise<IFileEntity>;
-  trash(request: IFileTrashOptions): Promise<void>;
+  trash(request: IEntityTrashOptions): Promise<void>;
   createFromDataUrl(request: IFileApiCreateFromDataUrlOptions): Promise<IFileEntity>;
   createFromExternalUrl(request: IFileApiCreateFromExternalUrlOptions): Promise<IFileApiCreateFromExternalUrlResponse>;
 }
@@ -541,34 +951,51 @@ declare global {
   }
 
   interface IDerivatives {
-    default?: null;
+    default: null;
   }
 }
 
 export type TDerivative = keyof IDerivatives;
 
-export interface IApplicationInstanceEntity extends IAbstractEntity {
+export interface IApplicationInstanceEntity extends TAbstractEntity {
   name: string;
   title: string;
 }
 
-export interface IApplicationInstanceListOptions extends IEntityListOptions {
-  name?: string;
+export type TApplicationInstanceTableIndexes = keyof Omit<IApplicationInstanceEntity, keyof TAbstractEntity>;
+
+export interface IApplicationInstanceTable
+  extends IAbstractTable<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  name: 'ApplicationInstance';
+  useDataField: false;
+  indexes: TTableIndexDefinitions & {
+    name: ITableIndexDefinition<IApplicationInstanceEntity, IApplicationInstanceEntity['name']>;
+    title: ITableIndexDefinition<IApplicationInstanceEntity, IApplicationInstanceEntity['title']>;
+  };
 }
 
-export interface IApplicationInstanceCreateOptions extends IEntityListOptions {
+export interface IApplicationInstanceListOptions
+  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  name?: TTableIndexReturnType<
+    IApplicationInstanceEntity,
+    IApplicationInstanceTable,
+    'name',
+    TApplicationInstanceTableIndexes
+  >;
+}
+
+export interface IApplicationInstanceCreateOptions
+  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
   instance: Partial<IApplicationInstanceEntity>;
   administrator: Partial<IMemberEntity>;
 }
 
-export interface IApplicationInstanceTrashOptions extends IEntityTrashOptions {}
-
 export interface IApplicationInstanceApi {
-  count(request: IApplicationInstanceListOptions): Promise<number>;
-  list(request: IApplicationInstanceListOptions): Promise<IApplicationInstanceEntity[]>;
+  count(options?: IApplicationInstanceListOptions): Promise<number>;
+  list(options?: IApplicationInstanceListOptions): Promise<IApplicationInstanceEntity[]>;
   store(entitySpec: Partial<IApplicationInstanceEntity>): Promise<IApplicationInstanceEntity>;
+  trash(options: IEntityTrashOptions): Promise<IApplicationInstanceEntity>;
   create(request: IApplicationInstanceCreateOptions): Promise<IApplicationInstanceEntity>;
-  trash(request: IApplicationInstanceTrashOptions): Promise<IApplicationInstanceEntity>;
 }
 
 declare global {
@@ -577,44 +1004,59 @@ declare global {
   }
 }
 
-export interface IEntityRolesEntity extends IEntity {
-  id: string;
-  type: string;
-  roles: number[];
+export type TEntityRolesType = keyof IEntityRolesTypes;
+
+export interface IEntityRolesEntity extends TAbstractEntity {
+  id: TAbstractEntity['oid'];
+  type: TEntityRolesType;
+  roles: TAbstractEntity['oid'][];
 }
 
-export interface IEntityRolesListOptions {
-  entityType: string;
-  entityId: number | number[];
+export type IEntityRolesTableIndexes = keyof Omit<IEntityRolesEntity, keyof TAbstractEntity>;
+
+export interface IEntityRolesTable extends IAbstractTable<IEntityRolesEntity, IEntityRolesTableIndexes> {
+  name: 'EntityRoles';
+  useDataField: false;
+  indexes: TTableIndexDefinitions & {
+    id: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['id']>;
+    type: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['type']>;
+    roles: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['roles']>;
+  };
 }
 
-export interface IEntityRolesListResult {
-  entityType: string;
-  entityId: number;
-  permissions?: string[];
-  roles?: number[];
+export interface IEntityRolesListOptions extends IEntityListOptions<IEntityRolesEntity, IEntityRolesTableIndexes> {
+  type?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'type', IEntityRolesTableIndexes>;
+  ids?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'id', IEntityRolesTableIndexes>[];
 }
 
 export interface IEntityRolesApi {
-  list(query: IEntityRolesListOptions): Promise<IEntityRolesListResult[]>;
-  store(spec: IEntityRolesListResult): Promise<IEntityRolesEntity>;
+  count(options?: IEntityRolesListOptions): Promise<number>;
+  list(options?: IEntityRolesListOptions): Promise<IEntityRolesEntity[]>;
+  store(entitySpec: Partial<IEntityRolesEntity>): Promise<IEntityRolesEntity>;
+  trash(options: IEntityTrashOptions): Promise<IEntityRolesEntity>;
 }
 
-export interface IRoleEntity extends IAbstractEntity {
+export interface IRoleEntity extends TAbstractEntity {
   machineName: string;
   title: string;
-  permissions: string[];
+  permissions: IPermission['permission'][];
 }
 
-export interface IRoleApiListOptions extends IEntityListOptions {}
+export type TRoleTableIndexes = 'machineName';
 
-export interface IRoleApiTrashOptions extends IEntityTrashOptions {}
+export interface IRoleTable extends IAbstractTable<IRoleEntity, TRoleTableIndexes> {
+  name: 'Role';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    machineName: ITableIndexDefinition<IRoleEntity, IRoleEntity['machineName']>;
+  };
+}
 
 export interface IRoleApi {
-  count(request?: IRoleApiListOptions): Promise<number>;
-  list(request?: IRoleApiListOptions): Promise<IRoleEntity[]>;
+  count(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<number>;
+  list(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<IRoleEntity[]>;
   store(entitySpec: Partial<IRoleEntity>): Promise<IRoleEntity>;
-  trash(request: IRoleApiTrashOptions): Promise<IRoleEntity>;
+  trash(request: IEntityTrashOptions): Promise<IRoleEntity>;
 }
 
 export interface IPermission {
@@ -622,10 +1064,10 @@ export interface IPermission {
   permission: string;
 }
 
-export interface IPermissionApiListOptions {}
+export interface IPermissionListOptions {}
 
 export interface IPermissionApi {
-  list(query?: IPermissionApiListOptions): Promise<IPermission[]>;
+  list(query?: IPermissionListOptions): Promise<IPermission[]>;
 }
 
 declare global {
@@ -634,142 +1076,9 @@ declare global {
     entityRoles: IEntityRolesApi;
     permission: IPermissionApi;
   }
-}
 
-export type IAccessControlOwner = 'member' | 'role';
-
-export type IAccessControlPermission = 'view' | 'list' | 'modify' | 'delete';
-
-export interface IAccessControlEntity {
-  objectType: string;
-  objectId: number;
-  ownerType: IAccessControlOwner;
-  ownerId: number;
-  permissions: IAccessControlPermission[];
-  tag?: string;
-}
-
-export interface IEntity {
-  /** entity unique ID */
-  oid: number;
-}
-
-export interface IAbstractEntity extends IEntity {
-  /** Creation date. */
-  created: Date;
-  creator?: number;
-  applicationInstance: number;
-
-  /** Modification date. */
-  changed: Date;
-
-  /** Modification date from a user action. */
-  userChanged: Date;
-
-  /** Supprimé */
-  deleted?: Date;
-  deletedBy?: number;
-}
-
-export interface IEntityListSortOption {
-  field: string;
-  order: IEntitySortOrder;
-}
-
-export interface IEntityListPagerOption {
-  from: number;
-  count: number;
-}
-
-export interface IEntityListOptions {
-  sort?: IEntityListSortOption[];
-  oids?: number[];
-  excludeOids?: number[];
-  deleted?: boolean;
-  owner?: number;
-  pager?: IEntityListPagerOption;
-}
-
-export interface IEntityTrashOptions {
-  oid: number;
-}
-
-export type EntityFieldType = 'string' | 'integer' | 'date' | 'boolean' | 'token';
-
-export type IEntitySortOrder = 'asc' | 'desc';
-
-export interface IEntityFieldDefinition {
-  callback: string;
-  fieldType: EntityFieldType;
-  fieldName: string;
-  sqlFieldName: string;
-  isArray: boolean;
-  textSearch: boolean;
-}
-
-export interface IEntityIndex {
-  name: string;
-  type: EntityFieldType;
-}
-
-export interface IEntityListResult {
-  name: string;
-  count?: number;
-  indexes: IEntityIndex[];
-}
-
-export interface IEntityReindexOptions {
-  entityName: string;
-}
-
-export interface IQueryFieldOperator {
-  name: string;
-  types: EntityFieldType[];
-}
-
-export interface IQueryFieldIndex {
-  name: string;
-  type: EntityFieldType;
-}
-
-export interface IQueryField {
-  index: IQueryFieldIndex;
-  operator: IQueryFieldOperator;
-  value: string;
-  date: Date;
-}
-
-export interface IEntityQueryOptions {
-  entity: { name: string; indexes: IEntityIndex[] };
-  fields: IQueryField[];
-  limit?: number;
-}
-
-export interface IEntityDefinitionResult {
-  name: string;
-  indexes: IQueryFieldIndex[];
-}
-
-export interface IEntityDefinitionsOptions {}
-
-export interface IEntityListAllOptions {}
-
-export interface IEntityApplyOptions {
-  name: string;
-  value: IAbstractEntity;
-}
-
-export interface IEntityApi {
-  list(request?: IEntityListAllOptions): Promise<IEntityListResult[]>;
-  reindex(request: IEntityReindexOptions): Promise<IJobResponse>;
-  apply(request: IEntityApplyOptions): Promise<IJob>;
-  query(request: IEntityQueryOptions): Promise<IEntity[]>;
-  entityDefinitions(request?: IEntityDefinitionsOptions): Promise<IEntityDefinitionResult[]>;
-}
-
-declare global {
-  interface IAPI {
-    entity: IEntityApi;
+  interface IEntityRolesTypes {
+    Member: null;
   }
 }
 export interface IRouteRecord {

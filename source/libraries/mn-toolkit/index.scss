@@ -125,6 +125,50 @@ $theme-light-fg: (#474747 #8a8a8a #9e9e9e #e4e4e4) !default;
   }
 }
 
+@keyframes mn-scale-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes mn-scale-in {
+  from {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes mn-leave-out {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes mn-enter-in {
+  from {
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
 $theme-default-font-name: Tahoma, Helvetica, sans-serif !default;
 
 $theme-small-ratio: 0.7;
@@ -138,8 +182,9 @@ $z-index-view-above: 3;
 $z-index-overlay: 6;
 $z-index-drawer: 7;
 $z-index-popup: 7;
-$z-index-popover: 8;
-$z-index-toaster: 9;
+$z-index-toaster: 7;
+$z-index-popover-overlay: 8;
+$z-index-popover: 9;
 $z-index-overall: 100;
 
 .mn-color-primary {
@@ -447,26 +492,6 @@ $z-index-overall: 100;
     .mn-screen-xxlarge & {
       @content;
     }
-  } @else if $media == small-min {
-    .mn-screen-small-min & {
-      @content;
-    }
-  } @else if $media == medium-min {
-    .mn-screen-medium-min & {
-      @content;
-    }
-  } @else if $media == large-min {
-    .mn-screen-large-min & {
-      @content;
-    }
-  } @else if $media == xlarge-min {
-    .mn-screen-xlarge-min & {
-      @content;
-    }
-  } @else if $media == xxlarge-min {
-    .mn-screen-xxlarge-min & {
-      @content;
-    }
   } @else {
     @error "Unknown media '"+$media+"'";
   }
@@ -485,11 +510,13 @@ $z-index-overall: 100;
 @import './fileInput/styles.scss';
 @import './icon/styles.scss';
 @import './splitPane/styles.scss';
+@import './cameraPicker/styles.scss';
 @import './image/styles.scss';
 @import './inplaceEdit/styles.scss';
 @import './numberInput/styles.scss';
 @import './popover/styles.scss';
 @import './popup/styles.scss';
+@import './dateTime/styles.scss';
 @import './progress/styles.scss';
 @import './sortable/styles.scss';
 @import './select/styles.scss';
@@ -506,6 +533,7 @@ $z-index-overall: 100;
 @import './memberBadge/styles.scss';
 @import './toaster/styles.scss';
 @import './toggle/styles.scss';
+@import './chip/styles.scss';
 @import './richText/styles.scss';
 @import './picture/styles.scss';
 @import './colorPicker/styles.scss';

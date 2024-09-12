@@ -1,7 +1,13 @@
-import { AllHTMLAttributes } from 'react';
+import { AllHTMLAttributes, createRef, RefObject } from 'react';
 import { classNames, isDefined, isNumber } from 'mn-tools';
+import { TIconId } from '../icon';
 import { TBackgroundColor } from '../themeSettings';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from './ToolkitComponent';
+import {
+  ToolkitComponent,
+  IToolkitComponentProps,
+  IToolkitComponentState,
+  TDidUpdateSnapshot,
+} from './ToolkitComponent';
 
 export type ColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
 
@@ -29,6 +35,12 @@ export type ZIndex =
   | 'popover'
   | 'toaster'
   | 'overall';
+
+export interface IContainableTip {
+  uuid: string;
+  message: string;
+  icon: TIconId;
+}
 
 export interface IContainableProps extends IToolkitComponentProps {
   s?: ColSpan;
@@ -62,8 +74,12 @@ export interface IContainableProps extends IToolkitComponentProps {
   onDragEnter?: (event: React.DragEvent) => void | Promise<void>;
   onDragOver?: (event: React.DragEvent) => void | Promise<void>;
   onDragLeave?: (event: React.DragEvent) => void | Promise<void>;
-  onMouseEnter?: (event: React.MouseEvent) => void;
-  onMouseLeave?: (event: React.MouseEvent) => void;
+  onMouseEnter?: (event: React.MouseEvent) => void | Promise<void>;
+  onMouseLeave?: (event: React.MouseEvent) => void | Promise<void>;
+  onMouseDown?: (event: React.MouseEvent) => void | Promise<void>;
+  onMouseUp?: (event: React.MouseEvent) => void | Promise<void>;
+  onTouchStart?: (event: React.TouchEvent) => void | Promise<void>;
+  onTouchEnd?: (event: React.TouchEvent) => void | Promise<void>;
   onTap?: (event: React.MouseEvent) => void | Promise<void>;
   onScroll?: (event: React.UIEvent) => void | Promise<void>;
   onFocus?: (event: React.FocusEvent) => void | Promise<void>;
@@ -71,21 +87,55 @@ export interface IContainableProps extends IToolkitComponentProps {
   onKeyUp?: (event: React.KeyboardEvent) => void | Promise<void>;
   onKeyDown?: (event: React.KeyboardEvent) => void | Promise<void>;
   style?: { [key: string]: number | boolean | string };
+  tip?: IContainableTip;
 }
 
 export interface IContainableState extends IToolkitComponentState {
   loaded: boolean;
 }
 
-export class Containable<PROPS extends IContainableProps, STATE extends IContainableState> extends ToolkitComponent<
-  PROPS,
-  STATE
-> {
+export class Containable<
+  PROPS extends IContainableProps,
+  STATE extends IContainableState,
+  BASE_ELEMENT extends HTMLElement = HTMLDivElement,
+> extends ToolkitComponent<PROPS, STATE> {
+  public base = createRef<BASE_ELEMENT>();
+
   public static get defaultProps(): Partial<IContainableProps> {
     return {
       zIndex: 'content',
       floatPosition: 'none',
     };
+  }
+
+  public constructor(props: PROPS) {
+    super(props);
+  }
+
+  public override componentDidMount() {
+    super.componentDidMount();
+    this.showTips();
+  }
+
+  public override componentDidUpdate(
+    prevProps: Readonly<PROPS>,
+    prevState: Readonly<STATE>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+  }
+
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+  }
+
+  protected showTips() {
+    const { tip } = this.props;
+    if (!tip || !!app.$tips.isAlreadySeen(tip.uuid)) return;
+    setTimeout(() => {
+      if (!this.base?.current) return;
+      app.$tips.show(this.base.current.getBoundingClientRect(), tip);
+    }, 1000);
   }
 
   public renderClasses() {
@@ -121,6 +171,10 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
       onBlur: (e: React.FocusEvent) => app.$errorManager.handlePromise(this.props.onBlur?.(e)),
       onKeyUp: (e: React.KeyboardEvent) => app.$errorManager.handlePromise(this.props.onKeyUp?.(e)),
       onKeyDown: (e: React.KeyboardEvent) => app.$errorManager.handlePromise(this.props.onKeyDown?.(e)),
+      onMouseDown: (e: React.MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseDown?.(e)),
+      onMouseUp: (e: React.MouseEvent) => app.$errorManager.handlePromise(this.props.onMouseUp?.(e)),
+      onTouchStart: (e: React.TouchEvent) => app.$errorManager.handlePromise(this.props.onTouchStart?.(e)),
+      onTouchEnd: (e: React.TouchEvent) => app.$errorManager.handlePromise(this.props.onTouchEnd?.(e)),
     };
 
     if (this.props.onDrop || this.props.onDragOver) {
@@ -175,6 +229,10 @@ export class Containable<PROPS extends IContainableProps, STATE extends IContain
   }
 
   public render() {
-    return <div {...this.renderAttributes()}>{this.children}</div>;
+    return (
+      <div ref={this.base as unknown as RefObject<HTMLDivElement>} {...this.renderAttributes()}>
+        {this.children}
+      </div>
+    );
   }
 }

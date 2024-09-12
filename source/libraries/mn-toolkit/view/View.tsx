@@ -14,7 +14,7 @@ export class View extends Container<IViewProps, IViewState> {
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-view'] = true;
     return classes;

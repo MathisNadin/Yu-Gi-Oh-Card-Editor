@@ -1,38 +1,48 @@
 @mixin themeBreadcrumb {
   @include fg(2);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  max-width: 100%;
+
+  .bread,
+  .crumb {
+    line-height: $themeDefaultItemHeight;
+    min-height: $themeDefaultItemHeight;
+    max-height: $themeDefaultItemHeight;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    @include fg(1);
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    p {
+      margin-bottom: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
 
   .bread {
-    line-height: $themeDefaultItemHeight;
-    height: $themeDefaultItemHeight;
     font-weight: 600;
-    display: block;
-    @include fg(1);
   }
 
   .crumb {
-    display: block;
-    height: $themeDefaultItemHeight;
     font-weight: 400;
-    line-height: $themeDefaultItemHeight;
     border-radius: $themeDefaultBorderRadius;
-    padding: 0 calc($themeDefaultSpacing/2);
     @include fx(color);
-    @include fg(1);
+
     &:hover {
       color: $primary;
     }
   }
 
   .separator {
-    display: block;
-    position: relative;
     line-height: $themeDefaultItemHeight;
-    height: $themeDefaultItemHeight;
-    top: 7px;
-    margin: 0 0 0 -4px;
+    min-height: $themeDefaultItemHeight;
+    max-height: $themeDefaultItemHeight;
+    margin: 0 calc($themeDefaultSpacing/4);
     @include fg(2);
   }
 }

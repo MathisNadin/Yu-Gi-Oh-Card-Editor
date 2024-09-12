@@ -16,6 +16,13 @@ $button-height: $themeDefaultItemHeight;
   }
 }
 
+button {
+  font-size: 16px;
+  font-size-adjust: inherit;
+  padding: 0;
+  background-color: transparent;
+}
+
 @mixin themeButton() {
   @include mnLayoutContainable();
   display: inline-flex;
@@ -65,12 +72,6 @@ $button-height: $themeDefaultItemHeight;
     padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
   }
 
-  .mn-badge {
-    position: absolute;
-    right: 3px;
-    bottom: 3px;
-  }
-
   &.mn-button-block {
     width: 100%;
     display: flex;
@@ -112,7 +113,6 @@ $button-height: $themeDefaultItemHeight;
   }
   &.mn-color-4 {
     @include colorizeButton(nth($theme-light-fg, 4));
-    @include fg(1);
   }
 
   &.mn-disabled {
@@ -172,6 +172,7 @@ $button-height: $themeDefaultItemHeight;
   &:hover {
     text-decoration: none;
   }
+
   .icon {
     $size: 30px;
     display: inline-block;
@@ -249,7 +250,7 @@ $button-height: $themeDefaultItemHeight;
 @mixin colorizeButtonLink($color) {
   background-color: rgba($color, 0);
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   .icon {
@@ -383,7 +384,7 @@ $button-height: $themeDefaultItemHeight;
   @include buttonIconSize($themeDefaultItemHeight, calc($themeDefaultSpacing/4), $border);
 
   &.mn-size-small {
-    @include buttonIconSize(calc($themeDefaultItemHeight / 2), calc($themeDefaultSpacing/8), $border);
+    @include buttonIconSize(calc($themeDefaultItemHeight * 0.75), calc($themeDefaultSpacing/4), $border);
   }
 
   &.mn-color-primary {

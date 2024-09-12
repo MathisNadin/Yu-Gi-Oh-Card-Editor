@@ -57,7 +57,13 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
   }
 
   private async load() {
-    const croppedArtworkBase64 = await getCroppedArtworkBase64(this.props.artworkBase64, this.props.crop);
+    const croppedArtworkBase64 = await getCroppedArtworkBase64({
+      src: this.props.artworkBase64,
+      height: this.props.crop.height,
+      width: this.props.crop.width,
+      x: this.props.crop.x,
+      y: this.props.crop.y,
+    });
     await this.setStateAsync({
       crop: this.props.crop,
       artworkURL: this.props.artworkURL,

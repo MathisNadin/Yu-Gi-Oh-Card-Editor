@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import { classNames } from 'mn-tools';
 import { HorizontalStack } from '../container';
-import { ButtonIcon } from '../button';
+import { Icon } from '../icon';
 import { Typography } from '../typography';
-import { TBackgroundColor } from 'mn-toolkit/themeSettings';
+import { TBackgroundColor } from '../themeSettings';
 import { TToastType } from '.';
 
 const TIMEOUT = 5000;
@@ -59,7 +59,8 @@ export class Toaster<
     return new Promise<void>((resolve) => this.setState(newState as S, resolve));
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    if (super.componentDidMount) super.componentDidMount();
     setTimeout(() => {
       this.setState({ visible: true }, () => {
         if (this.props.type === 'error') return;
@@ -87,7 +88,7 @@ export class Toaster<
         className={classNames('mn-toaster', { visible: this.state.visible, hidding: this.state.hidding })}
       >
         <Typography fill color='4' content={this.props.message} contentType='text' />
-        <ButtonIcon icon='toolkit-close' color='4' onTap={() => this.close()} />
+        <Icon icon='toolkit-close' color='4' onTap={() => this.close()} />
       </HorizontalStack>
     );
   }

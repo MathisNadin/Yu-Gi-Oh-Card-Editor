@@ -461,7 +461,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     return (
       <VerticalStack gutter className='card-editor-section basic-section'>
         <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' size={24} iconId='toolkit-title' color='1' />
+          <Icon className='field-icon' size={24} icon='toolkit-title' color='1' />
           <TextInput
             fill
             placeholder='Nom'
@@ -472,7 +472,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
         <HorizontalStack gutter>
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-color-palette' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-color-palette' color='1' />
             <Select<TNameStyle>
               fill
               minWidth={115}
@@ -493,7 +493,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           </HorizontalStack>
 
           <HorizontalStack fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-language' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-language' color='1' />
             <Select<TCardLanguage>
               fill
               minWidth={115}
@@ -508,7 +508,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         </HorizontalStack>
 
         <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' size={24} iconId='toolkit-image' color='1' />
+          <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
           {app.$device.isDesktop && (
             <FileInput
               fill
@@ -623,7 +623,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               props: { tabId: 'vanilla', label: 'Entier', gutter: true },
               content: (
                 <HorizontalStack key='vanilla-desc'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-script' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-script' color='1' />
                   <TextAreaInput
                     autoGrow
                     minRows={5}
@@ -640,7 +640,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               props: { tabId: 'regular', label: 'Condition / Effet', gutter: true },
               content: [
                 <HorizontalStack key='regular-other-effects'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-empty-small-script' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-empty-small-script' color='1' />
                   <TextAreaInput
                     autoGrow
                     minRows={3}
@@ -653,7 +653,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 </HorizontalStack>,
 
                 <HorizontalStack key='regular-condition'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-small-script' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-small-script' color='1' />
                   <TextAreaInput
                     autoGrow
                     minRows={3}
@@ -666,7 +666,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 </HorizontalStack>,
 
                 <HorizontalStack key='regular-effect'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-script' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-script' color='1' />
                   <TextAreaInput
                     autoGrow
                     minRows={3}
@@ -679,7 +679,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 </HorizontalStack>,
 
                 <HorizontalStack key='regular-effect-type' fill verticalItemAlignment='middle'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-print' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-print' color='1' />
                   <Select<TRushEffectType>
                     fill
                     minWidth={150}
@@ -697,7 +697,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               props: { tabId: 'choice', label: 'Effet au Choix', gutter: true },
               content: [
                 <HorizontalStack key='choice-other-effects'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-empty-small-script' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-empty-small-script' color='1' />
                   <TextAreaInput
                     autoGrow
                     minRows={3}
@@ -710,7 +710,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 </HorizontalStack>,
 
                 <HorizontalStack key='choice-condition'>
-                  <Icon className='field-icon' size={24} iconId='toolkit-small-script' color='1' />
+                  <Icon className='field-icon' size={24} icon='toolkit-small-script' color='1' />
                   <TextAreaInput
                     autoGrow
                     minRows={3}
@@ -729,9 +729,9 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     itemAlignment='right'
                     verticalItemAlignment='middle'
                   >
-                    <Icon className='field-icon' size={24} iconId='toolkit-script' color='1' />
+                    <Icon className='field-icon' size={24} icon='toolkit-script' color='1' />
                     <Typography fill variant='help' content='Choix' />
-                    <Icon size={24} iconId='toolkit-plus' color='positive' onTap={() => this.onAddChoiceEffect()} />
+                    <Icon size={24} icon='toolkit-plus' color='positive' onTap={() => this.onAddChoiceEffect()} />
                   </HorizontalStack>
 
                   <VerticalStack className='card-choice-effects-list'>
@@ -746,18 +746,14 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                           <Typography fill variant='help' content={`• ${iChoiceEff + 1}`} />
                           <Icon
                             size={24}
-                            iconId='toolkit-minus'
+                            icon='toolkit-minus'
                             color='negative'
                             onTap={() => this.onRemoveChoiceEffect(iChoiceEff)}
                           />
+                          <Icon size={24} icon='toolkit-angle-up' onTap={() => this.onMoveChoiceEffectUp(iChoiceEff)} />
                           <Icon
                             size={24}
-                            iconId='toolkit-angle-up'
-                            onTap={() => this.onMoveChoiceEffectUp(iChoiceEff)}
-                          />
-                          <Icon
-                            size={24}
-                            iconId='toolkit-angle-down'
+                            icon='toolkit-angle-down'
                             onTap={() => this.onMoveChoiceEffectDown(iChoiceEff)}
                           />
                         </HorizontalStack>
@@ -781,7 +777,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         />
 
         <HorizontalStack>
-          <Icon className='field-icon' size={24} iconId='toolkit-eye-close' color='1' />
+          <Icon className='field-icon' size={24} icon='toolkit-eye-close' color='1' />
           <CheckBox
             label="Ne pas couvrir l'artwork"
             defaultValue={this.state.card.dontCoverRushArt}
@@ -792,7 +788,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         {!this.state.card.dontCoverRushArt && (
           <HorizontalStack gutter className='line-with-checkbox'>
             <HorizontalStack verticalItemAlignment='middle'>
-              <Icon className='field-icon' size={24} iconId='toolkit-diamond-shine' color='1' />
+              <Icon className='field-icon' size={24} icon='toolkit-diamond-shine' color='1' />
               <CheckBox label='LEGEND' defaultValue={this.state.card.legend} onChange={() => this.onLegendChange()} />
             </HorizontalStack>
 
@@ -855,7 +851,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         {!this.state.card.dontCoverRushArt && (
           <HorizontalStack gutter>
             <HorizontalStack fill verticalItemAlignment='middle'>
-              <Icon className='field-icon' size={24} iconId='toolkit-star' color='1' />
+              <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />
               <NumberInput
                 fill
                 min={0}
@@ -867,7 +863,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             </HorizontalStack>
 
             <HorizontalStack fill verticalItemAlignment='middle'>
-              <Icon className='field-icon' size={24} iconId='toolkit-sword' color='1' />
+              <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
               <TextInput
                 fill
                 placeholder='ATK'
@@ -877,7 +873,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             </HorizontalStack>
 
             <HorizontalStack fill verticalItemAlignment='middle'>
-              <Icon className='field-icon' size={24} iconId='toolkit-shield' color='1' />
+              <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
               <TextInput
                 fill
                 placeholder='DEF'
@@ -900,7 +896,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
             {this.state.card.maximum && (
               <HorizontalStack fill verticalItemAlignment='middle'>
-                <Icon className='field-icon' size={24} iconId='toolkit-origami-sword' color='1' />
+                <Icon className='field-icon' size={24} icon='toolkit-origami-sword' color='1' />
                 <TextInput
                   fill
                   placeholder='ATK MAX'
@@ -915,7 +911,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         <VerticalStack className='card-abilities'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
             <Typography fill variant='help' content='Types' />
-            <Icon size={24} iconId='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />
+            <Icon size={24} icon='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />
           </HorizontalStack>
 
           <VerticalStack className='card-abilities-list' gutter={false}>
@@ -929,25 +925,19 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               >
                 <InplaceEdit
                   fill
-                  focusOnSingleClick
                   validateOnEnter
                   key={`${iAbility}-${ability}`}
-                  value={ability}
+                  defaultValue={ability}
                   onChange={(newValue) => this.onAbilityChange(newValue, iAbility)}
                 />
 
                 <HorizontalStack className='abilities-line-icons'>
-                  <Icon
-                    size={24}
-                    iconId='toolkit-minus'
-                    color='negative'
-                    onTap={() => this.onRemoveAbility(iAbility)}
-                  />
+                  <Icon size={24} icon='toolkit-minus' color='negative' onTap={() => this.onRemoveAbility(iAbility)} />
                   {this.state.card.abilities.length > 1 && (
-                    <Icon size={24} iconId='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
+                    <Icon size={24} icon='toolkit-angle-up' onTap={() => this.onMoveAbilityUp(iAbility)} />
                   )}
                   {this.state.card.abilities.length > 1 && (
-                    <Icon size={24} iconId='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
+                    <Icon size={24} icon='toolkit-angle-down' onTap={() => this.onMoveAbilityDown(iAbility)} />
                   )}
                 </HorizontalStack>
               </HorizontalStack>
@@ -965,7 +955,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
         <Grid>
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-id' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-id' color='1' />
             <TextInput
               fill
               placeholder='Set'
@@ -975,7 +965,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           </HorizontalStack>
 
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-print' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-print' color='1' />
             <Select<TEdition>
               fill
               minWidth={200}
@@ -996,7 +986,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
         <Grid>
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-sticker' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
               minWidth={150}
@@ -1018,7 +1008,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           </HorizontalStack>
 
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} iconId='toolkit-copyright' color='1' />
+            <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
               <CheckBox
                 label='Copyright'

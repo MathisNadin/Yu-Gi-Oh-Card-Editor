@@ -4,6 +4,7 @@
   flex: 1;
 
   .mn-textarea-input {
+    @include mnScrollBar();
     @include fg(1);
     background-color: transparent;
     line-height: 20px;
@@ -31,6 +32,10 @@
 }
 
 .mn-form-field.mn-field-textarea {
+  &.multilines {
+    height: auto;
+  }
+
   .input-wrapper {
     height: auto;
     max-height: none;

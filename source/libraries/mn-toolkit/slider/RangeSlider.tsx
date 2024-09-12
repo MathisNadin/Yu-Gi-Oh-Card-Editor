@@ -1,6 +1,6 @@
 import { classNames } from 'mn-tools';
 import { TSliderValueDisplayMode } from './Slider';
-import { IContainableProps, Containable, IContainableState } from '../containable';
+import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 import { createRef } from 'react';
 
@@ -55,7 +55,13 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
     };
   }
 
-  public componentDidUpdate(prevProps: IRangeSliderProps) {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRangeSliderProps>,
+    prevState: Readonly<IRangeSliderState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps === this.props) return;
     if (!this.props.defaultValue || this.props.defaultValue === prevProps.defaultValue) return;
     this.setState({ values: this.props.defaultValue });
   }
@@ -131,7 +137,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
     return ((mark - min) / (max - min)) * 100;
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-range-slider'] = true;
     if (this.props.color) classes[`mn-color-${this.props.color}`] = true;

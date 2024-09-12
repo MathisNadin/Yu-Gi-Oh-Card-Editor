@@ -1,4 +1,4 @@
-import { classNames } from 'mn-tools';
+import { ButtonHTMLAttributes } from 'react';
 import { IContainableProps, IContainableState, Containable } from '../containable';
 import { TForegroundColor } from '../themeSettings';
 
@@ -6,6 +6,7 @@ interface IButtonOutlineProps extends IContainableProps {
   label: string;
   color?: TForegroundColor;
   block?: boolean;
+  buttonType?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
 }
 
 interface IButtonOutlineState extends IContainableState {}
@@ -17,10 +18,11 @@ export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutli
       color: 'primary',
       block: false,
       disabled: false,
+      buttonType: 'button',
     };
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-button-outline'] = true;
     if (this.props.block) classes['mn-button-block'] = true;
@@ -28,22 +30,11 @@ export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutli
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
-      <div
-        id={this.props.nodeId}
-        title={this.props.hint}
-        className={classNames(this.renderClasses())}
-        onClick={
-          !this.props.onTap
-            ? undefined
-            : (e) => {
-                app.$errorManager.handlePromise(this.props.onTap!(e));
-              }
-        }
-      >
+      <button {...this.renderAttributes()} type={this.props.buttonType}>
         {!!this.props.label && <span className='label'>{this.props.label}</span>}
-      </div>
+      </button>
     );
   }
 }
