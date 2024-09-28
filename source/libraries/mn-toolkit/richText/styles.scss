@@ -38,28 +38,37 @@
   }
 }
 
-blockquote.mn-blockquote-callout {
+@mixin themeCalloutBlockquote($lightIconColor: nth($theme-light-bg, 2), $darkIconColor: nth($theme-light-bg, 2)) {
   &:not(.code-block) {
     border-left: none !important;
 
     &:before {
-      display: none;
+      content: '';
+      width: 1em;
+      height: 1em;
+      font-size: 1.3em;
+      margin-right: 0.5em;
+      vertical-align: 0;
+    }
+
+    &[data-icon='info']:before,
+    &:not([data-icon]):before,
+    &[data-icon='']:before {
+      display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      $color: rgba($lightIconColor, 0.99);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'><g><circle cx='7' cy='7' r='6.5' fill='none' stroke='" + $color + "' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='7' x2='7' y2='10.5' stroke='" + $color + "' stroke-linecap='round' stroke-linejoin='round'/><circle cx='7' cy='4.5' r='0.5' fill='" + $color + "' stroke-linecap='round' stroke-linejoin='round'/></g></svg>");
+
+      .mn-dark-theme & {
+        $color: rgba($darkIconColor, 0.99);
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'><g><circle cx='7' cy='7' r='6.5' fill='none' stroke='" + $color + "' stroke-linecap='round' stroke-linejoin='round'/><line x1='7' y1='7' x2='7' y2='10.5' stroke='" + $color + "' stroke-linecap='round' stroke-linejoin='round'/><circle cx='7' cy='4.5' r='0.5' fill='" + $color + "' stroke-linecap='round' stroke-linejoin='round'/></g></svg>");
+      }
     }
   }
+}
 
-  display: flex;
-  flex-direction: row;
-  gap: $themeDefaultSpacing;
-
-  > .mn-blockquote-callout-icon {
-    > svg {
-      $size: 20px;
-      width: $size !important;
-      min-width: $size !important;
-      max-width: $size !important;
-      height: $size !important;
-      min-height: $size !important;
-      max-height: $size !important;
-    }
-  }
+blockquote.mn-blockquote-callout {
+  @include themeCalloutBlockquote();
 }

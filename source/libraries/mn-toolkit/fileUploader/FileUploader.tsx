@@ -4,7 +4,7 @@ import { IContainableProps, Containable, IContainableState } from '../containabl
 import { HorizontalStack } from '../container/HorizontalStack';
 import { VerticalStack } from '../container/VerticalStack';
 import { Progress } from '../progress';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { Typography } from '../typography/Typography';
 import { IFilePickerOptions } from '../filePicker';
 import { Icon } from '../icon';

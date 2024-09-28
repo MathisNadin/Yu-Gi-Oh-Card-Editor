@@ -18,7 +18,7 @@
 
     &:hover {
       .mn-typography {
-        background-color: $primary;
+        background-color: color-rgb($primary);
       }
     }
   }
@@ -34,27 +34,27 @@
 
 .mn-date-chooser {
   .calendar {
-    min-height: $themeDefaultItemHeight * 7; // Max 6 different weeks in a month + the days row
+    min-height: calc(#{$themeDefaultItemHeight} * 7); // Max 6 different weeks in a month + the days row
 
     .weekdays,
     .week {
       .weekday,
       .day {
-        height: $themeDefaultItemHeight;
-        min-height: $themeDefaultItemHeight;
-        max-height: $themeDefaultItemHeight;
-        line-height: $themeDefaultItemHeight;
+        height: calc(#{$themeDefaultItemHeight});
+        min-height: calc(#{$themeDefaultItemHeight});
+        max-height: calc(#{$themeDefaultItemHeight});
+        line-height: calc(#{$themeDefaultItemHeight});
 
         .mn-typography {
           justify-content: center;
           border-radius: 50%;
-          width: $themeDefaultItemHeight;
-          min-width: $themeDefaultItemHeight;
-          max-width: $themeDefaultItemHeight;
-          height: $themeDefaultItemHeight;
-          min-height: $themeDefaultItemHeight;
-          max-height: $themeDefaultItemHeight;
-          line-height: $themeDefaultItemHeight;
+          width: calc(#{$themeDefaultItemHeight});
+          min-width: calc(#{$themeDefaultItemHeight});
+          max-width: calc(#{$themeDefaultItemHeight});
+          height: calc(#{$themeDefaultItemHeight});
+          min-height: calc(#{$themeDefaultItemHeight});
+          max-height: calc(#{$themeDefaultItemHeight});
+          line-height: calc(#{$themeDefaultItemHeight});
         }
       }
     }
@@ -71,18 +71,18 @@
       @include dateTimeHighlight();
 
       .mn-typography {
-        padding: calc($themeDefaultSpacing / 4) calc($themeDefaultSpacing / 2);
-        border-radius: calc($themeDefaultBorderRadius * 4);
+        padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+        border-radius: calc(#{$themeDefaultBorderRadius} * 4);
       }
     }
   }
 }
 
 .mn-date-picker {
-  padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
-  border: $fieldBorderSize solid;
+  padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+  border: calc(#{$themeFieldBorderSize}) solid;
   border-color: #c3c3c3;
-  border-radius: calc($themeDefaultBorderRadius / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius} / 2);
   @include bg(1);
 
   &:not(.mn-fill) {
@@ -91,7 +91,7 @@
 
   &.mn-focus {
     box-shadow: 0 0 10px rgba($primary, 0.26) inset;
-    border-color: $primary;
+    border-color: color-rgb($primary);
   }
 
   .mn-date-input {
@@ -116,7 +116,7 @@
 .mn-time-chooser {
   .hours,
   .minutes {
-    padding: 0 calc($themeDefaultSpacing / 2);
+    padding: 0 calc(#{$themeDefaultSpacing} / 2);
     &.minutes {
       border-left: 1px solid;
       border-color: rgba(nth($theme-light-fg, 1), 0.3);
@@ -134,12 +134,12 @@
       .hours-container,
       .minutes-container {
         > .mn-container-inside {
-          $gap: calc($themeDefaultSpacing / 4);
+          $gap: calc(#{$themeDefaultSpacing} / 4);
           gap: $gap;
 
           &:after {
             content: ' ';
-            $afterHeight: calc($height - $themeDefaultItemHeight - $gap);
+            $afterHeight: calc(#{$height} - #{$themeDefaultItemHeight} - #{$gap});
             min-height: $afterHeight;
           }
         }
@@ -149,31 +149,31 @@
     .hour,
     .minute {
       @include dateTimeHighlight();
-      height: $themeDefaultItemHeight;
-      min-height: $themeDefaultItemHeight;
-      max-height: $themeDefaultItemHeight;
-      line-height: $themeDefaultItemHeight;
+      height: calc(#{$themeDefaultItemHeight});
+      min-height: calc(#{$themeDefaultItemHeight});
+      max-height: calc(#{$themeDefaultItemHeight});
+      line-height: calc(#{$themeDefaultItemHeight});
 
       .mn-typography {
         justify-content: center;
-        border-radius: calc($themeDefaultBorderRadius / 2);
-        width: $themeDefaultItemHeight;
-        min-width: $themeDefaultItemHeight;
-        max-width: $themeDefaultItemHeight;
-        height: $themeDefaultItemHeight;
-        min-height: $themeDefaultItemHeight;
-        max-height: $themeDefaultItemHeight;
-        line-height: $themeDefaultItemHeight;
+        border-radius: calc(#{$themeDefaultBorderRadius} / 2);
+        width: calc(#{$themeDefaultItemHeight});
+        min-width: calc(#{$themeDefaultItemHeight});
+        max-width: calc(#{$themeDefaultItemHeight});
+        height: calc(#{$themeDefaultItemHeight});
+        min-height: calc(#{$themeDefaultItemHeight});
+        max-height: calc(#{$themeDefaultItemHeight});
+        line-height: calc(#{$themeDefaultItemHeight});
       }
     }
   }
 }
 
 .mn-time-picker {
-  padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
-  border: $fieldBorderSize solid;
+  padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+  border: calc(#{$themeFieldBorderSize}) solid;
   border-color: #c3c3c3;
-  border-radius: calc($themeDefaultBorderRadius / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius} / 2);
   @include bg(1);
 
   &:not(.mn-fill) {
@@ -182,7 +182,7 @@
 
   &.mn-focus {
     box-shadow: 0 0 10px rgba($primary, 0.26) inset;
-    border-color: $primary;
+    border-color: color-rgb($primary);
   }
 
   .mn-time-input {
@@ -206,14 +206,14 @@
 
 .mn-popup.date-time-chooser {
   .tab {
-    padding: calc($themeDefaultSpacing / 2) 0;
+    padding: calc(#{$themeDefaultSpacing} / 2) 0;
     border-bottom: 1px solid rgba(nth($theme-light-fg, 1), 0.3);
     .mn-dark-theme & {
       border-color: rgba(nth($theme-dark-fg, 1), 0.3);
     }
 
     &.selected {
-      border-bottom: 2px solid $primary;
+      border-bottom: 2px solid color-rgb($primary);
     }
   }
 }
@@ -231,12 +231,12 @@
         .hours-container,
         .minutes-container {
           > .mn-container-inside {
-            $gap: calc($themeDefaultSpacing / 4);
+            $gap: calc(#{$themeDefaultSpacing} / 4);
             gap: $gap;
 
             &:after {
               content: ' ';
-              $afterHeight: calc($height - $themeDefaultItemHeight - $gap);
+              $afterHeight: calc(#{$height} - #{$themeDefaultItemHeight} - #{$gap});
               min-height: $afterHeight;
             }
           }
@@ -255,10 +255,10 @@
 }
 
 .mn-date-time-picker {
-  padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
-  border: $fieldBorderSize solid;
+  padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+  border: calc(#{$themeFieldBorderSize}) solid;
   border-color: #c3c3c3;
-  border-radius: calc($themeDefaultBorderRadius / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius} / 2);
   @include bg(1);
   height: fit-content;
 
@@ -268,7 +268,7 @@
 
   &.mn-focus {
     box-shadow: 0 0 10px rgba($primary, 0.26) inset;
-    border-color: $primary;
+    border-color: color-rgb($primary);
   }
 
   .mn-date-time-input {
@@ -292,30 +292,30 @@
 
 .mn-week-chooser {
   .calendar {
-    min-height: $themeDefaultItemHeight * 7; // Max 6 different weeks in a month + the days row
+    min-height: calc(#{$themeDefaultItemHeight} * 7); // Max 6 different weeks in a month + the days row
 
     .weekdays,
     .week {
-      border-radius: $themeDefaultBorderRadius;
+      border-radius: calc(#{$themeDefaultBorderRadius});
 
       .week-number,
       .weekday,
       .day {
-        height: $themeDefaultItemHeight;
-        min-height: $themeDefaultItemHeight;
-        max-height: $themeDefaultItemHeight;
-        line-height: $themeDefaultItemHeight;
+        height: calc(#{$themeDefaultItemHeight});
+        min-height: calc(#{$themeDefaultItemHeight});
+        max-height: calc(#{$themeDefaultItemHeight});
+        line-height: calc(#{$themeDefaultItemHeight});
 
         .mn-typography {
           justify-content: center;
           border-radius: 50%;
-          width: $themeDefaultItemHeight;
-          min-width: $themeDefaultItemHeight;
-          max-width: $themeDefaultItemHeight;
-          height: $themeDefaultItemHeight;
-          min-height: $themeDefaultItemHeight;
-          max-height: $themeDefaultItemHeight;
-          line-height: $themeDefaultItemHeight;
+          width: calc(#{$themeDefaultItemHeight});
+          min-width: calc(#{$themeDefaultItemHeight});
+          max-width: calc(#{$themeDefaultItemHeight});
+          height: calc(#{$themeDefaultItemHeight});
+          min-height: calc(#{$themeDefaultItemHeight});
+          max-height: calc(#{$themeDefaultItemHeight});
+          line-height: calc(#{$themeDefaultItemHeight});
         }
       }
     }
@@ -334,7 +334,7 @@
         background-color: rgba($primary, 0.8);
 
         &:hover {
-          background-color: $primary;
+          background-color: color-rgb($primary);
         }
       }
 
@@ -349,8 +349,8 @@
       @include dateTimeHighlight();
 
       .mn-typography {
-        padding: calc($themeDefaultSpacing / 4) calc($themeDefaultSpacing / 2);
-        border-radius: $themeDefaultBorderRadius * 4;
+        padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+        border-radius: calc(#{$themeDefaultBorderRadius} * 4);
       }
     }
   }
@@ -358,15 +358,15 @@
 
 .mn-week-input {
   > .mn-container-inside {
-    gap: calc($themeDefaultSpacing / 4);
+    gap: calc(#{$themeDefaultSpacing} / 4);
   }
 }
 
 .mn-week-picker {
-  padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
-  border: $fieldBorderSize solid;
+  padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+  border: calc(#{$themeFieldBorderSize}) solid;
   border-color: #c3c3c3;
-  border-radius: calc($themeDefaultBorderRadius / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius} / 2);
   @include bg(1);
   height: fit-content;
 
@@ -376,7 +376,7 @@
 
   &.mn-focus {
     box-shadow: 0 0 10px rgba($primary, 0.26) inset;
-    border-color: $primary;
+    border-color: color-rgb($primary);
   }
 
   .mn-week-input {

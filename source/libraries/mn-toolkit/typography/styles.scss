@@ -11,7 +11,7 @@
     text-decoration: underline;
   }
   a {
-    color: $primary;
+    color: color-rgb($primary);
     .mn-dark-theme & {
       color: white(0.7);
     }
@@ -23,28 +23,28 @@
 
 @mixin themeTypographyColor() {
   &.mn-color-primary {
-    fill: $primary;
+    fill: color-rgb($primary);
   }
   &.mn-color-secondary {
-    fill: $secondary;
+    fill: color-rgb($secondary);
   }
   &.mn-color-tertiary {
-    fill: $tertiary;
+    fill: color-rgb($tertiary);
   }
   &.mn-color-positive {
-    fill: $positive;
+    fill: color-rgb($positive);
   }
   &.mn-color-negative {
-    fill: $negative;
+    fill: color-rgb($negative);
   }
   &.mn-color-neutral {
-    fill: $neutral;
+    fill: color-rgb($neutral);
   }
   &.mn-color-warning {
-    fill: $warning;
+    fill: color-rgb($warning);
   }
   &.mn-color-info {
-    fill: $info;
+    fill: color-rgb($info);
   }
   &.mn-color-1 {
     @include fill(1);
@@ -63,7 +63,7 @@
 @mixin themeTypographyText() {
   line-height: 140%;
   font-size: 16px;
-  font-family: $theme-default-font-name;
+  font-family: #{$themeDefaultFontName};
   @include themeTypographyColor();
 }
 
@@ -117,9 +117,9 @@
 
 @mixin themeTypographyList {
   list-style-position: outside;
-  margin: 0 0 $themeDefaultSpacing * 2 $themeDefaultSpacing * 2;
+  margin: 0 0 calc(#{$themeDefaultSpacing} * 2) calc(#{$themeDefaultSpacing} * 2);
   li {
-    margin-top: calc($themeDefaultSpacing/2);
+    margin-top: calc(#{$themeDefaultSpacing} / 2);
     line-height: 25px;
   }
   @include themeTypographyColor();
@@ -148,13 +148,13 @@
 }
 
 @mixin themeTypographyHelp {
-  font: 400 14px $theme-default-font-name;
+  font: 400 14px #{$themeDefaultFontName};
   @include themeTypographyColor();
 }
 
 @mixin themeTypographyParagraph {
   @include themeTypographyText();
-  margin-bottom: $themeDefaultSpacing;
+  margin-bottom: calc(#{$themeDefaultSpacing});
 }
 
 @mixin themeTypographyBlockquote {
@@ -162,8 +162,8 @@
     @include bg(2);
     border-left: 5px solid #ccc !important;
     @include border-color(1);
-    margin: $themeDefaultSpacing 0 !important;
-    padding: $themeDefaultSpacing !important;
+    margin: calc(#{$themeDefaultSpacing}) 0 !important;
+    padding: calc(#{$themeDefaultSpacing}) !important;
     quotes: none;
     &:before {
       @include fg(2);

@@ -2,7 +2,7 @@ import { Component, createRef } from 'react';
 import { classNames, isNumber } from 'mn-tools';
 import { VerticalStack } from '../container';
 import { JSXElementChildren } from '../react';
-import { TBackgroundColor } from '../themeSettings';
+import { TBackgroundColor } from '../theme';
 
 export interface IAbstractPopoverProps {
   key?: string;

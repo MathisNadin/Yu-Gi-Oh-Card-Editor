@@ -9,7 +9,7 @@
     min-width: $size;
     max-width: $size;
     border-radius: $size;
-    margin: calc($themeDefaultSpacing / 4);
+    margin: calc(#{$themeDefaultSpacing} / 4);
   }
 }
 

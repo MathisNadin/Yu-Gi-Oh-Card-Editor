@@ -21,16 +21,16 @@ $legendaryDragon: #82b8d4;
 .mn-popup.import {
   .card-import-dialog-content {
     &.websites {
-      gap: calc($themeDefaultSpacing * 2);
+      gap: calc(#{$themeDefaultSpacing} * 2);
 
       .logo {
-        padding: $themeDefaultSpacing;
+        padding: calc(#{$themeDefaultSpacing});
         width: 75%;
         max-height: 45%;
 
         &.selected {
-          border: 2px solid $primary;
-          border-radius: $themeDefaultBorderRadius;
+          border: 2px solid color-rgb($primary);
+          border-radius: calc(#{$themeDefaultBorderRadius});
         }
       }
     }
@@ -83,9 +83,9 @@ $legendaryDragon: #82b8d4;
 
     &.yugipedia {
       .mn-scroller-container {
-        $scrollerHeight: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
+        $scrollerHeight: calc(100% - 2 * #{$themeDefaultSpacing} - 2 * 32px);
         min-height: 150px;
-        max-height: calc(100% - 2 *#{$themeDefaultSpacing} - 2 * 32px);
+        max-height: calc(100% - 2 * #{$themeDefaultSpacing} - 2 * 32px);
         width: 80%;
       }
     }

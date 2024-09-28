@@ -1,4 +1,4 @@
-$decay: calc($themeDefaultSpacing / 4);
+$decay: calc(#{$themeDefaultSpacing} / 4);
 $tabBorderSize: 1px;
 
 @mixin themeTabSet {
@@ -9,20 +9,20 @@ $tabBorderSize: 1px;
   }
 
   .item {
-    padding: 0 $themeDefaultSpacing;
+    padding: 0 calc(#{$themeDefaultSpacing});
     cursor: pointer;
     display: flex;
     flex: 1;
-    min-height: $themeDefaultItemHeight;
-    max-height: $themeDefaultItemHeight;
+    min-height: calc(#{$themeDefaultItemHeight});
+    max-height: calc(#{$themeDefaultItemHeight});
     font-size: 15px;
     font-weight: 300;
     position: relative;
     transition: background-color 0.2s;
-    gap: calc($themeDefaultSpacing / 2);
+    gap: calc(#{$themeDefaultSpacing} / 2);
 
     .mn-indicators {
-      margin: 0 calc($themeDefaultSpacing / 2);
+      margin: 0 calc(#{$themeDefaultSpacing} / 2);
       display: flex;
     }
 
@@ -33,7 +33,7 @@ $tabBorderSize: 1px;
       max-height: 15px;
       @include fg(3);
       &:hover {
-        color: $primary;
+        color: color-rgb($primary);
       }
     }
 
@@ -45,7 +45,7 @@ $tabBorderSize: 1px;
 
     @include bg(2);
     z-index: 0;
-    border: $tabBorderSize solid nth($theme-light-bg, 3);
+    border: $tabBorderSize solid color-rgb(nth($theme-light-bg, 3));
 
     &:hover,
     &.selected {
@@ -88,45 +88,65 @@ $tabBorderSize: 1px;
   }
 
   &.mn-tabbed-pane-tab-position-left {
-    background-image: linear-gradient(to right, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    background-image: linear-gradient(
+      to right,
+      color-rgb(nth($theme-light-bg, 2)) 50%,
+      color-rgb(nth($theme-light-bg, 1)) 50%
+    );
     .mn-dark-theme & {
-      background-image: linear-gradient(to right, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+      background-image: linear-gradient(
+        to right,
+        color-rgb(nth($theme-dark-bg, 2)) 50%,
+        color-rgb(nth($theme-dark-bg, 1)) 50%
+      );
     }
     padding-left: $decay;
 
     .item {
       text-align: right;
-      border-radius: $themeDefaultBorderRadius 0 0 $themeDefaultBorderRadius;
+      border-radius: calc(#{$themeDefaultBorderRadius}) 0 0 calc(#{$themeDefaultBorderRadius});
       &.before-selected {
-        border-radius: $themeDefaultBorderRadius 0 $themeDefaultBorderRadius * 1.5 $themeDefaultBorderRadius;
+        border-radius: calc(#{$themeDefaultBorderRadius}) 0 calc(#{$themeDefaultBorderRadius} * 1.5)
+          calc(#{$themeDefaultBorderRadius});
       }
       &.after-selected {
-        border-radius: $themeDefaultBorderRadius $themeDefaultBorderRadius * 1.5 0 $themeDefaultBorderRadius;
+        border-radius: calc(#{$themeDefaultBorderRadius}) calc(#{$themeDefaultBorderRadius} * 1.5) 0
+          calc(#{$themeDefaultBorderRadius});
       }
       &:not(.selected) {
-        box-shadow: -1px 0 0 nth($theme-light-bg, 4);
+        box-shadow: -1px 0 0 color-rgb(nth($theme-light-bg, 4));
       }
     }
   }
 
   &.mn-tabbed-pane-tab-position-right {
-    background-image: linear-gradient(to left, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    background-image: linear-gradient(
+      to left,
+      color-rgb(nth($theme-light-bg, 2)) 50%,
+      color-rgb(nth($theme-light-bg, 1)) 50%
+    );
     .mn-dark-theme & {
-      background-image: linear-gradient(to left, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+      background-image: linear-gradient(
+        to left,
+        color-rgb(nth($theme-dark-bg, 2)) 50%,
+        color-rgb(nth($theme-dark-bg, 1)) 50%
+      );
     }
     padding-right: $decay;
 
     .item {
       text-align: left;
-      border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
+      border-radius: 0 calc(#{$themeDefaultBorderRadius}) calc(#{$themeDefaultBorderRadius}) 0;
       &.before-selected {
-        border-radius: 0 $themeDefaultBorderRadius $themeDefaultBorderRadius $themeDefaultBorderRadius * 1.5;
+        border-radius: 0 calc(#{$themeDefaultBorderRadius}) calc(#{$themeDefaultBorderRadius})
+          calc(#{$themeDefaultBorderRadius} * 1.5);
       }
       &.after-selected {
-        border-radius: $themeDefaultBorderRadius * 1.5 $themeDefaultBorderRadius $themeDefaultBorderRadius 0;
+        border-radius: calc(#{$themeDefaultBorderRadius} * 1.5) calc(#{$themeDefaultBorderRadius})
+          calc(#{$themeDefaultBorderRadius}) 0;
       }
       &:not(.selected) {
-        box-shadow: 1px 0 0 nth($theme-light-bg, 4);
+        box-shadow: 1px 0 0 color-rgb(nth($theme-light-bg, 4));
       }
     }
   }
@@ -148,43 +168,63 @@ $tabBorderSize: 1px;
   }
 
   &.mn-tabbed-pane-tab-position-top {
-    background-image: linear-gradient(to bottom, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    background-image: linear-gradient(
+      to bottom,
+      color-rgb(nth($theme-light-bg, 2)) 50%,
+      color-rgb(nth($theme-light-bg, 1)) 50%
+    );
     .mn-dark-theme & {
-      background-image: linear-gradient(to bottom, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+      background-image: linear-gradient(
+        to bottom,
+        color-rgb(nth($theme-dark-bg, 2)) 50%,
+        color-rgb(nth($theme-dark-bg, 1)) 50%
+      );
     }
     padding-top: $decay;
 
     .item {
-      border-radius: $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 0 0;
+      border-radius: calc(#{$themeDefaultBorderRadius} * 2) calc(#{$themeDefaultBorderRadius} * 2) 0 0;
       &.before-selected {
-        border-radius: $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 0;
+        border-radius: calc(#{$themeDefaultBorderRadius} * 2) calc(#{$themeDefaultBorderRadius} * 2)
+          calc(#{$themeDefaultBorderRadius} * 2) 0;
       }
       &.after-selected {
-        border-radius: $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 0 $themeDefaultBorderRadius * 2;
+        border-radius: calc(#{$themeDefaultBorderRadius} * 2) calc(#{$themeDefaultBorderRadius} * 2) 0
+          calc(#{$themeDefaultBorderRadius} * 2);
       }
       &:not(.selected) {
-        box-shadow: 0 -1px 0 nth($theme-light-bg, 4);
+        box-shadow: 0 -1px 0 color-rgb(nth($theme-light-bg, 4));
       }
     }
   }
 
   &.mn-tabbed-pane-tab-position-bottom {
-    background-image: linear-gradient(to top, nth($theme-light-bg, 2) 50%, nth($theme-light-bg, 1) 50%);
+    background-image: linear-gradient(
+      to top,
+      color-rgb(nth($theme-light-bg, 2)) 50%,
+      color-rgb(nth($theme-light-bg, 1)) 50%
+    );
     .mn-dark-theme & {
-      background-image: linear-gradient(to top, nth($theme-dark-bg, 2) 50%, nth($theme-dark-bg, 1) 50%);
+      background-image: linear-gradient(
+        to top,
+        color-rgb(nth($theme-dark-bg, 2)) 50%,
+        color-rgb(nth($theme-dark-bg, 1)) 50%
+      );
     }
     padding-bottom: $decay;
 
     .item {
-      border-radius: 0 0 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2;
+      border-radius: 0 0 calc(#{$themeDefaultBorderRadius} * 2) calc(#{$themeDefaultBorderRadius} * 2);
       &.before-selected {
-        border-radius: 0 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2;
+        border-radius: 0 calc(#{$themeDefaultBorderRadius} * 2) calc(#{$themeDefaultBorderRadius} * 2)
+          calc(#{$themeDefaultBorderRadius} * 2);
       }
       &.after-selected {
-        border-radius: $themeDefaultBorderRadius * 2 0 $themeDefaultBorderRadius * 2 $themeDefaultBorderRadius * 2;
+        border-radius: calc(#{$themeDefaultBorderRadius} * 2) 0 calc(#{$themeDefaultBorderRadius} * 2)
+          calc(#{$themeDefaultBorderRadius} * 2);
       }
       &:not(.selected) {
-        box-shadow: 0 1px 0 nth($theme-light-bg, 4);
+        box-shadow: 0 1px 0 color-rgb(nth($theme-light-bg, 4));
       }
     }
   }

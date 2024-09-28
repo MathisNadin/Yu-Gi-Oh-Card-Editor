@@ -13,19 +13,19 @@
 
 @mixin themeChip() {
   display: inline-flex;
-  padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
-  border-radius: $themeDefaultBorderRadius;
+  padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius});
 
   > .mn-container-inside {
-    gap: calc($themeDefaultSpacing/2);
+    gap: calc(#{$themeDefaultSpacing} / 2);
   }
 
   &.no-left-icon {
-    padding-left: $themeDefaultSpacing;
+    padding-left: calc(#{$themeDefaultSpacing});
   }
 
   &.no-right-icon {
-    padding-right: $themeDefaultSpacing;
+    padding-right: calc(#{$themeDefaultSpacing});
   }
 
   &.mn-disabled {
@@ -44,10 +44,10 @@
 
     .icon-right {
       &:hover {
-        color: $secondary;
+        color: color-rgb($secondary);
 
         .mn-dark-theme & {
-          color: $secondary;
+          color: color-rgb($secondary);
         }
       }
     }
@@ -92,7 +92,7 @@
 }
 
 .mn-chips-input {
-  min-height: $themeDefaultItemHeight;
+  min-height: calc(#{$themeDefaultItemHeight});
 
   &.mn-disabled {
     pointer-events: none;
@@ -106,8 +106,8 @@
     display: flex;
     flex: 1;
     font-size: inherit;
-    border-radius: $themeDefaultBorderRadius;
-    min-height: $themeDefaultItemHeight;
+    border-radius: calc(#{$themeDefaultBorderRadius});
+    min-height: calc(#{$themeDefaultItemHeight});
 
     background-color: transparent;
     .mn-dark-theme & {
@@ -118,7 +118,7 @@
 
 .mn-select-chips {
   width: fit-content;
-  min-height: $themeDefaultItemHeight;
+  min-height: calc(#{$themeDefaultItemHeight});
 
   &.mn-disabled {
     pointer-events: none;
@@ -187,7 +187,7 @@
 
     .mn-chips-input {
       width: 100%;
-      padding: calc($themeDefaultSpacing / 4);
+      padding: calc(#{$themeDefaultSpacing} / 4);
 
       input {
         display: flex;
@@ -207,7 +207,7 @@
       .chips,
       .placheholder {
         flex: 1;
-        padding: calc($themeDefaultSpacing / 4);
+        padding: calc(#{$themeDefaultSpacing} / 4);
       }
 
       .drop-icon {
@@ -216,7 +216,7 @@
         height: unset;
         min-height: unset;
         max-height: unset;
-        width: $themeDefaultItemHeight;
+        width: calc(#{$themeDefaultItemHeight});
         cursor: pointer;
         justify-content: center;
         display: flex;

@@ -1,9 +1,9 @@
 import { Crop } from 'react-image-crop';
 import { classNames, getCroppedArtworkBase64 } from 'mn-tools';
 import {
-  IContainableProps,
-  IContainableState,
-  Containable,
+  IContainerProps,
+  IContainerState,
+  Container,
   Spinner,
   Image,
   VerticalStack,
@@ -15,7 +15,7 @@ import {
   NumberInput,
 } from 'mn-toolkit';
 
-interface IArtworkEditingProps extends IContainableProps {
+interface IArtworkEditingProps extends IContainerProps {
   artworkURL: string;
   artworkBase64: string;
   keepRatio: boolean;
@@ -30,14 +30,24 @@ interface IArtworkEditingProps extends IContainableProps {
   onValidate: (url: string, crop: Crop, keepRatio: boolean) => void | Promise<void>;
 }
 
-interface IArtworkEditingState extends IContainableState {
+interface IArtworkEditingState extends IContainerState {
   artworkURL: string;
   crop: Crop;
   croppedArtworkBase64: string;
   keepRatio: boolean;
 }
 
-export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEditingState> {
+export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEditingState> {
+  public static override get defaultProps(): Partial<IArtworkEditingProps> {
+    return {
+      ...super.defaultProps,
+      layout: 'vertical',
+      fill: true,
+      scroll: true,
+      gutter: true,
+    };
+  }
+
   public constructor(props: IArtworkEditingProps) {
     super(props);
     this.state = {
@@ -81,8 +91,7 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
       unit: '%',
     };
     await this.setStateAsync({ artworkURL, crop });
-    if (!this.props.onArtworkURLChange) return;
-    await this.props.onArtworkURLChange(this.state.artworkURL);
+    if (this.props.onArtworkURLChange) await this.props.onArtworkURLChange(this.state.artworkURL);
   }
 
   private async onCropXChange(x: number) {
@@ -91,11 +100,8 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     } else if (x < 0) {
       x = 0;
     }
-    const crop = this.state.crop;
-    crop.x = x;
-    await this.setStateAsync({ crop });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    await this.setStateAsync({ crop: { ...this.state.crop, x } });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
   private async onCropYChange(y: number) {
@@ -104,39 +110,32 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
     } else if (y < 0) {
       y = 0;
     }
-    const crop = this.state.crop;
-    crop.y = y;
-    await this.setStateAsync({ crop });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    await this.setStateAsync({ crop: { ...this.state.crop, y } });
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
   private async onCropWidthChange(width: number) {
     if (width < 1) {
       width = 1;
     }
-    const crop = this.state.crop;
-    crop.width = width;
+    const crop = { ...this.state.crop, width };
     if (this.state.keepRatio && crop.width !== crop.height) {
       crop.height = width;
     }
     await this.setStateAsync({ crop });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
   private async onCropHeightChange(height: number) {
     if (height < 1) {
       height = 1;
     }
-    const crop = this.state.crop;
-    crop.height = height;
+    const crop = { ...this.state.crop, height };
     if (this.state.keepRatio && crop.height !== crop.width) {
       crop.width = height;
     }
     await this.setStateAsync({ crop });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
   private async doSelectImgPath() {
@@ -161,115 +160,118 @@ export class ArtworkEditing extends Containable<IArtworkEditingProps, IArtworkEd
 
   private async setFullCardPreset() {
     await this.setStateAsync({ crop: app.$card.getFullCardPreset() });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
   private async setFullPendulumCardPreset() {
     await this.setStateAsync({ crop: app.$card.getFullPendulumCardPreset() });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
   private async setFullRushCardPreset() {
     await this.setStateAsync({ crop: app.$card.getFullRushCardPreset() });
-    if (!this.props.onCroppingChange) return;
-    this.props.onCroppingChange(this.state.crop);
+    if (this.props.onCroppingChange) this.props.onCroppingChange(this.state.crop);
   }
 
-  public render() {
+  public override renderClasses() {
+    const classes = super.renderClasses();
+    classes['artwork-editing'] = true;
+    return classes;
+  }
+
+  public override get children() {
     if (!this.state.loaded) return <Spinner />;
-    return (
-      <VerticalStack className='artwork-editing' fill scroll gutter>
-        {app.$device.isDesktop && (
-          <FileInput
-            placeholder="Chemin vers l'artwork"
-            defaultValue={this.state.artworkURL}
-            onChange={(url) => this.onArtworkURLChange(url)}
-            overrideOnTap={() => this.doSelectImgPath()}
-          />
-        )}
+    return [
+      app.$device.isDesktop && (
+        <FileInput
+          key='file-input'
+          placeholder="Chemin vers l'artwork"
+          defaultValue={this.state.artworkURL}
+          onChange={(url) => this.onArtworkURLChange(url)}
+          overrideOnTap={() => this.doSelectImgPath()}
+        />
+      ),
 
-        {!!this.state.croppedArtworkBase64?.length ? (
-          <Image
-            src={this.state.croppedArtworkBase64}
-            className={classNames('cropped-img', { 'pendulum-ratio': this.props.pendulumRatio })}
-            alt='cropped-img'
-          />
-        ) : (
-          <div className='cropped-img' />
-        )}
+      !!this.state.croppedArtworkBase64?.length && (
+        <Image
+          key='loaded-cropped-img'
+          src={this.state.croppedArtworkBase64}
+          className={classNames('cropped-img', { 'pendulum-ratio': this.props.pendulumRatio })}
+          alt='cropped-img'
+        />
+      ),
 
-        <HorizontalStack className='ratio-checkbox' verticalItemAlignment='middle' gutter>
-          <CheckBox
-            fill
-            label='Conserver le ratio'
-            defaultValue={this.state.keepRatio}
-            onChange={() => this.switchKeepRatio()}
-          />
+      !this.state.croppedArtworkBase64?.length && <div key='empty-cropped-img' className='cropped-img' />,
 
+      <HorizontalStack key='ratio-checkbox' className='ratio-checkbox' verticalItemAlignment='middle' gutter>
+        <CheckBox
+          fill
+          label='Conserver le ratio'
+          defaultValue={this.state.keepRatio}
+          onChange={() => this.switchKeepRatio()}
+        />
+
+        <Button
+          className='full-card'
+          label='Preset carte entière'
+          onTap={() => (this.props.isRush ? this.setFullRushCardPreset() : this.setFullCardPreset())}
+        />
+
+        {!this.props.isRush && (
           <Button
-            className='full-card'
-            label='Preset carte entière'
-            onTap={() => (this.props.isRush ? this.setFullRushCardPreset() : this.setFullCardPreset())}
+            className='full-pendulum-card'
+            label='Preset Carte Pendule entière'
+            onTap={() => this.setFullPendulumCardPreset()}
           />
+        )}
+      </HorizontalStack>,
 
-          {!this.props.isRush && (
-            <Button
-              className='full-pendulum-card'
-              label='Preset Carte Pendule entière'
-              onTap={() => this.setFullPendulumCardPreset()}
+      <HorizontalStack key='size-fields' gutter>
+        <VerticalStack gutter fill>
+          <VerticalStack className='size-field'>
+            <Typography variant='help' content='X' />
+            <NumberInput fill defaultValue={this.state.crop.x} onChange={(x) => this.onCropXChange(x)} />
+          </VerticalStack>
+
+          <VerticalStack className='size-field'>
+            <Typography variant='help' content='Y' />
+            <NumberInput
+              fill
+              placeholder='Y'
+              defaultValue={this.state.crop.y}
+              onChange={(y) => this.onCropYChange(y)}
             />
-          )}
-        </HorizontalStack>
+          </VerticalStack>
+        </VerticalStack>
 
-        <HorizontalStack gutter>
-          <VerticalStack gutter fill>
-            <VerticalStack className='size-field'>
-              <Typography variant='help' content='X' />
-              <NumberInput fill defaultValue={this.state.crop.x} onChange={(x) => this.onCropXChange(x)} />
-            </VerticalStack>
-
-            <VerticalStack className='size-field'>
-              <Typography variant='help' content='Y' />
-              <NumberInput
-                fill
-                placeholder='Y'
-                defaultValue={this.state.crop.y}
-                onChange={(y) => this.onCropYChange(y)}
-              />
-            </VerticalStack>
+        <VerticalStack gutter fill>
+          <VerticalStack className='size-field'>
+            <Typography variant='help' content='Largeur' />
+            <NumberInput
+              fill
+              defaultValue={this.state.crop.width}
+              onChange={(width) => this.onCropWidthChange(width)}
+            />
           </VerticalStack>
 
-          <VerticalStack gutter fill>
-            <VerticalStack className='size-field'>
-              <Typography variant='help' content='Largeur' />
-              <NumberInput
-                fill
-                defaultValue={this.state.crop.width}
-                onChange={(width) => this.onCropWidthChange(width)}
-              />
-            </VerticalStack>
-
-            <VerticalStack className='size-field'>
-              <Typography variant='help' content='Hauteur' />
-              <NumberInput
-                fill
-                defaultValue={this.state.crop.height}
-                onChange={(height) => this.onCropHeightChange(height)}
-              />
-            </VerticalStack>
+          <VerticalStack className='size-field'>
+            <Typography variant='help' content='Hauteur' />
+            <NumberInput
+              fill
+              defaultValue={this.state.crop.height}
+              onChange={(height) => this.onCropHeightChange(height)}
+            />
           </VerticalStack>
-        </HorizontalStack>
+        </VerticalStack>
+      </HorizontalStack>,
 
-        <HorizontalStack itemAlignment='center' className='validate'>
-          <Button
-            label='OK'
-            color='positive'
-            onTap={() => this.props.onValidate(this.state.artworkURL, this.state.crop, this.state.keepRatio)}
-          />
-        </HorizontalStack>
-      </VerticalStack>
-    );
+      <HorizontalStack key='validate-btn' itemAlignment='center' className='validate'>
+        <Button
+          label='OK'
+          color='positive'
+          onTap={() => this.props.onValidate(this.state.artworkURL, this.state.crop, this.state.keepRatio)}
+        />
+      </HorizontalStack>,
+    ];
   }
 }

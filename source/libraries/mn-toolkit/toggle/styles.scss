@@ -30,7 +30,7 @@
 
   &.checked {
     .toggle {
-      background: $primary;
+      background: color-rgb($primary);
       .handle {
         margin-left: 15px;
       }
@@ -49,11 +49,11 @@
 
   .error & {
     .toggle {
-      border-color: $negative;
-      border: 1px solid $negative;
+      border-color: color-rgb($negative);
+      border: 1px solid color-rgb($negative);
       background-color: rgba($negative, 0.1);
       > .handle {
-        background-color: $negative;
+        background-color: color-rgb($negative);
       }
     }
   }
@@ -65,9 +65,9 @@
     border: none;
     box-shadow: none;
     padding-left: 0;
-    height: $inputHeight + calc($themeDefaultSpacing / 2);
-    min-height: $inputHeight + calc($themeDefaultSpacing / 2);
-    max-height: $inputHeight + calc($themeDefaultSpacing / 2);
+    height: calc($inputHeight + #{$themeDefaultSpacing} / 2);
+    min-height: calc($inputHeight + #{$themeDefaultSpacing} / 2);
+    max-height: calc($inputHeight + #{$themeDefaultSpacing} / 2);
 
     .form-label {
       flex: 1;
@@ -78,7 +78,7 @@
   }
 
   .form-helper {
-    margin-top: - calc($themeDefaultSpacing / 2);
+    margin-top: calc(-1 * #{$themeDefaultSpacing} / 2);
   }
 }
 

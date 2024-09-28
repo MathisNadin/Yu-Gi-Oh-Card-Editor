@@ -2,7 +2,7 @@ import { classNames } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { HorizontalStack, VerticalStack } from '../container';
 
 interface IStep<ID> {

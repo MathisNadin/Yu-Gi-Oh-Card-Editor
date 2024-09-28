@@ -3,7 +3,7 @@ import { isDefined } from 'mn-tools';
 import { IMemberEntity, TDerivative } from 'api/main';
 import { JSXElementChildren } from '../react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 
 export type TMemberBadgeShape = 'circle' | 'square';
 

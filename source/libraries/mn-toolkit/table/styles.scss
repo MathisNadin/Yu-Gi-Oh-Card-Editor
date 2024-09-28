@@ -1,6 +1,6 @@
 @mixin tableCell {
-  min-height: $themeDefaultItemHeight;
-  padding: 0 calc($themeDefaultSpacing/2);
+  min-height: calc(#{$themeDefaultItemHeight});
+  padding: 0 calc(#{$themeDefaultSpacing} / 2);
   flex: 1;
   display: flex;
   font-size: 14px;
@@ -54,8 +54,8 @@
 
   position: relative;
   > .mn-table-cell-wrapper {
-    left: calc($themeDefaultSpacing/2);
-    right: calc($themeDefaultSpacing/2);
+    left: calc(#{$themeDefaultSpacing} / 2);
+    right: calc(#{$themeDefaultSpacing} / 2);
     top: 0;
     bottom: 0;
     position: absolute;
@@ -157,7 +157,7 @@
     }
   }
   .mn-table-footer {
-    padding: $themeDefaultSpacing;
+    padding: calc(#{$themeDefaultSpacing});
     @include mnLayoutHorizontalStack();
     align-items: center;
     height: auto;

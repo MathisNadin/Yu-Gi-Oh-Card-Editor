@@ -2,7 +2,7 @@ import { JSXElementChildren } from '../react';
 import { IContainerProps, Container, IContainerState } from '../container';
 import { Typography } from '../typography';
 import { Icon, TIconId } from '../icon';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 
 export interface IChipProps extends IContainerProps {
   label: string;

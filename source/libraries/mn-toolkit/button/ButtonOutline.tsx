@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 import { IContainableProps, IContainableState, Containable } from '../containable';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 
 interface IButtonOutlineProps extends IContainableProps {
   label: string;

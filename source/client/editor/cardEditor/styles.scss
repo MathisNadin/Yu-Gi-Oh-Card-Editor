@@ -12,37 +12,37 @@
         .mn-checkbox {
           &.checked {
             .toggle {
-              background-color: $negative !important;
-              border-color: $negative !important;
+              background-color: color-rgb($negative) !important;
+              border-color: color-rgb($negative) !important;
             }
           }
         }
       }
 
       .line-with-checkbox {
-        min-height: $themeDefaultItemHeight;
+        min-height: calc(#{$themeDefaultItemHeight});
       }
 
       .card-icons-grid {
         margin-top: -6px;
-        margin-bottom: calc($themeDefaultSpacing / 2);
+        margin-bottom: calc(#{$themeDefaultSpacing} / 2);
       }
 
       .sub-title-container,
       .sub-title {
-        padding-bottom: calc($themeDefaultSpacing / 2);
+        padding-bottom: calc(#{$themeDefaultSpacing} / 2);
         border-bottom: 1px solid $borderColor;
       }
 
       .sub-title-container {
-        margin-top: calc($themeDefaultSpacing / 2);
+        margin-top: calc(#{$themeDefaultSpacing} / 2);
       }
 
       .sub-title-checkbox {
-        margin-top: $themeDefaultSpacing;
+        margin-top: calc(#{$themeDefaultSpacing});
 
         &.checked {
-          padding-bottom: calc($themeDefaultSpacing / 3);
+          padding-bottom: calc(#{$themeDefaultSpacing} / 3);
           border-bottom: 1px solid $borderColor;
         }
       }
@@ -82,12 +82,12 @@
       }
 
       .field-icon {
-        margin-right: calc($themeDefaultSpacing/2);
+        margin-right: calc(#{$themeDefaultSpacing} / 2);
       }
 
       .pendulum-lock-icon {
         padding: 5px;
-        border-radius: $themeDefaultBorderRadius;
+        border-radius: calc(#{$themeDefaultBorderRadius});
 
         &.locked {
           background-color: rgba($negative, 0.7);
@@ -99,27 +99,27 @@
       }
 
       .mn-textarea-input-container {
-        min-width: calc(100% - 20px - $themeDefaultSpacing/2);
-        max-width: calc(100% - 20px - $themeDefaultSpacing/2);
+        min-width: calc(100% - 20px - #{$themeDefaultSpacing} / 2);
+        max-width: calc(100% - 20px - #{$themeDefaultSpacing} / 2);
       }
 
       .card-abilities {
         > .mn-container-inside {
-          gap: calc($themeDefaultSpacing / 2);
+          gap: calc(#{$themeDefaultSpacing} / 2);
         }
 
         .abilities-add {
-          margin-bottom: - calc($themeDefaultSpacing / 4);
+          margin-bottom: calc(-1 * #{$themeDefaultSpacing} / 4);
         }
 
         .card-abilities-list {
           border: 1px solid $borderColor;
-          min-height: $themeDefaultItemHeight;
+          min-height: calc(#{$themeDefaultItemHeight});
           @include bg(1);
 
           .mn-inplace-edit {
             border-radius: 0;
-            margin: calc($themeDefaultSpacing/8) calc($themeDefaultSpacing/4);
+            margin: calc(#{$themeDefaultSpacing} / 8) calc(#{$themeDefaultSpacing} / 4);
             @include border-color(2);
             @include bg(1);
 
@@ -148,7 +148,7 @@
         .mn-container-inside {
           .mn-tabset {
             &.mn-tabbed-pane-tab-position-top {
-              border-radius: $themeDefaultBorderRadius;
+              border-radius: calc(#{$themeDefaultBorderRadius});
               background-image: none;
               padding: 0;
               @include bg(2);
@@ -164,22 +164,22 @@
 
             .mn-layout-spacer {
               background-color: transparent;
-              border-bottom: 1px solid nth($theme-light-bg, 3);
-              border-radius: $themeDefaultBorderRadius;
+              border-bottom: 1px solid color-rgb(nth($theme-light-bg, 3));
+              border-radius: calc(#{$themeDefaultBorderRadius});
             }
           }
 
           .mn-tab-pane {
-            border: 1px solid nth($theme-light-bg, 3);
+            border: 1px solid color-rgb(nth($theme-light-bg, 3));
             border-top: transparent;
 
             &#regular,
             &#choice {
-              padding-bottom: $themeDefaultSpacing;
+              padding-bottom: calc(#{$themeDefaultSpacing});
             }
 
             .mn-tab-button-choice {
-              box-shadow: 0 -1px 0 nth($theme-light-bg, 4);
+              box-shadow: 0 -1px 0 color-rgb(nth($theme-light-bg, 4));
             }
           }
 
@@ -193,12 +193,12 @@
       }
 
       .choice-effects-add {
-        margin-top: - calc($themeDefaultSpacing / 2);
+        margin-top: calc(-1 * #{$themeDefaultSpacing} / 2);
       }
 
       .card-choice-effects {
         .choice-effects-add {
-          margin-bottom: - calc($themeDefaultSpacing / 4);
+          margin-bottom: calc(-1 * #{$themeDefaultSpacing} / 4);
         }
 
         .card-choice-effects-list {

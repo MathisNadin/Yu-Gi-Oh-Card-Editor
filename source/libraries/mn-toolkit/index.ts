@@ -23,6 +23,7 @@ import { TipService } from './tip';
 import { SavingManagerService } from './savingManager';
 import { DateTimePickerService } from './dateTime';
 import { CameraPickerService } from './cameraPicker';
+import { ThemeService } from './theme';
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   extendNativeObjects();
@@ -36,6 +37,7 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$device', DeviceService);
   app.service('$react', ReactService);
   app.service('$router', RouterService, { depends: ['$react'] });
+  app.service('$theme', ThemeService);
   app.service('$toaster', ToasterService, { depends: ['$react'] });
   app.service('$store', StoreService, { depends: ['$device', '$core'] });
   app.service('$permission', PermissionService);
@@ -63,7 +65,7 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   loadSvgs();
 }
 
-export * from './themeSettings';
+export * from './theme';
 export * from './containable';
 export * from './container';
 export * from './memberBadge';

@@ -17,12 +17,12 @@
     background: rgba($color, 0.3);
 
     .bar {
-      background: $color;
+      background: color-rgb($color);
     }
   }
 
   .message {
-    color: $color;
+    color: color-rgb($color);
   }
 }
 
@@ -66,7 +66,7 @@
       @include fill-all;
       border-radius: 7px;
       @include fx(width, background-color);
-      background: $primary;
+      background: color-rgb($primary);
     }
   }
 
@@ -188,7 +188,7 @@
     }
 
     .step-text {
-      margin: calc($themeDefaultSpacing / 2);
+      margin: calc(#{$themeDefaultSpacing} / 2);
     }
 
     .step-circle {
@@ -219,7 +219,7 @@
         position: absolute;
         top: 0;
         left: 2px;
-        color: $primary;
+        color: color-rgb($primary);
         visibility: hidden;
       }
 
@@ -249,11 +249,11 @@
     &:not(.disabled) {
       .step-circle {
         &:before {
-          background-color: $secondary;
+          background-color: color-rgb($secondary);
         }
       }
       .step-text {
-        border-left: 3px dotted $primary;
+        border-left: 3px dotted color-rgb($primary);
       }
     }
 
@@ -261,8 +261,8 @@
       .step-circle {
         &:after,
         &:before {
-          background-color: $primary;
-          border-color: $primary;
+          background-color: color-rgb($primary);
+          border-color: color-rgb($primary);
         }
       }
       .step-text {
@@ -273,7 +273,7 @@
     &.active {
       .step-circle {
         &:before {
-          background-color: $primary;
+          background-color: color-rgb($primary);
         }
       }
       .pointer {
@@ -291,11 +291,11 @@
 
     &:hover {
       .step-text {
-        border-left: 3px dotted $primary;
+        border-left: 3px dotted color-rgb($primary);
       }
       .step-circle {
         &:before {
-          background-color: darken($primary, 10%);
+          background-color: darken-color($primary);
         }
       }
     }
@@ -306,7 +306,7 @@
     border-left: 3px solid transparent;
     padding-left: 4px;
     display: block;
-    margin: calc($themeDefaultSpacing / 2) 0;
+    margin: calc(#{$themeDefaultSpacing} / 2) 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -339,7 +339,7 @@
     .segment,
     .step {
       &.mn-step-progress-on {
-        border-color: nth($theme-light-bg, 1);
+        border-color: color-rgb(#{nth($theme-light-bg, 1)});
         @include bg(1);
       }
     }
@@ -348,7 +348,7 @@
     .segment,
     .step {
       &.mn-step-progress-on {
-        border-color: nth($theme-light-bg, 2);
+        border-color: color-rgb(#{nth($theme-light-bg, 2)});
         @include bg(2);
       }
     }
@@ -357,7 +357,7 @@
     .segment,
     .step {
       &.mn-step-progress-on {
-        border-color: nth($theme-light-bg, 3);
+        border-color: color-rgb(#{nth($theme-light-bg, 3)});
         @include bg(3);
       }
     }
@@ -366,7 +366,7 @@
     .segment,
     .step {
       &.mn-step-progress-on {
-        border-color: nth($theme-light-bg, 4);
+        border-color: color-rgb(#{nth($theme-light-bg, 4)});
         @include bg(4);
       }
     }

@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 import { IContainableProps, Containable, IContainableState } from '../containable';
-import { TBackgroundColor, TForegroundColor } from '../themeSettings';
+import { TBackgroundColor, TForegroundColor } from '../theme';
 import { Icon, TIconId } from '../icon';
 
 export interface IButtonProps extends IContainableProps {

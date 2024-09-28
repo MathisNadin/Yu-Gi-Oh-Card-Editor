@@ -1,18 +1,18 @@
 @mixin themeSearchBar() {
-  $height: $themeDefaultItemHeight;
+  $height: calc(#{$themeDefaultItemHeight});
   background-color: white;
 
   .mn-dark-theme & {
     background-color: white(0.15);
   }
 
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
   display: flex;
   align-items: center;
 
-  border: $fieldBorderSize solid;
+  border: calc(#{$themeFieldBorderSize}) solid;
   border-color: #c3c3c3;
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
   @include bg(1);
   @include fx(border-color, box-shadow);
   box-shadow: 0 0 10px black(0.16) inset;
@@ -26,7 +26,7 @@
   }
 
   .search-icon {
-    margin-left: $themeDefaultSpacing;
+    margin-left: calc(#{$themeDefaultSpacing});
   }
 
   input {
@@ -53,7 +53,7 @@
 
 @mixin themeSearchBarDropdown() {
   flex: 1;
-  $height: $themeDefaultItemHeight;
+  $height: calc(#{$themeDefaultItemHeight});
   background-color: white;
 
   .mn-dark-theme & {
@@ -61,7 +61,7 @@
   }
 
   border-style: solid;
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
   border-width: 1px;
   border-color: #d5d7f1;
   display: flex;

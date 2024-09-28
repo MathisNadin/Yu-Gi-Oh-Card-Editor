@@ -1,8 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default
 import ReactCrop, { Crop } from 'react-image-crop';
 import { classNames, isUndefined } from 'mn-tools';
-import { IContainableProps, IContainableState, Containable, Spinner, HorizontalStack } from 'mn-toolkit';
-import { createRef } from 'react';
+import { IContainableProps, IContainableState, Containable, Spinner, TDidUpdateSnapshot } from 'mn-toolkit';
 
 interface IArtworkCroppingProps extends IContainableProps {
   artworkBase64: string;
@@ -19,19 +18,26 @@ interface IArtworkCroppingState extends IContainableState {
 }
 
 export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtworkCroppingState> {
-  private croppingRef = createRef<HorizontalStack>();
+  public static override get defaultProps(): Partial<IArtworkCroppingProps> {
+    return {
+      ...super.defaultProps,
+      fill: true,
+    };
+  }
 
   public constructor(props: IArtworkCroppingProps) {
     super(props);
     this.state = {
       ...this.state,
       loaded: false,
+      higher: false,
       crop: props.crop,
       artworkBase64: '',
     };
   }
 
   public componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.loadHigher()));
   }
 
@@ -47,13 +53,18 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     );
   }
 
-  public componentDidUpdate(prevProps: IArtworkCroppingProps) {
+  public componentDidUpdate(
+    prevProps: Readonly<IArtworkCroppingProps>,
+    prevState: Readonly<IArtworkCroppingState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (isUndefined(this.state.higher) || !this.prevPropsIsDifferent(prevProps)) return;
     requestAnimationFrame(() => requestAnimationFrame(() => this.loadHigher()));
   }
 
   private loadHigher() {
-    if (!this.props.artworkBase64 || !this.croppingRef.current?.base?.current) {
+    if (!this.props.artworkBase64 || !this.base.current) {
       return this.setState({
         loaded: true,
         higher: false,
@@ -62,20 +73,21 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
       });
     }
 
-    const container = this.croppingRef.current.base.current;
+    const container = this.base.current;
     const containerisHigher = container.clientHeight > container.clientWidth;
 
     const image = new Image();
     image.src = this.props.artworkBase64;
     const imageIsHigher = image.height > image.width;
 
-    image.onload = () =>
+    image.onload = () => {
       this.setState({
         loaded: true,
         higher: containerisHigher && imageIsHigher,
         crop: this.props.crop,
         artworkBase64: this.props.artworkBase64,
       });
+    };
   }
 
   private onCroppingChange(crop: Crop) {
@@ -86,20 +98,23 @@ export class ArtworkCropping extends Containable<IArtworkCroppingProps, IArtwork
     this.setState({ crop }, () => this.props.onCroppingChange(this.state.crop));
   }
 
-  public render() {
+  public override renderClasses() {
+    const classes = super.renderClasses();
+    classes['artwork-cropping'] = true;
+    return classes;
+  }
+
+  public override get children() {
     if (!this.state.loaded) return <Spinner />;
+    if (!this.state.artworkBase64) return null;
     return (
-      <HorizontalStack ref={this.croppingRef} className='artwork-cropping' margin>
-        {!!this.state.artworkBase64 && (
-          <ReactCrop
-            className={classNames('cropping-interface', { higher: this.state.higher, larger: !this.state.higher })}
-            crop={this.state.crop}
-            onChange={(_cropPx: Crop, crop: Crop) => this.onCroppingChange(crop)}
-          >
-            <img id='artwork-img' className='artwork-img' src={this.state.artworkBase64} alt='artwork' />
-          </ReactCrop>
-        )}
-      </HorizontalStack>
+      <ReactCrop
+        className={classNames('cropping-interface', { higher: this.state.higher, larger: !this.state.higher })}
+        crop={this.state.crop}
+        onChange={(_cropPx: Crop, percentageCrop: Crop) => this.onCroppingChange(percentageCrop)}
+      >
+        <img id='artwork-img' className='artwork-img' src={this.state.artworkBase64} alt='artwork' />
+      </ReactCrop>
     );
   }
 }

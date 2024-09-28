@@ -6,7 +6,7 @@
   align-items: center;
 
   .mn-container-inside {
-    gap: calc($themeDefaultSpacing / 2);
+    gap: calc(#{$themeDefaultSpacing} / 2);
     align-items: center;
   }
 
@@ -15,16 +15,16 @@
     position: relative;
     @include text-overflow;
     @include fg(1);
-    line-height: $themeDefaultItemHeight - 2px;
-    min-height: $themeDefaultItemHeight - 2px;
-    max-height: $themeDefaultItemHeight - 2px;
-    padding: 0 calc($themeDefaultSpacing / 2);
+    line-height: calc(#{$themeDefaultItemHeight} - 2px);
+    min-height: calc(#{$themeDefaultItemHeight} - 2px);
+    max-height: calc(#{$themeDefaultItemHeight} - 2px);
+    padding: 0 calc(#{$themeDefaultSpacing} / 2);
     appearance: textfield;
 
     border-width: 1px;
     border-style: solid;
     @include border-color(4);
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
 
     &::placeholder {
       @include fg(2);
@@ -43,7 +43,7 @@
     display: flex;
     align-items: center;
     @include border-color(4);
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     padding: 3px;
   }
 

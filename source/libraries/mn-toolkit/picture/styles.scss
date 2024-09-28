@@ -32,7 +32,7 @@ $pictureBigSize: 300px;
     @include shadow(1);
     border: 1px solid nth($theme-light-bg, 1);
     .mn-dark-theme & {
-      border-color: nth($theme-dark-bg, 1);
+      border-color: color-rgb(#{nth($theme-dark-bg, 1)});
     }
 
     .mn-icon {
@@ -110,8 +110,8 @@ $pictureBigSize: 300px;
 
     &.circle-display {
       .icon-container {
-        right: $themeDefaultSpacing;
-        bottom: $themeDefaultSpacing;
+        right: calc(#{$themeDefaultSpacing});
+        bottom: calc(#{$themeDefaultSpacing});
       }
     }
   }

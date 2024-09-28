@@ -1,7 +1,7 @@
-$button-height: $themeDefaultItemHeight;
+$button-height: calc(#{$themeDefaultItemHeight});
 
 @mixin colorizeButton($bgColor) {
-  background-color: $bgColor;
+  background-color: color-rgb($bgColor);
   border: 3px solid rgba($bgColor, 0);
   @include bgAsFg(1);
 
@@ -12,7 +12,7 @@ $button-height: $themeDefaultItemHeight;
 
   &:hover,
   &:active {
-    background-color: lighten($bgColor, 10%);
+    background-color: lighten-color($bgColor);
   }
 }
 
@@ -39,7 +39,7 @@ button {
   text-shadow: none;
   background-image: none;
   position: relative;
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
   font-weight: 400;
   letter-spacing: 0.5px;
   transition: all 0.4s ease;
@@ -54,12 +54,12 @@ button {
 
   &.mn-button-icon-and-text {
     &.mn-icon-position-left {
-      padding-left: calc($themeDefaultSpacing/2);
+      padding-left: calc(#{$themeDefaultSpacing} / 2);
     }
 
     &.mn-icon-position-right {
       flex-direction: row-reverse;
-      padding-right: calc($themeDefaultSpacing/2);
+      padding-right: calc(#{$themeDefaultSpacing} / 2);
     }
   }
 
@@ -69,7 +69,7 @@ button {
     flex: 1;
     line-height: 1em;
     text-align: center;
-    padding: calc($themeDefaultSpacing/4) calc($themeDefaultSpacing/2);
+    padding: calc(#{$themeDefaultSpacing} / 4) calc(#{$themeDefaultSpacing} / 2);
   }
 
   &.mn-button-block {
@@ -129,11 +129,11 @@ button {
 @mixin colorizeButtonOutline($color) {
   transition: border-color 0.4s ease;
   border: 1px solid transparent;
-  border-color: $color;
+  border-color: color-rgb($color);
 
   &:hover,
   &:active {
-    background-color: $color;
+    background-color: color-rgb($color);
     @include bgAsFg(1);
   }
 
@@ -158,8 +158,8 @@ button {
   text-shadow: none;
   background-image: none;
   position: relative;
-  padding: 0px $themeDefaultSpacing;
-  border-radius: $themeDefaultBorderRadius;
+  padding: 0 calc(#{$themeDefaultSpacing});
+  border-radius: calc(#{$themeDefaultBorderRadius});
   border-width: 2px;
   border-style: solid;
   @include fx(border-color, background-color);
@@ -179,7 +179,7 @@ button {
     width: $size;
     height: $size;
     line-height: $size;
-    margin-right: calc($themeDefaultSpacing/2);
+    margin-right: calc(#{$themeDefaultSpacing} / 2);
   }
 
   &.mn-color-primary {
@@ -276,8 +276,8 @@ button {
   background-image: none;
   font-weight: 300;
   position: relative;
-  border-radius: $themeDefaultBorderRadius;
-  padding: 0 calc($themeDefaultSpacing / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius});
+  padding: 0 calc(#{$themeDefaultSpacing} / 2);
 
   .label {
     @include text-overflow;
@@ -289,7 +289,7 @@ button {
     width: $size;
     height: $size;
     line-height: $size;
-    margin-right: calc($themeDefaultSpacing/2);
+    margin-right: calc(#{$themeDefaultSpacing} / 2);
   }
 
   &.mn-color-primary {
@@ -341,12 +341,12 @@ button {
 }
 
 @mixin colorizeButtonIcon($color) {
-  fill: $color;
-  border-color: $color;
+  fill: color-rgb($color);
+  border-color: color-rgb($color);
 
   &:hover {
     @include bgAsFg(1);
-    background-color: $color;
+    background-color: color-rgb($color);
   }
 }
 
@@ -357,7 +357,7 @@ button {
   max-width: $size;
   padding: $padding;
 
-  $iconSize: $size - $padding * 2 - $border * 2;
+  $iconSize: calc(#{$size} - #{$padding} * 2 - #{$border} * 2);
   font-size: $iconSize;
   line-height: $iconSize;
 
@@ -379,12 +379,12 @@ button {
   transition: color 0.4s ease;
 
   $border: 1px;
-  border: $border solid $primary;
+  border: $border solid color-rgb($primary);
 
-  @include buttonIconSize($themeDefaultItemHeight, calc($themeDefaultSpacing/4), $border);
+  @include buttonIconSize(calc(#{$themeDefaultItemHeight}), calc(#{$themeDefaultSpacing} / 4), $border);
 
   &.mn-size-small {
-    @include buttonIconSize(calc($themeDefaultItemHeight * 0.75), calc($themeDefaultSpacing/4), $border);
+    @include buttonIconSize(calc(#{$themeDefaultItemHeight} * 0.75), calc(#{$themeDefaultSpacing} / 4), $border);
   }
 
   &.mn-color-primary {

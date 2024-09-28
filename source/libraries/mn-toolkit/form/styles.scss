@@ -1,5 +1,5 @@
-$inputHeight: $themeDefaultItemHeight;
-$contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
+$inputHeight: calc(#{$themeDefaultItemHeight});
+$contentHeight: calc($inputHeight - #{$themeDefaultSpacing} / 2);
 
 @mixin themeFormField {
   $helper-height: 12px;
@@ -12,15 +12,15 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
     height: $inputHeight;
     min-height: $inputHeight;
     max-height: $inputHeight;
-    padding: calc($themeDefaultSpacing/2);
+    padding: calc(#{$themeDefaultSpacing} / 2);
 
-    border: $fieldBorderSize solid #c3c3c3;
+    border: calc(#{$themeFieldBorderSize}) solid #c3c3c3;
     border-radius: calc($themeDefaultBorderRadius / 2);
     @include bg(1);
     transition: all 0.4s ease;
 
     > .mn-container-inside {
-      gap: calc($themeDefaultSpacing/2);
+      gap: calc(#{$themeDefaultSpacing} / 2);
     }
 
     .status-icon {
@@ -40,7 +40,7 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
       border: none;
       background-color: transparent;
       @include fg(1);
-      margin: - calc($themeDefaultSpacing/2) 0;
+      margin: calc(-1 * #{$themeDefaultSpacing} / 2) 0;
       display: block;
       width: 100%;
       appearance: textfield;
@@ -72,15 +72,15 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
   }
 
   .form-label {
-    margin-bottom: calc($themeDefaultSpacing / 2);
+    margin-bottom: calc(#{$themeDefaultSpacing} / 2);
 
     .form-label-with-info-icon {
-      margin-right: calc($themeDefaultSpacing/3);
+      margin-right: calc(#{$themeDefaultSpacing} / 3);
     }
   }
 
   .form-helper {
-    margin: calc($themeDefaultSpacing/2) 0 0 0;
+    margin: calc(#{$themeDefaultSpacing} / 2) 0 0 0;
   }
 
   &.mn-field-layout-horizontal {
@@ -119,7 +119,7 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
     > .mn-container-inside {
       > .prop-icon-container-button,
       > .prop-icon {
-        margin: -$themeDefaultSpacing * 0.5 0;
+        margin: calc(-1 * #{$themeDefaultSpacing} * 0.5) 0;
       }
     }
   }
@@ -139,7 +139,7 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
   &.mn-focus {
     .input-wrapper {
       box-shadow: 0 0 10px rgba($primary, 0.26) inset;
-      border-color: $primary;
+      border-color: color-rgb($primary);
     }
     .form-label {
       .mn-typography-label {
@@ -151,7 +151,7 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
   &.required {
     .form-label > .mn-typography::after {
       content: '*';
-      color: $primary;
+      color: color-rgb($primary);
       font-weight: bold;
       font-size: 20px;
       margin-left: 4px;
@@ -161,17 +161,17 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
 
   &.error {
     .form-label {
-      color: $negative;
+      color: color-rgb($negative);
     }
 
     .form-helper {
-      color: $negative;
+      color: color-rgb($negative);
     }
 
     .input-wrapper {
-      border-color: $negative;
+      border-color: color-rgb($negative);
       > * {
-        color: $negative;
+        color: color-rgb($negative);
       }
     }
   }
@@ -186,13 +186,13 @@ $contentHeight: $inputHeight - calc($themeDefaultSpacing/2);
   &.validated {
     &:not(.error) {
       .status-icon {
-        color: $positive;
+        color: color-rgb($positive);
       }
     }
 
     &.error {
       .status-icon {
-        color: $negative;
+        color: color-rgb($negative);
       }
     }
   }

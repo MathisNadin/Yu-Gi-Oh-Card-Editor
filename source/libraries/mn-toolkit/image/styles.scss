@@ -1,7 +1,7 @@
 .mn-image {
   @include mnLayoutContainable();
   overflow: hidden;
-  // border-radius: $themeDefaultBorderRadius;
+  // border-radius: calc(#{$themeDefaultBorderRadius});
   width: auto;
   height: auto;
   max-width: 100%;

@@ -1,7 +1,7 @@
 import { TControlTextContentType, Typography } from '../typography';
 import { Icon, TIconId } from '../icon';
 import { JSXElementChild } from '../react';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './AbstractPopup';
 import { HorizontalStack, VerticalStack } from '../container';
 import { TextInputField } from '../textInput';

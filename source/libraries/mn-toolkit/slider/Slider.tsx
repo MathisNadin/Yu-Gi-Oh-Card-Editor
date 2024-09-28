@@ -1,4 +1,4 @@
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { classNames } from 'mn-tools';
 import { createRef } from 'react';

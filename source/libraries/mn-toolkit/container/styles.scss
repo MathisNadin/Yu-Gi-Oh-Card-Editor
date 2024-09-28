@@ -42,7 +42,7 @@ $scrollBarSize: 5px;
 .mn-container {
   &.mn-layout-gutter {
     > .mn-container-inside {
-      gap: $themeDefaultSpacing;
+      gap: calc(#{$themeDefaultSpacing});
     }
   }
 
@@ -54,7 +54,7 @@ $scrollBarSize: 5px;
 
     &.mn-layout-gutter {
       > .mn-container-inside {
-        row-gap: calc($themeDefaultSpacing / 2);
+        row-gap: calc(#{$themeDefaultSpacing} / 2);
       }
     }
   }
@@ -150,14 +150,14 @@ $scrollBarSize: 5px;
   }
 
   &.mn-layout-margin {
-    margin: $themeDefaultSpacing;
+    margin: calc(#{$themeDefaultSpacing});
   }
 
   &.mn-layout-padding {
-    padding: $themeDefaultSpacing;
+    padding: calc(#{$themeDefaultSpacing});
   }
 
-  $scrollBarSpace: calc($themeDefaultSpacing / 2);
+  $scrollBarSpace: calc(#{$themeDefaultSpacing} / 2);
 
   &.mn-scroll {
     overflow-y: auto;
@@ -176,26 +176,26 @@ $scrollBarSize: 5px;
 
       > .mn-container-inside {
         padding-right: 0;
-        width: calc(100% - $themeDefaultSpacing / 2);
-        min-width: calc(100% - $themeDefaultSpacing / 2);
-        max-width: calc(100% - $themeDefaultSpacing / 2);
+        width: calc(100% - #{$themeDefaultSpacing} / 2);
+        min-width: calc(100% - #{$themeDefaultSpacing} / 2);
+        max-width: calc(100% - #{$themeDefaultSpacing} / 2);
 
         .without-webkit & {
-          width: calc(100% - $themeDefaultSpacing);
-          min-width: calc(100% - $themeDefaultSpacing);
-          max-width: calc(100% - $themeDefaultSpacing);
+          width: calc(100% - #{$themeDefaultSpacing});
+          min-width: calc(100% - #{$themeDefaultSpacing});
+          max-width: calc(100% - #{$themeDefaultSpacing});
         }
 
         &:after {
           content: ' ';
-          min-height: $themeDefaultSpacing;
+          min-height: calc(#{$themeDefaultSpacing});
         }
       }
 
       &.mn-layout-gutter {
         > .mn-container-inside {
           &:after {
-            margin-top: -$themeDefaultSpacing;
+            margin-top: calc(-1 * #{$themeDefaultSpacing});
           }
         }
       }
@@ -219,26 +219,26 @@ $scrollBarSize: 5px;
 
       > .mn-container-inside {
         padding-bottom: 0;
-        height: calc(100% - $themeDefaultSpacing / 2);
-        min-height: calc(100% - $themeDefaultSpacing / 2);
-        max-height: calc(100% - $themeDefaultSpacing / 2);
+        height: calc(100% - #{$themeDefaultSpacing} / 2);
+        min-height: calc(100% - #{$themeDefaultSpacing} / 2);
+        max-height: calc(100% - #{$themeDefaultSpacing} / 2);
 
         .without-webkit & {
-          height: calc(100% - $themeDefaultSpacing);
-          min-height: calc(100% - $themeDefaultSpacing);
-          max-height: calc(100% - $themeDefaultSpacing);
+          height: calc(100% - #{$themeDefaultSpacing});
+          min-height: calc(100% - #{$themeDefaultSpacing});
+          max-height: calc(100% - #{$themeDefaultSpacing});
         }
 
         &:after {
           content: ' ';
-          min-width: $themeDefaultSpacing;
+          min-width: calc(#{$themeDefaultSpacing});
         }
       }
 
       &.mn-layout-gutter {
         > .mn-container-inside {
           &:after {
-            margin-left: -$themeDefaultSpacing;
+            margin-left: calc(-1 * #{$themeDefaultSpacing});
           }
         }
       }
@@ -280,11 +280,11 @@ $COLUMNS: (
 .mn-layout-grid-stack {
   > .mn-layout-gutter {
     gap: initial;
-    margin-top: -$themeDefaultSpacing;
-    margin-left: -$themeDefaultSpacing;
+    margin-top: calc(-1 * #{$themeDefaultSpacing});
+    margin-left: calc(-1 * #{$themeDefaultSpacing});
 
     > * {
-      padding: $themeDefaultSpacing 0 0 $themeDefaultSpacing;
+      padding: calc(#{$themeDefaultSpacing}) 0 0 calc(#{$themeDefaultSpacing});
 
       > * {
         width: 100%;
@@ -324,7 +324,7 @@ $COLUMNS: (
 }
 
 @mixin frame($name) {
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
   @if ($name== 'shadow-1') {
     @include shadow(0);
   }
@@ -343,8 +343,8 @@ $COLUMNS: (
 }
 
 .mn-labeled-group {
-  margin-top: $themeDefaultSpacing;
-  border-radius: $themeDefaultBorderRadius;
+  margin-top: calc(#{$themeDefaultSpacing});
+  border-radius: calc(#{$themeDefaultBorderRadius});
 
   $borderOpacity: 0.3;
   border: 1px solid;
@@ -356,8 +356,8 @@ $COLUMNS: (
 
   .group-label-container {
     position: absolute;
-    top: -20px - calc($themeDefaultSpacing/2);
-    left: calc($themeDefaultSpacing/2);
-    padding: 0 $themeDefaultSpacing;
+    top: calc(-20px - #{$themeDefaultSpacing} / 2);
+    left: calc(#{$themeDefaultSpacing} / 2);
+    padding: 0 calc(#{$themeDefaultSpacing});
   }
 }

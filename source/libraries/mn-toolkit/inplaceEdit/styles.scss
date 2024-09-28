@@ -1,18 +1,18 @@
 @mixin themeInplaceEdit() {
   @include bg(1);
   @include fg(1);
-  padding: 0 calc($themeDefaultSpacing/2);
-  border-radius: $themeDefaultBorderRadius;
+  padding: 0 calc(#{$themeDefaultSpacing} / 2);
+  border-radius: calc(#{$themeDefaultBorderRadius});
 }
 
 div.mn-inplace-edit {
   @include themeInplaceEdit();
-  line-height: $themeDefaultItemHeight;
-  min-height: $themeDefaultItemHeight;
-  padding: 0 calc($themeDefaultSpacing/2 + 1px);
+  line-height: calc(#{$themeDefaultItemHeight});
+  min-height: calc(#{$themeDefaultItemHeight});
+  padding: 0 calc(#{$themeDefaultSpacing} / 2 + 1px);
   cursor: pointer;
   align-items: center;
-  gap: calc($themeDefaultSpacing / 2);
+  gap: calc(#{$themeDefaultSpacing} / 2);
 
   &.with-placeholder {
     @include fg(2);
@@ -37,8 +37,8 @@ div.mn-inplace-edit {
 
 input.mn-inplace-edit {
   @include themeInplaceEdit();
-  line-height: $themeDefaultItemHeight - 2px;
-  min-height: $themeDefaultItemHeight - 2px;
+  line-height: calc(#{$themeDefaultItemHeight} - 2px);
+  min-height: calc(#{$themeDefaultItemHeight} - 2px);
 
   border-width: 1px;
   border-style: solid;

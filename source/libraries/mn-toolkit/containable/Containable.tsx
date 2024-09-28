@@ -1,7 +1,7 @@
 import { AllHTMLAttributes, createRef, RefObject } from 'react';
 import { classNames, isDefined, isNumber } from 'mn-tools';
 import { TIconId } from '../icon';
-import { TBackgroundColor } from '../themeSettings';
+import { TBackgroundColor } from '../theme';
 import {
   ToolkitComponent,
   IToolkitComponentProps,

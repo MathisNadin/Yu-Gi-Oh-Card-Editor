@@ -1,5 +1,5 @@
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { classNames, isEmpty } from 'mn-tools';
 
 interface IProgressProps extends IContainableProps {

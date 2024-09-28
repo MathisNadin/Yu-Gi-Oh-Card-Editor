@@ -5,7 +5,6 @@ import { ITableColumn, CellValue, ITableCell } from './interfaces';
 import { ITableRow, TableRow } from './TableRow';
 import { ReactNode } from 'react';
 import { Icon } from '../icon';
-import { themeSettings } from '../themeSettings';
 import { TDidUpdateSnapshot } from '../containable';
 
 interface ITableProps extends IContainerProps {
@@ -85,7 +84,7 @@ export class Table extends Container<ITableProps, ITableState> {
             if (column.rotate === '90deg') {
               sum.push('2em');
             } else if (column.width) {
-              sum.push(column.width + themeSettings().themeDefaultSpacing);
+              sum.push(column.width + (app.$theme.settings['theme-default-spacing']?.value || 0));
             } else {
               nbNoWidth++;
             }
@@ -109,8 +108,9 @@ export class Table extends Container<ITableProps, ITableState> {
           style.maxWidth = x.width;
           style.minWidth = x.width;
         } else if (ssum) {
-          style.maxWidth = `calc((${ssum}) / ${nbNoWidth} - ${themeSettings().themeDefaultSpacing}px - 1px)`;
-          style.minWidth = `calc((${ssum}) / ${nbNoWidth} - ${themeSettings().themeDefaultSpacing}px - 1px)`;
+          const defaultSpacing = app.$theme.getUnitString(app.$theme.settings['theme-default-spacing']);
+          style.maxWidth = `calc((${ssum}) / ${nbNoWidth} - ${defaultSpacing} - 1px)`;
+          style.minWidth = `calc((${ssum}) / ${nbNoWidth} - ${defaultSpacing} - 1px)`;
         }
         if (x.rotate === '90deg') {
           style['writing-mode'] = 'vertical-rl';
@@ -208,10 +208,10 @@ export class Table extends Container<ITableProps, ITableState> {
     let minBodyHeight!: number;
     let maxBodyHeight!: number;
     if (this.props.visibleRows) {
-      minBodyHeight = themeSettings().themeDefaultItemHeight * this.props.visibleRows;
+      minBodyHeight = (app.$theme.settings['theme-default-item-height']?.value || 0) * this.props.visibleRows;
     }
     if (this.props.maxVisibleRows) {
-      maxBodyHeight = themeSettings().themeDefaultItemHeight * this.props.maxVisibleRows;
+      maxBodyHeight = (app.$theme.settings['theme-default-item-height']?.value || 0) * this.props.maxVisibleRows;
     }
 
     if (minBodyHeight || maxBodyHeight) {

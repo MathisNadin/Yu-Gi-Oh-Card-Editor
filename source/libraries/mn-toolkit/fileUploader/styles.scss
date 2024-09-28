@@ -5,18 +5,18 @@
 
   align-items: center;
   text-align: center;
-  gap: $themeDefaultSpacing;
-  padding: $themeDefaultSpacing * 2;
+  gap: calc(#{$themeDefaultSpacing});
+  padding: calc(#{$themeDefaultSpacing} * 2);
 
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
   border: 2px dashed;
-  border-color: nth($theme-light-fg, 1);
+  border-color: color-rgb(#{nth($theme-light-fg, 1)});
   .mn-dark-theme & {
-    border-color: nth($theme-dark-fg, 1);
+    border-color: color-rgb(#{nth($theme-dark-fg, 1)});
   }
 
   &.dragged-over {
-    border-color: $primary;
+    border-color: color-rgb($primary);
   }
 
   &.mn-disabled {

@@ -1,9 +1,9 @@
 @mixin colorizeIcon($color) {
-  fill: $color;
+  fill: color-rgb($color);
 
   &.has-click {
     &:hover {
-      color: $primary;
+      color: color-rgb($primary);
     }
   }
 }

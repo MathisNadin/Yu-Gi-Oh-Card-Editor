@@ -1,5 +1,5 @@
 import { escapeHTML, isDefined, isUndefined, markdownToHtml } from 'mn-tools';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { IRouterHrefParams } from '../router';
 import { IContainableProps, IContainableState, Containable } from '../containable';
 import { AllHTMLAttributes } from 'react';

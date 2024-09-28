@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, createRef, RefObject } from 'react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { classNames } from 'mn-tools';
 
 export type TIconId = keyof ISvgIcons;

@@ -1,7 +1,7 @@
 @mixin colorizeSlider($fgColor) {
   button.slider-thumb,
   .slider-filled {
-    background-color: $fgColor;
+    background-color: color-rgb($fgColor);
   }
 }
 
@@ -10,7 +10,7 @@ $sliderHeight: 20px;
 .mn-slider {
   position: relative;
   user-select: none;
-  margin: $themeDefaultSpacing;
+  margin: calc(#{$themeDefaultSpacing});
   height: $sliderHeight;
   min-height: $sliderHeight;
   max-height: $sliderHeight;
@@ -48,14 +48,14 @@ $sliderHeight: 20px;
       padding: 2px 5px;
       border-radius: 3px;
       font-size: 14px;
-      background-color: nth($theme-dark-fg, 4);
-      color: nth($theme-dark-fg, 1);
+      background-color: color-rgb(#{nth($theme-dark-fg, 4)});
+      color: color-rgb(#{nth($theme-dark-fg, 1)});
     }
   }
 
   .slider-mark {
     position: absolute;
-    bottom: -$sliderHeight; // Ajustez selon l'espacement souhaité sous le slider
+    bottom: calc(-1 * #{$sliderHeight}); // Ajustez selon l'espacement souhaité sous le slider
     transform: translateX(-50%); // Centrer le marqueur sous sa position
     font-size: 14px;
     @include fg(1);
@@ -107,7 +107,7 @@ $sliderHeight: 20px;
 .mn-range-slider {
   position: relative;
   user-select: none;
-  margin: $themeDefaultSpacing;
+  margin: calc(#{$themeDefaultSpacing});
   height: $sliderHeight;
   min-height: $sliderHeight;
   max-height: $sliderHeight;
@@ -145,14 +145,14 @@ $sliderHeight: 20px;
       padding: 2px 5px;
       border-radius: 3px;
       font-size: 14px;
-      background-color: nth($theme-dark-fg, 4);
-      color: nth($theme-dark-fg, 1);
+      background-color: color-rgb(#{nth($theme-dark-fg, 4)});
+      color: color-rgb(#{nth($theme-dark-fg, 1)});
     }
   }
 
   .slider-mark {
     position: absolute;
-    bottom: -$sliderHeight; // Ajustez selon l'espacement souhaité sous le slider
+    bottom: calc(-1 * #{$sliderHeight}); // Ajustez selon l'espacement souhaité sous le slider
     transform: translateX(-50%); // Centrer le marqueur sous sa position
     font-size: 14px;
     @include fg(1);
@@ -204,14 +204,14 @@ $sliderHeight: 20px;
 .mn-form-field.mn-field-slider,
 .mn-form-field.mn-field-range-slider {
   .input-wrapper {
-    $wrapperHeight: $sliderHeight + $themeDefaultSpacing * 2;
+    $wrapperHeight: calc(#{$sliderHeight} + #{$themeDefaultSpacing} * 2);
     background-color: transparent;
     border: none;
     box-shadow: none;
     height: $wrapperHeight;
     min-height: $wrapperHeight;
     max-height: $wrapperHeight;
-    margin: $themeDefaultSpacing 0;
+    margin: calc(#{$themeDefaultSpacing}) 0;
     padding-top: 0;
     padding-bottom: 0;
     overflow: visible;
@@ -244,6 +244,6 @@ $sliderHeight: 20px;
   }
 
   .form-helper {
-    padding-left: calc($themeDefaultSpacing / 2);
+    padding-left: calc(#{$themeDefaultSpacing} / 2);
   }
 }

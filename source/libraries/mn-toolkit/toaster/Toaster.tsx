@@ -3,7 +3,7 @@ import { classNames } from 'mn-tools';
 import { HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
-import { TBackgroundColor } from '../themeSettings';
+import { TBackgroundColor } from '../theme';
 import { TToastType } from '.';
 
 const TIMEOUT = 5000;

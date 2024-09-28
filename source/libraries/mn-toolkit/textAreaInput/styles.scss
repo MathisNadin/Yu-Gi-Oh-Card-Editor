@@ -8,7 +8,7 @@
     @include fg(1);
     background-color: transparent;
     line-height: 20px;
-    padding: calc($themeDefaultSpacing / 2);
+    padding: calc(#{$themeDefaultSpacing} / 2);
     resize: none;
     flex: 1;
     min-width: 100%;
@@ -17,7 +17,7 @@
     border-width: 1px;
     border-style: solid;
     @include border-color(4);
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
 
     &::placeholder {
       @include fg(2);

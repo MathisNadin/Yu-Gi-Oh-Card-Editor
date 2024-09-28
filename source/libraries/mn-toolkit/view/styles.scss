@@ -4,9 +4,9 @@
 
   .bread,
   .crumb {
-    line-height: $themeDefaultItemHeight;
-    min-height: $themeDefaultItemHeight;
-    max-height: $themeDefaultItemHeight;
+    line-height: calc(#{$themeDefaultItemHeight});
+    min-height: calc(#{$themeDefaultItemHeight});
+    max-height: calc(#{$themeDefaultItemHeight});
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,19 +30,19 @@
 
   .crumb {
     font-weight: 400;
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     @include fx(color);
 
     &:hover {
-      color: $primary;
+      color: color-rgb($primary);
     }
   }
 
   .separator {
-    line-height: $themeDefaultItemHeight;
-    min-height: $themeDefaultItemHeight;
-    max-height: $themeDefaultItemHeight;
-    margin: 0 calc($themeDefaultSpacing/4);
+    line-height: calc(#{$themeDefaultItemHeight});
+    min-height: calc(#{$themeDefaultItemHeight});
+    max-height: calc(#{$themeDefaultItemHeight});
+    margin: 0 calc(#{$themeDefaultSpacing} / 4);
     @include fg(2);
   }
 }
@@ -50,7 +50,7 @@
 @mixin themeHeader() {
   $progressHeight: 5px;
   @include bg(1);
-  padding: calc($themeDefaultSpacing / 2) !important;
+  padding: calc(#{$themeDefaultSpacing} / 2) !important;
   border-bottom: 1px solid;
   @include border-color(4);
   @include ios-top('padding-top');
@@ -83,9 +83,9 @@
 
   .title-bar {
     z-index: $z-index-title-bar;
-    padding: 0 calc($themeDefaultSpacing / 2);
+    padding: 0 calc(#{$themeDefaultSpacing} / 2);
     display: flex;
-    gap: calc($themeDefaultSpacing / 2);
+    gap: calc(#{$themeDefaultSpacing} / 2);
     flex-direction: row;
     align-items: center;
     @include fg(1);
@@ -93,7 +93,7 @@
     .center-part {
       display: flex;
       align-items: center;
-      gap: calc($themeDefaultSpacing / 2);
+      gap: calc(#{$themeDefaultSpacing} / 2);
       flex: 1;
       text-align: left;
       @include text-overflow;
@@ -107,12 +107,12 @@
   }
 
   .mn-sub-header {
-    padding: $themeDefaultSpacing;
+    padding: calc(#{$themeDefaultSpacing});
 
     .mn-fab {
       position: absolute;
       bottom: -32px;
-      right: $themeDefaultSpacing;
+      right: calc(#{$themeDefaultSpacing});
       z-index: $z-index-view-above;
     }
   }

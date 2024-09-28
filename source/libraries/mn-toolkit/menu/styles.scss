@@ -1,7 +1,7 @@
 $theme-menu-icon-size: 40px;
 $menu-width: 200px !default;
 // Padding du pane + padding de l'inside + taille des icones + bordure
-$menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
+$menu-contracted-width: calc(#{$themeDefaultSpacing} * 2.5 + 20px + 1px) !default;
 
 @mixin themeMenuPane {
   z-index: $z-index-drawer;
@@ -12,7 +12,7 @@ $menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
   height: 100vh;
   width: $menu-contracted-width;
   border-right: 1px solid black(0.1);
-  padding: calc($themeDefaultSpacing/2) 0;
+  padding: calc(#{$themeDefaultSpacing} / 2) 0;
   @include fg(2);
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@ $menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
 
   .mn-menu-pane-version {
     white-space: nowrap;
-    margin-left: - calc($themeDefaultSpacing / 2);
+    margin-left: calc(-1 * #{$themeDefaultSpacing} / 2);
   }
 
   &.dynamic {
@@ -33,9 +33,9 @@ $menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
     width: $menu-width;
   }
 
-  background-color: nth($theme-light-bg, 1);
+  background-color: color-rgb(#{nth($theme-light-bg, 1)});
   &.mn-dark-theme {
-    background-color: nth($theme-dark-bg, 1);
+    background-color: color-rgb(#{nth($theme-dark-bg, 1)});
   }
 
   .shrink-btn {
@@ -57,7 +57,7 @@ $menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
     }
 
     &:hover {
-      background-color: $primary;
+      background-color: color-rgb($primary);
       color: black !important;
     }
   }
@@ -80,9 +80,9 @@ $menu-contracted-width: calc($themeDefaultSpacing * 2.5 + 20px + 1px) !default;
 
   .mn-container-inside {
     &.with-icon {
-      $marginTop: calc($themeDefaultSpacing * 1.5);
+      $marginTop: calc(#{$themeDefaultSpacing} * 1.5);
       margin-top: $marginTop;
-      $height: calc(100% - $marginTop);
+      $height: calc(100% - #{$marginTop});
       height: $height;
       min-height: $height;
       max-height: $height;
@@ -110,16 +110,16 @@ $item-height: 53px;
   overflow-y: auto;
 
   .mn-left-menu-group {
-    margin-bottom: calc($themeDefaultItemHeight/2);
+    margin-bottom: calc(#{$themeDefaultItemHeight} / 2);
 
     .mn-left-menu-label {
-      padding-left: $themeDefaultSpacing;
+      padding-left: calc(#{$themeDefaultSpacing});
       display: flex;
       align-items: center;
       transition: all 0.2s ease;
-      height: $themeDefaultItemHeight;
-      min-height: $themeDefaultItemHeight;
-      max-height: $themeDefaultItemHeight;
+      height: calc(#{$themeDefaultItemHeight});
+      min-height: calc(#{$themeDefaultItemHeight});
+      max-height: calc(#{$themeDefaultItemHeight});
 
       .mn-menu-pane-tabs & {
         max-height: 0;
@@ -155,10 +155,10 @@ $item-height: 53px;
   }
 
   .mn-left-menu-subitem {
-    height: $themeDefaultItemHeight;
+    height: calc(#{$themeDefaultItemHeight});
     display: flex;
     align-items: center;
-    gap: calc($themeDefaultSpacing / 2);
+    gap: calc(#{$themeDefaultSpacing} / 2);
     transition:
       transform 0.2s ease,
       background-color 0.2s ease;
@@ -182,14 +182,14 @@ $item-height: 53px;
     &:hover,
     &.active {
       .mn-left-menu-icon {
-        color: $primary;
+        color: color-rgb($primary);
 
         // Pour certains svg
         path,
         rect,
         polyline,
         line {
-          color: $primary;
+          color: color-rgb($primary);
         }
       }
 
@@ -206,9 +206,9 @@ $item-height: 53px;
   min-height: $topMenuHeight;
   max-height: $topMenuHeight;
 
-  background-color: nth($theme-light-bg, 1);
+  background-color: color-rgb(#{nth($theme-light-bg, 1)});
   &.mn-dark-theme {
-    background-color: nth($theme-dark-bg, 1);
+    background-color: color-rgb(#{nth($theme-dark-bg, 1)});
   }
 
   .mn-top-menu-group {
@@ -216,10 +216,10 @@ $item-height: 53px;
 
     .mn-top-menu-group-container {
       &:hover {
-        color: $primary;
+        color: color-rgb($primary);
 
         .mn-top-menu-label {
-          color: $primary;
+          color: color-rgb($primary);
 
           &.mn-typography-anchor {
             &:hover {
@@ -229,14 +229,14 @@ $item-height: 53px;
         }
 
         .mn-icon {
-          color: $primary;
+          color: color-rgb($primary);
 
           // Pour certains svg
           path,
           rect,
           polyline,
           line {
-            color: $primary;
+            color: color-rgb($primary);
           }
         }
       }
@@ -288,28 +288,28 @@ body.mn-menu-pane-tabs {
 
     .mn-popup-actions-container {
       .action {
-        background-color: nth($theme-light-bg, 1);
+        background-color: color-rgb(#{nth($theme-light-bg, 1)});
         border-radius: 0;
 
         &:not(.mn-disabled):not(.separator) {
           &:hover {
-            background-color: nth($theme-dark-bg, 1);
+            background-color: color-rgb(#{nth($theme-dark-bg, 1)});
             box-shadow: white(0.2) 0px 1px 0.25rem 0px;
 
             .mn-icon {
-              color: $primary;
+              color: color-rgb($primary);
 
               // Pour certains svg
               path,
               rect,
               polyline,
               line {
-                color: $primary;
+                color: color-rgb($primary);
               }
             }
 
             .mn-typography.mn-content-type-text {
-              color: $primary;
+              color: color-rgb($primary);
 
               &.mn-typography-anchor {
                 &:hover {

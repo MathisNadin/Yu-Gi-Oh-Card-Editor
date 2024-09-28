@@ -35,8 +35,8 @@ textarea {
 
 .mn-checkbox.checked {
   .toggle {
-    background-color: $neutral !important;
-    border-color: $neutral !important;
+    background-color: color-rgb($neutral) !important;
+    border-color: color-rgb($neutral) !important;
   }
 }
 

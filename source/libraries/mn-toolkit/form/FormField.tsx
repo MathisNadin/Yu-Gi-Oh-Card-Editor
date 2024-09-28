@@ -1,6 +1,6 @@
 import { JSXElementChildren } from '../react';
 import { classNames, isEmpty, Observable } from 'mn-tools';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { HorizontalStack, VerticalStack } from '../container';
 import { TIconId, Icon } from '../icon';

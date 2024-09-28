@@ -3,7 +3,7 @@ import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot }
 import { JSXElementChild } from '../react';
 import { TIconId, Icon } from '../icon';
 import { Spacer } from '../spacer';
-import { TForegroundColor, TBackgroundColor } from '../themeSettings';
+import { TForegroundColor, TBackgroundColor } from '../theme';
 import { Typography } from '../typography';
 
 export type TTabPosition = 'top' | 'bottom' | 'left' | 'right';

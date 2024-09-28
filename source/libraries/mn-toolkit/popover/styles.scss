@@ -123,14 +123,14 @@
   .mn-popover-focus {
     position: fixed;
     box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.5);
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     z-index: $z-index-popover-overlay;
   }
 
   .mn-popover {
     position: absolute !important;
     pointer-events: auto;
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     @include bg(1);
 
     box-shadow: black(0.2) 0px 1px 0.25rem 0px;
@@ -182,23 +182,23 @@
 
       .mn-popup-actions-container {
         .action {
-          min-height: $themeDefaultItemHeight;
-          max-height: $themeDefaultItemHeight;
-          padding: 0 calc($themeDefaultSpacing / 2);
+          min-height: calc(#{$themeDefaultItemHeight});
+          max-height: calc(#{$themeDefaultItemHeight});
+          padding: 0 calc(#{$themeDefaultSpacing} / 2);
 
           // Simulate gap but without actual space (for hrefs)
           > .mn-container-inside {
             > *:not(:first-child) {
-              padding-left: $themeDefaultSpacing;
+              padding-left: calc(#{$themeDefaultSpacing});
             }
           }
 
           &:first-child {
-            border-radius: $themeDefaultBorderRadius $themeDefaultBorderRadius 0 0;
+            border-radius: calc(#{$themeDefaultBorderRadius}) calc(#{$themeDefaultBorderRadius}) 0 0;
           }
 
           &:last-child {
-            border-radius: 0 0 $themeDefaultBorderRadius $themeDefaultBorderRadius;
+            border-radius: 0 0 calc(#{$themeDefaultBorderRadius}) calc(#{$themeDefaultBorderRadius});
           }
 
           &.separator {
@@ -227,7 +227,7 @@
           }
 
           &.sub-title {
-            padding-left: calc($themeDefaultSpacing * 2);
+            padding-left: calc(#{$themeDefaultSpacing} * 2);
           }
         }
       }

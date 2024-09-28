@@ -1,7 +1,7 @@
 import { classNames } from 'mn-tools';
 import { TSliderValueDisplayMode } from './Slider';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { createRef } from 'react';
 
 type TMouseEvents = MouseEvent | React.MouseEvent<HTMLButtonElement, MouseEvent>;

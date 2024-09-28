@@ -2,10 +2,9 @@ import { ReactElement } from 'react';
 import { classNames, isEmpty, logger } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { HorizontalStack } from '../container';
-import { Icon, TIconId } from '../icon';
+import { Icon } from '../icon';
 import { ColorPicker } from '../colorPicker';
-import { TBackgroundColor } from '../themeSettings';
-import { createRoot } from 'react-dom/client';
+import { TBackgroundColor } from '../theme';
 
 const log = logger('RichTextEditor');
 
@@ -329,48 +328,6 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     }
   }
 
-  // Handle event when pressing just "Enter" inside a callout block
-  private handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key !== 'Enter' || event.shiftKey) return;
-
-    const selection = window.getSelection();
-    if (!selection) return;
-    const range = selection.getRangeAt(0);
-    const blockquoteElement = this.findAncestor(range.commonAncestorContainer, 'blockquote');
-
-    if (blockquoteElement && blockquoteElement.classList.contains('mn-blockquote-callout')) {
-      event.preventDefault(); // Empêcher le comportement par défaut de "Enter"
-
-      // Créer un nouveau paragraphe en dehors du blockquote
-      const newParagraph = document.createElement('p');
-      newParagraph.innerHTML = '<br>'; // Paragraphe vide
-
-      // Insérer le nouveau paragraphe après le blockquote
-      const parent = blockquoteElement.parentNode!;
-      parent.insertBefore(newParagraph, blockquoteElement.nextSibling);
-
-      // Positionner le curseur dans le nouveau paragraphe
-      const newRange = document.createRange();
-      newRange.setStart(newParagraph, 0);
-      newRange.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(newRange);
-    }
-  };
-
-  private handleOnClick = (event: React.MouseEvent) => {
-    // Vérifier si l'élément cliqué est .mn-blockquote-callout-icon ou un de ses enfants
-    const target = event.target as HTMLElement;
-    const iconElement = target.closest<HTMLDivElement>('.mn-blockquote-callout-icon');
-
-    if (iconElement) {
-      // Gérer le clic sur l'icône ou ses enfants
-      this.onCalloutIconClick(iconElement);
-    }
-
-    if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(event));
-  };
-
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-rich-text-editor'] = true;
@@ -395,11 +352,10 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
           // setTimeout nécessaire pour que les document.execCommand aient la possibilité
           // d'effectuer des manipulations avant que onInput soit créé, par exemple ce que fait onLink()
           onInput={() => setTimeout(() => this.onInput())}
-          onKeyDown={this.handleKeyDown}
           onFocus={(e) => this.onFocus(e)}
           onBlur={(e) => this.onBlur(e)}
           onPaste={(e) => this.onPaste(e)}
-          onClick={this.handleOnClick}
+          onClick={this.props.onTap ? (e) => app.$errorManager.handlePromise(this.props.onTap!(e)) : undefined}
           ref={(c) => {
             if (c && this._editor !== c) {
               this._editor = c;
@@ -741,8 +697,8 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
           // Clone l'élément <span> et divise le texte aux points d'intersection
           const spanClone = span.cloneNode(true);
           const remainingText = document.createElement('span');
-          remainingText.textContent = (spanClone.textContent || '').substring(intersection.endOffset);
-          spanClone.textContent = (spanClone.textContent || '').substring(0, intersection.startOffset);
+          remainingText.textContent = spanClone.textContent?.substring(intersection.endOffset) || '';
+          spanClone.textContent = spanClone.textContent?.substring(0, intersection.startOffset) || '';
 
           // Insère le span cloné avant l'élément original
           if (spanClone.textContent.length > 0) {
@@ -822,99 +778,26 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     let blockquoteElement = this.findAncestor(range.commonAncestorContainer, 'blockquote');
 
     if (blockquoteElement?.classList.contains('mn-blockquote-callout')) {
-      // Supprimer l'icône SVG et le contenu avant de retirer le blockquote
-      const iconContainer = blockquoteElement.querySelector('.mn-blockquote-callout-icon');
-      if (iconContainer) {
-        blockquoteElement.removeChild(iconContainer); // Retirer le conteneur d'icône
+      // Supprimer le blockquote mais conserver son contenu
+      const parent = blockquoteElement.parentNode!;
+      while (blockquoteElement.firstChild) {
+        parent.insertBefore(blockquoteElement.firstChild, blockquoteElement);
       }
-
-      const contentContainer = blockquoteElement.querySelector('.mn-blockquote-callout-content');
-      if (contentContainer) {
-        const innerContentContainers = contentContainer.querySelectorAll('.mn-blockquote-callout-inner-content');
-        const parent = blockquoteElement.parentNode!;
-
-        innerContentContainers.forEach((innerContentContainer) => {
-          // Retirer le contenu de l'inner-content et l'insérer avant le blockquote
-          while (innerContentContainer.firstChild) {
-            parent.insertBefore(innerContentContainer.firstChild, blockquoteElement);
-          }
-          contentContainer.removeChild(innerContentContainer); // Supprimer le conteneur inner-content
-        });
-
-        blockquoteElement.removeChild(contentContainer); // Supprimer le conteneur de contenu
-        parent.removeChild(blockquoteElement); // Supprimer le blockquote
-      }
+      parent.removeChild(blockquoteElement);
     } else {
-      // Créer un nouveau blockquote avec la classe 'mn-blockquote-callout'
-      document.execCommand('formatBlock', false, 'blockquote');
+      // Créer un blockquote simple avec la classe et l'attribut requis
+      document.execCommand('indent', false, 'blockquote');
 
       const newRange = selection.getRangeAt(0);
       blockquoteElement = this.findAncestor(newRange.commonAncestorContainer, 'blockquote');
       if (blockquoteElement) {
         blockquoteElement.classList.add('mn-blockquote-callout');
-
-        // Ajouter les conteneurs d'icône et de contenu
-        this.addIconToBlockquote(blockquoteElement, 'toolkit-info-circle');
+        blockquoteElement.setAttribute('data-icon', 'info');
       }
     }
 
     app.$popover.removeAll();
     this.onInput();
-  }
-
-  private addIconToBlockquote(blockquoteElement: HTMLElement, iconId: TIconId) {
-    // Obtenir l'élément SVG à partir de l'application
-    const iconJSX = app.$icon.get(iconId);
-
-    // Créer un conteneur pour l'icône
-    const iconContainer = document.createElement('div');
-    iconContainer.className = 'mn-blockquote-callout-icon';
-
-    // Rendre le SVG dans le conteneur de l'icône
-    const root = createRoot(iconContainer);
-    root.render(iconJSX);
-
-    // Insérer le conteneur de l'icône dans le blockquote
-    blockquoteElement.appendChild(iconContainer);
-
-    // Créer un conteneur pour le contenu principal
-    const contentContainer = document.createElement('div');
-    contentContainer.className = 'mn-blockquote-callout-content';
-
-    // Créer une div intermédiaire pour contenir le contenu réel
-    const innerContentContainer = document.createElement('div');
-    innerContentContainer.className = 'mn-blockquote-callout-inner-content';
-
-    // Déplacer le contenu existant dans la div intermédiaire
-    while (blockquoteElement.firstChild && blockquoteElement.firstChild !== iconContainer) {
-      innerContentContainer.appendChild(blockquoteElement.firstChild);
-    }
-
-    // Insérer la div intermédiaire dans le conteneur principal de contenu
-    contentContainer.appendChild(innerContentContainer);
-
-    // Insérer le conteneur de contenu dans le blockquote
-    blockquoteElement.appendChild(contentContainer);
-  }
-
-  // Example on how to replace the icon
-  // => implement an icon selector
-  private onCalloutIconClick(_iconElement: HTMLElement) {
-    // Trouver le conteneur de l'icône
-    /* const iconContainer = iconElement.closest('.mn-blockquote-callout-icon');
-
-    if (iconContainer) {
-      // Obtenir le nouveau JSX.Element de l'icône
-      const newIconJSX = app.$icon.get('toolkit-info-edit');
-
-      // Vider le conteneur de l'icône actuel
-      iconContainer.innerHTML = '';
-
-      // Rendre le nouvel élément JSX dans le conteneur
-      render(newIconJSX, iconContainer);
-
-      this.onInput();
-    } */
   }
 
   // Fonction utilitaire pour trouver l'ancêtre le plus proche de type tagName

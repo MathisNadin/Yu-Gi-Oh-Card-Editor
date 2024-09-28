@@ -1,6 +1,6 @@
 .cards-library {
   @include bg(1);
-  background-color: nth($theme-light-bg, 1);
+  background-color: color-rgb(nth($theme-light-bg, 1));
   width: 100%;
 
   .mn-table {

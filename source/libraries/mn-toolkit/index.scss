@@ -1,84 +1,205 @@
-$themeDefaultSpacing: 16px;
-$themeDefaultItemHeight: 32px;
-$themeDefaultBorderRadius: 12px;
-$themeDefaultFontSize: 16px;
-$themeMaxContentWidth: 750px;
-$themeMaxListWidth: 749px;
-$fieldBorderSize: 1px;
+$themeDefaultSpacing: var(--theme-default-spacing);
+$themeDefaultItemHeight: var(--theme-default-item-height);
+$themeDefaultBorderRadius: var(--theme-default-border-radius);
+$themeMaxContentWidth: var(--theme-max-content-width);
+$themeMaxListWidth: var(--theme-max-list-width);
+$themeFieldBorderSize: var(--theme-field-border-size);
 
-$primary: #fabd2f;
-$secondary: #563d7c;
-$tertiary: #f88379;
-$positive: #28a745;
-$negative: #dc3545;
-$neutral: #1e90ff;
-$warning: #ffca2c;
-$info: #17a2b8;
+$themeDefaultFontName: var(--theme-default-font-name);
+$themeDefaultFontSize: var(--theme-default-font-size);
 
-$theme-dark-bg: (#181818 #414141 #555555 #9d9d9d) !default;
-$theme-dark-fg: (#e9e9e9 #b8b8b8 #696969 #707070) !default;
-$theme-light-bg: (#ffffff #f6f8f9 #eef0f2 #e5e9eb) !default;
-$theme-light-fg: (#474747 #8a8a8a #9e9e9e #e4e4e4) !default;
+$positive: var(--positive);
+$negative: var(--negative);
+$neutral: var(--neutral);
+$warning: var(--warning);
+$info: var(--info);
+$primary: var(--primary);
+$secondary: var(--secondary);
+$tertiary: var(--tertiary);
+
+$theme-dark-bg: (var(--theme-dark-bg-1), var(--theme-dark-bg-2), var(--theme-dark-bg-3), var(--theme-dark-bg-4));
+$theme-dark-fg: (var(--theme-dark-fg-1), var(--theme-dark-fg-2), var(--theme-dark-fg-3), var(--theme-dark-fg-4));
+$theme-light-bg: (var(--theme-light-bg-1), var(--theme-light-bg-2), var(--theme-light-bg-3), var(--theme-light-bg-4));
+$theme-light-fg: (var(--theme-light-fg-1), var(--theme-light-fg-2), var(--theme-light-fg-3), var(--theme-light-fg-4));
+
+@function color-rgb($color) {
+  // Vérifier si $color est une variable SCSS connue
+  @if $color == $positive {
+    @return unquote('rgb(' + var(--positive) + ')');
+  } @else if $color == $negative {
+    @return unquote('rgb(' + var(--negative) + ')');
+  } @else if $color == $neutral {
+    @return unquote('rgb(' + var(--neutral) + ')');
+  } @else if $color == $warning {
+    @return unquote('rgb(' + var(--warning) + ')');
+  } @else if $color == $info {
+    @return unquote('rgb(' + var(--info) + ')');
+  } @else if $color == $primary {
+    @return unquote('rgb(' + var(--primary) + ')');
+  } @else if $color == $secondary {
+    @return unquote('rgb(' + var(--secondary) + ')');
+  } @else if $color == $tertiary {
+    @return unquote('rgb(' + var(--tertiary) + ')');
+  }
+
+  // Si $color est une valeur CSS comme `nth()`
+  @else if type-of($color) == string {
+    @return unquote('rgb(' + $color + ')');
+  }
+
+  // Gérer les autres cas de valeurs RGB
+  @else {
+    @return unquote('rgb(' + $color + ')');
+  }
+}
+
+@function darken-color($color) {
+  @if $color == $positive {
+    @return var(--positive-darken);
+  } @else if $color == $negative {
+    @return var(--negative-darken);
+  } @else if $color == $neutral {
+    @return var(--neutral-darken);
+  } @else if $color == $warning {
+    @return var(--warning-darken);
+  } @else if $color == $info {
+    @return var(--info-darken);
+  } @else if $color == $primary {
+    @return var(--primary-darken);
+  } @else if $color == $secondary {
+    @return var(--secondary-darken);
+  } @else if $color == $tertiary {
+    @return var(--tertiary-darken);
+  } @else {
+    @return $color;
+  }
+}
+
+@function darken-color-rgb($color) {
+  @if $color == $positive {
+    @return unquote('rgb(' + var(--positive-darken) + ')');
+  } @else if $color == $negative {
+    @return unquote('rgb(' + var(--negative-darken) + ')');
+  } @else if $color == $neutral {
+    @return unquote('rgb(' + var(--neutral-darken) + ')');
+  } @else if $color == $warning {
+    @return unquote('rgb(' + var(--warning-darken) + ')');
+  } @else if $color == $info {
+    @return unquote('rgb(' + var(--info-darken) + ')');
+  } @else if $color == $primary {
+    @return unquote('rgb(' + var(--primary-darken) + ')');
+  } @else if $color == $secondary {
+    @return unquote('rgb(' + var(--secondary-darken) + ')');
+  } @else if $color == $tertiary {
+    @return unquote('rgb(' + var(--tertiary-darken) + ')');
+  } @else {
+    @return unquote('rgb(' + $color + ')');
+  }
+}
+
+@function lighten-color($color) {
+  @if $color == $positive {
+    @return var(--positive-lighten);
+  } @else if $color == $negative {
+    @return var(--negative-lighten);
+  } @else if $color == $neutral {
+    @return var(--neutral-lighten);
+  } @else if $color == $warning {
+    @return var(--warning-lighten);
+  } @else if $color == $info {
+    @return var(--info-lighten);
+  } @else if $color == $primary {
+    @return var(--primary-lighten);
+  } @else if $color == $secondary {
+    @return var(--secondary-lighten);
+  } @else if $color == $tertiary {
+    @return var(--tertiary-lighten);
+  } @else {
+    @return $color;
+  }
+}
+
+@function lighten-color-rgb($color) {
+  @if $color == $positive {
+    @return unquote('rgb(' + var(--positive-lighten) + ')');
+  } @else if $color == $negative {
+    @return unquote('rgb(' + var(--negative-lighten) + ')');
+  } @else if $color == $neutral {
+    @return unquote('rgb(' + var(--neutral-lighten) + ')');
+  } @else if $color == $warning {
+    @return unquote('rgb(' + var(--warning-lighten) + ')');
+  } @else if $color == $info {
+    @return unquote('rgb(' + var(--info-lighten) + ')');
+  } @else if $color == $primary {
+    @return unquote('rgb(' + var(--primary-lighten) + ')');
+  } @else if $color == $secondary {
+    @return unquote('rgb(' + var(--secondary-lighten) + ')');
+  } @else if $color == $tertiary {
+    @return unquote('rgb(' + var(--tertiary-lighten) + ')');
+  } @else {
+    @return unquote('rgb(' + $color + ')');
+  }
+}
 
 @mixin bg($index: 1) {
-  background-color: nth($theme-light-bg, $index);
+  background-color: color-rgb(nth($theme-light-bg, $index));
   .mn-dark-theme & {
-    background-color: nth($theme-dark-bg, $index);
+    background-color: color-rgb(nth($theme-dark-bg, $index));
   }
 }
 
 @mixin fgAsBg($index: 1) {
-  background-color: nth($theme-light-fg, $index);
+  background-color: color-rgb(nth($theme-light-fg, $index));
   .mn-dark-theme & {
-    background-color: nth($theme-dark-fg, $index);
+    background-color: color-rgb(nth($theme-dark-fg, $index));
   }
 }
 
 @mixin bgAsFg($index: 1) {
-  color: nth($theme-light-bg, $index);
+  color: color-rgb(nth($theme-light-bg, $index));
   .mn-dark-theme & {
-    color: nth($theme-dark-bg, $index);
+    color: color-rgb(nth($theme-dark-bg, $index));
   }
 }
 
 @mixin fill($index: 1) {
-  fill: nth($theme-light-fg, $index);
+  fill: color-rgb(nth($theme-light-fg, $index));
   .mn-dark-theme & {
-    fill: nth($theme-dark-fg, $index);
+    fill: color-rgb(nth($theme-dark-fg, $index));
   }
 }
 
 @mixin fg($index: 1) {
-  color: nth($theme-light-fg, $index);
+  color: color-rgb(nth($theme-light-fg, $index));
   .mn-dark-theme & {
-    color: nth($theme-dark-fg, $index);
+    color: color-rgb(nth($theme-dark-fg, $index));
   }
 }
 
 @mixin strokeFg($index: 1) {
-  stroke: nth($theme-light-fg, $index);
+  stroke: color-rgb(nth($theme-light-fg, $index));
   .mn-dark-theme & {
-    stroke: nth($theme-dark-fg, $index);
+    stroke: color-rgb(nth($theme-dark-fg, $index));
   }
 }
 
 @mixin strokeBg($index: 1) {
-  stroke: nth($theme-light-bg, $index);
+  stroke: color-rgb(nth($theme-light-bg, $index));
   .mn-dark-theme & {
-    stroke: nth($theme-dark-bg, $index);
+    stroke: color-rgb(nth($theme-dark-bg, $index));
   }
 }
 
 @mixin caret-color($index: 1) {
-  caret-color: nth($theme-light-fg, $index);
+  caret-color: color-rgb(nth($theme-light-fg, $index));
   .mn-dark-theme & {
-    caret-color: nth($theme-dark-fg, $index);
+    caret-color: color-rgb(nth($theme-dark-fg, $index));
   }
 }
 @mixin border-color($index: 1) {
-  border-color: nth($theme-light-fg, $index);
+  border-color: color-rgb(nth($theme-light-fg, $index));
   .mn-dark-theme & {
-    border-color: nth($theme-dark-fg, $index);
+    border-color: color-rgb(nth($theme-dark-fg, $index));
   }
 }
 
@@ -169,8 +290,6 @@ $theme-light-fg: (#474747 #8a8a8a #9e9e9e #e4e4e4) !default;
   }
 }
 
-$theme-default-font-name: Tahoma, Helvetica, sans-serif !default;
-
 $theme-small-ratio: 0.7;
 
 $z-index-content: 0;
@@ -188,28 +307,28 @@ $z-index-popover: 9;
 $z-index-overall: 100;
 
 .mn-color-primary {
-  color: $primary;
+  color: color-rgb($primary);
 }
 .mn-color-secondary {
-  color: $secondary;
+  color: color-rgb($secondary);
 }
 .mn-color-tertiary {
-  color: $tertiary;
+  color: color-rgb($tertiary);
 }
 .mn-color-positive {
-  color: $positive;
+  color: color-rgb($positive);
 }
 .mn-color-negative {
-  color: $negative;
+  color: color-rgb($negative);
 }
 .mn-color-neutral {
-  color: $neutral;
+  color: color-rgb($neutral);
 }
 .mn-color-warning {
-  color: $warning;
+  color: color-rgb($warning);
 }
 .mn-color-info {
-  color: $info;
+  color: color-rgb($info);
 }
 .mn-color-1 {
   @include fg(1);
@@ -225,28 +344,28 @@ $z-index-overall: 100;
 }
 
 .mn-bg-primary {
-  background-color: $primary;
+  background-color: color-rgb($primary);
 }
 .mn-bg-secondary {
-  background-color: $secondary;
+  background-color: color-rgb($secondary);
 }
 .mn-bg-tertiary {
-  background-color: $tertiary;
+  background-color: color-rgb($tertiary);
 }
 .mn-bg-positive {
-  background-color: $positive;
+  background-color: color-rgb($positive);
 }
 .mn-bg-negative {
-  background-color: $negative;
+  background-color: color-rgb($negative);
 }
 .mn-bg-neutral {
-  background-color: $neutral;
+  background-color: color-rgb($neutral);
 }
 .mn-bg-warning {
-  background-color: $warning;
+  background-color: color-rgb($warning);
 }
 .mn-bg-info {
-  background-color: $info;
+  background-color: color-rgb($info);
 }
 .mn-bg-1 {
   @include bg(1);
@@ -401,9 +520,9 @@ $z-index-overall: 100;
   position: absolute;
 
   z-index: 2;
-  border-#{$opposite}: $height solid $color;
+  border-#{$opposite}: $height solid color-rgb($color);
 
-  $perpendicular-borders: calc($width/2) solid transparent;
+  $perpendicular-borders: calc($width / 2) solid transparent;
 
   @if $direction == top or $direction == bottom {
     border-left: $perpendicular-borders;
@@ -783,14 +902,14 @@ $z-index-overall: 100;
     display: flex;
     flex-direction: column;
 
-    background-color: nth($theme-light-bg, 1);
+    background-color: color-rgb(#{nth($theme-light-bg, 1)});
     &.mn-dark-theme {
-      background-color: nth($theme-dark-bg, 1);
+      background-color: color-rgb(#{nth($theme-dark-bg, 1)});
     }
 
-    color: nth($theme-light-fg, 1);
+    color: color-rgb(#{nth($theme-light-fg, 1)});
     &.mn-dark-theme {
-      color: nth($theme-dark-fg, 1);
+      color: color-rgb(#{nth($theme-dark-fg, 1)});
     }
   }
 

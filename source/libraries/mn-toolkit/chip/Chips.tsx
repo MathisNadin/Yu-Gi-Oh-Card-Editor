@@ -1,4 +1,4 @@
-import { TForegroundColor } from '../themeSettings';
+import { TForegroundColor } from '../theme';
 import { JSXElementChildren } from '../react';
 import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';

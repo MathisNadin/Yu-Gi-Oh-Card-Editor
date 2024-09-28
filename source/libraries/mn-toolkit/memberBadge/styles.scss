@@ -68,10 +68,10 @@
   }
 
   &.mn-shape-square {
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     overflow: hidden;
     .content {
-      border-radius: $themeDefaultBorderRadius;
+      border-radius: calc(#{$themeDefaultBorderRadius});
     }
   }
 

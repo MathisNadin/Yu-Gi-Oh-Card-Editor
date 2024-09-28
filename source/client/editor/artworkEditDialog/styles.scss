@@ -3,6 +3,7 @@
 .artwork-cropping {
   min-width: 50%;
   max-width: 50%;
+  margin: calc(#{$themeDefaultSpacing});
   height: calc(100% - 2 * #{$themeDefaultSpacing});
   align-items: center;
   justify-content: center;

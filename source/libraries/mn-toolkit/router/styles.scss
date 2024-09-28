@@ -1,4 +1,4 @@
-$routerLeftMargin: $themeDefaultSpacing;
+$routerLeftMargin: calc(#{$themeDefaultSpacing});
 
 .mn-router {
   display: flex;

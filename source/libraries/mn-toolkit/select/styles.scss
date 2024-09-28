@@ -3,7 +3,7 @@
     display: inline-block;
     line-height: 26px;
     padding: 0 12px;
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     background-color: #e0e0e0;
     margin: 4px 5px 3px 0;
     font-size: 14px;
@@ -38,9 +38,9 @@
     &:last-of-type {
       border-radius: 0 6px 6px 0;
     }
-    background-color: $primary;
+    background-color: color-rgb($primary);
     &.selected {
-      background-color: darken($primary, 10%);
+      background-color: darken-color($primary);
       color: white;
     }
     &.first-selected {
@@ -59,8 +59,8 @@
   border-style: solid;
   @include border-color(4);
 
-  border-radius: $themeDefaultBorderRadius;
-  height: $themeDefaultItemHeight;
+  border-radius: calc(#{$themeDefaultBorderRadius});
+  height: calc(#{$themeDefaultItemHeight});
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -68,7 +68,7 @@
 
   .label {
     cursor: pointer;
-    margin: 0 $themeDefaultSpacing;
+    margin: 0 calc(#{$themeDefaultSpacing});
     flex: 1;
     position: relative;
     @include text-overflow;
@@ -81,8 +81,8 @@
   .drop-icon {
     @include bg(3);
     @include fg(1);
-    height: $themeDefaultItemHeight;
-    width: $themeDefaultItemHeight;
+    height: calc(#{$themeDefaultItemHeight});
+    width: calc(#{$themeDefaultItemHeight});
     cursor: pointer;
     justify-content: center;
     display: flex;
@@ -127,7 +127,7 @@
 }
 
 .mn-popover.mn-select-popover {
-  border-radius: $themeDefaultBorderRadius;
+  border-radius: calc(#{$themeDefaultBorderRadius});
 }
 
 .mn-select {
@@ -137,9 +137,9 @@
 .mn-form-field.mn-field-select .input-wrapper {
   padding: 0;
   overflow: hidden;
-  min-height: $themeDefaultItemHeight;
-  height: $themeDefaultItemHeight;
-  max-height: $themeDefaultItemHeight;
+  min-height: calc(#{$themeDefaultItemHeight});
+  height: calc(#{$themeDefaultItemHeight});
+  max-height: calc(#{$themeDefaultItemHeight});
 
   .mn-select {
     border-radius: 0;

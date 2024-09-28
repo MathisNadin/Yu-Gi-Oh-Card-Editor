@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import { logger } from 'mn-tools';
-import { themeSettings } from '../themeSettings';
 import { IPopoverListener } from '.';
 
 const log = logger('Popovers');
@@ -23,7 +22,7 @@ export class Popovers extends Component<IPopoversProps, IPopoversState> implemen
 
   public render() {
     const { hasOverlay, popovers, focuses } = app.$popover;
-    const focusSpace = themeSettings().themeDefaultSpacing / 4;
+    const focusSpace = (app.$theme.settings['theme-default-spacing']?.value || 0) / 4;
     log.debug('render', popovers.length, focuses.length);
     return (
       <div className='mn-popovers'>

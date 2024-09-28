@@ -5,13 +5,13 @@
 
 @keyframes colorCycle {
   0% {
-    color: nth($theme-light-bg, 1);
+    color: color-rgb(nth($theme-light-bg, 1));
   }
   50% {
-    color: $warning;
+    color: color-rgb($warning);
   }
   100% {
-    color: nth($theme-light-bg, 1);
+    color: color-rgb(nth($theme-light-bg, 1));
   }
 }
 

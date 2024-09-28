@@ -7,8 +7,8 @@
     width: auto;
     max-height: calc(100% - #{$themeDefaultSpacing} * 2);
     max-width: 100%;
-    margin: $themeDefaultSpacing 0;
-    border-radius: $themeDefaultBorderRadius;
+    margin: calc(#{$themeDefaultSpacing}) 0;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     @include shadow(2);
   }
 }

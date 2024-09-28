@@ -12,6 +12,6 @@
   }
 
   .field-icon {
-    margin-right: calc($themeDefaultSpacing/2);
+    margin-right: calc(#{$themeDefaultSpacing} / 2);
   }
 }

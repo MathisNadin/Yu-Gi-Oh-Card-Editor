@@ -4,8 +4,8 @@
       gap: 0;
 
       .mn-sortable-item {
-        padding-top: calc($themeDefaultSpacing / 2);
-        padding-bottom: calc($themeDefaultSpacing / 2);
+        padding-top: calc(#{$themeDefaultSpacing} / 2);
+        padding-bottom: calc(#{$themeDefaultSpacing} / 2);
       }
     }
   }

@@ -15,7 +15,7 @@
 
   .mn-popup {
     position: absolute;
-    border-radius: $themeDefaultBorderRadius;
+    border-radius: calc(#{$themeDefaultBorderRadius});
     box-shadow: 0 0 10px black(0.26);
     backface-visibility: hidden;
     visibility: hidden;

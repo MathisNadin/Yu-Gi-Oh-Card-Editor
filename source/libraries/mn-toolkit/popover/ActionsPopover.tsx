@@ -3,7 +3,7 @@ import { IRouterHrefParams, TRouterState } from '../router';
 import { HorizontalStack, VerticalStack } from '../container';
 import { Typography } from '../typography';
 import { Icon, TIconId } from '../icon';
-import { TBackgroundColor, TForegroundColor, themeSettings } from '../themeSettings';
+import { TBackgroundColor, TForegroundColor } from '../theme';
 import { IAbstractPopoverProps, IAbstractPopoverState, AbstractPopover } from './AbstractPopover';
 
 export interface IActionsPopoverAction<ID = number, T extends TRouterState = TRouterState> {
@@ -48,7 +48,7 @@ export class ActionsPopover<
   public static get defaultProps(): Partial<IActionsPopoverProps> {
     return {
       ...AbstractPopover.defaultProps,
-      actionHeight: themeSettings().themeDefaultItemHeight,
+      actionHeight: app.$theme.settings['theme-default-item-height']?.value,
       actions: [],
     };
   }
