@@ -6,7 +6,7 @@
   }
 
   &.mn-selected {
-    background-color: $color;
+    background-color: color-rgb($color);
     color: white;
   }
 }

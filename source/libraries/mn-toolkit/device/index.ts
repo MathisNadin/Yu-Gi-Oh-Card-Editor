@@ -50,7 +50,7 @@ declare global {
     once: (channel: TOnceChannel, func: (...args: unknown[]) => void) => void;
     invoke: (channel: TInvokeChannel, ...args: unknown[]) => Promise<unknown>;
     openLink: (link: string) => Promise<void>;
-    download: (directoryPath: string, url: string) => Promise<string>;
+    download: (directoryPath: string, url: string, filename?: string) => Promise<string>;
     getAppVersion: () => Promise<string>;
     readFileUtf8: (filters?: TFileFilter[]) => Promise<string | Buffer>;
     getFilePath: (defaultPath?: string) => Promise<string>;

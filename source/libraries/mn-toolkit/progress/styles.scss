@@ -165,8 +165,8 @@
   .segment,
   .step {
     &.mn-step-progress-on {
-      border-color: $color;
-      background-color: $color;
+      border-color: color-rgb($color);
+      background-color: color-rgb($color);
     }
   }
 }

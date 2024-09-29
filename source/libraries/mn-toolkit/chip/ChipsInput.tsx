@@ -73,9 +73,9 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
 
   public override get children(): JSXElementChildren {
     return [
-      this.state.items.map((item) => (
+      this.state.items.map((item, i) => (
         <Chip
-          key={`${item.id}`}
+          key={`chip-${i}`}
           selected
           className={item.className}
           label={item.label}

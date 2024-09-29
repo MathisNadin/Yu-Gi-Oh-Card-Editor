@@ -1,6 +1,6 @@
 @mixin colorizeMemberBadge($color) {
   .content.letter {
-    color: $color;
+    color: color-rgb($color);
   }
 }
 
