@@ -278,12 +278,12 @@ export class YuginewsService {
                       } else if (effect.startsWith('[EFFET CONTINU]')) {
                         parsedCardData.effectType = '2';
                         parsedCardData.condition = effect.replaceAll('&nbsp;', ' ').replace('[EFFET CONTINU] ', '');
-                      } else if (effect.startsWith('[EFFET AU CHOIX]')) {
+                      } else if (effect.startsWith('[EFFET MULTI-CHOIX]')) {
                         parsedCardData.effectType = '3';
                         parsedCardData.choiceEffects = [
                           effect
                             .replaceAll('&nbsp;', ' ')
-                            .replace('[EFFET AU CHOIX] ', '')
+                            .replace('[EFFET MULTI-CHOIX] ', '')
                             .replace('● ', '')
                             .replace('• ', ''),
                         ];

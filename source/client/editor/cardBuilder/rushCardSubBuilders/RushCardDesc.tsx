@@ -137,7 +137,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
           else lines.push(line);
         });
 
-        lines.push(language === 'fr' ? '[Effet au Choix] ' : '[Multi-Choice Effect] ');
+        lines.push(language === 'fr' ? '[Effet Multi-Choix] ' : '[Multi-Choice Effect] ');
         for (const choice of rushChoiceEffects) {
           lines.push(...choice.split('\n'));
         }

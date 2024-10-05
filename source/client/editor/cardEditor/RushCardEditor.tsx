@@ -694,7 +694,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               ],
             },
             {
-              props: { tabId: 'choice', label: 'Effet au Choix', gutter: true },
+              props: { tabId: 'choice', label: 'Effet Multi-Choix', gutter: true },
               content: [
                 <HorizontalStack key='choice-other-effects'>
                   <Icon className='field-icon' size={24} icon='toolkit-empty-small-script' color='1' />
