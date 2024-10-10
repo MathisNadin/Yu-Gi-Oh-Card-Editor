@@ -38,7 +38,7 @@
   }
 }
 
-@mixin themeCalloutBlockquote($lightIconColor: nth($theme-light-bg, 2), $darkIconColor: nth($theme-light-bg, 2)) {
+@mixin themeCalloutBlockquote($lightIconColor: #8a8a8a, $darkIconColor: #b8b8b8) {
   &:not(.code-block) {
     border-left: none !important;
 

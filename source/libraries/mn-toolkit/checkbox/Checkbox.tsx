@@ -1,6 +1,7 @@
 import { classNames } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { Typography } from '../typography';
+import { Icon } from '../icon';
 
 interface ICheckBoxProps extends IContainableProps {
   /** Text in front of the check box. */
@@ -55,7 +56,7 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
   public render() {
     return (
       <div className={classNames(this.renderClasses())} onClick={() => app.$errorManager.handlePromise(this.onClick())}>
-        <div className='toggle'></div>
+        <Icon className='toggle' icon='toolkit-check-mark' />
         {!!this.props.label && <Typography className='label' content={this.props.label} variant='help' />}
       </div>
     );

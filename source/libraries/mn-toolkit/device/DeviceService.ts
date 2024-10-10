@@ -568,7 +568,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       if (isString(buffer)) return buffer;
       // Supposant que result est le contenu du fichier en tant que Buffer
       // Convertissez le Buffer (Node.js) en ArrayBuffer si nécessaire
-      return { content: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) };
+      return { content: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer };
     } else {
       // Mode web: Lire le fichier et renvoyer un objet avec ArrayBuffer
       return new Promise<{ content: ArrayBuffer; name?: string } | undefined>((resolve, reject) => {

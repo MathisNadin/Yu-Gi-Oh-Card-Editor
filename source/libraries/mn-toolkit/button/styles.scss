@@ -12,7 +12,7 @@ $button-height: calc(#{$themeDefaultItemHeight});
 
   &:hover,
   &:active {
-    background-color: lighten-color($bgColor);
+    background-color: lighten-color-rgb($bgColor);
   }
 }
 

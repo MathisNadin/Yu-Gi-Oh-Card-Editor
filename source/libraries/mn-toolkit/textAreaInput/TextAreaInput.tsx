@@ -19,7 +19,6 @@ interface ITextAreaInputState extends IContainableState {
   value: string;
   rows: number;
   activateScroll: boolean;
-  doTextAreaChange: boolean;
 }
 
 export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInputState> {
@@ -49,7 +48,6 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
       rows: props.autoGrow ? 1 : props.minRows!,
       value: props.defaultValue!,
       activateScroll: !props.autoGrow,
-      doTextAreaChange: false,
     };
   }
 
@@ -59,29 +57,16 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     setTimeout(() => this.inputElement.focus(), 100);
   }
 
-  public static getDerivedStateFromProps(
-    nextProps: ITextAreaInputProps,
-    prevState: ITextAreaInputState
-  ): Partial<ITextAreaInputState> | null {
-    if (prevState.value !== nextProps.defaultValue) {
-      return {
-        value: nextProps.defaultValue!,
-        doTextAreaChange: true,
-      };
-    } else {
-      return null;
-    }
-  }
-
   public override componentDidUpdate(
     prevProps: Readonly<ITextAreaInputProps>,
     prevState: Readonly<ITextAreaInputState>,
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (!this.state.doTextAreaChange) return;
+    if (prevProps === this.props) return;
+    if (this.props.defaultValue?.trim() === this.state.value?.trim()) return;
+    this.setState({ value: this.props.defaultValue! });
     this.onTextAreaChange();
-    this.setState({ doTextAreaChange: false });
   }
 
   public doFocus() {
@@ -155,7 +140,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     if (value === this.state.value) return;
     await this.setStateAsync({ value });
     this.onTextAreaChange();
-    if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(value));
+    if (this.props.onChange) await this.props.onChange(value);
   }
 
   private onTextAreaChange() {

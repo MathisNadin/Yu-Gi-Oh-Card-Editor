@@ -9,8 +9,8 @@
   .toggle {
     position: relative;
     display: inline-block;
-    min-width: 20px;
-    min-height: 20px;
+    width: 20px;
+    height: 20px;
     text-align: center;
     border: 1px solid;
     @include border-color(2);
@@ -19,8 +19,20 @@
     @include fx(background-color);
     background-repeat: no-repeat;
     background-position: center;
+
     .error & {
       border-color: color-rgb($negative);
+    }
+
+    stroke-width: 150%;
+    font-weight: bold;
+
+    path {
+      color: black;
+      fill: currentColor;
+      stroke: currentColor;
+      stroke-width: 0.5px;
+      visibility: hidden;
     }
   }
 

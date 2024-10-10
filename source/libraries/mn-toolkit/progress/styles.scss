@@ -295,7 +295,7 @@
       }
       .step-circle {
         &:before {
-          background-color: darken-color($primary);
+          background-color: darken-color-rgb($primary);
         }
       }
     }

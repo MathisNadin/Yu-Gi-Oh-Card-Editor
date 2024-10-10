@@ -121,7 +121,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
     if (this.props.multiple) files = [...this.state.files, ...files];
 
     await this.setStateAsync({ files, loadingFiles: false, loadingProgress: 0, loadingTotal: 0 });
-    () => this.fireOnFilesChanged();
+    this.fireOnFilesChanged();
   }
 
   private async onRemoveFile(index: number) {

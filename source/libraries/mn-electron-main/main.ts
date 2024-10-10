@@ -1,14 +1,10 @@
 import path, { join } from 'path';
 import { createConnection } from 'net';
-import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
 import { existsSync, readFileSync, writeFile } from 'fs';
+import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
 import { download } from 'electron-dl';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
-import {
-  buildProjectMenuDarwinTemplate,
-  buildProjectMenuTemplate,
-  patchIpcMain,
-} from '../../client/electronMainPatchs';
+import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate, patchIpcMain } from 'client/electron-patchs/main';
 
 declare global {
   type IIpcMain = Electron.IpcMain;
@@ -91,8 +87,10 @@ ipcMain.handle('writePngFile', async (_event, defaultFileName: string, base64: s
   if (!canceled && filePath) {
     const finalFilePath = filePath.endsWith('.png') ? filePath : `${filePath}.png`;
     const buffer = Buffer.from(base64, 'base64');
+    const uint8Array = new Uint8Array(buffer); // Convertir le buffer en Uint8Array
+
     // eslint-disable-next-line consistent-return
-    writeFile(finalFilePath, buffer, (err) => {
+    writeFile(finalFilePath, uint8Array, (err) => {
       if (!err) return finalFilePath;
     });
   }
@@ -108,7 +106,7 @@ ipcMain.handle('openLink', async (_event, link: string) => {
   shell.openExternal(link);
 });
 
-ipcMain.handle('download', async (_event, directory: string, url: string) => {
+ipcMain.handle('download', async (_event, directory: string, url: string, filename?: string) => {
   let win = BrowserWindow.getFocusedWindow() as BrowserWindow;
   if (!win) {
     let allWindows = BrowserWindow.getAllWindows();
@@ -116,7 +114,7 @@ ipcMain.handle('download', async (_event, directory: string, url: string) => {
       win = allWindows[0];
     }
   }
-  let file = await download(win, url, { directory });
+  const file = await download(win, url, { directory, filename });
   return file.getSavePath();
 });
 
