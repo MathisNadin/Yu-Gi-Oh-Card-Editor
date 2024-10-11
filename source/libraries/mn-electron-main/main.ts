@@ -4,7 +4,11 @@ import { existsSync, readFileSync, writeFile } from 'fs';
 import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
 import { download } from 'electron-dl';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
-import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate, patchIpcMain } from 'client/electron-patchs/main';
+import {
+  buildProjectMenuDarwinTemplate,
+  buildProjectMenuTemplate,
+  patchIpcMain,
+} from '../../client/electron-patchs/main';
 
 declare global {
   type IIpcMain = Electron.IpcMain;
