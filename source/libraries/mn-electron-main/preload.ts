@@ -27,8 +27,8 @@ const defaultIpcRenderer: Partial<IIpcRenderer> = {
     return ipcRenderer.invoke('openLink', link);
   },
 
-  download(directoryPath: string, url: string): Promise<string> {
-    return ipcRenderer.invoke('download', directoryPath, url);
+  download(directoryPath: string, url: string, filename?: string): Promise<string> {
+    return ipcRenderer.invoke('download', directoryPath, url, filename);
   },
 
   getAppVersion(): Promise<string> {
