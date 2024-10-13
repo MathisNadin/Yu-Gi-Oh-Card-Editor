@@ -202,22 +202,26 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         if (card.rushOtherEffects) {
           description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i)));
         }
-        const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix] ' : '[Multi-Choice Effect] ';
+        const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix]' : '[Multi-Choice Effect]';
+        const choiceEffects: (string | JSXElementChild[])[] = [];
+        for (const choice of card.rushChoiceEffects) {
+          choiceEffects.push(' ');
+          choiceEffects.push(...choice.split('\n').map((d, i) => this.getProcessedText(d, i, true)));
+        }
         description.push(
           [
             <span key={`rush-label-condition`} className='span-text rush-label condition'>
               {'[Condition] '}
             </span>,
-          ].concat(...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i))),
+            ...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i)),
+          ],
           [
             <span key={`rush-label-effect`} className='span-text rush-label effect'>
               {choiceEffectsLabel}
             </span>,
+            ...choiceEffects,
           ]
         );
-        for (const choice of card.rushChoiceEffects) {
-          description.push(...choice.split('\n').map((d, i) => this.getProcessedText(d, i, true)));
-        }
         break;
 
       default:
