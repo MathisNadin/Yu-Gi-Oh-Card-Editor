@@ -61,7 +61,7 @@
 }
 
 @mixin themeTypographyText() {
-  line-height: 140%;
+  line-height: 100%;
   font-size: 16px;
   font-family: #{$themeDefaultFontName};
   @include themeTypographyColor();
@@ -148,7 +148,9 @@
 }
 
 @mixin themeTypographyHelp {
-  font: 400 14px #{$themeDefaultFontName};
+  font-size: 14px;
+  font-weight: 400;
+  font-family: #{$themeDefaultFontName};
   @include themeTypographyColor();
 }
 

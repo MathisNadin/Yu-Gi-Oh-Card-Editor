@@ -33,7 +33,7 @@ export class ArtworkEditDialog extends AbstractPopup<
   IArtworkEditDialogState
 > {
   public static async show(options: IArtworkEditDialogProps) {
-    options.title = options.title || "Édition de l'image";
+    options.title = options.title || "Modifier l'artwork";
     options.height = options.height || '90%';
     options.width = options.width || '90%';
     return await app.$popup.show<IArtworkEditDialogResult, IArtworkEditDialogProps>({
@@ -43,29 +43,21 @@ export class ArtworkEditDialog extends AbstractPopup<
     });
   }
 
-  public constructor(props: IArtworkEditDialogProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      loaded: true,
-      artworkURL: props.artworkURL,
-      artworkBase64: '',
-      crop: props.crop,
-      keepRatio: props.keepRatio,
-    };
+  public async onInitializePopup() {
+    this.state.buttons.push({
+      color: 'positive',
+      label: 'Valider',
+      onTap: () =>
+        this.close({
+          url: this.state.artworkURL,
+          crop: this.state.crop,
+          keepRatio: this.state.keepRatio,
+        }),
+    });
+    await this.loadArtworkBase64(this.props.artworkURL, this.props.crop);
   }
 
-  public componentDidMount() {
-    super.componentDidMount();
-    app.$errorManager.handlePromise(this.loadArtworkBase64(undefined, true));
-  }
-
-  public componentDidUpdate(prevProps: Readonly<IArtworkEditDialogProps>) {
-    if (prevProps === this.props) return;
-    app.$errorManager.handlePromise(this.loadArtworkBase64());
-  }
-
-  private async loadArtworkBase64(artworkURL?: string, usePropsCrops?: boolean) {
+  private async loadArtworkBase64(artworkURL?: string, crop?: Crop) {
     artworkURL = artworkURL || this.state.artworkURL;
 
     let artworkBase64 = '';
@@ -79,24 +71,21 @@ export class ArtworkEditDialog extends AbstractPopup<
       }
     }
 
-    this.setState({
-      loaded: true,
+    await this.setStateAsync({
       artworkURL,
       artworkBase64,
       keepRatio: this.props.keepRatio || false,
-      crop: usePropsCrops
-        ? this.props.crop
-        : {
-            x: 0,
-            y: 0,
-            height: 100,
-            width: 100,
-            unit: '%',
-          },
+      crop: crop || {
+        x: 0,
+        y: 0,
+        height: 100,
+        width: 100,
+        unit: '%',
+      },
     });
   }
 
-  private onCroppingChange(crop: Crop) {
+  private async onCroppingChange(crop: Crop) {
     if (this.state.keepRatio && crop.height !== crop.width) {
       if (crop.height !== this.state.crop.height) {
         crop.width = crop.height;
@@ -104,25 +93,26 @@ export class ArtworkEditDialog extends AbstractPopup<
         crop.height = crop.width;
       }
     }
-    this.setState({ crop });
+    await this.setStateAsync({ crop });
   }
 
   protected override get scrollInContent() {
     return true;
   }
 
-  public renderContent() {
+  public override renderContent() {
     return (
-      <HorizontalStack className='artwork-edit-dialog' fill gutter>
+      <HorizontalStack className='artwork-edit-dialog' gutter>
         <ArtworkCropping
+          fill
+          margin
           artworkBase64={this.state.artworkBase64}
-          hasPendulumFrame={this.props.hasPendulumFrame}
-          hasLinkFrame={this.props.hasLinkFrame}
           crop={this.state.crop}
           onCroppingChange={(crop) => this.onCroppingChange(crop)}
         />
 
         <ArtworkEditing
+          fill
           artworkURL={this.state.artworkURL}
           artworkBase64={this.state.artworkBase64}
           keepRatio={this.state.keepRatio}
@@ -131,10 +121,9 @@ export class ArtworkEditDialog extends AbstractPopup<
           hasLinkFrame={this.props.hasLinkFrame}
           isRush={this.props.isRush}
           crop={this.state.crop}
-          onKeepRatioChange={(keepRatio) => this.setState({ keepRatio })}
-          onCroppingChange={(crop) => this.setState({ crop })}
+          onKeepRatioChange={(keepRatio) => this.setStateAsync({ keepRatio })}
+          onCroppingChange={(crop) => this.setStateAsync({ crop })}
           onArtworkURLChange={(url) => this.loadArtworkBase64(url)}
-          onValidate={(url, crop, keepRatio) => this.close({ url, crop, keepRatio })}
         />
       </HorizontalStack>
     );

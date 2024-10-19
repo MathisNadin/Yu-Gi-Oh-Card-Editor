@@ -1,54 +1,11 @@
 @import 'react-image-crop/src/ReactCrop.scss';
 
-.artwork-cropping {
-  min-width: 50%;
-  max-width: 50%;
-  margin: calc(#{$themeDefaultSpacing});
-  height: calc(100% - 2 * #{$themeDefaultSpacing});
-  align-items: center;
-  justify-content: center;
-
-  .cropping-interface {
-    height: auto;
-    width: auto;
-    max-height: 100%;
-    max-width: 100%;
-
-    &.larger {
-      min-width: 100%;
-      width: 100%;
-
-      .ReactCrop__child-wrapper {
-        min-width: 100%;
-        width: 100%;
-        max-width: 100%;
-
-        .artwork-img {
-          min-width: 100%;
-          width: 100%;
-          max-width: 100%;
-        }
-      }
-    }
-
-    &.higher {
-      min-height: 100%;
-      height: 100%;
-
-      .ReactCrop__child-wrapper {
-        min-height: 100%;
-        height: 100%;
-        max-height: 100%;
-
-        .artwork-img {
-          min-height: 100%;
-          height: 100%;
-          max-height: 100%;
-        }
-      }
-    }
-  }
-}
+/* .artwork-cropping {
+  $size: 50%;
+  width: $size;
+  min-width: $size;
+  max-width: $size;
+} */
 
 .artwork-editing {
   .cropped-img {
@@ -60,36 +17,5 @@
     &.pendulum-ratio {
       aspect-ratio: 703 / 526;
     }
-  }
-
-  .ratio-checkbox {
-    .mn-checkbox {
-      padding: 4px 0;
-      margin: -4px 0;
-    }
-
-    .mn-button {
-      font-size: 12px;
-      padding: 6px 8px;
-      border: 0;
-
-      &.full-card {
-        background: #deb887;
-      }
-
-      &.full-pendulum-card {
-        background: linear-gradient(250deg, green -29%, aquamarine 35%, #deb887 82%);
-      }
-    }
-  }
-
-  .size-field {
-    gap: 4px;
-    margin-bottom: 1px;
-  }
-
-  .validate {
-    padding: 4px 0;
-    margin: -4px 0;
   }
 }
