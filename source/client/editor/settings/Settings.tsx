@@ -8,6 +8,8 @@ import {
   Icon,
   Spacer,
   Spinner,
+  Typography,
+  VerticalStack,
 } from 'mn-toolkit';
 import { ISettingsListener, IUserSettings } from './SettingsService';
 
@@ -93,44 +95,56 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
   public get children() {
     if (!this.state.settings) return <Spinner />;
     return [
-      <HorizontalStack key='default-render-path' verticalItemAlignment='middle'>
-        <Icon className='field-icon' size={24} icon='toolkit-millennium-puzzle' color='1' />
-        {app.$device.isDesktop && (
-          <FileInput
-            fill
-            placeholder='Chemin de rendu par défaut'
-            defaultValue={this.state.settings.defaultRenderPath}
-            onChange={(url) => this.onDefaultRenderPathChanged(url)}
-            overrideOnTap={() => this.getDefaultRenderPath()}
-          />
-        )}
-      </HorizontalStack>,
+      <VerticalStack key='default-render-path' className='setting-field'>
+        <Typography variant='document' contentType='text' content='Chemin de rendu par défaut' />
 
-      <HorizontalStack key='default-artwork-path' verticalItemAlignment='middle'>
-        <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
-        {app.$device.isDesktop && (
-          <FileInput
-            fill
-            placeholder="Chemin vers l'artwork par défaut"
-            defaultValue={this.state.settings.defaultArtworkPath}
-            onChange={(path) => this.onDefaultArtworkPathChanged(path)}
-            overrideOnTap={() => this.getDefaultArtworkPath()}
-          />
-        )}
-      </HorizontalStack>,
+        <HorizontalStack verticalItemAlignment='middle'>
+          <Icon className='field-icon' size={24} icon='toolkit-millennium-puzzle' color='1' />
+          {app.$device.isDesktop && (
+            <FileInput
+              fill
+              placeholder='Chemin du dossier'
+              defaultValue={this.state.settings.defaultRenderPath}
+              onChange={(url) => this.onDefaultRenderPathChanged(url)}
+              overrideOnTap={() => this.getDefaultRenderPath()}
+            />
+          )}
+        </HorizontalStack>
+      </VerticalStack>,
 
-      <HorizontalStack key='default-img-import' verticalItemAlignment='middle'>
-        <Icon className='field-icon' size={24} icon='toolkit-image-sync' color='1' />
-        {app.$device.isDesktop && (
-          <FileInput
-            fill
-            placeholder="Chemin d'import d'images par défaut"
-            defaultValue={this.state.settings.defaultImgImportPath}
-            onChange={(path) => this.onDefaultImgImportPathChanged(path)}
-            overrideOnTap={() => this.getDefaultImgImportPath()}
-          />
-        )}
-      </HorizontalStack>,
+      <VerticalStack key='default-artwork-path' className='setting-field'>
+        <Typography variant='document' contentType='text' content='Chemin vers les artworks par défaut' />
+
+        <HorizontalStack verticalItemAlignment='middle'>
+          <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
+          {app.$device.isDesktop && (
+            <FileInput
+              fill
+              placeholder='Chemin du dossier'
+              defaultValue={this.state.settings.defaultArtworkPath}
+              onChange={(path) => this.onDefaultArtworkPathChanged(path)}
+              overrideOnTap={() => this.getDefaultArtworkPath()}
+            />
+          )}
+        </HorizontalStack>
+      </VerticalStack>,
+
+      <VerticalStack key='default-img-import' className='setting-field'>
+        <Typography variant='document' contentType='text' content="Chemin d'import des artworks par défaut" />
+
+        <HorizontalStack verticalItemAlignment='middle'>
+          <Icon className='field-icon' size={24} icon='toolkit-image-sync' color='1' />
+          {app.$device.isDesktop && (
+            <FileInput
+              fill
+              placeholder='Chemin du dossier'
+              defaultValue={this.state.settings.defaultImgImportPath}
+              onChange={(path) => this.onDefaultImgImportPathChanged(path)}
+              overrideOnTap={() => this.getDefaultImgImportPath()}
+            />
+          )}
+        </HorizontalStack>
+      </VerticalStack>,
 
       <Spacer key='spacer' />,
 

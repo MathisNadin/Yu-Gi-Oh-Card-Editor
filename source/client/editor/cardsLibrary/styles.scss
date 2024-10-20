@@ -4,37 +4,15 @@
   width: 100%;
 
   .mn-table {
-    .mn-table-body {
-      .mn-table-row {
-        &.mn-table-row-selected {
-          background: rgba($positive, 0.5);
-          border-color: rgba(black, 0.05);
+    tbody {
+      tr {
+        &.selected {
+          background-color: rgba($positive, 0.5);
         }
 
-        &.mn-table-row-current {
+        &.current {
           background-color: rgba($info, 0.5);
         }
-
-        /* .mn-table-cell {
-          .mn-table-cell-wrapper {
-            .mn-container {
-              min-width: 100%;
-              max-width: 100%;
-              min-height: 100%;
-              max-height: 100%;
-
-              .mn-typography {
-                display: block;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                min-width: 100%;
-                max-width: 100%;
-                user-select: none;
-              }
-            }
-          }
-        } */
       }
     }
   }

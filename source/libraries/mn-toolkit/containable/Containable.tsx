@@ -201,9 +201,9 @@ export class Containable<
   }
 
   public renderStyle() {
-    let style: { [key: string]: number | boolean | string } = {};
+    const style: { [key: string]: number | boolean | string } = {};
     if (this.props.style) {
-      for (let k in this.props.style) {
+      for (const k in this.props.style) {
         style[k] = this.props.style[k];
       }
     }

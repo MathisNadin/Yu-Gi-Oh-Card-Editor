@@ -1,179 +1,71 @@
-@mixin tableCell {
-  min-height: calc(#{$themeDefaultItemHeight});
-  padding: 0 calc(#{$themeDefaultSpacing} / 2);
-  flex: 1;
-  display: flex;
-  font-size: 14px;
-
-  &.no-padding {
-    .mn-table-cell-wrapper {
-      left: 0;
-      right: 0;
-    }
-  }
-  &.outside-cell {
-    background-color: transparent;
-    border: none;
-  }
-
-  &.mn-align-left {
-    .mn-table-cell-wrapper {
-      justify-content: flex-start;
-    }
-  }
-
-  &.mn-align-right {
-    .mn-table-cell-wrapper {
-      justify-content: flex-end;
-    }
-  }
-
-  &.mn-align-center {
-    .mn-table-cell-wrapper {
-      justify-content: center;
-    }
-  }
-
-  &.mn-vertical-align-top {
-    .mn-table-cell-wrapper {
-      align-items: flex-start;
-    }
-  }
-
-  &.mn-vertical-align-center {
-    .mn-table-cell-wrapper {
-      align-items: center;
-    }
-  }
-
-  &.mn-vertical-align-bottom {
-    .mn-table-cell-wrapper {
-      align-items: flex-end;
-    }
-  }
-
-  position: relative;
-  > .mn-table-cell-wrapper {
-    left: calc(#{$themeDefaultSpacing} / 2);
-    right: calc(#{$themeDefaultSpacing} / 2);
-    top: 0;
-    bottom: 0;
-    position: absolute;
-    overflow: hidden;
-    line-height: 130%;
-    display: flex;
-  }
-}
-
-@mixin fx($property...) {
-  $delay: 0.2s;
-  $ease: ease;
-  will-change: #{$property};
-  transition: #{$property} $delay $ease;
-}
-
-@mixin tableRow {
-  display: flex;
-  border-bottom: 1px solid rgba(black, 0.05);
-  @include fx(background-color);
-}
-
 @mixin themeTable {
-  display: flex;
-  flex-direction: column;
+  @include mnScrollBar();
 
-  overflow-x: auto;
-  overflow-y: hidden;
+  &.mn-scroll-x {
+    > .mn-container-inside {
+      padding-bottom: 0;
 
-  .mn-table-head {
-    .mn-table-row {
-      @include tableRow;
-      @include bg(2);
-
-      .mn-table-cell {
-        // color: rgba(black, 0.57);
-        color: #474747;
-
-        align-items: center;
-
-        border-right: 1px solid rgba(black, 0.04);
-
-        .mn-dark-theme & {
-          color: rgba(black, 0.7);
-        }
-
-        @include tableCell;
-        justify-content: left;
-
-        margin-top: 0;
-        .mn-table-header-label {
-          flex: 1;
-          display: inline-flex;
-          align-items: center;
-          overflow: hidden;
-
-          .mn-table-header-text {
-            @include text-overflow;
-            flex: 1;
-          }
-        }
+      .without-webkit & {
+        padding-bottom: 0;
       }
     }
   }
 
-  .mn-table-body {
-    flex-shrink: 1;
-    flex-grow: 1;
-    flex-basis: auto;
-    overflow: auto;
-    @include mnScrollBar();
-
-    .mn-table-row {
-      @include tableRow;
-
-      .mn-table-toggle-sub-rows {
-        align-self: center;
-      }
-
-      .mn-table-cell {
-        border-right: 1px solid rgba(black, 0.04);
-        @include fx(background-color);
-        user-select: text;
-        overflow: hidden;
-        @include tableCell;
-        // color: rgba(black, 0.57);
-        color: #474747;
-      }
-      &.mn-table-row-selected {
-        background-color: pink;
-        @include border-color(2);
-      }
-      &.mn-table-row-clickable {
-        cursor: pointer;
-      }
-      &:not(.mn-table-row-selected):hover {
-        @include bg(3);
-      }
-    }
+  table {
+    width: 100%;
   }
-  .mn-table-footer {
+
+  &.mn-layout-margin {
+    margin: calc(#{$themeDefaultSpacing});
+  }
+
+  &.mn-layout-padding {
     padding: calc(#{$themeDefaultSpacing});
-    @include mnLayoutHorizontalStack();
-    align-items: center;
-    height: auto;
-    > .mn-pager {
-      height: 40px;
+  }
+
+  th {
+    .mn-icon {
+      &.hidden {
+        visibility: hidden;
+      }
     }
   }
 
-  &.mn-table-scroll .mn-table-body {
-    overflow-x: hidden;
-    overflow-y: auto;
+  th,
+  td {
+    padding: calc(#{$themeDefaultSpacing} / 2) calc(#{$themeDefaultSpacing});
+    vertical-align: middle;
+
+    .mn-cell-content {
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
+    }
   }
 
-  .mn-table-body-wrapper {
-    display: flex;
-    flex-direction: column;
+  tr {
+    border-bottom: 1px solid rgba(black, 0.1);
+  }
+
+  thead {
+    table-layout: fixed;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    @include bg(2);
+  }
+
+  thead,
+  tfoot {
+    table-layout: fixed;
+  }
+
+  tbody,
+  tfoot {
+    @include bg(1);
   }
 }
 

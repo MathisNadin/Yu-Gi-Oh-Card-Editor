@@ -1,11 +1,10 @@
-import { deepClone } from 'mn-tools';
+import { classNames, deepClone } from 'mn-tools';
 import { MouseEvent } from 'react';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { ICardListener } from 'client/editor/card/CardService';
 import {
   IContainerProps,
   IContainerState,
-  TableColumnSortOrder,
   Container,
   Spinner,
   Table,
@@ -15,6 +14,7 @@ import {
   Spacer,
   Progress,
   Button,
+  TTableHeaderSortOrder,
 } from 'mn-toolkit';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
@@ -24,7 +24,7 @@ interface ICardsLibraryProps extends IContainerProps {}
 interface ICardsLibraryState extends IContainerState {
   localCards: ICard[];
   sortOption: TCardSortOption;
-  sortOrder: TableColumnSortOrder;
+  sortOrder: TTableHeaderSortOrder;
   current: string;
   edited: string;
   selectAllMode: boolean;
@@ -245,85 +245,67 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     return [
       <Table
         key='cards-table'
-        columns={[
+        headers={[
           {
-            label: 'Format',
-            order: sortOption === 'game' ? sortOrder : undefined,
-            width: '70px',
-            onChangeOrder: () => this.onChangeOrder('game'),
-          },
-          {
-            label: 'Nom',
-            order: sortOption === 'name' ? sortOrder : undefined,
-            onChangeOrder: () => this.onChangeOrder('name'),
-          },
-          {
-            label: 'Modifiée',
-            order: sortOption === 'modified' ? sortOrder : undefined,
-            width: '90px',
-            onChangeOrder: () => this.onChangeOrder('modified'),
-          },
-          {
-            label: '',
-            width: '42px',
-          },
-          {
-            label: '',
-            width: '42px',
+            cells: [
+              {
+                content: <Typography bold content='Format' contentType='text' variant='help' />,
+                sortOrder: sortOption === 'game' ? sortOrder : undefined,
+                onChangeOrder: () => this.onChangeOrder('game'),
+              },
+              {
+                content: <Typography bold content='Nom' contentType='text' variant='help' />,
+                sortOrder: sortOption === 'name' ? sortOrder : undefined,
+                onChangeOrder: () => this.onChangeOrder('name'),
+              },
+              {
+                content: <Typography bold content='Modifiée' contentType='text' variant='help' />,
+                sortOrder: sortOption === 'modified' ? sortOrder : undefined,
+                onChangeOrder: () => this.onChangeOrder('modified'),
+              },
+              {
+                content: '',
+              },
+              {
+                content: '',
+              },
+            ],
           },
         ]}
         rows={localCards.map((card) => {
-          const uuid = card.uuid as string;
-          const isEdited = this.state.edited === card.uuid;
-          const isCurrent = this.state.current === card.uuid;
+          const uuid = card.uuid!;
+          const isEdited = this.state.edited === uuid;
+          const isCurrent = this.state.current === uuid;
           return {
-            className: isCurrent ? 'current' : '',
-            selected: this.state.selectedCards[card.uuid as string],
+            className: classNames({ current: isCurrent, selected: this.state.selectedCards[uuid] }),
             cells: [
               {
                 onTap: () => this.toggleSelectCard(uuid),
-                value: (
-                  <HorizontalStack fill verticalItemAlignment='middle'>
-                    <Typography content={card.rush ? 'Rush' : 'Master'} variant='help' />
-                  </HorizontalStack>
-                ),
+                content: <Typography content={card.rush ? 'Rush' : 'Master'} contentType='text' variant='help' />,
               },
               {
                 onTap: () => this.toggleSelectCard(uuid),
-                value: (
-                  <HorizontalStack fill verticalItemAlignment='middle'>
-                    <Typography content={card.name} variant='help' />
-                  </HorizontalStack>
-                ),
+                align: 'left',
+                content: <Typography content={card.name} contentType='text' variant='help' />,
               },
               {
                 onTap: () => this.toggleSelectCard(uuid),
-                value: (
-                  <HorizontalStack fill verticalItemAlignment='middle'>
-                    <Typography content={this.formatDate(card.modified)} variant='help' />
-                  </HorizontalStack>
-                ),
+                content: <Typography content={this.formatDate(card.modified)} contentType='text' variant='help' />,
               },
               {
-                value: (
-                  <HorizontalStack
-                    itemAlignment='center'
-                    verticalItemAlignment='middle'
+                content: (
+                  <Icon
+                    icon={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'}
                     onTap={() => (isEdited ? this.saveEdit() : this.startEdit(card))}
-                  >
-                    <Icon size={24} icon={isEdited ? 'toolkit-check-mark' : 'toolkit-pen'} />
-                  </HorizontalStack>
+                  />
                 ),
               },
               {
-                value: (
-                  <HorizontalStack
-                    itemAlignment='center'
-                    verticalItemAlignment='middle'
+                content: (
+                  <Icon
+                    icon={isEdited ? 'toolkit-close' : 'toolkit-trash'}
                     onTap={() => (isEdited ? this.abordEdit() : this.deleteCard(card))}
-                  >
-                    <Icon size={24} icon={isEdited ? 'toolkit-close' : 'toolkit-trash'} />
-                  </HorizontalStack>
+                  />
                 ),
               },
             ],

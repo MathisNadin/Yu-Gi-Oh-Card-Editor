@@ -2,9 +2,7 @@ import { ICard } from 'client/editor/card/card-interfaces';
 import { IReplaceMatrix } from 'client/editor/mediaWiki';
 import { IYuginewsCardData } from 'client/editor/yuginews';
 import {
-  TableColumnSortOrder,
   Spinner,
-  ITableColumn,
   HorizontalStack,
   CheckBox,
   VerticalStack,
@@ -22,6 +20,8 @@ import {
   StepProgress,
   Image,
   IButtonProps,
+  ITableHeadRow,
+  TTableHeaderSortOrder,
 } from 'mn-toolkit';
 import { classNames, isEmpty, isString } from 'mn-tools';
 
@@ -48,7 +48,7 @@ interface ICardImportDialogState extends IAbstractPopupState {
   selectedCards: { [cardUuid: string]: boolean };
   selectedCardsNum: number;
   cardsDataSortOption: TCardsDataSortOption;
-  cardsDataSortOrder: TableColumnSortOrder;
+  cardsDataSortOrder: TTableHeaderSortOrder;
   artworkSaveDirPath: string;
   cardsToImport: number;
   cardsImported: number;
@@ -398,46 +398,40 @@ export class CardImportDialog extends AbstractPopup<
       selectedCardsNum,
     } = this.state;
     const showTheme = cardsData.length && cardsData[0].theme?.length;
-    const columns: ITableColumn[] = [
-      {
-        label: (
-          <HorizontalStack fill verticalItemAlignment='middle' onTap={() => this.toggleAll()}>
-            <CheckBox defaultValue={selectedCardsNum === cardsData.length} />
-          </HorizontalStack>
-        ),
-        width: '40px',
-      },
-    ];
+    const headers: ITableHeadRow = {
+      cells: [
+        {
+          content: <CheckBox defaultValue={selectedCardsNum === cardsData.length} onChange={() => this.toggleAll()} />,
+        },
+      ],
+    };
     if (showTheme) {
-      columns.push({
-        label: 'Thème',
-        width: '200px',
-        order: cardsDataSortOption === 'theme' ? cardsDataSortOrder : undefined,
+      headers.cells.push({
+        align: 'left',
+        content: 'Thème',
+        sortOrder: cardsDataSortOption === 'theme' ? cardsDataSortOrder : undefined,
         onChangeOrder: () => this.onChangeOrder('theme'),
       });
     } else {
-      columns.push({
-        label: 'Set',
-        width: '100px',
-        order: cardsDataSortOption === 'set' ? cardsDataSortOrder : undefined,
+      headers.cells.push({
+        align: 'left',
+        content: 'Set',
+        sortOrder: cardsDataSortOption === 'set' ? cardsDataSortOrder : undefined,
         onChangeOrder: () => this.onChangeOrder('set'),
       });
     }
-    columns.push(
-      ...[
-        {
-          label: 'ID',
-          width: '60px',
-          order: cardsDataSortOption === 'id' ? cardsDataSortOrder : undefined,
-          onChangeOrder: () => this.onChangeOrder('id'),
-        },
-        {
-          label: 'Nom',
-          order: cardsDataSortOption === 'name' ? cardsDataSortOrder : undefined,
-          onChangeOrder: () => this.onChangeOrder('name'),
-        },
-      ]
-    );
+    headers.cells.push({
+      align: 'left',
+      content: 'ID',
+      sortOrder: cardsDataSortOption === 'id' ? cardsDataSortOrder : undefined,
+      onChangeOrder: () => this.onChangeOrder('id'),
+    });
+    headers.cells.push({
+      align: 'left',
+      content: 'Nom',
+      sortOrder: cardsDataSortOption === 'name' ? cardsDataSortOrder : undefined,
+      onChangeOrder: () => this.onChangeOrder('name'),
+    });
 
     return (
       <VerticalStack key='yuginews' className='card-import-dialog-content yuginews' scroll gutter>
@@ -458,42 +452,29 @@ export class CardImportDialog extends AbstractPopup<
         {!!cardsData?.length && (
           <Table
             className='yuginews-cards-table'
-            columns={columns}
+            headers={[headers]}
             rows={cardsData.map((card) => {
-              const uuid = card.uuid as string;
+              const uuid = card.uuid!;
               return {
                 className: classNames('yuginews-card-row', this.getCardDataStyle(card), {
-                  selected: this.state.selectedCards[card.uuid as string],
+                  selected: this.state.selectedCards[uuid],
                 }),
                 onTap: () => this.toggleSelectCard(uuid),
                 cells: [
                   {
-                    value: (
-                      <HorizontalStack fill verticalItemAlignment='middle'>
-                        <CheckBox defaultValue={this.state.selectedCards[uuid]} />
-                      </HorizontalStack>
-                    ),
+                    content: <CheckBox defaultValue={this.state.selectedCards[uuid]} />,
                   },
                   {
-                    value: (
-                      <HorizontalStack fill verticalItemAlignment='middle'>
-                        <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />
-                      </HorizontalStack>
-                    ),
+                    align: 'left',
+                    content: <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />,
                   },
                   {
-                    value: (
-                      <HorizontalStack fill verticalItemAlignment='middle'>
-                        <Typography content={`${card.id ?? '-'}`} variant='help' />
-                      </HorizontalStack>
-                    ),
+                    align: 'left',
+                    content: <Typography content={`${card.id ?? '-'}`} variant='help' />,
                   },
                   {
-                    value: (
-                      <HorizontalStack fill verticalItemAlignment='middle'>
-                        <Typography content={card.nameFR} variant='help' />
-                      </HorizontalStack>
-                    ),
+                    align: 'left',
+                    content: <Typography content={card.nameFR} variant='help' />,
                   },
                 ],
               };

@@ -3,6 +3,12 @@
   $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
   width: 100%;
 
+  .setting-field {
+    > .mn-container-inside {
+      gap: calc(#{$themeDefaultSpacing} / 4);
+    }
+  }
+
   .mn-typography {
     color: black !important;
 

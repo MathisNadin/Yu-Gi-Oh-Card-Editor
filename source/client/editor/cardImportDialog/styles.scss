@@ -36,8 +36,8 @@ $legendaryDragon: #82b8d4;
     }
 
     &.yuginews {
-      .mn-table-body {
-        .mn-table-row {
+      tbody {
+        tr {
           @each $class,
             $color
               in (
@@ -75,7 +75,7 @@ $legendaryDragon: #82b8d4;
 
           filter: brightness(0.8);
           &.selected {
-            filter: brightness(1.2);
+            filter: brightness(1.1);
           }
         }
       }

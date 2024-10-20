@@ -22,10 +22,8 @@ export interface IContainerProps extends IContainableProps {
   scroll?: boolean;
   scrollX?: boolean;
   frame?: TFrame;
-  verticalItemAlignment?: TVerticalAlignment;
   itemAlignment?: THorizontalAlignment;
-  onContainerScroll?: (event: UIEvent) => void | Promise<void>;
-  onScrollRef?: (scroller: HTMLElement) => void;
+  verticalItemAlignment?: TVerticalAlignment;
 }
 
 export interface IContainerState extends IContainableState {}
