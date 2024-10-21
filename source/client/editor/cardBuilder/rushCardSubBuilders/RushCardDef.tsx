@@ -77,7 +77,7 @@ export class RushCardDef extends ToolkitComponent<IRushCardDefProps, IRushCardDe
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

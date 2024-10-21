@@ -81,7 +81,7 @@ export class CardAbilities extends ToolkitComponent<ICardAbilitiesProps, ICardAb
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

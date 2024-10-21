@@ -18,7 +18,7 @@ interface IRushCardDescProps extends IToolkitComponentProps {
 interface IRushCardDescState extends IToolkitComponentState {
   description: JSXElementChild[][];
   includesNormal: boolean;
-  checkState: boolean;
+  checkState: number;
   adjustState: 'unknown' | 'tooBig' | 'tooSmall';
   fontSize: number;
   lineHeight: number;
@@ -42,7 +42,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     this.state = {
       description: [...props.description],
       includesNormal: props.includesNormal,
-      checkState: true,
+      checkState: 1,
       adjustState: 'unknown',
       fontSize,
       lineHeight,
@@ -78,7 +78,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         nextProps.card.rushChoiceEffects
       );
       return {
-        checkState: true,
+        checkState: 1,
         description: [...nextProps.description],
         includesNormal: nextProps.includesNormal,
         adjustState: 'unknown',
@@ -200,9 +200,10 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
+      if (prevState.checkState === this.state.checkState) return;
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 
@@ -212,12 +213,12 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   }
 
   private checkReady() {
-    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
+    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
     const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
     if (!texts?.length || this.state.fontSize === 0) {
       return this.setState({
-        checkState: false,
+        checkState: 0,
         adjustState: 'unknown',
         fontSize: this.state.fontSize,
         lineHeight: this.state.lineHeight,
@@ -226,9 +227,9 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
 
     let textHeight = 0;
     let textWidth = 0;
-    textWidth = texts[0].clientWidth;
     texts.forEach((text) => {
       textHeight += text.clientHeight;
+      if (text.clientWidth > textWidth) textWidth = text.clientWidth;
     });
     const parentHeight = this.ref.current.clientHeight;
     const parentWidth = this.ref.current.clientWidth;
@@ -241,13 +242,14 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
 
       if (newFontSize >= 5) {
         return this.setState({
+          checkState: this.state.checkState + 1,
           adjustState: 'tooBig',
           fontSize: newFontSize,
           lineHeight: newLineHeight,
         });
       } else {
         return this.setState({
-          checkState: false,
+          checkState: 0,
           adjustState: 'unknown',
           fontSize: this.state.fontSize,
           lineHeight: this.state.lineHeight,
@@ -258,15 +260,15 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         if (this.state.lineHeight < 1.2) {
           let newLineHeight = this.state.lineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
-          this.setState({ lineHeight: newLineHeight });
           return this.setState({
+            checkState: this.state.checkState + 1,
             adjustState: this.state.adjustState,
             fontSize: this.state.fontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
-            checkState: false,
+            checkState: 0,
             adjustState: 'unknown',
             fontSize: this.state.fontSize,
             lineHeight: this.state.lineHeight,
@@ -279,13 +281,14 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
 
         if (newFontSize <= 30) {
           return this.setState({
+            checkState: this.state.checkState + 1,
             adjustState: 'tooSmall',
             fontSize: newFontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
-            checkState: false,
+            checkState: 0,
             adjustState: 'unknown',
             fontSize: this.state.fontSize,
             lineHeight: this.state.lineHeight,
@@ -294,7 +297,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       }
     } else {
       return this.setState({
-        checkState: false,
+        checkState: 0,
         adjustState: 'unknown',
         fontSize: this.state.fontSize,
         lineHeight: this.state.lineHeight,

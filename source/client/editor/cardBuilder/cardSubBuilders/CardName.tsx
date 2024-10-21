@@ -86,7 +86,7 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

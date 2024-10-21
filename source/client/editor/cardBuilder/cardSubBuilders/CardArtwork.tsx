@@ -89,7 +89,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     if (this.state.loadArtwork) {
       requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

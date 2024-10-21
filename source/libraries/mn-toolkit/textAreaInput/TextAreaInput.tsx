@@ -65,8 +65,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
     if (this.props.defaultValue?.trim() === this.state.value?.trim()) return;
-    this.setState({ value: this.props.defaultValue! });
-    this.onTextAreaChange();
+    this.setState({ value: this.props.defaultValue! }, () => this.onTextAreaChange());
   }
 
   public doFocus() {

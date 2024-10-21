@@ -103,7 +103,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (!this.state.needsUpdate) return;
+    if (!this.state.needsUpdate || prevState.needsUpdate === this.state.needsUpdate) return;
     if (this.props.onUpdating) this.props.onUpdating();
     app.$errorManager.handlePromise(this.prepareState());
   }
@@ -111,14 +111,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
   private async prepareState() {
     const { card } = this.state;
     if (!card) return;
-
-    this.nameReady = false;
-    this.descReady = false;
-    this.atkMaxReady = false;
-    this.atkReady = false;
-    this.defReady = false;
-    this.abilitiesReady = false;
-    this.artworkReady = false;
 
     const paths = app.$card.paths.rush;
     const hasRushMonsterDetails = app.$card.hasRushMonsterDetails(card);
@@ -234,7 +226,17 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         break;
     }
 
-    this.setState({
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    this.nameReady = false;
+    this.descReady = false;
+    this.atkMaxReady = false;
+    this.atkReady = false;
+    this.defReady = false;
+    this.abilitiesReady = false;
+    this.artworkReady = false;
+
+    await this.setStateAsync({
       loaded: true,
       needsUpdate: false,
       hasRushMonsterDetails,

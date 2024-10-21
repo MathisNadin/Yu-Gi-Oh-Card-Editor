@@ -744,7 +744,6 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     {this.state.card.rushChoiceEffects.map((choiceEff, iChoiceEff) => (
                       <VerticalStack
                         key={`choice-effect-line-${iChoiceEff}`}
-                        fill
                         className='choice-effects-line'
                         verticalItemAlignment='middle'
                       >

@@ -26,7 +26,7 @@ interface ICardDescState extends IToolkitComponentState {
   includesNormal: boolean;
   includesLink: boolean;
   includesSkill: boolean;
-  checkState: boolean;
+  checkState: number;
   adjustState: 'unknown' | 'tooBig' | 'tooSmall';
   splitDesc: JSXElementChild[];
   fontSize: number;
@@ -53,7 +53,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       includesNormal: props.includesNormal,
       includesLink: props.includesLink,
       includesSkill: props.includesSkill,
-      checkState: true,
+      checkState: 1,
       adjustState: 'unknown',
       splitDesc: props.card.description.split('\n').map((d, i) => CardDesc.getProcessedText(d, i)),
       fontSize,
@@ -86,7 +86,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
         nextProps.includesSkill
       );
       return {
-        checkState: true,
+        checkState: 1,
         description: nextProps.card.description,
         hasAbilities: nextProps.hasAbilities,
         hasPendulumFrame: nextProps.hasPendulumFrame,
@@ -182,9 +182,10 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
+      if (prevState.checkState === this.state.checkState) return;
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 
@@ -194,12 +195,12 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
   }
 
   private checkReady() {
-    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
+    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
     const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
     if (!texts?.length || this.state.fontSize === 0) {
       return this.setState({
-        checkState: false,
+        checkState: 0,
         adjustState: 'unknown',
         fontSize: this.state.fontSize,
         lineHeight: this.state.lineHeight,
@@ -208,9 +209,9 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
 
     let textHeight = 0;
     let textWidth = 0;
-    textWidth = texts[0].clientWidth;
     texts.forEach((text) => {
       textHeight += text.clientHeight;
+      if (text.clientWidth > textWidth) textWidth = text.clientWidth;
     });
     const parentHeight = this.ref.current.clientHeight;
     const parentWidth = this.ref.current.clientWidth;
@@ -223,13 +224,14 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
 
       if (newFontSize >= 5) {
         return this.setState({
+          checkState: this.state.checkState + 1,
           adjustState: 'tooBig',
           fontSize: newFontSize,
           lineHeight: newLineHeight,
         });
       } else {
         return this.setState({
-          checkState: false,
+          checkState: 0,
           adjustState: 'unknown',
           fontSize: this.state.fontSize,
           lineHeight: this.state.lineHeight,
@@ -240,15 +242,15 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
         if (this.state.lineHeight < 1.2) {
           let newLineHeight = this.state.lineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
-          this.setState({ lineHeight: newLineHeight });
           return this.setState({
+            checkState: this.state.checkState + 1,
             adjustState: this.state.adjustState,
             fontSize: this.state.fontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
-            checkState: false,
+            checkState: 0,
             adjustState: 'unknown',
             fontSize: this.state.fontSize,
             lineHeight: this.state.lineHeight,
@@ -261,13 +263,14 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
 
         if (newFontSize <= 30) {
           return this.setState({
+            checkState: this.state.checkState + 1,
             adjustState: 'tooSmall',
             fontSize: newFontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
-            checkState: false,
+            checkState: 0,
             adjustState: 'unknown',
             fontSize: this.state.fontSize,
             lineHeight: this.state.lineHeight,
@@ -276,7 +279,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       }
     } else {
       return this.setState({
-        checkState: false,
+        checkState: 0,
         adjustState: 'unknown',
         fontSize: this.state.fontSize,
         lineHeight: this.state.lineHeight,

@@ -73,7 +73,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

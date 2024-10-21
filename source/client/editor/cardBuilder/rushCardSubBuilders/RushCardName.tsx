@@ -86,7 +86,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

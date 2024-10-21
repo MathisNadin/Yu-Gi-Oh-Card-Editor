@@ -192,21 +192,12 @@
         }
       }
 
-      .choice-effects-add {
-        margin-top: calc(-1 * #{$themeDefaultSpacing} / 2);
-      }
-
       .card-choice-effects {
-        .choice-effects-add {
-          margin-bottom: calc(-1 * #{$themeDefaultSpacing} / 4);
-        }
-
         .card-choice-effects-list {
           .choice-effects-line {
             .choice-effects-line-icons {
               min-width: calc(100% - #{$themeDefaultSpacing});
               max-width: calc(100% - #{$themeDefaultSpacing});
-              padding: 0 5px;
             }
           }
         }

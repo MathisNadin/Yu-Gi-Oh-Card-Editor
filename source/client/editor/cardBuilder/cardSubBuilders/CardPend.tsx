@@ -20,7 +20,7 @@ interface ICardPendState extends IToolkitComponentState {
   pendEffect: string;
   hasPendulumFrame: boolean;
   includesLink: boolean;
-  checkState: boolean;
+  checkState: number;
   adjustState: 'unknown' | 'tooBig' | 'tooSmall';
   splitPendEff: JSXElementChild[];
   fontSize: number;
@@ -41,7 +41,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       pendEffect: props.card.pendEffect,
       hasPendulumFrame: props.hasPendulumFrame,
       includesLink: props.includesLink,
-      checkState: true,
+      checkState: 1,
       adjustState: 'unknown',
       splitPendEff: props.card.pendEffect.split('\n').map((d, i) => CardPend.getProcessedText(d, i)),
       fontSize,
@@ -69,7 +69,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
         nextProps.includesLink
       );
       return {
-        checkState: true,
+        checkState: 1,
         pendEffect: nextProps.card.pendEffect,
         hasPendulumFrame: nextProps.hasPendulumFrame,
         includesLink: nextProps.includesLink,
@@ -154,9 +154,10 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
+      if (prevState.checkState === this.state.checkState) return;
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 
@@ -166,12 +167,12 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   }
 
   private checkReady() {
-    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: false });
+    if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
     const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
     if (!texts?.length || this.state.fontSize === 0) {
       return this.setState({
-        checkState: false,
+        checkState: 0,
         adjustState: 'unknown',
         fontSize: this.state.fontSize,
         lineHeight: this.state.lineHeight,
@@ -195,13 +196,14 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
 
       if (newFontSize >= 5) {
         return this.setState({
+          checkState: this.state.checkState + 1,
           adjustState: 'tooBig',
           fontSize: newFontSize,
           lineHeight: newLineHeight,
         });
       } else {
         return this.setState({
-          checkState: false,
+          checkState: 0,
           adjustState: 'unknown',
           fontSize: this.state.fontSize,
           lineHeight: this.state.lineHeight,
@@ -213,13 +215,14 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
           let newLineHeight = this.state.lineHeight + 0.1;
           if (newLineHeight > 1.2) newLineHeight = 1.2;
           return this.setState({
+            checkState: this.state.checkState + 1,
             adjustState: this.state.adjustState,
             fontSize: this.state.fontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
-            checkState: false,
+            checkState: 0,
             adjustState: 'unknown',
             fontSize: this.state.fontSize,
             lineHeight: this.state.lineHeight,
@@ -232,13 +235,14 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
 
         if (newFontSize <= 30) {
           return this.setState({
+            checkState: this.state.checkState + 1,
             adjustState: 'tooSmall',
             fontSize: newFontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
-            checkState: false,
+            checkState: 0,
             adjustState: 'unknown',
             fontSize: this.state.fontSize,
             lineHeight: this.state.lineHeight,
@@ -247,7 +251,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       }
     } else {
       return this.setState({
-        checkState: false,
+        checkState: 0,
         adjustState: 'unknown',
         fontSize: this.state.fontSize,
         lineHeight: this.state.lineHeight,

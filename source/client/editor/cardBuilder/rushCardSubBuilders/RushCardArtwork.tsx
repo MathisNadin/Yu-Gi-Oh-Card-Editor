@@ -79,7 +79,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     if (this.state.loadArtwork) {
       requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 

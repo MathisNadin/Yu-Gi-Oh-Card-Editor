@@ -72,7 +72,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
-      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
+      this.props.onReady();
     }
   }
 
