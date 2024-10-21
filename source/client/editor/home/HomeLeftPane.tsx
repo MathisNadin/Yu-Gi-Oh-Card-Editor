@@ -50,11 +50,13 @@ export class HomeLeftPane
     app.$device.addListener(this);
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     app.$errorManager.handlePromise(this.checkUpdate());
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$card.removeListener(this);
     app.$device.removeListener(this);
   }

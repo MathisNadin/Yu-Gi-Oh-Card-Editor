@@ -15,7 +15,7 @@ export class HeaderSeparator extends Component<IHeaderSeparatorProps, IHeaderSep
     super(props);
   }
 
-  public render() {
+  public override render() {
     return <div className='mn-header-separator'></div>;
   }
 }

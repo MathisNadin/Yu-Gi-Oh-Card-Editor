@@ -29,7 +29,8 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     };
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$card.removeListener(this);
   }
 
@@ -53,7 +54,7 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     }
   }
 
-  public render() {
+  public override render() {
     return (
       <Container className='card-preview'>
         {!!this.state.renderCard && !this.state.renderCard.rush && (

@@ -44,7 +44,7 @@ export class Toggle extends Containable<IToggleProps, IToggleState> {
     if (this.props.onChange) await this.props.onChange(this.state.value);
   }
 
-  public render() {
+  public override render() {
     return (
       <Container
         className={classNames('mn-toggle', { checked: this.state.value })}

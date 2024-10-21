@@ -32,7 +32,8 @@ export class RushCardPreview
     };
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$card.removeListener(this);
   }
 
@@ -56,7 +57,7 @@ export class RushCardPreview
     }
   }
 
-  public render() {
+  public override render() {
     return (
       <Container className='card-preview'>
         {!!this.state.renderCard && !this.state.renderCard.rush && (

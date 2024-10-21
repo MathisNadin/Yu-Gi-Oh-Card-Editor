@@ -1,5 +1,5 @@
 import { ICard } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from 'mn-toolkit';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { getCroppedArtworkBase64 } from 'mn-tools';
 
 interface ICardArtworkProps extends IToolkitComponentProps {
@@ -42,7 +42,8 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
   }
 
@@ -79,7 +80,12 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICardArtworkProps>,
+    prevState: Readonly<ICardArtworkState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.loadArtwork) {
       requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
     } else {
@@ -122,7 +128,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     this.setState({ loadArtwork: false, artworkData });
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const { pendulum, hasPendulumFrame, includesLink, artworkData } = this.state;

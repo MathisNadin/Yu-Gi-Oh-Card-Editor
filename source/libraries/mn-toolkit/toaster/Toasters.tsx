@@ -20,7 +20,7 @@ export class Toasters extends Component<IToastersProps, IToastersState> implemen
     this.forceUpdate();
   }
 
-  public render() {
+  public override render() {
     const toasters = app.$toaster.toasters;
     log.debug('render', toasters.length);
     return <div className='mn-toasters'>{toasters}</div>;

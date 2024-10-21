@@ -1,5 +1,11 @@
 import { ICard } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, JSXElementChild } from 'mn-toolkit';
+import {
+  ToolkitComponent,
+  IToolkitComponentProps,
+  IToolkitComponentState,
+  JSXElementChild,
+  TDidUpdateSnapshot,
+} from 'mn-toolkit';
 import { classNames } from 'mn-tools';
 import { createRef } from 'react';
 
@@ -40,6 +46,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       props.includesSkill
     );
     this.state = {
+      ...this.state,
       description: props.card.description,
       hasAbilities: props.hasAbilities,
       hasPendulumFrame: props.hasPendulumFrame,
@@ -54,7 +61,8 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -167,7 +175,12 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     return processedText;
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICardDescProps>,
+    prevState: Readonly<ICardDescState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -271,7 +284,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     }
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const {

@@ -66,7 +66,7 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
     return this.props.panes.filter((pane) => !!pane?.content && !!pane.props && !pane.props.hidden);
   }
 
-  public render() {
+  public override render() {
     const panesToShow = this.filteredPanes.filter((pane, i) => {
       pane.props.bg = this.props.bg;
       pane.props.isFirst = i === 0;

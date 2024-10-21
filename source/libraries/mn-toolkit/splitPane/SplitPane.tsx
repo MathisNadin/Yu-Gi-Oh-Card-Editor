@@ -154,7 +154,7 @@ export class SplitPane extends Component<ISplitPaneProps, ISplitPaneState> {
     }
   }
 
-  public render() {
+  public override render() {
     let children = this.props.children as JSX.Element[];
     if (children.length !== 2) throw new Error('A SplitPane should have exactly two children panes');
 

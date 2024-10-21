@@ -24,7 +24,7 @@ export class Toolbar extends Container<IToolbarProps, IToolbarState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <div {...this.renderAttributes()}>
         {this.props.tools}

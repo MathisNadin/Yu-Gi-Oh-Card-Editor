@@ -21,7 +21,7 @@ export class Image extends Containable<IImageProps, IImageState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     return <img {...this.renderAttributes()} src={this.props.src} alt={this.props.alt} title={this.props.title} />;
   }
 }

@@ -20,7 +20,7 @@ export class View extends Container<IViewProps, IViewState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <div id={this.props.nodeId} className={classNames(this.renderClasses())}>
         {this.inside}

@@ -42,7 +42,7 @@ export class RouterViewPort
     this.setState({ loaded: true });
   }
 
-  public render() {
+  public override render() {
     const currentState = app.$router.currentState!;
     if (!app.$router.ready) {
       return (

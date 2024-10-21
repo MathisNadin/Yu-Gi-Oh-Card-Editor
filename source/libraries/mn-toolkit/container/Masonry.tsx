@@ -49,7 +49,7 @@ export class Masonry extends Container<IMasonryProps, IMasonryState> {
     this.resizeObserver.disconnect();
   }
 
-  public componentDidUpdate(
+  public override componentDidUpdate(
     prevProps: Readonly<IMasonryProps>,
     prevState: Readonly<IMasonryState>,
     snapshot?: TDidUpdateSnapshot

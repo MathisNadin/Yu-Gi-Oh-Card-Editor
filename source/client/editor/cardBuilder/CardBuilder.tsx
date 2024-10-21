@@ -1,7 +1,7 @@
 import { createRef, CSSProperties } from 'react';
 import { classNames, deepClone, isDeepEqual } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
-import { IContainableProps, IContainableState, Containable } from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from 'mn-toolkit';
 import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
 
 interface ICardBuilderProps extends IContainableProps {
@@ -75,7 +75,8 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.prepareState())));
   }
 
@@ -87,7 +88,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     return { needsUpdate: true, card: deepClone(nextProps.card) };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICardBuilderProps>,
+    prevState: Readonly<ICardBuilderState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (!this.state.needsUpdate) return;
     if (this.props.onUpdating) this.props.onUpdating();
     app.$errorManager.handlePromise(this.prepareState());
@@ -265,7 +271,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     return scaledArray;
   }
 
-  public render() {
+  public override render() {
     const {
       loaded,
       card,

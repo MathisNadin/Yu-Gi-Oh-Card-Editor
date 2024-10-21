@@ -67,7 +67,7 @@ export class Progress extends Containable<IProgressProps, IProgressState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     const percent = (100 * this.state.progress) / (this.props.total || 1);
     const overload = percent > 100;
     return (

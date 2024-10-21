@@ -53,7 +53,7 @@ export class StepProgress<ID = string> extends Containable<IStepProgressProps<ID
     return classes;
   }
 
-  public render() {
+  public override render() {
     const progress = this.props.items.findIndex((x) => x.id === this.state.progress);
     return (
       <HorizontalStack id={this.props.nodeId} className={classNames(this.renderClasses())}>

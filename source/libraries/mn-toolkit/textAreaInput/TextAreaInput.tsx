@@ -73,7 +73,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     if (this.inputElement) this.inputElement.focus();
   }
 
-  public render() {
+  public override render() {
     return (
       <div className={classNames('mn-textarea-input-container', this.props.className)}>
         <textarea

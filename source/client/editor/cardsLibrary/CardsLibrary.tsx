@@ -63,7 +63,8 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     this.sort(undefined, true);
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$card.removeListener(this);
   }
 

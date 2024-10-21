@@ -1,5 +1,5 @@
 import { ICard } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from 'mn-toolkit';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { classNames, integer } from 'mn-tools';
 import { createRef } from 'react';
 
@@ -35,7 +35,8 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -62,7 +63,12 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardAtkProps>,
+    prevState: Readonly<IRushCardAtkState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -93,7 +99,7 @@ export class RushCardAtk extends ToolkitComponent<IRushCardAtkProps, IRushCardAt
     this.setState({ xScale, checkState: false });
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
     const { atk, xScale } = this.state;
     return (

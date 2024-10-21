@@ -112,7 +112,7 @@ export abstract class FormField<
     });
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
     super.componentDidMount();
     if (this.hasValue) app.$errorManager.handlePromise(this.doValidation());
   }

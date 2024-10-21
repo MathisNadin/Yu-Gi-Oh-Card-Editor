@@ -63,7 +63,7 @@ export class GalleryContainer extends Container<IGalleryContainerProps, IGallery
     await this.setStateAsync({ images: _images, current: 0 });
   }
 
-  public render() {
+  public override render() {
     if (!this.state.images.length) return <div />;
 
     let imageSize!: { height: number; width: number };

@@ -20,7 +20,7 @@ export class Popups extends Component<IPopupsProps, IPopupsState> implements Par
     this.forceUpdate();
   }
 
-  public render() {
+  public override render() {
     const { popups } = app.$popup;
     log.debug('render', popups.length);
     return <div className={classNames('mn-popups', { active: !!popups.length })}>{popups.map((p) => p.element)}</div>;

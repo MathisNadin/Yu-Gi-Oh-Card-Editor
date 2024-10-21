@@ -120,7 +120,7 @@ export abstract class AbstractPopup<
     }, 200);
   }
 
-  public render() {
+  public override render() {
     return (
       <VerticalStack
         gutter

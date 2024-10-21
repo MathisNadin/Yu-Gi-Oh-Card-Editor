@@ -40,7 +40,8 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
     app.$settings.addListener(this);
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$settings.removeListener(this);
   }
 

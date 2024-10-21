@@ -62,7 +62,7 @@ export class SearchBar extends Containable<ISearchBarProps, ISearchBarState> {
     }
   }
 
-  public render() {
+  public override render() {
     if (this.props.dropdownOptions) {
       return this.renderBarWithDropdown();
     } else {

@@ -53,7 +53,7 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <div className={classNames(this.renderClasses())} onClick={() => app.$errorManager.handlePromise(this.onClick())}>
         <Icon className='toggle' icon='toolkit-check-mark' />

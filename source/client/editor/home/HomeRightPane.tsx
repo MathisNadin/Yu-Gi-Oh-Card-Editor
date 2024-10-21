@@ -35,7 +35,8 @@ export class HomeRightPane
     app.$card.addListener(this);
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$card.removeListener(this);
   }
 

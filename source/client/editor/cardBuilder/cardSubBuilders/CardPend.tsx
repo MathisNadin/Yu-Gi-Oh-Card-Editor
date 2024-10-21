@@ -1,5 +1,11 @@
 import { ICard } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, JSXElementChild } from 'mn-toolkit';
+import {
+  ToolkitComponent,
+  IToolkitComponentProps,
+  IToolkitComponentState,
+  JSXElementChild,
+  TDidUpdateSnapshot,
+} from 'mn-toolkit';
 import { classNames } from 'mn-tools';
 import { createRef } from 'react';
 
@@ -43,7 +49,8 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -140,7 +147,12 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     return processedText;
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICardPendProps>,
+    prevState: Readonly<ICardPendState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -243,7 +255,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     }
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const { includesLink, splitPendEff, fontSize, lineHeight } = this.state;

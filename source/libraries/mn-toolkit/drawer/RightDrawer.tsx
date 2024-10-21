@@ -115,7 +115,7 @@ export class RightDrawer
     return <div className='mn-container-inside'>{this.props.children}</div>;
   }
 
-  public render() {
+  public override render() {
     let handleStyle = {
       left: `${-(this.props.handleSize as number)}px`,
       width: `${this.props.handleSize}px`,

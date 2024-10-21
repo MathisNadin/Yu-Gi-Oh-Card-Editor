@@ -142,7 +142,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     const { min, max, valueDisplayMode, marks } = this.props;
     const { value, isHovered, isDragging } = this.state;
 

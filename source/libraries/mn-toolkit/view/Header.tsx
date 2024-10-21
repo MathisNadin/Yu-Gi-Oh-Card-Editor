@@ -74,7 +74,7 @@ export class Header extends ToolkitComponent<IHeaderProps, IHeaderState> impleme
     });
   }
 
-  public render() {
+  public override render() {
     const crumbs = this.props.crumbs ? [...this.props.crumbs] : [];
     if (this.props.title) crumbs.push({ title: this.props.title });
     return (

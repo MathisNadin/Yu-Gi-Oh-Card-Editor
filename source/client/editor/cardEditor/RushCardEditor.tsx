@@ -32,6 +32,7 @@ import {
   NumberInput,
   InplaceEdit,
   Image,
+  TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames, integer, isEmpty, isUndefined } from 'mn-tools';
 
@@ -92,7 +93,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardEditorProps>,
+    prevState: Readonly<IRushCardEditorState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.props.card === this.state.card) return;
     this.setState({ card: this.props.card });
   }

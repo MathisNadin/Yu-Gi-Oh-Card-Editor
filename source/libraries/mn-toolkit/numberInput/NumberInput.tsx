@@ -69,7 +69,7 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <input
         {...this.renderAttributes()}

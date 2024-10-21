@@ -136,7 +136,7 @@ export class Select<ID = number> extends Container<ISelectProps<ID>, ISelectStat
     return classes;
   }
 
-  public render() {
+  public override render() {
     const selectedItem = this.getSelectedListItem(this.generatePopOverActions()) as IActionsPopoverAction<ID>;
     return (
       <div

@@ -1,5 +1,5 @@
 import { ICard, TStIcon } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from 'mn-toolkit';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
 import { createRef, Fragment } from 'react';
 
@@ -43,7 +43,8 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -72,7 +73,12 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardAbilitiesProps>,
+    prevState: Readonly<IRushCardAbilitiesState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -106,7 +112,7 @@ export class RushCardAbilities extends ToolkitComponent<IRushCardAbilitiesProps,
     this.setState({ xScale, rightBracketMargin, checkState: false });
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const { abilities, stType, includesXyz, hasStIcon, xScale, rightBracketMargin } = this.state;

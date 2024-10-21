@@ -1,5 +1,5 @@
 import { ICard, TNameStyle } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from 'mn-toolkit';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { createRef } from 'react';
 
 interface IRushCardNameProps extends IToolkitComponentProps {
@@ -43,7 +43,8 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -76,7 +77,12 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardNameProps>,
+    prevState: Readonly<IRushCardNameState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -99,7 +105,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     this.setState({ xScale, checkState: false });
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const { cardName, nameStyle, includesXyz, includesLink, includesToken, includesSkill, isBackrow, xScale } =

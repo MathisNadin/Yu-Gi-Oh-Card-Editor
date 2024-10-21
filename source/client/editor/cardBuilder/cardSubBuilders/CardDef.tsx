@@ -1,5 +1,5 @@
 import { ICard } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from 'mn-toolkit';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { classNames, integer } from 'mn-tools';
 import { createRef } from 'react';
 
@@ -36,7 +36,8 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -63,7 +64,12 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICardDefProps>,
+    prevState: Readonly<ICardDefState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -94,7 +100,7 @@ export class CardDef extends ToolkitComponent<ICardDefProps, ICardDefState> {
     this.setState({ xScale, checkState: false });
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
     const { def, xScale } = this.state;
     return (

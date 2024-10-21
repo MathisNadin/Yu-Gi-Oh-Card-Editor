@@ -111,7 +111,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
     return classes;
   }
 
-  public render() {
+  public override render() {
     const items = this.getListItems();
     const selectedIndex = items.findIndex((i) => i.selected);
     return (

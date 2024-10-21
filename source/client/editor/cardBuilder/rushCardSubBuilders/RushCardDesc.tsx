@@ -1,5 +1,11 @@
 import { ICard, TCardLanguage, TRushEffectType, TRushTextMode } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, JSXElementChild } from 'mn-toolkit';
+import {
+  ToolkitComponent,
+  IToolkitComponentProps,
+  IToolkitComponentState,
+  JSXElementChild,
+  TDidUpdateSnapshot,
+} from 'mn-toolkit';
 import { createRef } from 'react';
 
 interface IRushCardDescProps extends IToolkitComponentProps {
@@ -43,7 +49,8 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
   }
 
@@ -186,7 +193,12 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     return { fontSize, lineHeight };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardDescProps>,
+    prevState: Readonly<IRushCardDescState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
       requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
     } else {
@@ -290,7 +302,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     }
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const { includesNormal, description, fontSize, lineHeight } = this.state;

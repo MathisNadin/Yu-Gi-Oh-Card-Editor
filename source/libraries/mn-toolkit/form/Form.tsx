@@ -113,7 +113,7 @@ export class Form extends Container<IFormProps, IFormState> implements IFormFiel
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <form ref={this.formRef} {...this.renderAttributes()}>
         {this.inside}

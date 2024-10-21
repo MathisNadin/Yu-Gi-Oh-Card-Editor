@@ -30,7 +30,7 @@ export class Spinner extends Containable<ISpinnerProps, ISpinnerState> {
     return style;
   }
 
-  public render() {
+  public override render() {
     return (
       <div {...this.renderAttributes()}>
         <div className='spinner-circle' />

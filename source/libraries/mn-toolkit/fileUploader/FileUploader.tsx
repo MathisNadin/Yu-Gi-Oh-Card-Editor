@@ -141,7 +141,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <div
         {...this.renderAttributes()}

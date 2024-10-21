@@ -336,7 +336,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <div
         id={this.props.nodeId}

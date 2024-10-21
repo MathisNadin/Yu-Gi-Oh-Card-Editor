@@ -18,7 +18,7 @@ export class Spacer extends Containable<ISpacerProps, ISpacerState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     return <div {...this.renderAttributes()} />;
   }
 }

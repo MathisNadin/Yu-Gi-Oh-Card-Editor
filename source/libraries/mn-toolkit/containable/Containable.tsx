@@ -228,7 +228,7 @@ export class Containable<
     return style;
   }
 
-  public render() {
+  public override render() {
     return (
       <div ref={this.base as unknown as RefObject<HTMLDivElement>} {...this.renderAttributes()}>
         {this.children}

@@ -100,7 +100,8 @@ export class CardImportDialog extends AbstractPopup<
     app.$card.addListener(this);
   }
 
-  public componentWillUnmount() {
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
     app.$card.removeListener(this);
   }
 

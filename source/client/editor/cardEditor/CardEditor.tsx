@@ -29,6 +29,7 @@ import {
   Icon,
   InplaceEdit,
   Image,
+  TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames, integer, isEmpty, isUndefined } from 'mn-tools';
 
@@ -111,7 +112,12 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<ICardEditorProps>,
+    prevState: Readonly<ICardEditorState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.props.card === this.state.card) return;
     this.setState({ card: this.props.card });
   }

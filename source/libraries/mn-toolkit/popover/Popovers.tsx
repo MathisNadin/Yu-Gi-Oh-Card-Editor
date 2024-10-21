@@ -20,7 +20,7 @@ export class Popovers extends Component<IPopoversProps, IPopoversState> implemen
     this.forceUpdate();
   }
 
-  public render() {
+  public override render() {
     const { hasOverlay, popovers, focuses } = app.$popover;
     const focusSpace = (app.$theme.settings['theme-default-spacing']?.value || 0) / 4;
     log.debug('render', popovers.length, focuses.length);

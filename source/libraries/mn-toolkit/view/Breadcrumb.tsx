@@ -22,7 +22,7 @@ export class Breadcrumb extends ToolkitComponent<IBreadcrumbProps, IBreadcrumbSt
     };
   }
 
-  public render() {
+  public override render() {
     const crumbs = this.props.crumbs.map((x) => ({ ...x }));
     app.$header.alterBreadCrumb(crumbs);
 

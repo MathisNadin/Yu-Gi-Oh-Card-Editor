@@ -68,7 +68,7 @@ export class Typography extends Containable<ITypographyProps, ITypographyState> 
     return attributes;
   }
 
-  public render() {
+  public override render() {
     if (isUndefined(this.props.content)) {
       return <div {...this.renderAttributes()}>{this.props.children}</div>;
     } else {

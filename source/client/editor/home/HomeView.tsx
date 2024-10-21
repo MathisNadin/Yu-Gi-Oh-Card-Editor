@@ -12,7 +12,7 @@ export class HomeView extends AbstractViewComponent<IHomeViewProps, IHomeViewSta
     super(props);
   }
 
-  public render() {
+  public override render() {
     return (
       <View className='home'>
         <Content padding={false} itemAlignment='center' layout='horizontal'>

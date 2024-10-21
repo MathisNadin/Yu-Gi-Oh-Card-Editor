@@ -144,7 +144,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
     return classes;
   }
 
-  public render() {
+  public override render() {
     const { min, max, marks, valueDisplayMode } = this.props;
     const { values, isHovered, isDragging } = this.state;
 

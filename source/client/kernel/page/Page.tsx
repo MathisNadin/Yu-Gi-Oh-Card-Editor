@@ -14,7 +14,7 @@ export class Page extends Component<IPageProps, IPageState> {
     });
   }
 
-  public render() {
+  public override render() {
     if (!app.$router.ready) return <Spinner />;
     return (
       <HorizontalStack fill>

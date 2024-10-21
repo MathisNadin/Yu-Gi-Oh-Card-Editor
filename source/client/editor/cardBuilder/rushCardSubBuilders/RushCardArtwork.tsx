@@ -1,5 +1,5 @@
 import { ICard } from 'client/editor/card/card-interfaces';
-import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from 'mn-toolkit';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { getCroppedArtworkBase64 } from 'mn-tools';
 
 interface IRushCardArtworkProps extends IToolkitComponentProps {
@@ -36,7 +36,8 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
   }
 
@@ -69,7 +70,12 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     }
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardArtworkProps>,
+    prevState: Readonly<IRushCardArtworkState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.loadArtwork) {
       requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
     } else {
@@ -112,7 +118,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     this.setState({ loadArtwork: false, artworkData });
   }
 
-  public render() {
+  public override render() {
     if (this.isEmpty) return null;
 
     const { artworkData } = this.state;

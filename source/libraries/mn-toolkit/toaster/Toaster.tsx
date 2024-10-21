@@ -78,7 +78,7 @@ export class Toaster<
     }, 200);
   }
 
-  public render() {
+  public override render() {
     return (
       <HorizontalStack
         gutter

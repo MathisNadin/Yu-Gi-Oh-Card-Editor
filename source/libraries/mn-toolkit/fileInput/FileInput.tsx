@@ -62,7 +62,7 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
     return classes;
   }
 
-  public render() {
+  public override render() {
     if (!app.$device.isDesktop) {
       return <Typography content='Impossible de choisir un chemin de fichier sur cette plateforme' />;
     }

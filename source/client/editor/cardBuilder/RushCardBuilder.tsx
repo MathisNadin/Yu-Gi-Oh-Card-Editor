@@ -2,7 +2,7 @@
 import { createRef, CSSProperties } from 'react';
 import { classNames, deepClone, isDeepEqual } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
-import { IContainableProps, IContainableState, Containable, JSXElementChild } from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable, JSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
 import {
   RushCardArtwork,
   RushCardDesc,
@@ -84,7 +84,8 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     };
   }
 
-  public componentDidMount() {
+  public override componentDidMount() {
+    super.componentDidMount();
     requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.prepareState())));
   }
 
@@ -96,7 +97,12 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     return { needsUpdate: true, card: deepClone(nextProps.card) };
   }
 
-  public componentDidUpdate() {
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardBuilderProps>,
+    prevState: Readonly<IRushCardBuilderState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
     if (!this.state.needsUpdate) return;
     if (this.props.onUpdating) this.props.onUpdating();
     app.$errorManager.handlePromise(this.prepareState());
@@ -371,7 +377,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     return scaledArray;
   }
 
-  public render() {
+  public override render() {
     const {
       loaded,
       card,

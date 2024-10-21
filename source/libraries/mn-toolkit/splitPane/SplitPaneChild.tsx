@@ -14,7 +14,7 @@ export class SplitPaneChild extends Component<ISplitPaneChildProps, ISplitPaneCh
     super(props);
   }
 
-  public render() {
+  public override render() {
     const isMaster = isDefined(this.props.size);
     const size = this.props.size || 0;
     const style: { width?: string; height?: string } = {};

@@ -52,7 +52,7 @@ export class Container<PROPS extends IContainerProps, STATE extends IContainerSt
     return classes;
   }
 
-  public render() {
+  public override render() {
     return (
       <div {...this.renderAttributes()} ref={this.base}>
         {this.inside}

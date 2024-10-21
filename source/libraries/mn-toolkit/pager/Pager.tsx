@@ -68,7 +68,7 @@ export class Pager extends Containable<IPagerProps, IPagerState> {
     }
   }
 
-  public render() {
+  public override render() {
     if (this.nbPages < 2) return null!;
     return (
       <HorizontalStack className='mn-pager' gutter verticalItemAlignment='middle'>
