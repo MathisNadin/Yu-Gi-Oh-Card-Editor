@@ -1,7 +1,7 @@
 {
   "name": "yu-gi-oh-card-editor",
   "displayName": "Yu-Gi-Oh! Card Editor",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Un éditeur de cartes Yu-Gi-Oh",
   "repository": {
     "type": "git",
@@ -34,7 +34,8 @@
     "build:desktop-renderer": "cross-env NODE_ENV=production PLATFORM=desktop-renderer TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/webpack.config.ts",
     "build:desktop": "cross-env NODE_ENV=production node scripts/clean-build-desktop.js && concurrently \"npm run build:desktop-main\" \"npm run build:desktop-renderer\"",
     "build": "npm run build:desktop",
-    "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish never",
+    "compile:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish never",
+    "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish always",
     "start:web": "cross-env NODE_ENV=development PLATFORM=web webpack serve --config webpack/webpack.config.ts",
     "build:web": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack/webpack.config.ts",
     "typecheck": "tsc --noEmit",
@@ -77,6 +78,7 @@
     "css-minimizer-webpack-plugin": "^6.0.0",
     "electron": "^28.1.1",
     "electron-builder": "^24.13.3",
+    "electron-updater": "^6.3.9",
     "electronmon": "^2.0.2",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",

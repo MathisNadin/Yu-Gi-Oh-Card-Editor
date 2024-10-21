@@ -18,5 +18,12 @@
     "target": ["AppImage", "deb"],
     "icon": "source/assets/icons"
   },
-  "asar": true
+  "asar": true,
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "MathisNadin",
+      "repo": "Yu-Gi-Oh-Card-Editor"
+    }
+  ]
 }

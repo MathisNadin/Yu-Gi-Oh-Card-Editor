@@ -3,6 +3,7 @@ import { createConnection } from 'net';
 import { existsSync, readFileSync, writeFile } from 'fs';
 import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
 import { download } from 'electron-dl';
+import { autoUpdater } from 'electron-updater';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
 import {
   buildProjectMenuDarwinTemplate,
@@ -124,6 +125,62 @@ ipcMain.handle('download', async (_event, directory: string, url: string, filena
 
 patchIpcMain(ipcMain);
 
+function checkForUpdates() {
+  if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log('Mises à jour désactivées en mode développement.');
+    return;
+  }
+
+  autoUpdater.fullChangelog = true; // Récupère les notes de version complètes pour chaque version
+
+  // Vérifie les mises à jour et notifie si disponible
+  autoUpdater.checkForUpdatesAndNotify();
+
+  // Gère les événements de mises à jour
+  autoUpdater.on('update-available', (info) => {
+    const allReleaseNotes = info.releaseNotes;
+    const currentVersion = app.getVersion();
+    const latestVersion = info.version;
+
+    // Accumuler les notes de version pour toutes les versions disponibles
+    let notes: string;
+    if (!allReleaseNotes) notes = 'Notes de version non disponibles.';
+    else if (typeof allReleaseNotes === 'string') notes = allReleaseNotes;
+    else notes = allReleaseNotes.map((release) => `Version ${release.version} :\n${release.note}`).join('\n\n');
+
+    // Afficher une boîte de dialogue avec les notes de version et une option pour télécharger la mise à jour
+    dialog
+      .showMessageBox({
+        type: 'info',
+        title: `Mise à jour disponible : ${latestVersion}`,
+        message: `Votre version actuelle est ${currentVersion}. Voici les changements apportés :`,
+        detail: notes,
+        buttons: ['Installer maintenant', 'Reporter'],
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.downloadUpdate(); // Télécharge la mise à jour si l'utilisateur choisit de l'installer
+        }
+      });
+  });
+
+  // Une fois la mise à jour téléchargée, propose de redémarrer pour installer la mise à jour
+  autoUpdater.on('update-downloaded', () => {
+    dialog
+      .showMessageBox({
+        title: 'Mise à jour prête',
+        message: "Une nouvelle version a été téléchargée. Redémarrer maintenant pour l'installer.",
+        buttons: ['Redémarrer', 'Plus tard'],
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall(); // Redémarre l'application et installe la mise à jour
+        }
+      });
+  });
+}
+
 /**
  * Create main window
  */
@@ -185,6 +242,9 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+
+    // Appeler la fonction de vérification des mises à jour ici
+    checkForUpdates();
   });
 
   mainWindow.on('closed', () => {
