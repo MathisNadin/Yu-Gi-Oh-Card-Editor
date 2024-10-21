@@ -135,7 +135,7 @@ function checkForUpdates() {
   autoUpdater.fullChangelog = true; // Récupère les notes de version complètes pour chaque version
 
   // Vérifie les mises à jour et notifie si disponible
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
 
   // Gère les événements de mises à jour
   autoUpdater.on('update-available', (info) => {
@@ -155,8 +155,8 @@ function checkForUpdates() {
         type: 'info',
         title: `Mise à jour disponible : ${latestVersion}`,
         message: `Votre version actuelle est ${currentVersion}. Voici les changements apportés :`,
-        detail: notes,
-        buttons: ['Installer maintenant', 'Reporter'],
+        detail: notes.replace(/<\/?[^>]+(>|$)/g, ''),
+        buttons: ['Installer maintenant', 'Plus tard'],
       })
       .then((result) => {
         if (result.response === 0) {
