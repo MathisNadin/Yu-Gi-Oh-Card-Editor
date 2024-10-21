@@ -132,38 +132,8 @@ function checkForUpdates() {
     return;
   }
 
-  autoUpdater.fullChangelog = true; // Récupère les notes de version complètes pour chaque version
-
   // Vérifie les mises à jour et notifie si disponible
-  autoUpdater.checkForUpdates();
-
-  // Gère les événements de mises à jour
-  autoUpdater.on('update-available', (info) => {
-    const allReleaseNotes = info.releaseNotes;
-    const currentVersion = app.getVersion();
-    const latestVersion = info.version;
-
-    // Accumuler les notes de version pour toutes les versions disponibles
-    let notes: string;
-    if (!allReleaseNotes) notes = 'Notes de version non disponibles.';
-    else if (typeof allReleaseNotes === 'string') notes = allReleaseNotes;
-    else notes = allReleaseNotes.map((release) => `Version ${release.version} :\n${release.note}`).join('\n\n');
-
-    // Afficher une boîte de dialogue avec les notes de version et une option pour télécharger la mise à jour
-    dialog
-      .showMessageBox({
-        type: 'info',
-        title: `Mise à jour disponible : ${latestVersion}`,
-        message: `Votre version actuelle est ${currentVersion}. Voici les changements apportés :`,
-        detail: notes.replace(/<\/?[^>]+(>|$)/g, ''),
-        buttons: ['Installer maintenant', 'Plus tard'],
-      })
-      .then((result) => {
-        if (result.response === 0) {
-          autoUpdater.downloadUpdate(); // Télécharge la mise à jour si l'utilisateur choisit de l'installer
-        }
-      });
-  });
+  autoUpdater.checkForUpdatesAndNotify();
 
   // Une fois la mise à jour téléchargée, propose de redémarrer pour installer la mise à jour
   autoUpdater.on('update-downloaded', () => {
