@@ -44,7 +44,8 @@
     "validate": "npm run format && npm run lint && npm run typecheck"
   },
   "dependencies": {
-    "electron-dl": "^3.5.0"
+    "electron-dl": "^3.5.0",
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "@capacitor-community/sqlite": "^6.0.0-alpha.1",
@@ -78,7 +79,6 @@
     "css-minimizer-webpack-plugin": "^6.0.0",
     "electron": "^28.1.1",
     "electron-builder": "^24.13.3",
-    "electron-updater": "^6.3.9",
     "electronmon": "^2.0.2",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
