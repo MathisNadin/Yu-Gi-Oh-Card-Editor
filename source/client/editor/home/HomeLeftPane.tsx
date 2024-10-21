@@ -1,18 +1,7 @@
 import { ICard, ICardListener } from 'client/editor/card';
 import { CardEditor, RushCardEditor } from 'client/editor/cardEditor';
-import {
-  IContainerProps,
-  IContainerState,
-  Container,
-  IDeviceListener,
-  Spinner,
-  VerticalStack,
-  HorizontalStack,
-  Button,
-  Typography,
-} from 'mn-toolkit';
+import { IContainerProps, IContainerState, Container, Spinner, HorizontalStack, Button } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { IVersionInfos, UpdateDialog } from './UpdateDialog';
 
 type TTabIndex = 'master' | 'rush';
 
@@ -23,13 +12,9 @@ interface IHomeLeftPaneState extends IContainerState {
   currentCard: ICard;
   tempCurrentCard: ICard;
   needUpdate: boolean;
-  versionInfos: IVersionInfos;
 }
 
-export class HomeLeftPane
-  extends Container<IHomeLeftPaneProps, IHomeLeftPaneState>
-  implements Partial<ICardListener>, Partial<IDeviceListener>
-{
+export class HomeLeftPane extends Container<IHomeLeftPaneProps, IHomeLeftPaneState> implements Partial<ICardListener> {
   public static get defaultProps(): IHomeLeftPaneProps {
     return {
       ...super.defaultProps,
@@ -45,52 +30,12 @@ export class HomeLeftPane
       ...this.state,
       tabIndex: 'master',
     };
-
     app.$card.addListener(this);
-    app.$device.addListener(this);
-  }
-
-  public override componentDidMount() {
-    super.componentDidMount();
-    app.$errorManager.handlePromise(this.checkUpdate());
   }
 
   public override componentWillUnmount() {
     super.componentWillUnmount();
     app.$card.removeListener(this);
-    app.$device.removeListener(this);
-  }
-
-  public deviceOnline() {
-    if (this.state.versionInfos) return;
-    app.$errorManager.handlePromise(this.checkUpdate());
-  }
-
-  public deviceInitialized() {
-    if (this.state.versionInfos) return;
-    app.$errorManager.handlePromise(this.checkUpdate());
-  }
-
-  private async checkUpdate() {
-    if (!app.$device.isDesktop || !app.$device.isConnected) return;
-    try {
-      const versionInfos = await app.$axios.get<IVersionInfos>(
-        'https://gist.githubusercontent.com/MathisNadin/e12c2c1494081ff24fbc5463f7c49470/raw/',
-        {
-          params: {
-            timestamp: new Date().getTime(),
-          },
-        }
-      );
-      if (versionInfos?.version) {
-        await this.setStateAsync({
-          versionInfos,
-          needUpdate: app.version !== versionInfos.version,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   public currentCardLoaded(currentCard: ICard) {
@@ -151,7 +96,6 @@ export class HomeLeftPane
     const isRush = tabIndex === 'rush';
     const card = tempCurrentCard || currentCard;
     return [
-      this.renderUpdate(),
       <HorizontalStack key='button-tabs' className='button-tabs' gutter itemAlignment='center'>
         <Button
           className={classNames('button-tab', 'master-button-tab', { selected: isMaster })}
@@ -183,23 +127,5 @@ export class HomeLeftPane
         />
       ),
     ];
-  }
-
-  private async openUpdateDialog() {
-    await UpdateDialog.show({ infos: this.state.versionInfos });
-  }
-
-  private renderUpdate() {
-    if (!this.state.needUpdate) return null;
-    return (
-      <VerticalStack key='new-version' className='new-version' gutter itemAlignment='center'>
-        <Typography
-          underlined
-          variant='label'
-          content='Nouvelle version disponible'
-          onTap={() => this.openUpdateDialog()}
-        />
-      </VerticalStack>
-    );
   }
 }
