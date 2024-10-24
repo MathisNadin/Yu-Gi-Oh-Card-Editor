@@ -932,7 +932,9 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   fill
                   validateOnEnter
                   defaultValue={ability}
-                  onChange={(newValue) => this.onAbilityChange(newValue, iAbility)}
+                  onChange={(ability, fromBlur) => {
+                    if (fromBlur) this.onAbilityChange(ability, iAbility);
+                  }}
                 />
 
                 <HorizontalStack className='abilities-line-icons'>

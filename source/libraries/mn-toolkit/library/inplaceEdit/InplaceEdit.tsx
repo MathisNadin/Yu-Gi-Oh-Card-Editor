@@ -6,7 +6,7 @@ interface InplaceEditProps extends IContainableProps {
   validateOnEnter?: boolean;
   placeholder?: string;
   defaultValue?: string;
-  onChange?: (value: string) => void | Promise<void>;
+  onChange?: (value: string, fromBlur: boolean) => void | Promise<void>;
 }
 
 interface InplaceEditState extends IContainableState {
@@ -62,13 +62,13 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState>
 
   private async doBlur() {
     await this.setStateAsync({ isFocused: false });
-    if (this.props.onChange) await this.props.onChange(this.state.value);
+    if (this.props.onChange) await this.props.onChange(this.state.value, true);
   }
 
   private async onChange(e: React.FormEvent<HTMLInputElement>) {
     const value = (e.target.value as string) || '';
     await this.setStateAsync({ value });
-    if (this.props.onChange) await this.props.onChange(this.state.value);
+    if (this.props.onChange) await this.props.onChange(this.state.value, false);
   }
 
   public override renderClasses() {

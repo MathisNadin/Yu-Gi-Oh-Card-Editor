@@ -811,7 +811,9 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   fill
                   validateOnEnter
                   defaultValue={ability}
-                  onChange={(ability) => this.onAbilityChange(ability, iAbility)}
+                  onChange={(ability, fromBlur) => {
+                    if (fromBlur) this.onAbilityChange(ability, iAbility);
+                  }}
                 />
 
                 <HorizontalStack className='abilities-line-icons'>

@@ -1,7 +1,13 @@
 ## mn-toolkit change log
 
+## 5.0.3
+
+- ajout de fromBlur dans onChange de InplaceEdit
+- types webpack dev server inutile car déprécié
+
 ## 5.0.2
 
+- bump to 5.0.2
 - fix export masonry
 
 ## 5.0.1
