@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
-import { classNames, deepClone, isDeepEqual } from 'mn-tools';
+import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
 import {
@@ -226,6 +226,10 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         break;
     }
 
+    const artworkBg = paths.whiteArtwork;
+
+    await Promise.all([preloadImage(artworkBg), ...cardFrames.map((frame) => preloadImage(frame))]);
+
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     this.nameReady = false;
@@ -246,7 +250,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       includesXyz,
       includesLink,
       includesSkill,
-      artworkBg: paths.whiteArtwork,
+      artworkBg,
       cardFrames,
       abilities,
       description,

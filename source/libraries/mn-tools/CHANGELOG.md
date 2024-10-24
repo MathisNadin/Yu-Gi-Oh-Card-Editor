@@ -1,5 +1,13 @@
 ## mn-tools change log
 
+## 2.0.1
+
+- ajout fonctions preload image et video
+
+## 2.0.0
+
+- bump to 2.0.0
+
 ## 1.0.5
 
 - bump to 1.0.5
@@ -14,7 +22,7 @@
 - ajout locales + bump
 - Merge branch 'master' of https://github.com/MathisNadin/mn-tools
 - ajout ansi
-- déplacement observable ici
+- déplacement  observable ici
 
 ## 1.0.3
 
@@ -30,3 +38,4 @@
 ## 1.0.1
 
 - ajout de fonctions
+

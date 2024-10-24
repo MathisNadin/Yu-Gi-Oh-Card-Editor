@@ -1,5 +1,5 @@
 import { createRef, CSSProperties } from 'react';
-import { classNames, deepClone, isDeepEqual } from 'mn-tools';
+import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from 'mn-toolkit';
 import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
@@ -145,6 +145,12 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
     } else {
       artworkBg = paths.whiteArtworks.whiteArtwork;
     }
+
+    await Promise.all([
+      preloadImage(artworkBg),
+      ...cardFrames.map((frame) => preloadImage(frame)),
+      ...pendulumCovers.map((cover) => preloadImage(cover)),
+    ]);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 

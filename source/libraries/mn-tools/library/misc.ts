@@ -63,6 +63,32 @@ export async function getCroppedArtworkBase64(options: ICropBase64Options) {
   return canvas.toDataURL(options.mimeType);
 }
 
+export function preloadImage(url: string) {
+  if (!url) return Promise.resolve();
+  return new Promise<void>((resolve, reject) => {
+    const img = new Image();
+    img.src = url;
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(`Erreur de chargement de l'image : ${url}`));
+  });
+}
+
+export function preloadVideo(url: string) {
+  if (!url) return Promise.resolve();
+
+  return new Promise<void>((resolve, reject) => {
+    const video = document.createElement('video');
+    video.src = url;
+
+    // Attendre que la vidéo soit prête à être lue entièrement
+    video.oncanplaythrough = () => resolve();
+    video.onerror = () => reject(new Error(`Erreur de chargement de la vidéo : ${url}`));
+
+    // Déclenche le chargement de la vidéo (sans lecture)
+    video.load();
+  });
+}
+
 /**
  * Convert a string version to its numeric version.
  *

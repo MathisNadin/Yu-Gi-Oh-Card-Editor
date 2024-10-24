@@ -1,6 +1,6 @@
 import { ICard } from 'client/editor/card/card-interfaces';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
-import { getCroppedArtworkBase64 } from 'mn-tools';
+import { getCroppedArtworkBase64, preloadImage } from 'mn-tools';
 
 interface IRushCardArtworkProps extends IToolkitComponentProps {
   card: ICard;
@@ -79,7 +79,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     if (this.state.loadArtwork) {
       requestAnimationFrame(() => requestAnimationFrame(() => app.$errorManager.handlePromise(this.loadArtwork())));
     } else {
-      this.props.onReady();
+      requestAnimationFrame(() => requestAnimationFrame(() => this.props.onReady()));
     }
   }
 
@@ -115,6 +115,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
       artworkData = artworkBg;
     }
 
+    await preloadImage(artworkData);
     this.setState({ loadArtwork: false, artworkData });
   }
 
