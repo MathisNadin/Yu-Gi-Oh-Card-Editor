@@ -1,9 +1,20 @@
-import { ICloneCSSStyleOptions, Options } from './types';
-import { cloneNode } from './clone-node';
-import { embedImages } from './embed-images';
-import { applyStyle } from './apply-style';
-import { embedWebFonts, getWebFontCSS } from './embed-webfonts';
-import { getImageSize, getPixelRatio, createImage, canvasToBlob, nodeToDataURL, checkCanvasDimensions } from './util';
+import {
+  ICloneCSSStyleOptions,
+  Options,
+  cloneNode,
+  applyStyle,
+  embedImages,
+  embedWebFonts,
+  getWebFontCSS,
+  getImageSize,
+  getPixelRatio,
+  createImage,
+  canvasToBlob,
+  nodeToDataURL,
+  checkCanvasDimensions,
+} from './library';
+
+export * from './library';
 
 export async function toSvg<T extends HTMLElement>(node: T, options: Options = {}): Promise<string> {
   const { width, height } = getImageSize(node, options);
