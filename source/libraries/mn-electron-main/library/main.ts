@@ -9,7 +9,7 @@ import {
   buildProjectMenuDarwinTemplate,
   buildProjectMenuTemplate,
   patchIpcMain,
-} from '../../client/electron-patchs/main';
+} from '../../../client/electron-patchs/main';
 
 declare global {
   type IIpcMain = Electron.IpcMain;
@@ -159,7 +159,7 @@ const createWindow = async () => {
 
   let preloadPath: string;
   if (isDev) {
-    preloadPath = path.join(__dirname, '../../../.temp-desktop/preload.js');
+    preloadPath = path.join(__dirname, '../../../../.temp-desktop/preload.js');
   } else {
     preloadPath = path.join(__dirname, 'preload.js');
   }

@@ -2,7 +2,7 @@ import { isDefined } from 'mn-tools';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
 import { TForegroundColor } from '../theme';
 import { AllHTMLAttributes } from 'react';
-import { IRouterHrefParams } from 'mn-toolkit/router';
+import { IRouterHrefParams } from 'mn-toolkit/library/router';
 
 interface IButtonLinkProps extends IContainableProps {
   label: string;

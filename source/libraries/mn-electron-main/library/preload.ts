@@ -1,5 +1,5 @@
 import { contextBridge, FileFilter, ipcRenderer, IpcRendererEvent } from 'electron';
-import { getProjectIpcRenderer } from '../../client/electron-patchs/preload';
+import { getProjectIpcRenderer } from '../../../client/electron-patchs/preload';
 
 const defaultIpcRenderer: Partial<IIpcRenderer> = {
   send(channel: TSendChannel, args: unknown[]) {

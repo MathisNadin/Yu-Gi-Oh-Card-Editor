@@ -1,29 +1,35 @@
 import { extendNativeObjects } from 'mn-tools';
-import { ApiService } from './api';
-import { AxiosService } from './axios';
-import { Application, IApplicationConfig } from './application';
-import { DeviceService } from './device';
-import { ErrorManagerService } from './errorManager';
-import { IconService, loadSvgs } from './icon';
-import { StoreService } from './store';
-import { PopoverService } from './popover';
-import { PopupService } from './popup';
-import { HeaderService } from './view';
-import { SessionService } from './session';
-import { ReactService } from './react';
-import { FilePickerService } from './filePicker';
-import { RouterService } from './router';
-import { XhrService } from './xhr';
-import { DrawerService } from './drawer';
-import { OverlayService } from './overlay';
-import { PermissionService } from './permission';
-import { ToasterService } from './toaster';
-import { GalleryService } from './gallery';
-import { TipService } from './tip';
-import { SavingManagerService } from './savingManager';
-import { DateTimePickerService } from './dateTime';
-import { CameraPickerService } from './cameraPicker';
-import { ThemeService } from './theme';
+import { loadSvgs } from './svgs';
+import {
+  ApiService,
+  Application,
+  AxiosService,
+  CameraPickerService,
+  DateTimePickerService,
+  DeviceService,
+  DrawerService,
+  ErrorManagerService,
+  GalleryService,
+  HeaderService,
+  IApplicationConfig,
+  IconService,
+  OverlayService,
+  PermissionService,
+  PopoverService,
+  PopupService,
+  ReactService,
+  RouterService,
+  SavingManagerService,
+  SessionService,
+  StoreService,
+  ThemeService,
+  ToasterService,
+  XhrService,
+  FilePickerService,
+  TipService,
+} from './library';
+
+export * from './library';
 
 export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
   extendNativeObjects();
@@ -64,60 +70,3 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
 
   loadSvgs();
 }
-
-export * from './theme';
-export * from './containable';
-export * from './container';
-export * from './memberBadge';
-export * from './gallery';
-export * from './pager';
-export * from './slider';
-export * from './searchBar';
-export * from './savingManager';
-export * from './cameraPicker';
-export * from './toaster';
-export * from './drawer';
-export * from './overlay';
-export * from './form';
-export * from './colorPicker';
-export * from './richText';
-export * from './picture';
-export * from './pane';
-export * from './splitPane';
-export * from './sortable';
-export * from './router';
-export * from './view';
-export * from './chip';
-export * from './dateTime';
-export * from './xhr';
-export * from './toolbar';
-export * from './menu';
-export * from './api';
-export * from './application';
-export * from './button';
-export * from './checkbox';
-export * from './fileUploader';
-export * from './device';
-export * from './errorManager';
-export * from './fileInput';
-export * from './icon';
-export * from './image';
-export * from './store';
-export * from './inplaceEdit';
-export * from './numberInput';
-export * from './popover';
-export * from './popup';
-export * from './toggle';
-export * from './progress';
-export * from './react';
-export * from './select';
-export * from './spacer';
-export * from './spinner';
-export * from './table';
-export * from './tabs';
-export * from './textAreaInput';
-export * from './textInput';
-export * from './typography';
-export * from './session';
-export * from './axios';
-export * from './permission';

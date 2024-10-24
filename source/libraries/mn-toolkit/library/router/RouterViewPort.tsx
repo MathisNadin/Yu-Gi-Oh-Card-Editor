@@ -1,5 +1,5 @@
 import { Component, DOMElement, createElement } from 'react';
-import { IRouterListener } from '../router';
+import { IRouterListener } from '.';
 import { Spinner } from '../spinner';
 import { classNames, logger } from 'mn-tools';
 

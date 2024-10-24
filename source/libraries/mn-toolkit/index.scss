@@ -616,50 +616,7 @@ $z-index-overall: 100;
   }
 }
 
-@import './containable/styles.scss';
-@import './container/styles.scss';
-@import './form/styles.scss';
-@import './pane/styles.scss';
-@import './menu/styles.scss';
-@import './router/styles.scss';
-@import './view/styles.scss';
-@import './button/styles.scss';
-@import './checkbox/styles.scss';
-@import './fileUploader/styles.scss';
-@import './fileInput/styles.scss';
-@import './icon/styles.scss';
-@import './splitPane/styles.scss';
-@import './cameraPicker/styles.scss';
-@import './image/styles.scss';
-@import './inplaceEdit/styles.scss';
-@import './numberInput/styles.scss';
-@import './popover/styles.scss';
-@import './popup/styles.scss';
-@import './dateTime/styles.scss';
-@import './progress/styles.scss';
-@import './sortable/styles.scss';
-@import './select/styles.scss';
-@import './spacer/styles.scss';
-@import './spinner/styles.scss';
-@import './table/styles.scss';
-@import './tabs/styles.scss';
-@import './textAreaInput/styles.scss';
-@import './textInput/styles.scss';
-@import './typography/styles.scss';
-@import './overlay/styles.scss';
-@import './drawer/styles.scss';
-@import './pager/styles.scss';
-@import './memberBadge/styles.scss';
-@import './toaster/styles.scss';
-@import './toggle/styles.scss';
-@import './chip/styles.scss';
-@import './richText/styles.scss';
-@import './picture/styles.scss';
-@import './colorPicker/styles.scss';
-@import './gallery/styles.scss';
-@import './slider/styles.scss';
-@import './toolbar/styles.scss';
-@import './searchBar/styles.scss';
+@import './library/index.scss';
 
 @mixin resetBlockTag {
   margin: 0;

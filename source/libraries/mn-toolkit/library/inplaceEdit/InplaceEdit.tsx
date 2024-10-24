@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
-import { Icon } from 'mn-toolkit/icon';
+import { Icon } from 'mn-toolkit/library/icon';
 
 interface InplaceEditProps extends IContainableProps {
   validateOnEnter?: boolean;

@@ -5,8 +5,8 @@ import nodeExternals from 'webpack-node-externals';
 const desktopMainConfig: Configuration = {
   target: 'electron-main',
   entry: {
-    main: path.join(__dirname, '..', '..', 'source', 'libraries', 'mn-electron-main', 'main.ts'),
-    preload: path.join(__dirname, '..', '..', 'source', 'libraries', 'mn-electron-main', 'preload.ts'),
+    main: path.join(__dirname, '..', '..', 'source', 'libraries', 'mn-electron-main', 'library', 'main.ts'),
+    preload: path.join(__dirname, '..', '..', 'source', 'libraries', 'mn-electron-main', 'library', 'preload.ts'),
   },
   output: {
     path: path.resolve(__dirname, '..', '..', '.build-desktop'),

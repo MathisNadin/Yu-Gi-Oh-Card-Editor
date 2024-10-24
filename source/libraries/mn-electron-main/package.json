@@ -10,5 +10,19 @@
   "author": {
     "name": "Mathis Nadin",
     "email": "mathis.nadin@gmail.com"
+  },
+  "scripts": {
+    "list-dependencies": "node scripts/list-dependencies.mjs",
+    "update-changelog": "node scripts/update-changelog.mjs",
+    "bump": "node scripts/bump-version.mjs"
+  },
+  "dependencies": {
+    "electron-dl": "^3.5.0",
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^28.1.1",
+    "electron-builder": "^24.13.3",
+    "electronmon": "^2.0.2"
   }
 }

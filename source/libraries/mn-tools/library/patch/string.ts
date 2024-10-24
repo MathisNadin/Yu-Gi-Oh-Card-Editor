@@ -1,4 +1,4 @@
-import { isArray, monkeyPatch } from '..';
+import { isArray, monkeyPatch } from '../..';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 let prototype: { [name: string]: Function } = {};

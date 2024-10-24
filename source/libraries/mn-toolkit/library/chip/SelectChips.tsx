@@ -5,7 +5,7 @@ import { Icon } from '../icon';
 import { Chip } from './Chip';
 import { IChipItem } from './Chips';
 import { SelectChipsPopover } from './SelectChipsPopover';
-import { Typography } from 'mn-toolkit/typography';
+import { Typography } from 'mn-toolkit/library/typography';
 
 export interface ISelectChipItem<ID = number> extends Omit<IChipItem<ID>, 'actionIcon' | 'onActionTap'> {}
 

@@ -1,4 +1,4 @@
-import { monkeyPatch, monkeyPatchGet } from '..';
+import { monkeyPatch, monkeyPatchGet } from '../..';
 
 let firstDayOfWeek = 1;
 

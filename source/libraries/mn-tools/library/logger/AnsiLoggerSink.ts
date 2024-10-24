@@ -1,4 +1,4 @@
-import { formatDate } from '..';
+import { formatDate } from '../..';
 import { AbstractLoggerSink, ILogRecord } from './AbstractLoggerSink';
 import { LogLevel } from './Logger';
 

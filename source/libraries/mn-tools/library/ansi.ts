@@ -1,4 +1,4 @@
-import { isNumber, JSONValue } from '.';
+import { isNumber, JSONValue } from '..';
 
 const underline = 4;
 const notUnderline = 24;

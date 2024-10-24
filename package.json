@@ -41,7 +41,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
     "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "validate": "npm run format && npm run lint && npm run typecheck"
+    "validate": "npm run format && npm run lint && npm run typecheck",
+    "list-dependencies": "node scripts/list-dependencies.mjs",
+    "sync-dependencies": "node scripts/sync-dependencies.mjs",
+    "update-changelog": "node scripts/update-changelog.mjs",
+    "bump": "node scripts/bump-version.mjs"
   },
   "dependencies": {
     "electron-dl": "^3.5.0",
@@ -87,6 +91,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "glob": "^11.0.0",
     "html-webpack-plugin": "^5.6.0",
     "html2canvas": "^1.4.1",
     "husky": "^4.3.8",
@@ -101,6 +106,7 @@
     "react-router-dom": "^6.24.1",
     "sass": "^1.70.0",
     "sass-loader": "^14.0.0",
+    "semver": "^7.6.3",
     "style-loader": "^3.3.4",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",

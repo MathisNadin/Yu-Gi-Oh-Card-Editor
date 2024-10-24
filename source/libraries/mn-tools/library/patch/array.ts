@@ -1,4 +1,4 @@
-import { monkeyPatch } from '..';
+import { monkeyPatch } from '../..';
 
 function arrayIntersect<T>(this: T[], b: T[]) {
   return this.filter((x) => b.indexOf(x) !== -1);

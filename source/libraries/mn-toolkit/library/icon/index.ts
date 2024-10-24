@@ -1,6 +1,5 @@
 import { IconService } from './IconService';
 
-export * from './svgs';
 export * from './IconService';
 export * from './Icon';
 
