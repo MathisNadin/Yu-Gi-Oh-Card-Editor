@@ -810,7 +810,6 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                 <InplaceEdit
                   fill
                   validateOnEnter
-                  key={`${iAbility}-${ability}`}
                   defaultValue={ability}
                   onChange={(ability) => this.onAbilityChange(ability, iAbility)}
                 />

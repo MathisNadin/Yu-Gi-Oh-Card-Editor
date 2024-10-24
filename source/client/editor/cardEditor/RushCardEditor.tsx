@@ -931,7 +931,6 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 <InplaceEdit
                   fill
                   validateOnEnter
-                  key={`${iAbility}-${ability}`}
                   defaultValue={ability}
                   onChange={(newValue) => this.onAbilityChange(newValue, iAbility)}
                 />
