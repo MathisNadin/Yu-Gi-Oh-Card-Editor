@@ -14,7 +14,7 @@
 - ajout locales + bump
 - Merge branch 'master' of https://github.com/MathisNadin/mn-tools
 - ajout ansi
-- déplacement  observable ici
+- déplacement observable ici
 
 ## 1.0.3
 
@@ -30,4 +30,3 @@
 ## 1.0.1
 
 - ajout de fonctions
-
