@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 5.0.2
+
+- fix export masonry
+
 ## 5.0.1
 
+- bump to 5.0.1
 - pas besoin de react image crop en standard
 - fix import index.scss de la library
 
