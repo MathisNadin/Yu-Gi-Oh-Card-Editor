@@ -35,6 +35,11 @@ const commonConfig: Configuration = {
         test: /\.(png|jpg|jpeg|gif|ico)$/i,
         type: 'asset/resource',
       },
+      // Textes
+      {
+        test: /\.(txt|md)$/,
+        use: 'raw-loader',
+      },
     ],
   },
   performance: {

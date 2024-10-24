@@ -1,7 +1,7 @@
 {
   "name": "mn-toolkit",
   "displayName": "MN Toolkit",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Bibliothèque React Typescript pour des fonctions et composants réutilisables",
   "repository": {
     "type": "git",
@@ -62,7 +62,6 @@
     "prettier": "^3.2.4",
     "raw-loader": "^4.0.2",
     "react": "^18.3.1",
-    "react-image-crop": "^11.0.5",
     "react-refresh": "^0.14.0",
     "react-router-dom": "^6.24.1",
     "sass": "^1.70.0",

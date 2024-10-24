@@ -1,7 +1,13 @@
 ## mn-toolkit change log
 
+## 5.0.1
+
+- pas besoin de react image crop en standard
+- fix import index.scss de la library
+
 ## 5.0.0
 
+- bump to 5.0.0
 - affinage du script bump
 - bump to 5.0.0
 - amélioration du script bump version
