@@ -350,6 +350,10 @@
         text-align: justify;
         text-shadow: 0 0 black;
 
+        font-size: calc(var(--description-text-font-size));
+        line-height: calc(var(--description-text-line-height));
+        margin-bottom: calc(var(--description-text-margin-bottom));
+
         .span-text {
           &.rush-label {
             text-transform: uppercase;
@@ -358,7 +362,7 @@
         }
 
         .with-bullet-point {
-          $bulletSize: 1rem;
+          $bulletSize: calc(var(--description-text-font-size) * 0.8);
           $margin: calc($bulletSize / 3);
 
           &::before {
@@ -368,6 +372,7 @@
             width: $bulletSize;
             border-radius: calc($bulletSize / 2);
             margin-right: $margin;
+            margin-bottom: -1px;
             background-color: black;
           }
 
@@ -402,8 +407,12 @@
         text-align: justify;
         text-shadow: 0 0 black;
 
+        font-size: calc(var(--pendulum-effect-text-font-size));
+        line-height: calc(var(--pendulum-effect-text-line-height));
+        margin-bottom: calc(var(--pendulum-effect-text-margin-bottom));
+
         .with-bullet-point {
-          $bulletSize: 1rem;
+          $bulletSize: calc(var(--pendulum-effect-text-font-size) * 0.8);
           $margin: calc($bulletSize / 3);
 
           &::before {
@@ -413,6 +422,7 @@
             width: $bulletSize;
             border-radius: calc($bulletSize / 2);
             margin-right: $margin;
+            margin-bottom: -1px;
             background-color: black;
           }
 

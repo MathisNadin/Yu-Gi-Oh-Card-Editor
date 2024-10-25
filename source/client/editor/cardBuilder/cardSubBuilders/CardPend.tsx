@@ -269,18 +269,17 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
         className={classNames('custom-container', 'vertical', 'card-layer', 'card-pendulum-effect-holder', {
           'on-link': includesLink,
         })}
+        style={
+          {
+            '--pendulum-effect-text-font-size': `${fontSize}px`,
+            '--pendulum-effect-text-line-height': lineHeight,
+            '--pendulum-effect-text-margin-bottom': `${lineHeight / 2}px`,
+          } as React.CSSProperties
+        }
       >
         {splitPendEff.map((text, i) => {
           return (
-            <p
-              key={`pendulum-effect-${i}`}
-              className='pendulum-effect-text black-text'
-              style={{
-                fontSize: `${fontSize}px`,
-                lineHeight: lineHeight,
-                marginBottom: lineHeight / 2,
-              }}
-            >
+            <p key={`pendulum-effect-${i}`} className='pendulum-effect-text black-text'>
               {text}
             </p>
           );

@@ -314,18 +314,20 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     if (includesNormal) containerClass = `${containerClass} normal-text`;
 
     return (
-      <div className={containerClass} ref={this.ref}>
+      <div
+        className={containerClass}
+        ref={this.ref}
+        style={
+          {
+            '--description-text-font-size': `${fontSize}px`,
+            '--description-text-line-height': lineHeight,
+            '--description-text-margin-bottom': `${lineHeight / 2}px`,
+          } as React.CSSProperties
+        }
+      >
         {description.map((d, i) => {
           return (
-            <p
-              key={`rush-description-text-${i}`}
-              className='description-text black-text'
-              style={{
-                fontSize: `${fontSize}px`,
-                lineHeight: lineHeight,
-                marginBottom: lineHeight / 2,
-              }}
-            >
+            <p key={`rush-description-text-${i}`} className='description-text black-text'>
               {d}
             </p>
           );
