@@ -21,6 +21,7 @@ interface ICardDescProps extends IToolkitComponentProps {
 
 interface ICardDescState extends IToolkitComponentState {
   description: string;
+  tcgAt: boolean;
   hasAbilities: boolean;
   hasPendulumFrame: boolean;
   includesNormal: boolean;
@@ -46,8 +47,8 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       props.includesSkill
     );
     this.state = {
-      ...this.state,
       description: props.card.description,
+      tcgAt: props.card.tcgAt,
       hasAbilities: props.hasAbilities,
       hasPendulumFrame: props.hasPendulumFrame,
       includesNormal: props.includesNormal,
@@ -71,6 +72,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     prevState: ICardDescState
   ): Partial<ICardDescState> | null {
     if (
+      prevState.tcgAt !== nextProps.card.tcgAt ||
       prevState.hasAbilities !== nextProps.hasAbilities ||
       prevState.hasPendulumFrame !== nextProps.hasPendulumFrame ||
       prevState.includesNormal !== nextProps.includesNormal ||
@@ -88,6 +90,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       return {
         checkState: 1,
         description: nextProps.card.description,
+        tcgAt: nextProps.card.tcgAt,
         hasAbilities: nextProps.hasAbilities,
         hasPendulumFrame: nextProps.hasPendulumFrame,
         includesNormal: nextProps.includesNormal,
@@ -291,6 +294,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     if (this.isEmpty) return null;
 
     const {
+      tcgAt,
       hasAbilities,
       hasPendulumFrame,
       includesNormal,
@@ -301,7 +305,9 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       lineHeight,
     } = this.state;
 
-    let containerClass = 'custom-container vertical card-layer card-description-holder';
+    let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder', {
+      'with-tcg-at': tcgAt,
+    });
     if (hasAbilities) {
       containerClass = `${containerClass} with-abilities`;
 

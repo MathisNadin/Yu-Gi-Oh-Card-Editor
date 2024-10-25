@@ -402,7 +402,7 @@ export class YuginewsService {
         language: 'fr',
         name: cardData.nameFR as string,
         nameStyle: 'default',
-        tcgAt: false,
+        tcgAt: true,
         artwork: {
           url: '',
           x: 0,

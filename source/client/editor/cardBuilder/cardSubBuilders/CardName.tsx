@@ -1,5 +1,6 @@
 import { ICard, TNameStyle } from 'client/editor/card/card-interfaces';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
+import { classNames } from 'mn-tools';
 import { createRef } from 'react';
 
 interface ICardNameProps extends IToolkitComponentProps {
@@ -15,6 +16,7 @@ interface ICardNameProps extends IToolkitComponentProps {
 interface ICardNameState extends IToolkitComponentState {
   cardName: string;
   nameStyle: TNameStyle;
+  tcgAt: boolean;
   includesToken: boolean;
   includesXyz: boolean;
   includesLink: boolean;
@@ -33,6 +35,7 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
     this.state = {
       cardName: props.card.name,
       nameStyle: props.card.nameStyle,
+      tcgAt: props.card.tcgAt,
       includesToken: props.includesToken,
       includesXyz: props.includesXyz,
       includesLink: props.includesLink,
@@ -59,12 +62,14 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
       prevState.includesSkill !== nextProps.includesSkill ||
       prevState.isBackrow !== nextProps.isBackrow ||
       prevState.nameStyle !== nextProps.card.nameStyle ||
+      prevState.tcgAt !== nextProps.card.tcgAt ||
       prevState.cardName !== nextProps.card.name
     ) {
       return {
         checkState: true,
         cardName: nextProps.card.name,
         nameStyle: nextProps.card.nameStyle,
+        tcgAt: nextProps.card.tcgAt,
         includesToken: nextProps.includesToken,
         includesXyz: nextProps.includesXyz,
         includesLink: nextProps.includesLink,
@@ -108,10 +113,10 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
   public override render() {
     if (this.isEmpty) return null;
 
-    const { cardName, nameStyle, includesXyz, includesLink, includesToken, includesSkill, isBackrow, xScale } =
+    const { cardName, nameStyle, tcgAt, includesXyz, includesLink, includesToken, includesSkill, isBackrow, xScale } =
       this.state;
 
-    let containerClass = `custom-container card-layer card-name-container`;
+    let containerClass = classNames('custom-container', 'card-layer', 'card-name-container', { 'with-tcg-at': tcgAt });
     let pClass = `card-layer card-name ${nameStyle}`;
     if (includesToken) {
       containerClass = `${containerClass} token-name-container`;
@@ -130,7 +135,7 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
     const parts = cardName.split(specialCharsRegex);
     const processedText = parts.map((part, index) =>
       specialCharsRegex.test(part) ? (
-        <span key={index} className='special-char-span'>
+        <span key={index} className={classNames('special-char-span', { 'with-tcg-at': tcgAt })}>
           {part}
         </span>
       ) : (

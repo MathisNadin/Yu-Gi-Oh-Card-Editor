@@ -18,6 +18,7 @@ interface ICardPendProps extends IToolkitComponentProps {
 
 interface ICardPendState extends IToolkitComponentState {
   pendEffect: string;
+  tcgAt: boolean;
   hasPendulumFrame: boolean;
   includesLink: boolean;
   checkState: number;
@@ -39,6 +40,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     );
     this.state = {
       pendEffect: props.card.pendEffect,
+      tcgAt: props.card.tcgAt,
       hasPendulumFrame: props.hasPendulumFrame,
       includesLink: props.includesLink,
       checkState: 1,
@@ -59,6 +61,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     prevState: ICardPendState
   ): Partial<ICardPendState> | null {
     if (
+      prevState.tcgAt !== nextProps.card.tcgAt ||
       prevState.hasPendulumFrame !== nextProps.hasPendulumFrame ||
       prevState.includesLink !== nextProps.includesLink ||
       prevState.pendEffect !== nextProps.card.pendEffect
@@ -70,6 +73,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       );
       return {
         checkState: 1,
+        tcgAt: nextProps.card.tcgAt,
         pendEffect: nextProps.card.pendEffect,
         hasPendulumFrame: nextProps.hasPendulumFrame,
         includesLink: nextProps.includesLink,
@@ -262,12 +266,13 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   public override render() {
     if (this.isEmpty) return null;
 
-    const { includesLink, splitPendEff, fontSize, lineHeight } = this.state;
+    const { tcgAt, includesLink, splitPendEff, fontSize, lineHeight } = this.state;
     return (
       <div
         ref={this.ref}
         className={classNames('custom-container', 'vertical', 'card-layer', 'card-pendulum-effect-holder', {
           'on-link': includesLink,
+          'with-tcg-at': tcgAt,
         })}
         style={
           {

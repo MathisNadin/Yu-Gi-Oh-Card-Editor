@@ -6,6 +6,7 @@ import {
   JSXElementChild,
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
+import { classNames } from 'mn-tools';
 import { createRef } from 'react';
 
 interface IRushCardDescProps extends IToolkitComponentProps {
@@ -17,6 +18,7 @@ interface IRushCardDescProps extends IToolkitComponentProps {
 
 interface IRushCardDescState extends IToolkitComponentState {
   description: JSXElementChild[][];
+  tcgAt: boolean;
   includesNormal: boolean;
   checkState: number;
   adjustState: 'unknown' | 'tooBig' | 'tooSmall';
@@ -41,6 +43,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     );
     this.state = {
       description: [...props.description],
+      tcgAt: props.card.tcgAt,
       includesNormal: props.includesNormal,
       checkState: 1,
       adjustState: 'unknown',
@@ -59,6 +62,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     prevState: IRushCardDescState
   ): Partial<IRushCardDescState> | null {
     if (
+      prevState.tcgAt !== nextProps.card.tcgAt ||
       prevState.includesNormal !== nextProps.includesNormal ||
       prevState.description.length !== nextProps.description.length ||
       !prevState.description.every(
@@ -80,6 +84,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       return {
         checkState: 1,
         description: [...nextProps.description],
+        tcgAt: nextProps.card.tcgAt,
         includesNormal: nextProps.includesNormal,
         adjustState: 'unknown',
         fontSize,
@@ -308,9 +313,11 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   public override render() {
     if (this.isEmpty) return null;
 
-    const { includesNormal, description, fontSize, lineHeight } = this.state;
+    const { tcgAt, includesNormal, description, fontSize, lineHeight } = this.state;
 
-    let containerClass = `custom-container vertical card-layer card-description-holder`;
+    let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder', {
+      'with-tcg-at': tcgAt,
+    });
     if (includesNormal) containerClass = `${containerClass} normal-text`;
 
     return (

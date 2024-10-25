@@ -1204,7 +1204,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
       language: 'en',
       name: '',
       nameStyle: 'default',
-      tcgAt: false,
+      tcgAt: true,
       artwork: {
         url: '',
         x: 0,

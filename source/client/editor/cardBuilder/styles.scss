@@ -4,6 +4,11 @@
 }
 
 @font-face {
+  font-family: fontDescTcgAt;
+  src: url(assets/fonts/MatrixBook_tcgAt.ttf);
+}
+
+@font-face {
   font-family: fontName;
   src: url(assets/fonts/yuGiOhMatrixRegularSmallCaps1.ttf);
 }
@@ -116,15 +121,18 @@
       width: 608px;
       top: 39px;
       left: 62px;
-      font-family: fontName;
       font-size: 95px;
       display: flex;
       justify-content: start;
+      font-family: fontName;
 
       .special-char-span {
-        font-family: fontDesc;
         font-size: 66px;
         font-weight: bold;
+        font-family: fontDesc;
+        &.with-tcg-at {
+          font-family: fontDescTcgAt;
+        }
       }
 
       &.token-name-container,
@@ -317,7 +325,6 @@
     }
 
     &.card-description-holder {
-      font-family: fontDesc;
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
@@ -325,6 +332,10 @@
       left: 65px;
       width: 680px;
       height: 214px;
+      font-family: fontDesc;
+      &.with-tcg-at {
+        font-family: fontDescTcgAt;
+      }
 
       &.normal-text {
         font-style: italic;
@@ -386,7 +397,6 @@
     }
 
     &.card-pendulum-effect-holder {
-      font-family: fontDesc;
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
@@ -394,6 +404,10 @@
       height: 124px;
       top: 748px;
       left: 127px;
+      font-family: fontDesc;
+      &.with-tcg-at {
+        font-family: fontDescTcgAt;
+      }
 
       &.on-link {
         width: 513px;
