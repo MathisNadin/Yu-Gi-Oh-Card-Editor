@@ -116,7 +116,7 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
     const { cardName, nameStyle, tcgAt, includesXyz, includesLink, includesToken, includesSkill, isBackrow, xScale } =
       this.state;
 
-    let containerClass = classNames('custom-container', 'card-layer', 'card-name-container', { 'with-tcg-at': tcgAt });
+    let containerClass = classNames('custom-container', 'card-layer', 'card-name-container');
     let pClass = `card-layer card-name ${nameStyle}`;
     if (includesToken) {
       containerClass = `${containerClass} token-name-container`;
@@ -136,7 +136,10 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
 
     let processedText = parts.map((part, i) =>
       specialCharsRegex.test(part) ? (
-        <span key={`special-char-span-${i}`} className={classNames('special-char-span', { 'with-tcg-at': tcgAt })}>
+        <span
+          key={`special-char-span-${i}`}
+          className={classNames('special-char-span', { 'tcg-at': tcgAt && part === '@' })}
+        >
           {part}
         </span>
       ) : (

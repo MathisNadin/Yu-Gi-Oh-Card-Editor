@@ -103,6 +103,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     this.setState({ card: this.props.card });
   }
 
+  private onTcgAtChange(tcgAt: boolean) {
+    this.state.card.tcgAt = tcgAt;
+    this.forceUpdate();
+    this.debouncedOnCardChange(this.state.card);
+  }
+
   private onLanguageChange(language: TCardLanguage) {
     this.state.card.language = language;
     this.forceUpdate();
@@ -511,6 +517,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               onChange={(language) => this.onLanguageChange(language)}
             />
           </HorizontalStack>
+
+          <CheckBox
+            label='@ TCG'
+            defaultValue={this.state.card.tcgAt}
+            onChange={(tcgAt) => this.onTcgAtChange(tcgAt)}
+          />
         </HorizontalStack>
 
         <HorizontalStack verticalItemAlignment='middle'>

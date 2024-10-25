@@ -162,7 +162,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let description: JSXElementChild[][] = [];
     switch (card.rushTextMode) {
       case 'vanilla':
-        description = card.description.split('\n').map((d, i) => this.getProcessedText(d, i));
+        description = card.description.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt));
         break;
 
       case 'regular':
@@ -180,41 +180,53 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
             break;
         }
         if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i)));
+          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)));
         }
         description.push(
           [
-            <span key={`rush-label-condition`} className='span-text rush-label condition'>
+            <span
+              key={`rush-label-condition`}
+              className={classNames('span-text', 'rush-label', 'condition', { 'with-tcg-at': card.tcgAt })}
+            >
               {'[Condition] '}
             </span>,
-          ].concat(...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i))),
+          ].concat(...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt))),
           [
-            <span key={`rush-label-effect`} className='span-text rush-label effect'>
+            <span
+              key={`rush-label-effect`}
+              className={classNames('span-text', 'rush-label', 'effect', { 'with-tcg-at': card.tcgAt })}
+            >
               {effectLabel}
             </span>,
-          ].concat(...card.rushEffect.split('\n').map((d, i) => this.getProcessedText(d, i)))
+          ].concat(...card.rushEffect.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)))
         );
         break;
 
       case 'choice':
         if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i)));
+          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)));
         }
         const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix]' : '[Multi-Choice Effect]';
         const choiceEffects: (string | JSXElementChild[])[] = [];
         for (const choice of card.rushChoiceEffects) {
           choiceEffects.push(' ');
-          choiceEffects.push(...choice.split('\n').map((d, i) => this.getProcessedText(d, i, true)));
+          choiceEffects.push(...choice.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt, true)));
         }
         description.push(
           [
-            <span key={`rush-label-condition`} className='span-text rush-label condition'>
+            <span
+              key={`rush-label-condition`}
+              className={classNames('span-text', 'rush-label', 'condition', { 'with-tcg-at': card.tcgAt })}
+            >
               {'[Condition] '}
             </span>,
-            ...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i)),
+            ...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)),
           ],
           [
-            <span key={`rush-label-effect`} className='span-text rush-label effect'>
+            <span
+              key={`rush-label-effect`}
+              className={classNames('span-text', 'rush-label', 'effect', { 'with-tcg-at': card.tcgAt })}
+            >
               {choiceEffectsLabel}
             </span>,
             ...choiceEffects,
@@ -311,7 +323,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     }
   }
 
-  private getProcessedText(text: string, index: number, forceBulletAtStart?: boolean) {
+  private getProcessedText(text: string, index: number, tcgAt: boolean, forceBulletAtStart?: boolean) {
     const parts = text.split(/(●|•)/).map((part) => part.trim());
     if (parts.length && !parts[0]) parts.shift();
 
@@ -321,16 +333,30 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       if (part === '●' || part === '•') {
         nextHasBullet = true;
       } else {
-        let classes = classNames('span-text', {
-          'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
-          'in-middle': i > 1,
-        });
-        nextHasBullet = false;
+        // Replace each occurrence of "@" with a span
+        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
+          <>
+            {subPart}
+            {subIndex < array.length - 1 && (
+              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
+                @
+              </span>
+            )}
+          </>
+        ));
         processedText.push(
-          <span key={`processed-text-${index}-${i}`} className={classes}>
-            {part}
+          <span
+            key={`processed-text-${index}-${i}`}
+            className={classNames('span-text', {
+              'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
+              'in-middle': i > 1,
+              'with-tcg-at': tcgAt,
+            })}
+          >
+            {modifiedPart}
           </span>
         );
+        nextHasBullet = false;
       }
     });
 

@@ -45,7 +45,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       includesLink: props.includesLink,
       checkState: 1,
       adjustState: 'unknown',
-      splitPendEff: props.card.pendEffect.split('\n').map((d, i) => CardPend.getProcessedText(d, i)),
+      splitPendEff: props.card.pendEffect.split('\n').map((d, i) => CardPend.getProcessedText(d, i, props.card.tcgAt)),
       fontSize,
       lineHeight,
     };
@@ -78,7 +78,9 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
         hasPendulumFrame: nextProps.hasPendulumFrame,
         includesLink: nextProps.includesLink,
         adjustState: 'unknown',
-        splitPendEff: nextProps.card.pendEffect.split('\n').map((d, i) => CardPend.getProcessedText(d, i)),
+        splitPendEff: nextProps.card.pendEffect
+          .split('\n')
+          .map((d, i) => CardPend.getProcessedText(d, i, nextProps.card.tcgAt)),
         fontSize,
         lineHeight,
       };
@@ -128,7 +130,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     return { fontSize, lineHeight };
   }
 
-  public static getProcessedText(text: string, index: number) {
+  public static getProcessedText(text: string, index: number, tcgAt: boolean) {
     const parts = text.split(/(●|•)/).map((part) => part.trim());
     if (parts.length && !parts[0]) parts.shift();
 
@@ -138,13 +140,30 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       if (part === '●' || part === '•') {
         nextHasBullet = true;
       } else {
-        let classes = classNames('span-text', { 'with-bullet-point': nextHasBullet, 'in-middle': i > 1 });
-        nextHasBullet = false;
+        // Replace each occurrence of "@" with a span
+        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
+          <>
+            {subPart}
+            {subIndex < array.length - 1 && (
+              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
+                @
+              </span>
+            )}
+          </>
+        ));
         processedText.push(
-          <span key={`processed-text-${index}-${i}`} className={classes}>
-            {part}
+          <span
+            key={`processed-text-${index}-${i}`}
+            className={classNames('span-text', {
+              'with-bullet-point': nextHasBullet,
+              'in-middle': i > 1,
+              'with-tcg-at': tcgAt,
+            })}
+          >
+            {modifiedPart}
           </span>
         );
+        nextHasBullet = false;
       }
     });
 
@@ -266,13 +285,12 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   public override render() {
     if (this.isEmpty) return null;
 
-    const { tcgAt, includesLink, splitPendEff, fontSize, lineHeight } = this.state;
+    const { includesLink, splitPendEff, fontSize, lineHeight } = this.state;
     return (
       <div
         ref={this.ref}
         className={classNames('custom-container', 'vertical', 'card-layer', 'card-pendulum-effect-holder', {
           'on-link': includesLink,
-          'with-tcg-at': tcgAt,
         })}
         style={
           {
@@ -284,7 +302,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       >
         {splitPendEff.map((text, i) => {
           return (
-            <p key={`pendulum-effect-${i}`} className='pendulum-effect-text black-text'>
+            <p key={`pendulum-effect-${i}`} className={classNames('pendulum-effect-text', 'black-text')}>
               {text}
             </p>
           );

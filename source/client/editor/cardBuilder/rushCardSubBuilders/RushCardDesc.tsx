@@ -313,11 +313,9 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   public override render() {
     if (this.isEmpty) return null;
 
-    const { tcgAt, includesNormal, description, fontSize, lineHeight } = this.state;
+    const { includesNormal, description, fontSize, lineHeight } = this.state;
 
-    let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder', {
-      'with-tcg-at': tcgAt,
-    });
+    let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder');
     if (includesNormal) containerClass = `${containerClass} normal-text`;
 
     return (
@@ -334,7 +332,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       >
         {description.map((d, i) => {
           return (
-            <p key={`rush-description-text-${i}`} className='description-text black-text'>
+            <p key={`rush-description-text-${i}`} className={classNames('description-text', 'black-text')}>
               {d}
             </p>
           );

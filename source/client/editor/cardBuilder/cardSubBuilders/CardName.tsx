@@ -135,7 +135,7 @@ export class CardName extends ToolkitComponent<ICardNameProps, ICardNameState> {
     const parts = cardName.split(specialCharsRegex);
     const processedText = parts.map((part, index) =>
       specialCharsRegex.test(part) ? (
-        <span key={index} className={classNames('special-char-span', { 'with-tcg-at': tcgAt })}>
+        <span key={index} className={classNames('special-char-span', { 'tcg-at': tcgAt })}>
           {part}
         </span>
       ) : (

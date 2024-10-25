@@ -56,7 +56,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       includesSkill: props.includesSkill,
       checkState: 1,
       adjustState: 'unknown',
-      splitDesc: props.card.description.split('\n').map((d, i) => CardDesc.getProcessedText(d, i)),
+      splitDesc: props.card.description.split('\n').map((d, i) => CardDesc.getProcessedText(d, i, props.card.tcgAt)),
       fontSize,
       lineHeight,
     };
@@ -97,7 +97,9 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
         includesLink: nextProps.includesLink,
         includesSkill: nextProps.includesSkill,
         adjustState: 'unknown',
-        splitDesc: nextProps.card.description.split('\n').map((d, i) => CardDesc.getProcessedText(d, i)),
+        splitDesc: nextProps.card.description
+          .split('\n')
+          .map((d, i) => CardDesc.getProcessedText(d, i, nextProps.card.tcgAt)),
         fontSize,
         lineHeight,
       };
@@ -155,7 +157,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     return { fontSize, lineHeight };
   }
 
-  public static getProcessedText(text: string, index: number) {
+  public static getProcessedText(text: string, index: number, tcgAt: boolean) {
     const parts = text.split(/(●|•)/).map((part) => part.trim());
     if (parts.length && !parts[0]) parts.shift();
 
@@ -165,13 +167,30 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       if (part === '●' || part === '•') {
         nextHasBullet = true;
       } else {
-        let classes = classNames('span-text', { 'with-bullet-point': nextHasBullet, 'in-middle': i > 1 });
-        nextHasBullet = false;
+        // Replace each occurrence of "@" with a span
+        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
+          <>
+            {subPart}
+            {subIndex < array.length - 1 && (
+              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
+                @
+              </span>
+            )}
+          </>
+        ));
         processedText.push(
-          <span key={`processed-text-${index}-${i}`} className={classes}>
-            {part}
+          <span
+            key={`processed-text-${index}-${i}`}
+            className={classNames('span-text', {
+              'with-bullet-point': nextHasBullet,
+              'in-middle': i > 1,
+              'with-tcg-at': tcgAt,
+            })}
+          >
+            {modifiedPart}
           </span>
         );
+        nextHasBullet = false;
       }
     });
 
@@ -294,7 +313,6 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     if (this.isEmpty) return null;
 
     const {
-      tcgAt,
       hasAbilities,
       hasPendulumFrame,
       includesNormal,
@@ -305,9 +323,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       lineHeight,
     } = this.state;
 
-    let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder', {
-      'with-tcg-at': tcgAt,
-    });
+    let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder');
     if (hasAbilities) {
       containerClass = `${containerClass} with-abilities`;
 
@@ -336,7 +352,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       >
         {splitDesc.map((d, i) => {
           return (
-            <p key={`description-text-${i}`} className='description-text black-text'>
+            <p key={`description-text-${i}`} className={classNames('description-text', 'black-text')}>
               {d}
             </p>
           );

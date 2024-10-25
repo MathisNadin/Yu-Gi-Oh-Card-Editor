@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: fontDescTcgAt;
-  src: url(assets/fonts/MatrixBook_tcgAt.ttf);
+  src: url(assets/fonts/NCAASanDiegoStAztecs.ttf);
 }
 
 @font-face {
@@ -127,11 +127,14 @@
       font-family: fontName;
 
       .special-char-span {
-        font-size: 66px;
-        font-weight: bold;
         font-family: fontDesc;
-        &.with-tcg-at {
+        font-size: 66px;
+        &.tcg-at {
           font-family: fontDescTcgAt;
+          font-size: 70px;
+        }
+        &:not(.tcg-at) {
+          font-weight: bold;
         }
       }
 
@@ -333,9 +336,6 @@
       width: 680px;
       height: 214px;
       font-family: fontDesc;
-      &.with-tcg-at {
-        font-family: fontDescTcgAt;
-      }
 
       &.normal-text {
         font-style: italic;
@@ -369,6 +369,12 @@
           &.rush-label {
             text-transform: uppercase;
             font-weight: bold;
+          }
+
+          &.with-tcg-at {
+            .at-char {
+              font-family: fontDescTcgAt;
+            }
           }
         }
 
@@ -405,9 +411,6 @@
       top: 748px;
       left: 127px;
       font-family: fontDesc;
-      &.with-tcg-at {
-        font-family: fontDescTcgAt;
-      }
 
       &.on-link {
         width: 513px;
@@ -424,6 +427,14 @@
         font-size: calc(var(--pendulum-effect-text-font-size));
         line-height: calc(var(--pendulum-effect-text-line-height));
         margin-bottom: calc(var(--pendulum-effect-text-margin-bottom));
+
+        .span-text {
+          &.with-tcg-at {
+            .at-char {
+              font-family: fontDescTcgAt;
+            }
+          }
+        }
 
         .with-bullet-point {
           $bulletSize: calc(var(--pendulum-effect-text-font-size) * 0.8);
