@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 import path, { join } from 'path';
 import { createConnection } from 'net';
 import { existsSync, readFileSync, writeFile } from 'fs';
-import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog, FileFilter, Menu, MessageBoxOptions } from 'electron';
 import { download } from 'electron-dl';
 import { autoUpdater } from 'electron-updater';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
@@ -132,22 +133,51 @@ function checkForUpdates() {
     return;
   }
 
-  // Vérifie les mises à jour et notifie si disponible
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
 
-  // Une fois la mise à jour téléchargée, propose de redémarrer pour installer la mise à jour
+  autoUpdater.on('update-available', () => {
+    // Demander à l'utilisateur s'il souhaite mettre à jour
+    const dialogOpts: MessageBoxOptions = {
+      type: 'info',
+      buttons: ['Mettre à jour', 'Plus tard'],
+      title: 'Mise à jour disponible',
+      message: 'Une nouvelle version est disponible.',
+      detail: 'Voulez-vous télécharger et installer la nouvelle version maintenant ?',
+    };
+
+    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+      if (returnValue.response === 0) {
+        // L'utilisateur a accepté la mise à jour
+        autoUpdater.downloadUpdate();
+      } else {
+        // L'utilisateur a refusé la mise à jour
+        console.log("L'utilisateur a refusé la mise à jour.");
+      }
+    });
+  });
+
   autoUpdater.on('update-downloaded', () => {
-    dialog
-      .showMessageBox({
-        title: 'Mise à jour prête',
-        message: "Une nouvelle version a été téléchargée. Redémarrer maintenant pour l'installer.",
-        buttons: ['Redémarrer', 'Plus tard'],
-      })
-      .then((result) => {
-        if (result.response === 0) {
-          autoUpdater.quitAndInstall(); // Redémarre l'application et installe la mise à jour
-        }
-      });
+    // Demander à l'utilisateur s'il est prêt à installer et redémarrer
+    const dialogOpts: MessageBoxOptions = {
+      type: 'info',
+      buttons: ['Redémarrer', 'Plus tard'],
+      title: 'Mise à jour prête',
+      message: 'Mise à jour téléchargée',
+      detail: "Voulez-vous redémarrer l'application pour appliquer les mises à jour ?",
+    };
+
+    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+      if (returnValue.response === 0) {
+        // Redémarrer et installer la mise à jour
+        autoUpdater.quitAndInstall();
+      } else {
+        console.log("L'utilisateur a choisi d'installer la mise à jour plus tard.");
+      }
+    });
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('Erreur lors de la mise à jour : ', err);
   });
 }
 
