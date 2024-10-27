@@ -7,7 +7,7 @@ import {
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { createRef } from 'react';
+import { createRef, Fragment } from 'react';
 
 interface ICardPendProps extends IToolkitComponentProps {
   card: ICard;
@@ -142,14 +142,14 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       } else {
         // Replace each occurrence of "@" with a span
         const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
-          <>
+          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
             {subPart}
             {subIndex < array.length - 1 && (
               <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
                 @
               </span>
             )}
-          </>
+          </Fragment>
         ));
         processedText.push(
           <span

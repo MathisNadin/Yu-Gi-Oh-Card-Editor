@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { createRef, CSSProperties } from 'react';
+import { createRef, CSSProperties, Fragment } from 'react';
 import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
@@ -335,14 +335,14 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       } else {
         // Replace each occurrence of "@" with a span
         const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
-          <>
+          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
             {subPart}
             {subIndex < array.length - 1 && (
               <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
                 @
               </span>
             )}
-          </>
+          </Fragment>
         ));
         processedText.push(
           <span

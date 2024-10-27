@@ -743,7 +743,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
       let includesOther = false;
       let includesDarkSynchro = false;
-      for (let frame of this.state.card.frames) {
+      for (const frame of this.state.card.frames) {
         if (frame !== 'xyz') {
           if (frame === 'darkSynchro') {
             includesDarkSynchro = true;
