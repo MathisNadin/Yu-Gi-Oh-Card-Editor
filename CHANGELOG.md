@@ -1,7 +1,14 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.1.3
+
+- rework du système de debouncing sur les éditeurs + améliorations visuelles sur le dialogue artwork editing
+- utilisation de React Fragment pour les processed texts
+- chgt du système des notifs de mise à jour
+
 ## 2.1.2
 
+- bump to 2.1.2
 - affichage et police du arobase tcg
 - premiers essais sur le tcg at
 - ajustement dela taille des bullet points
