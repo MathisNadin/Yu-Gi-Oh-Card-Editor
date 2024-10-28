@@ -234,71 +234,77 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
         />
       ),
 
-      !croppedArtworkBase64?.length && <div key='empty-cropped-img' className='cropped-img' />,
+      !!croppedArtworkBase64?.length && (
+        <HorizontalStack key='crop-title' itemAlignment='center' verticalItemAlignment='middle'>
+          <Typography alignment='center' variant='h2' contentType='text' content='Apperçu du recadrage' />
+        </HorizontalStack>
+      ),
 
-      <HorizontalStack key='crop-title' itemAlignment='center' verticalItemAlignment='middle'>
-        <Typography alignment='center' variant='h2' contentType='text' content='Apperçu du recadrage' />
-      </HorizontalStack>,
+      !!croppedArtworkBase64?.length && (
+        <HorizontalStack key='ratio-checkbox' itemAlignment='center' verticalItemAlignment='middle' gutter>
+          <Spacer />
+          <CheckBox label='Conserver le ratio 1:1' defaultValue={keepRatio} onChange={() => this.switchKeepRatio()} />
+        </HorizontalStack>
+      ),
 
-      <HorizontalStack key='ratio-checkbox' itemAlignment='center' verticalItemAlignment='middle' gutter>
-        <Spacer />
-        <CheckBox label='Conserver le ratio 1:1' defaultValue={keepRatio} onChange={() => this.switchKeepRatio()} />
-      </HorizontalStack>,
+      !!croppedArtworkBase64?.length && (
+        <HorizontalStack key='size-fields' gutter wrap>
+          <VerticalStack gutter fill>
+            <NumberInputField
+              fill
+              min={0}
+              max={100}
+              label='X'
+              defaultValue={crop.x}
+              onChange={(x) => this.onCropPropertyChange('x', x)}
+            />
+            <NumberInputField
+              fill
+              min={0}
+              max={100}
+              label='Y'
+              defaultValue={crop.y}
+              onChange={(y) => this.onCropPropertyChange('y', y)}
+            />
+          </VerticalStack>
 
-      <HorizontalStack key='size-fields' gutter wrap>
-        <VerticalStack gutter fill>
-          <NumberInputField
-            fill
-            min={0}
-            max={100}
-            label='X'
-            defaultValue={crop.x}
-            onChange={(x) => this.onCropPropertyChange('x', x)}
+          <VerticalStack gutter fill>
+            <NumberInputField
+              fill
+              min={1}
+              max={100}
+              label='Largeur'
+              defaultValue={crop.width}
+              onChange={(width) => this.onCropPropertyChange('width', width)}
+            />
+            <NumberInputField
+              fill
+              min={1}
+              max={100}
+              label='Hauteur'
+              defaultValue={crop.height}
+              onChange={(height) => this.onCropPropertyChange('height', height)}
+            />
+          </VerticalStack>
+        </HorizontalStack>
+      ),
+
+      !!croppedArtworkBase64?.length && (
+        <HorizontalStack key='card-preset' verticalItemAlignment='middle' gutter wrap>
+          <Button
+            color='neutral'
+            label='Appliquer'
+            onTap={() => (this.props.isRush ? this.setFullRushCardPreset() : this.setFullCardPreset())}
           />
-          <NumberInputField
-            fill
-            min={0}
-            max={100}
-            label='Y'
-            defaultValue={crop.y}
-            onChange={(y) => this.onCropPropertyChange('y', y)}
+          <Typography
+            variant='help'
+            contentType='text'
+            content='Appliquer les valeurs de cropping par défaut pour une carte entière'
           />
-        </VerticalStack>
+        </HorizontalStack>
+      ),
 
-        <VerticalStack gutter fill>
-          <NumberInputField
-            fill
-            min={1}
-            max={100}
-            label='Largeur'
-            defaultValue={crop.width}
-            onChange={(width) => this.onCropPropertyChange('width', width)}
-          />
-          <NumberInputField
-            fill
-            min={1}
-            max={100}
-            label='Hauteur'
-            defaultValue={crop.height}
-            onChange={(height) => this.onCropPropertyChange('height', height)}
-          />
-        </VerticalStack>
-      </HorizontalStack>,
-
-      <HorizontalStack key='card-preset' verticalItemAlignment='middle' gutter wrap>
-        <Button
-          color='neutral'
-          label='Appliquer'
-          onTap={() => (this.props.isRush ? this.setFullRushCardPreset() : this.setFullCardPreset())}
-        />
-        <Typography
-          variant='help'
-          contentType='text'
-          content='Appliquer les valeurs de cropping par défaut pour une carte entière'
-        />
-      </HorizontalStack>,
-
-      !this.props.isRush && (
+      !!croppedArtworkBase64?.length && !this.props.isRush && (
         <HorizontalStack key='pendulum-card-preset' verticalItemAlignment='middle' gutter wrap>
           <Button color='info' label='Appliquer' onTap={() => this.setFullPendulumCardPreset()} />
           <Typography

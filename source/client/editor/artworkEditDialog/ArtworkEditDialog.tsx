@@ -34,8 +34,8 @@ export class ArtworkEditDialog extends AbstractPopup<
 > {
   public static async show(options: IArtworkEditDialogProps) {
     options.title = options.title || "Modifier l'artwork";
-    options.height = options.height || '90%';
-    options.width = options.width || '90%';
+    options.height = options.height || '95%';
+    options.width = options.width || '85%';
     return await app.$popup.show<IArtworkEditDialogResult, IArtworkEditDialogProps>({
       type: 'artwork-edit',
       Component: ArtworkEditDialog,
@@ -57,9 +57,7 @@ export class ArtworkEditDialog extends AbstractPopup<
     await this.loadArtworkBase64(this.props.artworkURL, this.props.crop);
   }
 
-  private async loadArtworkBase64(artworkURL?: string, crop?: Crop) {
-    artworkURL = artworkURL || this.state.artworkURL;
-
+  private async loadArtworkBase64(artworkURL: string, crop?: Crop) {
     let artworkBase64 = '';
     if (app.$device.isDesktop) {
       try {

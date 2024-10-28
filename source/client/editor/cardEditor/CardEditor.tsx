@@ -1,15 +1,4 @@
-import { IArtworkEditDialogResult, ArtworkEditDialog } from 'client/editor/artworkEditDialog';
-import {
-  ICard,
-  TFrame,
-  TAttribute,
-  TStIcon,
-  TCardLanguage,
-  TNameStyle,
-  TLinkArrows,
-  TEdition,
-  TSticker,
-} from 'client/editor/card/card-interfaces';
+import { classNames, integer, isUndefined } from 'mn-tools';
 import {
   IContainerProps,
   IContainerState,
@@ -31,7 +20,18 @@ import {
   Image,
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
-import { classNames, integer, isEmpty, isUndefined } from 'mn-tools';
+import {
+  ICard,
+  TFrame,
+  TAttribute,
+  TStIcon,
+  TCardLanguage,
+  TNameStyle,
+  TLinkArrows,
+  TEdition,
+  TSticker,
+} from '../card';
+import { ArtworkEditDialog } from '../artworkEditDialog';
 
 interface ICardEditorProps extends IContainerProps {
   card: ICard;
@@ -50,7 +50,7 @@ interface ICardEditorState extends IContainerState {
 }
 
 export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
-  private debouncedOnCardChange: (card: ICard, delay?: number) => void;
+  private debounceTimeout: NodeJS.Timeout | null = null;
 
   public static get defaultProps(): Partial<ICardEditorProps> {
     return {
@@ -61,25 +61,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     };
   }
 
-  private flexibleDebounce(func: (card: ICard) => void): (card: ICard, delay?: number) => void {
-    let timeoutId: NodeJS.Timeout | null = null;
-
-    return (card: ICard, delay: number = 100) => {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
-
-      timeoutId = setTimeout(() => {
-        func(card);
-        timeoutId = null;
-      }, delay);
-    };
-  }
-
   public constructor(props: ICardEditorProps) {
     super(props);
-    this.debouncedOnCardChange = this.flexibleDebounce(this.props.onCardChange);
-
     this.state = {
       ...this.state,
       loaded: true,
@@ -118,200 +101,180 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props.card === this.state.card) return;
-    this.setState({ card: this.props.card });
-  }
 
-  private onTcgAtChange(tcgAt: boolean) {
-    this.state.card.tcgAt = tcgAt;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
-  }
-
-  private onLanguageChange(language: TCardLanguage) {
-    this.state.card.language = language;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
-  }
-
-  private onNoTextAttributeChange() {
-    this.state.card.noTextAttribute = !this.state.card.noTextAttribute;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
-  }
-
-  private onMultipleFramesChange() {
-    let card = this.state.card;
-    card.multipleFrames = !card.multipleFrames;
-    if (card.frames.length > 1) {
-      card.frames = [card.frames[0]];
-    }
-    this.setState({ card }, () => this.debouncedOnCardChange(this.state.card));
-  }
-
-  public onFrameChange(frame: TFrame) {
-    if (this.state.card.frames.includes(frame)) {
-      if (this.state.card.frames.length > 1) {
-        this.state.card.frames = this.state.card.frames.filter((f) => f !== frame);
-        this.forceUpdate();
-        this.debouncedOnCardChange(this.state.card);
+    // La carte a été mise à jour par le parent
+    if (this.props.card !== prevProps.card) {
+      // Annuler tout débounce en cours
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = null;
       }
+      this.setState({ card: this.props.card });
+    }
+    // La carte a été modifiée en interne
+    else if (this.state.card !== prevState.card) {
+      if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
+      this.debounceTimeout = setTimeout(() => {
+        this.props.onCardChange(this.state.card);
+        this.debounceTimeout = null;
+      }, 200);
+    }
+  }
+
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    if (!this.debounceTimeout) return;
+    clearTimeout(this.debounceTimeout);
+  }
+
+  private async onTcgAtChange(tcgAt: boolean) {
+    await this.setStateAsync({ card: { ...this.state.card, tcgAt } });
+  }
+
+  private async onLanguageChange(language: TCardLanguage) {
+    await this.setStateAsync({ card: { ...this.state.card, language } });
+  }
+
+  private async onNoTextAttributeChange() {
+    await this.setStateAsync({ card: { ...this.state.card, noTextAttribute: !this.state.card.noTextAttribute } });
+  }
+
+  private async onMultipleFramesChange() {
+    const newCard: ICard = { ...this.state.card, multipleFrames: !this.state.card.multipleFrames };
+    if (newCard.frames.length > 1) {
+      newCard.frames = [newCard.frames[0]];
+    }
+    await this.setStateAsync({ card: newCard });
+  }
+
+  private async onFrameChange(frame: TFrame) {
+    const newCard: ICard = { ...this.state.card };
+
+    if (newCard.frames.includes(frame)) {
+      if (newCard.frames.length > 1) {
+        newCard.frames = newCard.frames.filter((f) => f !== frame);
+        await this.setStateAsync({ card: newCard });
+      }
+      return;
+    }
+
+    if (newCard.multipleFrames) {
+      newCard.frames.push(frame);
     } else {
-      if (this.state.card.multipleFrames) {
-        this.state.card.frames.push(frame);
-      } else {
-        this.state.card.frames = [frame];
-      }
-
-      if (frame === 'spell') {
-        this.state.card.attribute = 'spell';
-      } else if (frame === 'trap') {
-        this.state.card.attribute = 'trap';
-      } else {
-        if (this.state.card.attribute === 'spell' || this.state.card.attribute === 'trap') {
-          this.state.card.attribute = 'dark';
-        }
-        if (this.state.card.level > 8 && frame === 'link') {
-          this.state.card.level = 8;
-        }
-      }
-
-      this.forceUpdate();
-      this.debouncedOnCardChange(this.state.card);
+      newCard.frames = [frame];
     }
+
+    if (frame === 'spell') {
+      newCard.attribute = 'spell';
+    } else if (frame === 'trap') {
+      newCard.attribute = 'trap';
+    } else {
+      if (newCard.attribute === 'spell' || newCard.attribute === 'trap') {
+        newCard.attribute = 'dark';
+      }
+      if (newCard.level > 8 && frame === 'link') {
+        newCard.level = 8;
+      }
+    }
+
+    await this.setStateAsync({ card: newCard });
   }
 
-  public onAttributeChange(attribute: TAttribute) {
-    this.state.card.attribute = attribute;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onAttributeChange(attribute: TAttribute) {
+    await this.setStateAsync({ card: { ...this.state.card, attribute } });
   }
 
-  private onNameStyleChange(nameStyle: TNameStyle) {
-    this.state.card.nameStyle = nameStyle;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onNameStyleChange(nameStyle: TNameStyle) {
+    await this.setStateAsync({ card: { ...this.state.card, nameStyle } });
   }
 
-  public onStTypeChange(stType: TStIcon) {
-    this.state.card.stType = stType;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onStTypeChange(stType: TStIcon) {
+    await this.setStateAsync({ card: { ...this.state.card, stType } });
   }
 
-  public onLevelChange(level: number, max: number) {
+  private async onLevelChange(level: number, max: number) {
+    if (isUndefined(level)) return;
     if (level > max) return;
-    this.state.card.level = level;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 200);
+    await this.setStateAsync({ card: { ...this.state.card, level } });
   }
 
-  public onAtkChange(atk: string) {
+  private async onAtkChange(atk: string) {
     if (isUndefined(atk) || atk.length > 6) return;
     if (atk && atk !== '?' && atk !== '∞' && !atk.startsWith('X') && integer(atk) === 0) atk = '0';
-    this.state.card.atk = atk;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 200);
+    await this.setStateAsync({ card: { ...this.state.card, atk } });
   }
 
-  public onDefChange(def: string) {
+  private async onDefChange(def: string) {
     if (isUndefined(def) || def.length > 6) return;
     if (def && def !== '?' && def !== '∞' && !def.startsWith('X') && integer(def) === 0) def = '0';
-    this.state.card.def = def;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 200);
+    await this.setStateAsync({ card: { ...this.state.card, def } });
   }
 
-  private onNameChange(name: string) {
+  private async onNameChange(name: string) {
     if (isUndefined(name)) return;
-    this.state.card.name = name;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 300);
+    await this.setStateAsync({ card: { ...this.state.card, name } });
   }
 
-  private onDescChange(description: string) {
+  private async onDescChange(description: string) {
     if (isUndefined(description)) return;
-    this.state.card.description = description;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 300);
+    await this.setStateAsync({ card: { ...this.state.card, description } });
   }
 
-  private onPendChange() {
-    this.state.card.pendulum = !this.state.card.pendulum;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onPendChange() {
+    await this.setStateAsync({ card: { ...this.state.card, pendulum: !this.state.card.pendulum } });
   }
 
-  private onArtworkPendChange() {
-    this.state.card.artwork.pendulum = !this.state.card.artwork.pendulum;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onArtworkPendChange() {
+    const newCard: ICard = { ...this.state.card };
+    newCard.artwork.pendulum = !newCard.artwork.pendulum;
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onPendLockChange() {
+  private async onPendLockChange() {
     const lockPend = !this.state.lockPend;
-    this.setState({ lockPend });
-    if (lockPend && this.state.card.scales.left !== this.state.card.scales.right) {
-      this.state.card.scales.right = this.state.card.scales.left;
-      this.forceUpdate();
-      this.debouncedOnCardChange(this.state.card);
+    if (!lockPend || this.state.card.scales.left === this.state.card.scales.right) {
+      return await this.setStateAsync({ lockPend });
     }
+
+    const newCard: ICard = { ...this.state.card };
+    newCard.scales.right = newCard.scales.left;
+    await this.setStateAsync({ card: newCard });
   }
 
-  public onLeftScaleChange(left: number) {
+  private async onLeftScaleChange(left: number) {
     if (isUndefined(left)) return;
-    this.state.card.scales.left = left;
-    if (this.state.lockPend) this.state.card.scales.right = left;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 200);
+    const newCard: ICard = { ...this.state.card };
+    newCard.scales.left = left;
+    if (this.state.lockPend) newCard.scales.right = left;
+    await this.setStateAsync({ card: newCard });
   }
 
-  public onRightScaleChange(right: number) {
+  private async onRightScaleChange(right: number) {
     if (isUndefined(right)) return;
-    this.state.card.scales.right = right;
-    if (this.state.lockPend) this.state.card.scales.left = right;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 200);
+    const newCard: ICard = { ...this.state.card };
+    newCard.scales.right = right;
+    if (this.state.lockPend) newCard.scales.left = right;
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onPendEffChange(pendEffect: string) {
+  private async onPendEffChange(pendEffect: string) {
     if (isUndefined(pendEffect)) return;
-    this.state.card.pendEffect = pendEffect;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 300);
+    await this.setStateAsync({ card: { ...this.state.card, pendEffect } });
   }
 
-  private onCardSetChange(cardSet: string) {
+  private async onCardSetChange(cardSet: string) {
     if (isUndefined(cardSet)) return;
-    this.state.card.cardSet = cardSet;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 300);
+    await this.setStateAsync({ card: { ...this.state.card, cardSet } });
   }
 
-  private onPasscodeChange(passcode: string) {
+  private async onPasscodeChange(passcode: string) {
     if (isUndefined(passcode)) return;
-    this.state.card.passcode = passcode;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card, 300);
+    await this.setStateAsync({ card: { ...this.state.card, passcode } });
   }
 
-  private onArtworkInfoChange(infos: IArtworkEditDialogResult) {
-    if (isEmpty(infos?.url)) return;
-    this.state.card.artwork = {
-      url: infos.url,
-      x: infos.crop?.x,
-      y: infos.crop?.y,
-      height: infos.crop?.height,
-      width: infos.crop?.width,
-      pendulum: this.state.card.artwork.pendulum,
-      keepRatio: infos.keepRatio,
-    };
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
-  }
-
-  private onArtworkURLChange(url: string) {
-    this.state.card.artwork = {
+  private async onArtworkURLChange(url: string) {
+    const newCard: ICard = { ...this.state.card };
+    newCard.artwork = {
       url,
       x: 0,
       y: 0,
@@ -320,82 +283,71 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
       pendulum: false,
       keepRatio: false,
     };
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onAbilityChange(newValue: string, iAbility: number) {
-    this.state.card.abilities[iAbility] = newValue;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onAbilityChange(newValue: string, iAbility: number) {
+    const newCard: ICard = { ...this.state.card };
+    newCard.abilities[iAbility] = newValue;
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onAddAbility() {
-    this.state.card.abilities.push('');
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onAddAbility() {
+    const newCard: ICard = { ...this.state.card };
+    newCard.abilities.push('');
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onRemoveAbility(index: number) {
-    this.state.card.abilities.splice(index, 1);
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onRemoveAbility(index: number) {
+    const newCard: ICard = { ...this.state.card };
+    newCard.abilities.splice(index, 1);
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onLinkArrowChange(arrow: TLinkArrows) {
-    this.state.card.linkArrows[arrow] = !this.state.card.linkArrows[arrow];
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onLinkArrowChange(arrow: TLinkArrows) {
+    const newCard: ICard = { ...this.state.card };
+    newCard.linkArrows[arrow] = !newCard.linkArrows[arrow];
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onMoveAbilityUp(index: number) {
+  private async onMoveAbilityUp(index: number) {
     if (index === 0) return;
+    const newCard: ICard = { ...this.state.card };
     const newIndex = index - 1;
-    let element = this.state.card.abilities[index];
-    this.state.card.abilities.splice(index, 1);
-    this.state.card.abilities.splice(newIndex, 0, element);
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    const element = newCard.abilities[index];
+    newCard.abilities.splice(index, 1);
+    newCard.abilities.splice(newIndex, 0, element);
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onMoveAbilityDown(index: number) {
+  private async onMoveAbilityDown(index: number) {
     if (index === this.state.card.abilities.length - 1) return;
+    const newCard: ICard = { ...this.state.card };
     const newIndex = index + 1;
-    let element = this.state.card.abilities[index];
-    this.state.card.abilities.splice(index, 1);
-    this.state.card.abilities.splice(newIndex, 0, element);
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+    const element = newCard.abilities[index];
+    newCard.abilities.splice(index, 1);
+    newCard.abilities.splice(newIndex, 0, element);
+    await this.setStateAsync({ card: newCard });
   }
 
-  private onEditionChange(edition: TEdition) {
-    this.state.card.edition = edition;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onEditionChange(edition: TEdition) {
+    await this.setStateAsync({ card: { ...this.state.card, edition } });
   }
 
-  private onStickerChange(sticker: TSticker) {
-    this.state.card.sticker = sticker;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onStickerChange(sticker: TSticker) {
+    await this.setStateAsync({ card: { ...this.state.card, sticker } });
   }
 
-  private onCopyrightChange() {
-    this.state.card.hasCopyright = !this.state.card.hasCopyright;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onCopyrightChange() {
+    await this.setStateAsync({ card: { ...this.state.card, hasCopyright: !this.state.card.hasCopyright } });
   }
 
-  private onOldCopyrightChange() {
-    this.state.card.oldCopyright = !this.state.card.oldCopyright;
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async onOldCopyrightChange() {
+    await this.setStateAsync({ card: { ...this.state.card, oldCopyright: !this.state.card.oldCopyright } });
   }
 
-  private generatePasscode() {
-    this.state.card.passcode = app.$card.generatePasscode();
-    this.forceUpdate();
-    this.debouncedOnCardChange(this.state.card);
+  private async generatePasscode() {
+    await this.setStateAsync({ card: { ...this.state.card, passcode: app.$card.generatePasscode() } });
   }
 
   private async showArtworkPopup() {
@@ -414,7 +366,19 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
       hasPendulumFrame: app.$card.hasPendulumFrame(this.state.card),
       hasLinkFrame: this.state.card.frames.includes('link'),
     });
-    if (result) this.onArtworkInfoChange(result);
+    if (!result) return;
+
+    const newCard: ICard = { ...this.state.card };
+    newCard.artwork = {
+      url: result.url,
+      x: result.crop?.x,
+      y: result.crop?.y,
+      height: result.crop?.height,
+      width: result.crop?.width,
+      pendulum: newCard.artwork.pendulum,
+      keepRatio: result.keepRatio,
+    };
+    await this.setStateAsync({ card: newCard });
   }
 
   private async renderCurrentCard() {
@@ -436,7 +400,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           disabled={this.state.rendering}
           label={this.state.rendering ? 'Rendu en cours...' : 'Faire le rendu'}
           color='neutral'
-          onTap={() => app.$errorManager.handlePromise(this.renderCurrentCard())}
+          onTap={() => this.renderCurrentCard()}
         />
         <Spacer />
         {!app.$card.tempCurrentCard && (
@@ -444,7 +408,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             disabled={this.state.rendering}
             label='Réinitialiser'
             color='negative'
-            onTap={() => app.$errorManager.handlePromise(app.$card.resetCurrentCard())}
+            onTap={() => app.$card.resetCurrentCard()}
           />
         )}
         <Spacer />
@@ -452,7 +416,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           disabled={this.state.rendering}
           label='Sauvegarder'
           color='positive'
-          onTap={() => app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())}
+          onTap={() => app.$card.saveCurrentOrTempToLocal()}
         />
       </HorizontalStack>,
 
