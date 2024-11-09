@@ -554,7 +554,6 @@ export class YuginewsService {
         atk: cardData.atk,
         def: cardData.def,
         pendulum: (cardData.abilities as string[])?.includes('Pendule'),
-        pendEffect: (cardData.pendulumEffects as string[])?.join(' '),
         scales: {
           left: scale,
           right: scale,
@@ -577,7 +576,8 @@ export class YuginewsService {
       } as ICard;
 
       app.$card.correct(card as ICard);
-      card.description = this.getDescription(card as ICard, cardData);
+      card.description = this.getDescription(cardData, app.$card.hasMaterials(card as ICard));
+      card.pendEffect = this.getPendEffect(cardData);
 
       if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
         card.edition = 'forbiddenDeck';
@@ -636,7 +636,7 @@ export class YuginewsService {
     }
   }
 
-  private getDescription(card: ICard, cardData: IYuginewsCardData): string {
+  private getDescription(cardData: IYuginewsCardData, hasMaterials: boolean): string {
     let description = '';
 
     if (cardData.normalText) {
@@ -653,7 +653,7 @@ export class YuginewsService {
           description = `${description}${lastHasLineBreak ? '' : ' '}${eff}`;
         }
 
-        if ((!i && app.$card.hasMaterials(card as ICard)) || (eff.startsWith('(') && !eff.startsWith('(Effet'))) {
+        if ((!i && hasMaterials) || (eff.startsWith('(') && !eff.startsWith('(Effet'))) {
           description = `${description}\n`;
           lastHasLineBreak = true;
         } else {
@@ -665,6 +665,34 @@ export class YuginewsService {
     }
 
     return description;
+  }
+
+  private getPendEffect(cardData: IYuginewsCardData): string {
+    if (!cardData.pendulumEffects?.length) return '';
+
+    let pendEffect = '';
+    let lastHasLineBreak = false;
+    let lastHasBulletPoint = false;
+    cardData.pendulumEffects.forEach((eff, i) => {
+      if (!i) {
+        pendEffect = eff;
+      } else if (!lastHasLineBreak && (lastHasBulletPoint || eff.startsWith('●'))) {
+        pendEffect = `${pendEffect}\n${eff}`;
+      } else {
+        pendEffect = `${pendEffect}${lastHasLineBreak ? '' : ' '}${eff}`;
+      }
+
+      if (eff.startsWith('(') && !eff.startsWith('(Effet')) {
+        pendEffect = `${pendEffect}\n`;
+        lastHasLineBreak = true;
+      } else {
+        lastHasLineBreak = false;
+      }
+
+      lastHasBulletPoint = eff.startsWith('●') || eff.includes('\n●');
+    });
+
+    return pendEffect;
   }
 
   private getFrame(cardData: IYuginewsCardData): TFrame[] {
