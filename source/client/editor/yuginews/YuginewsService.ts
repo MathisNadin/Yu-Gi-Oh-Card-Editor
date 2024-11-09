@@ -41,8 +41,6 @@ export interface IYuginewsCardData {
 }
 
 export class YuginewsService {
-  private basePostsRequestUrl = 'https://yuginews.fr/wp-json/wp/v2/posts';
-
   /**
    * Fetches and parses card data from a given page URL.
    * @param url - The page URL to fetch card data from.
@@ -90,7 +88,7 @@ export class YuginewsService {
    */
   private async fetchPageContent(slug: string): Promise<string | undefined> {
     const response = await app.$axios.get<{ content?: { rendered?: string } }[]>(
-      `${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`
+      `https://yuginews.fr/wp-json/wp/v2/posts?slug=${slug}&timestamp=${new Date().getTime()}`
     );
     return response[0]?.content?.rendered;
   }
