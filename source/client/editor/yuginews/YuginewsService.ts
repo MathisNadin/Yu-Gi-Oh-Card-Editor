@@ -1,5 +1,5 @@
-import { extend, integer, isDefined, isUndefined, uuid } from 'mn-tools';
 import { load } from 'cheerio';
+import { extend, integer, isDefined, isString, isUndefined, uuid } from 'mn-tools';
 import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from 'client/editor/card';
 
 export interface IYuginewsCardData {
@@ -37,294 +37,428 @@ export interface IYuginewsCardData {
   effectType?: string;
   effect?: string;
   choiceEffects?: string[] | undefined;
-  [key: string]: string | string[] | number | boolean | Date | undefined;
   isRush?: boolean;
 }
 
 export class YuginewsService {
-  private basePostsRequestUrl: string;
+  private basePostsRequestUrl = 'https://yuginews.fr/wp-json/wp/v2/posts';
 
-  public constructor() {
-    this.basePostsRequestUrl = 'https://yuginews.fr/wp-json/wp/v2/posts';
-  }
-
+  /**
+   * Fetches and parses card data from a given page URL.
+   * @param url - The page URL to fetch card data from.
+   * @returns An array of IYuginewsCardData objects.
+   */
   public async getPageCards(url: string): Promise<IYuginewsCardData[]> {
-    let cards: IYuginewsCardData[] = [];
-    const urlParts = url.split('/');
-    if (!urlParts?.length || urlParts.length < 2) return cards;
-
-    const slug = urlParts[urlParts.length - 2];
-    if (!slug) return cards;
+    // Extract the slug from the URL
+    const slug = this.getSlugFromUrl(url);
+    if (!slug) return [];
 
     const forceRush = slug.includes('cartes-rd-');
+
+    // Fetch page content
+    const renderedContent = await this.fetchPageContent(slug);
+    if (!renderedContent) return [];
+
+    // Extract setId and useFinalPictures
+    const setId = this.extractSetId(renderedContent);
+    const useFinalPictures = this.extractUseFinalPictures(renderedContent);
+
+    // Try to parse card data from the 'var cards = [...]' script
+    let cardsData = this.parseCardsScript(renderedContent, setId, useFinalPictures, forceRush);
+
+    // If parsing the script failed, parse the DOM
+    if (!cardsData) cardsData = this.parseDOM(renderedContent);
+
+    return cardsData || [];
+  }
+
+  /**
+   * Extracts the slug from a given URL.
+   * @param url - The URL to extract the slug from.
+   * @returns The extracted slug or undefined if not found.
+   */
+  private getSlugFromUrl(url: string): string | undefined {
+    const urlParts = url.split('/');
+    if (!urlParts?.length || urlParts.length < 2) return undefined;
+    return urlParts[urlParts.length - 2];
+  }
+
+  /**
+   * Fetches the page content using the slug.
+   * @param slug - The slug to use in the request.
+   * @returns The rendered content as a string or undefined if not found.
+   */
+  private async fetchPageContent(slug: string): Promise<string | undefined> {
+    const response = await app.$axios.get<{ content?: { rendered?: string } }[]>(
+      `${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`
+    );
+    return response[0]?.content?.rendered;
+  }
+
+  /**
+   * Extracts the setId from the content.
+   * @param content - The content to search in.
+   * @returns The extracted setId or undefined if not found.
+   */
+  private extractSetId(content: string): string | undefined {
+    const setIdMatches = content.match(/var setId = `([A-Za-z0-9]+)`;/);
+    return setIdMatches?.length ? setIdMatches[1] : undefined;
+  }
+
+  /**
+   * Extracts the useFinalPictures flag from the content.
+   * @param content - The content to search in.
+   * @returns True if useFinalPictures is 'true', otherwise false.
+   */
+  private extractUseFinalPictures(content: string): boolean {
+    const useFinalPicturesMatches = content.match(/var useFinalPictures = ([A-Za-z0-9]+);/);
+    return !!useFinalPicturesMatches?.length && useFinalPicturesMatches[1] === 'true';
+  }
+
+  /**
+   * Parses the card data from the 'var cards = [...]' script in the content.
+   * @param content - The content containing the script.
+   * @param setId - The setId to use if not present in card data.
+   * @param useFinalPictures - Flag indicating whether to use final pictures.
+   * @param forceRush - Flag indicating whether to force Rush card formatting.
+   * @returns An array of parsed IYuginewsCardData objects or undefined if no script is found.
+   */
+  private parseCardsScript(
+    content: string,
+    setId: string | undefined,
+    useFinalPictures: boolean,
+    forceRush: boolean
+  ): IYuginewsCardData[] | undefined {
+    const matches = content.match(/var cards = ([\s\S]*?];)/);
+    if (!matches?.length || !matches[1]) return undefined;
+
+    const extractedData = matches[1]
+      .replaceAll('<!-- [et_pb_line_break_holder] -->', '')
+      .replaceAll('<!–- [et_pb_br_holder] -–>', '\n')
+      .replaceAll('<!\u2013- [et_pb_br_holder] -\u2013>', '\n');
+    const cardsDataStrings = extractedData.split('},{');
+    if (!cardsDataStrings?.length) return [];
+
+    const cardsData: IYuginewsCardData[] = [];
     let foundRush = false;
+    for (const cardDataString of cardsDataStrings) {
+      const inputString = cardDataString
+        .replaceAll('[L]', '(L)')
+        .replaceAll('[R]', '(R)')
+        .replaceAll(/[ \t]+/g, ' ')
+        .replaceAll(/\n/g, '\\n');
 
-    let response = await app.$axios.get(`${this.basePostsRequestUrl}?slug=${slug}&timestamp=${new Date().getTime()}`);
-    const htmlContent = response[0]?.content?.rendered as string;
-    if (htmlContent) {
-      const renderedContent = response[0].content.rendered as string;
+      // Parse the card data
+      const parsedCardData = this.parseCardData(inputString);
+      if (!Object.keys(parsedCardData)?.length) continue;
 
-      let setIdMatches = renderedContent.match(/var setId = `([A-Za-z0-9]+)`;/);
-      let setId = setIdMatches?.length ? setIdMatches[1] : undefined;
+      // Process parsed card data
+      if (!parsedCardData.setId && setId) parsedCardData.setId = setId;
+      if (isDefined(parsedCardData.id) && !/\D/g.test(`${parsedCardData.id}`)) {
+        parsedCardData.id = integer(parsedCardData.id);
+      }
+      parsedCardData.uuid = uuid();
+      parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
 
-      let useFinalPictures = false;
-      let useFinalPicturesMatches = renderedContent.match(/var useFinalPictures = ([A-Za-z0-9]+);/);
-      if (useFinalPicturesMatches?.length && useFinalPicturesMatches[1] && useFinalPicturesMatches[1] === 'true') {
-        useFinalPictures = true;
+      parsedCardData.isRush = forceRush || foundRush || 'effectType' in parsedCardData;
+
+      // Construct picture URL
+      let picture: string;
+      if (parsedCardData.picture) {
+        picture = parsedCardData.picture;
+      } else {
+        picture = [
+          this.formatPictureString(parsedCardData.nameEN || ''),
+          '-',
+          parsedCardData.isRush ? 'RD' : '',
+          parsedCardData.setId,
+          '-JP',
+          useFinalPictures ? '' : '-OP',
+        ].join('');
       }
 
-      const matches = renderedContent.match(/var cards = ([\s\S]*?];)/);
-      if (matches?.length && matches[1]) {
-        const extractedData = matches[1]
-          .replaceAll('<!-- [et_pb_line_break_holder] -->', '')
-          .replaceAll('<!–- [et_pb_br_holder] -–>', '\n')
-          .replaceAll('<!\u2013- [et_pb_br_holder] -\u2013>', '\n');
-        let cardsData = extractedData.split('},{');
+      parsedCardData.artworkUrl = `https://yuginews.fr/wp-content/uploads/${parsedCardData.pictureDate}/${picture}.png`;
 
-        if (cardsData?.length) {
-          for (let cardData of cardsData) {
-            let inputString = cardData
-              .replaceAll('[L]', '(L)')
-              .replaceAll('[R]', '(R)')
-              .replaceAll(/[ \t]+/g, ' ')
-              .replaceAll(/\n/g, '\\n');
-
-            // eslint-disable-next-line no-useless-escape
-            const regex = /"([^"]+)":\s*("[^"]+"|\[[^\]]+\]|\`[^`]+\`)/g;
-            const parsedCardData: IYuginewsCardData = {};
-
-            let match: RegExpExecArray | null;
-            // eslint-disable-next-line no-cond-assign
-            while ((match = regex.exec(inputString)) !== null) {
-              const key = match[1];
-              let value: string | string[] = match[2];
-
-              // Si la valeur est un tableau encadré par des crochets, l'analyser en tant que tableau
-              if (value.startsWith('[') && value.endsWith(']')) {
-                let cleanValue = value
-                  .replaceAll(', ]', ']')
-                  .replaceAll('"', '\\"')
-                  .replaceAll('`', '"')
-                  .replaceAll('(L)', '[L]')
-                  .replaceAll('(R)', '[R]');
-                value = JSON.parse(cleanValue) as string[];
-              }
-
-              if (typeof value === 'string') {
-                value = value.replaceAll('`', '');
-              }
-              parsedCardData[key] = value;
-            }
-            if (Object.keys(parsedCardData)?.length) {
-              if (!parsedCardData.setId && setId) parsedCardData.setId = setId;
-              if (isDefined(parsedCardData.id) && !/\D/g.test(`${parsedCardData.id}`)) {
-                parsedCardData.id = integer(parsedCardData.id);
-              }
-              parsedCardData.uuid = uuid();
-              parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
-
-              // parsedCardData.isRush = 'effectType' in parsedCardData || 'normalText' in parsedCardData;
-              parsedCardData.isRush = forceRush || foundRush || 'effectType' in parsedCardData;
-              let picture =
-                parsedCardData.picture ??
-                `${this.formatPictureString(parsedCardData.nameEN || '')}-${parsedCardData.isRush ? 'RD' : ''}${parsedCardData.setId ?? setId}-JP${useFinalPictures ? '' : '-OP'}`;
-              if (picture)
-                parsedCardData.artworkUrl = `https://yuginews.fr/wp-content/uploads/${parsedCardData.pictureDate}/${picture}.png`;
-
-              if (parsedCardData.isRush) {
-                if (!forceRush && !foundRush) {
-                  foundRush = true;
-                  for (const card of cards) {
-                    card.isRush = true;
-                    if (card.nameFR) card.nameFR = card.nameFR.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                    if (card.nameEN) card.nameEN = card.nameEN.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                    if (card.nameJP) card.nameJP = card.nameJP.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                    if (card.normalText)
-                      card.normalText = card.normalText.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                    if (card.condition)
-                      card.condition = card.condition.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                    if (card.effect) card.effect = card.effect.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                    if (card.setId) card.setId = `RD/${card.setId}`;
-                  }
-                }
-                if (parsedCardData.nameFR)
-                  parsedCardData.nameFR = parsedCardData.nameFR.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                if (parsedCardData.nameEN)
-                  parsedCardData.nameEN = parsedCardData.nameEN.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                if (parsedCardData.nameJP)
-                  parsedCardData.nameJP = parsedCardData.nameJP.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                if (parsedCardData.normalText)
-                  parsedCardData.normalText = parsedCardData.normalText
-                    .replaceAll('(L)', '[L]')
-                    .replaceAll('(R)', '[R]');
-                if (parsedCardData.condition)
-                  parsedCardData.condition = parsedCardData.condition.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                if (parsedCardData.effect)
-                  parsedCardData.effect = parsedCardData.effect.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
-                if (parsedCardData.setId) parsedCardData.setId = `RD/${parsedCardData.setId}`;
-              }
-
-              cards.push(parsedCardData);
-            }
+      // Handle Rush specific modifications
+      if (parsedCardData.isRush) {
+        if (!forceRush && !foundRush) {
+          foundRush = true;
+          // Update existing cards in cardsData
+          for (const card of cardsData) {
+            card.isRush = true;
+            this.updateCardForRush(card);
           }
         }
-      } else {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const sections = doc.querySelectorAll(
-          'section.elementor-section.elementor-inner-section.elementor-element.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default'
-        );
-        sections.forEach((section) => {
-          let artworkUrl = section.querySelector('img')?.src;
-          let subSections = section.querySelectorAll(
-            'div.elementor-column.elementor-col-50.elementor-inner-column.elementor-element'
-          );
-          subSections.forEach((subSection, index) => {
-            if (!index) return;
-            let subSubSections = subSection.querySelectorAll(
-              'div.elementor-element.elementor-widget.elementor-widget-text-editor'
-            );
-            const parsedCardData: IYuginewsCardData = {};
-            subSubSections.forEach((s, sIndex) => {
-              const $ = load(s.innerHTML);
-              let lines: string[];
-              if (!sIndex) {
-                let ps = $('p');
-                ps.each((i) => {
-                  lines = ps.eq(i).html()?.split('<br>') as string[];
-                  if (lines?.length) {
-                    lines.forEach((line, iLine) => {
-                      if (!i) {
-                        if (iLine) {
-                          const setIdMatch = line.match(/^([^-]+)/);
-                          const idMatch = line.match(/-(.*?)\s*\(JAP/);
-                          const nameENMatch = line.match(/EN\s*:\s*<em>(.*?)<\/em>/);
+        this.updateCardForRush(parsedCardData);
+      }
 
-                          if (setIdMatch && idMatch) {
-                            parsedCardData.setId = setIdMatch[1].replaceAll('&nbsp;', ' ').trim();
-                            if (parsedCardData.setId && parsedCardData.setId.startsWith('RD/')) {
-                              parsedCardData.isRush = true;
-                            }
-                            parsedCardData.id = integer(
-                              idMatch[1].slice(-3).replace(/\D/g, '').replaceAll('&nbsp;', ' ').trim()
-                            );
-                            parsedCardData.nameEN = nameENMatch ? nameENMatch[1].replaceAll('&nbsp;', ' ').trim() : '';
-                          }
-                        } else {
-                          parsedCardData.nameFR = line
-                            .replaceAll('<span>', '')
-                            .replaceAll('</span>', '')
-                            .replaceAll('<strong>', '')
-                            .replaceAll('</strong>', '')
-                            .replaceAll('<b>', '')
-                            .replaceAll('</b>', '')
-                            .replaceAll('&nbsp;', ' ')
-                            .trim();
-                        }
-                      } else if (line.includes('Flèche')) {
-                        parsedCardData.linkArrows = line
-                          .replaceAll('&nbsp;', ' ')
-                          .replaceAll('Flèche Lien : ', '')
-                          .replaceAll('Flèches Lien : ', '')
-                          .trim()
-                          .split(' / ');
-                      } else if (line.includes(' / ')) {
-                        parsedCardData.abilities = line.split(' / ');
-                      } else if (line.includes('LEGEND')) {
-                        parsedCardData.legend = true;
-                      } else if (line.includes('Niveau')) {
-                        parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Niveau ', '').trim();
-                      } else if (line.includes('Rang')) {
-                        parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Rang ', '').trim();
-                      } else if (line.includes('Link-')) {
-                        parsedCardData.level = line.replaceAll('&nbsp;', ' ').replaceAll('Link-', '').trim();
-                      } else if (line.includes('ATK MAXIMUM')) {
-                        parsedCardData.atkMAX = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK MAXIMUM', '').trim();
-                      } else if (line.includes('ATK')) {
-                        parsedCardData.atk = line.replaceAll('&nbsp;', ' ').replaceAll(' ATK', '').trim();
-                      } else if (line.includes('DEF')) {
-                        parsedCardData.def = line.replaceAll('&nbsp;', ' ').replaceAll(' DEF', '').trim();
-                      } else if (line.includes('Échelle')) {
-                        parsedCardData.scale = line
-                          .replaceAll('&nbsp;', ' ')
-                          .replaceAll('Échelle Pendule : ', '')
-                          .trim();
-                      } else if (line.includes('Magie')) {
-                        parsedCardData.cardType = '2';
-                        parsedCardData.stType = this.getStTypeFromLine(line);
-                      } else if (line.includes('Piège')) {
-                        parsedCardData.cardType = '3';
-                        parsedCardData.stType = this.getStTypeFromLine(line);
-                      } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line.replaceAll('&nbsp;', ' ').trim())) {
-                        parsedCardData.attribute = this.getAttributeFromLine(line);
-                      }
-                    });
-                  }
-                });
-              } else {
-                let ps = $('p');
-                let effects: string[] = [];
-                ps.each((i) => {
-                  effects.push(ps.eq(i).text());
-                });
-                if (effects.length) {
-                  if (parsedCardData.isRush) {
-                    for (let effect of effects) {
-                      if (effect.startsWith('[CONDITION]')) {
-                        parsedCardData.condition = effect.replaceAll('&nbsp;', ' ').replace('[CONDITION] ', '');
-                      } else if (effect.startsWith('[EFFET]')) {
-                        parsedCardData.effectType = '1';
-                        parsedCardData.effect = effect.replaceAll('&nbsp;', ' ').replace('[EFFET] ', '');
-                      } else if (effect.startsWith('[EFFET CONTINU]')) {
-                        parsedCardData.effectType = '2';
-                        parsedCardData.condition = effect.replaceAll('&nbsp;', ' ').replace('[EFFET CONTINU] ', '');
-                      } else if (effect.startsWith('[EFFET MULTI-CHOIX]')) {
-                        parsedCardData.effectType = '3';
-                        parsedCardData.choiceEffects = [
-                          effect
-                            .replaceAll('&nbsp;', ' ')
-                            .replace('[EFFET MULTI-CHOIX] ', '')
-                            .replace('● ', '')
-                            .replace('• ', ''),
-                        ];
-                      } else if (effect.startsWith('●') || (effect.startsWith('•') && parsedCardData.choiceEffects)) {
-                        parsedCardData.choiceEffects?.push(
-                          effect.replaceAll('&nbsp;', ' ').replace('● ', '').replace('• ', '')
-                        );
-                      } else if (parsedCardData.abilities && parsedCardData.abilities.includes('Normal')) {
-                        parsedCardData.normalText = effect.replaceAll('&nbsp;', ' ');
-                      } else {
-                        if (!parsedCardData.otherEffectTexts) parsedCardData.otherEffectTexts = [];
-                        parsedCardData.otherEffectTexts?.push(effect.replaceAll('&nbsp;', ' '));
-                      }
-                    }
-                  } else if (effects[0].startsWith('Effet Pendule :')) {
-                    parsedCardData.pendulumEffects = effects.slice(1);
-                  } else if (effects[0].startsWith('Effet de Monstre :')) {
-                    parsedCardData.effects = effects.slice(1);
-                  } else {
-                    parsedCardData.effects = effects;
-                  }
-                }
-              }
-            });
+      cardsData.push(parsedCardData);
+    }
 
-            if (Object.keys(parsedCardData)?.length) {
-              if (!parsedCardData.cardType) parsedCardData.cardType = '1';
-              parsedCardData.uuid = uuid();
-              if (artworkUrl) parsedCardData.artworkUrl = artworkUrl;
-              if (!parsedCardData.setId) parsedCardData.setId = '';
-              if (isUndefined(parsedCardData.id)) parsedCardData.id = '';
-              cards.push(parsedCardData);
-            }
-          });
-        });
+    return cardsData;
+  }
+
+  /**
+   * Parses individual card data from a string.
+   * @param inputString - The string containing card data.
+   * @returns An object representing the parsed card data.
+   */
+  private parseCardData(inputString: string): IYuginewsCardData {
+    const regex = /"([^"]+)":\s*("[^"]+"|\[[^\]]+\]|\`[^`]+\`)/g;
+    const parsedCardData: IYuginewsCardData = {};
+
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(inputString)) !== null) {
+      const key = match[1] as keyof IYuginewsCardData;
+      let value: string | string[] = match[2];
+
+      // If the value is an array enclosed in brackets, parse it as an array
+      if (value.startsWith('[') && value.endsWith(']')) {
+        const cleanValue = value
+          .replaceAll(', ]', ']')
+          .replaceAll('"', '\\"')
+          .replaceAll('`', '"')
+          .replaceAll('(L)', '[L]')
+          .replaceAll('(R)', '[R]');
+        value = JSON.parse(cleanValue) as string[];
+      }
+
+      if (isString(value)) value = value.replaceAll('`', '');
+
+      // Just for typing reasons
+      parsedCardData[key as 'effect'] = value as string;
+    }
+    return parsedCardData;
+  }
+
+  /**
+   * Updates card data for Rush formatting.
+   * @param card - The card data to update.
+   */
+  private updateCardForRush(card: IYuginewsCardData) {
+    if (card.setId) card.setId = `RD/${card.setId}`;
+
+    function renormalizeText(text: string): string {
+      if (!text) return text;
+      return text.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+    }
+
+    if (card.nameFR) card.nameFR = renormalizeText(card.nameFR);
+    if (card.nameEN) card.nameEN = renormalizeText(card.nameEN);
+    if (card.nameJP) card.nameJP = renormalizeText(card.nameJP);
+
+    if (card.normalText) card.normalText = renormalizeText(card.normalText);
+
+    if (card.otherEffectTexts?.length) {
+      for (let effect of card.otherEffectTexts) {
+        effect = renormalizeText(effect);
       }
     }
 
-    return cards;
+    if (card.condition) card.condition = renormalizeText(card.condition);
+    if (card.effect) card.effect = renormalizeText(card.effect);
+
+    if (card.choiceEffects?.length) {
+      for (let effect of card.choiceEffects) {
+        effect = renormalizeText(effect);
+      }
+    }
   }
 
+  /**
+   * Parses the DOM to extract card data when the script is not found.
+   * @param htmlContent - The HTML content to parse.
+   * @returns An array of parsed IYuginewsCardData objects.
+   */
+  private parseDOM(htmlContent: string): IYuginewsCardData[] {
+    const cardsData: IYuginewsCardData[] = [];
+    const doc = new DOMParser().parseFromString(htmlContent, 'text/html');
+    const sections = doc.querySelectorAll(
+      'section.elementor-section.elementor-inner-section.elementor-element.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default'
+    );
+
+    sections.forEach((section) => {
+      const artworkUrl = section.querySelector('img')?.src;
+      const subSections = section.querySelectorAll(
+        'div.elementor-column.elementor-col-50.elementor-inner-column.elementor-element'
+      );
+      subSections.forEach((subSection, index) => {
+        if (!index) return;
+
+        const subSubSections = subSection.querySelectorAll(
+          'div.elementor-element.elementor-widget.elementor-widget-text-editor'
+        );
+        if (!subSubSections?.length) return;
+
+        const parsedCardData: IYuginewsCardData = {};
+        subSubSections.forEach((s, sIndex) => {
+          const paragraphs = load(s.innerHTML)('p');
+          if (!paragraphs.length) return;
+
+          // If first section, parse card info lines
+          if (!sIndex) {
+            paragraphs.each((i) => {
+              const infoLines = paragraphs.eq(i).html()?.split('<br>');
+              if (infoLines?.length) {
+                // Parse card names lines
+                if (!i) this.parseDOMNamesLines(infoLines, parsedCardData);
+                // Parse card information lines
+                else this.parseDOMInfoLines(infoLines, parsedCardData);
+              }
+            });
+          }
+          // Else, parse card effects
+          else {
+            const effects: string[] = [];
+            paragraphs.each((i) => {
+              effects.push(paragraphs.eq(i).text());
+            });
+            if (effects.length) this.parseDOMEffects(effects, parsedCardData);
+          }
+        });
+        if (!Object.keys(parsedCardData)?.length) return;
+
+        parsedCardData.uuid = uuid();
+        if (!parsedCardData.cardType) parsedCardData.cardType = '1';
+        if (artworkUrl) parsedCardData.artworkUrl = artworkUrl;
+        if (!parsedCardData.setId) parsedCardData.setId = '';
+        if (isUndefined(parsedCardData.id)) parsedCardData.id = '';
+        cardsData.push(parsedCardData);
+      });
+    });
+
+    return cardsData;
+  }
+
+  /**
+   * Parses lines of card names from the DOM.
+   * @param nameLines - The lines to parse.
+   * @param parsedCardData - The card data object to populate.
+   */
+  private parseDOMNamesLines(namesLines: string[], parsedCardData: IYuginewsCardData) {
+    namesLines.forEach((line, iLine) => {
+      // Replace &nbsp; with spaces
+      line = line.replaceAll('&nbsp;', ' ').trim();
+
+      // First line, nameFR
+      if (!iLine) {
+        parsedCardData.nameFR = line
+          .replaceAll('<span>', '')
+          .replaceAll('</span>', '')
+          .replaceAll('<strong>', '')
+          .replaceAll('</strong>', '')
+          .replaceAll('<b>', '')
+          .replaceAll('</b>', '')
+          .trim();
+      } else {
+        // Other lines
+        const setIdMatch = line.match(/^([^-]+)/);
+        const idMatch = line.match(/-(.*?)\s*\(JAP/);
+        const nameENMatch = line.match(/EN\s*:\s*<em>(.*?)<\/em>/);
+
+        if (setIdMatch && idMatch) {
+          parsedCardData.setId = setIdMatch[1].trim();
+          if (parsedCardData.setId?.startsWith('RD/')) parsedCardData.isRush = true;
+          parsedCardData.id = integer(idMatch[1].slice(-3).replace(/\D/g, '').trim());
+          parsedCardData.nameEN = nameENMatch?.length && nameENMatch[1] ? nameENMatch[1].trim() : '';
+        }
+      }
+    });
+  }
+
+  /**
+   * Parses lines of card information from the DOM.
+   * @param infoLines - The lines to parse.
+   * @param parsedCardData - The card data object to populate.
+   */
+  private parseDOMInfoLines(infoLines: string[], parsedCardData: IYuginewsCardData) {
+    for (let line of infoLines) {
+      // Replace &nbsp; with spaces
+      line = line.replaceAll('&nbsp;', ' ').trim();
+
+      if (line.includes('Flèche')) {
+        parsedCardData.linkArrows = line
+          .replace('Flèche Lien : ', '')
+          .replace('Flèches Lien : ', '')
+          .trim()
+          .split(' / ');
+      } else if (line.includes(' / ')) {
+        parsedCardData.abilities = line.split(' / ');
+      } else if (line.includes('Niveau')) {
+        parsedCardData.level = line.replace('Niveau ', '').trim();
+      } else if (line.includes('Rang')) {
+        parsedCardData.level = line.replace('Rang ', '').trim();
+      } else if (line.includes('Link-')) {
+        parsedCardData.level = line.replace('Link-', '').trim();
+      } else if (line.includes('ATK MAXIMUM')) {
+        parsedCardData.atkMAX = line.replace(' ATK MAXIMUM', '').trim();
+      } else if (line.includes('ATK')) {
+        parsedCardData.atk = line.replace(' ATK', '').trim();
+      } else if (line.includes('DEF')) {
+        parsedCardData.def = line.replace(' DEF', '').trim();
+      } else if (line.includes('Échelle')) {
+        parsedCardData.scale = line.replace('Échelle Pendule : ', '').trim();
+      } else if (line.includes('Magie')) {
+        parsedCardData.cardType = '2';
+        parsedCardData.stType = this.getStTypeFromLine(line);
+      } else if (line.includes('Piège')) {
+        parsedCardData.cardType = '3';
+        parsedCardData.stType = this.getStTypeFromLine(line);
+      } else if (line.includes('LEGEND') || line.includes('LÉGENDE')) {
+        parsedCardData.legend = true;
+      } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line)) {
+        parsedCardData.attribute = this.getAttributeFromLine(line);
+      }
+    }
+  }
+
+  /**
+   * Parses card effects from the DOM.
+   * @param effects - The effects to parse.
+   * @param parsedCardData - The card data object to populate.
+   */
+  private parseDOMEffects(effects: string[], parsedCardData: IYuginewsCardData) {
+    // Replace &nbsp; with spaces
+    for (let effect of effects) effect = effect.replaceAll('&nbsp;', ' ').trim();
+
+    if (parsedCardData.isRush) {
+      for (const effect of effects) {
+        if (effect.startsWith('[CONDITION]')) {
+          parsedCardData.condition = effect.replace('[CONDITION] ', '');
+        } else if (effect.startsWith('[EFFET]')) {
+          parsedCardData.effectType = '1';
+          parsedCardData.effect = effect.replace('[EFFET] ', '');
+        } else if (effect.startsWith('[EFFET CONTINU]')) {
+          parsedCardData.effectType = '2';
+          parsedCardData.condition = effect.replace('[EFFET CONTINU] ', '');
+        } else if (effect.startsWith('[EFFET MULTI-CHOIX]')) {
+          parsedCardData.effectType = '3';
+          parsedCardData.choiceEffects = [
+            effect.replace('[EFFET MULTI-CHOIX] ', '').replace('● ', '').replace('• ', ''),
+          ];
+        } else if ((effect.startsWith('●') || effect.startsWith('•')) && parsedCardData.choiceEffects) {
+          parsedCardData.choiceEffects.push(effect.replace('● ', '').replace('• ', ''));
+        } else if (parsedCardData.abilities?.includes('Normal')) {
+          parsedCardData.normalText = effect;
+        } else {
+          if (!parsedCardData.otherEffectTexts) parsedCardData.otherEffectTexts = [effect];
+          else parsedCardData.otherEffectTexts.push(effect);
+        }
+      }
+    } else if (effects[0].startsWith('Effet Pendule :')) {
+      parsedCardData.pendulumEffects = effects.slice(1);
+    } else if (effects[0].startsWith('Effet de Monstre :')) {
+      parsedCardData.effects = effects.slice(1);
+    } else {
+      parsedCardData.effects = effects;
+    }
+  }
+
+  /**
+   * Formats a string for use in picture URLs.
+   * @param str - The string to format.
+   * @returns The formatted string.
+   */
   private formatPictureString(str: string) {
     if (!str) return str;
     // Remplacer les caractères non autorisés dans une URL ou un nom de fichier
