@@ -25,18 +25,18 @@ export interface IYuginewsCardData {
   atk?: string;
   def?: string;
   scale?: string;
-  linkArrows?: string[] | undefined;
+  linkArrows?: string[];
   normalText?: string;
-  effects?: string[] | undefined;
-  pendulumEffects?: string[] | undefined;
+  effects?: string[];
+  pendulumEffects?: string[];
   note?: string;
   tradNote?: string;
-  legend?: boolean | undefined;
-  otherEffectTexts?: string[] | undefined;
+  legend?: boolean;
+  otherEffectTexts?: string[];
   condition?: string;
   effectType?: string;
   effect?: string;
-  choiceEffects?: string[] | undefined;
+  choiceEffects?: string[];
   isRush?: boolean;
 }
 
