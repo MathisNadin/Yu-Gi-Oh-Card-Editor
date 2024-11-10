@@ -6,7 +6,7 @@ export interface IReplaceMatrix {
   newString: string;
 }
 
-interface YugipediaGetCardImgApiResponse {
+interface IYugipediaGetCardImgApiResponse {
   batchcomplete: string;
   query: {
     pages: {
@@ -25,7 +25,7 @@ interface YugipediaGetCardImgApiResponse {
   };
 }
 
-interface YugipediaGetCardPageImgApiResponse {
+interface IYugipediaGetCardPageImgApiResponse {
   parse: {
     pageid: number;
     title: string;
@@ -33,7 +33,7 @@ interface YugipediaGetCardPageImgApiResponse {
   };
 }
 
-interface YugipediaGetCardPageApiResponse {
+interface IYugipediaGetCardPageApiResponse {
   batchcomplete: string;
   query: {
     normalized: {
@@ -101,7 +101,7 @@ export class MediaWikiService {
       .replaceAll('%7D', '}')
       .replaceAll('%7E', '~');
 
-    let data: YugipediaGetCardPageApiResponse = await app.$axios.get(this.baseApiUrl, {
+    const data = await app.$axios.get<IYugipediaGetCardPageApiResponse>(this.baseApiUrl, {
       params: {
         action: 'query',
         prop: 'revisions',
@@ -112,13 +112,13 @@ export class MediaWikiService {
     });
     if (!data?.query?.pages) return card;
 
-    let pageKeys = Object.keys(data.query.pages) as unknown as number[];
+    const pageKeys = Object.keys(data.query.pages).map(Number);
     if (!pageKeys?.length) return card;
 
-    let pageInfo = data.query?.pages[pageKeys[0]];
+    const pageInfo = data.query?.pages[pageKeys[0]];
     if (!pageInfo?.revisions?.length) return card;
 
-    let wikitext = pageInfo.revisions[0]['*'];
+    const wikitext = pageInfo.revisions[0]['*'];
     if (!wikitext) return card;
 
     return await this.wikitextToCard(
@@ -470,7 +470,7 @@ export class MediaWikiService {
       } else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
         let artworkName = this.getArtworkName(enName);
         if (artworkName) {
-          let imgData: YugipediaGetCardPageImgApiResponse = await app.$axios.get(this.baseApiUrl, {
+          const imgData = await app.$axios.get<IYugipediaGetCardPageImgApiResponse>(this.baseApiUrl, {
             params: {
               action: 'parse',
               page: titles,
@@ -482,7 +482,7 @@ export class MediaWikiService {
           if (imgData?.parse?.images?.length) {
             let fileName = imgData.parse.images.find((image) => image.includes(artworkName));
             if (fileName) {
-              let artworkData: YugipediaGetCardImgApiResponse = await app.$axios.get(this.baseApiUrl, {
+              const artworkData = await app.$axios.get<IYugipediaGetCardImgApiResponse>(this.baseApiUrl, {
                 params: {
                   action: 'query',
                   titles: `File:${fileName}`,
