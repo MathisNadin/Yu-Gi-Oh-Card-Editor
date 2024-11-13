@@ -1,17 +1,14 @@
-import { CardBuilder, RushCardBuilder } from 'client/editor/cardBuilder';
-import { ICardListener } from 'client/editor/card/CardService';
-import { ICard } from 'client/editor/card/card-interfaces';
+import { createRef } from 'react';
 import { toPng } from 'mn-html-to-image';
 import { IContainableProps, IContainableState, Containable, Container, Spinner } from 'mn-toolkit';
-import { classNames } from 'mn-tools';
-import { createRef } from 'react';
+import { CardBuilder, RushCardBuilder } from 'client/editor';
+import { ICard, ICardListener } from 'client/editor/card';
 
 interface IRushCardPreviewProps extends IContainableProps {
   card: ICard;
 }
 
 interface IRushCardPreviewState extends IContainableState {
-  hideSpinner: boolean;
   renderCard?: ICard;
 }
 
@@ -20,6 +17,8 @@ export class RushCardPreview
   implements Partial<ICardListener>
 {
   private renderRef = createRef<HTMLImageElement>();
+  private spinnerRef = createRef<Spinner>();
+  private hideSpinner = false;
 
   public constructor(props: IRushCardPreviewProps) {
     super(props);
@@ -27,7 +26,6 @@ export class RushCardPreview
     this.state = {
       ...this.state,
       loaded: true,
-      hideSpinner: false,
       renderCard: undefined,
     };
   }
@@ -46,15 +44,22 @@ export class RushCardPreview
   }
 
   private async onCardReady(element: HTMLDivElement) {
-    if (!this.renderRef.current) return this.setState({ hideSpinner: true });
+    if (!this.renderRef.current) return this.toggleSpinner(true);
     try {
       const dataUrl = await toPng(element);
-      this.renderRef.current.src = dataUrl;
+      if (this.renderRef.current) this.renderRef.current.src = dataUrl;
     } catch (error) {
       console.error(error);
     } finally {
-      this.setState({ hideSpinner: true });
+      this.toggleSpinner(true);
     }
+  }
+
+  private toggleSpinner(hideSpinner: boolean) {
+    if (!this.spinnerRef.current?.base?.current || this.hideSpinner === hideSpinner) return;
+    this.hideSpinner = hideSpinner;
+    if (hideSpinner) this.spinnerRef.current.base.current.classList.add('hidden');
+    else this.spinnerRef.current.base.current.classList.remove('hidden');
   }
 
   public override render() {
@@ -80,7 +85,7 @@ export class RushCardPreview
 
         <RushCardBuilder
           card={this.props.card}
-          onUpdating={() => this.state.hideSpinner && this.setState({ hideSpinner: false })}
+          onUpdating={() => this.hideSpinner && this.toggleSpinner(false)}
           onCardReady={(element) => app.$errorManager.handlePromise(this.onCardReady(element))}
           id='main-card-builder'
         />
@@ -94,7 +99,7 @@ export class RushCardPreview
           alt='cardPreview'
         />
 
-        <Spinner className={classNames('card-preview-img', 'rendering', { hidden: this.state.hideSpinner })} />
+        <Spinner ref={this.spinnerRef} className='card-preview-img rendering' />
       </Container>
     );
   }

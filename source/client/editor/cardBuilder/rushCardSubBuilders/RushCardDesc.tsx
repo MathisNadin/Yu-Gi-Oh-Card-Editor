@@ -7,27 +7,34 @@ import {
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { createRef } from 'react';
+import { createRef, Fragment } from 'react';
 
 interface IRushCardDescProps extends IToolkitComponentProps {
   card: ICard;
-  description: JSXElementChild[][];
   includesNormal: boolean;
   onReady: () => void;
 }
 
 interface IRushCardDescState extends IToolkitComponentState {
-  description: JSXElementChild[][];
+  description: string;
+  rushTextMode: TRushTextMode;
+  rushOtherEffects: string;
+  rushCondition: string;
+  rushEffect: string;
+  rushEffectType: TRushEffectType;
+  rushChoiceEffects: string[];
   tcgAt: boolean;
   includesNormal: boolean;
   checkState: number;
   adjustState: 'unknown' | 'tooBig' | 'tooSmall';
+  splitDesc: JSXElementChild[][];
   fontSize: number;
   lineHeight: number;
 }
 
 export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCardDescState> {
   public ref = createRef<HTMLDivElement>();
+  private checkReadyProcessId = 0;
 
   public constructor(props: IRushCardDescProps) {
     super(props);
@@ -42,11 +49,18 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       props.card.rushChoiceEffects
     );
     this.state = {
-      description: [...props.description],
+      description: props.card.description,
+      rushTextMode: props.card.rushTextMode,
+      rushOtherEffects: props.card.rushOtherEffects,
+      rushCondition: props.card.rushCondition,
+      rushEffect: props.card.rushEffect,
+      rushEffectType: props.card.rushEffectType,
+      rushChoiceEffects: props.card.rushChoiceEffects,
       tcgAt: props.card.tcgAt,
       includesNormal: props.includesNormal,
       checkState: 1,
       adjustState: 'unknown',
+      splitDesc: RushCardDesc.getDescription(props.card),
       fontSize,
       lineHeight,
     };
@@ -54,7 +68,13 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
 
   public override componentDidMount() {
     super.componentDidMount();
-    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
+    this.startCheckReady();
+  }
+
+  private startCheckReady() {
+    this.checkReadyProcessId++;
+    const currentProcessId = this.checkReadyProcessId;
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady(currentProcessId)));
   }
 
   public static getDerivedStateFromProps(
@@ -64,12 +84,13 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     if (
       prevState.tcgAt !== nextProps.card.tcgAt ||
       prevState.includesNormal !== nextProps.includesNormal ||
-      prevState.description.length !== nextProps.description.length ||
-      !prevState.description.every(
-        (innerArray, index) =>
-          innerArray.length === nextProps.description[index].length &&
-          innerArray.every((value, idx) => value === nextProps.description[index][idx])
-      )
+      prevState.description !== nextProps.card.description ||
+      prevState.rushTextMode !== nextProps.card.rushTextMode ||
+      prevState.rushOtherEffects !== nextProps.card.rushOtherEffects ||
+      prevState.rushCondition !== nextProps.card.rushCondition ||
+      prevState.rushEffect !== nextProps.card.rushEffect ||
+      prevState.rushEffectType !== nextProps.card.rushEffectType ||
+      !prevState.rushChoiceEffects.every((innerArray, index) => innerArray === nextProps.card.rushChoiceEffects[index])
     ) {
       const { fontSize, lineHeight } = RushCardDesc.predictSizes(
         nextProps.card.language,
@@ -83,16 +104,152 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       );
       return {
         checkState: 1,
-        description: [...nextProps.description],
+        description: nextProps.card.description,
+        rushTextMode: nextProps.card.rushTextMode,
+        rushOtherEffects: nextProps.card.rushOtherEffects,
+        rushCondition: nextProps.card.rushCondition,
+        rushEffect: nextProps.card.rushEffect,
+        rushEffectType: nextProps.card.rushEffectType,
+        rushChoiceEffects: nextProps.card.rushChoiceEffects,
         tcgAt: nextProps.card.tcgAt,
         includesNormal: nextProps.includesNormal,
         adjustState: 'unknown',
+        splitDesc: RushCardDesc.getDescription(nextProps.card),
         fontSize,
         lineHeight,
       };
     } else {
       return null;
     }
+  }
+
+  public static getDescription(card: ICard) {
+    let description: JSXElementChild[][] = [];
+    switch (card.rushTextMode) {
+      case 'vanilla':
+        description = card.description.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt));
+        break;
+
+      case 'regular':
+        let effectLabel = '';
+        switch (card.rushEffectType) {
+          case 'effect':
+            effectLabel = card.language === 'fr' ? '[Effet] ' : '[Effect] ';
+            break;
+
+          case 'continuous':
+            effectLabel = card.language === 'fr' ? '[Effet Continu] ' : '[Continuous Effect] ';
+            break;
+
+          default:
+            break;
+        }
+        if (card.rushOtherEffects) {
+          description.push(
+            ...card.rushOtherEffects.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt))
+          );
+        }
+        description.push(
+          [
+            <span
+              key={`rush-label-condition`}
+              className={classNames('span-text', 'rush-label', 'condition', { 'with-tcg-at': card.tcgAt })}
+            >
+              {'[Condition] '}
+            </span>,
+          ].concat(...card.rushCondition.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt))),
+          [
+            <span
+              key={`rush-label-effect`}
+              className={classNames('span-text', 'rush-label', 'effect', { 'with-tcg-at': card.tcgAt })}
+            >
+              {effectLabel}
+            </span>,
+          ].concat(...card.rushEffect.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt)))
+        );
+        break;
+
+      case 'choice':
+        if (card.rushOtherEffects) {
+          description.push(
+            ...card.rushOtherEffects.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt))
+          );
+        }
+        const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix]' : '[Multi-Choice Effect]';
+        const choiceEffects: (string | JSXElementChild[])[] = [];
+        for (const choice of card.rushChoiceEffects) {
+          choiceEffects.push(' ');
+          choiceEffects.push(
+            ...choice.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt, true))
+          );
+        }
+        description.push(
+          [
+            <span
+              key={`rush-label-condition`}
+              className={classNames('span-text', 'rush-label', 'condition', { 'with-tcg-at': card.tcgAt })}
+            >
+              {'[Condition] '}
+            </span>,
+            ...card.rushCondition.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt)),
+          ],
+          [
+            <span
+              key={`rush-label-effect`}
+              className={classNames('span-text', 'rush-label', 'effect', { 'with-tcg-at': card.tcgAt })}
+            >
+              {choiceEffectsLabel}
+            </span>,
+            ...choiceEffects,
+          ]
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    return description;
+  }
+
+  public static getProcessedText(text: string, index: number, tcgAt: boolean, forceBulletAtStart?: boolean) {
+    const parts = text.split(/(●|•)/).map((part) => part.trim());
+    if (parts.length && !parts[0]) parts.shift();
+
+    let nextHasBullet = false;
+    const processedText: JSX.Element[] = [];
+    parts.forEach((part, i) => {
+      if (part === '●' || part === '•') {
+        nextHasBullet = true;
+      } else {
+        // Replace each occurrence of "@" with a span
+        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
+          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
+            {subPart}
+            {subIndex < array.length - 1 && (
+              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
+                @
+              </span>
+            )}
+          </Fragment>
+        ));
+        processedText.push(
+          <span
+            key={`processed-text-${index}-${i}`}
+            className={classNames('span-text', {
+              'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
+              'in-middle': i > 1,
+              'with-tcg-at': tcgAt,
+            })}
+          >
+            {modifiedPart}
+          </span>
+        );
+        nextHasBullet = false;
+      }
+    });
+
+    return processedText;
   }
 
   public static predictSizes(
@@ -205,19 +362,21 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
-      if (prevState.checkState === this.state.checkState) return;
-      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
+      this.startCheckReady();
     } else {
       this.props.onReady();
     }
   }
 
   private get isEmpty() {
-    const { description } = this.state;
-    return !description.length;
+    const { description, rushOtherEffects, rushCondition, rushEffect, rushChoiceEffects } = this.state;
+    return !description && !rushOtherEffects && !rushCondition && !rushEffect && !rushChoiceEffects.length;
   }
 
-  private checkReady() {
+  private checkReady(currentProcessId: number) {
+    // Un nouveau processus de checkReady a été démarré, on ignore celui-ci
+    if (currentProcessId !== this.checkReadyProcessId) return;
+
     if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
     const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
@@ -225,8 +384,6 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       return this.setState({
         checkState: 0,
         adjustState: 'unknown',
-        fontSize: this.state.fontSize,
-        lineHeight: this.state.lineHeight,
       });
     }
 
@@ -256,8 +413,6 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         return this.setState({
           checkState: 0,
           adjustState: 'unknown',
-          fontSize: this.state.fontSize,
-          lineHeight: this.state.lineHeight,
         });
       }
     } else if (textHeight < parentHeight || textWidth < parentWidth) {
@@ -267,16 +422,12 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
           if (newLineHeight > 1.2) newLineHeight = 1.2;
           return this.setState({
             checkState: this.state.checkState + 1,
-            adjustState: this.state.adjustState,
-            fontSize: this.state.fontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
             checkState: 0,
             adjustState: 'unknown',
-            fontSize: this.state.fontSize,
-            lineHeight: this.state.lineHeight,
           });
         }
       } else {
@@ -295,8 +446,6 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
           return this.setState({
             checkState: 0,
             adjustState: 'unknown',
-            fontSize: this.state.fontSize,
-            lineHeight: this.state.lineHeight,
           });
         }
       }
@@ -304,8 +453,6 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       return this.setState({
         checkState: 0,
         adjustState: 'unknown',
-        fontSize: this.state.fontSize,
-        lineHeight: this.state.lineHeight,
       });
     }
   }
@@ -313,7 +460,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   public override render() {
     if (this.isEmpty) return null;
 
-    const { includesNormal, description, fontSize, lineHeight } = this.state;
+    const { includesNormal, splitDesc, fontSize, lineHeight } = this.state;
 
     let containerClass = classNames('custom-container', 'vertical card-layer', 'card-description-holder');
     if (includesNormal) containerClass = `${containerClass} normal-text`;
@@ -330,7 +477,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
           } as React.CSSProperties
         }
       >
-        {description.map((d, i) => {
+        {splitDesc.map((d, i) => {
           return (
             <p key={`rush-description-text-${i}`} className={classNames('description-text', 'black-text')}>
               {d}

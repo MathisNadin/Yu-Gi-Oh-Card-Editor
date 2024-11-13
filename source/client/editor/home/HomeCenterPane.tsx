@@ -39,16 +39,15 @@ export class HomeCenterPane
     this.setState({ loaded: true, tempCurrentCard });
   }
 
-  public renderClasses() {
+  public override renderClasses() {
     const classes = super.renderClasses();
     classes['home-center-pane'] = true;
     return classes;
   }
 
-  public get children() {
+  public override get children() {
     if (!this.state.loaded) return <Spinner />;
-    const { currentCard, tempCurrentCard } = this.state;
-    const card = tempCurrentCard || currentCard;
+    const card = this.state.tempCurrentCard || this.state.currentCard;
     return [
       !card.rush && <CardPreview key='card-preview' card={card} />,
       card.rush && <RushCardPreview key='rush-card-preview' card={card} />,

@@ -30,6 +30,7 @@ interface ICardPendState extends IToolkitComponentState {
 
 export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   public ref = createRef<HTMLDivElement>();
+  private checkReadyProcessId = 0;
 
   public constructor(props: ICardPendProps) {
     super(props);
@@ -53,7 +54,13 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
 
   public override componentDidMount() {
     super.componentDidMount();
-    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
+    this.startCheckReady();
+  }
+
+  private startCheckReady() {
+    this.checkReadyProcessId++;
+    const currentProcessId = this.checkReadyProcessId;
+    requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady(currentProcessId)));
   }
 
   public static getDerivedStateFromProps(
@@ -177,8 +184,7 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (this.state.checkState) {
-      if (prevState.checkState === this.state.checkState) return;
-      requestAnimationFrame(() => requestAnimationFrame(() => this.checkReady()));
+      this.startCheckReady();
     } else {
       this.props.onReady();
     }
@@ -189,7 +195,10 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
     return !hasPendulumFrame || !pendEffect;
   }
 
-  private checkReady() {
+  private checkReady(currentProcessId: number) {
+    // Un nouveau processus de checkReady a été démarré, on ignore celui-ci
+    if (currentProcessId !== this.checkReadyProcessId) return;
+
     if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
     const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
@@ -197,8 +206,6 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       return this.setState({
         checkState: 0,
         adjustState: 'unknown',
-        fontSize: this.state.fontSize,
-        lineHeight: this.state.lineHeight,
       });
     }
 
@@ -228,8 +235,6 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
         return this.setState({
           checkState: 0,
           adjustState: 'unknown',
-          fontSize: this.state.fontSize,
-          lineHeight: this.state.lineHeight,
         });
       }
     } else if (textHeight < parentHeight || textWidth < parentWidth) {
@@ -239,16 +244,12 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
           if (newLineHeight > 1.2) newLineHeight = 1.2;
           return this.setState({
             checkState: this.state.checkState + 1,
-            adjustState: this.state.adjustState,
-            fontSize: this.state.fontSize,
             lineHeight: newLineHeight,
           });
         } else {
           return this.setState({
             checkState: 0,
             adjustState: 'unknown',
-            fontSize: this.state.fontSize,
-            lineHeight: this.state.lineHeight,
           });
         }
       } else {
@@ -267,8 +268,6 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
           return this.setState({
             checkState: 0,
             adjustState: 'unknown',
-            fontSize: this.state.fontSize,
-            lineHeight: this.state.lineHeight,
           });
         }
       }
@@ -276,8 +275,6 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
       return this.setState({
         checkState: 0,
         adjustState: 'unknown',
-        fontSize: this.state.fontSize,
-        lineHeight: this.state.lineHeight,
       });
     }
   }

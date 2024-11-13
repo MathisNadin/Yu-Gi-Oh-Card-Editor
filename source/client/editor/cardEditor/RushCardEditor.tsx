@@ -95,7 +95,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       this.setState({ card: this.props.card });
     }
     // La carte a été modifiée en interne
-    else if (this.state.card !== prevState.card) {
+    else if (this.props.card !== this.state.card && this.state.card !== prevState.card) {
       if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
         this.props.onCardChange(this.state.card);

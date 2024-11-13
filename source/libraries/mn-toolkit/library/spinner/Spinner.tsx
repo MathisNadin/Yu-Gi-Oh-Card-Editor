@@ -1,3 +1,4 @@
+import { JSXElementChildren } from '../react';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 
 interface ISpinnerProps extends IContainableProps {
@@ -30,11 +31,7 @@ export class Spinner extends Containable<ISpinnerProps, ISpinnerState> {
     return style;
   }
 
-  public override render() {
-    return (
-      <div {...this.renderAttributes()}>
-        <div className='spinner-circle' />
-      </div>
-    );
+  public override get children(): JSXElementChildren {
+    return <div className='spinner-circle' />;
   }
 }

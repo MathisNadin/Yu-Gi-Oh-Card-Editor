@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { createRef, CSSProperties, Fragment } from 'react';
-import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
+import { createRef, CSSProperties } from 'react';
+import { deepClone, isDeepEqual, preloadImage } from 'mn-tools';
 import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
 import {
@@ -159,85 +159,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       }
     }
 
-    let description: JSXElementChild[][] = [];
-    switch (card.rushTextMode) {
-      case 'vanilla':
-        description = card.description.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt));
-        break;
-
-      case 'regular':
-        let effectLabel = '';
-        switch (card.rushEffectType) {
-          case 'effect':
-            effectLabel = card.language === 'fr' ? '[Effet] ' : '[Effect] ';
-            break;
-
-          case 'continuous':
-            effectLabel = card.language === 'fr' ? '[Effet Continu] ' : '[Continuous Effect] ';
-            break;
-
-          default:
-            break;
-        }
-        if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)));
-        }
-        description.push(
-          [
-            <span
-              key={`rush-label-condition`}
-              className={classNames('span-text', 'rush-label', 'condition', { 'with-tcg-at': card.tcgAt })}
-            >
-              {'[Condition] '}
-            </span>,
-          ].concat(...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt))),
-          [
-            <span
-              key={`rush-label-effect`}
-              className={classNames('span-text', 'rush-label', 'effect', { 'with-tcg-at': card.tcgAt })}
-            >
-              {effectLabel}
-            </span>,
-          ].concat(...card.rushEffect.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)))
-        );
-        break;
-
-      case 'choice':
-        if (card.rushOtherEffects) {
-          description.push(...card.rushOtherEffects.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)));
-        }
-        const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix]' : '[Multi-Choice Effect]';
-        const choiceEffects: (string | JSXElementChild[])[] = [];
-        for (const choice of card.rushChoiceEffects) {
-          choiceEffects.push(' ');
-          choiceEffects.push(...choice.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt, true)));
-        }
-        description.push(
-          [
-            <span
-              key={`rush-label-condition`}
-              className={classNames('span-text', 'rush-label', 'condition', { 'with-tcg-at': card.tcgAt })}
-            >
-              {'[Condition] '}
-            </span>,
-            ...card.rushCondition.split('\n').map((d, i) => this.getProcessedText(d, i, card.tcgAt)),
-          ],
-          [
-            <span
-              key={`rush-label-effect`}
-              className={classNames('span-text', 'rush-label', 'effect', { 'with-tcg-at': card.tcgAt })}
-            >
-              {choiceEffectsLabel}
-            </span>,
-            ...choiceEffects,
-          ]
-        );
-        break;
-
-      default:
-        break;
-    }
-
     const artworkBg = paths.whiteArtwork;
 
     await Promise.all([preloadImage(artworkBg), ...cardFrames.map((frame) => preloadImage(frame))]);
@@ -265,7 +186,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       artworkBg,
       cardFrames,
       abilities,
-      description,
       hasStIcon,
     });
   }
@@ -321,46 +241,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         requestAnimationFrame(() => this.ref.current && this.props.onCardReady(this.ref.current))
       );
     }
-  }
-
-  private getProcessedText(text: string, index: number, tcgAt: boolean, forceBulletAtStart?: boolean) {
-    const parts = text.split(/(●|•)/).map((part) => part.trim());
-    if (parts.length && !parts[0]) parts.shift();
-
-    let nextHasBullet = false;
-    const processedText: JSX.Element[] = [];
-    parts.forEach((part, i) => {
-      if (part === '●' || part === '•') {
-        nextHasBullet = true;
-      } else {
-        // Replace each occurrence of "@" with a span
-        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
-          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
-            {subPart}
-            {subIndex < array.length - 1 && (
-              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
-                @
-              </span>
-            )}
-          </Fragment>
-        ));
-        processedText.push(
-          <span
-            key={`processed-text-${index}-${i}`}
-            className={classNames('span-text', {
-              'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
-              'in-middle': i > 1,
-              'with-tcg-at': tcgAt,
-            })}
-          >
-            {modifiedPart}
-          </span>
-        );
-        nextHasBullet = false;
-      }
-    });
-
-    return processedText;
   }
 
   private getFramesStylesArray(num: number): string[] {
@@ -423,7 +303,6 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
       includesSkill,
       artworkBg,
       abilities,
-      description,
     } = this.state;
 
     if (!card || !loaded) return <div></div>;
@@ -503,12 +382,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
           onReady={() => this.onChildReady('abilities')}
         />
 
-        <RushCardDesc
-          card={card}
-          description={description}
-          includesNormal={includesNormal}
-          onReady={() => this.onChildReady('desc')}
-        />
+        <RushCardDesc card={card} includesNormal={includesNormal} onReady={() => this.onChildReady('desc')} />
 
         <RushCardName
           card={card}
