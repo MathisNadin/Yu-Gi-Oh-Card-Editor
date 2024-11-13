@@ -1,5 +1,5 @@
 import { load } from 'cheerio';
-import { extend, integer, isDefined, isString, isUndefined, uuid } from 'mn-tools';
+import { extend, integer, isDefined, isUndefined, uuid } from 'mn-tools';
 import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from 'client/editor/card';
 
 export interface IYuginewsCardData {
@@ -100,7 +100,7 @@ export class YuginewsService {
    */
   private extractSetId(content: string): string | undefined {
     const setIdMatches = content.match(/var setId = `([A-Za-z0-9]+)`;/);
-    return setIdMatches?.length ? setIdMatches[1] : undefined;
+    return setIdMatches?.length ? setIdMatches[1] : '????';
   }
 
   /**
@@ -132,22 +132,14 @@ export class YuginewsService {
 
     const extractedData = matches[1]
       .replaceAll('<!-- [et_pb_line_break_holder] -->', '')
-      .replaceAll('<!–- [et_pb_br_holder] -–>', '\n')
-      .replaceAll('<!\u2013- [et_pb_br_holder] -\u2013>', '\n');
-    const cardsDataStrings = extractedData.split('},{');
-    if (!cardsDataStrings?.length) return [];
+      .replaceAll('<!–- [et_pb_br_holder] -–>', '\\n')
+      .replaceAll('<!\u2013- [et_pb_br_holder] -\u2013>', '\\n');
+    const parsedCards = this.parseJavaScriptArray(extractedData);
+    if (!parsedCards.length) return [];
 
     const cardsData: IYuginewsCardData[] = [];
     let foundRush = false;
-    for (const cardDataString of cardsDataStrings) {
-      const inputString = cardDataString
-        .replaceAll('[L]', '(L)')
-        .replaceAll('[R]', '(R)')
-        .replaceAll(/[ \t]+/g, ' ')
-        .replaceAll(/\n/g, '\\n');
-
-      // Parse the card data
-      const parsedCardData = this.parseCardData(inputString);
+    for (const parsedCardData of parsedCards) {
       if (!Object.keys(parsedCardData)?.length) continue;
 
       // Process parsed card data
@@ -184,10 +176,10 @@ export class YuginewsService {
           // Update existing cards in cardsData
           for (const card of cardsData) {
             card.isRush = true;
-            this.updateCardForRush(card);
+            if (card.setId) card.setId = `RD/${card.setId}`;
           }
         }
-        this.updateCardForRush(parsedCardData);
+        if (parsedCardData.setId) parsedCardData.setId = `RD/${parsedCardData.setId}`;
       }
 
       cardsData.push(parsedCardData);
@@ -197,70 +189,40 @@ export class YuginewsService {
   }
 
   /**
-   * Parses individual card data from a string.
-   * @param inputString - The string containing card data.
-   * @returns An object representing the parsed card data.
+   * Convertit un string JavaScript non valide en un tableau d'objets JSON valide.
+   * @param inputString - Le string contenant le code JavaScript.
+   * @returns Un tableau d'objets représentant les données parsées.
    */
-  private parseCardData(inputString: string): IYuginewsCardData {
-    const regex = /"([^"]+)":\s*("[^"]+"|\[[^\]]+\]|\`[^`]+\`)/g;
-    const parsedCardData: IYuginewsCardData = {};
+  private parseJavaScriptArray(inputString: string) {
+    // Étape 1 : Remplacement de `new Date("...")` par les strings
+    inputString = inputString.replace(/new Date\("([^"]+)"\)/g, '"$1"');
 
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(inputString)) !== null) {
-      const key = match[1] as keyof IYuginewsCardData;
-      let value: string | string[] = match[2];
+    // Étape 2 : Remplacement des backticks par des guillemets doubles
+    inputString = inputString.replace(/`([^`]*)`/g, (_, content) => {
+      const escapedContent = content.replace(/"/g, '\\"'); // Échapper les guillemets doubles
+      return `"${escapedContent}"`;
+    });
 
-      // If the value is an array enclosed in brackets, parse it as an array
-      if (value.startsWith('[') && value.endsWith(']')) {
-        const cleanValue = value
-          .replaceAll(', ]', ']')
-          .replaceAll('"', '\\"')
-          .replaceAll('`', '"')
-          .replaceAll('(L)', '[L]')
-          .replaceAll('(R)', '[R]');
-        value = JSON.parse(cleanValue) as string[];
-      }
+    // Étape 3 : Suppression des virgules finales dans les tableaux et objets
+    inputString = inputString.replace(/,\s*([\]}])/g, '$1');
 
-      if (isString(value)) value = value.replaceAll('`', '');
+    // Étape 4 : Suppression du point-virgule final (ou autres caractères inattendus)
+    inputString = inputString.replace(/;\s*$/, '');
 
-      // Just for typing reasons
-      parsedCardData[key as 'effect'] = value as string;
-    }
-    return parsedCardData;
-  }
-
-  /**
-   * Updates card data for Rush formatting.
-   * @param card - The card data to update.
-   */
-  private updateCardForRush(card: IYuginewsCardData) {
-    if (card.setId) card.setId = `RD/${card.setId}`;
-
-    function renormalizeText(text: string): string {
-      if (!text) return text;
-      return text.replaceAll('(L)', '[L]').replaceAll('(R)', '[R]');
+    // Étape 5 : Vérifier que l'entrée est bien un tableau
+    if (!inputString.trim().startsWith('[')) {
+      inputString = `[${inputString}]`;
     }
 
-    if (card.nameFR) card.nameFR = renormalizeText(card.nameFR);
-    if (card.nameEN) card.nameEN = renormalizeText(card.nameEN);
-    if (card.nameJP) card.nameJP = renormalizeText(card.nameJP);
-
-    if (card.normalText) card.normalText = renormalizeText(card.normalText);
-
-    if (card.otherEffectTexts?.length) {
-      for (let effect of card.otherEffectTexts) {
-        effect = renormalizeText(effect);
-      }
+    // Étape 6 : Conversion JSON
+    let cardsData: IYuginewsCardData[] = [];
+    try {
+      cardsData = JSON.parse(inputString);
+    } catch (e) {
+      app.$errorManager.trigger(e as Error);
     }
 
-    if (card.condition) card.condition = renormalizeText(card.condition);
-    if (card.effect) card.effect = renormalizeText(card.effect);
-
-    if (card.choiceEffects?.length) {
-      for (let effect of card.choiceEffects) {
-        effect = renormalizeText(effect);
-      }
-    }
+    return cardsData;
   }
 
   /**
