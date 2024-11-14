@@ -1,7 +1,14 @@
 ## mn-toolkit change log
 
+## 5.0.4
+
+- Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
+- meilleur render dans spinner pour avoir accès à la ref
+- adaptation aux nvinterfaces de file api
+
 ## 5.0.3
 
+- bump to 5.0.3
 - ajout de fromBlur dans onChange de InplaceEdit
 - types webpack dev server inutile car déprécié
 

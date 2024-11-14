@@ -1,10 +1,10 @@
 import { extend, isDefined, isString, logger, Observable, parseUri } from 'mn-tools';
-import { HttpMethod, IFileApiDownloadFileOptions, IFileEffect, IFileEntity, IJobResponse } from 'api/main';
+import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, IJobResponse } from 'api/main';
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
 import { ApiJob } from './ApiJob';
 
-interface IFileGetUrlOptions extends Omit<IFileApiDownloadFileOptions, 'oid' | 'effects' | 'instance'> {
+interface IFileGetUrlOptions extends Omit<IFileApiDownloadOptions, 'oid' | 'effects' | 'instance'> {
   oid?: number;
   effects?: IFileEffect[];
   instance?: number;
