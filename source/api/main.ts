@@ -910,12 +910,13 @@ export interface IFileThumbnailEffect extends IFileEffect {
   mimeType: 'image/png';
 }
 
-export interface IFileApiDownloadFileOptions {
+export interface IFileApiDownloadOptions {
   instance: number;
   oid: number;
   timestamp?: string;
   derivative?: TDerivative;
-  effects?: string; // un IFileEffect[] stringifié
+  /** A stringified IFileEffect[] */
+  effects?: string;
 }
 
 export interface IFileListOptions extends IEntityListOptions<IFileEntity, TFileTableIndexes> {
