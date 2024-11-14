@@ -1,7 +1,16 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.1.4
+
+- up tk
+- harmonisation des checkStates des textes + correction des checkStates superposés
+- rework complet du parsing du script yuginews
+- parsing du pend eff comme la description
+- restructuration du yuginews service
+
 ## 2.1.3
 
+- bump to 2.1.3
 - rework du système de debouncing sur les éditeurs + améliorations visuelles sur le dialogue artwork editing
 - utilisation de React Fragment pour les processed texts
 - chgt du système des notifs de mise à jour
