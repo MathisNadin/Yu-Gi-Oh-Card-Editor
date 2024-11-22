@@ -103,11 +103,11 @@ export class MediaWikiService {
 
     const data = await app.$axios.get<IYugipediaGetCardPageApiResponse>(this.baseApiUrl, {
       params: {
+        titles,
         action: 'query',
         prop: 'revisions',
         rvprop: 'content',
         format: 'json',
-        titles,
       },
     });
     if (!data?.query?.pages) return card;
@@ -123,7 +123,7 @@ export class MediaWikiService {
 
     return await this.wikitextToCard(
       card,
-      pageInfo.title.replaceAll(' (card)', '').replaceAll(' (Rush Duel)', ''),
+      pageInfo.title.replaceAll(' (card)', '').replaceAll(' (Skill Card)', '').replaceAll(' (Rush Duel)', ''),
       wikitext,
       useFr,
       generatePasscode,
@@ -448,6 +448,15 @@ export class MediaWikiService {
       card.rushOtherEffects = rushOtherEffects as string;
     }
 
+    // Format texts
+    card.name = this.formatText(card.name);
+    card.description = this.formatText(card.description);
+    card.pendEffect = this.formatText(card.pendEffect);
+    card.rushOtherEffects = this.formatText(card.rushOtherEffects);
+    card.rushCondition = this.formatText(card.rushCondition);
+    card.rushEffect = this.formatText(card.rushEffect);
+    if (card.rushChoiceEffects?.length) card.rushChoiceEffects = card.rushChoiceEffects.map(this.formatText);
+
     if (replaceMatrixes.length) {
       for (let replaceMatrix of replaceMatrixes) {
         if (enName) enName = enName.replaceAll(replaceMatrix.toReplace, replaceMatrix.newString);
@@ -539,9 +548,7 @@ export class MediaWikiService {
       card.abilities = card.abilities.map((ability) => this.getFrenchAbility(ability.trim()));
     }
 
-    if (card.rush) {
-      card.edition = 'unlimited';
-    }
+    if (card.rush) card.edition = 'unlimited';
 
     app.$card.correct(card);
 
@@ -574,6 +581,18 @@ export class MediaWikiService {
     text = text.replaceAll("''", '');
 
     return text.trim();
+  }
+
+  private formatText(text: string | undefined): string {
+    if (!text) return '';
+    return text
+      .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+      .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&nbsp;/g, ' ');
   }
 
   private getArtworkName(str: string) {
