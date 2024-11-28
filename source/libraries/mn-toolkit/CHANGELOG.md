@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 5.0.5
+
+- amélioration du typing sur store.get et electron + davantage d'options sur le popup choice
+
 ## 5.0.4
 
+- bump to 5.0.4
 - Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
 - meilleur render dans spinner pour avoir accès à la ref
 - adaptation aux nvinterfaces de file api

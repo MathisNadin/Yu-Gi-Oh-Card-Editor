@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.0.3
+
+- restructuration et division du main.ts + meilleure gestion de l'autoUpdater
+
 ## 1.0.2
 
+- bump to 1.0.2
 - chgt du système des notifs de mise à jour
 - fix chemin d preload js
 - restructuration

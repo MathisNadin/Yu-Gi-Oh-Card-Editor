@@ -178,7 +178,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       this._platform = CapacitorCore.getPlatform().toLowerCase();
       log.debug('deviceId', this._platform);
       document.body.classList.add('mn-platform-mobile');
-    } else if (this.isDesktop) {
+    } else if (this.isElectron(window)) {
       this._platform = 'desktop';
     } else {
       this._platform = 'web';
