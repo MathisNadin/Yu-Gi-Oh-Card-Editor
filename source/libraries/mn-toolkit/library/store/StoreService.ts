@@ -1,4 +1,4 @@
-import { Observable, logger } from 'mn-tools';
+import { Observable, isUndefined, logger } from 'mn-tools';
 import { IStoreListener, IStoreOptions, IStoreService, TStoreValue } from '.';
 import { CapacitorSQLiteService } from './CapacitorSQLiteService';
 import { LocalStorageService } from './LocalStorageService';
@@ -50,7 +50,10 @@ export class StoreService extends Observable<IStoreListener> implements IStoreSe
     await this.storeImpl.set<T, K>(key, value);
   }
 
+  public get<T extends TStoreValue, K extends string>(key: K): Promise<T | undefined>; // Cas où `defaultValue` n'est pas défini
+  public get<T extends TStoreValue, K extends string>(key: K, defaultValue: T): Promise<T>; // Cas où `defaultValue` est défini
   public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
+    if (isUndefined(defaultValue)) return await this.storeImpl.get<T, K>(key);
     return await this.storeImpl.get<T, K>(key, defaultValue);
   }
 

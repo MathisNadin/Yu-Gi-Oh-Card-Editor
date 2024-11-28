@@ -1,8 +1,9 @@
 import { BrowserWindow, IpcMainInvokeEvent } from 'electron';
-import { autoUpdater, UpdateInfo } from 'electron-updater';
+import { autoUpdater, UpdateCheckResult, UpdateInfo } from 'electron-updater';
 import { addIpcMainHandleChannel } from './icpMainHandle';
 
 declare global {
+  type TElectronUpdateCheckResult = UpdateCheckResult;
   type TElectronUpdateInfo = UpdateInfo;
 
   // Electron-updater may attach a 'code' property
@@ -18,7 +19,7 @@ declare global {
     setAutoDownloadAppUpdate: { args: [value: boolean]; response: void };
     setAutoInstallOnAppQuit: { args: [value: boolean]; response: void };
     setAutoRunAppAfterInstall: { args: [value: boolean]; response: void };
-    checkForAppUpdates: { args: []; response: void };
+    checkForAppUpdates: { args: []; response: TElectronUpdateCheckResult | null };
     downloadAppUpdate: { args: []; response: void };
     quitAndInstallAppUpdate: { args: []; response: void };
   }
@@ -74,12 +75,14 @@ export function setupAutoUpdater() {
 
   // Handle checking for updates
   addIpcMainHandleChannel('checkForAppUpdates', async () => {
+    let result: TElectronUpdateCheckResult | null = null;
     try {
-      await autoUpdater.checkForUpdates();
+      result = await autoUpdater.checkForUpdates();
     } catch (error) {
       // Send error to renderer
       sendUpdateError(error as Error);
     }
+    return result;
   });
 
   // Handle downloading the update

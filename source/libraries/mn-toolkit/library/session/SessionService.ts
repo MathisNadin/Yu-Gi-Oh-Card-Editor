@@ -18,7 +18,7 @@ export class SessionService extends Observable<ISessionListener> {
   private options: ISessionOptions = {} as ISessionOptions;
   private _active: boolean;
   private _token: string;
-  private _data: ISessionData = {} as unknown as ISessionData;
+  private _data: ISessionData;
 
   public constructor() {
     super();
@@ -40,8 +40,8 @@ export class SessionService extends Observable<ISessionListener> {
   }
 
   public async setup() {
-    this._token = await app.$store.get('token');
-    this._data = await app.$store.get('session');
+    this._token = await app.$store.get('token', undefined!);
+    this._data = await app.$store.get('session', undefined!);
     if (this._token) {
       log.debug('Nous avons un token:', this._token);
       if (this._data) {
@@ -68,7 +68,7 @@ export class SessionService extends Observable<ISessionListener> {
     this.fireSessionUpdated();
   }
 
-  public get data(): ISessionData {
+  public get data() {
     return this._data;
   }
 

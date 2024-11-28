@@ -1,13 +1,14 @@
 import { createRoot } from 'react-dom/client';
 import { IApplicationListener } from 'mn-toolkit';
-import { logger } from 'mn-tools';
+import { logger, Observable } from 'mn-tools';
 import { Page } from '../page';
+import { ICoreListener } from '.';
 
 const log = logger('$core');
 
 const HOME_STATE = 'home';
 
-export class CoreService implements Partial<IApplicationListener> {
+export class CoreService extends Observable<ICoreListener> implements Partial<IApplicationListener> {
   public async setup() {
     app.addListener(this);
 
@@ -19,13 +20,13 @@ export class CoreService implements Partial<IApplicationListener> {
     });
 
     if (app.$device.isElectron(window)) {
-      window.electron.ipcRenderer.addListener('updateAvailable', (_info) =>
-        app.$errorManager.handlePromise(window.electron!.ipcRenderer.invoke('downloadAppUpdate'))
-      );
+      await window.electron.ipcRenderer.invoke('setAutoDownloadAppUpdate', true);
+      await window.electron.ipcRenderer.invoke('setAutoInstallOnAppQuit', true);
+      await window.electron.ipcRenderer.invoke('setAutoRunAppAfterInstall', true);
 
       window.electron.ipcRenderer.addListener(
         'updateDownloaded',
-        (info) => !!info && app.$errorManager.handlePromise(app.$store.set('available-update', info))
+        (info) => !!info && this.dispatch('electronUpdateDownloaded', info)
       );
 
       window.electron.ipcRenderer.addListener('updateError', (error) => !!error && app.$errorManager.trigger(error));
@@ -44,5 +45,9 @@ export class CoreService implements Partial<IApplicationListener> {
     const root = createRoot(container);
     root.render(<Page />);
     this.gotoHome();
+
+    if (app.$device.isElectron(window)) {
+      app.$errorManager.handlePromise(window.electron.ipcRenderer.invoke('checkForAppUpdates'));
+    }
   }
 }

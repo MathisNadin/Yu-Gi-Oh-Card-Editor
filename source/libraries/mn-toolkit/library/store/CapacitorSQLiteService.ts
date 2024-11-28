@@ -59,7 +59,7 @@ export class CapacitorSQLiteService implements IStoreService {
     await this.openConnection();
 
     const storeVersion = await this.get<number>('storeVersion', this.options.storeVersion);
-    if (storeVersion < this.options.storeVersion) {
+    if (isDefined(storeVersion) && storeVersion < this.options.storeVersion) {
       await this.clear();
     }
   }
@@ -145,12 +145,12 @@ export class CapacitorSQLiteService implements IStoreService {
     );
   }
 
-  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T): Promise<T> {
+  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
     await this.waitForConnection();
     log.debug('Getting item from SQLite:', { key, defaultValue });
     const { values } = await this.db.query(`SELECT value FROM ${this.tableName} WHERE key = '${key}';`);
-    if (values?.length) return this.unserializeDBValue(values[0].value) as T;
-    return defaultValue!;
+    if (values?.length && isDefined(values[0]?.value)) return this.unserializeDBValue(values[0].value) as T;
+    return defaultValue;
   }
 
   public async remove<K extends string = string>(key: K) {

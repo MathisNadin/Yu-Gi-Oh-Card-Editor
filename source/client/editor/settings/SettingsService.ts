@@ -60,8 +60,7 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
   }
 
   private async load(initial: boolean) {
-    this._settings = await app.$store.get<IUserSettings, SettingsStorageKey>('user-settings');
-    if (!this._settings) this._settings = {} as IUserSettings;
+    this._settings = await app.$store.get<IUserSettings, SettingsStorageKey>('user-settings', {} as IUserSettings);
     this.correct(this._settings);
     await app.$store.set<IUserSettings, SettingsStorageKey>('user-settings', this._settings);
     if (initial) {

@@ -16,6 +16,19 @@ export function addIpcMainHandleChannel<C extends TIpcRendererInvokeChannel>(
   });
 }
 
+export function addIpcMainHandleOnceChannel<C extends TIpcRendererInvokeChannel>(
+  channel: C,
+  listener: (
+    event: IpcMainInvokeEvent,
+    ...args: TIpcRendererInvokeChannelArgs<C>
+  ) => Promise<TIpcRendererInvokeChannelResponse<C>> | TIpcRendererInvokeChannelResponse<C>
+) {
+  ipcMain.handleOnce(channel, (event, ...args) => {
+    // Vérification du type des arguments
+    return listener(event, ...(args as TIpcRendererInvokeChannelArgs<C>));
+  });
+}
+
 export function setupIpcMainHandleChannels() {
   addIpcMainHandleChannel('getAppVersion', async (_event: IpcMainInvokeEvent) => {
     return app.getVersion();

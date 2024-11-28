@@ -54,7 +54,7 @@ export type TRushTextMode = 'vanilla' | 'regular' | 'choice';
 
 export type TRushEffectType = 'effect' | 'continuous';
 
-export type CardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards';
+export type TCardStorageKey = 'current-card' | 'temp-current-card' | 'local-cards';
 
 export interface ICard {
   uuid?: string;

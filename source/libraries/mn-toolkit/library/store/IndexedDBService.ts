@@ -1,4 +1,4 @@
-import { unserialize } from 'mn-tools';
+import { isDefined, unserialize } from 'mn-tools';
 import { IStoreOptions, IStoreService, TStoreValue } from '.';
 
 export class IndexedDBService implements IStoreService {
@@ -49,7 +49,7 @@ export class IndexedDBService implements IStoreService {
   }
 
   public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
-    return new Promise<T>((resolve, reject) => {
+    return await new Promise<T>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName]);
       const objectStore = transaction.objectStore(this.objectStoreName);
       const request = objectStore.get(key);
@@ -57,7 +57,7 @@ export class IndexedDBService implements IStoreService {
         reject(new Error(`Failed to get object with key ${key}`));
       };
       request.onsuccess = () => {
-        resolve(request.result || defaultValue);
+        resolve(isDefined(request.result) ? request.result : defaultValue);
       };
     });
   }

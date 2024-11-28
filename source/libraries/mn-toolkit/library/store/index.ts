@@ -20,7 +20,8 @@ export interface IStoreOptions {
 export interface IStoreService {
   setup: () => Promise<void>;
   set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T): Promise<void>;
-  get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T): Promise<T>;
+  get<T extends TStoreValue, K extends string = string>(key: K): Promise<T | undefined>;
+  get<T extends TStoreValue, K extends string = string>(key: K, defaultValue: T): Promise<T>;
   remove<K extends string = string>(key: K): Promise<void>;
   clear(): Promise<void>;
   importData(jsonData: string): Promise<void>;

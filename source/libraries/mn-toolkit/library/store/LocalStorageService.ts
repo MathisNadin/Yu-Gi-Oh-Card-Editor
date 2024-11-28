@@ -1,4 +1,4 @@
-import { logger, unserialize } from 'mn-tools';
+import { isDefined, logger, unserialize } from 'mn-tools';
 import { IStoreOptions, IStoreService, TStoreValue } from '.';
 
 const log = logger('$store');
@@ -28,10 +28,10 @@ export class LocalStorageService implements IStoreService {
     return Promise.resolve();
   }
 
-  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T): Promise<T> {
+  public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
     log.debug(`Retrieving item from LocalStorage: key=${key}`);
     const item = localStorage.getItem(`${this.storePrefix}${key}`);
-    const result = item ? unserialize(item) : defaultValue;
+    const result = isDefined(item) && item !== null ? unserialize(item) : defaultValue;
     return Promise.resolve(result as T);
   }
 
