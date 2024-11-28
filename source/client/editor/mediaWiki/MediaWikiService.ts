@@ -735,7 +735,7 @@ export class MediaWikiService {
       case 'Celestial Warrior':
         return 'Guerrier Céleste';
       case 'Galaxy':
-        return 'Galactique';
+        return 'Galaxie';
       default:
         return ability;
     }
