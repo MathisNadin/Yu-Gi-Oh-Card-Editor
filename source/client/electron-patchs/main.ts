@@ -1,3 +1,5 @@
+import { autoUpdater } from 'electron-updater';
+
 declare global {
   interface IIpcMainSendChannel {
     renderCurrentCard: [];
@@ -42,9 +44,7 @@ export function buildProjectMenuDarwinTemplate(
       {
         label: 'Quit',
         accelerator: 'Command+Q',
-        click: () => {
-          app.quit();
-        },
+        click: () => app.quit(),
       },
     ],
   };
@@ -72,23 +72,17 @@ export function buildProjectMenuDarwinTemplate(
       {
         label: 'Reload',
         accelerator: 'Command+R',
-        click: () => {
-          mainWindow.webContents.reload();
-        },
+        click: () => mainWindow.webContents.reload(),
       },
       {
         label: 'Toggle Full Screen',
         accelerator: 'Ctrl+Command+F',
-        click: () => {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        },
+        click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
       },
       {
         label: 'Toggle Developer Tools',
         accelerator: 'Alt+Command+I',
-        click: () => {
-          mainWindow.webContents.toggleDevTools();
-        },
+        click: () => mainWindow.webContents.toggleDevTools(),
       },
     ],
   };
@@ -99,9 +93,7 @@ export function buildProjectMenuDarwinTemplate(
       {
         label: 'Toggle Full Screen',
         accelerator: 'Ctrl+Command+F',
-        click: () => {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        },
+        click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
       },
     ],
   };
@@ -125,27 +117,19 @@ export function buildProjectMenuDarwinTemplate(
     submenu: [
       {
         label: 'Learn More',
-        click() {
-          shell.openExternal('https://electronjs.org');
-        },
+        click: () => shell.openExternal('https://electronjs.org'),
       },
       {
         label: 'Documentation',
-        click() {
-          shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme');
-        },
+        click: () => shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme'),
       },
       {
         label: 'Community Discussions',
-        click() {
-          shell.openExternal('https://www.electronjs.org/community');
-        },
+        click: () => shell.openExternal('https://www.electronjs.org/community'),
       },
       {
         label: 'Search Issues',
-        click() {
-          shell.openExternal('https://github.com/electron/electron/issues');
-        },
+        click: () => shell.openExternal('https://github.com/electron/electron/issues'),
       },
     ],
   };
@@ -158,27 +142,23 @@ export function buildProjectMenuDarwinTemplate(
 export function buildProjectMenuTemplate(
   mainWindow: IBrowserWindow,
   _app: IElectronApp,
-  _shell: IElectronShell
+  shell: IElectronShell
 ): IMenuItemConstructorOptions[] {
   const includeDevTools = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-  const templateDefault = [
+  const templateDefault: IMenuItemConstructorOptions[] = [
     {
       label: '&Fichier',
       submenu: [
         {
           label: '&Faire le rendu',
           accelerator: 'F1',
-          click: () => {
-            mainWindow.webContents.send('renderCurrentCard');
-          },
+          click: () => mainWindow.webContents.send('renderCurrentCard'),
         },
         {
           label: '&Fermer',
           accelerator: 'Ctrl+W',
-          click: () => {
-            mainWindow.close();
-          },
+          click: () => mainWindow.close(),
         },
       ],
     },
@@ -188,30 +168,22 @@ export function buildProjectMenuTemplate(
         {
           label: '&Sauvegarder la carte',
           accelerator: 'F2',
-          click: () => {
-            mainWindow.webContents.send('saveCurrentOrTempToLocal');
-          },
+          click: () => mainWindow.webContents.send('saveCurrentOrTempToLocal'),
         },
         {
           label: '&Importer depuis un site',
           accelerator: 'F3',
-          click: () => {
-            mainWindow.webContents.send('importCards');
-          },
+          click: () => mainWindow.webContents.send('importCards'),
         },
         {
           label: '&Importer des données',
           accelerator: 'F7',
-          click: () => {
-            mainWindow.webContents.send('importData');
-          },
+          click: () => mainWindow.webContents.send('importData'),
         },
         {
           label: '&Exporter les données',
           accelerator: 'F8',
-          click: () => {
-            mainWindow.webContents.send('exportData');
-          },
+          click: () => mainWindow.webContents.send('exportData'),
         },
       ],
     },
@@ -222,27 +194,38 @@ export function buildProjectMenuTemplate(
             {
               label: '&Recharger',
               accelerator: 'Ctrl+R',
-              click: () => {
-                mainWindow.webContents.reload();
-              },
+              click: () => mainWindow.webContents.reload(),
             },
             {
               label: '&Plein écran',
               accelerator: 'F11',
-              click: () => {
-                mainWindow.setFullScreen(!mainWindow.isFullScreen());
-              },
+              click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
             },
           ]
         : [
             {
               label: '&Plein écran',
               accelerator: 'F11',
-              click: () => {
-                mainWindow.setFullScreen(!mainWindow.isFullScreen());
-              },
+              click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
             },
           ],
+    },
+    {
+      label: '&Aide',
+      submenu: [
+        {
+          label: 'Rechercher les mises à jour',
+          click: () => autoUpdater.checkForUpdates().catch((e) => console.error(e)),
+        },
+        {
+          label: 'Documentation',
+          click: () => {
+            shell
+              .openExternal('https://github.com/MathisNadin/Yu-Gi-Oh-Card-Editor')
+              .catch((e) => console.error(`Failed to open URL: ${e.message}`));
+          },
+        },
+      ],
     },
   ];
 
@@ -253,16 +236,12 @@ export function buildProjectMenuTemplate(
         {
           label: '&Outils de développement',
           accelerator: 'Alt+Ctrl+I',
-          click: () => {
-            mainWindow.webContents.toggleDevTools();
-          },
+          click: () => mainWindow.webContents.toggleDevTools(),
         },
         {
           label: '&Supprimer les données locales',
           accelerator: 'Alt+Ctrl+D',
-          click: () => {
-            mainWindow.webContents.send('deleteLocalDb');
-          },
+          click: () => mainWindow.webContents.send('deleteLocalDb'),
         },
       ],
     });

@@ -45,9 +45,7 @@ export function buildDefaultDarwinTemplate(
       {
         label: 'Quit',
         accelerator: 'Command+Q',
-        click: () => {
-          app.quit();
-        },
+        click: () => app.quit(),
       },
     ],
   };
@@ -75,23 +73,17 @@ export function buildDefaultDarwinTemplate(
       {
         label: 'Reload',
         accelerator: 'Command+R',
-        click: () => {
-          mainWindow.webContents.reload();
-        },
+        click: () => mainWindow.webContents.reload(),
       },
       {
         label: 'Toggle Full Screen',
         accelerator: 'Ctrl+Command+F',
-        click: () => {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        },
+        click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
       },
       {
         label: 'Toggle Developer Tools',
         accelerator: 'Alt+Command+I',
-        click: () => {
-          mainWindow.webContents.toggleDevTools();
-        },
+        click: () => mainWindow.webContents.toggleDevTools(),
       },
     ],
   };
@@ -102,9 +94,7 @@ export function buildDefaultDarwinTemplate(
       {
         label: 'Toggle Full Screen',
         accelerator: 'Ctrl+Command+F',
-        click: () => {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        },
+        click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
       },
     ],
   };
@@ -128,27 +118,19 @@ export function buildDefaultDarwinTemplate(
     submenu: [
       {
         label: 'Learn More',
-        click() {
-          shell.openExternal('https://electronjs.org');
-        },
+        click: () => shell.openExternal('https://electronjs.org'),
       },
       {
         label: 'Documentation',
-        click() {
-          shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme');
-        },
+        click: () => shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme'),
       },
       {
         label: 'Community Discussions',
-        click() {
-          shell.openExternal('https://www.electronjs.org/community');
-        },
+        click: () => shell.openExternal('https://www.electronjs.org/community'),
       },
       {
         label: 'Search Issues',
-        click() {
-          shell.openExternal('https://github.com/electron/electron/issues');
-        },
+        click: () => shell.openExternal('https://github.com/electron/electron/issues'),
       },
     ],
   };
@@ -176,9 +158,7 @@ export function buildDefaultTemplate(
         {
           label: '&Close',
           accelerator: 'Ctrl+W',
-          click: () => {
-            mainWindow.close();
-          },
+          click: () => mainWindow.close(),
         },
       ],
     },
@@ -189,32 +169,24 @@ export function buildDefaultTemplate(
             {
               label: '&Reload',
               accelerator: 'Ctrl+R',
-              click: () => {
-                mainWindow.webContents.reload();
-              },
+              click: () => mainWindow.webContents.reload(),
             },
             {
               label: 'Toggle &Full Screen',
               accelerator: 'F11',
-              click: () => {
-                mainWindow.setFullScreen(!mainWindow.isFullScreen());
-              },
+              click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
             },
             {
               label: 'Toggle &Developer Tools',
               accelerator: 'Alt+Ctrl+I',
-              click: () => {
-                mainWindow.webContents.toggleDevTools();
-              },
+              click: () => mainWindow.webContents.toggleDevTools(),
             },
           ]
         : [
             {
               label: 'Toggle &Full Screen',
               accelerator: 'F11',
-              click: () => {
-                mainWindow.setFullScreen(!mainWindow.isFullScreen());
-              },
+              click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
             },
           ],
     },
@@ -223,27 +195,19 @@ export function buildDefaultTemplate(
       submenu: [
         {
           label: 'Learn More',
-          click() {
-            shell.openExternal('https://electronjs.org');
-          },
+          click: () => shell.openExternal('https://electronjs.org'),
         },
         {
           label: 'Documentation',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme');
-          },
+          click: () => shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme'),
         },
         {
           label: 'Community Discussions',
-          click() {
-            shell.openExternal('https://www.electronjs.org/community');
-          },
+          click: () => shell.openExternal('https://www.electronjs.org/community'),
         },
         {
           label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
-          },
+          click: () => shell.openExternal('https://github.com/electron/electron/issues'),
         },
       ],
     },

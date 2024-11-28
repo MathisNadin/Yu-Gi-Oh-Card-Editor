@@ -1,7 +1,7 @@
 import { BrowserWindow, shell, Menu, app } from 'electron';
 import path from 'path';
 import { createConnection } from 'net';
-import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './menuTemplate';
+import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './defaultMenus';
 import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate } from '../../../../client/electron-patchs/main';
 
 export class WindowManager {

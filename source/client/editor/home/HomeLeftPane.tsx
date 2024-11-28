@@ -1,10 +1,7 @@
-import { classNames, isString } from 'mn-tools';
+import { classNames } from 'mn-tools';
 import { IContainerProps, IContainerState, Container, Spinner, HorizontalStack, Button } from 'mn-toolkit';
-import { ICoreListener } from '../../kernel';
 import { ICard, ICardListener } from '../card';
 import { CardEditor, RushCardEditor } from '../cardEditor';
-
-type TUpdateChoice = 'update-restart' | 'update-close' | 'later';
 
 type TTabIndex = 'master' | 'rush';
 
@@ -16,10 +13,7 @@ interface IHomeLeftPaneState extends IContainerState {
   tempCurrentCard?: ICard;
 }
 
-export class HomeLeftPane
-  extends Container<IHomeLeftPaneProps, IHomeLeftPaneState>
-  implements Partial<ICoreListener>, Partial<ICardListener>
-{
+export class HomeLeftPane extends Container<IHomeLeftPaneProps, IHomeLeftPaneState> implements Partial<ICardListener> {
   public static get defaultProps(): IHomeLeftPaneProps {
     return {
       ...super.defaultProps,
@@ -35,65 +29,12 @@ export class HomeLeftPane
       ...this.state,
       tabIndex: 'master',
     };
-    app.$core.addListener(this);
     app.$card.addListener(this);
   }
 
   public override componentWillUnmount() {
     super.componentWillUnmount();
-    app.$core.removeListener(this);
     app.$card.removeListener(this);
-  }
-
-  public electronUpdateDownloaded(info: TElectronUpdateInfo) {
-    app.$errorManager.handlePromise(this.showUpdateDialog(info));
-  }
-
-  private async showUpdateDialog(info: TElectronUpdateInfo) {
-    if (!app.$device.isElectron(window)) return;
-
-    let message = '';
-
-    // Add release notes if available
-    if (info.releaseNotes) {
-      if (isString(info.releaseNotes)) {
-        message += `Notes de version :<br>${info.releaseNotes.replaceAll('\n\n', '<br>').replaceAll('\n', '<br>')}<br><br>`;
-      } else if (Array.isArray(info.releaseNotes)) {
-        const formattedNotes = info.releaseNotes.map((note) => (isString(note) ? note : note.note)).join('<br>');
-        message += `Notes de version :<br>${formattedNotes}<br><br>`;
-      }
-    }
-
-    // Add the default message
-    message +=
-      "Si vous ne mettez pas à jour tout de suite, la mise à jour sera faite automatiquement à la fermeture de l'application.";
-
-    const choice = await app.$popup.choice<TUpdateChoice>({
-      title: `Une nouvelle version est disponible : ${info.version}`,
-      messageType: 'html',
-      message,
-      choices: [
-        { id: 'update-restart', label: 'Mettre à jour et redémarrer', color: 'positive' },
-        { id: 'update-close', label: 'Mettre à jour et fermer', color: 'neutral' },
-        { id: 'later', label: 'Plus tard', color: '2' },
-      ],
-    });
-
-    switch (choice) {
-      case 'update-restart':
-        await window.electron.ipcRenderer.invoke('setAutoRunAppAfterInstall', true);
-        await window.electron.ipcRenderer.invoke('quitAndInstallAppUpdate');
-        break;
-
-      case 'update-close':
-        await window.electron.ipcRenderer.invoke('setAutoRunAppAfterInstall', false);
-        await window.electron.ipcRenderer.invoke('quitAndInstallAppUpdate');
-        break;
-
-      case 'later':
-      default:
-        break;
-    }
   }
 
   public currentCardLoaded(currentCard: ICard) {
