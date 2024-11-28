@@ -4,7 +4,17 @@ import nodeExternals from 'webpack-node-externals';
 
 const desktopPreloadConfig: Configuration = {
   target: 'electron-preload',
-  entry: path.join(__dirname, '..', '..', 'source', 'libraries', 'mn-electron-main', 'library', 'preload.ts'),
+  entry: path.join(
+    __dirname,
+    '..',
+    '..',
+    'source',
+    'libraries',
+    'mn-electron-main',
+    'library',
+    'preload',
+    'preload.ts'
+  ),
   output: {
     path: path.resolve(__dirname, '..', '..', '.temp-desktop'),
     filename: 'preload.js',

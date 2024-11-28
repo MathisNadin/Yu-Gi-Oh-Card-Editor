@@ -50,8 +50,8 @@ export class FileInput extends Containable<IFileInputProps, IFileInputState> {
   private async onTap(e: MouseEvent) {
     if (this.props.overrideOnTap) {
       await this.props.overrideOnTap(e);
-    } else {
-      const path = await window.electron.ipcRenderer.getFilePath();
+    } else if (app.$device.isElectron(window)) {
+      const path = await window.electron.ipcRenderer.invoke('getFilePath');
       if (path) await this.onChange({ target: { value: path } } as FormEvent<HTMLInputElement>);
     }
   }

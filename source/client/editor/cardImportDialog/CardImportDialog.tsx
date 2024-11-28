@@ -288,7 +288,11 @@ export class CardImportDialog extends AbstractPopup<
   }
 
   private async selectArtworkSaveDirPath() {
-    const artworkSaveDirPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.artworkSaveDirPath);
+    if (!app.$device.isElectron(window)) return;
+    const artworkSaveDirPath = await window.electron.ipcRenderer.invoke(
+      'getDirectoryPath',
+      this.state.artworkSaveDirPath
+    );
     if (!artworkSaveDirPath) return;
     await this.setStateAsync({ artworkSaveDirPath });
   }

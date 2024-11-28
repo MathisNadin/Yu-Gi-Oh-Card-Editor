@@ -178,7 +178,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       this._platform = CapacitorCore.getPlatform().toLowerCase();
       log.debug('deviceId', this._platform);
       document.body.classList.add('mn-platform-mobile');
-    } else if (this.isElectron) {
+    } else if (this.isDesktop) {
       this._platform = 'desktop';
     } else {
       this._platform = 'web';
@@ -322,43 +322,38 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
         false
       );
     } else {
-      let hidden: string;
-      let visibilityChange!: string;
-      if (typeof document.hidden !== 'undefined') {
+      let hidden: 'hidden' | 'mozHidden' | 'msHidden' | 'webkitHidden';
+      let visibilityChange: string | undefined;
+      if (isDefined(document.hidden)) {
         // Opera 12.10 and Firefox 18 and later support
         hidden = 'hidden';
         visibilityChange = 'visibilitychange';
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      else if (typeof (document as any).mozHidden !== 'undefined') {
+      } else if (isDefined(document.mozHidden)) {
         hidden = 'mozHidden';
         visibilityChange = 'mozvisibilitychange';
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      else if (typeof (document as any).msHidden !== 'undefined') {
+      } else if (isDefined(document.msHidden)) {
         hidden = 'msHidden';
         visibilityChange = 'msvisibilitychange';
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      else if (typeof (document as any).webkitHidden !== 'undefined') {
+      } else if (isDefined(document.webkitHidden)) {
         hidden = 'webkitHidden';
         visibilityChange = 'webkitvisibilitychange';
       }
 
-      document.addEventListener(
-        visibilityChange,
-        () => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((document as any)[hidden]) {
-            log.debug('App invisible');
-            this.doPause();
-          } else {
-            log.debug('App visible');
-            this.doResume();
-          }
-        },
-        false
-      );
+      if (visibilityChange) {
+        document.addEventListener(
+          visibilityChange,
+          () => {
+            if (document[hidden]) {
+              log.debug('App invisible');
+              this.doPause();
+            } else {
+              log.debug('App visible');
+              this.doResume();
+            }
+          },
+          false
+        );
+      }
 
       window.addEventListener('pagehide', function () {
         log.debug('Page hidden');
@@ -451,11 +446,13 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     await CapacitorSplashScreen.hide();
   }
 
+  public isElectron(
+    window: Window & typeof globalThis
+  ): window is Window & typeof globalThis & { electron: IElectronHandler } {
+    return !!window.electron;
+  }
   public get hasWeb() {
     return this._hasWebkit;
-  }
-  public get isElectron() {
-    return !!window.electron;
   }
   public get isConnected() {
     return this._isConnected;
@@ -479,8 +476,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     return !this._foreground;
   }
   public get isTouch() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return !!('ontouchstart' in window || (navigator as any).msMaxTouchPoints);
+    return 'ontouchstart' in window || !!navigator.msMaxTouchPoints;
   }
   public get isAndroid() {
     return this._platform === 'android';
@@ -505,17 +501,15 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   public get isIE() {
-    let ua = navigator.userAgent;
+    const ua = navigator.userAgent;
     return ua.indexOf('MSIE ') > -1 || ua.indexOf('Trident/') > -1;
   }
 
   public get isChrome() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const isChromium = (window as any).chrome;
+    const isChromium = window.chrome;
     const winNav = window.navigator;
     const vendorName = winNav.vendor;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const isOpera = typeof (window as any).opr !== 'undefined';
+    const isOpera = isDefined(window.opr);
     const isIEedge = winNav.userAgent.indexOf('Edge') > -1;
     const isIOSChrome = /CriOS/.exec(winNav.userAgent);
 
@@ -535,17 +529,17 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   public openExternalLink(url: string) {
-    if (this.isDesktop) {
-      app.$errorManager.handlePromise(window.electron.ipcRenderer.openLink(url));
+    if (this.isElectron(window)) {
+      app.$errorManager.handlePromise(window.electron.ipcRenderer.invoke('openLink', url));
     } else {
-      (window.open(url, '_blank') as Window).focus();
+      window.open(url, '_blank')!.focus();
     }
   }
 
   public async writeAndDownloadJson(defaultFileName: string, object: object, filePath?: string) {
     const jsonData = JSON.stringify(object);
-    if (this.isDesktop) {
-      await window.electron.ipcRenderer.writeJsonFile(defaultFileName, jsonData, filePath);
+    if (this.isElectron(window)) {
+      await window.electron.ipcRenderer.invoke('writeJsonFile', defaultFileName, jsonData, filePath);
     } else {
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -563,7 +557,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     filters: TFileFilter[]
   ): Promise<string | { content: ArrayBuffer; name?: string } | undefined> {
     if (this.isDesktop) {
-      const buffer = await window.electron.ipcRenderer.readFileUtf8(filters);
+      const buffer = await window.electron!.ipcRenderer.invoke('readFileUtf8', filters);
       if (!buffer) return undefined;
       if (isString(buffer)) return buffer;
       // Supposant que result est le contenu du fichier en tant que Buffer

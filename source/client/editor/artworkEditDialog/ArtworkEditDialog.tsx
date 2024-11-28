@@ -1,4 +1,4 @@
-import { isEmpty } from 'mn-tools';
+import { isDefined, isEmpty } from 'mn-tools';
 import { Crop } from 'react-image-crop';
 import { ArtworkCropping } from './ArtworkCropping';
 import { ArtworkEditing } from './ArtworkEditing';
@@ -59,10 +59,11 @@ export class ArtworkEditDialog extends AbstractPopup<
 
   private async loadArtworkBase64(artworkURL: string, crop?: Crop) {
     let artworkBase64 = '';
-    if (app.$device.isDesktop) {
+    if (app.$device.isElectron(window)) {
       try {
-        if (!isEmpty(artworkURL) && (await window.electron.ipcRenderer.checkFileExists(artworkURL))) {
-          artworkBase64 = await window.electron.ipcRenderer.createImgFromPath(artworkURL);
+        if (!isEmpty(artworkURL) && (await window.electron.ipcRenderer.invoke('checkFileExists', artworkURL))) {
+          const base64 = await window.electron.ipcRenderer.invoke('createImgFromPath', artworkURL);
+          if (isDefined(base64)) artworkBase64 = base64;
         }
       } catch (error) {
         console.error(error);

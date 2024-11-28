@@ -42,14 +42,11 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
   }
 
   public async setup() {
-    if (!app.$device.isDesktop) return;
-    window.electron.ipcRenderer.on('importData', async () => {
-      await this.importData();
-    });
-
-    window.electron.ipcRenderer.on('exportData', async () => {
-      await this.exportData();
-    });
+    if (app.$device.isElectron(window)) {
+      window.electron.ipcRenderer.addListener('importData', () => app.$errorManager.handlePromise(this.importData()));
+      window.electron.ipcRenderer.addListener('exportData', () => app.$errorManager.handlePromise(this.exportData()));
+    }
+    return Promise.resolve();
   }
 
   public cleared() {

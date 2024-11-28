@@ -29,10 +29,9 @@ export class IndexedDBService implements IStoreService {
       };
     });
 
-    if (!app.$device.isDesktop) return;
-    window.electron.ipcRenderer.on('deleteLocalDb', async () => {
-      await this.clear();
-    });
+    if (app.$device.isElectron(window)) {
+      window.electron.ipcRenderer.addListener('deleteLocalDb', () => app.$errorManager.handlePromise(this.clear()));
+    }
   }
 
   public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {

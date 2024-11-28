@@ -1,14 +1,14 @@
 declare global {
-  interface IOnChannel {
-    renderCurrentCard?: null;
-    saveCurrentOrTempToLocal?: null;
-    importCards?: null;
-    importData?: null;
-    exportData?: null;
+  interface IIpcMainSendChannel {
+    renderCurrentCard: [];
+    saveCurrentOrTempToLocal: [];
+    importCards: [];
+    importData: [];
+    exportData: [];
   }
 }
 
-export function patchIpcMain(_ipcMain: IIpcMain) {}
+export function patchIpcMain(_ipcMain: TIpcMain) {}
 
 export function buildProjectMenuDarwinTemplate(
   mainWindow: IBrowserWindow,

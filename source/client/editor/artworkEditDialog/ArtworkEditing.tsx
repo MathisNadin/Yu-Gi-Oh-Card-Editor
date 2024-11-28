@@ -171,7 +171,9 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
   }
 
   private async doSelectImgPath() {
-    const path = await window.electron.ipcRenderer.getFilePath(
+    if (!app.$device.isElectron(window)) return;
+    const path = await window.electron.ipcRenderer.invoke(
+      'getFilePath',
       this.state.artworkURL || app.$settings.settings.defaultArtworkPath
     );
     if (!path) return;

@@ -1,6 +1,6 @@
 import { ICard } from 'client/editor/card/card-interfaces';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
-import { getCroppedArtworkBase64, preloadImage } from 'mn-tools';
+import { getCroppedArtworkBase64, isDefined, preloadImage } from 'mn-tools';
 
 interface ICardArtworkProps extends IToolkitComponentProps {
   card: ICard;
@@ -104,26 +104,26 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     const { url, x, y, height, width, artworkBg } = this.state;
 
     let artworkExists = false;
-    if (app.$device.isDesktop) {
+    let artworkData!: string;
+    if (app.$device.isElectron(window)) {
       try {
-        artworkExists = await window.electron.ipcRenderer.checkFileExists(url);
+        artworkExists = await window.electron.ipcRenderer.invoke('checkFileExists', url);
       } catch (error) {
         console.error(error);
+      }
+
+      if (artworkExists) {
+        artworkData = `file://${url}`;
+        try {
+          const src = await window.electron.ipcRenderer.invoke('createImgFromPath', url);
+          if (isDefined(src)) artworkData = await getCroppedArtworkBase64({ src, x, y, height, width });
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
 
-    let artworkData: string;
-    if (artworkExists) {
-      artworkData = `file://${url}`;
-      try {
-        const src = await window.electron.ipcRenderer.createImgFromPath(url);
-        artworkData = await getCroppedArtworkBase64({ src, x, y, height, width });
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      artworkData = artworkBg;
-    }
+    if (!artworkExists) artworkData = artworkBg;
 
     await preloadImage(artworkData);
     this.setState({ loadArtwork: false, artworkData });

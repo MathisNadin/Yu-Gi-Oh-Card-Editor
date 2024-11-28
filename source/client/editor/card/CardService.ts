@@ -745,18 +745,20 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public async setup() {
-    if (!app.$device.isDesktop) return;
-    window.electron.ipcRenderer.on('renderCurrentCard', async () => {
-      await app.$card.renderCurrentCard();
-    });
+    if (app.$device.isElectron(window)) {
+      window.electron.ipcRenderer.addListener('renderCurrentCard', () =>
+        app.$errorManager.handlePromise(app.$card.renderCurrentCard())
+      );
 
-    window.electron.ipcRenderer.on('saveCurrentOrTempToLocal', async () => {
-      await app.$card.saveCurrentOrTempToLocal();
-    });
+      window.electron.ipcRenderer.addListener('saveCurrentOrTempToLocal', () =>
+        app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())
+      );
 
-    window.electron.ipcRenderer.on('importCards', async () => {
-      await app.$card.showImportDialog();
-    });
+      window.electron.ipcRenderer.addListener('importCards', () =>
+        app.$errorManager.handlePromise(app.$card.showImportDialog())
+      );
+    }
+    return Promise.resolve();
   }
 
   public cleared() {
@@ -960,11 +962,15 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public async askRenderPath() {
-    this._renderPath = await window.electron.ipcRenderer.getDirectoryPath(app.$settings.settings.defaultRenderPath);
+    if (!app.$device.isElectron(window)) return;
+    this._renderPath = await window.electron.ipcRenderer.invoke(
+      'getDirectoryPath',
+      app.$settings.settings.defaultRenderPath
+    );
   }
 
   public async renderCards(cards: ICard[]) {
-    if (!cards?.length || !app.$device.isDesktop) return;
+    if (!cards?.length || !app.$device.isElectron(window)) return;
 
     await this.askRenderPath();
     if (!this._renderPath) return;
@@ -974,12 +980,13 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public async writeCardFile(element: HTMLDivElement, cardUuid: string, cardName: string) {
-    if (!app.$device.isDesktop || !this._renderPath) return;
+    if (!app.$device.isElectron(window) || !this._renderPath) return;
 
     try {
       const dataUrl = await toPng(element);
       if (!dataUrl) return;
-      await window.electron.ipcRenderer.writePngFile(
+      await window.electron.ipcRenderer.invoke(
+        'writePngFile',
         cardName.replace(/[\\/:"*?<>|]/g, '') || 'Sans nom',
         dataUrl.replace(/^data:image\/\w+;base64,/, ''),
         this._renderPath
@@ -1130,10 +1137,10 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public async importArtwork(url: string, path?: string): Promise<string | undefined> {
-    if (!app.$device.isDesktop) return undefined;
-    path = path || (await window.electron.ipcRenderer.getDirectoryPath());
+    if (!app.$device.isElectron(window)) return undefined;
+    path = path || (await window.electron.ipcRenderer.invoke('getDirectoryPath'));
     if (!path) return '';
-    return await window.electron.ipcRenderer.download(path, url);
+    return await window.electron.ipcRenderer.invoke('download', path, url);
   }
 
   private getDefaultCurrentCard(): ICard {

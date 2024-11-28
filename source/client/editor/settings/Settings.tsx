@@ -54,7 +54,11 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
   }
 
   private async getDefaultRenderPath() {
-    const defaultRenderPath = await window.electron.ipcRenderer.getDirectoryPath(this.state.settings.defaultRenderPath);
+    if (!app.$device.isElectron(window)) return;
+    const defaultRenderPath = await window.electron.ipcRenderer.invoke(
+      'getDirectoryPath',
+      this.state.settings.defaultRenderPath
+    );
     if (!defaultRenderPath) return;
     await this.onDefaultRenderPathChanged(defaultRenderPath);
   }
@@ -64,7 +68,9 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
   }
 
   private async getDefaultArtworkPath() {
-    const defaultArtworkPath = await window.electron.ipcRenderer.getDirectoryPath(
+    if (!app.$device.isElectron(window)) return;
+    const defaultArtworkPath = await window.electron.ipcRenderer.invoke(
+      'getDirectoryPath',
       this.state.settings.defaultArtworkPath
     );
     if (!defaultArtworkPath) return;
@@ -76,7 +82,9 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
   }
 
   private async getDefaultImgImportPath() {
-    const defaultImgImportPath = await window.electron.ipcRenderer.getDirectoryPath(
+    if (!app.$device.isElectron(window)) return;
+    const defaultImgImportPath = await window.electron.ipcRenderer.invoke(
+      'getDirectoryPath',
       this.state.settings.defaultImgImportPath
     );
     if (!defaultImgImportPath) return;
