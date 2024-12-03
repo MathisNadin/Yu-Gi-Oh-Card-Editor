@@ -1,4 +1,3 @@
-import { load } from 'cheerio';
 import { extend, integer, isDefined, isUndefined, uuid } from 'mn-tools';
 import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from 'client/editor/card';
 
@@ -158,7 +157,7 @@ export class YuginewsService {
         picture = parsedCardData.picture;
       } else {
         picture = [
-          this.formatPictureString(parsedCardData.nameEN || ''),
+          this.formatPictureString(parsedCardData.nameEN),
           '-',
           parsedCardData.isRush ? 'RD' : '',
           parsedCardData.setId,
@@ -243,7 +242,7 @@ export class YuginewsService {
         'div.elementor-column.elementor-col-50.elementor-inner-column.elementor-element'
       );
       subSections.forEach((subSection, index) => {
-        if (!index) return;
+        if (!index) return; // Skip the first sub-section
 
         const subSubSections = subSection.querySelectorAll(
           'div.elementor-element.elementor-widget.elementor-widget-text-editor'
@@ -252,13 +251,13 @@ export class YuginewsService {
 
         const parsedCardData: IYuginewsCardData = {};
         subSubSections.forEach((s, sIndex) => {
-          const paragraphs = load(s.innerHTML)('p');
+          const paragraphs = Array.from(s.querySelectorAll('p'));
           if (!paragraphs.length) return;
 
           // If first section, parse card info lines
           if (!sIndex) {
-            paragraphs.each((i) => {
-              const infoLines = paragraphs.eq(i).html()?.split('<br>');
+            paragraphs.forEach((p, i) => {
+              const infoLines = p.innerHTML.split('<br>');
               if (infoLines?.length) {
                 // Parse card names lines
                 if (!i) this.parseDOMNamesLines(infoLines, parsedCardData);
@@ -269,13 +268,13 @@ export class YuginewsService {
           }
           // Else, parse card effects
           else {
-            const effects: string[] = [];
-            paragraphs.each((i) => {
-              effects.push(paragraphs.eq(i).text());
-            });
+            const effects = paragraphs
+              .map((p) => p.textContent?.replace(/\u00A0/g, ' ')?.trim() || '')
+              .filter((e) => !!e);
             if (effects.length) this.parseDOMEffects(effects, parsedCardData);
           }
         });
+
         if (!Object.keys(parsedCardData)?.length) return;
 
         parsedCardData.uuid = uuid();
@@ -297,33 +296,66 @@ export class YuginewsService {
    */
   private parseDOMNamesLines(namesLines: string[], parsedCardData: IYuginewsCardData) {
     namesLines.forEach((line, iLine) => {
-      // Replace &nbsp; with spaces
-      line = line.replaceAll('&nbsp;', ' ').trim();
+      // Utiliser DOMParser pour analyser le contenu HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(line, 'text/html');
+
+      // Extraire le texte brut, sans balises HTML, en remplaçant les espaces insécables
+      const plainLine = doc.body?.textContent?.replace(/\u00A0/g, ' ')?.trim() || '';
 
       // First line, nameFR
       if (!iLine) {
-        parsedCardData.nameFR = line
-          .replaceAll('<span>', '')
-          .replaceAll('</span>', '')
-          .replaceAll('<strong>', '')
-          .replaceAll('</strong>', '')
-          .replaceAll('<b>', '')
-          .replaceAll('</b>', '')
-          .trim();
+        parsedCardData.nameFR = plainLine;
       } else {
         // Other lines
-        const setIdMatch = line.match(/^([^-]+)/);
-        const idMatch = line.match(/-(.*?)\s*\(JAP/);
-        const nameENMatch = line.match(/EN\s*:\s*<em>(.*?)<\/em>/);
-
+        const setIdMatch = plainLine.match(/^([^-]+)/);
+        const idMatch = plainLine.match(/-(.*?)\s*\(JAP/);
         if (setIdMatch && idMatch) {
           parsedCardData.setId = setIdMatch[1].trim();
           if (parsedCardData.setId?.startsWith('RD/')) parsedCardData.isRush = true;
           parsedCardData.id = integer(idMatch[1].slice(-3).replace(/\D/g, '').trim());
-          parsedCardData.nameEN = nameENMatch?.length && nameENMatch[1] ? nameENMatch[1].trim() : '';
         }
+
+        // Expression régulière pour capturer les noms anglais et japonais
+        const parsedNames = this.parseDOMNames(plainLine);
+        if (parsedNames.nameEN) parsedCardData.nameEN = parsedNames.nameEN; // Nom anglais s'il existe
+        if (parsedNames.nameJP) parsedCardData.nameJP = parsedNames.nameJP; // Nom japonais s'il existe
       }
     });
+  }
+
+  private parseDOMNames(plainLine: string) {
+    let nameJP = '';
+    let nameEN = '';
+
+    // Retirer tout ce qui est en dehors des parenthèses pour limiter le contexte
+    const matchParentheses = plainLine.match(/\((.*?)\)$/);
+    if (!matchParentheses) {
+      // Si aucune parenthèse, retourner des noms vides
+      return { nameJP, nameEN };
+    }
+
+    // Contenu à l'intérieur des parenthèses
+    const content = matchParentheses[1];
+
+    // Première regex : cas où JAP et EN sont séparés
+    const matchSeparate = content.match(/JAP\s*:\s*(.*?)\s*\/\s*EN\s*:\s*(.*)/);
+    if (matchSeparate) {
+      nameJP = matchSeparate[1]?.trim() || '';
+      nameEN = matchSeparate[2]?.trim() || '';
+      return { nameJP, nameEN };
+    }
+
+    // Deuxième regex : cas où JAP/EN est combiné
+    const matchCombined = content.match(/JAP\/EN\s*:\s*(.*)/);
+    if (matchCombined) {
+      nameJP = matchCombined[1]?.trim() || '';
+      nameEN = matchCombined[1]?.trim() || '';
+      return { nameJP, nameEN };
+    }
+
+    // Si aucune correspondance trouvée
+    return { nameJP, nameEN };
   }
 
   /**
@@ -332,42 +364,46 @@ export class YuginewsService {
    * @param parsedCardData - The card data object to populate.
    */
   private parseDOMInfoLines(infoLines: string[], parsedCardData: IYuginewsCardData) {
-    for (let line of infoLines) {
-      // Replace &nbsp; with spaces
-      line = line.replaceAll('&nbsp;', ' ').trim();
+    for (const line of infoLines) {
+      // Utiliser DOMParser pour analyser le contenu HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(line, 'text/html');
 
-      if (line.includes('Flèche')) {
-        parsedCardData.linkArrows = line
+      // Extraire le texte brut, sans balises HTML, en remplaçant les espaces insécables
+      const plainLine = doc.body?.textContent?.replace(/\u00A0/g, ' ')?.trim() || '';
+
+      if (plainLine.includes('Flèche')) {
+        parsedCardData.linkArrows = plainLine
           .replace('Flèche Lien : ', '')
           .replace('Flèches Lien : ', '')
           .trim()
           .split(' / ');
-      } else if (line.includes(' / ')) {
-        parsedCardData.abilities = line.split(' / ');
-      } else if (line.includes('Niveau')) {
-        parsedCardData.level = line.replace('Niveau ', '').trim();
-      } else if (line.includes('Rang')) {
-        parsedCardData.level = line.replace('Rang ', '').trim();
-      } else if (line.includes('Link-')) {
-        parsedCardData.level = line.replace('Link-', '').trim();
-      } else if (line.includes('ATK MAXIMUM')) {
-        parsedCardData.atkMAX = line.replace(' ATK MAXIMUM', '').trim();
-      } else if (line.includes('ATK')) {
-        parsedCardData.atk = line.replace(' ATK', '').trim();
-      } else if (line.includes('DEF')) {
-        parsedCardData.def = line.replace(' DEF', '').trim();
-      } else if (line.includes('Échelle')) {
-        parsedCardData.scale = line.replace('Échelle Pendule : ', '').trim();
-      } else if (line.includes('Magie')) {
+      } else if (plainLine.includes(' / ')) {
+        parsedCardData.abilities = plainLine.split(' / ');
+      } else if (plainLine.includes('Niveau')) {
+        parsedCardData.level = plainLine.replace('Niveau ', '').trim();
+      } else if (plainLine.includes('Rang')) {
+        parsedCardData.level = plainLine.replace('Rang ', '').trim();
+      } else if (plainLine.includes('Link-')) {
+        parsedCardData.level = plainLine.replace('Link-', '').trim();
+      } else if (plainLine.includes('ATK MAXIMUM')) {
+        parsedCardData.atkMAX = plainLine.replace(' ATK MAXIMUM', '').trim();
+      } else if (plainLine.includes('ATK')) {
+        parsedCardData.atk = plainLine.replace(' ATK', '').trim();
+      } else if (plainLine.includes('DEF')) {
+        parsedCardData.def = plainLine.replace(' DEF', '').trim();
+      } else if (plainLine.includes('Échelle')) {
+        parsedCardData.scale = plainLine.replace('Échelle Pendule : ', '').trim();
+      } else if (plainLine.includes('Magie')) {
         parsedCardData.cardType = '2';
-        parsedCardData.stType = this.getStTypeFromLine(line);
-      } else if (line.includes('Piège')) {
+        parsedCardData.stType = this.getStTypeFromLine(plainLine);
+      } else if (plainLine.includes('Piège')) {
         parsedCardData.cardType = '3';
-        parsedCardData.stType = this.getStTypeFromLine(line);
-      } else if (line.includes('LEGEND') || line.includes('LÉGENDE')) {
+        parsedCardData.stType = this.getStTypeFromLine(plainLine);
+      } else if (plainLine.includes('LEGEND') || plainLine.includes('LÉGENDE')) {
         parsedCardData.legend = true;
-      } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(line)) {
-        parsedCardData.attribute = this.getAttributeFromLine(line);
+      } else if (/^[A-ZÀ-ÖØ-Þ]+$/i.test(plainLine)) {
+        parsedCardData.attribute = this.getAttributeFromLine(plainLine);
       }
     }
   }
@@ -378,9 +414,6 @@ export class YuginewsService {
    * @param parsedCardData - The card data object to populate.
    */
   private parseDOMEffects(effects: string[], parsedCardData: IYuginewsCardData) {
-    // Replace &nbsp; with spaces
-    for (let effect of effects) effect = effect.replaceAll('&nbsp;', ' ').trim();
-
     if (parsedCardData.isRush) {
       for (const effect of effects) {
         if (effect.startsWith('[CONDITION]')) {
@@ -390,7 +423,7 @@ export class YuginewsService {
           parsedCardData.effect = effect.replace('[EFFET] ', '');
         } else if (effect.startsWith('[EFFET CONTINU]')) {
           parsedCardData.effectType = '2';
-          parsedCardData.condition = effect.replace('[EFFET CONTINU] ', '');
+          parsedCardData.effect = effect.replace('[EFFET CONTINU] ', '');
         } else if (effect.startsWith('[EFFET MULTI-CHOIX]')) {
           parsedCardData.effectType = '3';
           parsedCardData.choiceEffects = [
@@ -419,7 +452,7 @@ export class YuginewsService {
    * @param str - The string to format.
    * @returns The formatted string.
    */
-  private formatPictureString(str: string) {
+  private formatPictureString(str: string | undefined) {
     if (!str) return str;
     // Remplacer les caractères non autorisés dans une URL ou un nom de fichier
     str = str
