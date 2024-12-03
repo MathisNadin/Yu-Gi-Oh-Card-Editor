@@ -180,7 +180,7 @@ export class MediaWikiService {
           .trim()
           .replaceAll(' (card)', '');
       } else if (t.includes('| attribute')) {
-        let attribute = t.slice(t.indexOf('= ') + 1, t.length).trim();
+        const attribute = t.slice(t.indexOf('= ') + 1, t.length).trim();
         switch (attribute) {
           case 'DARK':
             card.attribute = 'dark';
@@ -205,7 +205,7 @@ export class MediaWikiService {
             break;
         }
       } else if (t.includes('| card_type')) {
-        let cardType = t.slice(t.indexOf('= ') + 1, t.length).trim();
+        const cardType = t.slice(t.indexOf('= ') + 1, t.length).trim();
         switch (cardType) {
           case 'Trap':
             card.frames.push('trap');
@@ -218,7 +218,7 @@ export class MediaWikiService {
             break;
         }
       } else if (t.includes('| types')) {
-        let types = t.slice(t.indexOf('= ') + 1, t.length).trim();
+        const types = t.slice(t.indexOf('= ') + 1, t.length).trim();
 
         if (types.includes('Ritual')) {
           card.frames.push('ritual');
@@ -246,7 +246,7 @@ export class MediaWikiService {
 
         card.abilities = types.split(' / ');
       } else if (t.includes('| property')) {
-        let property = t.slice(t.indexOf('= ') + 1, t.length).trim();
+        const property = t.slice(t.indexOf('= ') + 1, t.length).trim();
         switch (property) {
           case 'Normal':
             card.stType = 'normal';
@@ -280,12 +280,12 @@ export class MediaWikiService {
       } else if (t.includes('| rank')) {
         card.level = integer(t.slice(t.indexOf('= ') + 1, t.length).trim());
       } else if (t.includes('| link_arrows')) {
-        let linkArrows = t
+        const linkArrows = t
           .slice(t.indexOf('= ') + 1, t.length)
           .trim()
           .split(', ');
         card.level = linkArrows.length;
-        for (let arrow of linkArrows) {
+        for (const arrow of linkArrows) {
           switch (arrow) {
             case 'Top-Left':
               card.linkArrows.topLeft = true;
@@ -316,7 +316,7 @@ export class MediaWikiService {
           }
         }
       } else if (t.includes('| materials')) {
-        let parsedText = this.parseWikitextLore(t);
+        const parsedText = this.parseWikitextLore(t);
         if (rushOtherEffects) {
           rushOtherEffects = `${parsedText}\n${rushOtherEffects}`;
         } else {
@@ -343,7 +343,7 @@ export class MediaWikiService {
           card.rushTextMode = 'choice';
         }
       } else if (t.includes('| pendulum_scale')) {
-        let scale = integer(t.slice(t.indexOf('= ') + 1, t.length).trim());
+        const scale = integer(t.slice(t.indexOf('= ') + 1, t.length).trim());
         card.scales = { left: scale, right: scale };
       } else if (t.includes('| password')) {
         card.passcode = t.slice(t.indexOf('= ') + 1, t.length).trim();
@@ -353,7 +353,7 @@ export class MediaWikiService {
       } else if (t.includes('| fr_requirement')) {
         rushFrCondition = this.parseWikitextLore(t);
       } else if (t.includes('| summoning_condition')) {
-        let parsedText = this.parseWikitextLore(t);
+        const parsedText = this.parseWikitextLore(t);
         if (rushOtherEffects) {
           rushOtherEffects = `${rushOtherEffects}\n${parsedText}`;
         } else {
@@ -370,14 +370,20 @@ export class MediaWikiService {
       } else if (t.includes('| fr_pendulum_effect')) {
         frPendEffect = this.parseWikitextLore(t);
       } else if (t.includes('| fr_sets')) {
-        let firstFrSet = wikitextArray[i + 1];
-        frSet = firstFrSet.slice(0, firstFrSet.indexOf(';'));
+        const firstFrSet = wikitextArray[i + 1];
+        if (!firstFrSet.includes('_sets') && !firstFrSet.includes('| archseries')) {
+          frSet = firstFrSet.slice(0, firstFrSet.indexOf(';'));
+        }
       } else if (t.includes('| en_sets')) {
-        let firstEnSet = wikitextArray[i + 1];
-        enSet = firstEnSet.slice(0, firstEnSet.indexOf(';'));
+        const firstEnSet = wikitextArray[i + 1];
+        if (!firstEnSet.includes('_sets') && !firstEnSet.includes('| archseries')) {
+          enSet = firstEnSet.slice(0, firstEnSet.indexOf(';'));
+        }
       } else if (t.includes('| jp_sets')) {
-        let firstJpSet = wikitextArray[i + 1];
-        jpSet = firstJpSet.slice(0, firstJpSet.indexOf(';'));
+        const firstJpSet = wikitextArray[i + 1];
+        if (!firstJpSet.includes('_sets') && !firstJpSet.includes('| archseries')) {
+          jpSet = firstJpSet.slice(0, firstJpSet.indexOf(';'));
+        }
       } else if (t.includes('| misc') && t.includes('Legend Card')) {
         card.legend = true;
       }
