@@ -121,11 +121,14 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
     let includesLink = false;
     let includesSkill = false;
     let includesSpell = false;
+    let includesTrap = false;
     let includesToken = false;
     let cardFrames: string[] = [];
     for (const frame of card.frames) {
       if (frame === 'spell') {
         includesSpell = true;
+      } else if (frame === 'trap') {
+        includesTrap = true;
       } else if (frame === 'normal') {
         includesNormal = true;
       } else if (frame === 'xyz') {
@@ -151,7 +154,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
         hasStIcon = true;
         abilities.push(app.$card.getStTypeName(card.stType, card.language, true));
       }
-    } else {
+    } else if (includesTrap) {
       abilities.push(card.language === 'fr' ? 'Carte Piège' : 'Trap Card');
       if (card.stType !== 'normal') {
         hasStIcon = true;
