@@ -124,10 +124,19 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   }
 
   public static getDescription(card: ICard) {
-    let description: JSXElementChild[][] = [];
+    const description: JSXElementChild[][] = [];
+    const addLineBreaks = (texts: JSXElementChild[] | JSXElementChild[][]) =>
+      texts.map((text, i) => (i < texts.length - 1 ? [text, <br key={`br-${i}`} />] : text));
+
     switch (card.rushTextMode) {
       case 'vanilla':
-        description = card.description.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt));
+        description.push(
+          addLineBreaks(
+            card.description
+              .split('\n')
+              .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+          )
+        );
         break;
 
       case 'regular':
@@ -146,7 +155,11 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         }
         if (card.rushOtherEffects) {
           description.push(
-            ...card.rushOtherEffects.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt))
+            addLineBreaks(
+              card.rushOtherEffects
+                .split('\n')
+                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+            )
           );
         }
         description.push(
@@ -157,7 +170,12 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             >
               {'[Condition] '}
             </span>,
-          ].concat(...card.rushCondition.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt))),
+            addLineBreaks(
+              card.rushCondition
+                .split('\n')
+                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+            ),
+          ],
           [
             <span
               key={`rush-label-effect`}
@@ -165,14 +183,23 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             >
               {effectLabel}
             </span>,
-          ].concat(...card.rushEffect.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt)))
+            addLineBreaks(
+              card.rushEffect
+                .split('\n')
+                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+            ),
+          ]
         );
         break;
 
       case 'choice':
         if (card.rushOtherEffects) {
           description.push(
-            ...card.rushOtherEffects.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt))
+            addLineBreaks(
+              card.rushOtherEffects
+                .split('\n')
+                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+            )
           );
         }
         const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix]' : '[Multi-Choice Effect]';
@@ -180,7 +207,13 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         for (const choice of card.rushChoiceEffects) {
           choiceEffects.push(' ');
           choiceEffects.push(
-            ...choice.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt, true))
+            addLineBreaks(
+              choice
+                .split('\n')
+                .map((text, index) =>
+                  RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt, forceBulletAtStart: !index })
+                )
+            )
           );
         }
         description.push(
@@ -191,7 +224,11 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             >
               {'[Condition] '}
             </span>,
-            ...card.rushCondition.split('\n').map((d, i) => RushCardDesc.getProcessedText(d, i, card.tcgAt)),
+            addLineBreaks(
+              card.rushCondition
+                .split('\n')
+                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+            ),
           ],
           [
             <span
@@ -212,9 +249,18 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     return description;
   }
 
-  public static getProcessedText(text: string, index: number, tcgAt: boolean, forceBulletAtStart?: boolean) {
-    const parts = text.split(/(●|•)/).map((part) => part.trim());
-    if (parts.length && !parts[0]) parts.shift();
+  public static getProcessedText(options: {
+    text: string;
+    index: number;
+    tcgAt: boolean;
+    forceBulletAtStart?: boolean;
+  }) {
+    const { text, index, tcgAt, forceBulletAtStart } = options;
+
+    const parts = text.split(/(●|•)/).map((part) => part.trim() || '\u00A0');
+    // If there are multiple strings, but the first is empty,
+    // then it means the second one is a bullet point because the text started with one
+    if (parts.length > 1 && parts[0] === '\u00A0') parts.shift();
 
     let nextHasBullet = false;
     const processedText: JSX.Element[] = [];

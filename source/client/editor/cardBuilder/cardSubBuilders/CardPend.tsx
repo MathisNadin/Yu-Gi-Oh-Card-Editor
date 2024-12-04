@@ -138,8 +138,10 @@ export class CardPend extends ToolkitComponent<ICardPendProps, ICardPendState> {
   }
 
   public static getProcessedText(text: string, index: number, tcgAt: boolean) {
-    const parts = text.split(/(●|•)/).map((part) => part.trim());
-    if (parts.length && !parts[0]) parts.shift();
+    const parts = text.split(/(●|•)/).map((part) => part.trim() || '\u00A0');
+    // If there are multiple strings, but the first is empty,
+    // then it means the second one is a bullet point because the text started with one
+    if (parts.length > 1 && parts[0] === '\u00A0') parts.shift();
 
     let nextHasBullet = false;
     const processedText: JSX.Element[] = [];
