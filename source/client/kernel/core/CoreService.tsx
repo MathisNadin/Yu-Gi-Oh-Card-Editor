@@ -43,18 +43,19 @@ export class CoreService implements Partial<IApplicationListener> {
     // Add release notes if available
     if (info.releaseNotes) {
       if (isString(info.releaseNotes)) {
-        message += `Notes de version :<br>${info.releaseNotes.replaceAll('\n\n', '<br>').replaceAll('\n', '<br>')}<br><br>`;
+        message += `Notes de version :<br>${info.releaseNotes.replaceAll('\n\n', '<br>').replaceAll('\n', '<br>')}<br>`;
       } else if (Array.isArray(info.releaseNotes)) {
         const formattedNotes = info.releaseNotes.map((note) => (isString(note) ? note : note.note)).join('<br>');
-        message += `Notes de version :<br>${formattedNotes}<br><br>`;
+        message += `Notes de version :<br>${formattedNotes}<br>`;
       }
     }
 
     // Add the default message
     message +=
-      "Si vous ne mettez pas à jour tout de suite, la mise à jour sera faite automatiquement à la fermeture de l'application.";
+      "<em>Si vous ne mettez pas à jour tout de suite, la mise à jour sera faite automatiquement à la fermeture de l'application.<em>";
 
     const choice = await app.$popup.choice<TUpdateChoice>({
+      className: 'app-update-choice-popup',
       title: `Une nouvelle version est disponible : ${info.version}`,
       messageType: 'html',
       message,
