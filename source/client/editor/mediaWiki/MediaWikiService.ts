@@ -207,6 +207,12 @@ export class MediaWikiService {
       } else if (t.includes('| card_type')) {
         const cardType = t.slice(t.indexOf('= ') + 1, t.length).trim();
         switch (cardType) {
+          case 'Skill':
+            card.frames.push('skill');
+            if (card.abilities) card.abilities.push(cardType);
+            else card.abilities = [cardType];
+            break;
+
           case 'Trap':
             card.frames.push('trap');
             card.attribute = 'trap';
@@ -395,7 +401,7 @@ export class MediaWikiService {
       card.multipleFrames = true;
     }
 
-    enName = (name || enName || title) as string;
+    enName = (name || enName || title)!;
     if (enName && card.frames.length === 1 && card.frames[0] === 'normal') {
       if (enName === 'Token') card.frames = ['token'];
       else if (enName.includes('Token')) card.frames = ['monsterToken'];
@@ -406,7 +412,7 @@ export class MediaWikiService {
     }
 
     if (useFr) {
-      card.cardSet = frSet as string;
+      card.cardSet = frSet!;
       if (!card.rush && card.cardSet.startsWith('RD/')) {
         card.rush = true;
       }
@@ -417,20 +423,23 @@ export class MediaWikiService {
             .split(/(●|•)/)
             .map((part) => part.trim())
             .filter((part) => part && part !== '●' && part !== '•');
+        } else if (card.frames?.length === 1 && card.frames[0] === 'normal') {
+          card.description = frLore!;
+          card.rushTextMode = 'vanilla';
         } else {
-          card.rushEffect = frLore as string;
+          card.rushEffect = frLore!;
         }
       } else {
-        card.description = frLore as string;
+        card.description = frLore!;
       }
 
       card.language = 'fr';
-      card.name = frName as string;
-      card.pendEffect = frPendEffect as string;
-      card.rushCondition = rushFrCondition as string;
-      card.rushOtherEffects = rushFrOtherEffects as string;
+      card.name = frName!;
+      card.pendEffect = frPendEffect!;
+      card.rushCondition = rushFrCondition!;
+      card.rushOtherEffects = rushFrOtherEffects!;
     } else {
-      card.cardSet = (enSet || jpSet) as string;
+      card.cardSet = (enSet || jpSet)!;
       if (!card.rush && card.cardSet.startsWith('RD/')) {
         card.rush = true;
       }
@@ -441,17 +450,26 @@ export class MediaWikiService {
             .split(/(●|•)/)
             .map((part) => part.trim())
             .filter((part) => part && part !== '●' && part !== '•');
+        } else if (card.frames?.length === 1 && card.frames[0] === 'normal') {
+          card.description = lore!;
+          card.rushTextMode = 'vanilla';
         } else {
-          card.rushEffect = lore as string;
+          card.rushEffect = lore!;
         }
       } else {
-        card.description = lore as string;
+        card.description = lore!;
       }
 
       card.name = enName;
-      card.pendEffect = pendEffect as string;
-      card.rushCondition = rushCondition as string;
-      card.rushOtherEffects = rushOtherEffects as string;
+      card.pendEffect = pendEffect!;
+      card.rushCondition = rushCondition!;
+      card.rushOtherEffects = rushOtherEffects!;
+    }
+
+    // For now, handle Rush Skills that way
+    if (card.rush && card.frames.length === 1 && card.frames[0] === 'skill') {
+      card.frames = ['effect'];
+      card.dontCoverRushArt = true;
     }
 
     // Format texts
@@ -589,7 +607,21 @@ export class MediaWikiService {
 
     text = text.replaceAll("''", '');
 
-    return text.trim();
+    const finalText: string[] = [];
+    for (const line of text.split('\n')) {
+      if (!line) {
+        finalText.push('');
+        continue;
+      }
+
+      // Utiliser DOMParser pour analyser le contenu HTML
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(line, 'text/html');
+
+      // Extraire le texte brut, sans balises HTML, en remplaçant les espaces insécables
+      finalText.push(doc.body?.textContent?.replace(/\u00A0/g, ' ')?.trim() || '');
+    }
+    return finalText.join('\n');
   }
 
   private formatText(text: string | undefined): string {
@@ -660,6 +692,8 @@ export class MediaWikiService {
         return 'Lien';
       case 'Dark Synchro':
         return 'Synchro des Ténèbres';
+      case 'Skill':
+        return 'Compétence';
       case 'Tuner':
         return 'Syntoniseur';
       case 'Special Summon':

@@ -50,7 +50,8 @@ $legendaryDragon: #82b8d4;
                 Lien: $link,
                 Magie: $spell,
                 Piège: $trap,
-                Jeton: $token
+                Jeton: $token,
+                Compétence: $skill
               )
           {
             &.#{$class} {

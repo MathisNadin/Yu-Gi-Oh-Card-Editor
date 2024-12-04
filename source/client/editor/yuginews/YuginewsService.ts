@@ -268,9 +268,29 @@ export class YuginewsService {
           }
           // Else, parse card effects
           else {
-            const effects = paragraphs
-              .map((p) => p.textContent?.replace(/\u00A0/g, ' ')?.trim() || '')
+            const effects: string[] = paragraphs
+              .map((paragraph) => {
+                let textWithBreaks = '';
+
+                // Parcours des enfants du paragraphe
+                paragraph.childNodes.forEach((child) => {
+                  if (child.nodeType === Node.TEXT_NODE) {
+                    // Texte brut
+                    textWithBreaks += child.textContent;
+                  } else if (child.nodeType === Node.ELEMENT_NODE && 'tagName' in child && child.tagName === 'BR') {
+                    // Balise <br>, ajouter un saut de ligne
+                    textWithBreaks += '\n';
+                  } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    // Autres balises, récupérer le texte à l'intérieur
+                    textWithBreaks += (child as HTMLElement).textContent;
+                  }
+                });
+
+                // Nettoyage final
+                return textWithBreaks.replace(/\u00A0/g, ' ').trim();
+              })
               .filter((e) => !!e);
+
             if (effects.length) this.parseDOMEffects(effects, parsedCardData);
           }
         });
@@ -372,7 +392,9 @@ export class YuginewsService {
       // Extraire le texte brut, sans balises HTML, en remplaçant les espaces insécables
       const plainLine = doc.body?.textContent?.replace(/\u00A0/g, ' ')?.trim() || '';
 
-      if (plainLine.includes('Flèche')) {
+      if (plainLine === 'Compétence') {
+        parsedCardData.abilities = [plainLine];
+      } else if (plainLine.includes('Flèche')) {
         parsedCardData.linkArrows = plainLine
           .replace('Flèche Lien : ', '')
           .replace('Flèches Lien : ', '')
@@ -516,18 +538,18 @@ export class YuginewsService {
     importArtworks: boolean,
     artworkDirectoryPath: string
   ) {
-    let cards: ICard[] = [];
-    let now = new Date();
+    const cards: ICard[] = [];
+    const now = new Date();
 
-    for (let cardData of cardsData) {
-      let scale: number = cardData.scale ? integer(cardData.scale) : 0;
+    for (const cardData of cardsData) {
+      const scale: number = cardData.scale ? integer(cardData.scale) : 0;
 
-      let card = {
-        uuid: cardData.uuid as string,
+      let card: ICard = {
+        uuid: cardData.uuid!,
         created: now,
         modified: now,
         language: 'fr',
-        name: cardData.nameFR as string,
+        name: cardData.nameFR!,
         nameStyle: 'default',
         tcgAt: true,
         artwork: {
@@ -544,11 +566,11 @@ export class YuginewsService {
         stType: this.getStType(cardData),
         attribute: this.getAttribute(cardData),
         noTextAttribute: false,
-        abilities: cardData.abilities as string[],
+        abilities: cardData.abilities!,
         level: integer(cardData.level || cardData.rank || cardData.linkRating || '0'),
-        atk: cardData.atk,
-        def: cardData.def,
-        pendulum: (cardData.abilities as string[])?.includes('Pendule'),
+        atk: cardData.atk!,
+        def: cardData.def!,
+        pendulum: !!cardData.abilities?.includes('Pendule'),
         scales: {
           left: scale,
           right: scale,
@@ -558,20 +580,33 @@ export class YuginewsService {
         cardSet: this.getCardSet(cardData),
         hasCopyright: true,
         sticker: 'none',
-        rush: cardData.isRush,
-        legend: cardData.legend,
-        atkMax: cardData.atkMAX,
+        rush: cardData.isRush!,
+        legend: cardData.legend!,
+        atkMax: cardData.atkMAX!,
         maximum: !!cardData.atkMAX,
-        rushEffectType: this.getRushEffectType(cardData.effectType as string),
+        rushEffectType: this.getRushEffectType(cardData.effectType),
         rushTextMode: this.getRushTextMode(cardData),
-        rushOtherEffects: cardData.otherEffectTexts?.join('\n'),
-        rushCondition: cardData.condition,
-        rushEffect: cardData.effect,
-        rushChoiceEffects: cardData.choiceEffects,
-      } as ICard;
+        rushOtherEffects: cardData.otherEffectTexts?.join('\n') || undefined!,
+        rushCondition: cardData.condition!,
+        rushEffect: cardData.effect!,
+        rushChoiceEffects: cardData.choiceEffects!,
+        description: undefined!,
+        dontCoverRushArt: undefined!,
+        legendType: undefined!,
+        oldCopyright: undefined!,
+        passcode: undefined!,
+        pendEffect: undefined!,
+        speed: undefined!,
+      };
 
-      app.$card.correct(card as ICard);
-      card.description = this.getDescription(cardData, app.$card.hasMaterials(card as ICard));
+      // For now, handle Rush Skills that way
+      if (card.rush && card.frames.length === 1 && card.frames[0] === 'skill') {
+        card.frames = ['effect'];
+        card.dontCoverRushArt = true;
+      }
+
+      app.$card.correct(card);
+      card.description = this.getDescription(cardData, app.$card.hasMaterials(card));
       card.pendEffect = this.getPendEffect(cardData);
 
       if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
@@ -604,7 +639,7 @@ export class YuginewsService {
         }
       }
 
-      cards.push(card as ICard);
+      cards.push(card);
     }
 
     return cards;
@@ -620,12 +655,11 @@ export class YuginewsService {
     }
   }
 
-  private getRushEffectType(effectType: string): TRushEffectType {
+  private getRushEffectType(effectType: string | undefined): TRushEffectType {
     switch (effectType) {
-      case '1':
-        return 'effect';
       case '2':
         return 'continuous';
+      case '1':
       default:
         return 'effect';
     }
@@ -691,9 +725,9 @@ export class YuginewsService {
   }
 
   private getFrame(cardData: IYuginewsCardData): TFrame[] {
-    let frame: TFrame[] = [];
+    const frame: TFrame[] = [];
 
-    let types = cardData.abilities as string[];
+    const types = cardData.abilities;
     if (types?.length) {
       if (types.includes('Rituel')) {
         frame.push('ritual');
