@@ -1495,8 +1495,8 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public getFramesNames(frames: TFrame[]) {
-    let names: string[] = [];
-    for (let frame of frames) {
+    const names: string[] = [];
+    for (const frame of frames) {
       names.push(this.getFrameName(frame));
     }
     return names.join(' / ');
@@ -1505,7 +1505,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   public hasMaterials(card: ICard): boolean {
     if (!card.frames?.length) return false;
 
-    for (let frame of card.frames) {
+    for (const frame of card.frames) {
       if (frame === 'fusion' || frame === 'synchro' || frame === 'darkSynchro' || frame === 'xyz' || frame === 'link') {
         return true;
       }
@@ -1515,7 +1515,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public hasLinkArrows(card: ICard): boolean {
-    for (let frame of card.frames) {
+    for (const frame of card.frames) {
       if (frame === 'link') {
         return true;
       } else if (frame === 'spell' && card.stType === 'link') {

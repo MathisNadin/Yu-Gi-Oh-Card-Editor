@@ -586,7 +586,7 @@ export class YuginewsService {
         maximum: !!cardData.atkMAX,
         rushEffectType: this.getRushEffectType(cardData.effectType),
         rushTextMode: this.getRushTextMode(cardData),
-        rushOtherEffects: cardData.otherEffectTexts?.join('\n') || undefined!,
+        rushOtherEffects: undefined!,
         rushCondition: cardData.condition!,
         rushEffect: cardData.effect!,
         rushChoiceEffects: cardData.choiceEffects!,
@@ -608,6 +608,7 @@ export class YuginewsService {
       app.$card.correct(card);
       card.description = this.getDescription(cardData, app.$card.hasMaterials(card));
       card.pendEffect = this.getPendEffect(cardData);
+      card.rushOtherEffects = this.getRushOtherEffects(cardData, app.$card.hasMaterials(card));
 
       if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
         card.edition = 'forbiddenDeck';
@@ -682,7 +683,10 @@ export class YuginewsService {
           description = `${description}${lastHasLineBreak ? '' : ' '}${eff}`;
         }
 
-        if ((!i && hasMaterials) || (eff.startsWith('(') && !eff.startsWith('(Effet'))) {
+        if (
+          isDefined(cardData.effects![i + 1]) &&
+          ((!i && hasMaterials) || (eff.startsWith('(') && !eff.startsWith('(Effet')))
+        ) {
           description = `${description}\n`;
           lastHasLineBreak = true;
         } else {
@@ -722,6 +726,35 @@ export class YuginewsService {
     });
 
     return pendEffect;
+  }
+
+  private getRushOtherEffects(cardData: IYuginewsCardData, hasMaterials: boolean): string {
+    if (!cardData.otherEffectTexts?.length) return '';
+
+    let otherEffectTexts = '';
+
+    let lastHasLineBreak = false;
+    let lastHasBulletPoint = false;
+    cardData.otherEffectTexts.forEach((eff, i) => {
+      if (!i) {
+        otherEffectTexts = eff;
+      } else if (!lastHasLineBreak && (lastHasBulletPoint || eff.startsWith('●'))) {
+        otherEffectTexts = `${otherEffectTexts}\n${eff}`;
+      } else {
+        otherEffectTexts = `${otherEffectTexts}${lastHasLineBreak ? '' : ' '}${eff}`;
+      }
+
+      if (isDefined(cardData.otherEffectTexts![i + 1]) && ((!i && hasMaterials) || eff.startsWith('('))) {
+        otherEffectTexts = `${otherEffectTexts}\n`;
+        lastHasLineBreak = true;
+      } else {
+        lastHasLineBreak = false;
+      }
+
+      lastHasBulletPoint = eff.startsWith('●') || eff.includes('\n●');
+    });
+
+    return otherEffectTexts;
   }
 
   private getFrame(cardData: IYuginewsCardData): TFrame[] {
