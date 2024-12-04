@@ -1,7 +1,23 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.1.5
+
+- pas d'abilities sur un simple token rush
+- correction de la gestion des sauts de ligne sur les otherEffectTexts dans l'import yuginews
+- meilleure gestion des retours à la ligne et lignes vides dans les processed texts
+- correction du parsing du dom pedia et yuginews + style Skill dans le tableau d'import + meilleure gestion de l'import des skills
+- fix import des sets depuis yugipedia
+- corrections dans l'import DOM d'articles Yuginews
+- type galactique -> type galaxie
+- ajout du menu Aide + déplacement de la logique d'update côté renderer
+- interface pour l'update + meilleur typing sur le store.get
+- rework de la structure de mn-electron-main
+- fix policedes caractères spéciaux sur le nom en master
+- amélioration et fixs sur l'import Yugipedia
+
 ## 2.1.4
 
+- bump to 2.1.4
 - up tk
 - harmonisation des checkStates des textes + correction des checkStates superposés
 - rework complet du parsing du script yuginews
