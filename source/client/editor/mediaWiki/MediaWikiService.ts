@@ -358,20 +358,18 @@ export class MediaWikiService {
         rushCondition = this.parseWikitextLore(t);
       } else if (t.includes('| fr_requirement')) {
         rushFrCondition = this.parseWikitextLore(t);
-      } else if (t.includes('| summoning_condition')) {
+      } else if (t.includes('| condition') || t.includes('| summoning_condition')) {
         const parsedText = this.parseWikitextLore(t);
         if (rushOtherEffects) {
           rushOtherEffects = `${rushOtherEffects}\n${parsedText}`;
         } else {
           rushOtherEffects = parsedText;
         }
-      } else if (t.includes('| fr_summoning_condition')) {
+      } else if (t.includes('| fr_condition') || t.includes('| fr_summoning_condition')) {
         rushFrOtherEffects = this.parseWikitextLore(t);
-      } else if (t.includes('| text')) {
+      } else if (t.includes('| text') || t.includes('| lore')) {
         lore = this.parseWikitextLore(t);
-      } else if (t.includes('| lore')) {
-        lore = this.parseWikitextLore(t);
-      } else if (t.includes('| fr_lore')) {
+      } else if (t.includes('| fr_text') || t.includes('| fr_lore')) {
         frLore = this.parseWikitextLore(t);
       } else if (t.includes('| pendulum_effect')) {
         pendEffect = this.parseWikitextLore(t);
