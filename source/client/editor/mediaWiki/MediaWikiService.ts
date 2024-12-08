@@ -367,6 +367,8 @@ export class MediaWikiService {
         }
       } else if (t.includes('| fr_summoning_condition')) {
         rushFrOtherEffects = this.parseWikitextLore(t);
+      } else if (t.includes('| text')) {
+        lore = this.parseWikitextLore(t);
       } else if (t.includes('| lore')) {
         lore = this.parseWikitextLore(t);
       } else if (t.includes('| fr_lore')) {
