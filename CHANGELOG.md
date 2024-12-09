@@ -1,7 +1,17 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.1.6
+
+- nettoyage import card interfaces + unification des logiques de taille des descriptions et effets
+- utilisation de Promise.all pour gagner du temps sur l'import yugipedia + fonctions à paramètres pour améliorer la clareté
+- up libs
+- gérer aussi condition à la place de summoning_condition
+- ajout du parsing du text dans le wikitext
+- correction de l'affichage des notes de mise à jour
+
 ## 2.1.5
 
+- bump to 2.1.5
 - pas d'abilities sur un simple token rush
 - correction de la gestion des sauts de ligne sur les otherEffectTexts dans l'import yuginews
 - meilleure gestion des retours à la ligne et lignes vides dans les processed texts
