@@ -1,30 +1,9 @@
-import { toPng } from 'mn-html-to-image';
-import { Observable, deepClone, uuid } from 'mn-tools';
-import {
-  ICard,
-  TCardStorageKey,
-  TFrame,
-  TAttribute,
-  TStIcon,
-  TCardLanguage,
-  TSticker,
-  TEdition,
-  TLegendType,
-} from './card-interfaces';
 import { Crop } from 'react-image-crop';
-import { CardImportDialog } from 'client/editor/cardImportDialog';
+import { toPng } from 'mn-html-to-image';
 import { IStoreListener } from 'mn-toolkit';
-
-interface ICardLinkArrowPaths {
-  top: string;
-  bottom: string;
-  left: string;
-  right: string;
-  topLeft: string;
-  topRight: string;
-  bottomLeft: string;
-  bottomRight: string;
-}
+import { Observable, deepClone, uuid } from 'mn-tools';
+import { CardImportDialog } from '../cardImportDialog';
+import { ICard, TCardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage, TSticker, TEdition, TLegendType } from '.';
 
 export interface ICardsExportData {
   'current-card': ICard;
@@ -60,6 +39,16 @@ const COMMON_FRAMES: TFrame[] = [
 
 const FRAMES_WITH_DESCRIPTION: TFrame[] = ['normal', 'token', 'monsterToken'];
 
+interface ICardLinkArrowPaths {
+  top: string;
+  bottom: string;
+  left: string;
+  right: string;
+  topLeft: string;
+  topRight: string;
+  bottomLeft: string;
+  bottomRight: string;
+}
 type TWhiteArtwork = 'whiteArtwork' | 'whiteArtworkPendulum' | 'whiteArtworkPendulumLink';
 type TPendOrNot = 'regular' | 'pendulum';
 type TLinkOrNot = 'regular' | 'link';

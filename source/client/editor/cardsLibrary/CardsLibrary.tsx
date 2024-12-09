@@ -1,7 +1,4 @@
-import { classNames, deepClone } from 'mn-tools';
 import { MouseEvent } from 'react';
-import { ICard } from 'client/editor/card/card-interfaces';
-import { ICardListener } from 'client/editor/card/CardService';
 import {
   IContainerProps,
   IContainerState,
@@ -16,6 +13,8 @@ import {
   Button,
   TTableHeaderSortOrder,
 } from 'mn-toolkit';
+import { classNames, deepClone } from 'mn-tools';
+import { ICard, ICardListener } from '../card';
 
 export type TCardSortOption = 'game' | 'name' | 'modified';
 

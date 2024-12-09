@@ -1,4 +1,4 @@
-import { ICard, TCardLanguage, TRushEffectType, TRushTextMode } from 'client/editor/card/card-interfaces';
+import { createRef } from 'react';
 import {
   ToolkitComponent,
   IToolkitComponentProps,
@@ -7,7 +7,8 @@ import {
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { createRef, Fragment } from 'react';
+import { ICard, TCardLanguage, TRushEffectType, TRushTextMode } from '../../card';
+import { TTextAdjustState } from '../CardBuilderService';
 
 interface IRushCardDescProps extends IToolkitComponentProps {
   card: ICard;
@@ -26,7 +27,7 @@ interface IRushCardDescState extends IToolkitComponentState {
   tcgAt: boolean;
   includesNormal: boolean;
   checkState: number;
-  adjustState: 'unknown' | 'tooBig' | 'tooSmall';
+  adjustState: TTextAdjustState;
   splitDesc: JSXElementChild[][];
   fontSize: number;
   lineHeight: number;
@@ -38,16 +39,16 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
 
   public constructor(props: IRushCardDescProps) {
     super(props);
-    const { fontSize, lineHeight } = RushCardDesc.predictSizes(
-      props.card.language,
-      props.card.description,
-      props.card.rushTextMode,
-      props.card.rushOtherEffects,
-      props.card.rushCondition,
-      props.card.rushEffect,
-      props.card.rushEffectType,
-      props.card.rushChoiceEffects
-    );
+    const { fontSize, lineHeight } = RushCardDesc.predictSizes({
+      language: props.card.language,
+      description: props.card.description,
+      rushTextMode: props.card.rushTextMode,
+      rushOtherEffects: props.card.rushOtherEffects,
+      rushCondition: props.card.rushCondition,
+      rushEffect: props.card.rushEffect,
+      rushEffectType: props.card.rushEffectType,
+      rushChoiceEffects: props.card.rushChoiceEffects,
+    });
     this.state = {
       description: props.card.description,
       rushTextMode: props.card.rushTextMode,
@@ -92,16 +93,16 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       prevState.rushEffectType !== nextProps.card.rushEffectType ||
       !prevState.rushChoiceEffects.every((innerArray, index) => innerArray === nextProps.card.rushChoiceEffects[index])
     ) {
-      const { fontSize, lineHeight } = RushCardDesc.predictSizes(
-        nextProps.card.language,
-        nextProps.card.description,
-        nextProps.card.rushTextMode,
-        nextProps.card.rushOtherEffects,
-        nextProps.card.rushCondition,
-        nextProps.card.rushEffect,
-        nextProps.card.rushEffectType,
-        nextProps.card.rushChoiceEffects
-      );
+      const { fontSize, lineHeight } = RushCardDesc.predictSizes({
+        language: nextProps.card.language,
+        description: nextProps.card.description,
+        rushTextMode: nextProps.card.rushTextMode,
+        rushOtherEffects: nextProps.card.rushOtherEffects,
+        rushCondition: nextProps.card.rushCondition,
+        rushEffect: nextProps.card.rushEffect,
+        rushEffectType: nextProps.card.rushEffectType,
+        rushChoiceEffects: nextProps.card.rushChoiceEffects,
+      });
       return {
         checkState: 1,
         description: nextProps.card.description,
@@ -123,6 +124,19 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     }
   }
 
+  public override componentDidUpdate(
+    prevProps: Readonly<IRushCardDescProps>,
+    prevState: Readonly<IRushCardDescState>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (this.state.checkState) {
+      this.startCheckReady();
+    } else {
+      this.props.onReady();
+    }
+  }
+
   public static getDescription(card: ICard) {
     const description: JSXElementChild[][] = [];
     const addLineBreaks = (texts: JSXElementChild[] | JSXElementChild[][]) =>
@@ -134,7 +148,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
           addLineBreaks(
             card.description
               .split('\n')
-              .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+              .map((text, index) => app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt }))
           )
         );
         break;
@@ -158,7 +172,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             addLineBreaks(
               card.rushOtherEffects
                 .split('\n')
-                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+                .map((text, index) => app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt }))
             )
           );
         }
@@ -173,7 +187,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             addLineBreaks(
               card.rushCondition
                 .split('\n')
-                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+                .map((text, index) => app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt }))
             ),
           ],
           [
@@ -186,7 +200,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             addLineBreaks(
               card.rushEffect
                 .split('\n')
-                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+                .map((text, index) => app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt }))
             ),
           ]
         );
@@ -198,7 +212,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             addLineBreaks(
               card.rushOtherEffects
                 .split('\n')
-                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+                .map((text, index) => app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt }))
             )
           );
         }
@@ -211,7 +225,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
               choice
                 .split('\n')
                 .map((text, index) =>
-                  RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt, forceBulletAtStart: !index })
+                  app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt, forceBulletAtStart: !index })
                 )
             )
           );
@@ -227,7 +241,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
             addLineBreaks(
               card.rushCondition
                 .split('\n')
-                .map((text, index) => RushCardDesc.getProcessedText({ text, index, tcgAt: card.tcgAt }))
+                .map((text, index) => app.$cardBuilder.getProcessedText({ text, index, tcgAt: card.tcgAt }))
             ),
           ],
           [
@@ -249,65 +263,27 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     return description;
   }
 
-  public static getProcessedText(options: {
-    text: string;
-    index: number;
-    tcgAt: boolean;
-    forceBulletAtStart?: boolean;
+  public static predictSizes(options: {
+    language: TCardLanguage;
+    description: string;
+    rushTextMode: TRushTextMode;
+    rushOtherEffects: string;
+    rushCondition: string;
+    rushEffect: string;
+    rushEffectType: TRushEffectType;
+    rushChoiceEffects: string[];
   }) {
-    const { text, index, tcgAt, forceBulletAtStart } = options;
+    const {
+      language,
+      description,
+      rushTextMode,
+      rushOtherEffects,
+      rushCondition,
+      rushEffect,
+      rushEffectType,
+      rushChoiceEffects,
+    } = options;
 
-    const parts = text.split(/(●|•)/).map((part) => part.trim() || '\u00A0');
-    // If there are multiple strings, but the first is empty,
-    // then it means the second one is a bullet point because the text started with one
-    if (parts.length > 1 && parts[0] === '\u00A0') parts.shift();
-
-    let nextHasBullet = false;
-    const processedText: JSX.Element[] = [];
-    parts.forEach((part, i) => {
-      if (part === '●' || part === '•') {
-        nextHasBullet = true;
-      } else {
-        // Replace each occurrence of "@" with a span
-        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
-          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
-            {subPart}
-            {subIndex < array.length - 1 && (
-              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
-                @
-              </span>
-            )}
-          </Fragment>
-        ));
-        processedText.push(
-          <span
-            key={`processed-text-${index}-${i}`}
-            className={classNames('span-text', {
-              'with-bullet-point': nextHasBullet || (!i && forceBulletAtStart),
-              'in-middle': i > 1,
-              'with-tcg-at': tcgAt,
-            })}
-          >
-            {modifiedPart}
-          </span>
-        );
-        nextHasBullet = false;
-      }
-    });
-
-    return processedText;
-  }
-
-  public static predictSizes(
-    language: TCardLanguage,
-    description: string,
-    rushTextMode: TRushTextMode,
-    rushOtherEffects: string,
-    rushCondition: string,
-    rushEffect: string,
-    rushEffectType: TRushEffectType,
-    rushChoiceEffects: string[]
-  ) {
     let lines: string[] = [];
     switch (rushTextMode) {
       case 'vanilla':
@@ -363,55 +339,17 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         break;
     }
 
-    let fontSize = 30;
-    let lineHeight = 1.2;
+    const fontSize = 30;
+    const lineHeight = 1.2;
     if (!lines.length) return { fontSize, lineHeight };
 
-    const maxWidth = 700;
-    const maxHeight = 194;
-
-    let estimatedWidth: number;
-    let estimatedHeight: number;
-    function adjustLineHeight(fontSize: number): number {
-      let newLineHeight = 1 + (30 - fontSize) / 90;
-      if (newLineHeight < 1.05) return 1.05;
-      if (newLineHeight > 1.2) return 1.2;
-      return newLineHeight;
-    }
-
-    do {
-      const averageCharWidth = fontSize * 0.6;
-      const charsPerLine = Math.floor(maxWidth / averageCharWidth);
-      let lineCount = 0;
-      for (const line of lines) {
-        lineCount += Math.ceil(line.length / charsPerLine);
-      }
-
-      estimatedWidth = charsPerLine * averageCharWidth;
-      estimatedHeight = lineCount * lineHeight * fontSize;
-
-      if (estimatedWidth > maxWidth || estimatedHeight > maxHeight) {
-        fontSize -= 0.5; // Diminuer la taille de la police
-        lineHeight = adjustLineHeight(fontSize); // Ajuster l'interligne
-      } else {
-        break; // Taille acceptable trouvée
-      }
-    } while (fontSize > 5 && (estimatedWidth > maxWidth || estimatedHeight > maxHeight));
-
-    return { fontSize, lineHeight };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IRushCardDescProps>,
-    prevState: Readonly<IRushCardDescState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.state.checkState) {
-      this.startCheckReady();
-    } else {
-      this.props.onReady();
-    }
+    return app.$cardBuilder.predictSizes({
+      lines,
+      fontSize,
+      lineHeight,
+      maxWidth: 700,
+      maxHeight: 194,
+    });
   }
 
   private get isEmpty() {
@@ -420,87 +358,35 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   }
 
   private checkReady(currentProcessId: number) {
-    // Un nouveau processus de checkReady a été démarré, on ignore celui-ci
+    // If a new process started, ignore this one
     if (currentProcessId !== this.checkReadyProcessId) return;
 
+    // If empty or no ref, just stop checking
     if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
-    const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
-    if (!texts?.length || this.state.fontSize === 0) {
-      return this.setState({
-        checkState: 0,
-        adjustState: 'unknown',
-      });
-    }
-
-    let textHeight = 0;
-    let textWidth = 0;
-    texts.forEach((text) => {
-      textHeight += text.clientHeight;
-      if (text.clientWidth > textWidth) textWidth = text.clientWidth;
+    // Use the generic utility function to determine if we need to adjust sizes
+    const result = app.$cardBuilder.checkTextSize({
+      container: this.ref.current,
+      currentAdjustState: this.state.adjustState,
+      currentFontSize: this.state.fontSize,
+      currentLineHeight: this.state.lineHeight,
     });
-    const parentHeight = this.ref.current.clientHeight;
-    const parentWidth = this.ref.current.clientWidth;
-    const fontSize = this.state.fontSize;
 
-    if (textHeight > parentHeight || textWidth > parentWidth) {
-      const newFontSize = fontSize - 0.5;
-      let newLineHeight = 1 + (12 - newFontSize) / 90;
-      if (newLineHeight < 1.05) newLineHeight = 1.05;
-
-      if (newFontSize >= 5) {
-        return this.setState({
-          checkState: this.state.checkState + 1,
-          adjustState: 'tooBig',
-          fontSize: newFontSize,
-          lineHeight: newLineHeight,
-        });
-      } else {
-        return this.setState({
-          checkState: 0,
-          adjustState: 'unknown',
-        });
-      }
-    } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustState === 'tooBig') {
-        if (this.state.lineHeight < 1.2) {
-          let newLineHeight = this.state.lineHeight + 0.1;
-          if (newLineHeight > 1.2) newLineHeight = 1.2;
-          return this.setState({
-            checkState: this.state.checkState + 1,
-            lineHeight: newLineHeight,
-          });
-        } else {
-          return this.setState({
-            checkState: 0,
-            adjustState: 'unknown',
-          });
-        }
-      } else {
-        const newFontSize = fontSize + 0.5;
-        let newLineHeight = 1 + (12 + newFontSize) / 90;
-        if (newLineHeight > 1.2) newLineHeight = 1.2;
-
-        if (newFontSize <= 30) {
-          return this.setState({
-            checkState: this.state.checkState + 1,
-            adjustState: 'tooSmall',
-            fontSize: newFontSize,
-            lineHeight: newLineHeight,
-          });
-        } else {
-          return this.setState({
-            checkState: 0,
-            adjustState: 'unknown',
-          });
-        }
-      }
-    } else {
+    // If we still need to adjust, update the state and increment the checkState
+    if (!result.fit) {
       return this.setState({
-        checkState: 0,
-        adjustState: 'unknown',
+        checkState: this.state.checkState + 1,
+        adjustState: result.adjustState,
+        fontSize: result.fontSize ?? this.state.fontSize,
+        lineHeight: result.lineHeight ?? this.state.lineHeight,
       });
     }
+
+    // If fit is true, we stop adjusting and mark ourselves as ready
+    this.setState({
+      checkState: 0,
+      adjustState: 'unknown',
+    });
   }
 
   public override render() {

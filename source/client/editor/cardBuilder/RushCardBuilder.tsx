@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
-import { deepClone, isDeepEqual, preloadImage } from 'mn-tools';
-import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, JSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
+import { deepClone, isDeepEqual, preloadImage } from 'mn-tools';
+import { ICard } from '../card';
 import {
   RushCardArtwork,
   RushCardDesc,

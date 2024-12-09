@@ -1,7 +1,7 @@
 import { createRef, CSSProperties } from 'react';
-import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
-import { ICard } from 'client/editor/card/card-interfaces';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from 'mn-toolkit';
+import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
+import { ICard } from '../card';
 import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
 
 interface ICardBuilderProps extends IContainableProps {

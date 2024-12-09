@@ -1,6 +1,6 @@
-import { ICard } from 'client/editor/card/card-interfaces';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { getCroppedArtworkBase64, isDefined, preloadImage } from 'mn-tools';
+import { ICard } from '../../card';
 
 interface ICardArtworkProps extends IToolkitComponentProps {
   card: ICard;

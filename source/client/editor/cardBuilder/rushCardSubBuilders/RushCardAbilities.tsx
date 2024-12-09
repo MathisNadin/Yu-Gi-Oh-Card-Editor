@@ -1,7 +1,7 @@
-import { ICard, TStIcon } from 'client/editor/card/card-interfaces';
+import { createRef, Fragment } from 'react';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { createRef, Fragment } from 'react';
+import { ICard, TStIcon } from '../../card';
 
 interface IRushCardAbilitiesProps extends IToolkitComponentProps {
   card: ICard;

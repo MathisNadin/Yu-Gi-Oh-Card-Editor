@@ -1,7 +1,7 @@
-import { ICard, TNameStyle } from 'client/editor/card/card-interfaces';
+import { createRef } from 'react';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState, TDidUpdateSnapshot } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { createRef } from 'react';
+import { ICard, TNameStyle } from '../../card';
 
 interface ICardNameProps extends IToolkitComponentProps {
   card: ICard;

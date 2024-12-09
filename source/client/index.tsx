@@ -2,7 +2,14 @@ import './index.scss';
 import * as confJson from '../../package.json';
 import { setupAppAndToolkit } from 'mn-toolkit';
 import { CoreService } from './kernel';
-import { SettingsService, MediaWikiService, CardService, YuginewsService, HomeView } from './editor';
+import {
+  SettingsService,
+  MediaWikiService,
+  CardService,
+  YuginewsService,
+  HomeView,
+  CardBuilderService,
+} from './editor';
 
 interface IPackageJSON {
   name: string;
@@ -45,6 +52,7 @@ setupAppAndToolkit(
     app.service('$settings', SettingsService, { depends: ['$store'] });
     app.service('$mediaWiki', MediaWikiService, { depends: ['$axios'] });
     app.service('$card', CardService, { depends: ['$store'] });
+    app.service('$cardBuilder', CardBuilderService);
     app.service('$yuginews', YuginewsService, { depends: ['$axios'] });
   }
 );

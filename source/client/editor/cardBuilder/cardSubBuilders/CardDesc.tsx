@@ -1,4 +1,4 @@
-import { ICard } from 'client/editor/card/card-interfaces';
+import { createRef } from 'react';
 import {
   ToolkitComponent,
   IToolkitComponentProps,
@@ -7,7 +7,8 @@ import {
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
-import { createRef, Fragment } from 'react';
+import { ICard } from '../../card';
+import { TTextAdjustState } from '../CardBuilderService';
 
 interface ICardDescProps extends IToolkitComponentProps {
   card: ICard;
@@ -28,7 +29,7 @@ interface ICardDescState extends IToolkitComponentState {
   includesLink: boolean;
   includesSkill: boolean;
   checkState: number;
-  adjustState: 'unknown' | 'tooBig' | 'tooSmall';
+  adjustState: TTextAdjustState;
   splitDesc: JSXElementChild[];
   fontSize: number;
   lineHeight: number;
@@ -40,13 +41,13 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
 
   public constructor(props: ICardDescProps) {
     super(props);
-    const { fontSize, lineHeight } = CardDesc.predictSizes(
-      props.card.description,
-      props.hasAbilities,
-      props.hasPendulumFrame,
-      props.includesLink,
-      props.includesSkill
-    );
+    const { fontSize, lineHeight } = CardDesc.predictSizes({
+      text: props.card.description,
+      hasAbilities: props.hasAbilities,
+      hasPendulumFrame: props.hasPendulumFrame,
+      includesLink: props.includesLink,
+      includesSkill: props.includesSkill,
+    });
     this.state = {
       description: props.card.description,
       tcgAt: props.card.tcgAt,
@@ -57,7 +58,9 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       includesSkill: props.includesSkill,
       checkState: 1,
       adjustState: 'unknown',
-      splitDesc: props.card.description.split('\n').map((d, i) => CardDesc.getProcessedText(d, i, props.card.tcgAt)),
+      splitDesc: props.card.description
+        .split('\n')
+        .map((d, i) => app.$cardBuilder.getProcessedText({ text: d, index: i, tcgAt: props.card.tcgAt })),
       fontSize,
       lineHeight,
     };
@@ -87,13 +90,13 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
       prevState.includesSkill !== nextProps.includesSkill ||
       prevState.description !== nextProps.card.description
     ) {
-      const { fontSize, lineHeight } = CardDesc.predictSizes(
-        nextProps.card.description,
-        nextProps.hasAbilities,
-        nextProps.hasPendulumFrame,
-        nextProps.includesLink,
-        nextProps.includesSkill
-      );
+      const { fontSize, lineHeight } = CardDesc.predictSizes({
+        text: nextProps.card.description,
+        hasAbilities: nextProps.hasAbilities,
+        hasPendulumFrame: nextProps.hasPendulumFrame,
+        includesLink: nextProps.includesLink,
+        includesSkill: nextProps.includesSkill,
+      });
       return {
         checkState: 1,
         description: nextProps.card.description,
@@ -106,7 +109,7 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
         adjustState: 'unknown',
         splitDesc: nextProps.card.description
           .split('\n')
-          .map((d, i) => CardDesc.getProcessedText(d, i, nextProps.card.tcgAt)),
+          .map((d, i) => app.$cardBuilder.getProcessedText({ text: d, index: i, tcgAt: nextProps.card.tcgAt })),
         fontSize,
         lineHeight,
       };
@@ -115,95 +118,31 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     }
   }
 
-  public static predictSizes(
-    description: string,
-    hasAbilities: boolean,
-    hasPendulumFrame: boolean,
-    includesLink: boolean,
-    includesSkill: boolean
-  ) {
-    let fontSize = 30;
-    let lineHeight = 1.2;
-    if (!description) return { fontSize, lineHeight };
+  public static predictSizes(options: {
+    text: string;
+    hasAbilities: boolean;
+    hasPendulumFrame: boolean;
+    includesLink: boolean;
+    includesSkill: boolean;
+  }) {
+    const { text, hasAbilities, hasPendulumFrame, includesLink, includesSkill } = options;
 
-    let maxWidth = 680;
+    const fontSize = 30;
+    const lineHeight = 1.2;
+    if (!text) return { fontSize, lineHeight };
+
     let maxHeight = 214;
     if (hasAbilities) maxHeight = 147;
     if (hasAbilities && includesSkill) maxHeight = 178;
     if (hasPendulumFrame && includesLink) maxHeight = 115;
 
-    let estimatedWidth: number;
-    let estimatedHeight: number;
-    function adjustLineHeight(fontSize: number): number {
-      let newLineHeight = 1 + (30 - fontSize) / 90;
-      if (newLineHeight < 1.05) return 1.05;
-      if (newLineHeight > 1.2) return 1.2;
-      return newLineHeight;
-    }
-
-    const lines = description.split('\n');
-    do {
-      const averageCharWidth = fontSize * 0.6;
-      const charsPerLine = Math.floor(maxWidth / averageCharWidth);
-      let lineCount = 0;
-      for (const line of lines) {
-        lineCount += Math.ceil(line.length / charsPerLine);
-      }
-
-      estimatedWidth = charsPerLine * averageCharWidth;
-      estimatedHeight = lineCount * lineHeight * fontSize;
-
-      if (estimatedWidth > maxWidth || estimatedHeight > maxHeight) {
-        fontSize -= 0.5; // Diminuer la taille de la police
-        lineHeight = adjustLineHeight(fontSize); // Ajuster l'interligne
-      } else {
-        break; // Taille acceptable trouvée
-      }
-    } while (fontSize > 5 && (estimatedWidth > maxWidth || estimatedHeight > maxHeight));
-
-    return { fontSize, lineHeight };
-  }
-
-  public static getProcessedText(text: string, index: number, tcgAt: boolean) {
-    const parts = text.split(/(●|•)/).map((part) => part.trim() || '\u00A0');
-    // If there are multiple strings, but the first is empty,
-    // then it means the second one is a bullet point because the text started with one
-    if (parts.length > 1 && parts[0] === '\u00A0') parts.shift();
-
-    let nextHasBullet = false;
-    const processedText: JSX.Element[] = [];
-    parts.forEach((part, i) => {
-      if (part === '●' || part === '•') {
-        nextHasBullet = true;
-      } else {
-        // Replace each occurrence of "@" with a span
-        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
-          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
-            {subPart}
-            {subIndex < array.length - 1 && (
-              <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
-                @
-              </span>
-            )}
-          </Fragment>
-        ));
-        processedText.push(
-          <span
-            key={`processed-text-${index}-${i}`}
-            className={classNames('span-text', {
-              'with-bullet-point': nextHasBullet,
-              'in-middle': i > 1,
-              'with-tcg-at': tcgAt,
-            })}
-          >
-            {modifiedPart}
-          </span>
-        );
-        nextHasBullet = false;
-      }
+    return app.$cardBuilder.predictSizes({
+      lines: text.split('\n'),
+      fontSize,
+      lineHeight,
+      maxWidth: 680,
+      maxHeight,
     });
-
-    return processedText;
   }
 
   public override componentDidUpdate(
@@ -225,87 +164,35 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
   }
 
   private checkReady(currentProcessId: number) {
-    // Un nouveau processus de checkReady a été démarré, on ignore celui-ci
+    // If a new process started, ignore this one
     if (currentProcessId !== this.checkReadyProcessId) return;
 
+    // If empty or no ref, just stop checking
     if (this.isEmpty || !this.ref.current) return this.setState({ checkState: 0 });
 
-    const texts = this.ref.current.childNodes as NodeListOf<HTMLParagraphElement>;
-    if (!texts?.length || this.state.fontSize === 0) {
-      return this.setState({
-        checkState: 0,
-        adjustState: 'unknown',
-      });
-    }
-
-    let textHeight = 0;
-    let textWidth = 0;
-    texts.forEach((text) => {
-      textHeight += text.clientHeight;
-      if (text.clientWidth > textWidth) textWidth = text.clientWidth;
+    // Use the generic utility function to determine if we need to adjust sizes
+    const result = app.$cardBuilder.checkTextSize({
+      container: this.ref.current,
+      currentAdjustState: this.state.adjustState,
+      currentFontSize: this.state.fontSize,
+      currentLineHeight: this.state.lineHeight,
     });
-    const parentHeight = this.ref.current.clientHeight;
-    const parentWidth = this.ref.current.clientWidth;
-    const fontSize = this.state.fontSize;
 
-    if (textHeight > parentHeight || textWidth > parentWidth) {
-      const newFontSize = fontSize - 0.5;
-      let newLineHeight = 1 + (12 - newFontSize) / 90;
-      if (newLineHeight < 1.05) newLineHeight = 1.05;
-
-      if (newFontSize >= 5) {
-        return this.setState({
-          checkState: this.state.checkState + 1,
-          adjustState: 'tooBig',
-          fontSize: newFontSize,
-          lineHeight: newLineHeight,
-        });
-      } else {
-        return this.setState({
-          checkState: 0,
-          adjustState: 'unknown',
-        });
-      }
-    } else if (textHeight < parentHeight || textWidth < parentWidth) {
-      if (this.state.adjustState === 'tooBig') {
-        if (this.state.lineHeight < 1.2) {
-          let newLineHeight = this.state.lineHeight + 0.1;
-          if (newLineHeight > 1.2) newLineHeight = 1.2;
-          return this.setState({
-            checkState: this.state.checkState + 1,
-            lineHeight: newLineHeight,
-          });
-        } else {
-          return this.setState({
-            checkState: 0,
-            adjustState: 'unknown',
-          });
-        }
-      } else {
-        const newFontSize = fontSize + 0.5;
-        let newLineHeight = 1 + (12 + newFontSize) / 90;
-        if (newLineHeight > 1.2) newLineHeight = 1.2;
-
-        if (newFontSize <= 30) {
-          return this.setState({
-            checkState: this.state.checkState + 1,
-            adjustState: 'tooSmall',
-            fontSize: newFontSize,
-            lineHeight: newLineHeight,
-          });
-        } else {
-          return this.setState({
-            checkState: 0,
-            adjustState: 'unknown',
-          });
-        }
-      }
-    } else {
+    // If we still need to adjust, update the state and increment the checkState
+    if (!result.fit) {
       return this.setState({
-        checkState: 0,
-        adjustState: 'unknown',
+        checkState: this.state.checkState + 1,
+        adjustState: result.adjustState,
+        fontSize: result.fontSize ?? this.state.fontSize,
+        lineHeight: result.lineHeight ?? this.state.lineHeight,
       });
     }
+
+    // If fit is true, we stop adjusting and mark ourselves as ready
+    this.setState({
+      checkState: 0,
+      adjustState: 'unknown',
+    });
   }
 
   public override render() {
