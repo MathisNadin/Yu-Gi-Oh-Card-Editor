@@ -533,16 +533,17 @@ export class YuginewsService {
     return undefined;
   }
 
-  public async importFromCardData(
-    cardsData: IYuginewsCardData[],
-    importArtworks: boolean,
-    artworkDirectoryPath: string
-  ) {
+  public async importFromCardData(options: {
+    cardsData: IYuginewsCardData[];
+    importArtworks: boolean;
+    artworkDirectoryPath: string;
+  }) {
+    const { cardsData, importArtworks, artworkDirectoryPath } = options;
     const cards: ICard[] = [];
     const now = new Date();
 
     for (const cardData of cardsData) {
-      const scale: number = cardData.scale ? integer(cardData.scale) : 0;
+      const scale = cardData.scale ? integer(cardData.scale) : 0;
 
       let card: ICard = {
         uuid: cardData.uuid!,
@@ -883,7 +884,7 @@ export class YuginewsService {
   }
 
   private getLinkArrows(cardData: IYuginewsCardData): ICard['linkArrows'] {
-    let arrows: ICard['linkArrows'] = {
+    const arrows: ICard['linkArrows'] = {
       top: false,
       bottom: false,
       left: false,
@@ -895,7 +896,7 @@ export class YuginewsService {
     };
 
     if (cardData.linkArrows?.length) {
-      for (let arrow of cardData.linkArrows) {
+      for (const arrow of cardData.linkArrows) {
         switch (arrow) {
           case 'Haut':
             arrows.top = true;

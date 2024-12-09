@@ -1,6 +1,4 @@
-import { ICard } from 'client/editor/card/card-interfaces';
-import { IReplaceMatrix } from 'client/editor/mediaWiki';
-import { IYuginewsCardData } from 'client/editor/yuginews';
+import { classNames, isString } from 'mn-tools';
 import {
   Spinner,
   HorizontalStack,
@@ -23,7 +21,9 @@ import {
   ITableHeadRow,
   TTableHeaderSortOrder,
 } from 'mn-toolkit';
-import { classNames, isEmpty, isString } from 'mn-tools';
+import { IReplaceMatrix } from '../mediaWiki';
+import { IYuginewsCardData } from '../yuginews';
+import { ICard } from '../card';
 
 type TWebsite = 'yugipedia' | 'yuginews';
 
@@ -41,7 +41,7 @@ interface ICardImportDialogState extends IAbstractPopupState {
   useFr: boolean;
   generatePasscode: boolean;
   replaceMatrixes: IReplaceMatrix[];
-  importArtwork: boolean;
+  importArtworks: boolean;
   yuginewsImporting: boolean;
   yuginewsUrl: string;
   cardsData: IYuginewsCardData[];
@@ -85,7 +85,7 @@ export class CardImportDialog extends AbstractPopup<
       useFr: false,
       generatePasscode: false,
       replaceMatrixes: [],
-      importArtwork: false,
+      importArtworks: false,
       yuginewsUrl: '',
       cardsData: [],
       selectedCards: {},
@@ -134,24 +134,31 @@ export class CardImportDialog extends AbstractPopup<
   private async doYugipediaImport() {
     if (this.state.importing || !this.state.import) return;
     await this.setStateAsync({ importing: true });
-    const importLinks = this.state.import.split('\n');
+
     const newCards: ICard[] = [];
-    for (const importLink of importLinks) {
-      if (isEmpty(importLink)) continue;
-      const splitImport = importLink.split('yugipedia.com/wiki/');
-      const newCard = await app.$mediaWiki.getCardInfo(
-        splitImport[splitImport.length - 1],
-        this.state.useFr,
-        this.state.generatePasscode,
-        this.state.replaceMatrixes,
-        this.state.importArtwork,
-        this.state.artworkSaveDirPath
+    const importLinks = this.state.import.split('\n');
+    const batches = importLinks.filter((l) => l.includes('yugipedia.com/wiki/')).chunk(10);
+
+    for (const batch of batches) {
+      const cardsBatch = await Promise.all(
+        batch.map((importLink) => {
+          const splitImport = importLink.split('yugipedia.com/wiki/');
+          return app.$mediaWiki.getCardInfo({
+            titles: splitImport[splitImport.length - 1],
+            useFr: this.state.useFr,
+            generatePasscode: this.state.generatePasscode,
+            replaceMatrixes: this.state.replaceMatrixes,
+            importArtworks: this.state.importArtworks,
+            artworkDirectoryPath: this.state.artworkSaveDirPath,
+          });
+        })
       );
 
-      if (newCard) {
-        newCards.push(newCard);
+      for (const newCard of cardsBatch) {
+        if (newCard) newCards.push(newCard);
       }
     }
+
     if (newCards.length) {
       this.setState({ cardsToImport: newCards.length });
       await app.$card.importCards(newCards);
@@ -182,15 +189,15 @@ export class CardImportDialog extends AbstractPopup<
   }
 
   private async doYuginewsImport() {
-    const selectedCards = this.state.cardsData.filter((c) => this.state.selectedCards[c.uuid as string]);
+    const selectedCards = this.state.cardsData.filter((c) => this.state.selectedCards[c.uuid!]);
     if (!selectedCards?.length) return;
 
     await this.setStateAsync({ importing: true, selectedCards: {}, selectedCardsNum: 0 });
-    const newCards = await app.$yuginews.importFromCardData(
-      selectedCards,
-      this.state.importArtwork,
-      this.state.artworkSaveDirPath
-    );
+    const newCards = await app.$yuginews.importFromCardData({
+      cardsData: selectedCards,
+      importArtworks: this.state.importArtworks,
+      artworkDirectoryPath: this.state.artworkSaveDirPath,
+    });
 
     if (newCards.length) {
       await this.setStateAsync({ cardsToImport: newCards.length });
@@ -579,15 +586,15 @@ export class CardImportDialog extends AbstractPopup<
   }
 
   private renderUrlImporter(website: TWebsite) {
-    if (!app.$device.isDesktop) return undefined;
+    if (!app.$device.isElectron(window)) return undefined;
     return (
       <HorizontalStack fill={website === 'yugipedia'} gutter>
         <CheckBox
           label='Importer les images'
-          defaultValue={this.state.importArtwork}
-          onChange={(importArtwork) => this.setState({ importArtwork })}
+          defaultValue={this.state.importArtworks}
+          onChange={(importArtworks) => this.setState({ importArtworks })}
         />
-        {this.state.importArtwork && (
+        {this.state.importArtworks && (
           <FileInput
             fill
             defaultValue={this.state.artworkSaveDirPath}

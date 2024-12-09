@@ -64,14 +64,15 @@ export class MediaWikiService {
     this.baseArtworkUrl = 'F:\\Images\\Images Yu-Gi-Oh!\\Artworks\\';
   }
 
-  public async getCardInfo(
-    titles: string,
-    useFr: boolean,
-    generatePasscode: boolean,
-    replaceMatrixes: IReplaceMatrix[],
-    importArtworks: boolean,
-    artworkDirectoryPath: string
-  ) {
+  public async getCardInfo(options: {
+    titles: string;
+    useFr: boolean;
+    generatePasscode: boolean;
+    replaceMatrixes: IReplaceMatrix[];
+    importArtworks: boolean;
+    artworkDirectoryPath: string;
+  }) {
+    let { titles, useFr, generatePasscode, replaceMatrixes, importArtworks, artworkDirectoryPath } = options;
     let card = app.$card.getDefaultImportCard();
 
     titles = titles
