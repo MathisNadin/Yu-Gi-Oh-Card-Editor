@@ -5,7 +5,8 @@ let firstDayOfWeek = 1;
 export type DateGranularity = 'minute' | 'minutes' | 'hour' | 'hours' | 'date' | 'time';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-let object: { [name: string]: Function } = {};
+const object: { [name: string]: Function } = {};
+
 object.setFirstDayOfWeek = function (value: number) {
   firstDayOfWeek = value;
 };
@@ -52,7 +53,8 @@ object.today = function (this: Date) {
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-let prototype: { [name: string]: Function } = {};
+const prototype: { [name: string]: Function } = {};
+
 prototype.isWeekEnd = function (this: Date) {
   return this.getDay() === 0 || this.getDay() === 6;
 };
@@ -448,7 +450,7 @@ declare global {
     endOfYear(year: number): Date;
     today(): Date;
     fromEpochDay(eday: number): Date;
-    fromWeekNumber(week: number, yeay: number): Date;
+    fromWeekNumber(week: number, year: number): Date;
     offsetToISO(offset: number): string;
     fromISODate(s: string): Date;
   }

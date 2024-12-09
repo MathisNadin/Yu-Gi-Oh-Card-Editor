@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.0.2
+
+- amélioration des patchs et suppr de l'inutile
+
 ## 2.0.1
 
+- bump to 2.0.1
 - ajout fonctions preload image et video
 
 ## 2.0.0

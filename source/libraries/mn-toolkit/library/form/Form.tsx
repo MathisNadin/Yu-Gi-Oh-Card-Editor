@@ -77,6 +77,8 @@ export class Form extends Container<IFormProps, IFormState> implements IFormFiel
     const key = Object.keys(domNode).find(
       (key) => key.startsWith('__reactFiber$') || key.startsWith('__reactInternalInstance$')
     );
+    if (!key) return null;
+
     const internalInstance = (
       domNode as unknown as Record<
         typeof key,

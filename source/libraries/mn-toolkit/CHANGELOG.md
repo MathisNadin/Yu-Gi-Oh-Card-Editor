@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 5.0.6
+
+- adaptation aux nv patchs tools
+
 ## 5.0.5
 
+- bump to 5.0.5
 - amélioration du typing sur store.get et electron + davantage d'options sur le popup choice
 
 ## 5.0.4

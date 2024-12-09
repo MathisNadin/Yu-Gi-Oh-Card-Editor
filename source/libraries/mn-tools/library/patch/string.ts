@@ -1,7 +1,7 @@
 import { isArray, monkeyPatch } from '../..';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-let prototype: { [name: string]: Function } = {};
+const prototype: { [name: string]: Function } = {};
 
 prototype.toCamelCase = function (this: string) {
   return this.replace(/([^a-z][a-z])/g, ($1) => {
@@ -688,14 +688,6 @@ prototype.highlight = function (this: string, terms: string | string[]) {
   return highlighted;
 };
 
-prototype.startsWith = function (this: string, str: string) {
-  return this.indexOf(str) === 0;
-};
-
-prototype.endsWith = function (this: string, suffix: string) {
-  return this.indexOf(suffix, this.length - suffix.length) !== -1;
-};
-
 prototype.ucfirst = function (this: string) {
   if (this.length < 1) return this;
   return this[0].toUpperCase() + this.substring(1).toLowerCase();
@@ -726,8 +718,7 @@ prototype.iequals = function (this: string, to: string) {
   return this.icompare(to) === 0;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-prototype.format = function (this: string, ...tokens: Object[]) {
+prototype.format = function (this: string, ...tokens: object[]) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   let result = this;
   for (let i = 0; i < tokens.length; i++) {
@@ -795,7 +786,7 @@ prototype.utfDecode = function (this: string) {
 };
 
 export function install() {
-  for (let name in prototype) {
+  for (const name in prototype) {
     monkeyPatch(String.prototype, name, prototype[name]);
   }
 }
@@ -808,8 +799,6 @@ declare global {
     toCamelCase(): string;
     stripAccents(): string;
     highlight(search: string | string[]): string;
-    startsWith(prefix: string): boolean;
-    endsWith(suffix: string): boolean;
     ucfirst(): string;
     compare(to: string): number;
 
@@ -829,8 +818,7 @@ declare global {
     icompare(to: string): number;
     icontains(to: string): boolean;
     iequals(to: string): boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    format(...tokens: any[]): string;
+    format(...tokens: object[]): string;
 
     /**
      * Convert a string from camel to kebab case (e.g. thisTest to this-test)

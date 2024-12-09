@@ -59,7 +59,7 @@ export class Chips<ID = number> extends Container<IChipsProps<ID>, IChipsState<I
   }
 
   private isSelected(item: IChipItem<ID>) {
-    return this.state.items.contains(item.id);
+    return this.state.items.includes(item.id);
   }
 
   private async onItemTap(item: IChipItem<ID>) {

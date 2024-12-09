@@ -1173,8 +1173,9 @@ export function timeZoneList(): string[] {
 let cache: { [tz: string]: ITimeZoneRecord } = {};
 export function timeZoneRecord(timezone: string) {
   if (!cache[timezone]) {
-    cache[timezone] = RECORDS.find((x) => x.utc.indexOf(timezone) !== -1);
-    if (!cache[timezone]) throw new Error(`Unable to find a timezone record for ${timezone}`);
+    const record = RECORDS.find((x) => x.utc.indexOf(timezone) !== -1);
+    if (!record) throw new Error(`Unable to find a timezone record for ${timezone}`);
+    cache[timezone] = record;
   }
   return cache[timezone];
 }
