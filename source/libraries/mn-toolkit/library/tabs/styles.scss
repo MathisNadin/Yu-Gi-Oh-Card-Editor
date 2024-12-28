@@ -1,6 +1,12 @@
 $decay: calc(#{$themeDefaultSpacing} / 4);
 $tabBorderSize: 1px;
 
+@mixin themeTabPane {
+  &.mn-tab-pane-hidden {
+    display: none;
+  }
+}
+
 @mixin themeTabSet {
   display: flex;
 
@@ -241,6 +247,10 @@ $tabBorderSize: 1px;
   &.mn-bg-4 {
     background-color: transparent;
   }
+}
+
+.mn-tab-pane {
+  @include themeTabPane;
 }
 
 .mn-tabset {

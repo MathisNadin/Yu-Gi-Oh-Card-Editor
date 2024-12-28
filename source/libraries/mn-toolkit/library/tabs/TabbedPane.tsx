@@ -1,5 +1,5 @@
 import { classNames } from 'mn-tools';
-import { Container, IContainerProps, IContainerState } from '../container';
+import { Container, IContainerProps, IContainerState, VerticalStack } from '../container';
 import { ITabSetProps, TabSet, TTabPosition } from './TabSet';
 import { ITabPaneProps, TabPane } from './TabPane';
 import { JSXElementChildren } from '../react';
@@ -54,7 +54,7 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
     this.setState({ value: this.props.defaultValue });
   }
 
-  public renderClasses(): { [name: string]: boolean } {
+  public override renderClasses(): { [name: string]: boolean } {
     const classes = super.renderClasses();
     classes['mn-tabbed-pane'] = true;
     classes[`mn-layout-horizontal-stack`] = this.props.tabPosition === 'left' || this.props.tabPosition === 'right';
@@ -62,18 +62,21 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
     return classes;
   }
 
-  private get filteredPanes() {
-    return this.props.panes.filter((pane) => !!pane?.content && !!pane.props && !pane.props.hidden);
-  }
-
   public override render() {
-    const panesToShow = this.filteredPanes.filter((pane, i) => {
+    const filteredPanes: ITabbedPanePane<ID>[] = [];
+
+    let i = 0;
+    for (const pane of this.props.panes) {
+      if (!pane?.content || !pane.props) continue;
+
       pane.props.bg = this.props.bg;
       pane.props.isFirst = i === 0;
       pane.props.tabPosition = this.props.tabPosition;
       pane.props.isLast = i === this.props.panes.length - 1;
-      return pane.props.tabId === this.state.value;
-    });
+
+      filteredPanes.push(pane);
+      i++;
+    }
 
     return (
       <Container
@@ -86,22 +89,23 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
         scrollX={this.props.scrollX && (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom')}
         className={classNames(this.renderClasses())}
       >
-        {(this.props.tabPosition === 'top' || this.props.tabPosition === 'left') && this.renderTabSet()}
+        {(this.props.tabPosition === 'top' || this.props.tabPosition === 'left') && this.renderTabSet(filteredPanes)}
 
-        <Container className='mn-tab-panes' fill bg='1'>
-          {panesToShow.map((pane, i) => (
-            <TabPane key={i} {...pane.props}>
+        <VerticalStack className='mn-tab-panes' fill bg='1'>
+          {filteredPanes.map((pane, i) => (
+            <TabPane key={i} {...pane.props} hidden={pane.props.hidden || pane.props.tabId !== this.state.value}>
               {pane.content}
             </TabPane>
           ))}
-        </Container>
+        </VerticalStack>
 
-        {(this.props.tabPosition === 'bottom' || this.props.tabPosition === 'right') && this.renderTabSet()}
+        {(this.props.tabPosition === 'bottom' || this.props.tabPosition === 'right') &&
+          this.renderTabSet(filteredPanes)}
       </Container>
     );
   }
 
-  private renderTabSet() {
+  private renderTabSet(filteredPanes: ITabbedPanePane<ID>[]) {
     return (
       <TabSet<ID>
         noSpacer={this.props.noSpacer}
@@ -114,7 +118,7 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
         addButton={this.props.addButton}
         onAdd={() => this.onAdd()}
         onChange={(value) => this.onChange(value)}
-        items={this.filteredPanes.map((pane) => {
+        items={filteredPanes.map((pane) => {
           return {
             tabId: pane.props.tabId,
             label: pane.props.label,
@@ -134,19 +138,16 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
   }
 
   private async onAdd() {
-    if (!this.props.onAdd) return;
-    await this.props.onAdd();
+    if (this.props.onAdd) await this.props.onAdd();
   }
 
   private async onClose(id: ID) {
-    if (!this.props.onClose) return;
-    await this.props.onClose(id);
+    if (this.props.onClose) await this.props.onClose(id);
   }
 
   public async onChange(value: ID) {
     if (this.state.value === value) return;
     await this.setStateAsync({ value });
-    if (!this.props.onChange) return;
-    await this.props.onChange(this.state.value);
+    if (this.props.onChange) await this.props.onChange(this.state.value);
   }
 }

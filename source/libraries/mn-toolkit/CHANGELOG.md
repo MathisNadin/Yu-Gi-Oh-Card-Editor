@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 5.0.7
+
+- meilleur typing dans Application + chgt logique de render du TabbedPane
+
 ## 5.0.6
 
+- bump to 5.0.6
 - adaptation aux nv patchs tools
 
 ## 5.0.5

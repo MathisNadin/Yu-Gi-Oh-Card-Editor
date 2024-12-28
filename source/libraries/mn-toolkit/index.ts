@@ -11,7 +11,6 @@ import {
   ErrorManagerService,
   GalleryService,
   HeaderService,
-  IApplicationConfig,
   IconService,
   OverlayService,
   PermissionService,
@@ -35,9 +34,7 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   extendNativeObjects();
   Date.setFirstDayOfWeek(1);
 
-  window.app = new Application() as IApp;
-
-  window.app.conf = conf;
+  window.app = new Application(conf) as IApp;
 
   app.service('$errorManager', ErrorManagerService);
   app.service('$device', DeviceService);

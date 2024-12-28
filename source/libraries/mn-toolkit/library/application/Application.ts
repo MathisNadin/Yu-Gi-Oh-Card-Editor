@@ -1,22 +1,9 @@
-import { IRouteRecord } from 'api/main';
 import { Observable, each, sortDependencies } from 'mn-tools';
 import { App as CapacitorApp } from '@capacitor/app';
 
 export interface IApplicationListener {
   applicationReady(): void;
   applicationWillClose(): void;
-}
-
-export interface IApplicationConfig {
-  name: string;
-  displayName: string;
-  stage: string;
-  version: string;
-  apiUrl?: string;
-  routerConfig?: IRouteRecord[];
-  dbName?: string;
-  objectStoreName?: string;
-  debug?: boolean;
 }
 
 interface IServiceOptions<T> {
@@ -39,16 +26,14 @@ export class Application extends Observable<IApplicationListener> {
   private _ready = false;
   private _conf: IApplicationConfig = {} as IApplicationConfig;
 
-  public constructor() {
+  public constructor(conf: IApplicationConfig) {
     super();
+    this._conf = conf;
     this.addListener(this);
   }
 
   public get conf() {
     return this._conf;
-  }
-  public set conf(conf: IApplicationConfig) {
-    this._conf = conf;
   }
   public get version() {
     return this._conf.version;
@@ -64,7 +49,7 @@ export class Application extends Observable<IApplicationListener> {
   }
 
   public get isProd() {
-    return this.stage === 'prod';
+    return this.stage === 'production';
   }
 
   public get isReady() {
@@ -79,7 +64,6 @@ export class Application extends Observable<IApplicationListener> {
     this.bootstrapConfig();
     this.bootstrapServices()
       .then(() => this.fireReady())
-
       .catch((e: Error) => console.error(e));
 
     window.onbeforeunload = () => {
@@ -119,16 +103,16 @@ export class Application extends Observable<IApplicationListener> {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     each(this._services, (options: IServiceOptions<any>, name: string) => {
-      if ((this._services[name].depends as (keyof IApp)[]).length === 0 && !this._services[name].clazz.prototype.setup)
+      if (this._services[name].depends!.length === 0 && !this._services[name].clazz.prototype.setup) {
         return;
-      graph[name] = options.depends as (keyof IApp)[];
+      }
+      graph[name] = options.depends!;
     });
 
-    const sortedGraph = sortDependencies(graph);
-    // eslint-disable-next-line no-restricted-syntax
+    const sortedGraph = sortDependencies(graph) as (keyof IApp)[];
     for (const serviceName of sortedGraph) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const service = (app as any)[serviceName];
+      const service = app[serviceName] as { setup?: () => void | Promise<void> };
       if (!service) {
         console.warn(`Le service ${serviceName} n'existe pas`);
       } else if (service.setup) {
@@ -139,8 +123,10 @@ export class Application extends Observable<IApplicationListener> {
 
   public service<T>(name: keyof IApp, clazz: T, options: IServiceOptions<T> = {}) {
     if (!clazz) throw new Error(`Nous avons besoin d'une classe pour ${name}`);
+
     options.depends = options.depends || [];
     if (!Array.isArray(options.depends)) throw new Error(`Mauvaises dépendances pour ${name} : ${options.depends}`);
+
     options.name = name;
     options.clazz = clazz;
     this._services[name] = options;

@@ -1,3 +1,4 @@
+import { IRouteRecord } from 'api/main';
 import { Application } from './Application';
 
 export * from './Application';
@@ -17,6 +18,20 @@ declare global {
   interface EventTarget {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
+  }
+
+  type TAppplicationStage = 'development' | 'production';
+
+  interface IApplicationConfig {
+    name: string;
+    displayName: string;
+    stage: TAppplicationStage;
+    version: string;
+    apiUrl?: string;
+    routerConfig?: IRouteRecord[];
+    dbName?: string;
+    objectStoreName?: string;
+    debug?: boolean;
   }
 }
 

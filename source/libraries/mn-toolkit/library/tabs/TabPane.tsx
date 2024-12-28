@@ -14,6 +14,7 @@ export class TabPane<ID = number> extends Container<ITabPaneProps<ID>, ITabPaneS
   public static get defaultProps(): Partial<ITabPaneProps<number>> {
     return {
       ...super.defaultProps,
+      tabPosition: 'top',
       layout: 'vertical',
       fill: true,
       padding: true,
@@ -27,6 +28,7 @@ export class TabPane<ID = number> extends Container<ITabPaneProps<ID>, ITabPaneS
     classes['mn-tab-pane-first'] = !!this.props.isFirst;
     classes['mn-tab-pane-last'] = !!this.props.isLast;
     classes[`mn-tab-pane-tab-position-${this.props.tabPosition}`] = true;
+    classes['mn-tab-pane-hidden'] = !!this.props.hidden;
     return classes;
   }
 }
