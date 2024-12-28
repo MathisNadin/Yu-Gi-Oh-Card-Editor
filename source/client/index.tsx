@@ -1,5 +1,4 @@
 import './index.scss';
-import * as confJson from '../../package.json';
 import { setupAppAndToolkit } from 'mn-toolkit';
 import { CoreService } from './kernel';
 import {
@@ -11,25 +10,32 @@ import {
   CardBuilderService,
 } from './editor';
 
-interface IPackageJSON {
-  name: string;
-  displayName: string;
-  stage: string;
-  version: string;
-  dbName: string;
-  objectStoreName: string;
-  presets: {
-    development: {
-      apiUrl: string;
+declare global {
+  interface IPackageJSON {
+    name: string;
+    displayName: string;
+    stage: string;
+    version: string;
+    dbName: string;
+    objectStoreName: string;
+    presets: {
+      development: {
+        apiUrl: string;
+      };
+      production: {
+        apiUrl: string;
+      };
     };
-    production: {
-      apiUrl: string;
-    };
-  };
+  }
 }
 
+import * as confJson from '../../package.json';
 const conf = confJson as unknown as IPackageJSON;
-const stage = process.env.NODE_ENV as 'development' | 'production';
+
+import correctConf from '../../config/platform.js';
+correctConf(conf);
+
+const stage = process.env.NODE_ENV as TAppplicationStage;
 let apiUrl: string;
 if (stage === 'production') {
   apiUrl = conf.presets.production.apiUrl;
