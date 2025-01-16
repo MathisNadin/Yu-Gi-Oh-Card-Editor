@@ -1,0 +1,73 @@
+@mixin themeRichTextEditor() {
+  display: block;
+  width: 100%;
+  cursor: text;
+  position: relative;
+
+  .placeholder {
+    @include themeTypographyParagraph();
+    color: color-hsl($fg2);
+    pointer-events: none;
+  }
+
+  .mn-rich-text {
+    cursor: text;
+
+    > p:last-child,
+    > .placeholder {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.mn-rich-text-editor {
+  @include themeRichTextEditor();
+}
+
+@mixin themeRichTextField() {
+  .input-wrapper {
+    height: auto;
+    max-height: none;
+    position: relative;
+
+    .status-icon {
+      position: absolute !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      top: auto !important;
+    }
+  }
+}
+
+.mn-form-field.mn-field-rich-text-editor {
+  @include themeRichTextField();
+}
+
+@mixin themeCalloutBlockquote() {
+  &:not(.code-block) {
+    border-left: none !important;
+
+    &:before {
+      content: '';
+      width: 1em;
+      height: 1em;
+      font-size: 1.3em;
+      margin-right: 0.5em;
+      vertical-align: 0;
+    }
+
+    &[data-icon='info']:before,
+    &:not([data-icon]):before,
+    &[data-icon='']:before {
+      display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-image: $calloutDataIconInfoBgImg;
+    }
+  }
+}
+
+blockquote.mn-blockquote-callout {
+  @include themeCalloutBlockquote();
+}

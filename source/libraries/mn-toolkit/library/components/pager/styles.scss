@@ -1,0 +1,7 @@
+@mixin themePager {
+  padding: calc(#{$defaultSpacing} / 2);
+}
+
+.mn-pager {
+  @include themePager();
+}

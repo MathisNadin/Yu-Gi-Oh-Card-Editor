@@ -1,0 +1,42 @@
+@mixin themeToasters() {
+  @include fill-all();
+  pointer-events: none;
+  transition: background-color 0.1s ease;
+  display: flex;
+  justify-content: center;
+  z-index: $z-index-toaster;
+
+  .mn-toaster {
+    position: absolute;
+    min-width: 50%;
+    max-width: 70%;
+    height: fit-content;
+    border-radius: calc(#{$defaultBorderRadius});
+    transform: translateY(-100px);
+    @include fx(all);
+    top: calc(#{$defaultSpacing});
+    pointer-events: auto;
+
+    &.visible {
+      transform: translateY(0);
+    }
+
+    &.hidding {
+      opacity: 0;
+      transform: translateY(-100px);
+    }
+
+    .mn-container-inside {
+      padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
+
+      .mn-typography,
+      .mn-icon {
+        color: color-hsl($bg1);
+      }
+    }
+  }
+}
+
+.mn-toasters {
+  @include themeToasters();
+}

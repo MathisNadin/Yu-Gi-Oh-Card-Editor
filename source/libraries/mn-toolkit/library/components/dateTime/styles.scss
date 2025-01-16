@@ -1,0 +1,471 @@
+@mixin dateTimeHighlight() {
+  &.selected {
+    .mn-typography {
+      background-color: color-hsla($primary, 0.8);
+    }
+
+    &:hover {
+      .mn-typography {
+        background-color: color-hsl($primary);
+      }
+    }
+  }
+
+  &:hover {
+    .mn-typography {
+      background-color: color-hsla($primary, 0.2);
+    }
+  }
+}
+
+// Date --------------------------------------------------------------------------------------------
+
+@mixin themeDateChooser() {
+  .calendar {
+    min-height: calc(#{$defaultItemHeight} * 7); // Max 6 different weeks in a month + the days row
+
+    .weekdays,
+    .week {
+      .weekday,
+      .day {
+        height: calc(#{$defaultItemHeight});
+        min-height: calc(#{$defaultItemHeight});
+        max-height: calc(#{$defaultItemHeight});
+        line-height: calc(#{$defaultItemHeight});
+
+        .mn-typography {
+          justify-content: center;
+          border-radius: 50%;
+          width: calc(#{$defaultItemHeight});
+          min-width: calc(#{$defaultItemHeight});
+          max-width: calc(#{$defaultItemHeight});
+          height: calc(#{$defaultItemHeight});
+          min-height: calc(#{$defaultItemHeight});
+          max-height: calc(#{$defaultItemHeight});
+          line-height: calc(#{$defaultItemHeight});
+        }
+      }
+    }
+
+    .week {
+      .day {
+        @include dateTimeHighlight();
+      }
+    }
+  }
+
+  .years {
+    .year {
+      @include dateTimeHighlight();
+
+      .mn-typography {
+        padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+        border-radius: calc(#{$defaultBorderRadius} * 4);
+      }
+    }
+  }
+}
+
+.mn-date-chooser {
+  @include themeDateChooser();
+}
+
+@mixin themeDatePicker() {
+  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+  border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
+
+  border-radius: calc(#{$defaultBorderRadius} / 2);
+  background-color: color-hsl($bg1);
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  &.mn-focus {
+    box-shadow: 0 0 10px color-hsla($primary, 0.26) inset;
+    border-color: color-hsl($primary);
+  }
+
+  .mn-date-input {
+    input {
+      cursor: text;
+      border: none;
+      width: 100%;
+      background-color: transparent;
+      color: color-hsl($fg1);
+    }
+  }
+}
+
+.mn-date-picker {
+  @include themeDatePicker();
+}
+
+// Time --------------------------------------------------------------------------------------------
+
+@mixin themeTimeChooser() {
+  .hours,
+  .minutes {
+    padding: 0 calc(#{$defaultSpacing} / 2);
+    &.minutes {
+      border-left: 1px solid;
+      border-color: color-hsla($fg1, 0.3);
+    }
+
+    &.scroller {
+      $height: 180px;
+      height: $height;
+      min-height: $height;
+      max-height: $height;
+
+      .hours-container,
+      .minutes-container {
+        > .mn-container-inside {
+          $gap: calc(#{$defaultSpacing} / 4);
+          gap: $gap;
+
+          &:after {
+            content: ' ';
+            $afterHeight: calc(#{$height} - #{$defaultItemHeight} - #{$gap});
+            min-height: $afterHeight;
+          }
+        }
+      }
+    }
+
+    .hour,
+    .minute {
+      @include dateTimeHighlight();
+      height: calc(#{$defaultItemHeight});
+      min-height: calc(#{$defaultItemHeight});
+      max-height: calc(#{$defaultItemHeight});
+      line-height: calc(#{$defaultItemHeight});
+
+      .mn-typography {
+        justify-content: center;
+        border-radius: calc(#{$defaultBorderRadius} / 2);
+        width: calc(#{$defaultItemHeight});
+        min-width: calc(#{$defaultItemHeight});
+        max-width: calc(#{$defaultItemHeight});
+        height: calc(#{$defaultItemHeight});
+        min-height: calc(#{$defaultItemHeight});
+        max-height: calc(#{$defaultItemHeight});
+        line-height: calc(#{$defaultItemHeight});
+      }
+    }
+  }
+}
+
+.mn-time-chooser {
+  @include themeTimeChooser();
+}
+
+@mixin themeTimePicker() {
+  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+  border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
+  border-radius: calc(#{$defaultBorderRadius} / 2);
+  background-color: color-hsl($bg1);
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  &.mn-focus {
+    box-shadow: 0 0 10px color-hsla($primary, 0.26) inset;
+    border-color: color-hsl($primary);
+  }
+
+  .mn-time-input {
+    input {
+      cursor: text;
+      border: none;
+      width: 100%;
+      background-color: transparent;
+      color: color-hsl($fg1);
+    }
+  }
+}
+
+.mn-time-picker {
+  @include themeTimePicker();
+}
+
+// Date Time --------------------------------------------------------------------------------------------
+
+@mixin themeDateTimeChooserPopup() {
+  .tab {
+    padding: calc(#{$defaultSpacing} / 2) 0;
+    border-bottom: 1px solid color-hsla($fg1, 0.3);
+
+    &.selected {
+      border-bottom: 2px solid color-hsl($primary);
+    }
+  }
+}
+
+.mn-popup.date-time-chooser {
+  @include themeDateTimeChooserPopup();
+}
+
+@mixin themeDateTimeChooser() {
+  .mn-time-chooser {
+    .hours,
+    .minutes {
+      &.scroller {
+        $height: 255px;
+        height: $height;
+        min-height: $height;
+        max-height: $height;
+
+        .hours-container,
+        .minutes-container {
+          > .mn-container-inside {
+            $gap: calc(#{$defaultSpacing} / 4);
+            gap: $gap;
+
+            &:after {
+              content: ' ';
+              $afterHeight: calc(#{$height} - #{$defaultItemHeight} - #{$gap});
+              min-height: $afterHeight;
+            }
+          }
+        }
+
+        &.hours {
+          border-left: 1px solid;
+          border-color: color-hsla($fg1, 0.3);
+        }
+      }
+    }
+  }
+}
+
+.mn-date-time-chooser {
+  @include themeDateTimeChooser();
+}
+
+@mixin themeDateTimePicker() {
+  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+  border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
+  border-radius: calc(#{$defaultBorderRadius} / 2);
+  background-color: color-hsl($bg1);
+  height: fit-content;
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  &.mn-focus {
+    box-shadow: 0 0 10px color-hsla($primary, 0.26) inset;
+    border-color: color-hsl($primary);
+  }
+
+  .mn-date-time-input {
+    input {
+      cursor: text;
+      border: none;
+      width: 100%;
+      background-color: transparent;
+      color: color-hsl($fg1);
+    }
+  }
+}
+
+.mn-date-time-picker {
+  @include themeDateTimePicker();
+}
+
+// Week --------------------------------------------------------------------------------------------
+
+@mixin themeWeekChooser() {
+  .calendar {
+    min-height: calc(#{$defaultItemHeight} * 7); // Max 6 different weeks in a month + the days row
+
+    .weekdays,
+    .week {
+      border-radius: calc(#{$defaultBorderRadius});
+
+      .week-number,
+      .weekday,
+      .day {
+        height: calc(#{$defaultItemHeight});
+        min-height: calc(#{$defaultItemHeight});
+        max-height: calc(#{$defaultItemHeight});
+        line-height: calc(#{$defaultItemHeight});
+
+        .mn-typography {
+          justify-content: center;
+          border-radius: 50%;
+          width: calc(#{$defaultItemHeight});
+          min-width: calc(#{$defaultItemHeight});
+          max-width: calc(#{$defaultItemHeight});
+          height: calc(#{$defaultItemHeight});
+          min-height: calc(#{$defaultItemHeight});
+          max-height: calc(#{$defaultItemHeight});
+          line-height: calc(#{$defaultItemHeight});
+        }
+      }
+    }
+
+    .week {
+      &.selected {
+        background-color: color-hsla($primary, 0.8);
+
+        &:hover {
+          background-color: color-hsl($primary);
+        }
+      }
+
+      &:hover {
+        background-color: color-hsla($primary, 0.2);
+      }
+    }
+  }
+
+  .years {
+    .year {
+      @include dateTimeHighlight();
+
+      .mn-typography {
+        padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+        border-radius: calc(#{$defaultBorderRadius} * 4);
+      }
+    }
+  }
+}
+
+.mn-week-chooser {
+  @include themeWeekChooser();
+}
+
+@mixin themeWeekInput() {
+  > .mn-container-inside {
+    gap: calc(#{$defaultSpacing} / 4);
+  }
+}
+
+.mn-week-input {
+  @include themeWeekInput();
+}
+
+@mixin themeWeekPicker() {
+  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+  border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
+  border-radius: calc(#{$defaultBorderRadius} / 2);
+  background-color: color-hsl($bg1);
+  height: fit-content;
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  &.mn-focus {
+    box-shadow: 0 0 10px color-hsla($primary, 0.26) inset;
+    border-color: color-hsl($primary);
+  }
+
+  .mn-week-input {
+    input {
+      cursor: text;
+      border: none;
+      width: 100%;
+      background-color: transparent;
+      color: color-hsl($fg1);
+    }
+  }
+}
+
+.mn-week-picker {
+  @include themeWeekPicker();
+}
+
+// Date Range --------------------------------------------------------------------------------------------
+
+@mixin themeDateRangePicker() {
+  height: fit-content;
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  .separator {
+    fill: color-hsl($fg1);
+  }
+}
+
+.mn-date-range-picker {
+  @include themeDateRangePicker();
+}
+
+// Date Time Range --------------------------------------------------------------------------------------------
+
+@mixin themeDateTimeRangePicker() {
+  height: fit-content;
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  .separator {
+    fill: color-hsl($fg1);
+  }
+}
+
+.mn-date-time-range-picker {
+  @include themeDateTimeRangePicker();
+}
+
+// Week Range --------------------------------------------------------------------------------------------
+
+@mixin themeWeekRangePicker() {
+  height: fit-content;
+
+  &:not(.mn-fill) {
+    width: fit-content;
+  }
+
+  .separator {
+    fill: color-hsl($fg1);
+  }
+}
+
+.mn-week-range-picker {
+  @include themeWeekRangePicker();
+}
+
+// Fields --------------------------------------------------------------------------------------------
+
+@mixin themeDateTimeFields() {
+  .input-wrapper {
+    min-height: auto;
+    max-height: inherit;
+    height: auto;
+    border: none !important;
+    box-shadow: none;
+    padding: 0;
+    background-color: transparent;
+
+    > .mn-container-inside {
+      align-items: center;
+    }
+
+    .mn-date-picker,
+    .mn-time-picker,
+    .mn-date-time-picker,
+    .mn-week-picker {
+      input {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.mn-form-field.mn-field-date-picker,
+.mn-form-field.mn-field-time-picker,
+.mn-form-field.mn-field-week-picker,
+.mn-form-field.mn-field-date-time-picker,
+.mn-form-field.mn-field-date-range-picker,
+.mn-form-field.mn-field-date-time-range-picker,
+.mn-form-field.mn-field-week-range-picker {
+  @include themeDateTimeFields();
+}

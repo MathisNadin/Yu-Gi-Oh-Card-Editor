@@ -1,0 +1,192 @@
+$inputHeight: calc(#{$defaultItemHeight});
+$contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
+
+@mixin themeFormField() {
+  $helper-height: 12px;
+  display: flex;
+  flex-direction: column;
+  vertical-align: top;
+  position: relative;
+
+  .input-wrapper {
+    height: $inputHeight;
+    min-height: $inputHeight;
+    max-height: $inputHeight;
+    padding: calc(#{$defaultSpacing} / 2);
+
+    border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
+    border-radius: calc($defaultBorderRadius / 2);
+    background-color: color-hsl($bg1);
+    transition: all 0.4s ease;
+
+    > .mn-container-inside {
+      gap: calc(#{$defaultSpacing} / 2);
+    }
+
+    .status-icon {
+      position: relative;
+      margin: 0;
+      width: $contentHeight;
+      height: $contentHeight;
+      min-width: $contentHeight;
+      min-height: $contentHeight;
+      line-height: $contentHeight;
+      text-align: center;
+      color: color-hsla($fg1, 0.15);
+    }
+
+    input {
+      border: none;
+      background-color: transparent;
+      color: color-hsl($fg1);
+      margin: calc(-1 * #{$defaultSpacing} / 2) 0;
+      display: block;
+      width: 100%;
+      appearance: textfield;
+
+      &::placeholder {
+        color: color-hsl($fg3);
+      }
+
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    textarea {
+      color: color-hsl($fg1);
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      line-height: 20px;
+      min-width: 100%;
+      padding: 0;
+      resize: none;
+      flex: 1;
+      &::placeholder {
+        color: color-hsl($fg3);
+      }
+    }
+  }
+
+  .form-label {
+    margin-bottom: calc(#{$defaultSpacing} / 2);
+
+    .form-label-with-info-icon {
+      margin-right: calc(#{$defaultSpacing} / 3);
+    }
+  }
+
+  .form-helper {
+    margin: calc(#{$defaultSpacing} / 2) 0 0 0;
+  }
+
+  &.mn-field-layout-horizontal {
+    .field-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .form-label {
+      transform: none !important;
+      position: static;
+      flex: 1;
+    }
+
+    .input-wrapper {
+      width: 150px;
+      margin-top: 0;
+    }
+  }
+
+  .input-wrapper {
+    > .mn-container-inside {
+      > .prop-icon-container-button,
+      > .prop-icon {
+        margin: calc(-1 * #{$defaultSpacing} * 0.5) 0;
+      }
+    }
+  }
+
+  &:not(.mn-focus) {
+    .prop-icon {
+      visibility: hidden;
+    }
+  }
+
+  &.has-value {
+    .prop-icon {
+      visibility: visible;
+    }
+  }
+
+  &.mn-focus {
+    .input-wrapper {
+      box-shadow: 0 0 10px color-hsla($primary, 0.26) inset;
+      border-color: color-hsl($primary);
+    }
+    .form-label {
+      .mn-typography-label {
+        color: color-hsl($fg1);
+      }
+    }
+  }
+
+  &.required {
+    .form-label {
+      .mn-typography::after {
+        content: '*';
+        @include themeFont('medium');
+        line-height: 100%;
+        font-weight: bold;
+        color: color-hsl($primary);
+        margin-left: 4px;
+        display: inline-block;
+      }
+    }
+  }
+
+  &.error {
+    .form-label {
+      color: color-hsl($negative);
+    }
+
+    .form-helper {
+      color: color-hsl($negative);
+    }
+
+    .input-wrapper {
+      border-color: color-hsl($negative);
+      > * {
+        color: color-hsl($negative);
+      }
+    }
+  }
+
+  &.validating {
+    .status-icon {
+      animation: mn-spin 800ms infinite linear;
+      color: color-hsla($fg1, 0.26);
+    }
+  }
+
+  &.validated {
+    &:not(.error) {
+      .status-icon {
+        color: color-hsl($positive);
+      }
+    }
+
+    &.error {
+      .status-icon {
+        color: color-hsl($negative);
+      }
+    }
+  }
+}
+
+.mn-form-field {
+  @include themeFormField();
+}

@@ -4,7 +4,7 @@
 }
 
 .card-editor {
-  $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
+  $borderColor: color-hsla($fg1, 0.5);
 
   .card-editor-sections {
     .card-editor-section {
@@ -12,37 +12,37 @@
         .mn-checkbox {
           &.checked {
             .toggle {
-              background-color: color-rgb($negative) !important;
-              border-color: color-rgb($negative) !important;
+              background-color: color-hsl($negative) !important;
+              border-color: color-hsl($negative) !important;
             }
           }
         }
       }
 
       .line-with-checkbox {
-        min-height: calc(#{$themeDefaultItemHeight});
+        min-height: calc(#{$defaultItemHeight});
       }
 
       .card-icons-grid {
         margin-top: -6px;
-        margin-bottom: calc(#{$themeDefaultSpacing} / 2);
+        margin-bottom: calc(#{$defaultSpacing} / 2);
       }
 
       .sub-title-container,
       .sub-title {
-        padding-bottom: calc(#{$themeDefaultSpacing} / 2);
+        padding-bottom: calc(#{$defaultSpacing} / 2);
         border-bottom: 1px solid $borderColor;
       }
 
       .sub-title-container {
-        margin-top: calc(#{$themeDefaultSpacing} / 2);
+        margin-top: calc(#{$defaultSpacing} / 2);
       }
 
       .sub-title-checkbox {
-        margin-top: calc(#{$themeDefaultSpacing});
+        margin-top: calc(#{$defaultSpacing});
 
         &.checked {
-          padding-bottom: calc(#{$themeDefaultSpacing} / 3);
+          padding-bottom: calc(#{$defaultSpacing} / 3);
           border-bottom: 1px solid $borderColor;
         }
       }
@@ -82,61 +82,61 @@
       }
 
       .field-icon {
-        margin-right: calc(#{$themeDefaultSpacing} / 2);
+        margin-right: calc(#{$defaultSpacing} / 2);
       }
 
       .pendulum-lock-icon {
         padding: 5px;
-        border-radius: calc(#{$themeDefaultBorderRadius});
+        border-radius: calc(#{$defaultBorderRadius});
 
         &.locked {
-          background-color: rgba($negative, 0.7);
+          background-color: color-hsla($negative, 0.7);
         }
 
         &:hover {
-          background-color: rgba($negative, 0.5);
+          background-color: color-hsla($negative, 0.5);
         }
       }
 
       .mn-textarea-input-container {
-        min-width: calc(100% - 20px - #{$themeDefaultSpacing} / 2);
-        max-width: calc(100% - 20px - #{$themeDefaultSpacing} / 2);
+        min-width: calc(100% - 20px - #{$defaultSpacing} / 2);
+        max-width: calc(100% - 20px - #{$defaultSpacing} / 2);
       }
 
       .card-abilities {
         > .mn-container-inside {
-          gap: calc(#{$themeDefaultSpacing} / 2);
+          gap: calc(#{$defaultSpacing} / 2);
         }
 
         .abilities-add {
-          margin-bottom: calc(-1 * #{$themeDefaultSpacing} / 4);
+          margin-bottom: calc(-1 * #{$defaultSpacing} / 4);
         }
 
         .card-abilities-list {
           border: 1px solid $borderColor;
-          min-height: calc(#{$themeDefaultItemHeight});
-          @include bg(1);
+          min-height: calc(#{$defaultItemHeight});
+          background-color: color-hsl($bg1);
 
           .mn-inplace-edit {
             border-radius: 0;
-            margin: calc(#{$themeDefaultSpacing} / 8) calc(#{$themeDefaultSpacing} / 4);
-            @include border-color(2);
-            @include bg(1);
+            margin: calc(#{$defaultSpacing} / 8) calc(#{$defaultSpacing} / 4);
+            border-color: color-hsl($fg2);
+            background-color: color-hsl($bg1);
 
             input {
-              @include bg(1);
+              background-color: color-hsl($bg1);
             }
           }
 
           .abilities-line {
             &:nth-child(even) {
-              @include bg(3);
+              background-color: color-hsl($bg3);
 
               .mn-inplace-edit {
-                @include bg(3);
+                background-color: color-hsl($bg3);
 
                 input {
-                  @include bg(3);
+                  background-color: color-hsl($bg3);
                 }
               }
             }
@@ -148,38 +148,38 @@
         .mn-container-inside {
           .mn-tabset {
             &.mn-tabbed-pane-tab-position-top {
-              border-radius: calc(#{$themeDefaultBorderRadius});
+              border-radius: calc(#{$defaultBorderRadius});
               background-image: none;
               padding: 0;
-              @include bg(2);
+              background-color: color-hsl($bg2);
 
               .item {
-                @include bg(3);
+                background-color: color-hsl($bg3);
 
                 &.selected {
-                  @include bg(2);
+                  background-color: color-hsl($bg2);
                 }
               }
             }
 
             .mn-layout-spacer {
               background-color: transparent;
-              border-bottom: 1px solid color-rgb(nth($theme-light-bg, 3));
-              border-radius: calc(#{$themeDefaultBorderRadius});
+              border-bottom: 1px solid color-hsl($bg3);
+              border-radius: calc(#{$defaultBorderRadius});
             }
           }
 
           .mn-tab-pane {
-            border: 1px solid color-rgb(nth($theme-light-bg, 3));
+            border: 1px solid color-hsl($bg3);
             border-top: transparent;
 
             &#regular,
             &#choice {
-              padding-bottom: calc(#{$themeDefaultSpacing});
+              padding-bottom: calc(#{$defaultSpacing});
             }
 
             .mn-tab-button-choice {
-              box-shadow: 0 -1px 0 color-rgb(nth($theme-light-bg, 4));
+              box-shadow: 0 -1px 0 color-hsl($bg4);
             }
           }
 
@@ -196,8 +196,8 @@
         .card-choice-effects-list {
           .choice-effects-line {
             .choice-effects-line-icons {
-              min-width: calc(100% - #{$themeDefaultSpacing});
-              max-width: calc(100% - #{$themeDefaultSpacing});
+              min-width: calc(100% - #{$defaultSpacing});
+              max-width: calc(100% - #{$defaultSpacing});
             }
           }
         }

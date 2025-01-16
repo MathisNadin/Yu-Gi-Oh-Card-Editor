@@ -1,0 +1,86 @@
+@mixin colorizeMemberBadge($color) {
+  .content.letter {
+    color: color-hsl($color);
+  }
+}
+
+@mixin themeMemberBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: color-hsl($bg3);
+
+  &.mn-color-primary {
+    @include colorizeMemberBadge($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeMemberBadge($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeMemberBadge($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeMemberBadge($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeMemberBadge($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeMemberBadge($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeMemberBadge($warning);
+  }
+  &.mn-color-info {
+    @include colorizeMemberBadge($info);
+  }
+  &.mn-color-1 {
+    @include colorizeMemberBadge($fg1);
+  }
+  &.mn-color-2 {
+    @include colorizeMemberBadge($fg2);
+  }
+  &.mn-color-3 {
+    @include colorizeMemberBadge($fg3);
+  }
+  &.mn-color-4 {
+    @include colorizeMemberBadge($fg4);
+  }
+
+  .letter {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .photo {
+    @include fill-all();
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  &.mn-shape-circle {
+    border-radius: 50%;
+    .content {
+      border-radius: 50%;
+    }
+  }
+
+  &.mn-shape-square {
+    border-radius: calc(#{$defaultBorderRadius});
+    overflow: hidden;
+    .content {
+      border-radius: calc(#{$defaultBorderRadius});
+    }
+  }
+
+  @include fx(opacity);
+  &.has-click:hover {
+    opacity: 0.8;
+  }
+}
+
+.mn-member-badge {
+  @include themeMemberBadge();
+}

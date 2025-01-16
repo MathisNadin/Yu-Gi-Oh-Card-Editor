@@ -1,0 +1,40 @@
+@mixin themeSearchBar() {
+  $height: calc(#{$defaultItemHeight});
+
+  border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
+  border-radius: calc(#{$defaultBorderRadius});
+
+  @include shadow(0);
+
+  &:not(.mn-focus) {
+    &:hover {
+      background-color: color-hsla($fg1, 0.15);
+    }
+  }
+
+  &.mn-focus {
+    border-color: color-hsl($primary);
+  }
+
+  .search-icon {
+    margin-left: calc(#{$defaultSpacing} / 2);
+  }
+
+  input {
+    line-height: $height;
+    height: $height;
+    padding: 0 8px;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: color-hsl($fg1);
+
+    &::placeholder {
+      color: color-hsl($fg3);
+    }
+  }
+}
+
+.mn-search-bar {
+  @include themeSearchBar();
+}

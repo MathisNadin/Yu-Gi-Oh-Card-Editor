@@ -1,0 +1,88 @@
+@mixin themeLayoutContainable() {
+  display: flex;
+  position: relative;
+
+  $float-margin: 5px;
+
+  &.mn-float-left {
+    position: absolute !important;
+    left: $float-margin;
+  }
+
+  &.mn-float-right {
+    position: absolute !important;
+    right: $float-margin;
+  }
+
+  &.mn-float-top-left {
+    position: absolute !important;
+    left: $float-margin;
+    top: $float-margin;
+  }
+
+  &.mn-float-top-right {
+    position: absolute !important;
+    right: $float-margin;
+    top: $float-margin;
+  }
+
+  &.mn-float-bottom-right {
+    position: absolute !important;
+    right: $float-margin;
+    bottom: $float-margin;
+  }
+
+  &.mn-float-bottom-left {
+    position: absolute !important;
+    left: $float-margin;
+    bottom: $float-margin;
+  }
+
+  &.mn-float-middle-right {
+    position: absolute !important;
+    right: $float-margin;
+    top: 50%;
+  }
+
+  &.mn-float-middle-left {
+    position: absolute !important;
+    left: $float-margin;
+    top: 50%;
+  }
+}
+
+.mn-containable {
+  @include themeLayoutContainable();
+}
+
+.has-click {
+  cursor: pointer;
+}
+
+.mn-fill {
+  flex: 1;
+  overflow: hidden;
+}
+
+.mn-ghost {
+  z-index: $z-index-content + 1;
+  will-change: opacity, transform !important;
+  transform: translate3d(0, -10px, 0);
+  opacity: 0;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease !important;
+}
+
+*:hover {
+  > .mn-ghost {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.mn-disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+  pointer-events: none;
+}

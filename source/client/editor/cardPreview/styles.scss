@@ -12,7 +12,7 @@
     min-width: 1500px;
     width: 100%;
     position: absolute;
-    @include fgAsBg(1);
+    background-color: color-hsl($fg1);
   }
 
   .card-preview-img {

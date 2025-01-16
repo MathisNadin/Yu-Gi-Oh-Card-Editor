@@ -1,12 +1,12 @@
 import { shortnameToImage } from './emojies';
 
-export type JSONValue = string | number | boolean | { [x: string]: JSONValue } | JSONValue[];
+export type TJSONValue = string | number | boolean | { [x: string]: TJSONValue } | TJSONValue[];
 
 export interface JSONObject {
-  [x: string]: JSONValue;
+  [x: string]: TJSONValue;
 }
 
-export interface JSONArray extends Array<JSONValue> {}
+export interface JSONArray extends Array<TJSONValue> {}
 
 export async function sleep(time: number) {
   return new Promise<void>((resolve) => {

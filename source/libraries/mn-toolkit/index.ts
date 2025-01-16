@@ -7,9 +7,7 @@ import {
   CameraPickerService,
   DateTimePickerService,
   DeviceService,
-  DrawerService,
   ErrorManagerService,
-  GalleryService,
   HeaderService,
   IconService,
   OverlayService,
@@ -49,13 +47,11 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$header', HeaderService);
   app.service('$api', ApiService);
   app.service('$axios', AxiosService);
-  app.service('$drawer', DrawerService);
   app.service('$overlay', OverlayService);
   app.service('$icon', IconService);
   app.service('$popup', PopupService);
   app.service('$popover', PopoverService, { depends: ['$react'] });
   app.service('$filePicker', FilePickerService);
-  app.service('$gallery', GalleryService, { depends: ['$react'] });
   app.service('$savingManager', SavingManagerService);
   app.service('$tips', TipService);
   app.service('$dateTimePicker', DateTimePickerService);

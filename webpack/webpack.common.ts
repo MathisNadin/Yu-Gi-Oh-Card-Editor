@@ -1,6 +1,6 @@
 import path from 'path';
-import { Configuration } from 'webpack';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
+import { Configuration } from 'webpack';
 
 const commonConfig: Configuration = {
   resolve: {

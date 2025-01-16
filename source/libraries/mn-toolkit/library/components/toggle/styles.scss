@@ -1,0 +1,102 @@
+@mixin themeToggle() {
+  @include fx(background-color);
+
+  $handleSize: 12px;
+  $handleMargin: 3px;
+  $toggleWidth: calc(#{$handleSize} * 2 + #{$handleMargin} * 3);
+  $toggleHeight: calc(#{$handleSize} + #{$handleMargin} * 2);
+
+  .toggle {
+    display: inline-block;
+    min-width: $toggleWidth;
+    max-width: $toggleWidth;
+    min-height: $toggleHeight;
+    max-height: $toggleHeight;
+    background-color: color-hsl($bg4);
+    border-radius: 10px;
+
+    .handle {
+      display: inline-block;
+      background-color: color-hsl($bg1);
+      width: $handleSize;
+      height: $handleSize;
+      margin: $handleMargin;
+      border-radius: 50%;
+      @include fx(margin-left);
+      position: relative;
+    }
+  }
+
+  &.checked {
+    .toggle {
+      background: color-hsl($primary);
+      .handle {
+        margin-left: calc(#{$handleSize} + #{$handleMargin} * 2);
+      }
+    }
+  }
+
+  &:hover {
+    .toggle {
+      background-color: color-hsl($bg3);
+    }
+
+    &.checked {
+      .toggle {
+        background: lighten-color-hsl($primary);
+      }
+    }
+  }
+
+  &.disabled {
+    pointer-events: none;
+    .toggle {
+      border-color: color-hsl($fg3);
+      .handle {
+        background-color: color-hsl($bg3);
+      }
+    }
+  }
+
+  .error & {
+    .toggle {
+      border-color: color-hsl($negative);
+      border: 1px solid color-hsl($negative);
+      background-color: color-hsla($negative, 0.1);
+      > .handle {
+        background-color: color-hsl($negative);
+      }
+    }
+  }
+}
+
+.mn-toggle {
+  @include themeToggle();
+}
+
+@mixin themeToggleField() {
+  .input-wrapper {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding-left: 0;
+    height: calc($inputHeight + #{$defaultSpacing} / 2);
+    min-height: calc($inputHeight + #{$defaultSpacing} / 2);
+    max-height: calc($inputHeight + #{$defaultSpacing} / 2);
+
+    .form-label {
+      flex: 1;
+      overflow: hidden;
+      margin-bottom: 0;
+      padding-left: 0;
+    }
+  }
+
+  .form-helper {
+    margin-top: calc(-1 * #{$defaultSpacing} / 2);
+  }
+}
+
+.mn-form-field.mn-field-toggle {
+  @include themeToggleField();
+}

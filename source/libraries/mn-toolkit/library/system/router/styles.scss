@@ -1,0 +1,12 @@
+$routerLeftMargin: calc(#{$defaultSpacing});
+
+.mn-router {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+
+  &.with-left-margin {
+    margin-left: $routerLeftMargin;
+  }
+}

@@ -3,7 +3,7 @@ import {
   IContainerState,
   Container,
   Button,
-  FileInput,
+  FilePathInput,
   HorizontalStack,
   Icon,
   Spacer,
@@ -110,12 +110,12 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-millennium-puzzle' color='1' />
           {app.$device.isDesktop && (
-            <FileInput
+            <FilePathInput
               fill
               placeholder='Chemin du dossier'
               defaultValue={this.state.settings.defaultRenderPath}
               onChange={(url) => this.onDefaultRenderPathChanged(url)}
-              overrideOnTap={() => this.getDefaultRenderPath()}
+              overrideOnTapIcon={() => this.getDefaultRenderPath()}
             />
           )}
         </HorizontalStack>
@@ -127,12 +127,12 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
           {app.$device.isDesktop && (
-            <FileInput
+            <FilePathInput
               fill
               placeholder='Chemin du dossier'
               defaultValue={this.state.settings.defaultArtworkPath}
               onChange={(path) => this.onDefaultArtworkPathChanged(path)}
-              overrideOnTap={() => this.getDefaultArtworkPath()}
+              overrideOnTapIcon={() => this.getDefaultArtworkPath()}
             />
           )}
         </HorizontalStack>
@@ -144,12 +144,12 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-image-sync' color='1' />
           {app.$device.isDesktop && (
-            <FileInput
+            <FilePathInput
               fill
               placeholder='Chemin du dossier'
               defaultValue={this.state.settings.defaultImgImportPath}
               onChange={(path) => this.onDefaultImgImportPathChanged(path)}
-              overrideOnTap={() => this.getDefaultImgImportPath()}
+              overrideOnTapIcon={() => this.getDefaultImgImportPath()}
             />
           )}
         </HorizontalStack>

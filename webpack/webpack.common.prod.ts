@@ -1,7 +1,9 @@
-import { Configuration, EnvironmentPlugin } from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import { Configuration, EnvironmentPlugin } from 'webpack';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 
 const commonProdConfig: Configuration = {
   mode: 'production',
@@ -11,11 +13,7 @@ const commonProdConfig: Configuration = {
       // Styles
       {
         test: /\.s[ac]ss$/i,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader'
-        ],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
   },
@@ -34,7 +32,18 @@ const commonProdConfig: Configuration = {
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
+    new CspHtmlWebpackPlugin(
+      {
+        'style-src': ["'self'", 'https://fonts.googleapis.com'],
+        'style-src-elem': ["'self'", 'https://fonts.googleapis.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com'],
+      },
+      {
+        enabled: true,
+        hashingMethod: 'sha256',
+      }
+    ),
   ],
-}
+};
 
 export default commonProdConfig;

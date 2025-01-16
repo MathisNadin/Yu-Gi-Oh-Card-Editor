@@ -1,0 +1,22 @@
+@mixin themeColorPicker() {
+  .mn-color-swatch,
+  .mn-icon {
+    $size: 20px;
+    height: $size;
+    min-height: $size;
+    max-height: $size;
+    width: $size;
+    min-width: $size;
+    max-width: $size;
+    border-radius: $size;
+    margin: calc(#{$defaultSpacing} / 4);
+  }
+
+  .mn-color-swatch {
+    border: 1px solid color-hsla($fg1, 0.2);
+  }
+}
+
+.mn-color-picker {
+  @include themeColorPicker();
+}

@@ -1,0 +1,857 @@
+// Small
+$small-h1-family: var(--small-h1-family);
+$small-h1-size: var(--small-h1-size);
+$small-h1-stretch: var(--small-h1-stretch);
+$small-h1-style: var(--small-h1-style);
+$small-h1-variant: var(--small-h1-variant);
+$small-h1-weight: var(--small-h1-weight);
+$small-h1-line-height: var(--small-h1-line-height);
+$small-h1-letter-spacing: var(--small-h1-letter-spacing);
+
+$small-h2-family: var(--small-h2-family);
+$small-h2-size: var(--small-h2-size);
+$small-h2-stretch: var(--small-h2-stretch);
+$small-h2-style: var(--small-h2-style);
+$small-h2-variant: var(--small-h2-variant);
+$small-h2-weight: var(--small-h2-weight);
+$small-h2-line-height: var(--small-h2-line-height);
+$small-h2-letter-spacing: var(--small-h2-letter-spacing);
+
+$small-h3-family: var(--small-h3-family);
+$small-h3-size: var(--small-h3-size);
+$small-h3-stretch: var(--small-h3-stretch);
+$small-h3-style: var(--small-h3-style);
+$small-h3-variant: var(--small-h3-variant);
+$small-h3-weight: var(--small-h3-weight);
+$small-h3-line-height: var(--small-h3-line-height);
+$small-h3-letter-spacing: var(--small-h3-letter-spacing);
+
+$small-h4-family: var(--small-h4-family);
+$small-h4-size: var(--small-h4-size);
+$small-h4-stretch: var(--small-h4-stretch);
+$small-h4-style: var(--small-h4-style);
+$small-h4-variant: var(--small-h4-variant);
+$small-h4-weight: var(--small-h4-weight);
+$small-h4-line-height: var(--small-h4-line-height);
+$small-h4-letter-spacing: var(--small-h4-letter-spacing);
+
+$small-h5-family: var(--small-h5-family);
+$small-h5-size: var(--small-h5-size);
+$small-h5-stretch: var(--small-h5-stretch);
+$small-h5-style: var(--small-h5-style);
+$small-h5-variant: var(--small-h5-variant);
+$small-h5-weight: var(--small-h5-weight);
+$small-h5-line-height: var(--small-h5-line-height);
+$small-h5-letter-spacing: var(--small-h5-letter-spacing);
+
+$small-h6-family: var(--small-h6-family);
+$small-h6-size: var(--small-h6-size);
+$small-h6-stretch: var(--small-h6-stretch);
+$small-h6-style: var(--small-h6-style);
+$small-h6-variant: var(--small-h6-variant);
+$small-h6-weight: var(--small-h6-weight);
+$small-h6-line-height: var(--small-h6-line-height);
+$small-h6-letter-spacing: var(--small-h6-letter-spacing);
+
+$small-large-family: var(--small-large-family);
+$small-large-size: var(--small-large-size);
+$small-large-stretch: var(--small-large-stretch);
+$small-large-style: var(--small-large-style);
+$small-large-variant: var(--small-large-variant);
+$small-large-weight: var(--small-large-weight);
+$small-large-line-height: var(--small-large-line-height);
+$small-large-letter-spacing: var(--small-large-letter-spacing);
+
+$small-medium-family: var(--small-medium-family);
+$small-medium-size: var(--small-medium-size);
+$small-medium-stretch: var(--small-medium-stretch);
+$small-medium-style: var(--small-medium-style);
+$small-medium-variant: var(--small-medium-variant);
+$small-medium-weight: var(--small-medium-weight);
+$small-medium-line-height: var(--small-medium-line-height);
+$small-medium-letter-spacing: var(--small-medium-letter-spacing);
+
+$small-regular-family: var(--small-regular-family);
+$small-regular-size: var(--small-regular-size);
+$small-regular-stretch: var(--small-regular-stretch);
+$small-regular-style: var(--small-regular-style);
+$small-regular-variant: var(--small-regular-variant);
+$small-regular-weight: var(--small-regular-weight);
+$small-regular-line-height: var(--small-regular-line-height);
+$small-regular-letter-spacing: var(--small-regular-letter-spacing);
+
+$small-small-family: var(--small-small-family);
+$small-small-size: var(--small-small-size);
+$small-small-stretch: var(--small-small-stretch);
+$small-small-style: var(--small-small-style);
+$small-small-variant: var(--small-small-variant);
+$small-small-weight: var(--small-small-weight);
+$small-small-line-height: var(--small-small-line-height);
+$small-small-letter-spacing: var(--small-small-letter-spacing);
+
+$small-tiny-family: var(--small-tiny-family);
+$small-tiny-size: var(--small-tiny-size);
+$small-tiny-stretch: var(--small-tiny-stretch);
+$small-tiny-style: var(--small-tiny-style);
+$small-tiny-variant: var(--small-tiny-variant);
+$small-tiny-weight: var(--small-tiny-weight);
+$small-tiny-line-height: var(--small-tiny-line-height);
+$small-tiny-letter-spacing: var(--small-tiny-letter-spacing);
+
+// Medium
+$medium-h1-family: var(--medium-h1-family);
+$medium-h1-size: var(--medium-h1-size);
+$medium-h1-stretch: var(--medium-h1-stretch);
+$medium-h1-style: var(--medium-h1-style);
+$medium-h1-variant: var(--medium-h1-variant);
+$medium-h1-weight: var(--medium-h1-weight);
+$medium-h1-line-height: var(--medium-h1-line-height);
+$medium-h1-letter-spacing: var(--medium-h1-letter-spacing);
+
+$medium-h2-family: var(--medium-h2-family);
+$medium-h2-size: var(--medium-h2-size);
+$medium-h2-stretch: var(--medium-h2-stretch);
+$medium-h2-style: var(--medium-h2-style);
+$medium-h2-variant: var(--medium-h2-variant);
+$medium-h2-weight: var(--medium-h2-weight);
+$medium-h2-line-height: var(--medium-h2-line-height);
+$medium-h2-letter-spacing: var(--medium-h2-letter-spacing);
+
+$medium-h3-family: var(--medium-h3-family);
+$medium-h3-size: var(--medium-h3-size);
+$medium-h3-stretch: var(--medium-h3-stretch);
+$medium-h3-style: var(--medium-h3-style);
+$medium-h3-variant: var(--medium-h3-variant);
+$medium-h3-weight: var(--medium-h3-weight);
+$medium-h3-line-height: var(--medium-h3-line-height);
+$medium-h3-letter-spacing: var(--medium-h3-letter-spacing);
+
+$medium-h4-family: var(--medium-h4-family);
+$medium-h4-size: var(--medium-h4-size);
+$medium-h4-stretch: var(--medium-h4-stretch);
+$medium-h4-style: var(--medium-h4-style);
+$medium-h4-variant: var(--medium-h4-variant);
+$medium-h4-weight: var(--medium-h4-weight);
+$medium-h4-line-height: var(--medium-h4-line-height);
+$medium-h4-letter-spacing: var(--medium-h4-letter-spacing);
+
+$medium-h5-family: var(--medium-h5-family);
+$medium-h5-size: var(--medium-h5-size);
+$medium-h5-stretch: var(--medium-h5-stretch);
+$medium-h5-style: var(--medium-h5-style);
+$medium-h5-variant: var(--medium-h5-variant);
+$medium-h5-weight: var(--medium-h5-weight);
+$medium-h5-line-height: var(--medium-h5-line-height);
+$medium-h5-letter-spacing: var(--medium-h5-letter-spacing);
+
+$medium-h6-family: var(--medium-h6-family);
+$medium-h6-size: var(--medium-h6-size);
+$medium-h6-stretch: var(--medium-h6-stretch);
+$medium-h6-style: var(--medium-h6-style);
+$medium-h6-variant: var(--medium-h6-variant);
+$medium-h6-weight: var(--medium-h6-weight);
+$medium-h6-line-height: var(--medium-h6-line-height);
+$medium-h6-letter-spacing: var(--medium-h6-letter-spacing);
+
+$medium-large-family: var(--medium-large-family);
+$medium-large-size: var(--medium-large-size);
+$medium-large-stretch: var(--medium-large-stretch);
+$medium-large-style: var(--medium-large-style);
+$medium-large-variant: var(--medium-large-variant);
+$medium-large-weight: var(--medium-large-weight);
+$medium-large-line-height: var(--medium-large-line-height);
+$medium-large-letter-spacing: var(--medium-large-letter-spacing);
+
+$medium-medium-family: var(--medium-medium-family);
+$medium-medium-size: var(--medium-medium-size);
+$medium-medium-stretch: var(--medium-medium-stretch);
+$medium-medium-style: var(--medium-medium-style);
+$medium-medium-variant: var(--medium-medium-variant);
+$medium-medium-weight: var(--medium-medium-weight);
+$medium-medium-line-height: var(--medium-medium-line-height);
+$medium-medium-letter-spacing: var(--medium-medium-letter-spacing);
+
+$medium-regular-family: var(--medium-regular-family);
+$medium-regular-size: var(--medium-regular-size);
+$medium-regular-stretch: var(--medium-regular-stretch);
+$medium-regular-style: var(--medium-regular-style);
+$medium-regular-variant: var(--medium-regular-variant);
+$medium-regular-weight: var(--medium-regular-weight);
+$medium-regular-line-height: var(--medium-regular-line-height);
+$medium-regular-letter-spacing: var(--medium-regular-letter-spacing);
+
+$medium-small-family: var(--medium-small-family);
+$medium-small-size: var(--medium-small-size);
+$medium-small-stretch: var(--medium-small-stretch);
+$medium-small-style: var(--medium-small-style);
+$medium-small-variant: var(--medium-small-variant);
+$medium-small-weight: var(--medium-small-weight);
+$medium-small-line-height: var(--medium-small-line-height);
+$medium-small-letter-spacing: var(--medium-small-letter-spacing);
+
+$medium-tiny-family: var(--medium-tiny-family);
+$medium-tiny-size: var(--medium-tiny-size);
+$medium-tiny-stretch: var(--medium-tiny-stretch);
+$medium-tiny-style: var(--medium-tiny-style);
+$medium-tiny-variant: var(--medium-tiny-variant);
+$medium-tiny-weight: var(--medium-tiny-weight);
+$medium-tiny-line-height: var(--medium-tiny-line-height);
+$medium-tiny-letter-spacing: var(--medium-tiny-letter-spacing);
+
+// Large
+$large-h1-family: var(--large-h1-family);
+$large-h1-size: var(--large-h1-size);
+$large-h1-stretch: var(--large-h1-stretch);
+$large-h1-style: var(--large-h1-style);
+$large-h1-variant: var(--large-h1-variant);
+$large-h1-weight: var(--large-h1-weight);
+$large-h1-line-height: var(--large-h1-line-height);
+$large-h1-letter-spacing: var(--large-h1-letter-spacing);
+
+$large-h2-family: var(--large-h2-family);
+$large-h2-size: var(--large-h2-size);
+$large-h2-stretch: var(--large-h2-stretch);
+$large-h2-style: var(--large-h2-style);
+$large-h2-variant: var(--large-h2-variant);
+$large-h2-weight: var(--large-h2-weight);
+$large-h2-line-height: var(--large-h2-line-height);
+$large-h2-letter-spacing: var(--large-h2-letter-spacing);
+
+$large-h3-family: var(--large-h3-family);
+$large-h3-size: var(--large-h3-size);
+$large-h3-stretch: var(--large-h3-stretch);
+$large-h3-style: var(--large-h3-style);
+$large-h3-variant: var(--large-h3-variant);
+$large-h3-weight: var(--large-h3-weight);
+$large-h3-line-height: var(--large-h3-line-height);
+$large-h3-letter-spacing: var(--large-h3-letter-spacing);
+
+$large-h4-family: var(--large-h4-family);
+$large-h4-size: var(--large-h4-size);
+$large-h4-stretch: var(--large-h4-stretch);
+$large-h4-style: var(--large-h4-style);
+$large-h4-variant: var(--large-h4-variant);
+$large-h4-weight: var(--large-h4-weight);
+$large-h4-line-height: var(--large-h4-line-height);
+$large-h4-letter-spacing: var(--large-h4-letter-spacing);
+
+$large-h5-family: var(--large-h5-family);
+$large-h5-size: var(--large-h5-size);
+$large-h5-stretch: var(--large-h5-stretch);
+$large-h5-style: var(--large-h5-style);
+$large-h5-variant: var(--large-h5-variant);
+$large-h5-weight: var(--large-h5-weight);
+$large-h5-line-height: var(--large-h5-line-height);
+$large-h5-letter-spacing: var(--large-h5-letter-spacing);
+
+$large-h6-family: var(--large-h6-family);
+$large-h6-size: var(--large-h6-size);
+$large-h6-stretch: var(--large-h6-stretch);
+$large-h6-style: var(--large-h6-style);
+$large-h6-variant: var(--large-h6-variant);
+$large-h6-weight: var(--large-h6-weight);
+$large-h6-line-height: var(--large-h6-line-height);
+$large-h6-letter-spacing: var(--large-h6-letter-spacing);
+
+$large-large-family: var(--large-large-family);
+$large-large-size: var(--large-large-size);
+$large-large-stretch: var(--large-large-stretch);
+$large-large-style: var(--large-large-style);
+$large-large-variant: var(--large-large-variant);
+$large-large-weight: var(--large-large-weight);
+$large-large-line-height: var(--large-large-line-height);
+$large-large-letter-spacing: var(--large-large-letter-spacing);
+
+$large-medium-family: var(--large-medium-family);
+$large-medium-size: var(--large-medium-size);
+$large-medium-stretch: var(--large-medium-stretch);
+$large-medium-style: var(--large-medium-style);
+$large-medium-variant: var(--large-medium-variant);
+$large-medium-weight: var(--large-medium-weight);
+$large-medium-line-height: var(--large-medium-line-height);
+$large-medium-letter-spacing: var(--large-medium-letter-spacing);
+
+$large-regular-family: var(--large-regular-family);
+$large-regular-size: var(--large-regular-size);
+$large-regular-stretch: var(--large-regular-stretch);
+$large-regular-style: var(--large-regular-style);
+$large-regular-variant: var(--large-regular-variant);
+$large-regular-weight: var(--large-regular-weight);
+$large-regular-line-height: var(--large-regular-line-height);
+$large-regular-letter-spacing: var(--large-regular-letter-spacing);
+
+$large-small-family: var(--large-small-family);
+$large-small-size: var(--large-small-size);
+$large-small-stretch: var(--large-small-stretch);
+$large-small-style: var(--large-small-style);
+$large-small-variant: var(--large-small-variant);
+$large-small-weight: var(--large-small-weight);
+$large-small-line-height: var(--large-small-line-height);
+$large-small-letter-spacing: var(--large-small-letter-spacing);
+
+$large-tiny-family: var(--large-tiny-family);
+$large-tiny-size: var(--large-tiny-size);
+$large-tiny-stretch: var(--large-tiny-stretch);
+$large-tiny-style: var(--large-tiny-style);
+$large-tiny-variant: var(--large-tiny-variant);
+$large-tiny-weight: var(--large-tiny-weight);
+$large-tiny-line-height: var(--large-tiny-line-height);
+$large-tiny-letter-spacing: var(--large-tiny-letter-spacing);
+
+// XLarge
+$xlarge-h1-family: var(--xlarge-h1-family);
+$xlarge-h1-size: var(--xlarge-h1-size);
+$xlarge-h1-stretch: var(--xlarge-h1-stretch);
+$xlarge-h1-style: var(--xlarge-h1-style);
+$xlarge-h1-variant: var(--xlarge-h1-variant);
+$xlarge-h1-weight: var(--xlarge-h1-weight);
+$xlarge-h1-line-height: var(--xlarge-h1-line-height);
+$xlarge-h1-letter-spacing: var(--xlarge-h1-letter-spacing);
+
+$xlarge-h2-family: var(--xlarge-h2-family);
+$xlarge-h2-size: var(--xlarge-h2-size);
+$xlarge-h2-stretch: var(--xlarge-h2-stretch);
+$xlarge-h2-style: var(--xlarge-h2-style);
+$xlarge-h2-variant: var(--xlarge-h2-variant);
+$xlarge-h2-weight: var(--xlarge-h2-weight);
+$xlarge-h2-line-height: var(--xlarge-h2-line-height);
+$xlarge-h2-letter-spacing: var(--xlarge-h2-letter-spacing);
+
+$xlarge-h3-family: var(--xlarge-h3-family);
+$xlarge-h3-size: var(--xlarge-h3-size);
+$xlarge-h3-stretch: var(--xlarge-h3-stretch);
+$xlarge-h3-style: var(--xlarge-h3-style);
+$xlarge-h3-variant: var(--xlarge-h3-variant);
+$xlarge-h3-weight: var(--xlarge-h3-weight);
+$xlarge-h3-line-height: var(--xlarge-h3-line-height);
+$xlarge-h3-letter-spacing: var(--xlarge-h3-letter-spacing);
+
+$xlarge-h4-family: var(--xlarge-h4-family);
+$xlarge-h4-size: var(--xlarge-h4-size);
+$xlarge-h4-stretch: var(--xlarge-h4-stretch);
+$xlarge-h4-style: var(--xlarge-h4-style);
+$xlarge-h4-variant: var(--xlarge-h4-variant);
+$xlarge-h4-weight: var(--xlarge-h4-weight);
+$xlarge-h4-line-height: var(--xlarge-h4-line-height);
+$xlarge-h4-letter-spacing: var(--xlarge-h4-letter-spacing);
+
+$xlarge-h5-family: var(--xlarge-h5-family);
+$xlarge-h5-size: var(--xlarge-h5-size);
+$xlarge-h5-stretch: var(--xlarge-h5-stretch);
+$xlarge-h5-style: var(--xlarge-h5-style);
+$xlarge-h5-variant: var(--xlarge-h5-variant);
+$xlarge-h5-weight: var(--xlarge-h5-weight);
+$xlarge-h5-line-height: var(--xlarge-h5-line-height);
+$xlarge-h5-letter-spacing: var(--xlarge-h5-letter-spacing);
+
+$xlarge-h6-family: var(--xlarge-h6-family);
+$xlarge-h6-size: var(--xlarge-h6-size);
+$xlarge-h6-stretch: var(--xlarge-h6-stretch);
+$xlarge-h6-style: var(--xlarge-h6-style);
+$xlarge-h6-variant: var(--xlarge-h6-variant);
+$xlarge-h6-weight: var(--xlarge-h6-weight);
+$xlarge-h6-line-height: var(--xlarge-h6-line-height);
+$xlarge-h6-letter-spacing: var(--xlarge-h6-letter-spacing);
+
+$xlarge-large-family: var(--xlarge-large-family);
+$xlarge-large-size: var(--xlarge-large-size);
+$xlarge-large-stretch: var(--xlarge-large-stretch);
+$xlarge-large-style: var(--xlarge-large-style);
+$xlarge-large-variant: var(--xlarge-large-variant);
+$xlarge-large-weight: var(--xlarge-large-weight);
+$xlarge-large-line-height: var(--xlarge-large-line-height);
+$xlarge-large-letter-spacing: var(--xlarge-large-letter-spacing);
+
+$xlarge-medium-family: var(--xlarge-medium-family);
+$xlarge-medium-size: var(--xlarge-medium-size);
+$xlarge-medium-stretch: var(--xlarge-medium-stretch);
+$xlarge-medium-style: var(--xlarge-medium-style);
+$xlarge-medium-variant: var(--xlarge-medium-variant);
+$xlarge-medium-weight: var(--xlarge-medium-weight);
+$xlarge-medium-line-height: var(--xlarge-medium-line-height);
+$xlarge-medium-letter-spacing: var(--xlarge-medium-letter-spacing);
+
+$xlarge-regular-family: var(--xlarge-regular-family);
+$xlarge-regular-size: var(--xlarge-regular-size);
+$xlarge-regular-stretch: var(--xlarge-regular-stretch);
+$xlarge-regular-style: var(--xlarge-regular-style);
+$xlarge-regular-variant: var(--xlarge-regular-variant);
+$xlarge-regular-weight: var(--xlarge-regular-weight);
+$xlarge-regular-line-height: var(--xlarge-regular-line-height);
+$xlarge-regular-letter-spacing: var(--xlarge-regular-letter-spacing);
+
+$xlarge-small-family: var(--xlarge-small-family);
+$xlarge-small-size: var(--xlarge-small-size);
+$xlarge-small-stretch: var(--xlarge-small-stretch);
+$xlarge-small-style: var(--xlarge-small-style);
+$xlarge-small-variant: var(--xlarge-small-variant);
+$xlarge-small-weight: var(--xlarge-small-weight);
+$xlarge-small-line-height: var(--xlarge-small-line-height);
+$xlarge-small-letter-spacing: var(--xlarge-small-letter-spacing);
+
+$xlarge-tiny-family: var(--xlarge-tiny-family);
+$xlarge-tiny-size: var(--xlarge-tiny-size);
+$xlarge-tiny-stretch: var(--xlarge-tiny-stretch);
+$xlarge-tiny-style: var(--xlarge-tiny-style);
+$xlarge-tiny-variant: var(--xlarge-tiny-variant);
+$xlarge-tiny-weight: var(--xlarge-tiny-weight);
+$xlarge-tiny-line-height: var(--xlarge-tiny-line-height);
+$xlarge-tiny-letter-spacing: var(--xlarge-tiny-letter-spacing);
+
+// XXLarge
+$xxlarge-h1-family: var(--xxlarge-h1-family);
+$xxlarge-h1-size: var(--xxlarge-h1-size);
+$xxlarge-h1-stretch: var(--xxlarge-h1-stretch);
+$xxlarge-h1-style: var(--xxlarge-h1-style);
+$xxlarge-h1-variant: var(--xxlarge-h1-variant);
+$xxlarge-h1-weight: var(--xxlarge-h1-weight);
+$xxlarge-h1-line-height: var(--xxlarge-h1-line-height);
+$xxlarge-h1-letter-spacing: var(--xxlarge-h1-letter-spacing);
+
+$xxlarge-h2-family: var(--xxlarge-h2-family);
+$xxlarge-h2-size: var(--xxlarge-h2-size);
+$xxlarge-h2-stretch: var(--xxlarge-h2-stretch);
+$xxlarge-h2-style: var(--xxlarge-h2-style);
+$xxlarge-h2-variant: var(--xxlarge-h2-variant);
+$xxlarge-h2-weight: var(--xxlarge-h2-weight);
+$xxlarge-h2-line-height: var(--xxlarge-h2-line-height);
+$xxlarge-h2-letter-spacing: var(--xxlarge-h2-letter-spacing);
+
+$xxlarge-h3-family: var(--xxlarge-h3-family);
+$xxlarge-h3-size: var(--xxlarge-h3-size);
+$xxlarge-h3-stretch: var(--xxlarge-h3-stretch);
+$xxlarge-h3-style: var(--xxlarge-h3-style);
+$xxlarge-h3-variant: var(--xxlarge-h3-variant);
+$xxlarge-h3-weight: var(--xxlarge-h3-weight);
+$xxlarge-h3-line-height: var(--xxlarge-h3-line-height);
+$xxlarge-h3-letter-spacing: var(--xxlarge-h3-letter-spacing);
+
+$xxlarge-h4-family: var(--xxlarge-h4-family);
+$xxlarge-h4-size: var(--xxlarge-h4-size);
+$xxlarge-h4-stretch: var(--xxlarge-h4-stretch);
+$xxlarge-h4-style: var(--xxlarge-h4-style);
+$xxlarge-h4-variant: var(--xxlarge-h4-variant);
+$xxlarge-h4-weight: var(--xxlarge-h4-weight);
+$xxlarge-h4-line-height: var(--xxlarge-h4-line-height);
+$xxlarge-h4-letter-spacing: var(--xxlarge-h4-letter-spacing);
+
+$xxlarge-h5-family: var(--xxlarge-h5-family);
+$xxlarge-h5-size: var(--xxlarge-h5-size);
+$xxlarge-h5-stretch: var(--xxlarge-h5-stretch);
+$xxlarge-h5-style: var(--xxlarge-h5-style);
+$xxlarge-h5-variant: var(--xxlarge-h5-variant);
+$xxlarge-h5-weight: var(--xxlarge-h5-weight);
+$xxlarge-h5-line-height: var(--xxlarge-h5-line-height);
+$xxlarge-h5-letter-spacing: var(--xxlarge-h5-letter-spacing);
+
+$xxlarge-h6-family: var(--xxlarge-h6-family);
+$xxlarge-h6-size: var(--xxlarge-h6-size);
+$xxlarge-h6-stretch: var(--xxlarge-h6-stretch);
+$xxlarge-h6-style: var(--xxlarge-h6-style);
+$xxlarge-h6-variant: var(--xxlarge-h6-variant);
+$xxlarge-h6-weight: var(--xxlarge-h6-weight);
+$xxlarge-h6-line-height: var(--xxlarge-h6-line-height);
+$xxlarge-h6-letter-spacing: var(--xxlarge-h6-letter-spacing);
+
+$xxlarge-large-family: var(--xxlarge-large-family);
+$xxlarge-large-size: var(--xxlarge-large-size);
+$xxlarge-large-stretch: var(--xxlarge-large-stretch);
+$xxlarge-large-style: var(--xxlarge-large-style);
+$xxlarge-large-variant: var(--xxlarge-large-variant);
+$xxlarge-large-weight: var(--xxlarge-large-weight);
+$xxlarge-large-line-height: var(--xxlarge-large-line-height);
+$xxlarge-large-letter-spacing: var(--xxlarge-large-letter-spacing);
+
+$xxlarge-medium-family: var(--xxlarge-medium-family);
+$xxlarge-medium-size: var(--xxlarge-medium-size);
+$xxlarge-medium-stretch: var(--xxlarge-medium-stretch);
+$xxlarge-medium-style: var(--xxlarge-medium-style);
+$xxlarge-medium-variant: var(--xxlarge-medium-variant);
+$xxlarge-medium-weight: var(--xxlarge-medium-weight);
+$xxlarge-medium-line-height: var(--xxlarge-medium-line-height);
+$xxlarge-medium-letter-spacing: var(--xxlarge-medium-letter-spacing);
+
+$xxlarge-regular-family: var(--xxlarge-regular-family);
+$xxlarge-regular-size: var(--xxlarge-regular-size);
+$xxlarge-regular-stretch: var(--xxlarge-regular-stretch);
+$xxlarge-regular-style: var(--xxlarge-regular-style);
+$xxlarge-regular-variant: var(--xxlarge-regular-variant);
+$xxlarge-regular-weight: var(--xxlarge-regular-weight);
+$xxlarge-regular-line-height: var(--xxlarge-regular-line-height);
+$xxlarge-regular-letter-spacing: var(--xxlarge-regular-letter-spacing);
+
+$xxlarge-small-family: var(--xxlarge-small-family);
+$xxlarge-small-size: var(--xxlarge-small-size);
+$xxlarge-small-stretch: var(--xxlarge-small-stretch);
+$xxlarge-small-style: var(--xxlarge-small-style);
+$xxlarge-small-variant: var(--xxlarge-small-variant);
+$xxlarge-small-weight: var(--xxlarge-small-weight);
+$xxlarge-small-line-height: var(--xxlarge-small-line-height);
+$xxlarge-small-letter-spacing: var(--xxlarge-small-letter-spacing);
+
+$xxlarge-tiny-family: var(--xxlarge-tiny-family);
+$xxlarge-tiny-size: var(--xxlarge-tiny-size);
+$xxlarge-tiny-stretch: var(--xxlarge-tiny-stretch);
+$xxlarge-tiny-style: var(--xxlarge-tiny-style);
+$xxlarge-tiny-variant: var(--xxlarge-tiny-variant);
+$xxlarge-tiny-weight: var(--xxlarge-tiny-weight);
+$xxlarge-tiny-line-height: var(--xxlarge-tiny-line-height);
+$xxlarge-tiny-letter-spacing: var(--xxlarge-tiny-letter-spacing);
+
+$theme-font-variables: (
+  // tiny
+  'tiny-family',
+  'tiny-size',
+  'tiny-stretch',
+  'tiny-style',
+  'tiny-variant',
+  'tiny-weight',
+  'tiny-line-height',
+  'tiny-letter-spacing',
+  // small
+  'small-family',
+  'small-size',
+  'small-stretch',
+  'small-style',
+  'small-variant',
+  'small-weight',
+  'small-line-height',
+  'small-letter-spacing',
+  // regular
+  'regular-family',
+  'regular-size',
+  'regular-stretch',
+  'regular-style',
+  'regular-variant',
+  'regular-weight',
+  'regular-line-height',
+  'regular-letter-spacing',
+  // medium
+  'medium-family',
+  'medium-size',
+  'medium-stretch',
+  'medium-style',
+  'medium-variant',
+  'medium-weight',
+  'medium-line-height',
+  'medium-letter-spacing',
+  // large
+  'large-family',
+  'large-size',
+  'large-stretch',
+  'large-style',
+  'large-variant',
+  'large-weight',
+  'large-line-height',
+  'large-letter-spacing',
+  // h1
+  'h1-family',
+  'h1-size',
+  'h1-stretch',
+  'h1-style',
+  'h1-variant',
+  'h1-weight',
+  'h1-line-height',
+  'h1-letter-spacing',
+  // h2
+  'h2-family',
+  'h2-size',
+  'h2-stretch',
+  'h2-style',
+  'h2-variant',
+  'h2-weight',
+  'h2-line-height',
+  'h2-letter-spacing',
+  // h3
+  'h3-family',
+  'h3-size',
+  'h3-stretch',
+  'h3-style',
+  'h3-variant',
+  'h3-weight',
+  'h3-line-height',
+  'h3-letter-spacing',
+  // h4
+  'h4-family',
+  'h4-size',
+  'h4-stretch',
+  'h4-style',
+  'h4-variant',
+  'h4-weight',
+  'h4-line-height',
+  'h4-letter-spacing',
+  // h5
+  'h5-family',
+  'h5-size',
+  'h5-stretch',
+  'h5-style',
+  'h5-variant',
+  'h5-weight',
+  'h5-line-height',
+  'h5-letter-spacing',
+  // h6
+  'h6-family',
+  'h6-size',
+  'h6-stretch',
+  'h6-style',
+  'h6-variant',
+  'h6-weight',
+  'h6-line-height',
+  'h6-letter-spacing'
+);
+
+@mixin themeScreenFonts($screen) {
+  @each $var-name in $theme-font-variables {
+    --#{$var-name}: var(--#{$screen}-#{$var-name});
+  }
+}
+
+.mn-screen-small {
+  @include themeScreenFonts('small');
+}
+
+.mn-screen-medium {
+  @include themeScreenFonts('medium');
+}
+
+.mn-screen-large {
+  @include themeScreenFonts('large');
+}
+
+.mn-screen-xlarge {
+  @include themeScreenFonts('xlarge');
+}
+
+.mn-screen-xxlarge {
+  @include themeScreenFonts('xxlarge');
+}
+
+// Current
+$h1-family: var(--h1-family);
+$h1-size: var(--h1-size);
+$h1-stretch: var(--h1-stretch);
+$h1-style: var(--h1-style);
+$h1-variant: var(--h1-variant);
+$h1-weight: var(--h1-weight);
+$h1-line-height: var(--h1-line-height);
+$h1-letter-spacing: var(--h1-letter-spacing);
+
+$h2-family: var(--h2-family);
+$h2-size: var(--h2-size);
+$h2-stretch: var(--h2-stretch);
+$h2-style: var(--h2-style);
+$h2-variant: var(--h2-variant);
+$h2-weight: var(--h2-weight);
+$h2-line-height: var(--h2-line-height);
+$h2-letter-spacing: var(--h2-letter-spacing);
+
+$h3-family: var(--h3-family);
+$h3-size: var(--h3-size);
+$h3-stretch: var(--h3-stretch);
+$h3-style: var(--h3-style);
+$h3-variant: var(--h3-variant);
+$h3-weight: var(--h3-weight);
+$h3-line-height: var(--h3-line-height);
+$h3-letter-spacing: var(--h3-letter-spacing);
+
+$h4-family: var(--h4-family);
+$h4-size: var(--h4-size);
+$h4-stretch: var(--h4-stretch);
+$h4-style: var(--h4-style);
+$h4-variant: var(--h4-variant);
+$h4-weight: var(--h4-weight);
+$h4-line-height: var(--h4-line-height);
+$h4-letter-spacing: var(--h4-letter-spacing);
+
+$h5-family: var(--h5-family);
+$h5-size: var(--h5-size);
+$h5-stretch: var(--h5-stretch);
+$h5-style: var(--h5-style);
+$h5-variant: var(--h5-variant);
+$h5-weight: var(--h5-weight);
+$h5-line-height: var(--h5-line-height);
+$h5-letter-spacing: var(--h5-letter-spacing);
+
+$h6-family: var(--h6-family);
+$h6-size: var(--h6-size);
+$h6-stretch: var(--h6-stretch);
+$h6-style: var(--h6-style);
+$h6-variant: var(--h6-variant);
+$h6-weight: var(--h6-weight);
+$h6-line-height: var(--h6-line-height);
+$h6-letter-spacing: var(--h6-letter-spacing);
+
+$large-family: var(--large-family);
+$large-size: var(--large-size);
+$large-stretch: var(--large-stretch);
+$large-style: var(--large-style);
+$large-variant: var(--large-variant);
+$large-weight: var(--large-weight);
+$large-line-height: var(--large-line-height);
+$large-letter-spacing: var(--large-letter-spacing);
+
+$medium-family: var(--medium-family);
+$medium-size: var(--medium-size);
+$medium-stretch: var(--medium-stretch);
+$medium-style: var(--medium-style);
+$medium-variant: var(--medium-variant);
+$medium-weight: var(--medium-weight);
+$medium-line-height: var(--medium-line-height);
+$medium-letter-spacing: var(--medium-letter-spacing);
+
+$regular-family: var(--regular-family);
+$regular-size: var(--regular-size);
+$regular-stretch: var(--regular-stretch);
+$regular-style: var(--regular-style);
+$regular-variant: var(--regular-variant);
+$regular-weight: var(--regular-weight);
+$regular-line-height: var(--regular-line-height);
+$regular-letter-spacing: var(--regular-letter-spacing);
+
+$small-family: var(--small-family);
+$small-size: var(--small-size);
+$small-stretch: var(--small-stretch);
+$small-style: var(--small-style);
+$small-variant: var(--small-variant);
+$small-weight: var(--small-weight);
+$small-line-height: var(--small-line-height);
+$small-letter-spacing: var(--small-letter-spacing);
+
+$tiny-family: var(--tiny-family);
+$tiny-size: var(--tiny-size);
+$tiny-stretch: var(--tiny-stretch);
+$tiny-style: var(--tiny-style);
+$tiny-variant: var(--tiny-variant);
+$tiny-weight: var(--tiny-weight);
+$tiny-line-height: var(--tiny-line-height);
+$tiny-letter-spacing: var(--tiny-letter-spacing);
+
+$theme-fonts: (
+  'h1': (
+    'family': $h1-family,
+    'size': $h1-size,
+    'stretch': $h1-stretch,
+    'style': $h1-style,
+    'variant': $h1-variant,
+    'weight': $h1-weight,
+    'line-height': $h1-line-height,
+    'letter-spacing': $h1-letter-spacing,
+  ),
+  'h2': (
+    'family': $h2-family,
+    'size': $h2-size,
+    'stretch': $h2-stretch,
+    'style': $h2-style,
+    'variant': $h2-variant,
+    'weight': $h2-weight,
+    'line-height': $h2-line-height,
+    'letter-spacing': $h2-letter-spacing,
+  ),
+  'h3': (
+    'family': $h3-family,
+    'size': $h3-size,
+    'stretch': $h3-stretch,
+    'style': $h3-style,
+    'variant': $h3-variant,
+    'weight': $h3-weight,
+    'line-height': $h3-line-height,
+    'letter-spacing': $h3-letter-spacing,
+  ),
+  'h4': (
+    'family': $h4-family,
+    'size': $h4-size,
+    'stretch': $h4-stretch,
+    'style': $h4-style,
+    'variant': $h4-variant,
+    'weight': $h4-weight,
+    'line-height': $h4-line-height,
+    'letter-spacing': $h4-letter-spacing,
+  ),
+  'h5': (
+    'family': $h5-family,
+    'size': $h5-size,
+    'stretch': $h5-stretch,
+    'style': $h5-style,
+    'variant': $h5-variant,
+    'weight': $h5-weight,
+    'line-height': $h5-line-height,
+    'letter-spacing': $h5-letter-spacing,
+  ),
+  'h6': (
+    'family': $h6-family,
+    'size': $h6-size,
+    'stretch': $h6-stretch,
+    'style': $h6-style,
+    'variant': $h6-variant,
+    'weight': $h6-weight,
+    'line-height': $h6-line-height,
+    'letter-spacing': $h6-letter-spacing,
+  ),
+  'large': (
+    'family': $large-family,
+    'size': $large-size,
+    'stretch': $large-stretch,
+    'style': $large-style,
+    'variant': $large-variant,
+    'weight': $large-weight,
+    'line-height': $large-line-height,
+    'letter-spacing': $large-letter-spacing,
+  ),
+  'medium': (
+    'family': $medium-family,
+    'size': $medium-size,
+    'stretch': $medium-stretch,
+    'style': $medium-style,
+    'variant': $medium-variant,
+    'weight': $medium-weight,
+    'line-height': $medium-line-height,
+    'letter-spacing': $medium-letter-spacing,
+  ),
+  'regular': (
+    'family': $regular-family,
+    'size': $regular-size,
+    'stretch': $regular-stretch,
+    'style': $regular-style,
+    'variant': $regular-variant,
+    'weight': $regular-weight,
+    'line-height': $regular-line-height,
+    'letter-spacing': $regular-letter-spacing,
+  ),
+  'small': (
+    'family': $small-family,
+    'size': $small-size,
+    'stretch': $small-stretch,
+    'style': $small-style,
+    'variant': $small-variant,
+    'weight': $small-weight,
+    'line-height': $small-line-height,
+    'letter-spacing': $small-letter-spacing,
+  ),
+  'tiny': (
+    'family': $tiny-family,
+    'size': $tiny-size,
+    'stretch': $tiny-stretch,
+    'style': $tiny-style,
+    'variant': $tiny-variant,
+    'weight': $tiny-weight,
+    'line-height': $tiny-line-height,
+    'letter-spacing': $tiny-letter-spacing,
+  ),
+);
+
+@mixin themeFont($category) {
+  $font-values: map-get($theme-fonts, $category);
+  @if $font-values == null {
+    @error "The #{$category} category doesn't exist in the $theme-fonts map";
+  }
+
+  // Apply all properties in the current CSS rule
+  font-family: map-get($font-values, 'family');
+  font-size: map-get($font-values, 'size');
+  font-stretch: map-get($font-values, 'stretch');
+  font-style: map-get($font-values, 'style');
+  font-variant: map-get($font-values, 'variant');
+  font-weight: map-get($font-values, 'weight');
+  line-height: map-get($font-values, 'line-height');
+  letter-spacing: map-get($font-values, 'letter-spacing');
+}

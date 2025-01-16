@@ -1,4 +1,4 @@
-import { isNumber, JSONValue } from '..';
+import { isNumber, TJSONValue } from '..';
 
 const underline = 4;
 const notUnderline = 24;
@@ -121,7 +121,7 @@ class Ansi {
     return this.fgFence(s, brightWhite);
   }
 
-  public table(headers: string[], rows: JSONValue[][]): void {
+  public table(headers: string[], rows: TJSONValue[][]): void {
     const columnWidths: number[] = [];
     headers.forEach((header, index) => {
       const maxLength = Math.max(header.length, ...rows.map((row) => this.filterAnsi(row[index]).length));
@@ -153,17 +153,17 @@ class Ansi {
     // eslint-disable-next-line no-console
     console.log(bottomLine);
   }
-  public filterAnsi(value: JSONValue) {
+  public filterAnsi(value: TJSONValue) {
     return `${value}`.replace(/\u001b\[\d+m/g, '');
   }
 
-  private formatValue(value: JSONValue) {
+  private formatValue(value: TJSONValue) {
     // if (isString(value)) return ansi.red(value);
     if (isNumber(value)) return ansi.green(`${value}`);
     return `${value}`;
   }
 
-  private pad(value: JSONValue, width: number) {
+  private pad(value: TJSONValue, width: number) {
     let padSize = width - this.filterAnsi(value).length - 2;
     return ' '.repeat(padSize);
   }

@@ -2,7 +2,7 @@ import { isArray, isObject } from './is';
 
 export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
-export type __Dictionary<T> = { [key: string]: T } | { [oid: number]: T };
+export type TDictionary<T> = { [key: string]: T } | { [oid: number]: T };
 /**
  * Make a clone of the source object.
  *
@@ -108,6 +108,42 @@ export function extend<T>(object: T, ...args: Partial<T>[]): T {
     }
   }
   return object;
+}
+
+/**
+ * Deeply extends an object with multiple partial objects.
+ *
+ * @param target The target object to extend.
+ * @param sources The partial objects to merge into the target.
+ * @return The resulting deeply extended object.
+ */
+export function deepExtend<T>(target: T, ...sources: Partial<T>[]): T {
+  if (!isObject(target)) {
+    throw new Error('Target must be an object.');
+  }
+
+  for (const source of sources) {
+    if (!isObject(source)) continue;
+
+    for (const key in source) {
+      if (!source.hasOwnProperty(key)) continue;
+
+      const sourceValue = source[key];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const targetValue = (target as any)[key];
+
+      if (isObject(sourceValue) && isObject(targetValue)) {
+        // Recursive merge for nested objects
+        deepExtend(targetValue, sourceValue);
+      } else {
+        // Direct assignment for non-object properties
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (target as any)[key] = sourceValue;
+      }
+    }
+  }
+
+  return target;
 }
 
 /**
@@ -299,7 +335,7 @@ export function keys(object: any): string[] {
  * @param object source object
  * @return array of values
  */
-export function values<T>(object: __Dictionary<T>): T[] {
+export function values<T>(object: TDictionary<T>): T[] {
   let ks = keys(object);
   let length = ks.length;
   let values: T[] = Array(length);

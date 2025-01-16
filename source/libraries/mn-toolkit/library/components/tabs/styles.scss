@@ -1,0 +1,213 @@
+$decay: calc(#{$defaultSpacing} / 4);
+$tabBorderSize: 1px;
+
+@mixin themeTabbedPane() {
+  &.mn-bg-1,
+  &.mn-bg-2,
+  &.mn-bg-3,
+  &.mn-bg-4 {
+    background-color: transparent;
+  }
+}
+
+.mn-tabbed-pane {
+  @include themeTabbedPane();
+}
+
+@mixin themeTabPane() {
+  &.mn-tab-pane-hidden {
+    display: none;
+  }
+}
+
+.mn-tab-pane {
+  @include themeTabPane();
+}
+
+@mixin themeTabset() {
+  display: flex;
+
+  .mn-layout-spacer {
+    background-color: color-hsl($bg2);
+  }
+
+  .item {
+    padding: 0 calc(#{$defaultSpacing});
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    min-height: calc(#{$defaultItemHeight});
+    max-height: calc(#{$defaultItemHeight});
+    @include themeFont('small');
+    font-weight: 300;
+    position: relative;
+    transition: background-color 0.2s;
+    gap: calc(#{$defaultSpacing} / 2);
+
+    .mn-indicators {
+      margin: 0 calc(#{$defaultSpacing} / 2);
+      display: flex;
+    }
+
+    .mn-close {
+      opacity: 0;
+      @include fx(opacity);
+      min-height: 15px;
+      max-height: 15px;
+      color: color-hsl($fg3);
+      &:hover {
+        color: color-hsl($primary);
+      }
+    }
+
+    > .label {
+      @include text-overflow();
+      flex: 1;
+    }
+
+    background-color: color-hsl($bg2);
+    z-index: 0;
+    border: $tabBorderSize solid color-hsl($bg3);
+
+    &:hover,
+    &.selected {
+      background-color: color-hsl($bg1);
+      z-index: 1;
+    }
+
+    &.selected {
+      border-color: transparent;
+    }
+
+    &:hover {
+      .mn-close {
+        opacity: 1;
+      }
+    }
+
+    &.disabled {
+      pointer-events: none;
+      color: color-hsl($fg2);
+
+      .icon {
+        color: color-hsl($fg2);
+      }
+    }
+  }
+
+  &.mn-tabbed-pane-tab-position-left,
+  &.mn-tabbed-pane-tab-position-right {
+    flex-direction: column;
+
+    .item {
+      align-items: center;
+    }
+
+    .mn-layout-spacer {
+      min-width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  &.mn-tabbed-pane-tab-position-left {
+    background-image: linear-gradient(to right, color-hsl($bg2) 50%, color-hsl($bg1) 50%);
+    padding-left: $decay;
+
+    .item {
+      text-align: right;
+      border-radius: calc(#{$defaultBorderRadius}) 0 0 calc(#{$defaultBorderRadius});
+      &.before-selected {
+        border-radius: calc(#{$defaultBorderRadius}) 0 calc(#{$defaultBorderRadius} * 1.5) calc(#{$defaultBorderRadius});
+      }
+      &.after-selected {
+        border-radius: calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius} * 1.5) 0 calc(#{$defaultBorderRadius});
+      }
+      &:not(.selected) {
+        box-shadow: -1px 0 0 color-hsl($bg4);
+      }
+    }
+  }
+
+  &.mn-tabbed-pane-tab-position-right {
+    background-image: linear-gradient(to left, color-hsl($bg2) 50%, color-hsl($bg1) 50%);
+    padding-right: $decay;
+
+    .item {
+      text-align: left;
+      border-radius: 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0;
+      &.before-selected {
+        border-radius: 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius} * 1.5);
+      }
+      &.after-selected {
+        border-radius: calc(#{$defaultBorderRadius} * 1.5) calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0;
+      }
+      &:not(.selected) {
+        box-shadow: 1px 0 0 color-hsl($bg4);
+      }
+    }
+  }
+
+  &.mn-tabbed-pane-tab-position-top,
+  &.mn-tabbed-pane-tab-position-bottom {
+    flex-direction: row;
+    align-items: center;
+
+    .item {
+      align-items: center;
+      text-align: center;
+    }
+
+    .mn-layout-spacer {
+      min-height: 100%;
+      max-height: 100%;
+    }
+  }
+
+  &.mn-tabbed-pane-tab-position-top {
+    background-image: linear-gradient(to bottom, color-hsl($bg2) 50%, color-hsl($bg1) 50%);
+    padding-top: $decay;
+
+    .item {
+      border-radius: calc(#{$defaultBorderRadius} * 2) calc(#{$defaultBorderRadius} * 2) 0 0;
+      &.before-selected {
+        border-radius: calc(#{$defaultBorderRadius} * 2) calc(#{$defaultBorderRadius} * 2)
+          calc(#{$defaultBorderRadius} * 2) 0;
+      }
+      &.after-selected {
+        border-radius: calc(#{$defaultBorderRadius} * 2) calc(#{$defaultBorderRadius} * 2) 0
+          calc(#{$defaultBorderRadius} * 2);
+      }
+      &:not(.selected) {
+        box-shadow: 0 -1px 0 color-hsl($bg4);
+      }
+    }
+  }
+
+  &.mn-tabbed-pane-tab-position-bottom {
+    background-image: linear-gradient(to top, color-hsl($bg2) 50%, color-hsl($bg1) 50%);
+    padding-bottom: $decay;
+
+    .item {
+      border-radius: 0 0 calc(#{$defaultBorderRadius} * 2) calc(#{$defaultBorderRadius} * 2);
+      &.before-selected {
+        border-radius: 0 calc(#{$defaultBorderRadius} * 2) calc(#{$defaultBorderRadius} * 2)
+          calc(#{$defaultBorderRadius} * 2);
+      }
+      &.after-selected {
+        border-radius: calc(#{$defaultBorderRadius} * 2) 0 calc(#{$defaultBorderRadius} * 2)
+          calc(#{$defaultBorderRadius} * 2);
+      }
+      &:not(.selected) {
+        box-shadow: 0 1px 0 color-hsl($bg4);
+      }
+    }
+  }
+
+  .mn-tabset-add-button-holder {
+    text-align: center;
+  }
+}
+
+.mn-tabset {
+  @include themeTabset();
+}

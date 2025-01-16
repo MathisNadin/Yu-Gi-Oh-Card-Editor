@@ -1,0 +1,47 @@
+$z-index-content: 0;
+$z-index-title-bar: 1;
+$z-index-view: 1;
+$z-index-notifications: 2;
+$z-index-view-below: 2;
+$z-index-view-above: 3;
+$z-index-overlay: 6;
+$z-index-drawer: 7;
+$z-index-popup: 7;
+$z-index-toaster: 7;
+$z-index-popover-overlay: 8;
+$z-index-popover: 9;
+$z-index-overall: 100;
+
+.mn-zindex-content {
+  z-index: $z-index-content;
+}
+.mn-zindex-view {
+  z-index: $z-index-view;
+}
+.mn-zindex-notifications {
+  z-index: $z-index-notifications;
+}
+.mn-zindex-view-below {
+  z-index: $z-index-view-below;
+}
+.mn-zindex-view-above {
+  z-index: $z-index-view-above;
+}
+.mn-zindex-drawer {
+  z-index: $z-index-drawer;
+}
+.mn-zindex-overlay {
+  z-index: $z-index-overlay;
+}
+.mn-zindex-popup {
+  z-index: $z-index-popup;
+}
+.mn-zindex-popover {
+  z-index: $z-index-popover;
+}
+.mn-zindex-toaster {
+  z-index: $z-index-toaster;
+}
+.mn-zindex-overall {
+  z-index: $z-index-overall;
+}

@@ -28,15 +28,15 @@ textarea,
 input,
 textarea {
   &:focus-visible {
-    outline-color: rgba($neutral, 0.7);
+    outline-color: color-hsla($neutral, 0.7);
     outline-width: 1px;
   }
 }
 
 .mn-checkbox.checked {
   .toggle {
-    background-color: color-rgb($neutral) !important;
-    border-color: color-rgb($neutral) !important;
+    background-color: color-hsl($neutral) !important;
+    border-color: color-hsl($neutral) !important;
   }
 }
 

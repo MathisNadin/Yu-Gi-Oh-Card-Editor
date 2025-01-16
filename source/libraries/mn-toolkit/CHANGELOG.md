@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 5.0.8
+
+- icone adaptative sur le picture editor
+
 ## 5.0.7
 
+- bump to 5.0.7
 - meilleur typing dans Application + chgt logique de render du TabbedPane
 
 ## 5.0.6

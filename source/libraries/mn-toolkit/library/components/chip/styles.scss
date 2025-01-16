@@ -1,0 +1,233 @@
+// ------------------------- Chip ---------------------------
+
+@mixin colorizeChip($color) {
+  .mn-typography,
+  .mn-icon {
+    color: color-hsl($bg1);
+    fill: color-hsl($fg1);
+  }
+
+  &.mn-selected {
+    background-color: color-hsl($color);
+    color: white;
+  }
+}
+
+@mixin themeChip() {
+  display: inline-flex;
+  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+  border-radius: calc(#{$defaultBorderRadius});
+
+  > .mn-container-inside {
+    gap: calc(#{$defaultSpacing} / 2);
+  }
+
+  &.no-left-icon {
+    padding-left: calc(#{$defaultSpacing});
+  }
+
+  &.no-right-icon {
+    padding-right: calc(#{$defaultSpacing});
+  }
+
+  &.mn-color-primary {
+    @include colorizeChip($primary);
+
+    .icon-right {
+      &:hover {
+        color: color-hsl($secondary);
+      }
+    }
+  }
+  &.mn-color-secondary {
+    @include colorizeChip($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeChip($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeChip($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeChip($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeChip($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeChip($warning);
+  }
+  &.mn-color-info {
+    @include colorizeChip($info);
+  }
+  &.mn-color-1 {
+    @include colorizeChip($fg1);
+  }
+  &.mn-color-2 {
+    @include colorizeChip($fg2);
+  }
+  &.mn-color-3 {
+    @include colorizeChip($fg3);
+  }
+  &.mn-color-4 {
+    @include colorizeChip($fg4);
+  }
+}
+
+.mn-chip {
+  @include themeChip;
+}
+
+// ----------------------------------------------------------
+
+// ---------------------- Chips Field -----------------------
+
+@mixin themeChipsField() {
+  .input-wrapper {
+    min-height: auto;
+    max-height: inherit;
+    height: auto;
+    border: none !important;
+    box-shadow: none;
+    padding: 0;
+    background-color: transparent;
+
+    > .mn-container-inside {
+      align-items: center;
+    }
+  }
+}
+
+.mn-form-field.mn-field-chips {
+  @include themeChipsField();
+}
+
+// ----------------------------------------------------------
+
+// ---------------------- Chips Input -----------------------
+
+@mixin themeChipsInput() {
+  min-height: calc(#{$defaultItemHeight});
+
+  input {
+    border: none;
+    outline: none;
+    display: flex;
+    flex: 1;
+    border-radius: calc(#{$defaultBorderRadius});
+    min-height: calc(#{$defaultItemHeight});
+    background-color: transparent;
+  }
+}
+
+.mn-chips-input {
+  @include themeChipsInput();
+}
+
+// ----------------------------------------------------------
+
+// ------------------- Chips Input Field --------------------
+
+@mixin themeChipsInputField() {
+  .input-wrapper {
+    min-height: auto;
+    max-height: inherit;
+    padding: 0;
+
+    .mn-chips-input {
+      width: 100%;
+      padding: calc(#{$defaultSpacing} / 4);
+
+      input {
+        display: flex;
+        flex: 1;
+        width: unset;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.mn-form-field.mn-field-chips-input {
+  @include themeChipsInputField();
+}
+
+// ----------------------------------------------------------
+
+// ---------------------- Select Chips ----------------------
+
+@mixin themeSelectChips() {
+  width: fit-content;
+  min-height: calc(#{$defaultItemHeight});
+
+  .drop-icon {
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+  }
+}
+
+.mn-select-chips {
+  @include themeSelectChips();
+}
+
+.mn-popover.actions.select-chips {
+  .mn-popover-actions-container {
+    .action {
+      &.selected {
+        background-color: transparent;
+      }
+
+      &:not(.mn-disabled):not(.separator) {
+        &:hover {
+          background-color: color-hsla($primary, 0.5);
+        }
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------
+
+// ------------------- Select Chips Field -------------------
+
+@mixin themeSelectChipsField() {
+  .input-wrapper {
+    min-height: auto;
+    max-height: inherit;
+    padding: 0;
+
+    .mn-select-chips {
+      width: 100%;
+
+      > .mn-container-inside {
+        align-items: stretch !important;
+      }
+
+      .chips,
+      .placheholder {
+        flex: 1;
+        padding: calc(#{$defaultSpacing} / 4);
+      }
+
+      .drop-icon {
+        background-color: color-hsl($bg3);
+        color: color-hsl($fg1);
+        height: unset;
+        min-height: unset;
+        max-height: unset;
+        width: calc(#{$defaultItemHeight});
+        cursor: pointer;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid;
+        border-color: color-hsl($fg4);
+      }
+    }
+  }
+}
+
+.mn-form-field.mn-field-select-chips {
+  @include themeSelectChipsField();
+}

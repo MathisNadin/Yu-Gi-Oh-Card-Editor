@@ -1,0 +1,55 @@
+@mixin themeTextareaInputContainer() {
+  position: relative;
+  display: flex;
+  flex: 1;
+
+  .mn-textarea-input {
+    @include themeScrollBar();
+    color: color-hsl($fg1);
+    background-color: transparent;
+    line-height: 20px;
+    padding: calc(#{$defaultSpacing} / 2);
+    resize: none;
+    flex: 1;
+    min-width: 100%;
+    max-width: 100%;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: color-hsl($fg4);
+    border-radius: calc(#{$defaultBorderRadius});
+
+    &::placeholder {
+      color: color-hsl($fg3);
+    }
+
+    &.mn-textarea-input-hidden {
+      visibility: hidden;
+      position: absolute;
+      z-index: -1;
+    }
+  }
+}
+
+.mn-textarea-input-container {
+  @include themeTextareaInputContainer();
+}
+
+@mixin themeTextareaField() {
+  &.multilines {
+    height: auto;
+  }
+
+  .input-wrapper {
+    height: auto;
+    max-height: none;
+
+    .mn-textarea-input-container {
+      min-width: 100%;
+    }
+  }
+}
+
+.mn-form-field.mn-field-textarea {
+  @include themeTextareaField();
+}

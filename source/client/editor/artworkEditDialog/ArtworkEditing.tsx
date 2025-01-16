@@ -7,7 +7,7 @@ import {
   Spinner,
   Image,
   VerticalStack,
-  FileInput,
+  FilePathInput,
   HorizontalStack,
   CheckBox,
   Button,
@@ -218,12 +218,12 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
     if (!loaded) return <Spinner />;
     return [
       app.$device.isDesktop && (
-        <FileInput
+        <FilePathInput
           key='file-input'
           placeholder="Chemin vers l'artwork"
           defaultValue={artworkURL}
           onChange={(url) => this.onArtworkURLChange(url)}
-          overrideOnTap={() => this.doSelectImgPath()}
+          overrideOnTapIcon={() => this.doSelectImgPath()}
         />
       ),
 

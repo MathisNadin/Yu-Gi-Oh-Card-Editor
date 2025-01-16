@@ -1,0 +1,473 @@
+$theme-color-variables: (
+  // Globals
+  'positive',
+  'negative',
+  'neutral',
+  'warning',
+  'info',
+  'primary',
+  'secondary',
+  'tertiary',
+  'positive-darken',
+  'negative-darken',
+  'neutral-darken',
+  'warning-darken',
+  'info-darken',
+  'primary-darken',
+  'secondary-darken',
+  'tertiary-darken',
+  'positive-lighten',
+  'negative-lighten',
+  'neutral-lighten',
+  'warning-lighten',
+  'info-lighten',
+  'primary-lighten',
+  'secondary-lighten',
+  'tertiary-lighten',
+  'fg-1',
+  'fg-2',
+  'fg-3',
+  'fg-4',
+  'bg-1',
+  'bg-2',
+  'bg-3',
+  'bg-4',
+  'link',
+  'link-hover',
+  'link-visited',
+  'link-visited-hover',
+  // Shadow Specifics
+  'border-shadow-0',
+  'border-color-shadow-0',
+  'box-shadow-shadow-0',
+  'border-shadow-1',
+  'border-color-shadow-1',
+  'box-shadow-shadow-1',
+  'border-shadow-2',
+  'border-color-shadow-2',
+  'box-shadow-shadow-2',
+  'border-shadow-3',
+  'border-color-shadow-3',
+  'box-shadow-shadow-3',
+  'border-shadow-4',
+  'border-color-shadow-4',
+  'box-shadow-shadow-4',
+  'border-shadow-5',
+  'border-color-shadow-5',
+  'box-shadow-shadow-5',
+  'border-shadow-6',
+  'border-color-shadow-6',
+  'box-shadow-shadow-6',
+  // Field Specifics
+  'field-border-color',
+  // Callout Specifics
+  'callout-data-icon-info-bg-img',
+  // Top Menu Specifics
+  'top-menu-below-action-bg'
+);
+
+@mixin theme($mode) {
+  @each $var-name in $theme-color-variables {
+    --#{$var-name}: var(--#{$mode}-#{$var-name});
+  }
+}
+
+.mn-light-theme {
+  @include theme('light');
+}
+
+.mn-dark-theme {
+  @include theme('dark');
+}
+
+// Light values
+$light-positive: var(--light-positive);
+$light-negative: var(--light-negative);
+$light-neutral: var(--light-neutral);
+$light-warning: var(--light-warning);
+$light-info: var(--light-info);
+$light-primary: var(--light-primary);
+$light-secondary: var(--light-secondary);
+$light-tertiary: var(--light-tertiary);
+
+$light-fg1: var(--light-fg-1);
+$light-fg2: var(--light-fg-2);
+$light-fg3: var(--light-fg-3);
+$light-fg4: var(--light-fg-4);
+
+$light-bg1: var(--light-bg-1);
+$light-bg2: var(--light-bg-2);
+$light-bg3: var(--light-bg-3);
+$light-bg4: var(--light-bg-4);
+
+$light-link: var(--light-link);
+$light-linkHover: var(--light-link-hover);
+$light-linkVisited: var(--light-link-visited);
+$light-linkVisitedHover: var(--light-link-visited-hover);
+
+$light-borderShadow0: var(--light-border-shadow-0);
+$light-borderColorShadow0: var(--light-border-color-shadow-0);
+$light-boxShadowShadow0: var(--light-box-shadow-shadow-0);
+
+$light-borderShadow1: var(--light-border-shadow-1);
+$light-borderColorShadow1: var(--light-border-color-shadow-1);
+$light-boxShadowShadow1: var(--light-box-shadow-shadow-1);
+
+$light-borderShadow2: var(--light-border-shadow-2);
+$light-borderColorShadow2: var(--light-border-color-shadow-2);
+$light-boxShadowShadow2: var(--light-box-shadow-shadow-2);
+
+$light-borderShadow3: var(--light-border-shadow-3);
+$light-borderColorShadow3: var(--light-border-color-shadow-3);
+$light-boxShadowShadow3: var(--light-box-shadow-shadow-3);
+
+$light-borderShadow4: var(--light-border-shadow-4);
+$light-borderColorShadow4: var(--light-border-color-shadow-4);
+$light-boxShadowShadow4: var(--light-box-shadow-shadow-4);
+
+$light-borderShadow5: var(--light-border-shadow-5);
+$light-borderColorShadow5: var(--light-border-color-shadow-5);
+$light-boxShadowShadow5: var(--light-box-shadow-shadow-5);
+
+$light-borderShadow6: var(--light-border-shadow-6);
+$light-borderColorShadow6: var(--light-border-color-shadow-6);
+$light-boxShadowShadow6: var(--light-box-shadow-shadow-6);
+
+$light-fieldBorderColor: var(--light-field-border-color);
+
+$light-calloutDataIconInfoBgImg: var(--light-callout-data-icon-info-bg-img);
+
+$light-topMenuBelowActionBg: var(--light-top-menu-below-action-bg);
+
+// Dark values
+$dark-positive: var(--dark-positive);
+$dark-negative: var(--dark-negative);
+$dark-neutral: var(--dark-neutral);
+$dark-warning: var(--dark-warning);
+$dark-info: var(--dark-info);
+$dark-primary: var(--dark-primary);
+$dark-secondary: var(--dark-secondary);
+$dark-tertiary: var(--dark-tertiary);
+
+$dark-fg1: var(--dark-fg-1);
+$dark-fg2: var(--dark-fg-2);
+$dark-fg3: var(--dark-fg-3);
+$dark-fg4: var(--dark-fg-4);
+
+$dark-bg1: var(--dark-bg-1);
+$dark-bg2: var(--dark-bg-2);
+$dark-bg3: var(--dark-bg-3);
+$dark-bg4: var(--dark-bg-4);
+
+$dark-link: var(--dark-link);
+$dark-linkHover: var(--dark-link-hover);
+$dark-linkVisited: var(--dark-link-visited);
+$dark-linkVisitedHover: var(--dark-link-visited-hover);
+
+$dark-borderShadow0: var(--dark-border-shadow-0);
+$dark-borderColorShadow0: var(--dark-border-color-shadow-0);
+$dark-boxShadowShadow0: var(--dark-box-shadow-shadow-0);
+
+$dark-borderShadow1: var(--dark-border-shadow-1);
+$dark-borderColorShadow1: var(--dark-border-color-shadow-1);
+$dark-boxShadowShadow1: var(--dark-box-shadow-shadow-1);
+
+$dark-borderShadow2: var(--dark-border-shadow-2);
+$dark-borderColorShadow2: var(--dark-border-color-shadow-2);
+$dark-boxShadowShadow2: var(--dark-box-shadow-shadow-2);
+
+$dark-borderShadow3: var(--dark-border-shadow-3);
+$dark-borderColorShadow3: var(--dark-border-color-shadow-3);
+$dark-boxShadowShadow3: var(--dark-box-shadow-shadow-3);
+
+$dark-borderShadow4: var(--dark-border-shadow-4);
+$dark-borderColorShadow4: var(--dark-border-color-shadow-4);
+$dark-boxShadowShadow4: var(--dark-box-shadow-shadow-4);
+
+$dark-borderShadow5: var(--dark-border-shadow-5);
+$dark-borderColorShadow5: var(--dark-border-color-shadow-5);
+$dark-boxShadowShadow5: var(--dark-box-shadow-shadow-5);
+
+$dark-borderShadow6: var(--dark-border-shadow-6);
+$dark-borderColorShadow6: var(--dark-border-color-shadow-6);
+$dark-boxShadowShadow6: var(--dark-box-shadow-shadow-6);
+
+$dark-fieldBorderColor: var(--dark-field-border-color);
+
+$dark-calloutDataIconInfoBgImg: var(--dark-callout-data-icon-info-bg-img);
+
+$dark-topMenuBelowActionBg: var(--dark-top-menu-below-action-bg);
+
+// Default values
+$positive: var(--positive);
+$negative: var(--negative);
+$neutral: var(--neutral);
+$warning: var(--warning);
+$info: var(--info);
+$primary: var(--primary);
+$secondary: var(--secondary);
+$tertiary: var(--tertiary);
+
+$fg1: var(--fg-1);
+$fg2: var(--fg-2);
+$fg3: var(--fg-3);
+$fg4: var(--fg-4);
+
+$bg1: var(--bg-1);
+$bg2: var(--bg-2);
+$bg3: var(--bg-3);
+$bg4: var(--bg-4);
+
+$link: var(--link);
+$linkHover: var(--link-hover);
+$linkVisited: var(--link-visited);
+$linkVisitedHover: var(--link-visited-hover);
+
+$borderShadow0: var(--border-shadow-0);
+$borderColorShadow0: var(--border-color-shadow-0);
+$boxShadowShadow0: var(--box-shadow-shadow-0);
+
+$borderShadow1: var(--border-shadow-1);
+$borderColorShadow1: var(--border-color-shadow-1);
+$boxShadowShadow1: var(--box-shadow-shadow-1);
+
+$borderShadow2: var(--border-shadow-2);
+$borderColorShadow2: var(--border-color-shadow-2);
+$boxShadowShadow2: var(--box-shadow-shadow-2);
+
+$borderShadow3: var(--border-shadow-3);
+$borderColorShadow3: var(--border-color-shadow-3);
+$boxShadowShadow3: var(--box-shadow-shadow-3);
+
+$borderShadow4: var(--border-shadow-4);
+$borderColorShadow4: var(--border-color-shadow-4);
+$boxShadowShadow4: var(--box-shadow-shadow-4);
+
+$borderShadow5: var(--border-shadow-5);
+$borderColorShadow5: var(--border-color-shadow-5);
+$boxShadowShadow5: var(--box-shadow-shadow-5);
+
+$borderShadow6: var(--border-shadow-6);
+$borderColorShadow6: var(--border-color-shadow-6);
+$boxShadowShadow6: var(--box-shadow-shadow-6);
+
+$fieldBorderColor: var(--field-border-color);
+
+$calloutDataIconInfoBgImg: var(--callout-data-icon-info-bg-img);
+
+$topMenuBelowActionBg: var(--top-menu-below-action-bg);
+
+@function color-hsl($color) {
+  @return unquote('hsl(' + $color + ')');
+}
+
+@function color-hsla($color, $alpha) {
+  // Si $color est une valeur CSS brute
+  @if type-of($color) == string {
+    @return unquote('hsla(' + $color + ', ' + $alpha + ')');
+  }
+
+  // Gestion des autres cas (par ex., une liste HSL brute)
+  @else if type-of($color) == list and length($color) == 3 {
+    @return unquote('hsla(' + nth($color, 1) + ', ' + nth($color, 2) + ', ' + nth($color, 3) + ', ' + $alpha + ')');
+  }
+
+  // Gestion des valeurs non reconnues (par défaut)
+  @else {
+    @return unquote('hsla(' + $color + ', ' + $alpha + ')');
+  }
+}
+
+@function darken-color($color) {
+  @if $color == $positive {
+    @return var(--positive-darken);
+  } @else if $color == $negative {
+    @return var(--negative-darken);
+  } @else if $color == $neutral {
+    @return var(--neutral-darken);
+  } @else if $color == $warning {
+    @return var(--warning-darken);
+  } @else if $color == $info {
+    @return var(--info-darken);
+  } @else if $color == $primary {
+    @return var(--primary-darken);
+  } @else if $color == $secondary {
+    @return var(--secondary-darken);
+  } @else if $color == $tertiary {
+    @return var(--tertiary-darken);
+  } @else {
+    @return $color;
+  }
+}
+
+@function darken-color-hsl($color) {
+  @if $color == $positive {
+    @return unquote('hsl(' + var(--positive-darken) + ')');
+  } @else if $color == $negative {
+    @return unquote('hsl(' + var(--negative-darken) + ')');
+  } @else if $color == $neutral {
+    @return unquote('hsl(' + var(--neutral-darken) + ')');
+  } @else if $color == $warning {
+    @return unquote('hsl(' + var(--warning-darken) + ')');
+  } @else if $color == $info {
+    @return unquote('hsl(' + var(--info-darken) + ')');
+  } @else if $color == $primary {
+    @return unquote('hsl(' + var(--primary-darken) + ')');
+  } @else if $color == $secondary {
+    @return unquote('hsl(' + var(--secondary-darken) + ')');
+  } @else if $color == $tertiary {
+    @return unquote('hsl(' + var(--tertiary-darken) + ')');
+  } @else {
+    @return unquote('hsl(' + $color + ')');
+  }
+}
+
+@function lighten-color($color) {
+  @if $color == $positive {
+    @return var(--positive-lighten);
+  } @else if $color == $negative {
+    @return var(--negative-lighten);
+  } @else if $color == $neutral {
+    @return var(--neutral-lighten);
+  } @else if $color == $warning {
+    @return var(--warning-lighten);
+  } @else if $color == $info {
+    @return var(--info-lighten);
+  } @else if $color == $primary {
+    @return var(--primary-lighten);
+  } @else if $color == $secondary {
+    @return var(--secondary-lighten);
+  } @else if $color == $tertiary {
+    @return var(--tertiary-lighten);
+  } @else {
+    @return $color;
+  }
+}
+
+@function lighten-color-hsl($color) {
+  @if $color == $positive {
+    @return unquote('hsl(' + var(--positive-lighten) + ')');
+  } @else if $color == $negative {
+    @return unquote('hsl(' + var(--negative-lighten) + ')');
+  } @else if $color == $neutral {
+    @return unquote('hsl(' + var(--neutral-lighten) + ')');
+  } @else if $color == $warning {
+    @return unquote('hsl(' + var(--warning-lighten) + ')');
+  } @else if $color == $info {
+    @return unquote('hsl(' + var(--info-lighten) + ')');
+  } @else if $color == $primary {
+    @return unquote('hsl(' + var(--primary-lighten) + ')');
+  } @else if $color == $secondary {
+    @return unquote('hsl(' + var(--secondary-lighten) + ')');
+  } @else if $color == $tertiary {
+    @return unquote('hsl(' + var(--tertiary-lighten) + ')');
+  } @else {
+    @return unquote('hsl(' + $color + ')');
+  }
+}
+
+@mixin shadow($index: 3) {
+  @if $index == 0 {
+    border: $borderShadow0;
+    border-color: color-hsl($borderColorShadow0);
+    box-shadow: $boxShadowShadow0;
+  } @else if $index == 1 {
+    border: $borderShadow1;
+    border-color: color-hsl($borderColorShadow1);
+    box-shadow: $boxShadowShadow1;
+  } @else if $index == 2 {
+    border: $borderShadow2;
+    border-color: color-hsl($borderColorShadow2);
+    box-shadow: $boxShadowShadow2;
+  } @else if $index == 3 {
+    border: $borderShadow3;
+    border-color: color-hsl($borderColorShadow3);
+    box-shadow: $boxShadowShadow3;
+  } @else if $index == 4 {
+    border: $borderShadow4;
+    border-color: color-hsl($borderColorShadow4);
+    box-shadow: $boxShadowShadow4;
+  } @else if $index == 5 {
+    border: $borderShadow5;
+    border-color: color-hsl($borderColorShadow5);
+    box-shadow: $boxShadowShadow5;
+  } @else if $index == 6 {
+    border: $borderShadow6;
+    border-color: color-hsl($borderColorShadow6);
+    box-shadow: $boxShadowShadow6;
+  }
+}
+
+.mn-color-primary {
+  color: color-hsl($primary);
+}
+.mn-color-secondary {
+  color: color-hsl($secondary);
+}
+.mn-color-tertiary {
+  color: color-hsl($tertiary);
+}
+.mn-color-positive {
+  color: color-hsl($positive);
+}
+.mn-color-negative {
+  color: color-hsl($negative);
+}
+.mn-color-neutral {
+  color: color-hsl($neutral);
+}
+.mn-color-warning {
+  color: color-hsl($warning);
+}
+.mn-color-info {
+  color: color-hsl($info);
+}
+.mn-color-1 {
+  color: color-hsl($fg1);
+}
+.mn-color-2 {
+  color: color-hsl($fg2);
+}
+.mn-color-3 {
+  color: color-hsl($fg3);
+}
+.mn-color-4 {
+  color: color-hsl($fg4);
+}
+
+.mn-bg-primary {
+  background-color: color-hsl($primary);
+}
+.mn-bg-secondary {
+  background-color: color-hsl($secondary);
+}
+.mn-bg-tertiary {
+  background-color: color-hsl($tertiary);
+}
+.mn-bg-positive {
+  background-color: color-hsl($positive);
+}
+.mn-bg-negative {
+  background-color: color-hsl($negative);
+}
+.mn-bg-neutral {
+  background-color: color-hsl($neutral);
+}
+.mn-bg-warning {
+  background-color: color-hsl($warning);
+}
+.mn-bg-info {
+  background-color: color-hsl($info);
+}
+.mn-bg-1 {
+  background-color: color-hsl($bg1);
+}
+.mn-bg-2 {
+  background-color: color-hsl($bg2);
+}
+.mn-bg-3 {
+  background-color: color-hsl($bg3);
+}
+.mn-bg-4 {
+  background-color: color-hsl($bg4);
+}

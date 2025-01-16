@@ -3,7 +3,7 @@ import {
   ToolkitComponent,
   IToolkitComponentProps,
   IToolkitComponentState,
-  JSXElementChild,
+  TJSXElementChild,
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
@@ -24,7 +24,7 @@ interface ICardPendState extends IToolkitComponentState {
   includesLink: boolean;
   checkState: number;
   adjustState: TTextAdjustState;
-  splitPendEff: JSXElementChild[];
+  splitPendEff: TJSXElementChild[];
   fontSize: number;
   lineHeight: number;
 }

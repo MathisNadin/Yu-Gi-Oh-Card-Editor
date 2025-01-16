@@ -634,7 +634,6 @@ export function loadSvgs() {
     'toolkit-newspaper',
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' id='Newspaper--Streamline-Ultimate.svg'>
       <defs></defs>
-      <title>newspaper</title>
       <path
         d='M2.25 0.75h19.5s1.5 0 1.5 1.5v19.5s0 1.5 -1.5 1.5H2.25s-1.5 0 -1.5 -1.5V2.25s0 -1.5 1.5 -1.5'
         fill='none'
@@ -872,7 +871,6 @@ export function loadSvgs() {
     'toolkit-tasks',
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' strokeWidth='1.5px' height='48' width='48'>
       <defs></defs>
-      <title>checklist</title>
       <rect
         x='0.75'
         y='0.749'
@@ -1038,11 +1036,11 @@ export function loadSvgs() {
         fillRule='evenodd'
         clipRule='evenodd'
         d='M21 8C21 6.34315 19.6569 5 18 5H10C8.34315 5 7 6.34315 7 8V20C7 21.6569 8.34315 23 10 23H18C19.6569 23 21 21.6569 21 20V8ZM19 8C19 7.44772 18.5523 7 18 7H10C9.44772 7 9 7.44772 9 8V20C9 20.5523 9.44772 21 10 21H18C18.5523 21 19 20.5523 19 20V8Z'
-        fill='#0F0F0F'
+        fill='currentColor'
       />
       <path
         d='M6 3H16C16.5523 3 17 2.55228 17 2C17 1.44772 16.5523 1 16 1H6C4.34315 1 3 2.34315 3 4V18C3 18.5523 3.44772 19 4 19C4.55228 19 5 18.5523 5 18V4C5 3.44772 5.44772 3 6 3Z'
-        fill='#0F0F0F'
+        fill='currentColor'
       />
     </svg>
   );
@@ -1618,6 +1616,7 @@ export function loadSvgs() {
           strokeLinecap='round'
           strokeLinejoin='round'
           d='M6.5 12.536a6.036 6.036 0 1 0 0 -12.071 6.036 6.036 0 0 0 0 12.071Z'
+          fill='none'
           strokeWidth='1'
         ></path>
         <path
@@ -1626,6 +1625,7 @@ export function loadSvgs() {
           strokeLinecap='round'
           strokeLinejoin='round'
           d='M6.5 3.714v3.018'
+          fill='none'
           strokeWidth='1'
         ></path>
         <g id='Group 2605'>
@@ -1635,6 +1635,7 @@ export function loadSvgs() {
             strokeLinecap='round'
             strokeLinejoin='round'
             d='M6.5 9.286a0.232 0.232 0 0 1 0 -0.464'
+            fill='none'
             strokeWidth='1'
           ></path>
           <path
@@ -1643,6 +1644,7 @@ export function loadSvgs() {
             strokeLinecap='round'
             strokeLinejoin='round'
             d='M6.5 9.286a0.232 0.232 0 0 0 0 -0.464'
+            fill='none'
             strokeWidth='1'
           ></path>
         </g>

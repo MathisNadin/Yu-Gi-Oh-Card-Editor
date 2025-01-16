@@ -11,7 +11,7 @@ import {
   Progress,
   TextAreaInput,
   Icon,
-  FileInput,
+  FilePathInput,
   AbstractPopup,
   IAbstractPopupState,
   IAbstractPopupProps,
@@ -595,11 +595,11 @@ export class CardImportDialog extends AbstractPopup<
           onChange={(importArtworks) => this.setState({ importArtworks })}
         />
         {this.state.importArtworks && (
-          <FileInput
+          <FilePathInput
             fill
             defaultValue={this.state.artworkSaveDirPath}
             onChange={(artworkSaveDirPath) => this.setState({ artworkSaveDirPath })}
-            overrideOnTap={() => this.selectArtworkSaveDirPath()}
+            overrideOnTapIcon={() => this.selectArtworkSaveDirPath()}
           />
         )}
       </HorizontalStack>

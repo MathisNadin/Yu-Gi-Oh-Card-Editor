@@ -1,0 +1,116 @@
+@mixin text-overflow() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 130%;
+}
+
+@mixin fill-all($left: 0, $right: 0, $top: 0, $bottom: 0, $width: 0, $height: 0) {
+  display: block;
+  position: absolute;
+  left: $left;
+  top: $top;
+  @if ($height != 0) {
+    height: $height;
+  } @else {
+    bottom: $bottom;
+  }
+  @if ($width != 0) {
+    width: $width;
+  } @else {
+    right: $right;
+  }
+}
+
+@mixin triangle($direction, $opposite, $color: currentcolor, $width: 20px, $height: 20px) {
+  width: 0;
+  height: 0;
+  content: '';
+  position: absolute;
+
+  z-index: 2;
+  border-#{$opposite}: $height solid color-hsl($color);
+
+  $perpendicular-borders: calc($width / 2) solid transparent;
+
+  @if $direction == top or $direction == bottom {
+    border-left: $perpendicular-borders;
+    border-right: $perpendicular-borders;
+  } @else if $direction == right or $direction == left {
+    border-bottom: $perpendicular-borders;
+    border-top: $perpendicular-borders;
+  }
+}
+
+@mixin fx($property...) {
+  $delay: 0.2s;
+  $ease: ease;
+  will-change: #{$property};
+  transition: #{$property} $delay $ease;
+}
+
+@mixin ios-top($prop, $adding: 0) {
+  @include on(ios) {
+    @if ($adding == 0) {
+      #{$prop}: constant(safe-area-inset-top);
+      #{$prop}: env(safe-area-inset-top);
+    } @else {
+      #{$prop}: calc(constant(safe-area-inset-top) + #{$adding});
+      #{$prop}: calc(env(safe-area-inset-top) + #{$adding});
+    }
+  }
+}
+
+@mixin on($media) {
+  @if $media == ios {
+    .mn-platform-ios.mn-platform-mobile:not(.fullscreen) & {
+      @content;
+    }
+  } @else if $media == android {
+    .mn-platform-android.mn-platform-mobile:not(.fullscreen) & {
+      @content;
+    }
+  } @else if $media == small {
+    .mn-screen-small & {
+      @content;
+    }
+  } @else if $media == medium {
+    .mn-screen-medium & {
+      @content;
+    }
+  } @else if $media == large {
+    .mn-screen-large & {
+      @content;
+    }
+  } @else if $media == xlarge {
+    .mn-screen-xlarge & {
+      @content;
+    }
+  } @else if $media == xxlarge {
+    .mn-screen-xxlarge & {
+      @content;
+    }
+  } @else {
+    @error "Unknown media '"+$media+"'";
+  }
+}
+
+@mixin frame($name) {
+  border-radius: calc(#{$defaultBorderRadius});
+  @if ($name== 'shadow-1') {
+    @include shadow(0);
+  }
+  @if ($name== 'dashed') {
+    border-style: dashed;
+    border-width: 1px;
+    border-color: color-hsl($fg3);
+  }
+}
+
+.mn-frame-shadow-1 {
+  @include frame('shadow-1');
+}
+
+.mn-frame-dashed {
+  @include frame('dashed');
+}

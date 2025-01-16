@@ -3,7 +3,7 @@ import {
   ToolkitComponent,
   IToolkitComponentProps,
   IToolkitComponentState,
-  JSXElementChild,
+  TJSXElementChild,
   TDidUpdateSnapshot,
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
@@ -28,7 +28,7 @@ interface IRushCardDescState extends IToolkitComponentState {
   includesNormal: boolean;
   checkState: number;
   adjustState: TTextAdjustState;
-  splitDesc: JSXElementChild[][];
+  splitDesc: TJSXElementChild[][];
   fontSize: number;
   lineHeight: number;
 }
@@ -138,8 +138,8 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
   }
 
   public static getDescription(card: ICard) {
-    const description: JSXElementChild[][] = [];
-    const addLineBreaks = (texts: JSXElementChild[] | JSXElementChild[][]) =>
+    const description: TJSXElementChild[][] = [];
+    const addLineBreaks = (texts: TJSXElementChild[] | TJSXElementChild[][]) =>
       texts.map((text, i) => (i < texts.length - 1 ? [text, <br key={`br-${i}`} />] : text));
 
     switch (card.rushTextMode) {
@@ -217,7 +217,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
           );
         }
         const choiceEffectsLabel = card.language === 'fr' ? '[Effet Multi-Choix]' : '[Multi-Choice Effect]';
-        const choiceEffects: (string | JSXElementChild[])[] = [];
+        const choiceEffects: (string | TJSXElementChild[])[] = [];
         for (const choice of card.rushChoiceEffects) {
           choiceEffects.push(' ');
           choiceEffects.push(

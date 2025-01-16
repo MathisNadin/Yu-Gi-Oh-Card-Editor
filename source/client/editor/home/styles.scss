@@ -5,19 +5,19 @@
 
 @keyframes colorCycle {
   0% {
-    color: color-rgb(nth($theme-light-bg, 1));
+    color: color-hsl($bg1);
   }
   50% {
-    color: color-rgb($warning);
+    color: color-hsl($warning);
   }
   100% {
-    color: color-rgb(nth($theme-light-bg, 1));
+    color: color-hsl($bg1);
   }
 }
 
-.home {
+.mn-view.home-view {
   .mn-content {
-    @include fgAsBg(1);
+    background-color: color-hsl($fg1);
   }
 
   .home-center-pane {
@@ -35,7 +35,7 @@
         }
 
         &:not(.selected) {
-          @include fg(1);
+          color: color-hsl($fg1);
         }
       }
     }
@@ -58,7 +58,7 @@
         }
 
         &:not(.selected) {
-          @include fg(1);
+          color: color-hsl($fg1);
         }
       }
     }

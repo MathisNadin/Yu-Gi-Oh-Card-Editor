@@ -1,11 +1,11 @@
 .settings {
-  @include bg(1);
-  $borderColor: rgba(nth($theme-light-fg, 1), 0.5);
+  background-color: color-hsl($bg1);
+  $borderColor: color-hsla($fg1, 0.5);
   width: 100%;
 
   .setting-field {
     > .mn-container-inside {
-      gap: calc(#{$themeDefaultSpacing} / 4);
+      gap: calc(#{$defaultSpacing} / 4);
     }
   }
 
@@ -18,6 +18,6 @@
   }
 
   .field-icon {
-    margin-right: calc(#{$themeDefaultSpacing} / 2);
+    margin-right: calc(#{$defaultSpacing} / 2);
   }
 }

@@ -1,0 +1,39 @@
+@mixin themeTextInput() {
+  line-height: calc(#{$defaultItemHeight} - 2px);
+  min-height: calc(#{$defaultItemHeight} - 2px);
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: color-hsl($fg4);
+  border-radius: calc(#{$defaultBorderRadius});
+
+  color: color-hsl($fg1);
+  padding: 0 calc(#{$defaultSpacing} / 2);
+  appearance: textfield;
+  background-color: color-hsl($bg1);
+
+  &::placeholder {
+    color: color-hsl($fg3);
+  }
+
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.mn-text-input {
+  @include themeTextInput();
+}
+
+@mixin themePasswordField() {
+  .input-wrapper {
+    > .mn-container-inside {
+      align-items: center;
+    }
+  }
+}
+
+.mn-form-field.mn-field-password {
+  @include themePasswordField();
+}

@@ -1,0 +1,378 @@
+$scrollBarSize: 5px;
+
+@mixin themeScrollBar() {
+  .with-webkit & {
+    &::-webkit-scrollbar {
+      width: $scrollBarSize;
+      height: $scrollBarSize;
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: hsl(0deg 0% 0% / 0.1);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(0deg 0% 0% / 0.3);
+    }
+  }
+
+  .without-webkit & {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(0deg 0% 0% / 0.1) transparent;
+  }
+}
+
+// ----------------------- Container ------------------------
+
+@mixin themeContainerInside() {
+  display: flex;
+  position: relative;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+}
+
+.mn-container-inside {
+  @include themeContainerInside();
+}
+
+@mixin themeContainer() {
+  &.mn-layout-gutter {
+    > .mn-container-inside {
+      gap: calc(#{$defaultSpacing});
+    }
+  }
+
+  &.mn-layout-wrap {
+    > .mn-container-inside {
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  }
+
+  &.mn-layout-item-valign-top {
+    > .mn-container-inside {
+      align-items: flex-start;
+      justify-content: initial;
+    }
+  }
+
+  &.mn-layout-item-valign-middle {
+    > .mn-container-inside {
+      align-items: center;
+      justify-content: initial;
+    }
+  }
+
+  &.mn-layout-item-valign-bottom {
+    > .mn-container-inside {
+      align-items: flex-end;
+      justify-content: initial;
+    }
+  }
+
+  &.mn-layout-item-align-left {
+    > .mn-container-inside {
+      justify-content: flex-start;
+    }
+  }
+
+  &.mn-layout-item-align-center {
+    > .mn-container-inside {
+      justify-content: center;
+    }
+  }
+
+  &.mn-layout-item-align-right {
+    > .mn-container-inside {
+      justify-content: flex-end;
+    }
+  }
+
+  &.mn-layout-horizontal-stack {
+    > .mn-container-inside {
+      flex-direction: row;
+    }
+  }
+
+  &.mn-layout-vertical-stack {
+    > .mn-container-inside {
+      flex-direction: column;
+    }
+
+    &.mn-layout-item-align-left {
+      > .mn-container-inside {
+        align-items: flex-start;
+        justify-content: initial;
+      }
+    }
+
+    &.mn-layout-item-align-center {
+      > .mn-container-inside {
+        align-items: center;
+        justify-content: initial;
+      }
+    }
+
+    &.mn-layout-item-align-right {
+      > .mn-container-inside {
+        align-items: flex-end;
+        justify-content: initial;
+      }
+    }
+
+    &.mn-layout-item-valign-top {
+      > .mn-container-inside {
+        justify-content: flex-start;
+      }
+    }
+
+    &.mn-layout-item-valign-middle {
+      > .mn-container-inside {
+        justify-content: center;
+      }
+    }
+
+    &.mn-layout-item-valign-bottom {
+      > .mn-container-inside {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  &.mn-layout-margin {
+    margin: calc(#{$defaultSpacing});
+  }
+
+  &.mn-layout-padding {
+    padding: calc(#{$defaultSpacing});
+  }
+
+  $scrollBarSpace: calc(#{$defaultSpacing} / 2);
+
+  &.mn-scroll {
+    overflow-y: auto;
+    @include themeScrollBar();
+
+    > .mn-container-inside {
+      padding-right: $scrollBarSize;
+
+      .without-webkit & {
+        padding-right: $scrollBarSpace;
+      }
+    }
+
+    &.mn-layout-padding {
+      padding-right: 0;
+
+      > .mn-container-inside {
+        padding-right: 0;
+        width: calc(100% - #{$defaultSpacing} / 2);
+        min-width: calc(100% - #{$defaultSpacing} / 2);
+        max-width: calc(100% - #{$defaultSpacing} / 2);
+
+        .without-webkit & {
+          width: calc(100% - #{$defaultSpacing});
+          min-width: calc(100% - #{$defaultSpacing});
+          max-width: calc(100% - #{$defaultSpacing});
+        }
+
+        &:after {
+          content: ' ';
+          min-height: calc(#{$defaultSpacing});
+        }
+      }
+
+      &.mn-layout-gutter {
+        > .mn-container-inside {
+          &:after {
+            margin-top: calc(-1 * #{$defaultSpacing});
+          }
+        }
+      }
+    }
+  }
+
+  &.mn-scroll-x {
+    overflow-x: auto;
+    @include themeScrollBar();
+
+    > .mn-container-inside {
+      padding-bottom: $scrollBarSize;
+
+      .without-webkit & {
+        padding-bottom: $scrollBarSpace;
+      }
+    }
+
+    &.mn-layout-padding {
+      padding-bottom: 0;
+
+      > .mn-container-inside {
+        padding-bottom: 0;
+        height: calc(100% - #{$defaultSpacing} / 2);
+        min-height: calc(100% - #{$defaultSpacing} / 2);
+        max-height: calc(100% - #{$defaultSpacing} / 2);
+
+        .without-webkit & {
+          height: calc(100% - #{$defaultSpacing});
+          min-height: calc(100% - #{$defaultSpacing});
+          max-height: calc(100% - #{$defaultSpacing});
+        }
+
+        &:after {
+          content: ' ';
+          min-width: calc(#{$defaultSpacing});
+        }
+      }
+
+      &.mn-layout-gutter {
+        > .mn-container-inside {
+          &:after {
+            margin-left: calc(-1 * #{$defaultSpacing});
+          }
+        }
+      }
+    }
+  }
+}
+
+.mn-container {
+  @include themeContainer();
+}
+
+// ----------------------------------------------------------
+
+// ------------------------- Grid ---------------------------
+
+$COLUMNS: (
+  -1: percentage(calc(1 / 12)),
+  -2: percentage(calc(2 / 12)),
+  -3: percentage(calc(3 / 12)),
+  -4: percentage(calc(4 / 12)),
+  -5: percentage(calc(5 / 12)),
+  -6: percentage(calc(6 / 12)),
+  -7: percentage(calc(7 / 12)),
+  -8: percentage(calc(8 / 12)),
+  -9: percentage(calc(9 / 12)),
+  -10: percentage(calc(10 / 12)),
+  -11: percentage(calc(11 / 12)),
+  -12: percentage(calc(12 / 12))
+);
+
+@mixin gridset($bp) {
+  @each $colwidth, $width in $COLUMNS {
+    .mn-containable-item-width#{$bp}#{$colwidth} {
+      width: $width;
+      flex-basis: $width;
+    }
+
+    &.mn-layout-gutter {
+      .mn-containable-item-width#{$bp}#{$colwidth} {
+        width: calc(#{$width} - #{$defaultSpacing});
+        flex-basis: calc(#{$width} - #{$defaultSpacing});
+      }
+    }
+  }
+}
+
+@mixin themeGrid() {
+  > .mn-layout-gutter {
+    gap: initial;
+    margin-top: calc(-1 * #{$defaultSpacing});
+    margin-left: calc(-1 * #{$defaultSpacing});
+
+    > * {
+      padding: calc(#{$defaultSpacing}) 0 0 calc(#{$defaultSpacing});
+
+      > * {
+        width: 100%;
+      }
+    }
+  }
+
+  > .mn-grid-item {
+    display: flex;
+  }
+
+  @include gridset('-s');
+
+  @include on(medium) {
+    @include gridset('-m');
+  }
+
+  @include on(large) {
+    @include gridset('-l');
+  }
+
+  @include on(xlarge) {
+    @include gridset('-xl');
+  }
+
+  @include on(xxlarge) {
+    @include gridset('-xxl');
+  }
+}
+
+.mn-layout-grid-stack {
+  @include themeGrid();
+}
+
+// ----------------------------------------------------------
+
+// --------------------- Labeled Group ----------------------
+
+@mixin themeLabeledGroup() {
+  margin-top: calc(#{$defaultSpacing});
+  border-radius: calc(#{$defaultBorderRadius});
+
+  $borderOpacity: 0.3;
+  border: 1px solid;
+  border-color: color-hsla($fg1, $borderOpacity);
+
+  .group-label-container {
+    position: absolute;
+    top: calc(-1 * #{$medium-size} - #{$defaultSpacing} / 2);
+    left: calc(#{$defaultSpacing} / 2);
+    padding: 0 calc(#{$defaultSpacing});
+
+    // Set to 100% to make sure the top calc above is correct, as the text will be as high as $medium-size
+    .mn-typography {
+      line-height: 100%;
+    }
+  }
+}
+
+.mn-labeled-group {
+  @include themeLabeledGroup();
+}
+
+// ----------------------------------------------------------
+
+// ------------------------ Masonry -------------------------
+
+@mixin themeMasonry() {
+  .mn-masonry-item {
+    > * {
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
+    }
+  }
+}
+
+.mn-masonry {
+  @include themeMasonry();
+}

@@ -61,6 +61,6 @@ const getConfig = () => {
   }
 
   return merge(commonConfig, ...envConfigs);
-}
+};
 
 export default getConfig;

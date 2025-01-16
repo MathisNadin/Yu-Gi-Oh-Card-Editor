@@ -12,6 +12,40 @@ export class Page extends Component<IPageProps, IPageState> {
     app.$router.addListener({
       routerStateChanged: () => this.forceUpdate(),
     });
+
+    const fontFamilies: Partial<IAppThemeScreensSizesFont> = {
+      family: ['Tahoma', 'Helvetica', 'sans-serif'],
+    };
+    const screenFonts: Partial<IAppThemeScreensSizesFonts> = {
+      h1: fontFamilies,
+      h2: fontFamilies,
+      h3: fontFamilies,
+      h4: fontFamilies,
+      h5: fontFamilies,
+      h6: fontFamilies,
+    };
+    app.$theme.loadTheme({
+      fontLinks: [],
+      screens: {
+        small: {
+          fonts: screenFonts,
+        },
+        medium: {
+          fonts: screenFonts,
+        },
+        large: {
+          fonts: screenFonts,
+        },
+        xlarge: {
+          fonts: screenFonts,
+        },
+        xxlarge: {
+          fonts: screenFonts,
+        },
+      },
+    });
+
+    app.$theme.setLightDarkTheme(false);
   }
 
   public override render() {

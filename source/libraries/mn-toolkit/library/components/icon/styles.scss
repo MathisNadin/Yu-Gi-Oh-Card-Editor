@@ -1,0 +1,65 @@
+@mixin colorizeIcon($color) {
+  color: color-hsl($color);
+  fill: color-hsl($color);
+
+  &.has-click {
+    &:hover {
+      color: color-hsla($color, 0.7);
+      fill: color-hsla($color, 0.7);
+    }
+  }
+}
+
+@mixin themeIcon() {
+  object-fit: cover;
+  object-position: center;
+
+  &.mn-color-primary {
+    @include colorizeIcon($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeIcon($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeIcon($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeIcon($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeIcon($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeIcon($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeIcon($warning);
+  }
+  &.mn-color-info {
+    @include colorizeIcon($info);
+  }
+  &.mn-color-1 {
+    @include colorizeIcon($fg1);
+  }
+  &.mn-color-2 {
+    @include colorizeIcon($fg2);
+  }
+  &.mn-color-3 {
+    @include colorizeIcon($fg3);
+  }
+  &.mn-color-4 {
+    @include colorizeIcon($fg4);
+  }
+}
+
+.mn-icon {
+  @include themeIcon();
+}
+
+@mixin themeIconContainerButton() {
+  border: none;
+}
+
+.mn-icon-container-button {
+  @include themeIconContainerButton();
+}

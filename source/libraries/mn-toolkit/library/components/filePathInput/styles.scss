@@ -1,0 +1,56 @@
+@mixin themeFilePathInput() {
+  display: block;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .mn-container-inside {
+    gap: calc(#{$defaultSpacing} / 2);
+    align-items: center;
+  }
+
+  input {
+    flex: 1;
+    position: relative;
+    @include text-overflow();
+    color: color-hsl($fg1);
+    background-color: color-hsl($bg1);
+    line-height: calc(#{$defaultItemHeight} - 2px);
+    min-height: calc(#{$defaultItemHeight} - 2px);
+    max-height: calc(#{$defaultItemHeight} - 2px);
+    padding: 0 calc(#{$defaultSpacing} / 2);
+    appearance: textfield;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: color-hsl($fg4);
+    border-radius: calc(#{$defaultBorderRadius});
+
+    &::placeholder {
+      color: color-hsl($fg3);
+    }
+  }
+
+  .mn-icon {
+    background-color: color-hsl($bg3);
+    color: color-hsl($fg1);
+    cursor: pointer;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    border-color: color-hsl($fg4);
+    border-radius: calc(#{$defaultBorderRadius});
+    padding: 3px;
+  }
+
+  &.disabled {
+    input {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}
+
+.mn-file-path-input {
+  @include themeFilePathInput();
+}

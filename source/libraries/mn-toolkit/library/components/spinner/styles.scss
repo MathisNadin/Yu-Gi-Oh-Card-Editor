@@ -1,0 +1,27 @@
+@keyframes spinner-animation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin themeSpinner() {
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+
+  .spinner-circle {
+    $width: 33%;
+    $borderSize: 7px;
+    width: $width;
+    height: 0;
+    padding-bottom: calc($width - $borderSize * 2);
+    border-radius: 50%;
+    border: $borderSize solid hsl(0deg 0% 0% / 0.1);
+    border-top-color: hsl(0deg, 0%, 0%);
+    animation: spinner-animation 1200ms linear infinite;
+  }
+}
+
+.mn-spinner {
+  @include themeSpinner();
+}

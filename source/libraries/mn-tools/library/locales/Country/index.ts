@@ -244,10 +244,10 @@ export interface ICountries {
   zm: null;
   zw: null;
 }
-export type Country = keyof ICountries;
+export type TCountry = keyof ICountries;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export let CountryList: Country[] = [
+export let CountryList: TCountry[] = [
   'ad',
   'ae',
   'af',

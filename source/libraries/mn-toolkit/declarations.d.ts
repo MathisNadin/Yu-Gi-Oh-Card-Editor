@@ -1,4 +1,4 @@
-type Styles = Record<string, string>;
+type TStyles = Record<string, string>;
 
 declare module '*.svg' {
   import React = require('react');
@@ -20,17 +20,17 @@ declare module '*.jpg' {
 }
 
 declare module '*.scss' {
-  const content: Styles;
+  const content: TStyles;
   export default content;
 }
 
 declare module '*.sass' {
-  const content: Styles;
+  const content: TStyles;
   export default content;
 }
 
 declare module '*.css' {
-  const content: Styles;
+  const content: TStyles;
   export default content;
 }
 

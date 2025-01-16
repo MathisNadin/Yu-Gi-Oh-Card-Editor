@@ -1,0 +1,325 @@
+$theme-menu-icon-size: 40px;
+$menu-width: 200px !default;
+// Padding du pane + padding de l'inside + taille des icones + bordure
+$menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 1px) !default;
+
+@mixin themeMenuPane() {
+  z-index: $z-index-drawer;
+  overflow: visible;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: $menu-contracted-width;
+
+  padding: calc(#{$defaultSpacing} / 2) 0;
+  color: color-hsl($fg2);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease-in-out;
+
+  .mn-menu-pane-version {
+    white-space: nowrap;
+    margin-left: calc(-1 * #{$defaultSpacing} / 2);
+  }
+
+  &.dynamic {
+    &:hover {
+      width: $menu-width;
+    }
+  }
+
+  &.open {
+    width: $menu-width;
+  }
+
+  background-color: color-hsl($bg1);
+
+  .shrink-btn {
+    position: absolute;
+    top: 20px;
+    height: 30px;
+    width: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px -3px hsl(260deg 44% 32% / 0.3);
+    right: -00px;
+    transform: translateY(-50%) translateX(-8px);
+    transition: 0.3s;
+    z-index: $z-index-drawer;
+
+    .mn-icon {
+      transition: 0.3s;
+      color: white;
+    }
+
+    &:hover {
+      background-color: color-hsl($primary);
+      color: black !important;
+    }
+  }
+
+  .hide {
+    transition: opacity 0.3s 0.2s;
+  }
+
+  .mn-container-inside {
+    &.with-icon {
+      $marginTop: calc(#{$defaultSpacing} * 1.5);
+      margin-top: $marginTop;
+      $height: calc(100% - #{$marginTop});
+      height: $height;
+      min-height: $height;
+      max-height: $height;
+    }
+  }
+
+  &.open {
+    width: $menu-width;
+  }
+
+  &.close {
+    .mn-left-menu-label {
+      opacity: 0;
+      height: 0 !important;
+      min-height: 0 !important;
+      max-height: 0 !important;
+    }
+  }
+}
+
+.mn-menu-pane {
+  @include themeMenuPane();
+}
+
+@mixin themeLeftMenu() {
+  overflow: visible;
+  overflow-y: auto;
+
+  .mn-left-menu-group {
+    margin-bottom: calc(#{$defaultItemHeight} / 2);
+
+    .mn-left-menu-label {
+      padding-left: calc(#{$defaultSpacing});
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      height: calc(#{$defaultItemHeight});
+      min-height: calc(#{$defaultItemHeight});
+      max-height: calc(#{$defaultItemHeight});
+
+      // Override the anchor-specific color
+      &.mn-typography-anchor {
+        color: color-hsl($fg1);
+        &:hover {
+          font-weight: bold;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+
+  .mn-left-menu-subitems {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 2s ease;
+    cursor: pointer;
+  }
+
+  .open {
+    .mn-left-menu-label {
+      &.hide {
+        display: none;
+      }
+    }
+
+    .mn-left-menu-subitems {
+      transition: max-height 2s ease;
+      max-height: 5000px;
+    }
+  }
+
+  .mn-left-menu-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mn-left-menu-subitem {
+    height: calc(#{$defaultItemHeight});
+    display: flex;
+    align-items: center;
+    gap: calc(#{$defaultSpacing} / 2);
+    will-change: transform, background-color;
+    transition:
+      transform 0.2s ease,
+      background-color 0.2s ease;
+
+    .mn-left-menu-subitem-text {
+      opacity: 1;
+      transition: opacity 0.2s ease;
+
+      // Override the anchor-specific color
+      &.mn-typography-anchor {
+        color: color-hsl($fg1) !important;
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+
+    &:hover,
+    &.active {
+      .mn-left-menu-icon {
+        color: color-hsl($primary);
+
+        // Pour certains svg
+        path,
+        rect,
+        polyline,
+        line {
+          color: color-hsl($primary);
+        }
+      }
+
+      .mn-left-menu-subitem-text {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.mn-left-menu {
+  @include themeLeftMenu();
+}
+
+@mixin themeTopMenu() {
+  $topMenuHeight: calc(#{$defaultItemHeight} + 2 * #{$defaultSpacing});
+  height: $topMenuHeight;
+  min-height: $topMenuHeight;
+  max-height: $topMenuHeight;
+
+  background-color: color-hsl($bg1);
+
+  .mn-top-menu-group {
+    cursor: pointer;
+
+    .mn-top-menu-group-container {
+      .mn-container-inside {
+        gap: calc(#{$defaultSpacing} / 2);
+      }
+
+      // Override the anchor-specific color
+      .mn-top-menu-label {
+        color: color-hsl($fg1);
+      }
+
+      &:hover {
+        color: color-hsl($primary);
+
+        .mn-top-menu-label {
+          color: color-hsl($primary);
+
+          &.mn-typography-anchor {
+            &:hover {
+              text-decoration: none;
+            }
+          }
+        }
+
+        .mn-icon {
+          color: color-hsl($primary);
+
+          // Pour certains svg
+          path,
+          rect,
+          polyline,
+          line {
+            color: color-hsl($primary);
+          }
+        }
+      }
+    }
+  }
+}
+
+.mn-top-menu {
+  @include themeTopMenu();
+}
+
+@mixin themeTopMenuBelowPopover() {
+  border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
+  background: transparent;
+  border-top: 0;
+
+  .mn-popover-actions-container {
+    .action {
+      background-color: color-hsl($topMenuBelowActionBg);
+
+      // Override the anchor-specific color
+      .mn-typography.mn-typography-anchor {
+        color: color-hsl($fg1);
+      }
+
+      &:first-child {
+        border-radius: 0;
+      }
+
+      &:only-child {
+        border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
+      }
+
+      &.selected {
+        background-color: color-hsl($topMenuBelowActionBg);
+
+        .mn-icon {
+          color: color-hsl($primary);
+
+          // Pour certains svg
+          path,
+          rect,
+          polyline,
+          line {
+            color: color-hsl($primary);
+          }
+        }
+
+        .mn-typography.mn-content-type-text {
+          color: color-hsl($primary);
+        }
+      }
+
+      &:not(.mn-disabled):not(.separator) {
+        &:hover {
+          background-color: color-hsl($dark-bg1);
+
+          .mn-icon {
+            color: color-hsl($primary);
+
+            // Pour certains svg
+            path,
+            rect,
+            polyline,
+            line {
+              color: color-hsl($primary);
+            }
+          }
+
+          .mn-typography.mn-content-type-text {
+            color: color-hsl($primary);
+
+            &.mn-typography-anchor {
+              &:hover {
+                text-decoration: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.mn-popovers {
+  .mn-popover.actions.mn-top-menu-below-popover {
+    @include themeTopMenuBelowPopover();
+  }
+}

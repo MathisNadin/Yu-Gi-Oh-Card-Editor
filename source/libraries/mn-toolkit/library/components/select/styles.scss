@@ -1,0 +1,94 @@
+@mixin themeSelect {
+  display: block;
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  border-color: color-hsl($fg4);
+
+  border-radius: calc(#{$defaultBorderRadius});
+  height: calc(#{$defaultItemHeight});
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: color-hsl($bg1);
+
+  .label {
+    cursor: pointer;
+    margin: 0 calc(#{$defaultSpacing});
+    flex: 1;
+    position: relative;
+    @include themeFont('small');
+    @include text-overflow();
+    color: color-hsl($fg1);
+    padding-right: 26px;
+  }
+
+  .drop-icon {
+    background-color: color-hsl($bg3);
+    color: color-hsl($fg1);
+    height: calc(#{$defaultItemHeight});
+    width: calc(#{$defaultItemHeight});
+    cursor: pointer;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid;
+
+    border-color: color-hsl($fg4);
+  }
+
+  &.show .items {
+    display: block;
+  }
+
+  &:focus,
+  &.activated {
+    padding-bottom: 2px;
+    @include fx(border-color);
+  }
+}
+
+.mn-select {
+  @include themeSelect();
+}
+
+@mixin themeSelectPopover() {
+  border-radius: calc(#{$defaultBorderRadius});
+}
+
+.mn-popover.mn-select-popover {
+  @include themeSelectPopover();
+}
+
+@mixin themeSelectField() {
+  .input-wrapper {
+    padding: 0;
+    overflow: hidden;
+    min-height: calc(#{$defaultItemHeight});
+    height: calc(#{$defaultItemHeight});
+    max-height: calc(#{$defaultItemHeight});
+
+    .mn-select {
+      border-radius: 0;
+      border: 0;
+      flex: 1;
+    }
+  }
+
+  &.error {
+    .input-wrapper {
+      .mn-select {
+        border: 1px solid color-hsla($negative, 0.2);
+        background-color: color-hsla($negative, 0.1);
+
+        .drop-icon {
+          background-color: color-hsla($negative, 0.1);
+        }
+      }
+    }
+  }
+}
+
+.mn-form-field.mn-field-select {
+  @include themeSelectField();
+}

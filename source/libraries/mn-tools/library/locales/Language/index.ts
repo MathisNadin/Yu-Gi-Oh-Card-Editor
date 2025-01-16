@@ -739,11 +739,11 @@ interface ILanguageISO6393 {
   zul: null;
 }
 
-export type LanguageLocale = keyof ILanguageLocale;
-export type LanguageISO6391 = keyof ILanguageISO6391;
-export type Language = keyof ILanguageISO6393;
+export type TLanguageLocale = keyof ILanguageLocale;
+export type TLanguageISO6391 = keyof ILanguageISO6391;
+export type TLanguage = keyof ILanguageISO6393;
 
-export let languageLocaleList: { id: LanguageLocale; label: string }[] = [
+export let languageLocaleList: { id: TLanguageLocale; label: string }[] = [
   { id: 'af', label: 'Afrikaans' },
   { id: 'am', label: 'Amharic' },
   { id: 'ar_ae', label: 'Arabic - United Arab Emirates' },
@@ -903,7 +903,7 @@ export let languageLocaleList: { id: LanguageLocale; label: string }[] = [
   { id: 'zh_tw', label: 'Chinese - Taiwan' },
   { id: 'zu', label: 'Zulu' },
 ];
-export let languageList: { id: Language; label: string }[] = [
+export let languageList: { id: TLanguage; label: string }[] = [
   { id: 'aar', label: 'Afar - Afaraf' },
   { id: 'abk', label: 'Abkhaz - аҧсуа бызшәа, аҧсшәа' },
   { id: 'ave', label: 'Avestan - avesta' },

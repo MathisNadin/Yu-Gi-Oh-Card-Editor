@@ -1,0 +1,143 @@
+@mixin themeBreadcrumb() {
+  color: color-hsl($fg2);
+  max-width: 100%;
+
+  .bread,
+  .crumb {
+    line-height: calc(#{$defaultItemHeight});
+    min-height: calc(#{$defaultItemHeight});
+    max-height: calc(#{$defaultItemHeight});
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: color-hsl($fg1);
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    p {
+      margin-bottom: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .bread {
+    font-weight: 600;
+  }
+
+  .crumb {
+    font-weight: 400;
+    border-radius: calc(#{$defaultBorderRadius});
+    @include fx(color);
+
+    &:hover {
+      color: color-hsl($primary);
+    }
+  }
+
+  .separator {
+    line-height: calc(#{$defaultItemHeight});
+    min-height: calc(#{$defaultItemHeight});
+    max-height: calc(#{$defaultItemHeight});
+    margin: 0 calc(#{$defaultSpacing} / 4);
+    color: color-hsl($fg2);
+  }
+}
+
+.mn-breadcrumb {
+  @include themeBreadcrumb();
+}
+
+@mixin themeHeader() {
+  $progressHeight: 5px;
+  background-color: color-hsl($bg1);
+  padding: calc(#{$defaultSpacing} / 2) !important;
+  border-bottom: 1px solid;
+  border-color: color-hsl($fg4);
+  @include ios-top('padding-top');
+
+  .mn-progress {
+    min-height: $progressHeight;
+    max-height: $progressHeight;
+    background-color: transparent;
+
+    .progress {
+      opacity: 0;
+      @include fx(opacity);
+      .bar {
+        background-color: color-hsla($bg1, 0.7);
+      }
+    }
+
+    &.enabled {
+      .progress {
+        opacity: 1;
+      }
+    }
+
+    &:not(.enabled) {
+      .progress {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .title-bar {
+    z-index: $z-index-title-bar;
+    padding: 0 calc(#{$defaultSpacing} / 2);
+    display: flex;
+    gap: calc(#{$defaultSpacing} / 2);
+    flex-direction: row;
+    align-items: center;
+    color: color-hsl($fg1);
+
+    .center-part {
+      display: flex;
+      align-items: center;
+      gap: calc(#{$defaultSpacing} / 2);
+      flex: 1;
+      text-align: left;
+      @include text-overflow();
+    }
+  }
+
+  .mn-header-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mn-sub-header {
+    padding: calc(#{$defaultSpacing});
+
+    .mn-fab {
+      position: absolute;
+      bottom: -32px;
+      right: calc(#{$defaultSpacing});
+      z-index: $z-index-view-above;
+    }
+  }
+
+  .mn-header-separator {
+    border-left: 1px solid;
+    border-color: color-hsl($fg3);
+    width: 10px;
+    height: 100%;
+    margin-left: 8px;
+  }
+}
+
+.mn-header {
+  @include themeHeader();
+}
+
+@mixin themeFooter() {
+  padding-top: 0;
+}
+
+.mn-footer {
+  @include themeFooter();
+}

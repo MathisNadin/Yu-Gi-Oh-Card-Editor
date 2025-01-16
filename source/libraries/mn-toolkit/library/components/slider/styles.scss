@@ -1,0 +1,255 @@
+@mixin colorizeSlider($fgColor) {
+  button.slider-thumb,
+  .slider-filled {
+    background-color: color-hsl($fgColor);
+  }
+}
+
+$sliderHeight: 20px;
+
+@mixin themeSlider() {
+  position: relative;
+  user-select: none;
+  margin: calc(#{$defaultSpacing});
+  height: $sliderHeight;
+  min-height: $sliderHeight;
+  max-height: $sliderHeight;
+
+  .slider-track,
+  .slider-filled {
+    position: absolute;
+    height: 4px;
+    top: 8px;
+  }
+
+  .slider-track {
+    width: 100%;
+    background-color: color-hsl($fg4);
+  }
+
+  .slider-thumb {
+    position: absolute;
+    border-radius: 50%;
+    background-color: color-hsl($fg3);
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 10px;
+    opacity: 1;
+
+    &:focus {
+      outline: none;
+    }
+
+    .slider-value {
+      position: absolute;
+      top: -30px; // Ajustez si nécessaire
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 5px;
+      border-radius: 3px;
+      @include themeFont('small');
+      line-height: 120%;
+      background-color: color-hsl($fg4);
+      color: color-hsl($fg1);
+    }
+  }
+
+  .slider-mark {
+    position: absolute;
+    bottom: calc(-1 * #{$sliderHeight}); // Ajustez selon l'espacement souhaité sous le slider
+    transform: translateX(-50%); // Centrer le marqueur sous sa position
+    @include themeFont('small');
+    line-height: 120%;
+    color: color-hsl($fg1);
+  }
+
+  &.mn-color-primary {
+    @include colorizeSlider($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeSlider($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeSlider($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeSlider($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeSlider($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeSlider($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeSlider($warning);
+  }
+  &.mn-color-info {
+    @include colorizeSlider($info);
+  }
+  &.mn-color-1 {
+    @include colorizeSlider($fg1);
+  }
+  &.mn-color-2 {
+    @include colorizeSlider($fg2);
+  }
+  &.mn-color-3 {
+    @include colorizeSlider($fg3);
+  }
+  &.mn-color-4 {
+    @include colorizeSlider($fg4);
+  }
+}
+
+.mn-slider {
+  @include themeSlider();
+}
+
+@mixin themeRangeSlider() {
+  position: relative;
+  user-select: none;
+  margin: calc(#{$defaultSpacing});
+  height: $sliderHeight;
+  min-height: $sliderHeight;
+  max-height: $sliderHeight;
+
+  .slider-track,
+  .slider-filled {
+    position: absolute;
+    height: 4px;
+    top: 8px;
+  }
+
+  .slider-track {
+    width: 100%;
+    background-color: color-hsl($fg4);
+  }
+
+  .slider-thumb {
+    position: absolute;
+    border-radius: 50%;
+    background-color: color-hsl($fg3);
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 10px;
+    opacity: 1;
+
+    &:focus {
+      outline: none;
+    }
+
+    .slider-value {
+      position: absolute;
+      top: -30px; // Ajustez si nécessaire
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 5px;
+      border-radius: 3px;
+      @include themeFont('small');
+      line-height: 120%;
+      background-color: color-hsl($fg4);
+      color: color-hsl($fg1);
+    }
+  }
+
+  .slider-mark {
+    position: absolute;
+    bottom: calc(-1 * #{$sliderHeight}); // Ajustez selon l'espacement souhaité sous le slider
+    transform: translateX(-50%); // Centrer le marqueur sous sa position
+    @include themeFont('small');
+    line-height: 120%;
+    color: color-hsl($fg1);
+  }
+
+  &.mn-color-primary {
+    @include colorizeSlider($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeSlider($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeSlider($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeSlider($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeSlider($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeSlider($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeSlider($warning);
+  }
+  &.mn-color-info {
+    @include colorizeSlider($info);
+  }
+  &.mn-color-1 {
+    @include colorizeSlider($fg1);
+  }
+  &.mn-color-2 {
+    @include colorizeSlider($fg2);
+  }
+  &.mn-color-3 {
+    @include colorizeSlider($fg3);
+  }
+  &.mn-color-4 {
+    @include colorizeSlider($fg4);
+  }
+}
+
+.mn-range-slider {
+  @include themeRangeSlider();
+}
+
+@mixin themeSliderFields() {
+  .input-wrapper {
+    $wrapperHeight: calc(#{$sliderHeight} + #{$defaultSpacing} * 2);
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    height: $wrapperHeight;
+    min-height: $wrapperHeight;
+    max-height: $wrapperHeight;
+    margin: calc(#{$defaultSpacing}) 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: visible;
+
+    > .mn-container {
+      height: $wrapperHeight;
+      min-height: $wrapperHeight;
+      max-height: $wrapperHeight;
+    }
+
+    .form-label {
+      margin-bottom: 0;
+      padding-left: 0;
+      height: $wrapperHeight;
+      min-height: $wrapperHeight;
+      max-height: $wrapperHeight;
+
+      > .mn-container {
+        height: $wrapperHeight;
+        min-height: $wrapperHeight;
+        max-height: $wrapperHeight;
+        align-items: center;
+      }
+    }
+
+    .mn-slider,
+    .mn-range-slider {
+      flex: 1;
+    }
+  }
+
+  .form-helper {
+    padding-left: calc(#{$defaultSpacing} / 2);
+  }
+}
+
+.mn-form-field.mn-field-slider,
+.mn-form-field.mn-field-range-slider {
+  @include themeSliderFields();
+}

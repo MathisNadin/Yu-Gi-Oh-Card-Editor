@@ -1,17 +1,16 @@
 .cards-library {
-  @include bg(1);
-  background-color: color-rgb(nth($theme-light-bg, 1));
+  background-color: color-hsl($bg1);
   width: 100%;
 
   .mn-table {
     tbody {
       tr {
         &.selected {
-          background-color: rgba($positive, 0.5);
+          background-color: color-hsla($positive, 0.5);
         }
 
         &.current {
-          background-color: rgba($info, 0.5);
+          background-color: color-hsla($info, 0.5);
         }
       }
     }

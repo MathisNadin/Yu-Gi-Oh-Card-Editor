@@ -1,5 +1,7 @@
 import 'webpack-dev-server';
 import { Configuration, EnvironmentPlugin, LoaderOptionsPlugin } from 'webpack';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 
 const commonDevConfig: Configuration = {
   mode: 'development',
@@ -9,11 +11,7 @@ const commonDevConfig: Configuration = {
       // Styles
       {
         test: /\.s[ac]ss$/i,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader'
-        ],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
     ],
   },
@@ -22,9 +20,20 @@ const commonDevConfig: Configuration = {
       NODE_ENV: 'development',
     }),
     new LoaderOptionsPlugin({
-      debug: true
+      debug: true,
     }),
+    new CspHtmlWebpackPlugin(
+      {
+        'style-src': ["'self'", 'https://fonts.googleapis.com'],
+        'style-src-elem': ["'self'", 'https://fonts.googleapis.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com'],
+      },
+      {
+        enabled: false,
+        hashingMethod: 'sha256',
+      }
+    ),
   ],
-}
+};
 
 export default commonDevConfig;

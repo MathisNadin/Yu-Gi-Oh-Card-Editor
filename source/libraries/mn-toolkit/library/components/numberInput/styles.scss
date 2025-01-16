@@ -1,0 +1,27 @@
+@mixin themeNumberInput() {
+  line-height: calc(#{$defaultItemHeight} - 2px);
+  min-height: calc(#{$defaultItemHeight} - 2px);
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: color-hsl($fg4);
+  border-radius: calc(#{$defaultBorderRadius});
+
+  color: color-hsl($fg1);
+  background-color: color-hsl($bg1);
+  padding: 0 calc(#{$defaultSpacing} / 2);
+  appearance: textfield;
+
+  &::placeholder {
+    color: color-hsl($fg3);
+  }
+
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.mn-number-input {
+  @include themeNumberInput();
+}

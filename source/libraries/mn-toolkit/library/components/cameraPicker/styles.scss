@@ -1,0 +1,18 @@
+@mixin themeCameraPickerPopup() {
+  video {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    width: auto;
+    max-height: calc(100% - #{$defaultSpacing} * 2);
+    max-width: 100%;
+    margin: calc(#{$defaultSpacing}) 0;
+    border-radius: calc(#{$defaultBorderRadius});
+    @include shadow(2);
+  }
+}
+
+.mn-popup.camera-picker {
+  @include themeCameraPickerPopup();
+}

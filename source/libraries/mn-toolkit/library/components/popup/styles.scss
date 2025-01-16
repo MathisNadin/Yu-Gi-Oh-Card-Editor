@@ -1,0 +1,83 @@
+@mixin themeScreenPopup($size) {
+  --popup-active-animation-name: var(--#{$size}-popup-active-animation-name);
+  --popup-active-animation-duration: var(--#{$size}-popup-active-animation-duration);
+  --popup-hidding-animation-name: var(--#{$size}-popup-hidding-animation-name);
+  --popup-hidding-animation-duration: var(--#{$size}-popup-hidding-animation-duration);
+}
+
+.mn-screen-small {
+  @include themeScreenPopup('small');
+}
+
+.mn-screen-medium {
+  @include themeScreenPopup('medium');
+}
+
+.mn-screen-large {
+  @include themeScreenPopup('large');
+}
+
+.mn-screen-xlarge {
+  @include themeScreenPopup('xlarge');
+}
+
+.mn-screen-xxlarge {
+  @include themeScreenPopup('xxlarge');
+}
+
+$popup-active-animation-name: var(--popup-active-animation-name);
+$popup-active-animation-duration: var(--popup-active-animation-duration);
+$popup-hidding-animation-name: var(--popup-hidding-animation-name);
+$popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
+
+@mixin themePopups() {
+  @include fill-all();
+  pointer-events: none;
+  transition: background-color 0.1s ease;
+  z-index: $z-index-popup;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.active {
+    transition: background-color 0.4s ease;
+    background-color: hsl(0deg 0% 0% / 0.3);
+    pointer-events: auto;
+  }
+
+  .mn-popup {
+    position: absolute;
+    border-radius: calc(#{$defaultBorderRadius});
+    @include shadow(1);
+    backface-visibility: hidden;
+    visibility: hidden;
+    transform: translateZ(0);
+
+    &.active {
+      display: flex;
+      visibility: visible;
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
+      animation-name: $popup-active-animation-name;
+      animation-duration: $popup-active-animation-duration;
+    }
+
+    &.hidding {
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
+      animation-name: $popup-hidding-animation-name;
+      animation-duration: $popup-hidding-animation-duration;
+    }
+
+    .mn-popup-header {
+      .mn-popup-title {
+        @include themeFont('medium');
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.mn-popups {
+  @include themePopups();
+}

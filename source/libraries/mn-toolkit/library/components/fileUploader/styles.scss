@@ -1,0 +1,22 @@
+@mixin themeFileUploader() {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  text-align: center;
+  gap: calc(#{$defaultSpacing});
+  padding: calc(#{$defaultSpacing} * 2);
+
+  border-radius: calc(#{$defaultBorderRadius});
+  border: 2px dashed;
+  border-color: color-hsl($fg1);
+
+  &.dragged-over {
+    border-color: color-hsl($primary);
+  }
+}
+
+.mn-file-uploader {
+  @include themeFileUploader();
+}

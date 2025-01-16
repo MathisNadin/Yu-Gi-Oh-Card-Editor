@@ -2,7 +2,7 @@ import { monkeyPatch, monkeyPatchGet } from '../..';
 
 let firstDayOfWeek = 1;
 
-export type DateGranularity = 'minute' | 'minutes' | 'hour' | 'hours' | 'date' | 'time';
+export type TDateGranularity = 'minute' | 'minutes' | 'hour' | 'hours' | 'date' | 'time';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const object: { [name: string]: Function } = {};
@@ -68,7 +68,7 @@ prototype.getDayIndex = function (this: Date) {
   return day;
 };
 
-prototype.getTruncatedTime = function (this: Date, granularity: DateGranularity) {
+prototype.getTruncatedTime = function (this: Date, granularity: TDateGranularity) {
   let date;
   switch (granularity) {
     case 'minute':
@@ -100,7 +100,7 @@ prototype.getTruncatedTime = function (this: Date, granularity: DateGranularity)
   return date.getTime();
 };
 
-prototype.truncate = function (granularity: DateGranularity) {
+prototype.truncate = function (granularity: TDateGranularity) {
   this.setTime(this.getTruncatedTime(granularity));
   return this;
 };
@@ -160,17 +160,17 @@ prototype.toBeginOfDay = function (this: Date) {
   return set(this, 0, 0, 0, 0);
 };
 
-prototype.before = function (d: Date, granularity: DateGranularity) {
+prototype.before = function (d: Date, granularity: TDateGranularity) {
   d = d || new Date();
   return this.getTruncatedTime(granularity) < d.getTruncatedTime(granularity);
 };
 
-prototype.same = function (d: Date, granularity: DateGranularity) {
+prototype.same = function (d: Date, granularity: TDateGranularity) {
   d = d || new Date();
   return this.getTruncatedTime(granularity) === d.getTruncatedTime(granularity);
 };
 
-prototype.after = function (d?: Date, granularity?: DateGranularity) {
+prototype.after = function (d?: Date, granularity?: TDateGranularity) {
   d = d || new Date();
   return this.getTruncatedTime(granularity) > d.getTruncatedTime(granularity);
 };
@@ -323,12 +323,12 @@ prototype.isBeginOfWeek = function (this: Date) {
 prototype.isEndOfWeek = function (this: Date) {
   return this.getDay() === 0;
 };
-prototype.beforeIncluding = function (d: Date, granularity: DateGranularity) {
+prototype.beforeIncluding = function (d: Date, granularity: TDateGranularity) {
   d = d || new Date();
   return this.getTruncatedTime(granularity) <= d.getTruncatedTime(granularity);
 };
 
-prototype.afterIncluding = function (d: Date, granularity: DateGranularity) {
+prototype.afterIncluding = function (d: Date, granularity: TDateGranularity) {
   d = d || new Date();
   return this.getTruncatedTime(granularity) >= d.getTruncatedTime(granularity);
 };
@@ -456,12 +456,12 @@ declare global {
   }
 
   interface Date {
-    truncate(granularity: DateGranularity): Date;
+    truncate(granularity: TDateGranularity): Date;
     toTimezone(offset: number): Date;
     toLocaleISOString(): string;
     isWeekEnd(): boolean;
     getDayIndex(): number;
-    getTruncatedTime(granularity?: DateGranularity): number;
+    getTruncatedTime(granularity?: TDateGranularity): number;
     getEpochDays(): number;
     toBeginOfWeek(): Date;
     toEndOfWeek(): Date;
@@ -469,9 +469,9 @@ declare global {
     toBeginOfMonth(): Date;
     toEndOfDay(): Date;
     toBeginOfDay(): Date;
-    before(d?: Date, granularity?: DateGranularity): boolean;
-    same(d?: Date, granularity?: DateGranularity): boolean;
-    after(d?: Date, granularity?: DateGranularity): boolean;
+    before(d?: Date, granularity?: TDateGranularity): boolean;
+    same(d?: Date, granularity?: TDateGranularity): boolean;
+    after(d?: Date, granularity?: TDateGranularity): boolean;
     getWeekNumber(): number;
     addTime(value: number): Date;
     addSeconds(value: number): Date;
@@ -496,8 +496,8 @@ declare global {
     isBeginOfMonth(): boolean;
     isBeginOfWeek(): boolean;
     isEndOfWeek(): boolean;
-    beforeIncluding(d?: Date, granularity?: DateGranularity): boolean;
-    afterIncluding(d?: Date, granularity?: DateGranularity): boolean;
+    beforeIncluding(d?: Date, granularity?: TDateGranularity): boolean;
+    afterIncluding(d?: Date, granularity?: TDateGranularity): boolean;
     isToday(): boolean;
     isThisWeek(): boolean;
     isNextWeek(): boolean;

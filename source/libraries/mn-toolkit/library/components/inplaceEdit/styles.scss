@@ -1,0 +1,65 @@
+@mixin themeInplaceEdit() {
+  background-color: color-hsl($bg1);
+  color: color-hsl($fg1);
+  padding: 0 calc(#{$defaultSpacing} / 2);
+  border-radius: calc(#{$defaultBorderRadius});
+}
+
+@mixin themeInplaceEditDiv() {
+  @include themeInplaceEdit();
+  line-height: calc(#{$defaultItemHeight});
+  min-height: calc(#{$defaultItemHeight});
+  padding: 0 calc(#{$defaultSpacing} / 2 + 1px);
+  cursor: pointer;
+  align-items: center;
+  gap: calc(#{$defaultSpacing} / 2);
+
+  &.with-placeholder {
+    color: color-hsl($fg2);
+  }
+
+  .value {
+    flex: 1;
+  }
+
+  .mn-icon {
+    visibility: hidden;
+  }
+
+  &:hover {
+    background-color: color-hsl($bg2);
+
+    .mn-icon {
+      visibility: visible;
+    }
+  }
+}
+
+div.mn-inplace-edit {
+  @include themeInplaceEditDiv();
+}
+
+@mixin themeInplaceEditInput() {
+  @include themeInplaceEdit();
+  line-height: calc(#{$defaultItemHeight} - 2px);
+  min-height: calc(#{$defaultItemHeight} - 2px);
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: color-hsl($fg4);
+
+  appearance: textfield;
+
+  &::placeholder {
+    color: color-hsl($fg3);
+  }
+
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+input.mn-inplace-edit {
+  @include themeInplaceEditInput();
+}

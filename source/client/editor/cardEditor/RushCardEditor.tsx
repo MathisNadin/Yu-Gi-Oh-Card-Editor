@@ -11,7 +11,7 @@ import {
   Icon,
   TextInput,
   Select,
-  FileInput,
+  FilePathInput,
   CheckBox,
   Grid,
   TabbedPane,
@@ -496,12 +496,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
           {app.$device.isDesktop && (
-            <FileInput
+            <FilePathInput
               fill
               placeholder="Chemin vers l'artwork"
               defaultValue={this.state.card.artwork.url}
               onChange={(url) => this.onArtworkURLChange(url)}
-              overrideOnTap={() => this.showArtworkPopup()}
+              overrideOnTapIcon={() => this.showArtworkPopup()}
             />
           )}
         </HorizontalStack>

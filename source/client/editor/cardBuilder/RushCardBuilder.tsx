@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
-import { IContainableProps, IContainableState, Containable, JSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
+import { IContainableProps, IContainableState, Containable, TJSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
 import { deepClone, isDeepEqual, preloadImage } from 'mn-tools';
 import { ICard } from '../card';
 import {
@@ -37,7 +37,7 @@ interface IRushCardBuilderState extends IContainableState {
   artworkBg: string;
   cardFrames: string[];
   abilities: string[];
-  description: JSXElementChild[][];
+  description: TJSXElementChild[][];
   hasStIcon: boolean;
 }
 

@@ -1,6 +1,6 @@
 /* eslint-disable import/export */
 
-import { TForbidTypeChanges, LanguageLocale, JSONValue } from 'mn-tools';
+import { TForbidTypeChanges, TLanguageLocale, TJSONValue } from 'mn-tools';
 
 // Pour faire de ceci un module
 export interface IDummy {}
@@ -372,7 +372,7 @@ export interface IPushServerApiRegisterOptions {
     name: string;
     stage: string;
     version: string;
-    language: LanguageLocale;
+    language: TLanguageLocale;
     userAgent: string;
   };
 }
@@ -481,7 +481,7 @@ export interface IBatchTableReport {
   formatter: 'table';
   title?: string;
   headers: (string | { label: string; width?: string })[];
-  rows: JSONValue[][];
+  rows: TJSONValue[][];
 }
 
 export type BatchGraphReportType = 'lines' | 'donnut';
@@ -557,7 +557,7 @@ export interface IRemodeDeviceSpec {
     version: string;
     name: string;
     stage: string;
-    language: LanguageLocale;
+    language: TLanguageLocale;
   };
 }
 
@@ -569,7 +569,7 @@ export interface IMemberEntity extends TAbstractEntity {
   lastName?: string;
   picture?: number;
   pictureEffects: IFileEffect[];
-  language: LanguageLocale;
+  language: TLanguageLocale;
   timeZone?: string;
   darkTheme: boolean;
   tips: { [uuid: string]: boolean };
@@ -694,7 +694,7 @@ declare global {
 export type TMailStatus = 'sent' | 'new' | 'error';
 
 export interface IMailTemplateVariables {
-  language?: LanguageLocale;
+  language?: TLanguageLocale;
   attachment?: {
     filename: string;
     content: string;

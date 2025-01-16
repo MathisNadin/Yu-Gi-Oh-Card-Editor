@@ -1,0 +1,263 @@
+@mixin themeTypographyEnrichment() {
+  &.bold-weight,
+  strong,
+  b {
+    font-weight: bold;
+  }
+
+  &.italic-style,
+  em,
+  i {
+    font-style: italic;
+  }
+
+  &.underline-decoration,
+  u {
+    text-decoration: underline;
+  }
+
+  &.mn-typography-anchor,
+  a {
+    width: fit-content;
+    color: color-hsl($link);
+    &:link {
+      color: color-hsl($link);
+    }
+
+    &:hover {
+      color: color-hsl($linkHover);
+      text-decoration: underline;
+    }
+
+    &:visited {
+      color: color-hsl($linkVisited);
+      &:hover {
+        color: color-hsl($linkVisitedHover);
+      }
+    }
+  }
+}
+
+@mixin themeTypographyColor() {
+  &.mn-color-primary {
+    fill: color-hsl($primary);
+  }
+  &.mn-color-secondary {
+    fill: color-hsl($secondary);
+  }
+  &.mn-color-tertiary {
+    fill: color-hsl($tertiary);
+  }
+  &.mn-color-positive {
+    fill: color-hsl($positive);
+  }
+  &.mn-color-negative {
+    fill: color-hsl($negative);
+  }
+  &.mn-color-neutral {
+    fill: color-hsl($neutral);
+  }
+  &.mn-color-warning {
+    fill: color-hsl($warning);
+  }
+  &.mn-color-info {
+    fill: color-hsl($info);
+  }
+  &.mn-color-1 {
+    fill: color-hsl($fg1);
+  }
+  &.mn-color-2 {
+    fill: color-hsl($fg2);
+  }
+  &.mn-color-3 {
+    fill: color-hsl($fg3);
+  }
+  &.mn-color-4 {
+    fill: color-hsl($fg4);
+  }
+}
+
+@mixin themeTypographyText() {
+  @include themeFont('regular');
+}
+
+@mixin themeTypographyH1() {
+  @include themeFont('h1');
+  width: fit-content;
+  margin: 0;
+}
+
+@mixin themeTypographyH2() {
+  @include themeFont('h2');
+  width: fit-content;
+  margin: 0;
+}
+
+@mixin themeTypographyH3() {
+  @include themeFont('h3');
+  width: fit-content;
+  margin: 0;
+}
+
+@mixin themeTypographyH4() {
+  @include themeFont('h4');
+  width: fit-content;
+  margin: 0;
+}
+
+@mixin themeTypographyH5() {
+  @include themeFont('h5');
+  width: fit-content;
+  margin: 0;
+}
+
+@mixin themeTypographyH6() {
+  @include themeFont('h6');
+  width: fit-content;
+  margin: 0;
+}
+
+@mixin themeTypographyList() {
+  list-style-position: outside;
+  margin: 0 0 calc(#{$defaultSpacing} * 2) calc(#{$defaultSpacing} * 2);
+  li {
+    margin-top: calc(#{$defaultSpacing} / 2);
+    line-height: 25px;
+  }
+}
+
+@mixin themeTypographyOL() {
+  @include themeTypographyList();
+  list-style-type: decimal;
+  ol {
+    list-style-type: lower-latin;
+  }
+}
+
+@mixin themeTypographyUL() {
+  @include themeTypographyList();
+  list-style-type: disc;
+  ul {
+    list-style-type: circle;
+  }
+}
+
+@mixin themeTypographyLabel() {
+  @include themeFont('medium');
+  width: fit-content;
+}
+
+@mixin themeTypographyHelp() {
+  @include themeFont('small');
+}
+
+@mixin themeTypographyParagraph() {
+  @include themeTypographyText();
+  margin-bottom: calc(#{$defaultSpacing});
+}
+
+@mixin themeTypographyBlockquote() {
+  &:not(.code-block) {
+    background-color: color-hsl($bg3);
+    border-left: 5px solid color-hsl($fg3) !important;
+    border-color: color-hsl($fg1);
+    margin: calc(#{$defaultSpacing}) 0 !important;
+    padding: calc(#{$defaultSpacing}) !important;
+    quotes: none;
+    &:before {
+      color: color-hsl($fg2);
+      content: '“';
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
+    p {
+      &:last-child {
+        font-size: 1.2em;
+        font-weight: 300;
+        font-style: italic;
+        display: inline;
+      }
+    }
+  }
+}
+
+@mixin themeTypographyDocument() {
+  @include themeTypographyText();
+  blockquote,
+  q {
+    @include themeTypographyBlockquote();
+  }
+  p {
+    @include themeTypographyParagraph();
+  }
+}
+
+@mixin themeTypographyBullet() {
+  @include themeTypographyText();
+}
+
+@mixin text-overflow() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 130%;
+}
+
+@mixin themeTypography() {
+  &.mn-typography-left {
+    text-align: left;
+  }
+  &.mn-typography-right {
+    text-align: right;
+  }
+  &.mn-typography-center {
+    text-align: center;
+  }
+
+  &.mn-typography-h1 {
+    @include themeTypographyH1();
+  }
+  &.mn-typography-h2 {
+    @include themeTypographyH2();
+  }
+  &.mn-typography-h3 {
+    @include themeTypographyH3();
+  }
+  &.mn-typography-h4 {
+    @include themeTypographyH4();
+  }
+  &.mn-typography-h5 {
+    @include themeTypographyH5();
+  }
+  &.mn-typography-h6 {
+    @include themeTypographyH6();
+  }
+  &.mn-typography-paragraph {
+    @include themeTypographyParagraph();
+  }
+  &.mn-typography-help {
+    @include themeTypographyHelp();
+  }
+  &.mn-typography-label {
+    @include themeTypographyLabel();
+  }
+  &.mn-typography-document {
+    @include themeTypographyDocument();
+  }
+  &.mn-typography-bullet {
+    @include themeTypographyBullet();
+  }
+
+  @include themeTypographyEnrichment();
+  @include themeTypographyColor();
+
+  &.no-wrap {
+    @include text-overflow();
+  }
+}
+
+.mn-typography {
+  @include themeTypography();
+}
