@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { classNames, isString } from 'mn-tools';
 import {
   Spinner,

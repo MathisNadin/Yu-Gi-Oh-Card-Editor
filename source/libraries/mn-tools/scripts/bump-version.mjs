@@ -23,7 +23,7 @@ try {
 let currentVersion;
 try {
   currentVersion = execSync('git describe --tags --abbrev=0').toString().trim();
-} catch (error) {
+} catch {
   currentVersion = '0.0.0'; // Version initiale si aucun tag n'existe
 }
 

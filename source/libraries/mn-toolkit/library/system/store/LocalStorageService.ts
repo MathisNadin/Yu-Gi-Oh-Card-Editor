@@ -1,4 +1,4 @@
-import { isDefined, logger, unserialize } from 'mn-tools';
+import { isDefined, logger, serialize, unserialize } from 'mn-tools';
 import { IStoreOptions, IStoreService, TStoreValue } from '.';
 
 const log = logger('$store');
@@ -24,7 +24,7 @@ export class LocalStorageService implements IStoreService {
 
   public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {
     log.debug(`Storing item in LocalStorage: key=${key}, value=${value}`);
-    localStorage.setItem(`${this.storePrefix}${key}`, JSON.stringify(value));
+    localStorage.setItem(`${this.storePrefix}${key}`, serialize(value));
     return Promise.resolve();
   }
 
@@ -61,6 +61,6 @@ export class LocalStorageService implements IStoreService {
     for (const key in localStorage) {
       data[key] = unserialize(localStorage.getItem(key)!);
     }
-    return JSON.stringify(data);
+    return serialize(data);
   }
 }

@@ -1,6 +1,6 @@
 import { isArray, monkeyPatch } from '../..';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const prototype: { [name: string]: Function } = {};
 
 prototype.toCamelCase = function (this: string) {

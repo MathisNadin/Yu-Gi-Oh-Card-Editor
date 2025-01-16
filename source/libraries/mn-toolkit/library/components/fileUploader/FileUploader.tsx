@@ -6,14 +6,9 @@ import { Typography } from '../typography';
 import { Button } from '../button';
 import { Icon } from '../icon';
 
-// Present on File with Electron
-interface ElectronFile extends File {
-  readonly path: string;
-}
-
 export interface IFile {
   name: File['name'];
-  path?: ElectronFile['path'];
+  path?: string;
   size?: File['size'];
   type?: File['type'];
   extension?: string;
@@ -91,15 +86,22 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       for (const orgFile of fileListArray) {
         try {
           this.setState((prevState) => ({ loadingProgress: prevState.loadingProgress + 1 }));
+
           const match = orgFile.name?.match(/\.[0-9a-z]+$/i);
+          let path: string | undefined;
+          if (app.$device.isElectron(window)) {
+            path = await window.electron.ipcRenderer.invoke('getPathForFile', orgFile);
+          }
+
           const file: IFile = {
             url: await app.$api.fileToDataURL(orgFile),
             name: orgFile.name,
-            path: 'path' in orgFile ? (orgFile as ElectronFile).path : undefined,
             size: orgFile.size,
             type: orgFile.type,
             extension: match ? match[0] : '',
+            path,
           };
+
           files.push(file);
           if (files.length && !this.props.multiple) break;
         } catch (e) {

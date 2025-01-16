@@ -238,7 +238,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
 
       !!croppedArtworkBase64?.length && (
         <HorizontalStack key='crop-title' itemAlignment='center' verticalItemAlignment='middle'>
-          <Typography alignment='center' variant='h2' contentType='text' content='Apperçu du recadrage' />
+          <Typography alignment='center' bold variant='label' contentType='text' content='Apperçu du recadrage' />
         </HorizontalStack>
       ),
 

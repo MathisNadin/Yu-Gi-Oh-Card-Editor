@@ -97,7 +97,7 @@ export function getPixelRatio() {
   let FINAL_PROCESS;
   try {
     FINAL_PROCESS = process;
-  } catch (e) {
+  } catch {
     // pass
   }
 

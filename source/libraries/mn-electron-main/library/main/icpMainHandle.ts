@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { existsSync, readFileSync, writeFile } from 'fs';
-import { app, BrowserWindow, shell, ipcMain, dialog, IpcMainInvokeEvent } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog, IpcMainInvokeEvent, webUtils } from 'electron';
 import { download } from 'electron-dl';
 
 export function addIpcMainHandleChannel<C extends TIpcRendererInvokeChannel>(
@@ -36,6 +36,10 @@ export function setupIpcMainHandleChannels() {
 
   addIpcMainHandleChannel('checkFileExists', async (_event: IpcMainInvokeEvent, filePath: string) => {
     return existsSync(filePath);
+  });
+
+  addIpcMainHandleChannel('getPathForFile', async (_event: IpcMainInvokeEvent, file: File) => {
+    return await webUtils.getPathForFile(file);
   });
 
   addIpcMainHandleChannel('getFilePath', async (_event: IpcMainInvokeEvent, defaultPath?: string) => {

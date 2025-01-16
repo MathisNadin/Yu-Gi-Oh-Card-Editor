@@ -35,7 +35,7 @@ function clonePseudoElement<T extends HTMLElement>(nativeNode: T, clonedNode: T,
   const className = uuid();
   try {
     clonedNode.className = `${clonedNode.className} ${className}`;
-  } catch (err) {
+  } catch {
     return;
   }
 

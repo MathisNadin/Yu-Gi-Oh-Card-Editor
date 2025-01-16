@@ -1,4 +1,4 @@
-import { extend, isDefined, isString, logger, Observable, parseUri } from 'mn-tools';
+import { extend, isDefined, isString, logger, Observable, parseUri, serialize } from 'mn-tools';
 import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, IJobResponse } from 'api/main';
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
@@ -254,7 +254,7 @@ export class ApiService extends Observable<IApiListener> {
   }
 
   private encodeArrayToBase64<T>(array: T[]): string {
-    const jsonString = JSON.stringify(array);
+    const jsonString = serialize(array);
     const bytes = new TextEncoder().encode(jsonString);
     const base64String = window.btoa(String.fromCharCode(...bytes));
     return base64String;

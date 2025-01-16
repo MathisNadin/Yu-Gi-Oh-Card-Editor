@@ -19,6 +19,7 @@ declare global {
   interface IIpcRendererInvokeChannel {
     getAppVersion: { args: []; response: string };
     checkFileExists: { args: [path: string]; response: boolean };
+    getPathForFile: { args: [file: File]; response: string };
     getFilePath: { args: [defaultPath?: string]; response: string | undefined };
     getDirectoryPath: { args: [defaultPath?: string]; response: string | undefined };
     readFileUtf8: { args: [filters?: TFileFilter[]]; response: string | Buffer | undefined };

@@ -4,7 +4,7 @@ import { Device as CapacitorDevice } from '@capacitor/device';
 import { Keyboard as CapacitorKeyboard } from '@capacitor/keyboard';
 import { SplashScreen as CapacitorSplashScreen } from '@capacitor/splash-screen';
 import { StatusBar as CapacitorStatusBar, Style as StatusBarStyle } from '@capacitor/status-bar';
-import { extend, isBoolean, isDefined, isString, TLanguageLocale, logger, Observable } from 'mn-tools';
+import { extend, isBoolean, isDefined, isString, TLanguageLocale, logger, Observable, serialize } from 'mn-tools';
 import { IApplicationListener } from '../../system';
 
 interface IDeviceRecord {
@@ -548,7 +548,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   public async writeAndDownloadJson(defaultFileName: string, object: object, filePath?: string) {
-    const jsonData = JSON.stringify(object);
+    const jsonData = serialize(object);
     if (this.isElectron(window)) {
       await window.electron.ipcRenderer.invoke('writeJsonFile', defaultFileName, jsonData, filePath);
     } else {

@@ -4,7 +4,7 @@ let firstDayOfWeek = 1;
 
 export type TDateGranularity = 'minute' | 'minutes' | 'hour' | 'hours' | 'date' | 'time';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const object: { [name: string]: Function } = {};
 
 object.setFirstDayOfWeek = function (value: number) {
@@ -52,7 +52,7 @@ object.today = function (this: Date) {
   return new Date();
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const prototype: { [name: string]: Function } = {};
 
 prototype.isWeekEnd = function (this: Date) {

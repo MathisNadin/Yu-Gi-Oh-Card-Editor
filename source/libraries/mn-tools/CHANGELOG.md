@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.0.4
+
+- fix d'erreurs eslint
+
 ## 2.0.3
 
+- bump to 2.0.3
 - polish des noms des types + funcs wait, hslToRgb, et deepExtend
 
 ## 2.0.2

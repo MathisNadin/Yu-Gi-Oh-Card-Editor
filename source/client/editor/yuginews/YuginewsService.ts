@@ -1,4 +1,4 @@
-import { extend, integer, isDefined, isUndefined, uuid } from 'mn-tools';
+import { extend, integer, isDefined, isUndefined, unserialize, uuid } from 'mn-tools';
 import { ICard, TRushTextMode, TRushEffectType, TFrame, TStIcon, TAttribute } from 'client/editor/card';
 
 export interface IYuginewsCardData {
@@ -216,7 +216,7 @@ export class YuginewsService {
     // Étape 6 : Conversion JSON
     let cardsData: IYuginewsCardData[] = [];
     try {
-      cardsData = JSON.parse(inputString);
+      cardsData = unserialize(inputString);
     } catch (e) {
       app.$errorManager.trigger(e as Error);
     }

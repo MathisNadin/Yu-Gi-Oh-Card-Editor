@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { Crop } from 'react-image-crop';
 import { toPng } from 'mn-html-to-image';
 import { IStoreListener } from 'mn-toolkit';

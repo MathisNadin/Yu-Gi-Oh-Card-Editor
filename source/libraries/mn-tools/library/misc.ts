@@ -1,4 +1,4 @@
-import { isEmpty, isBoolean, isString, isObject } from './is';
+import { isEmpty, isBoolean, isString } from './is';
 import { each } from './objects';
 
 export interface ICropBase64Options {
@@ -183,7 +183,7 @@ export async function wait(ms: number) {
   return await new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function debounce(func: Function, wait?: number) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let timeout: any;
@@ -951,11 +951,11 @@ export function imageResizer(options: ImageResizerOptions, cb: (error: Error | u
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function classNames(...args: any[]): string {
-  let result = [];
-  for (let arg of args) {
+  const result = [];
+  for (const arg of args) {
     if (!arg) continue;
-    if (isObject(arg)) {
-      for (let k in arg) {
+    if (typeof arg === 'object' && !Array.isArray(arg)) {
+      for (const k in arg) {
         if (!!arg[k]) result.push(k);
       }
     } else {

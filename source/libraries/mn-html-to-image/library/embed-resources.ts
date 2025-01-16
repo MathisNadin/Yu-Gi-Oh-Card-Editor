@@ -41,7 +41,7 @@ export async function embed(
       dataURL = await resourceToDataURL(resolvedURL, contentType, options);
     }
     return cssText.replace(toRegex(resourceURL), `$1${dataURL}$3`);
-  } catch (error) {
+  } catch {
     // pass
   }
   return cssText;

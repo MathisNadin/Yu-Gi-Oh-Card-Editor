@@ -1,4 +1,4 @@
-import { isDefined, unserialize } from 'mn-tools';
+import { isDefined, serialize, unserialize } from 'mn-tools';
 import { IStoreOptions, IStoreService, TStoreValue } from '.';
 
 export class IndexedDBService implements IStoreService {
@@ -124,7 +124,7 @@ export class IndexedDBService implements IStoreService {
       };
       request.onsuccess = () => {
         const data = request.result;
-        const jsonData = JSON.stringify(data);
+        const jsonData = serialize(data);
         resolve(jsonData);
       };
     });

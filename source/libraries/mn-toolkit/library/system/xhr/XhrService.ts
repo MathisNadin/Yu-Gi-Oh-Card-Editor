@@ -75,7 +75,7 @@ export class XhrService extends Observable<IXhrListener> {
           try {
             request = new ActiveXObject(versions[i]);
             break;
-          } catch (e) {}
+          } catch {}
         }
       }
       if (typeof request === 'undefined') return reject(new XhrError('No XHR'));

@@ -183,6 +183,6 @@ export class CapacitorSQLiteService implements IStoreService {
     for (const { key, value } of values) {
       data[key] = this.unserializeDBValue(value);
     }
-    return JSON.stringify(data);
+    return serialize(data);
   }
 }

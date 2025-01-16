@@ -77,10 +77,19 @@ module.exports = {
     'no-return-await': 'off',
     'no-nested-ternary': 'off',
     'no-case-declarations': 'off',
+    '@typescript-eslint/no-empty-object-type': 'off',
   },
   settings: {
     react: {
       version: 'detect',
     },
   },
+  overrides: [
+    {
+      files: ['**/package.json', 'source/api/main.json'], // Target those specific files
+      rules: {
+        '@typescript-eslint/no-unused-expressions': 'off',
+      },
+    },
+  ],
 };

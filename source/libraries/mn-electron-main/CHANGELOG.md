@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.0
+
+- mise à jour des versions d'electron et ses packages associés
+
 ## 1.0.3
 
+- bump to 1.0.3
 - restructuration et division du main.ts + meilleure gestion de l'autoUpdater
 
 ## 1.0.2

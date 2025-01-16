@@ -48,7 +48,7 @@ export function isClass(func: any): boolean {
  * @param {any} subject the subject
  * @return {boolean} true if the test is successful
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type
 export function isFunction(obj: any): obj is Function {
   return kind(obj) === 'function';
 }
@@ -141,8 +141,8 @@ export function isInteger(subject: any): subject is number {
  *
  * @param {Object} subject subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-export function isObject(subject: any): subject is Object {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isObject(subject: any): subject is object {
   return !isUndefined(subject) && !isArray(subject) && typeof subject === 'object';
 }
 
@@ -242,7 +242,8 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
 
     for (const key of keys1) {
       if (!keys2.includes(key)) return false;
-      if (!isDeepEqual(obj1[key], obj2[key])) return false;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!isDeepEqual((obj1 as Record<string, any>)[key], (obj2 as Record<string, any>)[key])) return false;
     }
     return true;
   }

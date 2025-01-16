@@ -1,6 +1,6 @@
-import { ICardsExportData } from 'client/editor/card';
+import { Observable, deepClone, isObject, isString, unserialize } from 'mn-tools';
 import { IStoreListener } from 'mn-toolkit';
-import { Observable, deepClone, isObject, isString } from 'mn-tools';
+import { ICardsExportData } from 'client/editor/card';
 
 interface IExportData {
   settings: IUserSettings;
@@ -94,11 +94,11 @@ export class SettingsService extends Observable<ISettingsListener> implements Pa
       const stringContent = resultIsString ? result : decoder.decode(result.content);
       if (!stringContent) return;
 
-      const data = JSON.parse(stringContent);
+      const data = unserialize(stringContent) as IExportData;
       if (!data || !isObject(data)) return;
 
       if (data.settings) {
-        const settings = deepClone((data as IExportData).settings);
+        const settings = deepClone(data.settings);
         this.correct(settings);
         this._settings = settings;
         await app.$store.set<IUserSettings, SettingsStorageKey>('user-settings', this._settings);

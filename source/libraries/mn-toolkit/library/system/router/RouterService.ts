@@ -282,7 +282,7 @@ export class RouterService extends Observable<IRouterListener> {
       key = eligible.pathKeys[i - 1];
       try {
         val = isString(match[i]) ? decodeURIComponent(match[i]) : match[i];
-      } catch (e) {
+      } catch {
         throw new Error(`Failed to decode param '${match[i]}'`);
       }
 

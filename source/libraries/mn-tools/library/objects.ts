@@ -346,7 +346,7 @@ export function values<T>(object: TDictionary<T>): T[] {
   return values;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type
 export function monkeyPatch(obj: any, name: string, fn: Function) {
   if (!(name in obj)) {
     Object.defineProperty(obj, name, { value: fn });
