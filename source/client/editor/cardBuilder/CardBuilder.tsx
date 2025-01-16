@@ -1,6 +1,6 @@
 import { createRef, CSSProperties } from 'react';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from 'mn-toolkit';
-import { classNames, deepClone, isDeepEqual, preloadImage } from 'mn-tools';
+import { classNames, deepClone, isDeepEqual, preloadImage, wait } from 'mn-tools';
 import { ICard } from '../card';
 import { CardName, CardAtk, CardDef, CardAbilities, CardDesc, CardPend, CardArtwork } from './cardSubBuilders';
 
@@ -152,7 +152,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
       ...pendulumCovers.map((cover) => preloadImage(cover)),
     ]);
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await wait(0);
 
     this.nameReady = false;
     this.descReady = false;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
 import { IContainableProps, IContainableState, Containable, TJSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
-import { deepClone, isDeepEqual, preloadImage } from 'mn-tools';
+import { deepClone, isDeepEqual, preloadImage, wait } from 'mn-tools';
 import { ICard } from '../card';
 import {
   RushCardArtwork,
@@ -166,7 +166,7 @@ export class RushCardBuilder extends Containable<IRushCardBuilderProps, IRushCar
 
     await Promise.all([preloadImage(artworkBg), ...cardFrames.map((frame) => preloadImage(frame))]);
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await wait(0);
 
     this.nameReady = false;
     this.descReady = false;

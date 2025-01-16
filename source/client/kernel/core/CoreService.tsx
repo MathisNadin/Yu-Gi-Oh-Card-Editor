@@ -83,8 +83,8 @@ export class CoreService implements Partial<IApplicationListener> {
     }
   }
 
-  public gotoHome() {
-    app.$router.go(HOME_STATE);
+  public async gotoHome() {
+    await app.$router.go(HOME_STATE);
   }
 
   public applicationReady() {
@@ -92,7 +92,7 @@ export class CoreService implements Partial<IApplicationListener> {
     const container = document.getElementById('root')!;
     const root = createRoot(container);
     root.render(<Page />);
-    this.gotoHome();
+    app.$errorManager.handlePromise(this.gotoHome());
 
     if (app.$device.isElectron(window)) {
       app.$errorManager.handlePromise(window.electron.ipcRenderer.invoke('checkForAppUpdates'));
