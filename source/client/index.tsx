@@ -29,7 +29,7 @@ declare global {
   }
 }
 
-import * as confJson from '../../package.json';
+import confJson from '../../package.json';
 const conf = confJson as unknown as IPackageJSON;
 
 import correctConf from '../../config/platform.js';
