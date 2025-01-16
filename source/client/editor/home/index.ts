@@ -5,7 +5,7 @@ export * from './HomeRightPane';
 
 declare global {
   interface IRouter {
-    home: () => void;
-    toPleaseTheRouter: (options: { dummy: string }) => void;
+    home: () => Promise<void>;
+    toPleaseTheRouter: (options: { dummy: string }) => Promise<void>;
   }
 }

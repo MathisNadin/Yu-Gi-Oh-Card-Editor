@@ -51,8 +51,13 @@
   span {
     font-family: unset;
     font-size: unset;
-    margin-bottom: unset;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
     line-height: 100%;
+    letter-spacing: 0px;
+    margin-bottom: unset;
   }
 
   .custom-container {

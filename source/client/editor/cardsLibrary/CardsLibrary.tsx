@@ -160,7 +160,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     let day = `${date.getDate()}`;
     if (day.length < 2) day = `0${day}`;
 
-    let month = `${date.getMonth()}`;
+    let month = `${date.getMonth() + 1}`;
     if (month.length < 2) month = `0${month}`;
 
     return `${day}-${month}-${date.getFullYear()}`;
