@@ -39,7 +39,7 @@ $tabBorderSize: 1px;
     min-height: calc(#{$defaultItemHeight});
     max-height: calc(#{$defaultItemHeight});
     @include themeFont('small');
-    font-weight: 300;
+    color: color-hsl($fg2);
     position: relative;
     transition: background-color 0.2s;
     gap: calc(#{$defaultSpacing} / 2);
@@ -71,6 +71,7 @@ $tabBorderSize: 1px;
 
     &:hover,
     &.selected {
+      color: color-hsl($fg1);
       background-color: color-hsl($bg1);
       z-index: 1;
     }

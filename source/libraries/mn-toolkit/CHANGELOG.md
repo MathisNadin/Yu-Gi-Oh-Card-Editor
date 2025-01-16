@@ -1,7 +1,38 @@
 ## mn-toolkit change log
 
+## 6.0.0
+
+- fix header children
+- fix renderFooter + fix typing dans RouterService
+- ajustement couleur des tabset item label
+- retour de overrideOnTapIcon sur FilePathInput
+- polish dans react et router services
+- correction du labeled group
+- ajustement du letter spacing
+- diminution de l'utilisation de la mixin on + nommage propre des types TS + fonction wait
+- corrections ouverture des href externes sur typo et menus
+- def des fonts en variables css + utilisation partout + split des styles globaux en plusieurs fichiers
+- suppr des rgba et hexa restants
+- suppr des fonctions scss white et black
+- fix taille des rich text editor et field
+- ajustements divers pour le dark mode et fonctionnels sur certains composants
+- conversion rgb -> hsl sur toutes les variables et les dark theme + fixs affichage left menu
+- toggle light/dark theme sur le theme service + fixs visuels des ancres sur les menus + right et left content sur le top menu
+- nettoyage des styles de typography
+- gestion générique du mn-disabled
+- typing correct des events react
+- notation override sur les defaultProps + extension ocrrecte sur les Drawers, 404, GalleryContainer
+- correction AbstractView + fixs et ajustements de rendu de Toaster, Popup, Popover, et TopMenu
+- fusion de View et AbstractViewComponent
+- homonégéisation des render et children sur la plupart des composants
+- fileInput -> filePathInput
+- quelques ajouts de refs + tous les styles du toolkit dans une mixin~
+- restructuration des fichiers en system/components
+- restructuration des fichiers en system/components
+
 ## 5.0.8
 
+- bump to 5.0.8
 - icone adaptative sur le picture editor
 
 ## 5.0.7

@@ -18,7 +18,7 @@ export abstract class AbstractView<
 
   protected renderHeader?(): TJSXElementChild;
   protected abstract renderContent(): TJSXElementChild;
-  protected renderFoter?(): TJSXElementChild;
+  protected renderFooter?(): TJSXElementChild;
 
   public static override get defaultProps(): IAbstractViewProps {
     return {
@@ -72,7 +72,7 @@ export abstract class AbstractView<
       <div className='mn-container-inside'>
         {!!this.renderHeader && this.renderHeader()}
         {this.renderContent()}
-        {!!this.renderFoter && this.renderFoter()}
+        {!!this.renderFooter && this.renderFooter()}
       </div>
     );
   }

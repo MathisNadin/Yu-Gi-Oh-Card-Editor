@@ -1,4 +1,4 @@
-import { Observable, extend, isString, isUndefined } from 'mn-tools';
+import { Observable, extend, isBoolean, isNumber, isString, isUndefined } from 'mn-tools';
 import {
   IRouterListener,
   IResolvedState,
@@ -107,7 +107,12 @@ export class RouterService extends Observable<IRouterListener> {
         return;
       }
 
-      const value = encodeURIComponent(parameters[keyName]);
+      let value = '';
+      if (isString(parameters[keyName]) || isNumber(parameters[keyName]) || isBoolean(parameters[keyName])) {
+        // Typing trick
+        const param = parameters[keyName] as string | number | boolean;
+        value = encodeURIComponent(param);
+      }
 
       if (key.type === 'path') {
         path = path.replace(':' + key.name, value);
@@ -305,7 +310,7 @@ export class RouterService extends Observable<IRouterListener> {
   public setHistoryState(name: string, value: string) {
     if (!this.currentResolvedState.historyData) return;
     const key = name as keyof TRouterParams<TRouterState>;
-    (this.currentResolvedState.historyData as TRouterParams<TRouterState>)[key] = value;
+    (this.currentResolvedState.historyData as { [key in keyof TRouterParams<TRouterState>]: string })[key] = value;
   }
 
   public getHistoryState(name: string) {

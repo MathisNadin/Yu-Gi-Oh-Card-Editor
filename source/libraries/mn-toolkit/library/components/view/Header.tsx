@@ -102,7 +102,7 @@ export class Header extends Container<IHeaderProps, IHeaderState> implements Par
 
         {!!this.downloadTotal && <Progress total={this.downloadTotal} progress={this.downloadProgress} />}
 
-        {this.children}
+        {this.props.children}
       </div>
     );
   }
