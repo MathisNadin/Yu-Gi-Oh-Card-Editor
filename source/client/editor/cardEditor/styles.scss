@@ -86,7 +86,6 @@
       }
 
       .pendulum-lock-icon {
-        padding: 5px;
         border-radius: calc(#{$defaultBorderRadius});
 
         &.locked {
@@ -94,7 +93,11 @@
         }
 
         &:hover {
-          background-color: color-hsla($negative, 0.5);
+          background-color: color-hsla($negative, 0.4);
+        }
+
+        > svg {
+          padding: calc(#{$defaultSpacing} / 4);
         }
       }
 

@@ -12,7 +12,7 @@
     min-width: 1500px;
     width: 100%;
     position: absolute;
-    background-color: color-hsl($fg1);
+    background-color: $contentBg;
   }
 
   .card-preview-img {

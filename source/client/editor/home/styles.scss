@@ -17,7 +17,7 @@
 
 .mn-view.home-view {
   .mn-content {
-    background-color: color-hsl($fg1);
+    background-color: $contentBg;
   }
 
   .home-center-pane {

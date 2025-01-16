@@ -819,6 +819,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   private renderPendulumCardDetails() {
+    const defaultSpacing = app.$theme.settings.commons?.['default-spacing']?.value || 16;
     return (
       <VerticalStack gutter className='card-editor-section pendulum-section'>
         <HorizontalStack fill gutter verticalItemAlignment='bottom'>
@@ -834,8 +835,12 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </VerticalStack>
 
           <Icon
-            size={32}
-            className={classNames('pendulum-lock-icon', { locked: this.state.lockPend })}
+            size={28 + defaultSpacing / 4}
+            className={classNames(
+              'pendulum-lock-icon',
+              { unlocked: !this.state.lockPend },
+              { locked: this.state.lockPend }
+            )}
             icon={this.state.lockPend ? 'toolkit-lock-closed' : 'toolkit-lock-opened'}
             onTap={() => this.onPendLockChange()}
           />

@@ -1,9 +1,11 @@
 // Vraiment parce que c'est plus simple de hacker comme ça
 .mn-zindex-content {
-  &:not(.mn-popup-container .mn-zindex-content) {
+  &:not(.mn-popup-container .mn-zindex-content):not(.mn-table):not(.card-preview-img.rendering) {
     z-index: inherit !important;
   }
 }
+
+$contentBg: #414141;
 
 @import 'mn-toolkit/index.scss';
 @import './kernel/styles.scss';
