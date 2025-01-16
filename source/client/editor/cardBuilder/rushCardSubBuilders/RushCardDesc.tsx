@@ -91,6 +91,7 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
       prevState.rushCondition !== nextProps.card.rushCondition ||
       prevState.rushEffect !== nextProps.card.rushEffect ||
       prevState.rushEffectType !== nextProps.card.rushEffectType ||
+      prevState.rushChoiceEffects.length !== nextProps.card.rushChoiceEffects.length ||
       !prevState.rushChoiceEffects.every((innerArray, index) => innerArray === nextProps.card.rushChoiceEffects[index])
     ) {
       const { fontSize, lineHeight } = RushCardDesc.predictSizes({

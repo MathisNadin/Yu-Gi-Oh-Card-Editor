@@ -729,12 +729,14 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                       >
                         <HorizontalStack className='choice-effects-line-icons' verticalItemAlignment='middle'>
                           <Typography fill variant='help' content={`• ${iChoiceEff + 1}`} />
-                          <Icon
-                            size={24}
-                            icon='toolkit-minus'
-                            color='negative'
-                            onTap={() => this.onRemoveChoiceEffect(iChoiceEff)}
-                          />
+                          {this.state.card.rushChoiceEffects.length > 2 && (
+                            <Icon
+                              size={24}
+                              icon='toolkit-minus'
+                              color='negative'
+                              onTap={() => this.onRemoveChoiceEffect(iChoiceEff)}
+                            />
+                          )}
                           <Icon size={24} icon='toolkit-angle-up' onTap={() => this.onMoveChoiceEffectUp(iChoiceEff)} />
                           <Icon
                             size={24}
