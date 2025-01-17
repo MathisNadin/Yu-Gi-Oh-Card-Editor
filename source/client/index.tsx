@@ -30,7 +30,7 @@ export interface IPackageJSON {
 import confJson from '../../package.json';
 const conf = confJson as unknown as IPackageJSON;
 
-import { patchConfig } from '../../config/platform.js';
+import patchConfig from '../../config/platform.js';
 patchConfig(conf);
 
 const stage = process.env.NODE_ENV as TAppplicationStage;

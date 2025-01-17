@@ -24,7 +24,7 @@
     }
   },
   "scripts": {
-    "start": "npm run start:desktop",
+    "start": "cross-env PORT=8080 npm run start:desktop",
     "build": "npm run build:desktop",
     "watch:client-apis": "node scripts/copy-api-to-clients.js",
     "watch:interfaces": "node scripts/build-api-interfaces.js",
