@@ -12,13 +12,13 @@ if (isDev) {
   entry.push(`webpack-dev-server/client?http://localhost:${port}/dist`);
   entry.push('webpack/hot/only-dev-server');
 }
-entry.push(path.join(__dirname, '..', '..', 'source', 'client', 'index.tsx'));
+entry.push(path.join(__dirname, '..', '..', '..', 'source', 'client', 'index.tsx'));
 
 const desktopRendererConfig: Configuration = {
   target: ['web', 'electron-renderer'],
   entry,
   output: {
-    path: path.resolve(__dirname, '..', '..', '.build-desktop'),
+    path: path.resolve(__dirname, '..', '..', '..', '.build-desktop'),
     filename: 'renderer.js',
     publicPath: isDev ? '/' : './',
     library: {
@@ -27,7 +27,7 @@ const desktopRendererConfig: Configuration = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '..', '..', 'source', 'client', 'index.html'),
+      template: path.resolve(__dirname, '..', '..', '..', 'source', 'client', 'index.html'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -38,4 +38,4 @@ const desktopRendererConfig: Configuration = {
   ],
 };
 
-export default desktopRendererConfig;
+export { desktopRendererConfig };

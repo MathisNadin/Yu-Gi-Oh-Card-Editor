@@ -10,30 +10,28 @@ import {
   CardBuilderService,
 } from './editor';
 
-declare global {
-  interface IPackageJSON {
-    name: string;
-    displayName: string;
-    stage: string;
-    version: string;
-    dbName: string;
-    objectStoreName: string;
-    presets: {
-      development: {
-        apiUrl: string;
-      };
-      production: {
-        apiUrl: string;
-      };
+export interface IPackageJSON {
+  name: string;
+  displayName: string;
+  stage: string;
+  version: string;
+  dbName: string;
+  objectStoreName: string;
+  presets: {
+    development: {
+      apiUrl: string;
     };
-  }
+    production: {
+      apiUrl: string;
+    };
+  };
 }
 
 import confJson from '../../package.json';
 const conf = confJson as unknown as IPackageJSON;
 
-import correctConf from '../../config/platform.js';
-correctConf(conf);
+import { patchConfig } from '../../config/platform.js';
+patchConfig(conf);
 
 const stage = process.env.NODE_ENV as TAppplicationStage;
 let apiUrl: string;

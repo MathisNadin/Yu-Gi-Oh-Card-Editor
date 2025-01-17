@@ -2,8 +2,11 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { Configuration, EnvironmentPlugin } from 'webpack';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+import { TWebpackNodeEnv } from '..';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
+
+const prodEnv: TWebpackNodeEnv = 'production';
 
 const commonProdConfig: Configuration = {
   mode: 'production',
@@ -27,10 +30,7 @@ const commonProdConfig: Configuration = {
   },
   plugins: [
     new EnvironmentPlugin({
-      NODE_ENV: 'production',
-    }),
-    new MiniCssExtractPlugin({
-      filename: 'style.css',
+      NODE_ENV: prodEnv,
     }),
     new CspHtmlWebpackPlugin(
       {
@@ -46,4 +46,4 @@ const commonProdConfig: Configuration = {
   ],
 };
 
-export default commonProdConfig;
+export { commonProdConfig };

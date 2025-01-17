@@ -1,16 +1,17 @@
 import path from 'path';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { Configuration } from 'webpack';
 
 const commonConfig: Configuration = {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    modules: [path.join(__dirname, '../../source'), 'node_modules'],
+    modules: [path.join(__dirname, '..', '..', '..', 'source'), 'node_modules'],
     plugins: [new TsconfigPathsPlugin()],
   },
   module: {
     rules: [
-      // Imports TS/JS
+      // TS/JS Imports
       {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
@@ -35,7 +36,7 @@ const commonConfig: Configuration = {
         test: /\.(png|jpg|jpeg|gif|ico)$/i,
         type: 'asset/resource',
       },
-      // Textes
+      // Texts
       {
         test: /\.(txt|md)$/,
         use: 'raw-loader',
@@ -45,6 +46,11 @@ const commonConfig: Configuration = {
   performance: {
     hints: false,
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'style.css',
+    }),
+  ],
 };
 
-export default commonConfig;
+export { commonConfig };

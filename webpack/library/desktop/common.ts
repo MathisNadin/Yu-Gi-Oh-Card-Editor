@@ -5,6 +5,6 @@ const desktopCommonConfig: Configuration = {
     __dirname: false,
     __filename: false,
   },
-}
+};
 
-export default desktopCommonConfig;
+export { desktopCommonConfig };

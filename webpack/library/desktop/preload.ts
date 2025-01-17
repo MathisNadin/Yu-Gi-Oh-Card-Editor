@@ -8,6 +8,7 @@ const desktopPreloadConfig: Configuration = {
     __dirname,
     '..',
     '..',
+    '..',
     'source',
     'libraries',
     'mn-electron-main',
@@ -16,7 +17,7 @@ const desktopPreloadConfig: Configuration = {
     'preload.ts'
   ),
   output: {
-    path: path.resolve(__dirname, '..', '..', '.temp-desktop'),
+    path: path.resolve(__dirname, '..', '..', '..', '.temp-desktop'),
     filename: 'preload.js',
     library: {
       type: 'umd',
@@ -25,4 +26,4 @@ const desktopPreloadConfig: Configuration = {
   externals: [nodeExternals()],
 };
 
-export default desktopPreloadConfig;
+export { desktopPreloadConfig };

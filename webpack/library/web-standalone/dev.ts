@@ -1,7 +1,7 @@
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { Configuration } from 'webpack';
 
-const webDevConfig: Configuration = {
+const webStandaloneDevConfig: Configuration = {
   devServer: {
     hot: true,
     open: true,
@@ -10,4 +10,4 @@ const webDevConfig: Configuration = {
   plugins: [new ReactRefreshWebpackPlugin()],
 };
 
-export default webDevConfig;
+export { webStandaloneDevConfig };
