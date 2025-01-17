@@ -11,6 +11,7 @@
     "name": "Mathis Nadin",
     "email": "mathis.nadin@gmail.com"
   },
+  "license": "MIT",
   "scripts": {
     "list-dependencies": "node scripts/list-dependencies.mjs",
     "update-changelog": "node scripts/update-changelog.mjs",

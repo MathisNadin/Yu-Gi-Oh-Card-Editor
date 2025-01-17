@@ -12,23 +12,23 @@ const rootDir = path.resolve(process.cwd(), '..');
 const sourceScriptsDir = path.join(process.cwd(), 'app-scripts');
 
 // 2) Dossier cible (celui qu’on veut créer s’il n’existe pas).
-const targetScriptsDir = path.join(rootDir, 'script');
+const targetScriptsDir = path.join(rootDir, 'scripts');
 
 // 3) Chemin du package.json racine et du package.json Webpack.
 const rootPackageJsonPath = path.join(rootDir, 'package.json');
 const webpackPackageJsonPath = path.join(process.cwd(), 'package.json');
 
 async function main() {
-  // --- Étape 1 : créer le dossier `script` à la racine, s'il n'existe pas. ---
+  // --- Étape 1 : créer le dossier `scripts` à la racine, s'il n'existe pas. ---
   try {
     await fs.mkdir(targetScriptsDir, { recursive: true });
-    console.log(`✅ Dossier 'script' créé ou déjà existant : ${targetScriptsDir}`);
+    console.log(`✅ Dossier 'scripts' créé ou déjà existant : ${targetScriptsDir}`);
   } catch (err) {
-    console.error(`❌ Erreur lors de la création du dossier 'script':`, err);
+    console.error(`❌ Erreur lors de la création du dossier 'scripts':`, err);
     process.exit(1);
   }
 
-  // --- Étape 2 : copier le contenu de webpack/app-scripts vers /script. ---
+  // --- Étape 2 : copier le contenu de webpack/app-scripts vers /scripts. ---
   // Utilise fs.cp (Node 16.7+). Pour les versions antérieures, utiliser fs-extra.
   try {
     await fs.cp(sourceScriptsDir, targetScriptsDir, {

@@ -81,8 +81,9 @@ async function syncRootPackageJson(dependencies, devDependencies) {
 
 // Fonction principale
 (async () => {
+  const webpackPath = path.join(process.cwd(), 'webpack');
+  const [webpackPackageJsonFile] = await findPackageJsonFiles(webpackPath);
   const sourceLibrariesPath = path.join(process.cwd(), 'source', 'libraries');
-  const [webpackPackageJsonFile] = await findPackageJsonFiles(sourceLibrariesPath);
   const libsPackageJsonFiles = await findPackageJsonFiles(sourceLibrariesPath);
   const packageJsonFiles = [webpackPackageJsonFile, ...libsPackageJsonFiles];
 
