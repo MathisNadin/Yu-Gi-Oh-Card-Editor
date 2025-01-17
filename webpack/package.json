@@ -1,0 +1,51 @@
+{
+  "name": "mn-webpack-builder",
+  "displayName": "MN Webpack Builder",
+  "version": "0.0.1",
+  "description": "Builder Webpack en Typescript pour divers environnements",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisNadin/mn-webpack-builder.git"
+  },
+  "author": {
+    "name": "Mathis Nadin",
+    "email": "mathis.nadin@gmail.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "sync-app-scripts": "node scripts/sync-app-scripts.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "validate": "npm run format && npm run lint && npm run typecheck",
+    "update-changelog": "node app-scripts/update-changelog.mjs",
+    "bump": "node app-scripts/bump-version.mjs"
+  },
+  "appScripts": {
+    "watch:client-apis": "node scripts/copy-api-to-clients.js",
+    "watch:interfaces": "node scripts/build-api-interfaces.js",
+    "watch:dev": "concurrently \"npm:watch:interfaces\" \"npm:watch:client-apis\"",
+    "watch:server": "nodemon --watch source/ --exec \"ts-node -r tsconfig-paths/register source/server/index.ts\" -e ts,json",
+    "watch:api": "concurrently \"npm:watch:server\" \"npm:watch:interfaces\" \"npm:watch:client-apis\"",
+    "start:desktop-preload": "cross-env NODE_ENV=development PLATFORM=desktop-preload TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/index.ts",
+    "start:desktop-main": "cross-env NODE_ENV=development PLATFORM=desktop-main electron scripts/start-desktop-main-dev.js",
+    "start:desktop-renderer": "cross-env NODE_ENV=development PLATFORM=desktop-renderer webpack serve --config webpack/index.ts",
+    "start:desktop-watch": "concurrently \"npm run start:desktop-renderer\" \"npm run start:desktop-main\"",
+    "start:desktop": "cross-env NODE_ENV=development npm-run-all --serial start:desktop-preload start:desktop-watch",
+    "build:desktop-main": "cross-env NODE_ENV=production PLATFORM=desktop-main TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/index.ts",
+    "build:desktop-renderer": "cross-env NODE_ENV=production PLATFORM=desktop-renderer TS_NODE_TRANSPILE_ONLY=true webpack --config webpack/index.ts",
+    "build:desktop": "cross-env NODE_ENV=production node scripts/clean-build-desktop.js && concurrently \"npm run build:desktop-main\" \"npm run build:desktop-renderer\"",
+    "compile:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish never",
+    "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish always",
+    "start:web": "cross-env NODE_ENV=development PLATFORM=web webpack serve --config webpack/index.ts",
+    "build:web": "cross-env NODE_ENV=production PLATFORM=web webpack --config webpack/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "validate": "npm run format && npm run lint && npm run typecheck",
+    "list-dependencies": "node scripts/list-dependencies.mjs",
+    "sync-dependencies": "node scripts/sync-dependencies.mjs",
+    "update-changelog": "node scripts/update-changelog.mjs",
+    "bump": "node scripts/bump-version.mjs"
+  }
+}
