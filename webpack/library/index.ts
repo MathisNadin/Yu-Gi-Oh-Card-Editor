@@ -1,6 +1,5 @@
 import { Configuration } from 'webpack';
 import { merge } from 'webpack-merge';
-
 import { commonConfig, commonDevConfig, commonProdConfig } from './common';
 import { webServedCommonConfig, webServedDevConfig, webServedProdConfig } from './web-served';
 import { webStandaloneCommonConfig, webStandaloneDevConfig, webStandaloneProdConfig } from './web-standalone';

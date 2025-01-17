@@ -1,6 +1,6 @@
-import { Configuration } from 'webpack';
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { Configuration } from 'webpack';
 
 const webServedCommonConfig: Configuration = {
   target: 'web',

@@ -3,9 +3,9 @@ import { Configuration } from 'webpack';
 
 const webStandaloneDevConfig: Configuration = {
   devServer: {
+    port: process.env.PORT || 8080,
     hot: true,
     open: true,
-    port: 8072,
   },
   plugins: [new ReactRefreshWebpackPlugin()],
 };

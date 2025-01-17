@@ -1,6 +1,6 @@
 import path from 'path';
-import { Configuration } from 'webpack';
 import nodeExternals from 'webpack-node-externals';
+import { Configuration } from 'webpack';
 
 const desktopPreloadConfig: Configuration = {
   target: 'electron-preload',
