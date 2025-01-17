@@ -1,7 +1,12 @@
 ## mn-html-to-image change log
 
+## 1.0.3
+
+- ajout de la license
+
 ## 1.0.2
 
+- bump to 1.0.2
 - restrucutration
 
 ## 1.0.1

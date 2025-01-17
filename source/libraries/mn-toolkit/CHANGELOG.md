@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 6.0.2
+
+- ajout de la license et déplacement des déps sur webpack
+
 ## 6.0.1
 
+- bump to 6.0.1
 - update dependances eslint et electron + utilisation de serialize partout
 
 ## 6.0.0

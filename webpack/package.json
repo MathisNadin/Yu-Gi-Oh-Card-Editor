@@ -1,7 +1,7 @@
 {
   "name": "mn-webpack-builder",
   "displayName": "MN Webpack Builder",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Builder Webpack en Typescript pour divers environnements",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "package:desktop": "cross-env NODE_ENV=production npm run build:desktop && node scripts/clean-package-desktop.js && electron-builder build --publish always",
     "start:web-standalone": "cross-env NODE_ENV=development PLATFORM=web-standalone webpack serve --config webpack/index.ts",
     "build:web-standalone": "cross-env NODE_ENV=production PLATFORM=web-standalone webpack --config webpack/index.ts",
-    "watch:web": "cross-env NODE_ENV=development PLATFORM=web-served webpack --watch --config webpack/webpack.config.ts",
+    "watch:web-served": "cross-env NODE_ENV=development PLATFORM=web-served webpack --watch --config webpack/index.ts",
     "build:web-served": "cross-env NODE_ENV=production PLATFORM=web-served webpack --config webpack/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\" \"./scripts/**/*.{js,jsx,ts,tsx,json}\" \"./webpack/**/*.{js,jsx,ts,tsx,json}\"",

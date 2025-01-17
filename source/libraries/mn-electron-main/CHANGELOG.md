@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.1
+
+- ajout d la license
+
 ## 1.1.0
 
+- bump to 1.1.0
 - mise à jour des versions d'electron et ses packages associés
 
 ## 1.0.3

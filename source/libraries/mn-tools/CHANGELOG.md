@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.0.5
+
+- ajout de la license
+
 ## 2.0.4
 
+- bump to 2.0.4
 - fix d'erreurs eslint
 
 ## 2.0.3

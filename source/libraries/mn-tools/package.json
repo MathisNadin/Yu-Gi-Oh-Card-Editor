@@ -1,7 +1,7 @@
 {
   "name": "mn-tools",
   "displayName": "MN Tools",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Bibliothèque Typescript pour des fonctions utilitaires",
   "repository": {
     "type": "git",
