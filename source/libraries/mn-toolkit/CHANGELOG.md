@@ -1,7 +1,21 @@
 ## mn-toolkit change log
 
+## 6.1.1
+
+- fix buildPath
+
+## 6.1.0
+
+- bump to 6.1.0
+- Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
+- gestion des tags et du fallbackState de chaque vue
+- Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
+- utilisation du getPathFromFile via le renderer directement
+- rework du router pour utiliser une baseUrl au lieu de #!
+
 ## 6.0.2
 
+- bump to 6.0.2
 - ajout de la license et déplacement des déps sur webpack
 
 ## 6.0.1

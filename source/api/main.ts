@@ -1,9 +1,10 @@
 /* eslint-disable import/export */
 
-import { TForbidTypeChanges, TLanguageLocale, TJSONValue } from 'mn-tools';
+import { TForbidTypeChanges, TJSONValue, TLanguageLocale } from 'mn-tools';
 
 // Pour faire de ceci un module
 export interface IDummy {}
+
 
 declare global {
   interface IDerivatives {
@@ -13,21 +14,300 @@ declare global {
   }
 }
 
-export interface IVariableEntity extends TAbstractEntity {
-  name: string;
-  value: string;
+
+// For <title>
+export interface IHeadTitleTag {
+  tagName: 'title';
+  title: string;
 }
 
-export type TVariableTableIndexes = 'name' | 'value';
 
-export interface IVariableTable extends IAbstractTable<IVariableEntity, TVariableTableIndexes> {
-  name: 'Variable';
-  useDataField: false;
+export type THeadMetaTagName =
+  | 'viewport' // Controls the page's responsive layout for different screen sizes
+  | 'description' // Short description of the page content for SEO
+  | 'keywords' // Keywords for search engines (less relevant today)
+  | 'author' // Indicates the author of the page
+  | 'theme-color' // Sets the color of the address bar on mobile browsers
+  | 'robots' // Tells search engines how to index or follow the page
+  | 'google-site-verification' // Google verification token for Search Console
+  | 'msvalidate.01' // Bing verification token for Webmaster Tools
+  | 'yandex-verification' // Yandex verification token for Webmaster Tools
+  | 'twitter:card' // Type of Twitter card for sharing (e.g., summary, large image)
+  | 'twitter:site' // Twitter username of the site or publisher
+  | 'twitter:title' // Title used when the page is shared on Twitter
+  | 'twitter:description' // Description for the Twitter share card
+  | 'twitter:image';
+ // Image URL displayed in the Twitter share card
+
+export type THeadMetaTagProperty =
+  | 'og:type' // Type of content for Open Graph (e.g., website, article)
+  | 'og:locale' // Locale of the content (e.g., en_US, fr_FR)
+  | 'og:site_name' // Name of the website for Open Graph
+  | 'og:title' // Title for Open Graph sharing
+  | 'og:description' // Description for Open Graph sharing
+  | 'og:url' // Canonical URL of the page
+  | 'og:image' // URL of the image for Open Graph sharing
+  | 'og:image:alt' // Alternative text for the Open Graph image
+  | 'og:image:width' // Width of the Open Graph image in pixels
+  | 'og:image:height' // Height of the Open Graph image in pixels
+  | 'twitter:card' // (See above, also used in Open Graph context)
+  | 'twitter:title' // (See above, also used in Open Graph context)
+  | 'twitter:description' // (See above, also used in Open Graph context)
+  | 'twitter:image' // (See above, also used in Open Graph context)
+  | 'twitter:image:alt' // Alternative text for the Twitter image
+  | 'article:published_time' // Publication date of the article in ISO 8601 format
+  | 'article:modified_time' // Last modification date of the article in ISO 8601 format
+  | 'article:publisher' // URL or profile of the article's publisher
+  | 'article:author';
+ // URL or profile of the article's author
+
+// For <meta>, we rely on standard `content` + [`name` or `property`]
+export interface IHeadMetaTag {
+  tagName: 'meta';
+  content: string;
+  name?: THeadMetaTagName;
+  property?: THeadMetaTagProperty;
+}
+
+
+export type THeadLinkTagRel =
+  | 'canonical' // Specifies the canonical URL for the current page to avoid duplicate content
+  | 'apple-touch-icon' // Defines the icon for Apple devices when added to the home screen
+  | 'manifest';
+ // Points to the PWA manifest file describing the app's properties
+
+// For <link>
+export interface IHeadLinkTag {
+  tagName: 'link'; // Specifies that this is a <link> element
+  rel: THeadLinkTagRel; // Defines the relationship between the current document and the linked resource
+  href: string; // URL of the linked resource
+}
+
+
+export type THeadTag = IHeadTitleTag | IHeadMetaTag | IHeadLinkTag;
+export interface IRouteRecord {
+  static: boolean;
+  raw?: boolean;
+  className?: string;
+  methodName: string;
+  httpMethod: HttpMethod;
+  path: string;
+  anonymousAccess: boolean;
+}
+
+
+export type HttpMethod = 'get' | 'post' | 'put' | 'options' | 'delete' | 'all';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface IJob<R = any> {
+  id: string;
+  name: string;
+  description: string;
+  error: string;
+  result: R;
+  message: string;
+  total: number;
+  state: JobState;
+  progress: number;
+}
+
+
+export interface IJobResponse {
+  job: IJob;
+}
+
+
+export type JobState = 'init' | 'enter' | 'progress' | 'done';
+
+
+export interface IJobListOptions {
+  id?: string;
+}
+
+
+export interface IJobApi {
+  list(request?: IJobListOptions): Promise<IJob[]>;
+}
+
+
+declare global {
+  interface IAPI {
+    job: IJobApi;
+  }
+}
+
+
+export interface IFileEntity extends TAbstractEntity {
+  /**
+   * The real name of the file it is linked to in the file system
+   * One real file can be linked to multiple FileEntities
+   */
+  fileId: string;
+  public: boolean;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  caption?: string;
+  data?: string;
+  duration?: number;
+}
+
+
+export type TFileTableIndexes = 'fileId' | 'public';
+
+
+export interface IFileTable extends IAbstractTable<IFileEntity, TFileTableIndexes> {
+  name: 'File';
+  useDataField: true;
   indexes: TTableIndexDefinitions & {
-    name: ITableIndexDefinition<IVariableEntity, IVariableEntity['name']>;
-    value: ITableIndexDefinition<IVariableEntity, IVariableEntity['value']>;
+    fileId: ITableIndexDefinition<IFileEntity, IFileEntity['fileId']>;
+    public: ITableIndexDefinition<IFileEntity, IFileEntity['public']>;
   };
 }
+
+
+export interface IFileDerivative<E extends IFileEffect> {
+  effects: E[];
+}
+
+
+export interface IFileEffect {
+  uuid: string;
+  mimeType: string;
+
+  /**
+   * Utilisé pour les effets portés par les Entités, notamment pour pouvoir fixer un timestamp lors de la requête.
+   * Laisser undefined pour les derivatives définies sur le serveur
+   */
+  changed?: Date;
+}
+
+
+export interface IFileCropEffect extends IFileEffect {
+  uuid: 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
+  mimeType: 'image/png';
+  crop: {
+    height: number;
+    width: number;
+    left: number;
+    top: number;
+  };
+  original: { height: number; width: number };
+}
+
+
+export interface IFileResizeEffect extends IFileEffect {
+  uuid: 'c3624031-9990-4c63-84c3-b6b6388bd68f';
+  mimeType: 'image/png';
+  scale: number;
+  height: number;
+  width: number;
+}
+
+
+export interface IFileThumbnailEffect extends IFileEffect {
+  uuid: '35c0f216-4551-4e09-ba48-20f3332e138f';
+  mimeType: 'image/png';
+}
+
+
+export interface IFileApiDownloadOptions {
+  instance: number;
+  oid: number;
+  timestamp?: string;
+  derivative?: TDerivative;
+  /** A stringified IFileEffect[] */
+  effects?: string;
+}
+
+
+export interface IFileListOptions extends IEntityListOptions<IFileEntity, TFileTableIndexes> {
+  fileIds?: TTableIndexReturnType<IFileEntity, IFileTable, 'fileId', TFileTableIndexes>[];
+  public?: TTableIndexReturnType<IFileEntity, IFileTable, 'public', TFileTableIndexes>;
+}
+
+
+export interface IFileApiDuplicateOptions {
+  originalOid: number;
+  /** If empty, same as the original's */
+  targetAppInstance?: number;
+}
+
+
+export interface IFileApiCreateFromDataUrlOptions {
+  spec?: Partial<IFileEntity>;
+  file?: IFileEntity;
+  data: string;
+}
+
+
+export interface IFileApiCreateFromExternalUrlOptions {
+  url: string;
+}
+
+
+export interface IFileApiCreateFromExternalUrlResponse {
+  fileOid: number;
+}
+
+
+export interface IFileApi {
+  count(request?: IFileListOptions): Promise<number>;
+  list(request?: IFileListOptions): Promise<IFileEntity[]>;
+  store(entitySpec: Partial<IFileEntity>): Promise<IFileEntity>;
+  trash(request: IEntityTrashOptions): Promise<IFileEntity>;
+  duplicate(request: IFileApiDuplicateOptions): Promise<IFileEntity>;
+  createFromDataUrl(request: IFileApiCreateFromDataUrlOptions): Promise<IFileEntity>;
+  createFromExternalUrl(request: IFileApiCreateFromExternalUrlOptions): Promise<IFileApiCreateFromExternalUrlResponse>;
+}
+
+
+declare global {
+  interface IAPI {
+    file: IFileApi;
+  }
+
+  interface IDerivatives {
+    default: null;
+  }
+}
+
+
+export type TDerivative = keyof IDerivatives;
+
+
+export interface IExceptionEntity extends TAbstractEntity {
+  timestamp: Date;
+  source: string;
+  terminal: { version: string };
+  os: { name: string; version: string };
+}
+
+
+export type TExceptionTableIndexes = 'timestamp' | 'source' | 'version';
+
+
+export interface IExceptionTable extends IAbstractTable<IExceptionEntity, TExceptionTableIndexes> {
+  name: 'Exception';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    timestamp: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['timestamp']>;
+    source: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['source']>;
+    version: ITableIndexDefinition<IExceptionEntity, number>;
+  };
+}
+
+
+export interface IExceptionApi {
+  log(exception: IExceptionEntity): Promise<void>;
+}
+
+
+declare global {
+  interface IAPI {
+    exception: IExceptionApi;
+  }
+}
+
 
 interface IAbstractEntity {
   oid: number;
@@ -40,12 +320,15 @@ interface IAbstractEntity {
   deletedBy?: TAbstractEntity['oid'];
 }
 
+
 export type TAbstractEntity = TForbidTypeChanges<IAbstractEntity, IAbstractEntity>;
+
 
 export interface ITableIndexDefinition<E extends TAbstractEntity, V extends TSQLValue> {
   type: TPostgresType<V>;
   getter: (entity: E) => V;
 }
+
 
 interface ITableIndexDefinitions {
   oid: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['oid']>;
@@ -58,7 +341,9 @@ interface ITableIndexDefinitions {
   deletedBy: ITableIndexDefinition<TAbstractEntity, TAbstractEntity['deletedBy']>;
 }
 
+
 export type TTableIndexDefinitions = TForbidTypeChanges<ITableIndexDefinitions, ITableIndexDefinitions>;
+
 
 export type TAbstractTableIndexes =
   | 'oid'
@@ -70,9 +355,11 @@ export type TAbstractTableIndexes =
   | 'deleted'
   | 'deletedBy';
 
+
 export type TTableOtherIndexes<E extends TAbstractEntity, K extends string> = {
   [index in K extends TAbstractTableIndexes ? never : K]: ITableIndexDefinition<E, TSQLValue>;
 };
+
 
 export interface IAbstractTable<E extends TAbstractEntity = TAbstractEntity, K extends string = never> {
   query: IQuery<E, this, K>;
@@ -90,6 +377,7 @@ export interface IAbstractTable<E extends TAbstractEntity = TAbstractEntity, K e
   onBeforeRestore: (entity: E) => Promise<void>;
 }
 
+
 export interface IPostgresTypeMapping {
   string: 'text' | 'varchar' | 'char';
   number: 'integer' | 'float' | 'double precision' | 'numeric';
@@ -102,6 +390,7 @@ export interface IPostgresTypeMapping {
   booleanArray: 'boolean[]';
   DateArray: 'timestamp[]' | 'date[]';
 }
+
 
 export type TPostgresBaseType<T> = T extends string
   ? IPostgresTypeMapping['string']
@@ -117,6 +406,7 @@ export type TPostgresBaseType<T> = T extends string
             ? IPostgresTypeMapping['undefined']
             : never;
 
+
 export type TPostgresArrayType<T> = T extends (infer U)[]
   ? U extends string
     ? IPostgresTypeMapping['stringArray']
@@ -129,14 +419,18 @@ export type TPostgresArrayType<T> = T extends (infer U)[]
           : never
   : never;
 
+
 export type TPostgresType<T> = TPostgresBaseType<T> | TPostgresArrayType<T>;
+
 
 export type TSQLBaseValue = string | number | boolean | Date | null | undefined;
 
 export type TSQLValue = TSQLBaseValue | TSQLBaseValue[];
 
+
 export type TValidIndexKeys<E extends TAbstractEntity, K extends string> = keyof (TTableIndexDefinitions &
   TTableOtherIndexes<E, K>);
+
 
 export type TTableIndexReturnType<
   E extends TAbstractEntity,
@@ -144,6 +438,7 @@ export type TTableIndexReturnType<
   I extends TValidIndexKeys<E, K> = TValidIndexKeys<E, never>,
   K extends string = never,
 > = T['indexes'][I] extends ITableIndexDefinition<E, infer R> ? R : never;
+
 
 export type TJoinOperator =
   | 'equals'
@@ -157,6 +452,7 @@ export type TJoinOperator =
   | 'like'
   | 'notLike';
 
+
 export interface IJoinCondition<
   E extends TAbstractEntity,
   K extends string,
@@ -167,6 +463,7 @@ export interface IJoinCondition<
   externalField: TValidIndexKeys<A, O>;
   operator: TJoinOperator;
 }
+
 
 export type TQueryConditionOperator =
   | '='
@@ -186,13 +483,16 @@ export type TQueryConditionOperator =
   | 'NOT &&'
   | '@@ to_tsquery';
 
+
 export interface IQueryCondition {
   field: string;
   operator: TQueryConditionOperator;
   value?: TSQLValue;
 }
 
+
 export type TQueryJoinType = 'JOIN' | 'INNER JOIN' | 'LEFT JOIN' | 'RIGHT JOIN' | 'FULL JOIN';
+
 
 export interface IQueryJoin {
   joinType: TQueryJoinType;
@@ -200,6 +500,7 @@ export interface IQueryJoin {
   otherQuery: IQuery<any, any>;
   joinConditions: string[];
 }
+
 
 export interface IQuery<E extends TAbstractEntity, T extends IAbstractTable<E, K>, K extends string = never> {
   table: T;
@@ -267,17 +568,21 @@ export interface IQuery<E extends TAbstractEntity, T extends IAbstractTable<E, K
   grabOne(options?: IQueryPagerOptions): Promise<E | undefined>;
 }
 
+
 export type TEntitySortOrder = 'asc' | 'desc';
+
 
 export interface IEntityListSortOption<E extends TAbstractEntity, K extends string> {
   field: TValidIndexKeys<E, K>;
   order: TEntitySortOrder;
 }
 
+
 export interface IQueryPagerOptions {
   from: number;
   count: number;
 }
+
 
 export interface IEntityListOptions<E extends TAbstractEntity, K extends string = never> {
   sort?: IEntityListSortOption<E, K>[];
@@ -288,11 +593,14 @@ export interface IEntityListOptions<E extends TAbstractEntity, K extends string 
   pager?: IQueryPagerOptions;
 }
 
+
 export interface IEntityTrashOptions {
   oid: TTableIndexReturnType<IAbstractEntity, IAbstractTable<IAbstractEntity, 'oid'>, 'oid'>;
 }
 
+
 export interface IEntityListAllOptions {}
+
 
 export interface IEntityIndex {
   name: string;
@@ -306,14 +614,17 @@ export interface IEntityListResult {
   indexes: IEntityIndex[];
 }
 
+
 export interface IEntityReindexOptions {
   entityName: string;
 }
+
 
 export interface IEntityApi {
   list(request?: IEntityListAllOptions): Promise<IEntityListResult[]>;
   reindex(request: IEntityReindexOptions): Promise<IJobResponse>;
 }
+
 
 declare global {
   interface IAPI {
@@ -321,49 +632,265 @@ declare global {
   }
 }
 
-export interface INotificationEntity extends TAbstractEntity {
-  timestamp: Date;
-  sender: number;
-  recipient: number;
-  parameters: { [key: string]: Date | string };
-  title: string;
-  body: string;
-  seen?: Date;
-  target: string;
+
+export interface IBatchCategories {
+  tool: 'Outil';
+  export: 'Exports';
 }
 
-export type TNotificationTableIndexes = 'recipient' | 'seen';
 
-export interface INotificationTable extends IAbstractTable<INotificationEntity, TNotificationTableIndexes> {
-  name: 'Notification';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    recipient: ITableIndexDefinition<INotificationEntity, INotificationEntity['recipient']>;
-    seen: ITableIndexDefinition<INotificationEntity, INotificationEntity['seen']>;
-  };
+export type TBatchCategory = keyof IBatchCategories;
+
+
+export interface IBatchInfo {
+  description: string;
+  name: string;
+  commandOnly: boolean;
+  parameterDefinitions: IBatchParameterDefinition[];
 }
 
-export interface INotificationListOptions extends IEntityListOptions<INotificationEntity, TNotificationTableIndexes> {
-  recipient?: TTableIndexReturnType<INotificationEntity, INotificationTable, 'recipient', TNotificationTableIndexes>;
+
+export type TBatchReportFormatter = 'json' | 'graph' | 'table';
+
+
+export type TBatchReportPart = IBatchGraphReport | IBatchTableReport | IBatchJsonReport | IBatchMarkdownReport;
+
+
+export type TBatchReport = TBatchReportPart[];
+
+
+export interface IBatchJsonReport {
+  formatter: 'json';
+  title?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any;
 }
 
-export interface INotificationApiSeenOptions {
-  notificationIds: TTableIndexReturnType<INotificationEntity, INotificationTable, 'oid', TNotificationTableIndexes>[];
+
+export interface IBatchMarkdownReport {
+  formatter: 'markdown';
+  title?: string;
+  content: string;
 }
 
-export interface INotificationApi {
-  count(options?: INotificationListOptions): Promise<number>;
-  list(options?: INotificationListOptions): Promise<INotificationEntity[]>;
-  store(entitySpec: Partial<INotificationEntity>): Promise<INotificationEntity>;
-  trash(options: IEntityTrashOptions): Promise<INotificationEntity>;
-  seen(request: INotificationApiSeenOptions): Promise<void>;
+
+export interface IBatchTableReport {
+  formatter: 'table';
+  title?: string;
+  headers: (string | { label: string; width?: string })[];
+  rows: TJSONValue[][];
 }
+
+export type TBatchGraphReportType = 'lines' | 'donnut';
+
+
+export interface IBatchGraphReport {
+  formatter: 'graph';
+  title?: string;
+  type: TBatchGraphReportType;
+}
+
+
+export type TBatchParameterType = 'json' | 'string' | 'number' | 'boolean' | 'string[]' | 'number[]';
+
+export interface IBatchParameterDefinition {
+  name: string;
+  type: TBatchParameterType;
+  required?: boolean;
+  description?: string;
+}
+
+
+export interface IBatchNextOptions {
+  systemVersion: string;
+}
+
+
+export interface IBatchListOptions {}
+
+
+export interface IBatchCheckResultsOptions {}
+
+
+export interface IBatchCheckResultsResponse {
+  toDo: string[];
+}
+
+
+export type TBatchParameter = string | boolean | number | number[] | string[];
+
+export interface IBatchParameters {
+  [name: string]: TBatchParameter;
+}
+
+export interface IBatchStartOptions {
+  name: string;
+  parameters?: IBatchParameters;
+}
+
+
+export interface IBatchApi {
+  list(request?: IBatchListOptions): Promise<IBatchInfo[]>;
+  checkResults(request?: IBatchCheckResultsOptions): Promise<IBatchCheckResultsResponse>;
+  start(request: IBatchStartOptions): Promise<TBatchReport>;
+}
+
 
 declare global {
   interface IAPI {
-    notification: INotificationApi;
+    batch: IBatchApi;
   }
 }
+
+
+export interface IApplicationInstanceEntity extends TAbstractEntity {
+  name: string;
+  title: string;
+}
+
+
+export type TApplicationInstanceTableIndexes = keyof Omit<IApplicationInstanceEntity, keyof TAbstractEntity>;
+
+
+export interface IApplicationInstanceTable
+  extends IAbstractTable<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  name: 'ApplicationInstance';
+  useDataField: false;
+  indexes: TTableIndexDefinitions & {
+    name: ITableIndexDefinition<IApplicationInstanceEntity, IApplicationInstanceEntity['name']>;
+    title: ITableIndexDefinition<IApplicationInstanceEntity, IApplicationInstanceEntity['title']>;
+  };
+}
+
+
+export interface IApplicationInstanceListOptions
+  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  name?: TTableIndexReturnType<
+    IApplicationInstanceEntity,
+    IApplicationInstanceTable,
+    'name',
+    TApplicationInstanceTableIndexes
+  >;
+}
+
+
+export interface IApplicationInstanceCreateOptions
+  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  instance: Partial<IApplicationInstanceEntity>;
+  administrator: Partial<IMemberEntity>;
+}
+
+
+export interface IApplicationInstanceApi {
+  count(options?: IApplicationInstanceListOptions): Promise<number>;
+  list(options?: IApplicationInstanceListOptions): Promise<IApplicationInstanceEntity[]>;
+  store(entitySpec: Partial<IApplicationInstanceEntity>): Promise<IApplicationInstanceEntity>;
+  trash(options: IEntityTrashOptions): Promise<IApplicationInstanceEntity>;
+  create(request: IApplicationInstanceCreateOptions): Promise<IApplicationInstanceEntity>;
+}
+
+
+declare global {
+  interface IAPI {
+    applicationInstance: IApplicationInstanceApi;
+  }
+}
+
+
+export type TEntityRolesType = keyof IEntityRolesTypes;
+
+
+export interface IEntityRolesEntity extends TAbstractEntity {
+  id: TAbstractEntity['oid'];
+  type: TEntityRolesType;
+  roles: TAbstractEntity['oid'][];
+}
+
+
+export type IEntityRolesTableIndexes = keyof Omit<IEntityRolesEntity, keyof TAbstractEntity>;
+
+
+export interface IEntityRolesTable extends IAbstractTable<IEntityRolesEntity, IEntityRolesTableIndexes> {
+  name: 'EntityRoles';
+  useDataField: false;
+  indexes: TTableIndexDefinitions & {
+    id: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['id']>;
+    type: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['type']>;
+    roles: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['roles']>;
+  };
+}
+
+
+export interface IEntityRolesListOptions extends IEntityListOptions<IEntityRolesEntity, IEntityRolesTableIndexes> {
+  type?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'type', IEntityRolesTableIndexes>;
+  ids?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'id', IEntityRolesTableIndexes>[];
+}
+
+
+export interface IEntityRolesApi {
+  count(options?: IEntityRolesListOptions): Promise<number>;
+  list(options?: IEntityRolesListOptions): Promise<IEntityRolesEntity[]>;
+  store(entitySpec: Partial<IEntityRolesEntity>): Promise<IEntityRolesEntity>;
+  trash(options: IEntityTrashOptions): Promise<IEntityRolesEntity>;
+}
+
+
+export interface IRoleEntity extends TAbstractEntity {
+  machineName: string;
+  title: string;
+  permissions: IPermission['permission'][];
+}
+
+
+export type TRoleTableIndexes = 'machineName';
+
+
+export interface IRoleTable extends IAbstractTable<IRoleEntity, TRoleTableIndexes> {
+  name: 'Role';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    machineName: ITableIndexDefinition<IRoleEntity, IRoleEntity['machineName']>;
+  };
+}
+
+
+export interface IRoleApi {
+  count(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<number>;
+  list(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<IRoleEntity[]>;
+  store(entitySpec: Partial<IRoleEntity>): Promise<IRoleEntity>;
+  trash(request: IEntityTrashOptions): Promise<IRoleEntity>;
+}
+
+
+export interface IPermission {
+  service: string;
+  permission: string;
+}
+
+
+export interface IPermissionListOptions {}
+
+
+export interface IPermissionApi {
+  list(query?: IPermissionListOptions): Promise<IPermission[]>;
+}
+
+
+declare global {
+  interface IAPI {
+    role: IRoleApi;
+    entityRoles: IEntityRolesApi;
+    permission: IPermissionApi;
+  }
+
+  interface IEntityRolesTypes {
+    Member: null;
+  }
+}
+
+
+export type TPushProvider = 'fcm' | 'apn' | 'ws';
+
 
 export interface IPushServerApiRegisterOptions {
   provider: TPushProvider;
@@ -377,20 +904,23 @@ export interface IPushServerApiRegisterOptions {
   };
 }
 
-export type TPushProvider = 'fcm' | 'apn' | 'ws';
 
 export interface IPushServerApiRegisterResponse {}
+
 
 export interface IPushServerApi {
   register(request: IPushServerApiRegisterOptions): Promise<IPushServerApiRegisterResponse>;
 }
+
 
 interface IPushMessageRegistredPayload {
   type: 'registered';
   token: string;
 }
 
+
 export interface IPushMessageRegistred extends IPushMessage<IPushMessageRegistredPayload> {}
+
 
 declare global {
   interface IAPI {
@@ -401,6 +931,7 @@ export interface IPushMessagePayload {
   type: string;
 }
 
+
 export interface IPushMessage<PAYLOAD extends IPushMessagePayload = IPushMessagePayload> {
   targetIosAppId?: string; // Example : 'com.joerisama.codexygo'
   body?: string;
@@ -408,133 +939,66 @@ export interface IPushMessage<PAYLOAD extends IPushMessagePayload = IPushMessage
   payload?: PAYLOAD;
 }
 
+
 interface IPushMessageReleasePayload {
   type: 'release';
   version: string;
 }
 
+
 export interface IPushMessageRelease extends IPushMessage<IPushMessageReleasePayload> {}
 
-export interface ISessionEntity extends TAbstractEntity {
-  token: string;
-  device: IRemodeDeviceSpec;
-  foreground: boolean;
-  push: { token: string; provider: TPushProvider; timestamp: Date };
-  lastAccess: Date;
-  closed: Date;
-  saving: boolean;
+
+export interface INotificationEntity extends TAbstractEntity {
+  timestamp: Date;
+  sender: number;
+  recipient: number;
+  parameters: { [key: string]: Date | string };
+  title: string;
+  body: string;
+  seen?: Date;
+  target: string;
 }
 
-export type TSessionTableIndexes = 'lastAccess' | 'token' | 'pushToken' | 'pushProvider' | 'pushTimestamp' | 'closed';
 
-export interface ISessionTable extends IAbstractTable<ISessionEntity, TSessionTableIndexes> {
-  name: 'Session';
+export type TNotificationTableIndexes = 'recipient' | 'seen';
+
+
+export interface INotificationTable extends IAbstractTable<INotificationEntity, TNotificationTableIndexes> {
+  name: 'Notification';
   useDataField: true;
   indexes: TTableIndexDefinitions & {
-    lastAccess: ITableIndexDefinition<ISessionEntity, ISessionEntity['lastAccess']>;
-    token: ITableIndexDefinition<ISessionEntity, ISessionEntity['token']>;
-    pushToken: ITableIndexDefinition<ISessionEntity, ISessionEntity['push']['token']>;
-    pushProvider: ITableIndexDefinition<ISessionEntity, ISessionEntity['push']['provider']>;
-    pushTimestamp: ITableIndexDefinition<ISessionEntity, ISessionEntity['push']['timestamp']>;
-    closed: ITableIndexDefinition<ISessionEntity, ISessionEntity['closed']>;
+    recipient: ITableIndexDefinition<INotificationEntity, INotificationEntity['recipient']>;
+    seen: ITableIndexDefinition<INotificationEntity, INotificationEntity['seen']>;
   };
 }
 
-export interface ISessionListOptions extends IEntityListOptions<ISessionEntity, TSessionTableIndexes> {
-  token?: TTableIndexReturnType<ISessionEntity, ISessionTable, 'token', TSessionTableIndexes>;
+
+export interface INotificationListOptions extends IEntityListOptions<INotificationEntity, TNotificationTableIndexes> {
+  recipient?: TTableIndexReturnType<INotificationEntity, INotificationTable, 'recipient', TNotificationTableIndexes>;
 }
 
-export interface IBatchCategory {
-  tool: 'Outil';
-  export: 'Exports';
+
+export interface INotificationApiSeenOptions {
+  notificationIds: TTableIndexReturnType<INotificationEntity, INotificationTable, 'oid', TNotificationTableIndexes>[];
 }
 
-export type BatchCategories = keyof IBatchCategory;
 
-export interface IBatchInfo {
-  description: string;
-  name: string;
-  commandOnly: boolean;
-  parameterDefinitions: IBatchParameterDefinition[];
+export interface INotificationApi {
+  count(options?: INotificationListOptions): Promise<number>;
+  list(options?: INotificationListOptions): Promise<INotificationEntity[]>;
+  store(entitySpec: Partial<INotificationEntity>): Promise<INotificationEntity>;
+  trash(options: IEntityTrashOptions): Promise<INotificationEntity>;
+  seen(request: INotificationApiSeenOptions): Promise<void>;
 }
 
-export type BatchReportFormatter = 'json' | 'graph' | 'table';
-
-export type IBatchReportPart = IBatchGraphReport | IBatchTableReport | IBatchJsonReport | IBatchMarkdownReport;
-
-export type BatchReport = IBatchReportPart[];
-
-export interface IBatchJsonReport {
-  formatter: 'json';
-  title?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any;
-}
-
-export interface IBatchMarkdownReport {
-  formatter: 'markdown';
-  title?: string;
-  content: string;
-}
-
-export interface IBatchTableReport {
-  formatter: 'table';
-  title?: string;
-  headers: (string | { label: string; width?: string })[];
-  rows: TJSONValue[][];
-}
-
-export type BatchGraphReportType = 'lines' | 'donnut';
-
-export interface IBatchGraphReport {
-  formatter: 'graph';
-  title?: string;
-  type: BatchGraphReportType;
-}
-
-export type BatchParameterType = 'json' | 'string' | 'number' | 'boolean' | 'string[]' | 'number[]';
-
-export interface IBatchParameterDefinition {
-  name: string;
-  type: BatchParameterType;
-  required?: boolean;
-  description?: string;
-}
-
-export interface IBatchNextOptions {
-  systemVersion: string;
-}
-
-export interface IBatchListOptions {}
-
-export interface IBatchCheckResultsOptions {}
-
-export interface IBatchCheckResultsResponse {
-  toDo: string[];
-}
-
-export type IBatchParameterType = string | boolean | number | number[] | string[];
-
-export interface IBatchParameters {
-  [name: string]: IBatchParameterType;
-}
-
-export interface IBatchStartOptions {
-  name: string;
-  parameters?: IBatchParameters;
-}
-
-export interface IBatchApi {
-  list(request?: IBatchListOptions): Promise<IBatchInfo[]>;
-  checkResults(request?: IBatchCheckResultsOptions): Promise<IBatchCheckResultsResponse>;
-  start(request: IBatchStartOptions): Promise<BatchReport>;
-}
 
 declare global {
   interface IAPI {
-    batch: IBatchApi;
+    notification: INotificationApi;
   }
 }
+
 
 export interface IRemodeDeviceSpec {
   device: {
@@ -561,9 +1025,13 @@ export interface IRemodeDeviceSpec {
   };
 }
 
+
 export interface IMemberEntity extends TAbstractEntity {
   mail: string;
+  /** Hashed password, should always be deleted before sending the object over the API */
   password?: string;
+  /** Meant only for changing the password, should never be stored */
+  clearPassword?: string;
   userName?: string;
   firstName?: string;
   lastName?: string;
@@ -571,16 +1039,19 @@ export interface IMemberEntity extends TAbstractEntity {
   pictureEffects: IFileEffect[];
   language: TLanguageLocale;
   timeZone?: string;
-  darkTheme: boolean;
+  darkTheme?: boolean;
   tips: { [uuid: string]: boolean };
 }
+
 
 export interface IMemberTableIndexes {
   mail: ITableIndexDefinition<IMemberEntity, IMemberEntity['mail']>;
   searchContent: ITableIndexDefinition<IMemberEntity, string>;
 }
 
+
 export type TMemberTableIndexes = keyof IMemberTableIndexes;
+
 
 export interface IMemberTable extends IAbstractTable<IMemberEntity, TMemberTableIndexes> {
   name: 'Member';
@@ -588,11 +1059,13 @@ export interface IMemberTable extends IAbstractTable<IMemberEntity, TMemberTable
   indexes: TTableIndexDefinitions & IMemberTableIndexes;
 }
 
+
 export interface IMemberListOptions extends IEntityListOptions<IMemberEntity, TMemberTableIndexes> {
   mails?: TTableIndexReturnType<IMemberEntity, IMemberTable, 'mail', TMemberTableIndexes>[];
   roles?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'roles', IEntityRolesTableIndexes>;
   searchContent?: TTableIndexReturnType<IMemberEntity, IMemberTable, 'searchContent', TMemberTableIndexes>;
 }
+
 
 export interface IMemberAPILoginResponse {
   error?: string;
@@ -602,12 +1075,14 @@ export interface IMemberAPILoginResponse {
   permissions?: IPermission['permission'][];
 }
 
+
 export interface IMemberApiLoginOptions {
   mail: IMemberEntity['mail'];
   password: string;
   instance: IMemberEntity['applicationInstance'];
   device: IRemodeDeviceSpec;
 }
+
 
 export interface IMemberApiRegisterOptions {
   userName?: IMemberEntity['userName'];
@@ -619,16 +1094,6 @@ export interface IMemberApiRegisterOptions {
   device: IRemodeDeviceSpec;
 }
 
-export interface IMemberApiFinalizeRegisterOptions {
-  oid: IMemberEntity['oid'];
-  userName?: IMemberEntity['userName'];
-  lastName?: IMemberEntity['lastName'];
-  firstName?: IMemberEntity['firstName'];
-  mail: IMemberEntity['mail'];
-  password: string;
-  instance: IMemberEntity['applicationInstance'];
-  device: IRemodeDeviceSpec;
-}
 
 export interface IMemberApiGetInstancesOptions {
   mail: string;
@@ -665,10 +1130,12 @@ export interface IMemberApiForgotPasswordResponse {
   sent: boolean;
 }
 
+
 export interface IMemberApiImportResponse {
   created: number;
   invited: IMemberEntity[];
 }
+
 
 export interface IMemberApi {
   count(request?: IMemberListOptions): Promise<number>;
@@ -679,11 +1146,11 @@ export interface IMemberApi {
   checkMail(request: IMemberApiCheckMailOptions): Promise<IMemberApiCheckMailResponse>;
   login(request: IMemberApiLoginOptions): Promise<IMemberAPILoginResponse>;
   register(request: IMemberApiRegisterOptions): Promise<IMemberAPILoginResponse>;
-  finalizeRegister(request: IMemberApiFinalizeRegisterOptions): Promise<IMemberAPILoginResponse>;
   forgotPassword(request: IMemberApiForgotPasswordOptions): Promise<IMemberApiForgotPasswordResponse>;
   logout(): Promise<void>;
   getPermissions(request: IMemberApiGetPermissionsOptions): Promise<IMemberApiGetPermissionsResponse>;
 }
+
 
 declare global {
   interface IAPI {
@@ -691,7 +1158,9 @@ declare global {
   }
 }
 
+
 export type TMailStatus = 'sent' | 'new' | 'error';
+
 
 export interface IMailTemplateVariables {
   language?: TLanguageLocale;
@@ -702,6 +1171,7 @@ export interface IMailTemplateVariables {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
+
 
 export interface IMailEntity extends TAbstractEntity {
   domain: string;
@@ -716,7 +1186,9 @@ export interface IMailEntity extends TAbstractEntity {
   links: string[];
 }
 
+
 export type TMailTableIndexes = 'mid' | 'status' | 'recipients';
+
 
 export interface IMailTable extends IAbstractTable<IMailEntity, TMailTableIndexes> {
   name: 'Mail';
@@ -728,6 +1200,7 @@ export interface IMailTable extends IAbstractTable<IMailEntity, TMailTableIndexe
   };
 }
 
+
 export interface IMailEventEntity extends TAbstractEntity {
   timestamp: Date;
   mid: string;
@@ -738,7 +1211,9 @@ export interface IMailEventEntity extends TAbstractEntity {
   params: { [key: string]: any };
 }
 
+
 export type TMailEventTableIndexes = 'timestamp' | 'mid' | 'recipient' | 'mailClass' | 'status';
+
 
 export interface IMailEventTable extends IAbstractTable<IMailEventEntity, TMailEventTableIndexes> {
   name: 'MailEvent';
@@ -752,6 +1227,7 @@ export interface IMailEventTable extends IAbstractTable<IMailEventEntity, TMailE
   };
 }
 
+
 export interface ILogRecordEntity extends TAbstractEntity {
   timestamp: Date;
   bulk: string;
@@ -764,7 +1240,9 @@ export interface ILogRecordEntity extends TAbstractEntity {
   };
 }
 
+
 export type TLogRecordTableIndexes = 'timestamp' | 'bulk' | 'logLevel' | 'action';
+
 
 export interface ILogRecordTable extends IAbstractTable<ILogRecordEntity, TLogRecordTableIndexes> {
   name: 'LogRecord';
@@ -777,6 +1255,7 @@ export interface ILogRecordTable extends IAbstractTable<ILogRecordEntity, TLogRe
   };
 }
 
+
 export interface ILogRecordApi {
   count(options?: IEntityListOptions<ILogRecordEntity, TLogRecordTableIndexes>): Promise<number>;
   list(options?: IEntityListOptions<ILogRecordEntity, TLogRecordTableIndexes>): Promise<ILogRecordEntity[]>;
@@ -785,311 +1264,61 @@ export interface ILogRecordApi {
   flushRecordStack(exception?: object): Promise<void>;
 }
 
+
 declare global {
   interface IAPI {
     logRecord: ILogRecordApi;
   }
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface IJob<R = any> {
-  id: string;
+
+
+export interface IVariableEntity extends TAbstractEntity {
   name: string;
-  description: string;
-  error: string;
-  result: R;
-  message: string;
-  total: number;
-  state: JobState;
-  progress: number;
+  value: string;
 }
 
-export interface IJobResponse {
-  job: IJob;
-}
 
-export type JobState = 'init' | 'enter' | 'progress' | 'done';
+export type TVariableTableIndexes = 'name' | 'value';
 
-export interface IJobListOptions {
-  id?: string;
-}
 
-export interface IJobApi {
-  list(request?: IJobListOptions): Promise<IJob[]>;
-}
-
-declare global {
-  interface IAPI {
-    job: IJobApi;
-  }
-}
-
-export interface IExceptionEntity extends TAbstractEntity {
-  timestamp: Date;
-  source: string;
-  terminal: { version: string };
-  os: { name: string; version: string };
-}
-
-export type TExceptionTableIndexes = 'timestamp' | 'source' | 'version';
-
-export interface IExceptionTable extends IAbstractTable<IExceptionEntity, TExceptionTableIndexes> {
-  name: 'Exception';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    timestamp: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['timestamp']>;
-    source: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['source']>;
-    version: ITableIndexDefinition<IExceptionEntity, number>;
-  };
-}
-
-export interface IExceptionApi {
-  log(exception: IExceptionEntity): Promise<void>;
-}
-
-declare global {
-  interface IAPI {
-    exception: IExceptionApi;
-  }
-}
-
-export interface IFileEntity extends TAbstractEntity {
-  public: boolean;
-  fileName: string;
-  fileSize: number;
-  mimeType: string;
-  caption?: string;
-  data?: string;
-  duration?: number;
-}
-
-export type TFileTableIndexes = 'public';
-
-export interface IFileTable extends IAbstractTable<IFileEntity, TFileTableIndexes> {
-  name: 'File';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    public: ITableIndexDefinition<IFileEntity, IFileEntity['public']>;
-  };
-}
-
-export interface IFileDerivative<E extends IFileEffect> {
-  effects: E[];
-}
-
-export interface IFileEffect {
-  uuid: string;
-  mimeType: string;
-
-  // Utilisé pour les effets portés par les Entités, notamment pour pouvoir fixer un timestamp lors de la requête.
-  // Laisser undefined pour les derivatives définies sur le serveur
-  changed?: Date;
-}
-
-export interface IFileCropEffect extends IFileEffect {
-  uuid: 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
-  mimeType: 'image/png';
-  crop: {
-    height: number;
-    width: number;
-    left: number;
-    top: number;
-  };
-  original: { height: number; width: number };
-}
-
-export interface IFileResizeEffect extends IFileEffect {
-  uuid: 'c3624031-9990-4c63-84c3-b6b6388bd68f';
-  mimeType: 'image/png';
-  scale: number;
-  height: number;
-  width: number;
-}
-
-export interface IFileThumbnailEffect extends IFileEffect {
-  uuid: '35c0f216-4551-4e09-ba48-20f3332e138f';
-  mimeType: 'image/png';
-}
-
-export interface IFileApiDownloadOptions {
-  instance: number;
-  oid: number;
-  timestamp?: string;
-  derivative?: TDerivative;
-  /** A stringified IFileEffect[] */
-  effects?: string;
-}
-
-export interface IFileListOptions extends IEntityListOptions<IFileEntity, TFileTableIndexes> {
-  public?: TTableIndexReturnType<IFileEntity, IFileTable, 'public', TFileTableIndexes>;
-}
-
-export interface IFileApiCreateFromDataUrlOptions {
-  spec?: Partial<IFileEntity>;
-  file?: IFileEntity;
-  data: string;
-}
-
-export interface IFileApiCreateFromExternalUrlOptions {
-  url: string;
-}
-
-export interface IFileApiCreateFromExternalUrlResponse {
-  fileOid: number;
-}
-
-export interface IFileApi {
-  count(request?: IFileListOptions): Promise<number>;
-  list(request?: IFileListOptions): Promise<IFileEntity[]>;
-  store(entitySpec: Partial<IFileEntity>): Promise<IFileEntity>;
-  trash(request: IEntityTrashOptions): Promise<void>;
-  createFromDataUrl(request: IFileApiCreateFromDataUrlOptions): Promise<IFileEntity>;
-  createFromExternalUrl(request: IFileApiCreateFromExternalUrlOptions): Promise<IFileApiCreateFromExternalUrlResponse>;
-}
-
-declare global {
-  interface IAPI {
-    file: IFileApi;
-  }
-
-  interface IDerivatives {
-    default: null;
-  }
-}
-
-export type TDerivative = keyof IDerivatives;
-
-export interface IApplicationInstanceEntity extends TAbstractEntity {
-  name: string;
-  title: string;
-}
-
-export type TApplicationInstanceTableIndexes = keyof Omit<IApplicationInstanceEntity, keyof TAbstractEntity>;
-
-export interface IApplicationInstanceTable
-  extends IAbstractTable<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
-  name: 'ApplicationInstance';
+export interface IVariableTable extends IAbstractTable<IVariableEntity, TVariableTableIndexes> {
+  name: 'Variable';
   useDataField: false;
   indexes: TTableIndexDefinitions & {
-    name: ITableIndexDefinition<IApplicationInstanceEntity, IApplicationInstanceEntity['name']>;
-    title: ITableIndexDefinition<IApplicationInstanceEntity, IApplicationInstanceEntity['title']>;
+    name: ITableIndexDefinition<IVariableEntity, IVariableEntity['name']>;
+    value: ITableIndexDefinition<IVariableEntity, IVariableEntity['value']>;
   };
 }
 
-export interface IApplicationInstanceListOptions
-  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
-  name?: TTableIndexReturnType<
-    IApplicationInstanceEntity,
-    IApplicationInstanceTable,
-    'name',
-    TApplicationInstanceTableIndexes
-  >;
+
+export interface ISessionEntity extends TAbstractEntity {
+  token: string;
+  device: IRemodeDeviceSpec;
+  foreground: boolean;
+  push?: { token: string; provider: TPushProvider; timestamp: Date };
+  lastAccess: Date;
+  closed: Date;
+  saving: boolean;
 }
 
-export interface IApplicationInstanceCreateOptions
-  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
-  instance: Partial<IApplicationInstanceEntity>;
-  administrator: Partial<IMemberEntity>;
-}
 
-export interface IApplicationInstanceApi {
-  count(options?: IApplicationInstanceListOptions): Promise<number>;
-  list(options?: IApplicationInstanceListOptions): Promise<IApplicationInstanceEntity[]>;
-  store(entitySpec: Partial<IApplicationInstanceEntity>): Promise<IApplicationInstanceEntity>;
-  trash(options: IEntityTrashOptions): Promise<IApplicationInstanceEntity>;
-  create(request: IApplicationInstanceCreateOptions): Promise<IApplicationInstanceEntity>;
-}
+export type TSessionTableIndexes = 'lastAccess' | 'token' | 'pushToken' | 'pushProvider' | 'pushTimestamp' | 'closed';
 
-declare global {
-  interface IAPI {
-    applicationInstance: IApplicationInstanceApi;
-  }
-}
 
-export type TEntityRolesType = keyof IEntityRolesTypes;
-
-export interface IEntityRolesEntity extends TAbstractEntity {
-  id: TAbstractEntity['oid'];
-  type: TEntityRolesType;
-  roles: TAbstractEntity['oid'][];
-}
-
-export type IEntityRolesTableIndexes = keyof Omit<IEntityRolesEntity, keyof TAbstractEntity>;
-
-export interface IEntityRolesTable extends IAbstractTable<IEntityRolesEntity, IEntityRolesTableIndexes> {
-  name: 'EntityRoles';
-  useDataField: false;
-  indexes: TTableIndexDefinitions & {
-    id: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['id']>;
-    type: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['type']>;
-    roles: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['roles']>;
-  };
-}
-
-export interface IEntityRolesListOptions extends IEntityListOptions<IEntityRolesEntity, IEntityRolesTableIndexes> {
-  type?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'type', IEntityRolesTableIndexes>;
-  ids?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'id', IEntityRolesTableIndexes>[];
-}
-
-export interface IEntityRolesApi {
-  count(options?: IEntityRolesListOptions): Promise<number>;
-  list(options?: IEntityRolesListOptions): Promise<IEntityRolesEntity[]>;
-  store(entitySpec: Partial<IEntityRolesEntity>): Promise<IEntityRolesEntity>;
-  trash(options: IEntityTrashOptions): Promise<IEntityRolesEntity>;
-}
-
-export interface IRoleEntity extends TAbstractEntity {
-  machineName: string;
-  title: string;
-  permissions: IPermission['permission'][];
-}
-
-export type TRoleTableIndexes = 'machineName';
-
-export interface IRoleTable extends IAbstractTable<IRoleEntity, TRoleTableIndexes> {
-  name: 'Role';
+export interface ISessionTable extends IAbstractTable<ISessionEntity, TSessionTableIndexes> {
+  name: 'Session';
   useDataField: true;
   indexes: TTableIndexDefinitions & {
-    machineName: ITableIndexDefinition<IRoleEntity, IRoleEntity['machineName']>;
+    lastAccess: ITableIndexDefinition<ISessionEntity, ISessionEntity['lastAccess']>;
+    token: ITableIndexDefinition<ISessionEntity, ISessionEntity['token']>;
+    pushToken: ITableIndexDefinition<ISessionEntity, string | undefined>;
+    pushProvider: ITableIndexDefinition<ISessionEntity, TPushProvider | undefined>;
+    pushTimestamp: ITableIndexDefinition<ISessionEntity, Date | undefined>;
+    closed: ITableIndexDefinition<ISessionEntity, ISessionEntity['closed']>;
   };
 }
 
-export interface IRoleApi {
-  count(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<number>;
-  list(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<IRoleEntity[]>;
-  store(entitySpec: Partial<IRoleEntity>): Promise<IRoleEntity>;
-  trash(request: IEntityTrashOptions): Promise<IRoleEntity>;
+
+export interface ISessionListOptions extends IEntityListOptions<ISessionEntity, TSessionTableIndexes> {
+  token?: TTableIndexReturnType<ISessionEntity, ISessionTable, 'token', TSessionTableIndexes>;
 }
-
-export interface IPermission {
-  service: string;
-  permission: string;
-}
-
-export interface IPermissionListOptions {}
-
-export interface IPermissionApi {
-  list(query?: IPermissionListOptions): Promise<IPermission[]>;
-}
-
-declare global {
-  interface IAPI {
-    role: IRoleApi;
-    entityRoles: IEntityRolesApi;
-    permission: IPermissionApi;
-  }
-
-  interface IEntityRolesTypes {
-    Member: null;
-  }
-}
-export interface IRouteRecord {
-  static: boolean;
-  raw?: boolean;
-  className?: string;
-  methodName: string;
-  httpMethod: HttpMethod;
-  path: string;
-  anonymousAccess: boolean;
-}
-
-export type HttpMethod = 'get' | 'post' | 'put' | 'options' | 'delete' | 'all';

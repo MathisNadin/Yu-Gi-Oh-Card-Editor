@@ -1,4 +1,4 @@
-import { Component, DOMElement, createElement } from 'react';
+import { DOMElement, createElement } from 'react';
 import { logger, serialize } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState, Spinner } from '../../components';
 import { IRouterListener } from '.';
@@ -46,8 +46,6 @@ export class RouterViewPort
 
     const currentState = app.$router.currentState!;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let c: Component<any, any> = currentState.component;
     const routerParameters = app.$router.getParameters() as object;
     const routerKey = `${currentState.name}${serialize(routerParameters)}`;
     const key = 'key' in routerParameters ? routerParameters.key : '';
@@ -56,7 +54,7 @@ export class RouterViewPort
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let content: DOMElement<any, any>;
     if (this.currentContentKey !== newContentKey) {
-      content = createElement(c as unknown as string, { ...routerParameters, key: newContentKey });
+      content = createElement(currentState.component as unknown as string, { ...routerParameters, key: newContentKey });
       this.currentComponent = content;
       this.currentContentKey = newContentKey;
     } else {

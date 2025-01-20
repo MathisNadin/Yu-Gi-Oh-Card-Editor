@@ -9,6 +9,13 @@ interface IPopoversProps extends IContainableProps {}
 interface IPopoversState extends IContainableState {}
 
 export class Popovers extends Containable<IPopoversProps, IPopoversState> implements Partial<IPopoverListener> {
+  public static override get defaultProps(): IPopoversProps {
+    return {
+      ...super.defaultProps,
+      zIndex: 'popover',
+    };
+  }
+
   public constructor(props: IPopoversProps) {
     super(props);
     this.state = {} as IPopoversState;

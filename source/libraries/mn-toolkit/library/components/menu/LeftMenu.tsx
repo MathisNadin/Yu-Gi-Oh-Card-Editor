@@ -106,10 +106,11 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
   }
 
   private async goToHref(href: IMenuItem['href']) {
+    if (!href) return;
     if (isString(href)) {
       window.location.href = href;
     } else {
-      await app.$router.go(href!.state, href!.params);
+      await app.$router.go(href.state, href.params);
     }
   }
 

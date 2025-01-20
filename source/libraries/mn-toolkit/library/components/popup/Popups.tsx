@@ -9,6 +9,13 @@ interface IPopupsProps extends IContainableProps {}
 interface IPopupsState extends IContainableState {}
 
 export class Popups extends Containable<IPopupsProps, IPopupsState> implements Partial<IPopupListener> {
+  public static override get defaultProps(): IPopupsProps {
+    return {
+      ...super.defaultProps,
+      zIndex: 'popup',
+    };
+  }
+
   public constructor(props: IPopupsProps) {
     super(props);
     app.$popup.addListener(this);

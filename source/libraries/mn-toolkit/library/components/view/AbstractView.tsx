@@ -1,17 +1,24 @@
-import { TJSXElementChild } from '../../system';
+import { THeadTag } from 'api/main';
+import { TJSXElementChild, TRouterParams, TRouterState } from '../../system';
 import { IContainerProps, IContainerState, Container } from '../container';
 
-export interface IAbstractViewProps extends IContainerProps {}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface IAbstractViewRouterProps<D extends object = any> {
+  initialServerData?: D;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface IAbstractViewProps<D extends object = any> extends IAbstractViewRouterProps<D>, IContainerProps {}
 
 export interface IAbstractViewState extends IContainerState {
   loaded: boolean;
 }
 
-export abstract class AbstractView<
-  P extends IAbstractViewProps = IAbstractViewProps,
-  S extends IAbstractViewState = IAbstractViewState,
-> extends Container<P, S> {
+export abstract class AbstractView<P extends IAbstractViewProps, S extends IAbstractViewState> extends Container<P, S> {
   protected viewName: string;
+
+  public static async getInitialServerData?(params: TRouterParams<TRouterState>): Promise<Partial<object | undefined>>;
+  public static getMetaTags?(params: TRouterParams<TRouterState>): THeadTag[];
 
   protected onViewEnter?(): Promise<void>;
   protected onViewLeave?(): Promise<void>;

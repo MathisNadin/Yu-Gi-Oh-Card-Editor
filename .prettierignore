@@ -1,3 +1,5 @@
 source/api
 **/source/**/CHANGELOG.md
 **/source/**/package.json
+**/webpack/**/CHANGELOG.md
+**/webpack/**/package.json

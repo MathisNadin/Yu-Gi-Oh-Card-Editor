@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { contextBridge, ipcRenderer, IpcRendererEvent, webUtils } from 'electron';
 import { getProjectIpcRenderer } from '../../../../client/electron-patchs/preload';
 
 const defaultIpcRenderer: Partial<IIpcRenderer> = {
@@ -23,6 +23,10 @@ const defaultIpcRenderer: Partial<IIpcRenderer> = {
     ...args: TIpcRendererInvokeChannelArgs<C>
   ): Promise<TIpcRendererInvokeChannelResponse<C>> {
     return await ipcRenderer.invoke(channel, ...args);
+  },
+
+  getPathForFile(file: File): string {
+    return webUtils.getPathForFile(file);
   },
 };
 

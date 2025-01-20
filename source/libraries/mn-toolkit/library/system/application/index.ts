@@ -27,6 +27,7 @@ declare global {
     displayName: string;
     stage: TAppplicationStage;
     version: string;
+    baseUrl: string;
     apiUrl?: string;
     routerConfig?: IRouteRecord[];
     dbName?: string;

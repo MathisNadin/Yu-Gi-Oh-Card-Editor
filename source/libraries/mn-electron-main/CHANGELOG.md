@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.2
+
+- fix de l'utilisation de webUtils
+
 ## 1.1.1
 
+- bump to 1.1.1
 - ajout d la license
 
 ## 1.1.0

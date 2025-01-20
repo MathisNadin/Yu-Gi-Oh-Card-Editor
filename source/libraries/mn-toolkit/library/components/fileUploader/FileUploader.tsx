@@ -90,7 +90,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
           const match = orgFile.name?.match(/\.[0-9a-z]+$/i);
           let path: string | undefined;
           if (app.$device.isElectron(window)) {
-            path = await window.electron.ipcRenderer.invoke('getPathForFile', orgFile);
+            path = await window.electron.ipcRenderer.getPathForFile(orgFile);
           }
 
           const file: IFile = {

@@ -1,7 +1,7 @@
 {
   "name": "mn-toolkit",
   "displayName": "MN Toolkit",
-  "version": "6.0.2",
+  "version": "6.1.1",
   "description": "Bibliothèque React Typescript pour des fonctions et composants réutilisables",
   "repository": {
     "type": "git",

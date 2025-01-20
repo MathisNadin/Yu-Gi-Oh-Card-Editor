@@ -45,6 +45,7 @@ declare global {
       channel: C,
       ...args: TIpcRendererInvokeChannelArgs<C>
     ): Promise<TIpcRendererInvokeChannelResponse<C>>;
+    getPathForFile(file: File): string;
   }
 
   interface IElectronHandler {

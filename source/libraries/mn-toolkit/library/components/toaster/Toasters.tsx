@@ -9,6 +9,13 @@ interface IToastersProps extends IContainableProps {}
 interface IToastersState extends IContainableState {}
 
 export class Toasters extends Containable<IToastersProps, IToastersState> implements Partial<IToasterListener> {
+  public static override get defaultProps(): IToastersProps {
+    return {
+      ...super.defaultProps,
+      zIndex: 'toaster',
+    };
+  }
+
   public constructor(props: IToastersProps) {
     super(props);
     app.$toaster.addListener(this);

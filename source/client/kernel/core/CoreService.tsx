@@ -20,6 +20,8 @@ export class CoreService implements Partial<IApplicationListener> {
       storePrefix: app.conf.objectStoreName,
     });
 
+    app.$router.fallbackState = 'home';
+
     if (app.$device.isElectron(window)) {
       await window.electron.ipcRenderer.invoke('setAutoDownloadAppUpdate', true);
       await window.electron.ipcRenderer.invoke('setAutoInstallOnAppQuit', true);

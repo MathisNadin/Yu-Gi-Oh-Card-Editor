@@ -1,3 +1,4 @@
+import { THeadTag } from 'api/main';
 import { RouterService } from './RouterService';
 
 export * from './RouterService';
@@ -9,12 +10,19 @@ declare global {
     $router: RouterService;
   }
 
+  interface Window {
+    __INITIAL_SERVER_DATA__?: IResolvedState['parameters']['initialServerData'];
+  }
+
   interface IRouter {}
 }
 
 export type TRouterState = keyof IRouter;
 
-export type TRouterParams<T extends TRouterState> = IRouter[T] extends (options: infer P) => void ? P : never;
+export type TRouterParams<T extends TRouterState> = IRouter[T] extends (options: infer P) => void
+  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    P & { initialServerData?: any }
+  : never;
 
 export interface IRouterHrefParams<T extends TRouterState = TRouterState> {
   state: T;
@@ -27,10 +35,11 @@ export interface IStateCrumb<T extends TRouterState = TRouterState> {
   parameters?: TRouterParams<T>;
 }
 
-export interface IResolvedState<T extends TRouterState = TRouterState> {
+export interface IResolvedState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState> {
   path: string;
-  state: IState;
+  state: IState<T, P>;
   parameters: TRouterParams<T>;
+  headTags: THeadTag[];
   historyData?: object;
   title?: string;
   parentParameters?: object;
@@ -43,17 +52,27 @@ export interface IStatePathKey {
   type: 'qs' | 'path';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TRouterComponent = React.ComponentClass<any, any>;
+
+export interface IAbstractViewStaticFunctions {
+  getInitialServerData?<T extends TRouterState>(params: TRouterParams<T>): Promise<Partial<TRouterParams<T>>>;
+  getMetaTags?<T extends TRouterState>(params: TRouterParams<T>): THeadTag[];
+  resolver?<T extends TRouterState>(state: IResolvedState<T>): Promise<void>;
+}
+
 export interface IState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState> {
   name: T;
   path: string;
   pathKeys: IStatePathKey[];
   parentState?: P;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: any;
+  component: TRouterComponent;
   params: TRouterParams<T>;
   regExp: RegExp;
-  resolver?: (state: IResolvedState) => Promise<void>;
-  describe?: (state: IResolvedState) => Promise<void>;
+  fallbackState?: TRouterState;
+  getInitialData?: (params: TRouterParams<T>) => Promise<Partial<TRouterParams<T>>>;
+  getMetaTags?: (params: TRouterParams<T>) => THeadTag[];
+  resolver?: (state: IResolvedState<T>) => Promise<void>;
 }
 
 export interface IRouterListener {
