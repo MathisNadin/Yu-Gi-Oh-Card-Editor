@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.3
+
+- ajout de l'app icon en mode dev
+
 ## 1.1.2
 
+- bump to 1.1.2
 - fix de l'utilisation de webUtils
 
 ## 1.1.1

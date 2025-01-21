@@ -1,6 +1,7 @@
-import { BrowserWindow, shell, Menu, app } from 'electron';
 import path from 'path';
 import { createConnection } from 'net';
+import { platform } from 'os';
+import { BrowserWindow, shell, Menu, app } from 'electron';
 import { buildDefaultDarwinTemplate, buildDefaultTemplate } from './defaultMenus';
 import { buildProjectMenuDarwinTemplate, buildProjectMenuTemplate } from '../../../../client/electron-patchs/main';
 
@@ -13,9 +14,19 @@ export class WindowManager {
   public async createWindow() {
     const isDev = process.env.NODE_ENV === 'development';
 
+    // In prod, don't provide the icon, let electron-builder.json handle it
+    let iconPath: string | undefined;
     let preloadPath: string;
     if (isDev) {
-      preloadPath = path.join(__dirname, '..', '..', '..', '..', '..', '.temp-desktop', 'preload.js');
+      const sourceFolderPath = path.join(__dirname, '..', '..', '..', '..');
+      preloadPath = path.join(sourceFolderPath, '..', '.temp-desktop', 'preload.js');
+
+      const iconsFolderPath = path.join(sourceFolderPath, 'assets', 'icons');
+      if (platform() === 'win32') {
+        iconPath = path.join(iconsFolderPath, 'icon.ico'); // Windows
+      } else {
+        iconPath = path.join(iconsFolderPath, 'icon.png'); // macOS & Linux
+      }
     } else {
       preloadPath = path.join(__dirname, 'preload.js');
     }
@@ -24,6 +35,7 @@ export class WindowManager {
       show: false,
       width: 1024,
       height: 728,
+      icon: iconPath,
       webPreferences: {
         preload: preloadPath,
       },
