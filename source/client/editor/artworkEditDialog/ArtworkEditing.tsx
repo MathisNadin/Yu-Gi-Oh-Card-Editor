@@ -9,7 +9,7 @@ import {
   VerticalStack,
   FilePathInput,
   HorizontalStack,
-  CheckBox,
+  Checkbox,
   Button,
   TDidUpdateSnapshot,
   NumberInputField,
@@ -245,7 +245,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
       !!croppedArtworkBase64?.length && (
         <HorizontalStack key='ratio-checkbox' itemAlignment='center' verticalItemAlignment='middle' gutter>
           <Spacer />
-          <CheckBox label='Conserver le ratio 1:1' defaultValue={keepRatio} onChange={() => this.switchKeepRatio()} />
+          <Checkbox label='Conserver le ratio 1:1' defaultValue={keepRatio} onChange={() => this.switchKeepRatio()} />
         </HorizontalStack>
       ),
 

@@ -26,7 +26,6 @@ button {
 }
 
 @mixin themeButton() {
-  @include themeLayoutContainable();
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -36,6 +35,7 @@ button {
   height: fit-content;
   font-weight: 400;
   letter-spacing: 0.5px;
+  max-width: 100%;
 
   cursor: pointer;
   text-decoration: none;
@@ -69,7 +69,7 @@ button {
     @include text-overflow();
     display: block;
     flex: 1;
-    line-height: 1em;
+    line-height: 100%;
     text-align: center;
     padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
   }
@@ -152,6 +152,7 @@ button {
   max-height: $button-height;
   line-height: $button-height;
   width: fit-content;
+  max-width: 100%;
   cursor: pointer;
   text-decoration: none;
   user-select: none;
@@ -247,6 +248,7 @@ button {
   justify-content: right;
   border: none;
   @include text-overflow();
+  max-width: 100%;
   min-height: $button-height;
   max-height: $button-height;
   line-height: $button-height;
@@ -360,6 +362,7 @@ button {
 
   $border: 1px;
   border: $border solid color-hsl($primary);
+  max-width: 100%;
 
   @include buttonIconSize(calc(#{$defaultItemHeight}), calc(#{$defaultSpacing} / 4), $border);
 

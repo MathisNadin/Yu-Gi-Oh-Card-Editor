@@ -95,12 +95,12 @@
     color: color-hsl($fg1);
 
     .center-part {
-      display: flex;
-      align-items: center;
-      gap: calc(#{$defaultSpacing} / 2);
-      flex: 1;
       text-align: left;
       @include text-overflow();
+
+      > .mn-container-inside {
+        gap: calc(#{$defaultSpacing} / 2);
+      }
     }
   }
 

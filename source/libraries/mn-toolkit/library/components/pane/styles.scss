@@ -1,5 +1,5 @@
 @mixin themePane() {
-  background-color: color-hsl($bg1);
+  border-color: color-hsl($fg4);
 
   &.mn-pane-left {
     border-right-width: 1px;
@@ -20,10 +20,180 @@
     border-top-width: 1px;
     border-top-style: solid;
   }
-
-  border-color: color-hsl($fg4);
 }
 
 .mn-pane {
   @include themePane();
+}
+
+@keyframes mn-sticky-pane-top-appearing {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes mn-sticky-pane-bottom-appearing {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes mn-sticky-pane-left-appearing {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes mn-sticky-pane-right-appearing {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes mn-sticky-pane-top-disappearing {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes mn-sticky-pane-bottom-disappearing {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes mn-sticky-pane-left-disappearing {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes mn-sticky-pane-right-disappearing {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@mixin themeStickyPane() {
+  position: relative;
+  overflow: visible; // Ensure the animation is not clipped
+
+  // When sticky, the content is positioned fixedly
+  &.sticky {
+    z-index: $z-index-view-above;
+    > .mn-container-inside {
+      position: fixed;
+    }
+
+    /* Top position */
+    &.mn-pane-top {
+      > .mn-container-inside {
+        top: 0;
+        height: fit-content;
+        min-height: fit-content;
+        max-height: fit-content;
+      }
+      &.sticky-visible > .mn-container-inside {
+        animation: mn-sticky-pane-top-appearing 0.3s ease-out forwards;
+      }
+      &.sticky-hidden > .mn-container-inside {
+        animation: mn-sticky-pane-top-disappearing 0.3s ease-out forwards;
+      }
+    }
+
+    /* Bottom position */
+    &.mn-pane-bottom {
+      > .mn-container-inside {
+        bottom: 0;
+        height: fit-content;
+        min-height: fit-content;
+        max-height: fit-content;
+      }
+      &.sticky-visible > .mn-container-inside {
+        animation: mn-sticky-pane-bottom-appearing 0.3s ease-out forwards;
+      }
+      &.sticky-hidden > .mn-container-inside {
+        animation: mn-sticky-pane-bottom-disappearing 0.3s ease-out forwards;
+      }
+    }
+
+    /* Left position */
+    &.mn-pane-left {
+      > .mn-container-inside {
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: fit-content;
+        min-width: fit-content;
+        max-width: fit-content;
+      }
+      &.sticky-visible > .mn-container-inside {
+        animation: mn-sticky-pane-left-appearing 0.3s ease-out forwards;
+      }
+      &.sticky-hidden > .mn-container-inside {
+        animation: mn-sticky-pane-left-disappearing 0.3s ease-out forwards;
+      }
+    }
+
+    /* Right position */
+    &.mn-pane-right {
+      > .mn-container-inside {
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: fit-content;
+        min-width: fit-content;
+        max-width: fit-content;
+      }
+      &.sticky-visible > .mn-container-inside {
+        animation: mn-sticky-pane-right-appearing 0.3s ease-out forwards;
+      }
+      &.sticky-hidden > .mn-container-inside {
+        animation: mn-sticky-pane-right-disappearing 0.3s ease-out forwards;
+      }
+    }
+  }
+
+  // Specific style for the top menu, as it's mostly the intended use for the top position
+  &.mn-pane-top {
+    .mn-top-menu {
+      :after {
+        content: ' ';
+        position: fixed;
+        background-color: color-hsl($bg1);
+        top: 0;
+        right: -$scrollBarSize;
+        width: $scrollBarSize;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.mn-sticky-pane {
+  @include themeStickyPane();
 }

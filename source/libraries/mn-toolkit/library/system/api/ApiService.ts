@@ -1,13 +1,14 @@
 import { extend, isDefined, isString, logger, Observable, parseUri, serialize } from 'mn-tools';
-import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, IJobResponse } from 'api/main';
+import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, IJobResponse, ISessionEntity } from 'api/main';
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
 import { ApiJob } from './ApiJob';
 
 interface IFileGetUrlOptions extends Omit<IFileApiDownloadOptions, 'oid' | 'effects' | 'instance'> {
-  oid?: number;
+  oid?: IFileEntity['oid'];
   effects?: IFileEffect[];
-  instance?: number;
+  instance?: IFileEntity['applicationInstance'];
+  token?: ISessionEntity['token'];
 }
 
 const BYTES_PER_CHUNK = 1048576; // 1MB chunk sizes.
@@ -234,13 +235,13 @@ export class ApiService extends Observable<IApiListener> {
   // A éviter de mettre à jour à chaque render, sinon ça requête l'image à nouveau à chaque fois
   // Uniquement quand il y a un sens à vouloir rafraichir l'image affichée
   public getFileUrl(options: IFileGetUrlOptions) {
-    let { oid, derivative, effects, timestamp, instance } = options;
+    let { oid, derivative, effects, timestamp, instance, token } = options;
     if (!oid) return undefined;
 
     instance = instance || app.$session.data?.member?.applicationInstance || 1;
 
-    const url = new URL(`${this._settings.apiUrl}/file/download/${instance}/${oid}`);
-    url.searchParams.set('token', app.$session.token);
+    const url = new URL(`${this._settings.apiUrl}/file/download/${instance}/${oid}/`);
+    if (token) url.searchParams.set('token', token);
 
     if (derivative) url.searchParams.set('derivative', derivative);
 
@@ -265,8 +266,10 @@ export class ApiService extends Observable<IApiListener> {
     return `${this._settings.apiUrl}/file/stream/${appInstance}/${oid}?token=${app.$session.token}`;
   }
 
-  public async createFileFromFile(fileBlob: File) {
-    const file = await app.$api.file.store({ mimeType: fileBlob.type, fileName: fileBlob.name });
+  public async createFileFromFile(fileBlob: File, spec: Partial<IFileEntity> = {}) {
+    spec.fileName = spec.fileName || fileBlob.name;
+    spec.mimeType = spec.mimeType || fileBlob.type;
+    const file = await app.$api.file.store(spec);
     await this.uploadFileToFile(fileBlob, file.oid, file.applicationInstance);
     return file;
   }

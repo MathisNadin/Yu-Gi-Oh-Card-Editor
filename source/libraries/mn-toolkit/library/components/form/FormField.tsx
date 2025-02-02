@@ -38,7 +38,7 @@ export interface IFormFieldProps<TFormFieldDataType, FORM_ELEMENT extends HTMLEl
   onSubmit?: (event: React.KeyboardEvent<FORM_ELEMENT>) => void | Promise<void>;
 
   hideLabel?: boolean;
-  label?: string;
+  label: string;
 
   infoIcon?: {
     icon: TIconId;
@@ -97,6 +97,7 @@ export abstract class FormField<
   public static override get defaultProps(): IFormFieldProps<any, any> {
     return {
       ...super.defaultProps,
+      label: '',
     };
   }
 

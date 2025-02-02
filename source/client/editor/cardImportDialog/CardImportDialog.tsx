@@ -3,7 +3,7 @@ import { classNames, isString } from 'mn-tools';
 import {
   Spinner,
   HorizontalStack,
-  CheckBox,
+  Checkbox,
   VerticalStack,
   TextInput,
   Button,
@@ -384,12 +384,14 @@ export class CardImportDialog extends AbstractPopup<
           key='yuginews-logo'
           className={classNames('logo', 'yuginews', { selected: this.state.website === 'yuginews' })}
           src={this.yuginewsLogo}
+          alt='yuginews-logo'
           onTap={() => this.onSelectWesite('yuginews')}
         />
         <Image
           key='yugipedia-logo'
           className={classNames('logo', 'yugipedia', { selected: this.state.website === 'yugipedia' })}
           src={this.yugipediaLogo}
+          alt='yugipedia-logo'
           onTap={() => this.onSelectWesite('yugipedia')}
         />
       </VerticalStack>
@@ -414,7 +416,7 @@ export class CardImportDialog extends AbstractPopup<
     const headers: ITableHeadRow = {
       cells: [
         {
-          content: <CheckBox defaultValue={selectedCardsNum === cardsData.length} onChange={() => this.toggleAll()} />,
+          content: <Checkbox defaultValue={selectedCardsNum === cardsData.length} onChange={() => this.toggleAll()} />,
         },
       ],
     };
@@ -475,7 +477,7 @@ export class CardImportDialog extends AbstractPopup<
                 onTap: () => this.toggleSelectCard(uuid),
                 cells: [
                   {
-                    content: <CheckBox defaultValue={this.state.selectedCards[uuid]} />,
+                    content: <Checkbox defaultValue={this.state.selectedCards[uuid]} />,
                   },
                   {
                     align: 'left',
@@ -532,8 +534,8 @@ export class CardImportDialog extends AbstractPopup<
         />
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
-          <CheckBox label='Textes français' defaultValue={useFr} onChange={(useFr) => this.setState({ useFr })} />
-          <CheckBox
+          <Checkbox label='Textes français' defaultValue={useFr} onChange={(useFr) => this.setState({ useFr })} />
+          <Checkbox
             label='Si absent, générer un code'
             defaultValue={generatePasscode}
             onChange={(generatePasscode) => this.setState({ generatePasscode })}
@@ -590,7 +592,7 @@ export class CardImportDialog extends AbstractPopup<
     if (!app.$device.isElectron(window)) return undefined;
     return (
       <HorizontalStack fill={website === 'yugipedia'} gutter>
-        <CheckBox
+        <Checkbox
           label='Importer les images'
           defaultValue={this.state.importArtworks}
           onChange={(importArtworks) => this.setState({ importArtworks })}

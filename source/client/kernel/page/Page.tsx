@@ -1,4 +1,13 @@
-import { Spinner, RouterViewPort, HorizontalStack, Popovers, Popups, Toasters } from 'mn-toolkit';
+import {
+  Spinner,
+  RouterViewPort,
+  HorizontalStack,
+  Popovers,
+  Popups,
+  Toasters,
+  Drawers,
+  FullscreenImages,
+} from 'mn-toolkit';
 import { Component } from 'react';
 
 interface IPageProps {}
@@ -53,6 +62,9 @@ export class Page extends Component<IPageProps, IPageState> {
     return (
       <HorizontalStack fill>
         <RouterViewPort />
+
+        <FullscreenImages />
+        <Drawers />
         <Popups />
         <Popovers />
         <Toasters />

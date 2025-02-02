@@ -11,7 +11,7 @@ import {
   TextInput,
   Select,
   FilePathInput,
-  CheckBox,
+  Checkbox,
   Grid,
   TextAreaInput,
   NumberInput,
@@ -482,7 +482,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <CheckBox
+          <Checkbox
             label='@ TCG'
             defaultValue={this.state.card.tcgAt}
             onChange={(tcgAt) => this.onTcgAtChange(tcgAt)}
@@ -504,7 +504,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </HorizontalStack>
 
           {this.state.card.pendulum && (
-            <CheckBox
+            <Checkbox
               label='Format Pendule'
               defaultValue={this.state.card.artwork.pendulum}
               onChange={() => this.onArtworkPendChange()}
@@ -515,7 +515,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <VerticalStack gutter>
           <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
             <Typography fill variant='help' content={this.state.card.multipleFrames ? 'Bordures' : 'Bordure'} />
-            <CheckBox
+            <Checkbox
               label='Cumuler'
               defaultValue={this.state.card.multipleFrames}
               onChange={() => this.onMultipleFramesChange()}
@@ -537,7 +537,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   <Image
                     src={paths.frames[frame]}
                     alt={`frame-${frame}`}
-                    title={app.$card.getFrameName(frame)}
+                    hint={app.$card.getFrameName(frame)}
                     onTap={() => this.onFrameChange(frame)}
                     maxHeight={60}
                   />
@@ -551,7 +551,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           <VerticalStack gutter>
             <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
               <Typography fill variant='help' content='Icône' />
-              <CheckBox
+              <Checkbox
                 label='Sans texte'
                 defaultValue={this.state.card.noTextAttribute}
                 onChange={() => this.onNoTextAttributeChange()}
@@ -572,7 +572,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   <Image
                     src={paths.attributeIcons[attribute]}
                     alt={`attribute-${attribute}`}
-                    title={app.$card.getAttributeName(attribute)}
+                    hint={app.$card.getAttributeName(attribute)}
                     onTap={() => this.onAttributeChange(attribute)}
                     maxHeight={40}
                   />
@@ -599,7 +599,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   <Image
                     src={paths.stIcons[stType]}
                     alt={`st-icon-${stType}`}
-                    title={app.$card.getStIconName(stType)}
+                    hint={app.$card.getStIconName(stType)}
                     onTap={() => this.onStTypeChange(stType)}
                     maxHeight={40}
                   />
@@ -633,18 +633,18 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <HorizontalStack gutter>
           <Spacer />
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox
+            <Checkbox
               defaultValue={this.state.card.linkArrows.topLeft}
               onChange={() => this.onLinkArrowChange('topLeft')}
             />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox defaultValue={this.state.card.linkArrows.top} onChange={() => this.onLinkArrowChange('top')} />
+            <Checkbox defaultValue={this.state.card.linkArrows.top} onChange={() => this.onLinkArrowChange('top')} />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox
+            <Checkbox
               defaultValue={this.state.card.linkArrows.topRight}
               onChange={() => this.onLinkArrowChange('topRight')}
             />
@@ -655,11 +655,11 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <HorizontalStack gutter>
           <Spacer />
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox defaultValue={this.state.card.linkArrows.left} onChange={() => this.onLinkArrowChange('left')} />
+            <Checkbox defaultValue={this.state.card.linkArrows.left} onChange={() => this.onLinkArrowChange('left')} />
           </HorizontalStack>
           <Spacer />
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox
+            <Checkbox
               defaultValue={this.state.card.linkArrows.right}
               onChange={() => this.onLinkArrowChange('right')}
             />
@@ -670,21 +670,21 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <HorizontalStack gutter>
           <Spacer />
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox
+            <Checkbox
               defaultValue={this.state.card.linkArrows.bottomLeft}
               onChange={() => this.onLinkArrowChange('bottomLeft')}
             />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox
+            <Checkbox
               defaultValue={this.state.card.linkArrows.bottom}
               onChange={() => this.onLinkArrowChange('bottom')}
             />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <CheckBox
+            <Checkbox
               defaultValue={this.state.card.linkArrows.bottomRight}
               onChange={() => this.onLinkArrowChange('bottomRight')}
             />
@@ -806,7 +806,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </VerticalStack>
         </VerticalStack>
 
-        <CheckBox
+        <Checkbox
           className='sub-title-checkbox'
           label='Pendule'
           defaultValue={this.state.card.pendulum}
@@ -948,12 +948,12 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
-              <CheckBox
+              <Checkbox
                 label='Copyright'
                 defaultValue={this.state.card.hasCopyright}
                 onChange={() => this.onCopyrightChange()}
               />
-              <CheckBox
+              <Checkbox
                 label='1996'
                 defaultValue={this.state.card.oldCopyright}
                 onChange={() => this.onOldCopyrightChange()}

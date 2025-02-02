@@ -21,6 +21,11 @@ export class Toasters extends Containable<IToastersProps, IToastersState> implem
     app.$toaster.addListener(this);
   }
 
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    app.$toaster.removeListener(this);
+  }
+
   public toastersChanged() {
     log.debug('toastersChanged');
     this.forceUpdate();

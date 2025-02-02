@@ -1,4 +1,4 @@
-import { IDeviceListener, TJSXElementChildren, TForegroundColor } from '../../system';
+import { IDeviceListener, TJSXElementChildren, TForegroundColor, TJSXElementChild } from '../../system';
 import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, IContainerState, Container, HorizontalStack } from '../container';
 import { Typography } from '../typography';
@@ -6,9 +6,8 @@ import { IActionsPopoverAction } from '../popover';
 import { Icon } from '../icon';
 import { IMenuItem, isMenuItemActive } from '.';
 
-interface ITopMenuProps extends IContainerProps {
+interface ITopMenuProps extends IContainerProps<HTMLElement> {
   items: IMenuItem[];
-  dark?: boolean;
   leftContent?: TJSXElementChildren;
   rightContent?: TJSXElementChildren;
 }
@@ -18,10 +17,11 @@ interface ITopMenuState extends IContainerState {
   currentlyShown?: IMenuItem;
 }
 
-export class TopMenu extends Container<ITopMenuProps, ITopMenuState> implements Partial<IDeviceListener> {
+export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement> implements Partial<IDeviceListener> {
   public static override get defaultProps(): ITopMenuProps {
     return {
       ...super.defaultProps,
+      theme: 'dark',
       bg: '1',
       wrap: true,
       layout: 'horizontal',
@@ -61,17 +61,26 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> implements 
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-top-menu'] = true;
-    classes['mn-dark-theme'] = !!this.props.dark;
     return classes;
   }
 
-  public get inside() {
+  public override render(): TJSXElementChild {
+    return (
+      <nav ref={this.base} {...this.renderAttributes()}>
+        {this.inside}
+      </nav>
+    );
+  }
+
+  public override get inside() {
     return (
       <div className='mn-container-inside' onMouseLeave={(e) => this.closePopover(e)}>
         <HorizontalStack fill height='100%' onMouseEnter={(e) => this.closePopover(e)} itemAlignment='left'>
           {this.props.leftContent}
         </HorizontalStack>
-        {this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}
+
+        <ul>{this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>
+
         <HorizontalStack fill height='100%' onMouseEnter={(e) => this.closePopover(e)} itemAlignment='right'>
           {this.props.rightContent}
         </HorizontalStack>
@@ -84,12 +93,9 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> implements 
     const hasBelow = !!item.below?.length;
     const labelColor: TForegroundColor = isMenuItemActive(item) || this.state.currentlyShown === item ? 'primary' : '1';
     return (
-      <HorizontalStack
+      <li
         key={`mn-top-menu-group-${item.id}-${item.label}`}
         className='mn-top-menu-group'
-        height='100%'
-        itemAlignment='center'
-        verticalItemAlignment='middle'
         onMouseEnter={(event) => (hasBelow ? this.showBelow(event, item) : this.closePopover(event))}
       >
         <HorizontalStack className='mn-top-menu-group-container' itemAlignment='center' verticalItemAlignment='middle'>
@@ -105,12 +111,22 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> implements 
 
           {hasBelow && <Icon icon='toolkit-angle-down' size={16} color={labelColor} />}
         </HorizontalStack>
-      </HorizontalStack>
+
+        {hasBelow && (
+          <ul className='crawler-hidden-item-list'>
+            {item.below!.map((item, i) => (
+              <li key={i}>
+                <Typography href={item.href} content={item.label} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
     );
   }
 
   private isTargetOrParentOfClasses(
-    event: React.MouseEvent<HTMLDivElement> | undefined,
+    event: React.MouseEvent<HTMLDivElement | HTMLLIElement> | undefined,
     classNames: string[]
   ): boolean {
     if (!event?.relatedTarget || !(event.relatedTarget instanceof HTMLElement)) {
@@ -131,7 +147,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> implements 
     return false;
   }
 
-  public async closePopover(event?: React.MouseEvent<HTMLDivElement>) {
+  public async closePopover(event?: React.MouseEvent<HTMLDivElement | HTMLLIElement>) {
     if (
       !app.$popover.visible ||
       this.isTargetOrParentOfClasses(event, ['mn-top-menu-group', 'mn-top-menu-below-popover'])
@@ -143,10 +159,10 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState> implements 
     await this.setStateAsync({ currentlyShown: undefined });
   }
 
-  private async showBelow(event: React.MouseEvent<HTMLDivElement>, item: IMenuItem) {
+  private async showBelow(event: React.MouseEvent<HTMLLIElement>, item: IMenuItem) {
     if (app.$popover.visible && this.state.currentlyShown === item) return;
 
-    const eventTarget = event.target as HTMLDivElement;
+    const eventTarget = event.target as HTMLLIElement;
     const eventTargetParent = eventTarget?.parentElement as HTMLDivElement;
     if (!eventTargetParent) return;
 

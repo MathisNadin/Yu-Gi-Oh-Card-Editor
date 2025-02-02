@@ -218,7 +218,7 @@ export class ThemeService {
       info: [190, 78, 41], // hsl(190, 78%, 41%)
 
       // Theme Light Foreground Colors
-      'fg-1': [0, 0, 10], // hsl(0, 0%, 10%)
+      'fg-1': [0, 0, 0], // hsl(0, 0%, 0%)
       'fg-2': [0, 0, 35], // hsl(0, 0%, 35%)
       'fg-3': [0, 0, 60], // hsl(0, 0%, 60%)
       'fg-4': [0, 0, 85], // hsl(0, 0%, 85%)

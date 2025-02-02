@@ -6,7 +6,7 @@ import { Containable, IContainableProps, IContainableState } from '../containabl
 export type TMemberBadgeShape = 'circle' | 'square';
 
 interface IMemberBadgeProps extends IContainableProps {
-  member: IMemberEntity;
+  member: Pick<IMemberEntity, 'userName' | 'firstName' | 'lastName' | 'picture' | 'pictureEffects'>;
   shape?: TMemberBadgeShape;
   size?: number;
   color?: TForegroundColor;

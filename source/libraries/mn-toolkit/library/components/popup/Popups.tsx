@@ -21,6 +21,11 @@ export class Popups extends Containable<IPopupsProps, IPopupsState> implements P
     app.$popup.addListener(this);
   }
 
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    app.$popup.removeListener(this);
+  }
+
   public popupsChanged() {
     log.debug('popupsChanged');
     this.forceUpdate();

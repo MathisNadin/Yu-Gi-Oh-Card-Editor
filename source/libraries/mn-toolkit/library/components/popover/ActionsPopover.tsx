@@ -1,6 +1,6 @@
-import { classNames, isDefined, isString } from 'mn-tools';
+import { classNames, isString } from 'mn-tools';
 import { IRouterHrefParams, TRouterState, TBackgroundColor, TForegroundColor } from '../../system';
-import { HorizontalStack, VerticalStack } from '../container';
+import { VerticalStack } from '../container';
 import { Typography } from '../typography';
 import { Icon, TIconId } from '../icon';
 import { IAbstractPopoverProps, IAbstractPopoverState, AbstractPopover } from './AbstractPopover';
@@ -10,7 +10,7 @@ export interface IActionsPopoverAction<ID = number, T extends TRouterState = TRo
   className?: string;
   weight?: number;
   label?: string;
-  onTap?: (event: React.MouseEvent<HTMLDivElement>) => void | Promise<void>;
+  onTap?: (event: React.MouseEvent<HTMLLIElement>) => void | Promise<void>;
   bg?: TBackgroundColor;
   icon?: TIconId;
   iconColor?: TForegroundColor;
@@ -19,7 +19,7 @@ export interface IActionsPopoverAction<ID = number, T extends TRouterState = TRo
   selected?: boolean;
   button?: {
     icon: TIconId;
-    onTap: () => void | Promise<void>;
+    onTap: (event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => void | Promise<void>;
   };
   isTitle?: boolean;
   isSubTitle?: boolean;
@@ -150,26 +150,46 @@ export class ActionsPopover<
   protected renderContent() {
     return (
       <VerticalStack className='mn-popover-actions-container'>
-        {this.state.actions.map((action, i) => this.renderAction(action, i))}
+        <ul>
+          {this.state.actions.map((action, i) => {
+            if (action.separator) return this.renderSeparator(action, i);
+            return this.renderAction(action, i);
+          })}
+        </ul>
       </VerticalStack>
     );
   }
 
+  protected renderSeparator(action: IActionsPopoverAction<ID>, i: number) {
+    return (
+      <hr
+        key={`action-separator-${i}`}
+        id={action.id ? `${action.id}` : undefined}
+        className={classNames('action', 'separator', action.className)}
+      />
+    );
+  }
+
+  protected renderActionClasses(action: IActionsPopoverAction<ID>) {
+    const classes: { [key: string]: boolean } = {};
+    classes['action'] = true;
+    if (action.className) classes[action.className] = true;
+    if (action.bg) classes[`mn-bg-${action.bg}`] = true;
+    classes['selected'] = !!action.selected;
+    classes['title'] = !!action.isTitle;
+    classes['sub-title'] = !!action.isSubTitle;
+    classes['has-click'] = !!action.onTap;
+    classes['mn-disabled'] = !!action.disabled;
+    return classes;
+  }
+
   protected renderAction(action: IActionsPopoverAction<ID>, i: number) {
     return (
-      <HorizontalStack
+      <li
         key={`action-${i}`}
         id={action.id ? `${action.id}` : undefined}
-        bg={action.bg}
-        disabled={action.disabled}
-        verticalItemAlignment='middle'
-        className={classNames('action', action.className, {
-          selected: action.selected,
-          separator: action.separator,
-          title: action.isTitle,
-          'sub-title': action.isSubTitle,
-        })}
-        onTap={!action.onTap ? undefined : (event) => this.onTapAction(event, action)}
+        className={classNames(this.renderActionClasses(action))}
+        onClick={(event) => !!action.onTap && app.$errorManager.handlePromise(this.onTapAction(event, action))}
       >
         {!!action.icon && (
           <Icon
@@ -181,6 +201,7 @@ export class ActionsPopover<
 
         <Typography
           fill
+          bold={action.isTitle}
           variant='document'
           contentType='text'
           content={action.label}
@@ -188,11 +209,17 @@ export class ActionsPopover<
           onTap={!action.href ? undefined : () => this.close()}
         />
 
-        {isDefined(action.button) && (
-          <Icon icon={action.button.icon} onTap={!action.href ? undefined : () => this.onGoToHref(action)} />
-        )}
-      </HorizontalStack>
+        {!!action.button && <Icon icon={action.button.icon} onTap={(e) => this.onTapActionButton(e, action)} />}
+      </li>
     );
+  }
+
+  protected async onTapActionButton(
+    event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
+    action: IActionsPopoverAction<ID>
+  ) {
+    await action.button!.onTap(event);
+    if (action.href) await this.onGoToHref(action);
   }
 
   protected async onGoToHref(action: IActionsPopoverAction<ID>) {
@@ -207,7 +234,7 @@ export class ActionsPopover<
     }
   }
 
-  protected async onTapAction(event: React.MouseEvent<HTMLDivElement>, action: IActionsPopoverAction<ID>) {
+  protected async onTapAction(event: React.MouseEvent<HTMLLIElement>, action: IActionsPopoverAction<ID>) {
     if (!action.href) await this.close();
     if (action.onTap) await action.onTap(event);
   }

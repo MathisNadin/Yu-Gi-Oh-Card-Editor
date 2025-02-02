@@ -13,7 +13,7 @@ export interface IMenuItem<T extends TRouterState = TRouterState> {
   iconColor?: string;
   badge?: string | number;
   collapsable?: boolean;
-  onTap?: (event: React.MouseEvent) => void;
+  onTap?: (event: React.MouseEvent<HTMLDivElement | HTMLLIElement>) => void;
   href?: string | IRouterHrefParams<T>;
   className?: string;
   height?: number;

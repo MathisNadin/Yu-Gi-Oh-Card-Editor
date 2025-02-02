@@ -24,6 +24,8 @@ import {
   XhrService,
   FilePickerService,
   TipService,
+  DrawerService,
+  FullscreenImageService,
 } from './library';
 
 export * from './library';
@@ -56,6 +58,8 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$tips', TipService);
   app.service('$dateTimePicker', DateTimePickerService);
   app.service('$cameraPicker', CameraPickerService);
+  app.service('$drawer', DrawerService);
+  app.service('$fullscreenImage', FullscreenImageService);
 
   if (beforeBootstrap) beforeBootstrap();
 

@@ -75,6 +75,36 @@ $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
         font-weight: 600;
       }
     }
+
+    &.image {
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      margin: 0 auto;
+
+      .mn-popup-header {
+        .mn-icon-container-button {
+          .mn-icon {
+            color: color-hsl($bg1);
+            fill: color-hsl($bg1);
+          }
+        }
+      }
+
+      .mn-popup-content-container {
+        display: flex;
+        flex-direction: column;
+        gap: calc(#{$defaultSpacing} / 2);
+
+        .mn-image {
+          margin: 0 auto;
+        }
+
+        .mn-typography {
+          color: color-hsl($bg1);
+        }
+      }
+    }
   }
 }
 

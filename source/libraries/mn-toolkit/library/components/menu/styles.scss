@@ -1,7 +1,7 @@
 $theme-menu-icon-size: 40px;
 $menu-width: 200px !default;
-// Padding du pane + padding de l'inside + taille des icones + bordure
-$menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 1px) !default;
+// Padding du pane + padding de l'inside + taille des icones + scroller padding-left + bordure
+$menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !default;
 
 @mixin themeMenuPane() {
   z-index: $z-index-drawer;
@@ -34,7 +34,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 1px) !default;
 
   background-color: color-hsl($bg1);
 
-  .shrink-btn {
+  .shrink-btn-container-button {
     position: absolute;
     top: 20px;
     height: 30px;
@@ -94,6 +94,14 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 1px) !default;
 @mixin themeLeftMenu() {
   overflow: visible;
   overflow-y: auto;
+
+  // Reset styles
+  ul,
+  li {
+    list-style: none;
+    line-height: 100%;
+    margin: 0;
+  }
 
   .mn-left-menu-group {
     margin-bottom: calc(#{$defaultItemHeight} / 2);
@@ -199,7 +207,28 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 1px) !default;
 
   background-color: color-hsl($bg1);
 
+  > .mn-container-inside {
+    > ul {
+      margin: 0;
+      list-style: none;
+      line-height: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: calc(#{$defaultSpacing});
+    }
+  }
+
   .mn-top-menu-group {
+    margin: 0;
+    list-style: none;
+    line-height: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 
     .mn-top-menu-group-container {
@@ -237,6 +266,12 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 1px) !default;
           }
         }
       }
+    }
+
+    // Items in the DOM for the crawler bots, but hidden for the user
+    .crawler-hidden-item-list {
+      z-index: -1;
+      display: none;
     }
   }
 }

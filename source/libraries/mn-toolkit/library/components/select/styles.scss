@@ -1,4 +1,4 @@
-@mixin themeSelect {
+@mixin themeSelect() {
   display: block;
   position: relative;
   border-width: 1px;
@@ -19,6 +19,7 @@
     position: relative;
     @include themeFont('small');
     @include text-overflow();
+    line-height: 100%;
     color: color-hsl($fg1);
     padding-right: 26px;
   }

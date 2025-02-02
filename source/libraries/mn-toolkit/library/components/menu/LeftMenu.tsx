@@ -1,14 +1,15 @@
 import { classNames, isString } from 'mn-tools';
+import { TJSXElementChild } from '../../system';
 import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, IContainerState, Container } from '../container';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
 import { IMenuItem, isMenuItemActive } from '.';
 
-interface ILeftMenuProps extends IContainerProps {
+interface ILeftMenuProps extends IContainerProps<HTMLElement> {
   items: IMenuItem[];
   hideGroupLabels?: boolean;
-  onClickItem?: (item: IMenuItem) => void | Promise<void>;
+  onClickItem?: (event: React.MouseEvent<HTMLLIElement>, item: IMenuItem) => void | Promise<void>;
 }
 
 interface ILeftMenuState extends IContainerState {
@@ -16,10 +17,11 @@ interface ILeftMenuState extends IContainerState {
   open: IMenuItem[];
 }
 
-export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
+export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState, HTMLElement> {
   public static override get defaultProps(): ILeftMenuProps {
     return {
       ...super.defaultProps,
+      theme: 'dark',
       scroll: true,
       layout: 'vertical',
       hideGroupLabels: false,
@@ -55,14 +57,23 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     return classes;
   }
 
-  public get children() {
-    return this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item));
+  public override render(): TJSXElementChild {
+    return (
+      <nav ref={this.base} {...this.renderAttributes()}>
+        {this.inside}
+      </nav>
+    );
+  }
+
+  public override get children() {
+    if (!this.state.items.length) return null;
+    return <ul>{this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>;
   }
 
   private renderGroup(item: IMenuItem) {
     if (item.permission && !app.$permission.hasPermission(item.permission)) return null;
     return (
-      <div
+      <li
         key={`mn-left-menu-group-${item.id}-${item.label}`}
         onClick={() => item.collapsable && app.$errorManager.handlePromise(this.openGroup(item))}
         className={classNames(
@@ -73,15 +84,16 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
       >
         <Typography
           className={classNames('mn-left-menu-label', { hide: !!this.props.hideGroupLabels })}
+          fill
           bold={!item.href}
           color='2'
           content={item.label}
           href={item.href}
         />
-        <div className='mn-left-menu-subitems'>
+        <ul className='mn-left-menu-subitems'>
           {!!item.below && item.below.map((subItems) => this.renderSubItem(subItems))}{' '}
-        </div>
-      </div>
+        </ul>
+      </li>
     );
   }
 
@@ -97,12 +109,12 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     return !!this.state.open.find((x) => x === item);
   }
 
-  private onClickItem(item: IMenuItem, e: React.MouseEvent<HTMLDivElement>) {
+  private onClickItem(event: React.MouseEvent<HTMLLIElement>, item: IMenuItem) {
     if (item.onTap) {
       this.hideBeforeClick();
-      item.onTap(e);
+      item.onTap(event);
     }
-    if (this.props.onClickItem) app.$errorManager.handlePromise(this.props.onClickItem(item));
+    if (this.props.onClickItem) app.$errorManager.handlePromise(this.props.onClickItem(event, item));
   }
 
   private async goToHref(href: IMenuItem['href']) {
@@ -118,10 +130,10 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
     if (subItem.permission && !app.$permission.hasPermission(subItem.permission)) return null;
     const isActive = isMenuItemActive(subItem);
     return (
-      <div
+      <li
         key={`mn-left-menu-subitem-${subItem.id}-${subItem.label}`}
         className={classNames('mn-left-menu-subitem', { active: isActive })}
-        onClick={(e) => this.onClickItem(subItem, e)}
+        onClick={(e) => this.onClickItem(e, subItem)}
       >
         {!subItem.icon && <span className='mn-left-menu-icon' />}
         {!!subItem.icon && (
@@ -134,12 +146,13 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState> {
 
         <Typography
           className='mn-left-menu-subitem-text'
+          fill
           href={subItem.href}
           bold={isActive}
           color='1'
           content={subItem.label}
         />
-      </div>
+      </li>
     );
   }
 

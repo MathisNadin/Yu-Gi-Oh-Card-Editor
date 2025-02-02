@@ -5,7 +5,6 @@ import { Typography } from '../typography';
 
 interface IMenuPaneProps extends IPaneProps {
   showIcon?: boolean;
-  dark?: boolean;
   open?: boolean;
   dynamic?: boolean;
   showVersion?: boolean;
@@ -21,7 +20,6 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
     return {
       ...super.defaultProps,
       showIcon: true,
-      dark: false,
       open: false,
       dynamic: false,
       layout: 'vertical',
@@ -85,7 +83,6 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-menu-pane'] = true;
-    classes['mn-dark-theme'] = !!this.props.dark;
     classes['dynamic'] = !!this.props.dynamic;
     classes['static'] = !this.props.dynamic;
     classes['open'] = this.state.open;

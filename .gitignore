@@ -6,7 +6,8 @@
 
 node_modules
 
-config
+config/platform-webpack.ts
+config/platform.js
 
 *.log
 

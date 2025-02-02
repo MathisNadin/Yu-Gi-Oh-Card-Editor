@@ -12,7 +12,7 @@ import {
   TextInput,
   Select,
   FilePathInput,
-  CheckBox,
+  Checkbox,
   Grid,
   TabbedPane,
   TextAreaInput,
@@ -486,7 +486,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             />
           </HorizontalStack>
 
-          <CheckBox
+          <Checkbox
             label='@ TCG'
             defaultValue={this.state.card.tcgAt}
             onChange={(tcgAt) => this.onTcgAtChange(tcgAt)}
@@ -509,7 +509,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         <VerticalStack gutter>
           <HorizontalStack gutter className='sub-title-container' itemAlignment='center'>
             <Typography fill variant='help' content={this.state.card.multipleFrames ? 'Bordures' : 'Bordure'} />
-            <CheckBox
+            <Checkbox
               label='Cumuler'
               defaultValue={this.state.card.multipleFrames}
               onChange={() => this.onMultipleFramesChange()}
@@ -531,7 +531,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   <Image
                     src={paths.frames[frame]}
                     alt={`frame-${frame}`}
-                    title={app.$card.getFrameName(frame)}
+                    hint={app.$card.getFrameName(frame)}
                     onTap={() => this.onFrameChange(frame)}
                     maxHeight={60}
                   />
@@ -561,7 +561,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   <Image
                     src={paths.attributeIcons[attribute]}
                     alt={`attribute-${attribute}`}
-                    title={app.$card.getAttributeName(attribute)}
+                    hint={app.$card.getAttributeName(attribute)}
                     onTap={() => this.onAttributeChange(attribute)}
                     maxHeight={40}
                   />
@@ -588,7 +588,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   <Image
                     src={paths.spellTraps[stType]}
                     alt={`st-icon-${stType}`}
-                    title={app.$card.getStIconName(stType)}
+                    hint={app.$card.getStIconName(stType)}
                     onTap={() => this.onStTypeChange(stType)}
                     maxHeight={40}
                   />
@@ -765,7 +765,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
         <HorizontalStack>
           <Icon className='field-icon' size={24} icon='toolkit-eye-close' color='1' />
-          <CheckBox
+          <Checkbox
             label="Ne pas couvrir l'artwork"
             defaultValue={this.state.card.dontCoverRushArt}
             onChange={() => this.onDontCoverRushArtChange()}
@@ -776,7 +776,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           <HorizontalStack gutter className='line-with-checkbox'>
             <HorizontalStack verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-diamond-shine' color='1' />
-              <CheckBox label='LEGEND' defaultValue={this.state.card.legend} onChange={() => this.onLegendChange()} />
+              <Checkbox label='LEGEND' defaultValue={this.state.card.legend} onChange={() => this.onLegendChange()} />
             </HorizontalStack>
 
             {this.state.card.legend && (
@@ -874,7 +874,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         {!this.state.card.dontCoverRushArt && (
           <HorizontalStack gutter className='line-with-checkbox'>
             <HorizontalStack verticalItemAlignment='middle'>
-              <CheckBox
+              <Checkbox
                 label='Maximum'
                 defaultValue={this.state.card.maximum}
                 onChange={() => this.onMaximumChange()}
@@ -998,12 +998,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
-              <CheckBox
+              <Checkbox
                 label='Copyright'
                 defaultValue={this.state.card.hasCopyright}
                 onChange={() => this.onCopyrightChange()}
               />
-              <CheckBox
+              <Checkbox
                 label='1996'
                 defaultValue={this.state.card.oldCopyright}
                 onChange={() => this.onOldCopyrightChange()}

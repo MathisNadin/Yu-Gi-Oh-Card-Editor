@@ -9,6 +9,7 @@ export class PictureEditorField extends FormField<IPicture, IPictureEditorFieldP
   public static override get defaultProps(): IPictureEditorFieldProps {
     return {
       ...super.defaultProps,
+      imgAlt: PictureEditor.defaultProps.imgAlt,
       display: PictureEditor.defaultProps.display,
       size: PictureEditor.defaultProps.size,
       options: PictureEditor.defaultProps.options,

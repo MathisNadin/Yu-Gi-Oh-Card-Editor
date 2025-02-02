@@ -42,7 +42,6 @@ export abstract class AbstractPopup<
       padding: true,
       bg: '1',
       zIndex: 'popup',
-      className: '',
       title: '',
     };
   }

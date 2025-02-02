@@ -232,7 +232,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
   private async onDropFiles(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
     if (this.base.current?.classList) this.base.current.classList.remove('dragged-over');
-    await this.onFileListImported((event.dataTransfer as DataTransfer).files);
+    await this.onFileListImported(event.dataTransfer.files);
   }
 
   private async onPickFile() {

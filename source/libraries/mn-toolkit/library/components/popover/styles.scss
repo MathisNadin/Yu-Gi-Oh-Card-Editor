@@ -177,63 +177,88 @@
       }
 
       .mn-popover-actions-container {
-        .action {
-          height: calc(#{$defaultItemHeight});
-          min-height: calc(#{$defaultItemHeight});
-          max-height: calc(#{$defaultItemHeight});
-          padding: 0 calc(#{$defaultSpacing} / 2);
+        > .mn-container-inside {
+          > ul {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            list-style: none;
 
-          // Simulate gap but without actual space (for hrefs)
-          > .mn-container-inside {
-            > *:not(:first-child) {
-              padding-left: calc(#{$defaultSpacing});
+            // Reset li style
+            li.action {
+              line-height: 100%;
+              margin-top: 0;
             }
-          }
 
-          // Override the anchor-specific color
-          .mn-typography.mn-typography-anchor {
-            color: color-hsl($fg1);
+            .action {
+              $actionSidePadding: calc(#{$defaultSpacing} / 2);
+              padding: 0 $actionSidePadding;
 
-            &:hover {
-              color: color-hsl($fg1);
+              height: calc(#{$defaultItemHeight});
+              min-height: calc(#{$defaultItemHeight});
+              max-height: calc(#{$defaultItemHeight});
+
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              gap: calc(0.5 * #{$defaultSpacing});
+
+              // Simulate gap but without actual space (for hrefs)
+              > .mn-container-inside {
+                > *:not(:first-child) {
+                  padding-left: calc(#{$defaultSpacing});
+                }
+              }
+
+              // Override the anchor-specific color
+              .mn-typography.mn-typography-anchor {
+                color: color-hsl($fg1);
+
+                &:hover {
+                  color: color-hsl($fg1);
+                }
+              }
+
+              &:first-child {
+                border-radius: calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0 0;
+              }
+
+              &:last-child {
+                border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
+              }
+
+              &:only-child {
+                border-radius: calc(#{$defaultBorderRadius});
+              }
+
+              &.separator {
+                $separatorHeight: 1px;
+                height: $separatorHeight;
+                min-height: $separatorHeight;
+                max-height: $separatorHeight;
+
+                $separatorWidth: calc(100% - #{$actionSidePadding});
+                width: $separatorWidth;
+                min-width: $separatorWidth;
+                max-width: $separatorWidth;
+
+                background-color: color-hsla($fg1, 0.3);
+              }
+
+              &:not(.mn-disabled):not(.separator) {
+                &:hover {
+                  background-color: color-hsl($bg2);
+                }
+              }
+
+              &.selected {
+                background-color: color-hsl($bg2);
+              }
+
+              &.sub-title {
+                padding-left: calc(#{$defaultSpacing} * 2);
+              }
             }
-          }
-
-          &:first-child {
-            border-radius: calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0 0;
-          }
-
-          &:last-child {
-            border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
-          }
-
-          &:only-child {
-            border-radius: calc(#{$defaultBorderRadius});
-          }
-
-          &.separator {
-            min-height: 1px;
-            max-height: 1px;
-            background-color: color-hsla($fg1, 0.3);
-          }
-
-          &:not(.mn-disabled):not(.separator) {
-            &:hover {
-              background-color: color-hsl($bg3);
-            }
-          }
-
-          &.selected {
-            background-color: color-hsl($bg3);
-          }
-
-          &.title {
-            pointer-events: none;
-            font-weight: bold;
-          }
-
-          &.sub-title {
-            padding-left: calc(#{$defaultSpacing} * 2);
           }
         }
       }

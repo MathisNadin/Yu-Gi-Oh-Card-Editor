@@ -22,7 +22,6 @@ export interface ISelectProps<ID = number> extends IContainableProps {
   width?: number;
   minWidth?: number;
   noTopContainer?: boolean;
-  label?: string;
   fill?: boolean;
   undefinedLabel?: string;
   sort?: boolean;
@@ -38,7 +37,6 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     return {
       ...super.defaultProps,
       name: '',
-      className: '',
       disabled: false,
       undefinedLabel: '',
       labelDecorator: DefaultSelectLabelDecorator,

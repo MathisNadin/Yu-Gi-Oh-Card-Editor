@@ -7,7 +7,10 @@ import { Chip } from './Chip';
 import { IChipItem } from './Chips';
 import { SelectChipsPopover } from './SelectChipsPopover';
 
-export interface ISelectChipItem<ID = number> extends Omit<IChipItem<ID>, 'actionIcon' | 'onActionTap'> {}
+export interface ISelectChipItem<ID = number> extends Omit<IChipItem<ID>, 'actionIcon' | 'onActionTap'> {
+  isTitle?: boolean;
+  isSubTitle?: boolean;
+}
 
 export interface ISelectChipsProps<ID = number> extends IContainerProps {
   placeholder?: string;
@@ -16,7 +19,7 @@ export interface ISelectChipsProps<ID = number> extends IContainerProps {
   onChange?: (value: ID[]) => void | Promise<void>;
 }
 
-interface ISelectChipsState<ID> extends IContainerState {
+interface ISelectChipsState<ID = number> extends IContainerState {
   selected: ID[];
   items: ISelectChipItem<ID>[];
 }
@@ -38,8 +41,8 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
     super(props);
     this.state = {
       ...this.state,
-      items: props.items || [],
       selected: props.defaultValue || [],
+      items: props.items || [],
     };
   }
 
@@ -67,6 +70,8 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
         actions: this.state.items.map((item) => ({
           id: item.id,
           label: item.label,
+          isTitle: item.isTitle,
+          isSubTitle: item.isSubTitle,
           selected: this.state.selected.includes(item.id),
           onTap: () => this.toggleChip(item.id),
         })),
@@ -92,7 +97,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
   }
 
   public override get children(): TJSXElementChildren {
-    const selectedItems = this.state.items.filter((item) => this.props.defaultValue!.includes(item.id));
+    const selectedItems = this.state.items.filter((item) => this.state.selected.includes(item.id));
     return [
       !selectedItems.length && (
         <Typography
@@ -104,6 +109,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
           variant='help'
           contentType='text'
           content={this.props.placeholder}
+          onTap={() => this.showItems()}
         />
       ),
       !!selectedItems.length && (
@@ -115,7 +121,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
               className={item.className}
               label={item.label}
               color={item.color}
-              onTap={(e) => item.onTapOverride && item.onTapOverride(e)}
+              onTap={!item.onTapOverride ? undefined : (e) => item.onTapOverride!(e)}
               icon={item.icon}
               actionIcon='toolkit-close-disc'
               onActionTap={() => this.toggleChip(item.id)}

@@ -199,6 +199,7 @@
 }
 
 @mixin text-overflow() {
+  display: inline-block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

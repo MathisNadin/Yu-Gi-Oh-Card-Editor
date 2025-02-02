@@ -1,7 +1,7 @@
 @mixin themeOverlay {
   @include fill-all();
   position: fixed;
-  background-color: black;
+  background-color: hsl(0deg, 0%, 0%);
   z-index: $z-index-overlay;
   opacity: 0;
   will-change: opacity;
@@ -10,7 +10,7 @@
   transition: 0.4s;
 
   &.active {
-    opacity: 0.2;
+    opacity: 0.3;
     pointer-events: auto;
   }
 

@@ -6,6 +6,7 @@ $z-index-view-below: 2;
 $z-index-view-above: 3;
 $z-index-overlay: 6;
 $z-index-drawer: 7;
+$z-index-fullscreen-image: 7;
 $z-index-popup: 7;
 $z-index-toaster: 7;
 $z-index-popover-overlay: 8;
@@ -27,11 +28,14 @@ $z-index-overall: 100;
 .mn-zindex-view-above {
   z-index: $z-index-view-above;
 }
+.mn-zindex-overlay {
+  z-index: $z-index-overlay;
+}
 .mn-zindex-drawer {
   z-index: $z-index-drawer;
 }
-.mn-zindex-overlay {
-  z-index: $z-index-overlay;
+.mn-zindex-fullscreen-image {
+  z-index: $z-index-fullscreen-image;
 }
 .mn-zindex-popup {
   z-index: $z-index-popup;

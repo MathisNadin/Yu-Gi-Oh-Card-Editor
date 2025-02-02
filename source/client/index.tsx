@@ -1,5 +1,5 @@
 import './index.scss';
-import { setupAppAndToolkit } from 'mn-toolkit';
+import { RouterService, setupAppAndToolkit } from 'mn-toolkit';
 import { CoreService } from './kernel';
 import {
   SettingsService,
@@ -31,7 +31,7 @@ setupAppAndToolkit(
     displayName: conf.displayName,
     stage: process.env.NODE_ENV as TAppplicationStage,
     version: conf.version,
-    baseUrl: `${window.location.href.replace(/#.*$/, '')}#!`,
+    baseUrl: RouterService.baseUrlWithHash,
     apiUrl: '',
     dbName: conf.dbName,
     objectStoreName: conf.objectStoreName,
@@ -46,4 +46,4 @@ setupAppAndToolkit(
   }
 );
 
-app.$router.register('home', '/home', HomeView);
+app.$router.register('home', '/home/', HomeView);

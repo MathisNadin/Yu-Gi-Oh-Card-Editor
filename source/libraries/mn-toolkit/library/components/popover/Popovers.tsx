@@ -22,6 +22,11 @@ export class Popovers extends Containable<IPopoversProps, IPopoversState> implem
     app.$popover.addListener(this);
   }
 
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    app.$popover.removeListener(this);
+  }
+
   public popoversChanged() {
     log.debug('popoversChanged');
     this.forceUpdate();

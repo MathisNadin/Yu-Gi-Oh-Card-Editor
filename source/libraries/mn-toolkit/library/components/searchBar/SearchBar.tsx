@@ -5,6 +5,7 @@ import { TextInput } from '../textInput';
 
 interface ISearchBarProps extends IContainerProps {
   defaultValue: string;
+  onChange?: (value: string) => void | Promise<void>;
   onSearch?: (value: string) => void | Promise<void>;
 }
 
@@ -44,22 +45,21 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
     this.setState({ value: this.props.defaultValue });
   }
 
-  private doSearch() {
-    if (this.props.onSearch) {
-      app.$errorManager.handlePromise(this.props.onSearch(this.state.value));
-    }
+  private async doSearch() {
+    if (this.props.onSearch) await this.props.onSearch(this.state.value);
   }
 
   private async onInput(value: string) {
     await this.setStateAsync({ value });
+    if (this.props.onChange) await this.props.onChange(this.state.value);
   }
 
   public onKeyUp(e: React.KeyboardEvent) {
     clearTimeout(this.timer);
     if (e.key === 'Enter') {
-      this.doSearch();
+      app.$errorManager.handlePromise(this.doSearch());
     } else {
-      this.timer = setTimeout(() => this.doSearch(), 200);
+      this.timer = setTimeout(() => app.$errorManager.handlePromise(this.doSearch()), 200);
     }
   }
 

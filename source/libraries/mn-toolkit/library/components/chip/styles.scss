@@ -160,6 +160,10 @@
   width: fit-content;
   min-height: calc(#{$defaultItemHeight});
 
+  .placeholder {
+    padding-right: 1px; // To account for the fact it's in italic
+  }
+
   .drop-icon {
     height: 100%;
     min-height: 100%;
@@ -201,11 +205,11 @@
       width: 100%;
 
       > .mn-container-inside {
-        align-items: stretch !important;
+        min-height: calc(#{$defaultItemHeight});
       }
 
       .chips,
-      .placheholder {
+      .placeholder {
         flex: 1;
         padding: calc(#{$defaultSpacing} / 4);
       }
@@ -213,9 +217,8 @@
       .drop-icon {
         background-color: color-hsl($bg3);
         color: color-hsl($fg1);
-        height: unset;
-        min-height: unset;
-        max-height: unset;
+        padding: calc(#{$defaultSpacing} / 4);
+        min-height: calc(#{$defaultItemHeight});
         width: calc(#{$defaultItemHeight});
         cursor: pointer;
         justify-content: center;
@@ -223,6 +226,10 @@
         align-items: center;
         border-left: 1px solid;
         border-color: color-hsl($fg4);
+
+        > .mn-container-inside {
+          min-height: calc(#{$defaultItemHeight});
+        }
       }
     }
   }

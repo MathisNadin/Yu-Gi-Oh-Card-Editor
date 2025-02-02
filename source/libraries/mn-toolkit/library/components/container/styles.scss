@@ -344,10 +344,12 @@ $COLUMNS: (
     top: calc(-1 * #{$medium-size} - #{$defaultSpacing} / 2);
     left: calc(#{$defaultSpacing} / 2);
     padding: 0 calc(#{$defaultSpacing});
+    max-width: 100%;
 
     // Set to 100% to make sure the top calc above is correct, as the text will be as high as $medium-size
     .mn-typography {
       line-height: 100%;
+      padding-bottom: 5px; // Simulate line-height to see some characters entierly
     }
   }
 }

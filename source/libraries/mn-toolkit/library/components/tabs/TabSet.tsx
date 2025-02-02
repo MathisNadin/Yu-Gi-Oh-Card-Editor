@@ -43,7 +43,6 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
     return {
       ...super.defaultProps,
       name: '',
-      className: '',
       disabled: false,
       defaultValue: undefined!,
       items: [],

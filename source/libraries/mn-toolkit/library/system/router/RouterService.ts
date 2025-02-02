@@ -1,5 +1,15 @@
+import {
+  Observable,
+  extend,
+  isBoolean,
+  isNumber,
+  isObject,
+  isString,
+  isUndefined,
+  serialize,
+  unserialize,
+} from 'mn-tools';
 import { THeadTag, IHeadLinkTag, IHeadTitleTag, IHeadMetaTag } from 'api/main';
-import { Observable, extend, isBoolean, isNumber, isString, isUndefined } from 'mn-tools';
 import {
   IRouterListener,
   IResolvedState,
@@ -19,7 +29,7 @@ type TRouterStates<T extends TRouterState = TRouterState, P extends TRouterState
 export class RouterService extends Observable<IRouterListener> {
   private currentResolvedState?: IResolvedState;
   private states: TRouterStates = {};
-  private resolving!: boolean;
+  private resolving = false;
   private history: IResolvedState[] = [];
 
   private _defaultHeadTags: THeadTag[] = [];
@@ -126,12 +136,16 @@ export class RouterService extends Observable<IRouterListener> {
     return resolvedState.state.name === stateName;
   }
 
-  public get baseUrlWithHash() {
+  // To get easily when needed (mostly for apps not served by a server)
+  public static get baseUrlWithHash() {
     return `${window.location.href.replace(/#.*$/, '')}#!`;
   }
 
+  // Buld path, while handling the case if a root path
   public buildPath(path: string) {
-    return `${app.conf.baseUrl.replace(/[\/]*$/, '')}/${path.replace(/^[\/]*/, '')}`;
+    const cleanBaseUrl = app.conf.baseUrl.replace(/[\/]*$/, '');
+    if (path === '/') return cleanBaseUrl;
+    return `${cleanBaseUrl}/${path.replace(/^[\/]+|[\/]+$/g, '')}/`;
   }
 
   public getLink<T extends TRouterState = TRouterState>(options: IRouterHrefParams<T>, ignoreQs: boolean = false) {
@@ -153,7 +167,7 @@ export class RouterService extends Observable<IRouterListener> {
 
       if (isUndefined(param)) {
         if (!key.optional) throw new Error(`param '${keyName}' for route '${options.state}' is not optional`);
-        return;
+        else continue;
       }
 
       let value = '';
@@ -174,6 +188,42 @@ export class RouterService extends Observable<IRouterListener> {
     return path;
   }
 
+  // Update the current URL without reloading the current view
+  public updateUrl<T extends TRouterState = TRouterState>(state: T, params?: TRouterParams<T>) {
+    // Makes no sense to get here without a current state
+    if (!this.currentResolvedState) return;
+
+    // 1) Merge params and get new path
+    params = {
+      ...(this.currentResolvedState.parameters as unknown as TRouterParams<T>),
+      ...params,
+    };
+    const path = this.getLink({ state, params });
+    if (!path) {
+      console.warn(`updateUrl : cannot find path "${state}"`);
+      return;
+    }
+
+    // 2) Only makes sense if there is a currently resolved state
+    window.history.replaceState(this.currentResolvedState.historyData, '', document.location.href);
+
+    // 3) Push new URL in history
+    window.history.pushState({}, '', path);
+    this.history.push(this.currentResolvedState);
+
+    // 4) Resolve new state
+    const resolvedState = this.resolveStateFromPath(path);
+    if (!resolvedState) throw new Error(`No state for ${state}`);
+
+    // 5) Update current resolved state with the new one
+    resolvedState.historyData = history.state || {};
+    resolvedState.parameters = params as unknown as TRouterParams<TRouterState>;
+    this.currentResolvedState = resolvedState;
+
+    const breadcrumb = this.buildBreadcrumb();
+    this.currentResolvedState.breadcrumb = breadcrumb;
+  }
+
   private async checkCanLeave() {
     if (!this.currentResolvedState) return true;
 
@@ -189,14 +239,14 @@ export class RouterService extends Observable<IRouterListener> {
   public async go<T extends TRouterState = TRouterState>(state: T, params?: TRouterParams<T>) {
     if (!(await this.checkCanLeave())) return;
 
+    params = params || ({} as TRouterParams<T>);
+    const path = this.getLink({ state, params });
+    if (!path) throw new Error(`No path for ${state}`);
+
     // Only makes sense if there is a currently resolved state
     if (this.currentResolvedState) {
       window.history.replaceState(this.currentResolvedState.historyData, '', document.location.href);
     }
-
-    params = params || ({} as TRouterParams<T>);
-    const path = this.getLink({ state, params });
-    if (!path) throw new Error(`No path for ${state}`);
 
     window.history.pushState({}, '', path);
     if (this.currentResolvedState) this.history.push(this.currentResolvedState);
@@ -245,8 +295,8 @@ export class RouterService extends Observable<IRouterListener> {
     return await this.resolveState(rs);
   }
 
-  public reload() {
-    this.go(this.currentState!.name, this.getParameters());
+  public async reload() {
+    await this.go(this.currentState!.name, this.getParameters());
   }
 
   private populateState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState>(
@@ -270,7 +320,7 @@ export class RouterService extends Observable<IRouterListener> {
       return '([^/]+)';
     });
 
-    record.regExp = new RegExp('^' + path + '$', 'i');
+    record.regExp = new RegExp(`^${path}\$`, 'i');
   }
 
   public register<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState>(
@@ -281,7 +331,7 @@ export class RouterService extends Observable<IRouterListener> {
   ) {
     const route: IState<T, P> = {
       name,
-      path,
+      path: path || '/',
       component,
       params: undefined!,
       pathKeys: undefined!,
@@ -322,7 +372,7 @@ export class RouterService extends Observable<IRouterListener> {
     return parents;
   }
 
-  private async buildBreadcrumb(): Promise<IStateCrumb[]> {
+  private buildBreadcrumb(): IStateCrumb[] {
     const bc = this.getStatesTrail(
       this.currentState!.name,
       this.currentResolvedState!.parameters,
@@ -392,8 +442,9 @@ export class RouterService extends Observable<IRouterListener> {
     return state;
   }
 
+  // Handle a root path by default
   private processPath(locationPath: string) {
-    return locationPath.replace(app.conf.baseUrl, '').replace(/[\/]*$/, '');
+    return locationPath.replace(app.conf.baseUrl, '') || '/';
   }
 
   public resolveStateFromPath(locationPath: string = window.location.href) {
@@ -430,7 +481,8 @@ export class RouterService extends Observable<IRouterListener> {
     const script = document.querySelector('script#initial-server-data');
     if (script) script.remove();
 
-    return data;
+    // To recreate Date objects
+    return isObject(data) ? unserialize(serialize(data)) : data;
   }
 
   private async resolveState(state: IResolvedState) {
@@ -474,7 +526,7 @@ export class RouterService extends Observable<IRouterListener> {
       }
       this.updateDomHead(state.headTags, oldHeadTags);
 
-      const breadcrumb = await this.buildBreadcrumb();
+      const breadcrumb = this.buildBreadcrumb();
       this.currentResolvedState.breadcrumb = breadcrumb;
       this.resolving = false;
       this.fireStateChanged(this.currentResolvedState);

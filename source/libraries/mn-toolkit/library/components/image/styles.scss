@@ -11,3 +11,91 @@
 .mn-image {
   @include themeImage();
 }
+
+@mixin themeFullscreenImages() {
+  @include fill-all();
+  pointer-events: none;
+  transition: background-color 0.1s ease;
+  z-index: $z-index-fullscreen-image;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  &.active {
+    transition: background-color 0.4s ease;
+    background-color: hsl(0deg 0% 0% / 0.75);
+    pointer-events: auto;
+
+    .overlay {
+      display: block;
+      cursor: pointer;
+    }
+  }
+
+  .mn-fullscreen-image {
+    z-index: 2;
+    position: absolute;
+    border-radius: calc(#{$defaultBorderRadius});
+    @include shadow(1);
+    backface-visibility: hidden;
+    visibility: hidden;
+    transform: translateZ(0);
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    margin: 0 auto;
+
+    &.visible {
+      display: flex;
+      visibility: visible;
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
+      animation-name: mn-scale-in;
+      animation-duration: 0.2s;
+    }
+
+    .mn-fullscreen-image-header {
+      .mn-icon-container-button {
+        .mn-icon {
+          color: color-hsl($bg3);
+          fill: color-hsl($bg3);
+        }
+
+        &:hover {
+          .mn-icon {
+            color: color-hsl($bg1);
+            fill: color-hsl($bg1);
+          }
+        }
+      }
+    }
+
+    .mn-fullscreen-image-content {
+      display: flex;
+      flex-direction: column;
+      gap: calc(#{$defaultSpacing} / 2);
+
+      .mn-image {
+        margin: 0 auto;
+      }
+
+      .mn-typography {
+        color: color-hsl($bg1);
+      }
+    }
+  }
+}
+
+.mn-fullscreen-images {
+  @include themeFullscreenImages();
+}

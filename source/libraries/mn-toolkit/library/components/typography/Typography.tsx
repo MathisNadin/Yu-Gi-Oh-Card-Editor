@@ -75,13 +75,77 @@ export class Typography extends Containable<ITypographyProps, ITypographyState, 
   }
 
   public override render() {
-    if (isUndefined(this.props.content)) {
+    if (isDefined(this.props.content)) {
+      return this.renderWithContent();
+    }
+    return this.renderWithChildren();
+  }
+
+  private renderWithChildren() {
+    if (isDefined(this.props.content)) return null;
+
+    if (this.props.href) {
       return (
-        <div ref={this.base as RefObject<HTMLDivElement>} {...this.renderAttributes()}>
-          {this.props.children}
-        </div>
+        <a {...this.renderAttributes()} ref={this.base as RefObject<HTMLAnchorElement>}>
+          {this.children}
+        </a>
       );
     }
+
+    switch (this.props.variant) {
+      case 'h1':
+        return (
+          <h1 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {this.children}
+          </h1>
+        );
+
+      case 'h2':
+        return (
+          <h2 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {this.children}
+          </h2>
+        );
+
+      case 'h3':
+        return (
+          <h3 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {this.children}
+          </h3>
+        );
+
+      case 'h4':
+        return (
+          <h4 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {this.children}
+          </h4>
+        );
+
+      case 'h5':
+        return (
+          <h5 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {this.children}
+          </h5>
+        );
+
+      case 'h6':
+        return (
+          <h6 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {this.children}
+          </h6>
+        );
+
+      default:
+        return (
+          <div ref={this.base as RefObject<HTMLDivElement>} {...this.renderAttributes()}>
+            {this.children}
+          </div>
+        );
+    }
+  }
+
+  private renderWithContent() {
+    if (isUndefined(this.props.content)) return null;
 
     let content: string;
     if (this.props.contentType === 'markdown') {
@@ -97,7 +161,6 @@ export class Typography extends Containable<ITypographyProps, ITypographyState, 
           {...this.renderAttributes()}
           ref={this.base as RefObject<HTMLAnchorElement>}
           dangerouslySetInnerHTML={{ __html: content }}
-          target={isString(this.props.href) ? '_blank' : undefined}
         />
       );
     }

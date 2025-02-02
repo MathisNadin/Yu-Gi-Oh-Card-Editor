@@ -19,9 +19,11 @@ declare global {
 
 export type TRouterState = keyof IRouter;
 
-export type TRouterParams<T extends TRouterState> = IRouter[T] extends (options: infer P) => void
-  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    P & { initialServerData?: any }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TRouterParams<T extends TRouterState, D extends object = any> = IRouter[T] extends (
+  options: infer P
+) => void
+  ? P & { initialServerData?: D }
   : never;
 
 export interface IRouterHrefParams<T extends TRouterState = TRouterState> {
@@ -70,8 +72,6 @@ export interface IState<T extends TRouterState = TRouterState, P extends TRouter
   params: TRouterParams<T>;
   regExp: RegExp;
   fallbackState?: TRouterState;
-  getInitialData?: (params: TRouterParams<T>) => Promise<Partial<TRouterParams<T>>>;
-  getMetaTags?: (params: TRouterParams<T>) => THeadTag[];
   resolver?: (state: IResolvedState<T>) => Promise<void>;
 }
 

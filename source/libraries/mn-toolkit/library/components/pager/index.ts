@@ -1,1 +1,2 @@
-export * from './Pager';
+export * from './ClassicPager';
+export * from './TablePager';

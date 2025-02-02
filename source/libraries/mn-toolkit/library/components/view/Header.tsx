@@ -1,5 +1,5 @@
 import { IXhrProgress } from '../../system';
-import { Container, IContainerProps, IContainerState } from '../container';
+import { Container, HorizontalStack, IContainerProps, IContainerState } from '../container';
 import { Icon } from '../icon';
 import { Progress } from '../progress';
 import { Breadcrumb } from './Breadcrumb';
@@ -90,10 +90,10 @@ export class Header extends Container<IHeaderProps, IHeaderState> implements Par
         <div className='title-bar'>
           {app.$header.parts.left.map((part) => part.component)}
 
-          <div className='center-part'>
+          <HorizontalStack fill className='center-part' verticalItemAlignment='middle'>
             <Breadcrumb key='breadcrumb' crumbs={crumbs} onlyShowLastCrumb={this.props.onlyShowLastCrumb} />
             {app.$header.parts.center.map((part) => part.component)}
-          </div>
+          </HorizontalStack>
 
           {app.$header.parts.right.map((part) => part.component)}
 

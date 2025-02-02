@@ -4,7 +4,8 @@ import { commonConfig, commonDevConfig, commonProdConfig } from './common';
 import { webServedCommonConfig, webServedDevConfig, webServedProdConfig } from './web-served';
 import { webStandaloneCommonConfig, webStandaloneDevConfig, webStandaloneProdConfig } from './web-standalone';
 import { desktopCommonConfig, desktopPreloadConfig, desktopMainConfig, desktopRendererConfig } from './desktop';
-import { projectWebpackConfig } from '../../config/webpack';
+import { projectWebpackConfig } from '../../config/project-webpack';
+import { platformWebpackConfig } from '../../config/platform-webpack';
 
 export type TWebpackNodeEnv = 'development' | 'production';
 
@@ -70,5 +71,5 @@ export const buildConfig = () => {
       break;
   }
 
-  return merge(commonConfig, ...envConfigs, projectWebpackConfig);
+  return merge(commonConfig, ...envConfigs, projectWebpackConfig, platformWebpackConfig);
 };

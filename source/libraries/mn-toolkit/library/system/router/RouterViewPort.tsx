@@ -19,6 +19,13 @@ export class RouterViewPort
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private currentComponent!: DOMElement<any, any>;
 
+  public static override get defaultProps(): IRouterViewPortProps {
+    return {
+      ...super.defaultProps,
+      fill: true,
+    };
+  }
+
   public constructor(props: IRouterViewPortProps) {
     super(props);
     this.state = { ...this.state, loaded: false };
@@ -46,7 +53,7 @@ export class RouterViewPort
 
     const currentState = app.$router.currentState!;
 
-    const routerParameters = app.$router.getParameters() as object;
+    const routerParameters = app.$router.getParameters();
     const routerKey = `${currentState.name}${serialize(routerParameters)}`;
     const key = 'key' in routerParameters ? routerParameters.key : '';
     const newContentKey = `${key}${routerKey}content`;

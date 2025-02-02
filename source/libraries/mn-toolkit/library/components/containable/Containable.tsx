@@ -11,6 +11,14 @@ import {
 
 export type TColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
 
+export interface IColSpanParams {
+  s?: TColSpan;
+  m?: TColSpan;
+  l?: TColSpan;
+  xl?: TColSpan;
+  xxl?: TColSpan;
+}
+
 export type TFloatPosition =
   | 'none'
   | 'top-left'
@@ -31,6 +39,7 @@ export type TZIndex =
   | 'view-above'
   | 'drawer'
   | 'overlay'
+  | 'fullscreen-image'
   | 'popup'
   | 'popover'
   | 'toaster'
@@ -42,16 +51,14 @@ export interface IContainableTip {
   icon: TIconId;
 }
 
-export interface IContainableProps<BASE_ELEMENT extends HTMLElement = HTMLDivElement> extends IToolkitComponentProps {
-  s?: TColSpan;
-  m?: TColSpan;
-  l?: TColSpan;
-  xl?: TColSpan;
-  xxl?: TColSpan;
+export interface IContainableProps<BASE_ELEMENT extends HTMLElement = HTMLDivElement>
+  extends IColSpanParams,
+    IToolkitComponentProps {
   className?: string;
   name?: string;
   id?: string;
   hint?: string;
+  theme?: keyof IAppThemeThemes;
   bg?: TBackgroundColor;
   disabled?: boolean;
   fill?: boolean;
@@ -142,6 +149,7 @@ export class Containable<
     const classes: { [key: string]: boolean } = {};
     classes['mn-containable'] = true;
     if (this.props.className) classes[this.props.className] = true;
+    if (this.props.theme) classes[`mn-${this.props.theme}-theme`] = true;
     classes['has-click'] = !!this.props.onTap;
     classes['mn-fill'] = !!this.props.fill;
     classes['mn-ghost'] = !!this.props.ghost;

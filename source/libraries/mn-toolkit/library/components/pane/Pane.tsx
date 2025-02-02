@@ -12,6 +12,7 @@ export class Pane<P extends IPaneProps, S extends IPaneState> extends Container<
       ...super.defaultProps,
       gutter: false,
       padding: true,
+      bg: '1',
       position: 'left',
       layout: undefined,
     };

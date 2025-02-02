@@ -5,7 +5,7 @@ import { TJSXElementChildren } from '../../system';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
 import { HorizontalStack } from '../container';
 import { IActionsPopoverAction } from '../popover';
-import { Image as ToolkitImage } from '../image';
+import { IImageProps, Image } from '../image';
 import { Icon, IIconProps, IIconState, TIconId } from '../icon';
 import { PictureCropperDialog, TPictureCropperAreaType } from './PictureCropperDialog';
 import defaultPicturePlaceholder from 'assets/images/picture-placeholder.png';
@@ -35,8 +35,8 @@ export interface IPictureEditorProps extends IContainableProps {
   size?: 'small' | 'normal' | 'big' | 'free';
   options?: IPictureEditorOptions;
   placeholder?: string;
-  imgAlt?: string;
-  imgTitle?: string;
+  imgAlt: IImageProps['alt'];
+  imgHint?: IImageProps['hint'];
   defaultValue?: IPicture;
   onChange?: (value: IPicture) => void | Promise<void>;
 }
@@ -237,6 +237,18 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       if (!result?.length) return;
 
       const file = result[0];
+      await this.onUploadFile(file);
+    } catch (error) {
+      console.error('Failed to select image', error);
+      app.$errorManager.trigger(error as Error);
+    }
+  }
+
+  private async onUploadFile(file: File) {
+    try {
+      // Start by checking the MIME type (especially for drag and drop)
+      if (!file.type.startsWith('image/')) return;
+
       const picture: IPicture = {
         file,
         fileDataUrl: await app.$api.fileToDataURL(file),
@@ -307,11 +319,44 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
   public override renderAttributes() {
     const attributes = super.renderAttributes();
     attributes.onClick = (e) => this.onTap(e);
+    attributes.onDragEnter = (e) => {
+      e.preventDefault();
+      if (this.base.current) this.base.current.classList.add('dragged-over');
+      if (this.props.onDragEnter) app.$errorManager.handlePromise(this.props.onDragEnter(e));
+    };
+    attributes.onDragOver = (e) => {
+      e.preventDefault();
+      if (this.props.onDragOver) app.$errorManager.handlePromise(this.props.onDragOver(e));
+    };
+    attributes.onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+      this.checkOnDragLeave(e);
+      if (this.props.onDragLeave) app.$errorManager.handlePromise(this.props.onDragLeave(e));
+    };
+    attributes.onDrop = (e: React.DragEvent<HTMLDivElement>) => app.$errorManager.handlePromise(this.onDropFiles(e));
     return attributes;
   }
 
+  private checkOnDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    if (!this.base.current || !e.target) return;
+    if (this.base.current !== e.target && this.base.current.contains(e.target as Node)) return;
+    this.base.current?.classList.remove('dragged-over');
+  }
+
+  private async onDropFiles(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    if (this.base.current?.classList) this.base.current.classList.remove('dragged-over');
+
+    if (!event.dataTransfer?.files?.length) return;
+
+    const file = event.dataTransfer.files.item(0);
+    if (!file) return;
+
+    await this.onUploadFile(file);
+  }
+
   public override get children(): TJSXElementChildren {
-    const { placeholder, imgAlt, imgTitle, options } = this.props;
+    const { placeholder, imgAlt, imgHint, options } = this.props;
     const { displayUrl } = this.state;
 
     let icon: TIconId;
@@ -322,7 +367,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     }
 
     return [
-      <ToolkitImage key='image' src={displayUrl || placeholder!} alt={imgAlt} title={imgTitle} />,
+      <Image key='image' src={displayUrl || placeholder!} alt={imgAlt} hint={imgHint} />,
       <HorizontalStack
         key='icon-container'
         className='icon-container'

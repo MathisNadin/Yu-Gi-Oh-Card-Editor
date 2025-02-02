@@ -7,8 +7,15 @@ import { IPromptDialogProps, PromptDialog } from './PromptDialog';
 import { AbstractPopup } from './AbstractPopup';
 import { IAbstractPopupProps, IPopupListener, IPopupShowOptions } from '.';
 
+interface IPopupData {
+  id: string;
+  element: TJSXElementChild;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ref: AbstractPopup<any> | null;
+}
+
 export class PopupService extends Observable<IPopupListener> {
-  public popups: { id: string; element: TJSXElementChild; ref: AbstractPopup<never> | null }[];
+  public popups: IPopupData[];
 
   public constructor() {
     super();
@@ -76,14 +83,14 @@ export class PopupService extends Observable<IPopupListener> {
     return new Promise<R | undefined>((resolve) => {
       const { Component, componentProps, type } = options;
       const id = `${type}-${this.popups.length + 1}-${uuid()}`;
-      let ref: AbstractPopup<R> | null = null;
-      const popupElement = (
+      const popup: IPopupData = { id, element: null, ref: null };
+      popup.element = (
         <Component
           {...componentProps}
           ref={(instance) => {
             if (!instance) return;
             if (componentProps.onRef) componentProps.onRef(instance);
-            ref = instance;
+            popup.ref = instance;
           }}
           onClose={(r) => resolve(r)}
           key={id}
@@ -91,7 +98,7 @@ export class PopupService extends Observable<IPopupListener> {
           type={type}
         />
       );
-      this.popups.push({ id, element: popupElement, ref });
+      this.popups.push(popup);
       this.dispatch('popupsChanged');
     });
   }

@@ -2,7 +2,7 @@ import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot }
 import { Typography } from '../typography';
 import { Icon } from '../icon';
 
-interface ICheckBoxProps extends IContainableProps {
+interface ICheckboxProps extends IContainableProps {
   /** Text in front of the check box. */
   label: string;
   /** Value of the check box. */
@@ -15,12 +15,12 @@ interface ICheckBoxProps extends IContainableProps {
   disabled?: boolean;
 }
 
-interface ICheckBoxState extends IContainableState {
+interface ICheckboxState extends IContainableState {
   value: boolean;
 }
 
-export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
-  public static override get defaultProps(): ICheckBoxProps {
+export class Checkbox extends Containable<ICheckboxProps, ICheckboxState> {
+  public static override get defaultProps(): ICheckboxProps {
     return {
       ...super.defaultProps,
       defaultValue: false,
@@ -29,14 +29,14 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
     };
   }
 
-  public constructor(props: ICheckBoxProps) {
+  public constructor(props: ICheckboxProps) {
     super(props);
     this.state = { ...this.state, value: props.defaultValue! };
   }
 
   public override componentDidUpdate(
-    prevProps: Readonly<ICheckBoxProps>,
-    prevState: Readonly<ICheckBoxState>,
+    prevProps: Readonly<ICheckboxProps>,
+    prevState: Readonly<ICheckboxState>,
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
@@ -48,8 +48,7 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-checkbox'] = true;
-    if (this.state.value) classes['checked'] = true;
-    if (this.props.labelPosition === 'left') classes['label-position-left'] = true;
+    classes['checked'] = this.state.value;
     return classes;
   }
 
@@ -61,8 +60,13 @@ export class CheckBox extends Containable<ICheckBoxProps, ICheckBoxState> {
 
   public override get children() {
     return [
+      !!this.props.label && this.props.labelPosition === 'left' && (
+        <Typography key='label-left' className='label' content={this.props.label} variant='help' />
+      ),
       <Icon key='toggle' className='toggle' icon='toolkit-check-mark' />,
-      !!this.props.label && <Typography key='label' className='label' content={this.props.label} variant='help' />,
+      !!this.props.label && this.props.labelPosition === 'right' && (
+        <Typography key='label-right' className='label' content={this.props.label} variant='help' />
+      ),
     ];
   }
 

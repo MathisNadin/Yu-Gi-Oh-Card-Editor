@@ -3,10 +3,16 @@ $routerLeftMargin: calc(#{$defaultSpacing});
 .mn-router {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  overflow: hidden;
 
   &.with-left-margin {
     margin-left: $routerLeftMargin;
+  }
+
+  // When not fill, unset the fill on any Content inside, as it means the router should be in a larger scrollble container
+  &:not(.mn-fill) {
+    .mn-content.mn-fill {
+      flex: unset;
+      overflow: unset;
+    }
   }
 }

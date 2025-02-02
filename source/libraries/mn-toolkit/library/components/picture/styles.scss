@@ -6,6 +6,7 @@ $pictureBigSize: 300px;
   position: relative;
   overflow: hidden;
 
+  // Case: mouse hovering
   .mn-image,
   .icon-container {
     &:hover {
@@ -13,7 +14,16 @@ $pictureBigSize: 300px;
     }
   }
 
+  // Case: drag and drop
+  &.dragged-over {
+    .mn-image,
+    .icon-container {
+      filter: brightness(0.9);
+    }
+  }
+
   $iconPadding: calc(#{$defaultSpacing} / 4);
+  $iconSize: calc(#{$pictureNormalSize} / 5 + #{$iconPadding} * 2);
   .icon-container {
     padding: $iconPadding;
     border-radius: 50%;
@@ -21,7 +31,6 @@ $pictureBigSize: 300px;
     right: calc(#{$defaultSpacing} / 4);
     bottom: calc(#{$defaultSpacing} / 4);
 
-    $iconSize: calc(#{$pictureNormalSize} / 5 + #{$iconPadding} * 2);
     width: $iconSize !important;
     min-width: $iconSize !important;
     max-width: $iconSize !important;
@@ -110,6 +119,13 @@ $pictureBigSize: 300px;
         right: calc(#{$defaultSpacing});
         bottom: calc(#{$defaultSpacing});
       }
+    }
+  }
+
+  // Make sure the icon is still visible even in case of a not found image
+  &.free-size {
+    .mn-image {
+      min-height: calc(0.5 * #{$defaultItemHeight} + #{$iconSize});
     }
   }
 

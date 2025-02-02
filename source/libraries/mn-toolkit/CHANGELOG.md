@@ -1,7 +1,81 @@
 ## mn-toolkit change log
 
+## 6.2.1
+
+- fix de certaines line-height
+
+## 6.2.0
+
+- bump to 6.2.0
+- fix width des button et labeled group label + fix refs sur les Drawer, Popups, et FullscreenImage services + pas d'animation à la disparition d'une fullscreen image
+- border sur les drawers
+- gestion theme dans Containable + ajout StickyPane et style spécifique pour TopMenu et RouterViewport
+- user select none retiré dans reset + ImageDialog -> FullscreenImage géré de façon autonome + overlay sur ça et Drawer
+- Retour de Drawer complètement revu
+- ajout ImageDialog + implémentation sur Image
+- fix style shrink btn du MenuPane
+- fix dom des crawler items du top menu + fonction updateUrl dans RouterService
+- utilisation de nav, ul, et li sur les menus
+- implémentation li dans SelectChipsPopover
+- ul et li dans ActionsPopover + fix action.button
+- utilisation de ul dans checbox tree
+- ajustement style et corrections sur les pagers + Pager -> ClassicPager
+- Pager -> TablePager + nouveau Pager
+- gestion du drag and drop dans PictureEditor
+- min height sur un picture editor en free size
+- fix fg 1
+- réglage de menu-contracted-width
+- corrections sur Checkbox + ajout CheckboxTree
+- affichage propre des title et subtitles sur les popovers avec action
+- fixs visuels sur SelectChips
+- fg 1 doit être un noir total
+
+## 6.1.9
+
+- bump to 6.1.9
+- render plus complet sur typography
+
+## 6.1.8
+
+- bump to 6.1.8
+- unserialize correct des server data
+
+## 6.1.7
+
+- bump to 6.1.7
+- member plus souple sur MemberBadge
+
+## 6.1.6
+
+- bump to 6.1.6
+- fix style du center-part du header + plus de variable maxContentWidth
+
+## 6.1.5
+
+- bump to 6.1.5
+- token à fournir dans getUrl + createFile prend des specs en entrée
+
+## 6.1.4
+
+- bump to 6.1.4
+- interface séparée pour les colspans + meilleur typing de initialServerData sur TRouterParams
+
+## 6.1.3
+
+- bump to 6.1.3
+- gestion des vues avec un root path + base url with hash devient static
+
+## 6.1.2
+
+- bump to 6.1.2
+- fix process path
+- ajout d'un / à la fin du path
+- fix update entre props et search bar
+- text overflow a besoin de inline-block
+
 ## 6.1.1
 
+- bump to 6.1.1
 - fix buildPath
 
 ## 6.1.0

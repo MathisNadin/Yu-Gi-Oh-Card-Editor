@@ -26,7 +26,6 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
       ...super.defaultProps,
       panes: [],
       name: '',
-      className: '',
       disabled: false,
       layout: 'vertical',
       tabPosition: 'top',

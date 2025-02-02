@@ -1,7 +1,139 @@
-@mixin themePager {
-  padding: calc(#{$defaultSpacing} / 2);
+$pager-page-size: calc(#{$defaultItemHeight});
+
+@mixin colorizeClassicPager($bgColor) {
+  .pages {
+    .page.number {
+      &:hover {
+        background-color: color-hsla($bgColor, 0.2);
+      }
+
+      &.current {
+        background-color: color-hsl($bgColor);
+
+        @if $bgColor == $bg1 {
+          color: color-hsl($fg1);
+        } @else if $bgColor == $bg2 {
+          color: color-hsl($fg1);
+        } @else if $bgColor == $bg3 {
+          color: color-hsl($fg1);
+        } @else if $bgColor == $bg4 {
+          color: color-hsl($fg1);
+        } @else {
+          color: color-hsl($bg1);
+        }
+      }
+    }
+  }
+
+  &.outlined {
+    .mn-button.page.number.current {
+      border-color: color-hsl($bgColor);
+    }
+  }
 }
 
-.mn-pager {
-  @include themePager();
+@mixin themeClassicPager() {
+  &.outlined {
+    .mn-button.page.number {
+      border: 1px solid color-hsl($fg2);
+    }
+  }
+
+  &.round-shape {
+    .mn-button.page.number {
+      border-radius: 50%;
+    }
+  }
+
+  &.square-shape {
+    .mn-button.page.number {
+      border-radius: calc(#{$defaultBorderRadius});
+    }
+  }
+
+  .pages {
+    > .mn-container-inside {
+      gap: calc(0.5 * #{$defaultSpacing});
+
+      .page {
+        @include themeFont('small');
+        height: $pager-page-size;
+        min-height: $pager-page-size;
+        max-height: $pager-page-size;
+        min-width: $pager-page-size;
+
+        &.dots {
+          width: $pager-page-size;
+          max-width: $pager-page-size;
+          align-items: end;
+          justify-content: center;
+        }
+
+        &.number {
+          color: color-hsl($fg1);
+          background-color: color-hsl($bg1);
+
+          .label {
+            padding: 0;
+
+            // Override default button behavior
+            &:hover {
+              background-color: transparent;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.mn-color-primary {
+    @include colorizeClassicPager($primary);
+  }
+  &.mn-color-secondary {
+    @include colorizeClassicPager($secondary);
+  }
+  &.mn-color-tertiary {
+    @include colorizeClassicPager($tertiary);
+  }
+  &.mn-color-positive {
+    @include colorizeClassicPager($positive);
+  }
+  &.mn-color-negative {
+    @include colorizeClassicPager($negative);
+  }
+  &.mn-color-neutral {
+    @include colorizeClassicPager($neutral);
+  }
+  &.mn-color-warning {
+    @include colorizeClassicPager($warning);
+  }
+  &.mn-color-info {
+    @include colorizeClassicPager($info);
+  }
+  &.mn-color-1 {
+    @include colorizeClassicPager($bg1);
+  }
+  &.mn-color-2 {
+    @include colorizeClassicPager($bg2);
+  }
+  &.mn-color-3 {
+    @include colorizeClassicPager($bg3);
+  }
+  &.mn-color-4 {
+    @include colorizeClassicPager($bg4);
+  }
+}
+
+.mn-classic-pager {
+  @include themeClassicPager();
+}
+
+@mixin themeTablePager() {
+  .mn-typography.page-count {
+    line-height: 100%;
+  }
+}
+
+.mn-table-pager {
+  @include themeTablePager();
 }

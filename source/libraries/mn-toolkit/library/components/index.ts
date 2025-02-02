@@ -36,6 +36,7 @@ export * from './progress';
 export * from './select';
 export * from './spacer';
 export * from './spinner';
+export * from './drawer';
 export * from './table';
 export * from './tabs';
 export * from './textAreaInput';
