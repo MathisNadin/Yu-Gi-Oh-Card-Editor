@@ -505,56 +505,53 @@ export class MediaWikiService {
       ) {
         card.artwork.url = defaultJpg;
       } else if (importArtworks && artworkDirectoryPath?.length && enName?.length) {
-        let artworkName = this.getArtworkName(enName);
-        if (artworkName) {
-          const imgData = await app.$axios.get<IYugipediaGetCardPageImgApiResponse>(this.baseApiUrl, {
-            params: {
-              action: 'parse',
-              page: titles,
-              prop: 'images',
-              format: 'json',
-            },
-          });
+        const imgData = await app.$axios.get<IYugipediaGetCardPageImgApiResponse>(this.baseApiUrl, {
+          params: {
+            action: 'parse',
+            page: titles,
+            prop: 'images',
+            format: 'json',
+          },
+        });
 
-          if (imgData?.parse?.images?.length) {
-            let fileName = imgData.parse.images.find((image) => image.includes(artworkName));
-            if (fileName) {
-              const artworkData = await app.$axios.get<IYugipediaGetCardImgApiResponse>(this.baseApiUrl, {
-                params: {
-                  action: 'query',
-                  titles: `File:${fileName}`,
-                  prop: 'imageinfo',
-                  iiprop: 'url',
-                  format: 'json',
-                },
-              });
+        if (imgData?.parse?.images?.length) {
+          let fileName = imgData.parse.images[0];
+          if (fileName) {
+            const artworkData = await app.$axios.get<IYugipediaGetCardImgApiResponse>(this.baseApiUrl, {
+              params: {
+                action: 'query',
+                titles: `File:${fileName}`,
+                prop: 'imageinfo',
+                iiprop: 'url',
+                format: 'json',
+              },
+            });
 
-              if (artworkData?.query?.pages) {
-                let keys = Object.keys(artworkData?.query?.pages);
-                if (keys?.length) {
-                  let pageInfo = artworkData?.query?.pages[keys[0]];
-                  if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
-                    const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath);
-                    if (filePath) {
-                      card.artwork.url = filePath;
+            if (artworkData?.query?.pages) {
+              let keys = Object.keys(artworkData?.query?.pages);
+              if (keys?.length) {
+                let pageInfo = artworkData?.query?.pages[keys[0]];
+                if (pageInfo?.imageinfo?.length && pageInfo?.imageinfo[0].url) {
+                  const filePath = await app.$card.importArtwork(pageInfo?.imageinfo[0].url, artworkDirectoryPath);
+                  if (filePath) {
+                    card.artwork.url = filePath;
+                    if (card.rush) {
+                      card.dontCoverRushArt = true;
+                    }
+
+                    if (
+                      !filePath.endsWith('-OW.webp') &&
+                      !filePath.endsWith('-OW.png') &&
+                      !filePath.endsWith('-OW.jpg') &&
+                      !filePath.endsWith('-OW.jpeg')
+                    ) {
                       if (card.rush) {
                         card.dontCoverRushArt = true;
-                      }
-
-                      if (
-                        !filePath.endsWith('-OW.webp') &&
-                        !filePath.endsWith('-OW.png') &&
-                        !filePath.endsWith('-OW.jpg') &&
-                        !filePath.endsWith('-OW.jpeg')
-                      ) {
-                        if (card.rush) {
-                          card.dontCoverRushArt = true;
-                          extend(card.artwork, app.$card.getFullRushCardPreset());
-                        } else if (card.pendulum) {
-                          extend(card.artwork, app.$card.getFullPendulumCardPreset());
-                        } else {
-                          extend(card.artwork, app.$card.getFullCardPreset());
-                        }
+                        extend(card.artwork, app.$card.getFullRushCardPreset());
+                      } else if (card.pendulum) {
+                        extend(card.artwork, app.$card.getFullPendulumCardPreset());
+                      } else {
+                        extend(card.artwork, app.$card.getFullCardPreset());
                       }
                     }
                   }
@@ -635,42 +632,6 @@ export class MediaWikiService {
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&nbsp;/g, ' ');
-  }
-
-  private getArtworkName(str: string) {
-    // Remplacer les caractères non autorisés dans une URL ou un nom de fichier
-    str = str
-      .replaceAll(
-        /[^\w\s\-+.!\/'()=%\\*\?"<>|\u00E0\u00E2\u00E4\u00E7\u00E8\u00E9\u00EA\u00EB\u00EE\u00EF\u00F4\u00F6\u00F9\u00FB\u00FC]/g,
-        ''
-      )
-      .replaceAll(/[\s?!]/g, '')
-      .replaceAll(/:/g, '');
-    // Remplacer les caractères accentués
-    const accents = [
-      /[\u00C0-\u00C6]/g, // A avec accents majuscules
-      /[\u00E0-\u00E6]/g, // a avec accents minuscules
-      /[\u00C8-\u00CB]/g, // E avec accents majuscules
-      /[\u00E8-\u00EB]/g, // e avec accents minuscules
-      /[\u00CC-\u00CF]/g, // I avec accents majuscules
-      /[\u00EC-\u00EF]/g, // i avec accents minuscules
-      /[\u00D2-\u00D8]/g, // O avec accents majuscules
-      /[\u00F2-\u00F8]/g, // o avec accents minuscules
-      /[\u00D9-\u00DC]/g, // U avec accents majuscules
-      /[\u00F9-\u00FC]/g, // u avec accents minuscules
-      /[\u00D1]/g, // N avec tilde majuscule
-      /[\u00F1]/g, // n avec tilde minuscule
-      /[\u00C7]/g, // C cédille majuscule
-      /[\u00E7]/g, // c cédille minuscule
-    ];
-    const noAccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
-    for (let i = 0; i < accents.length; i++) {
-      str = str.replaceAll(accents[i], noAccent[i]);
-    }
-    // Remplacer les /, -, ", ', :, !, ?, et les .
-    str = str.replaceAll(/[\/\\\-"'()=:!?\.]/g, '');
-    // Retourner la chaîne de caractères modifiée
-    return str;
   }
 
   private getFrenchAbility(ability: string): string {
