@@ -1,3 +1,4 @@
+import { app } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 declare global {
@@ -9,6 +10,9 @@ declare global {
     exportData: [];
   }
 }
+
+// Ignore OS zoom as html-to-img does not handle it well
+app.commandLine.appendSwitch('force-device-scale-factor', '1');
 
 export function patchIpcMain(_ipcMain: TIpcMain) {}
 
