@@ -75,13 +75,25 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
   public override get inside() {
     return (
       <div className='mn-container-inside' onMouseLeave={(e) => this.closePopover(e)}>
-        <HorizontalStack fill height='100%' onMouseEnter={(e) => this.closePopover(e)} itemAlignment='left'>
+        <HorizontalStack
+          fill
+          height='100%'
+          onMouseEnter={(e) => this.closePopover(e)}
+          itemAlignment='left'
+          verticalItemAlignment='middle'
+        >
           {this.props.leftContent}
         </HorizontalStack>
 
         <ul>{this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>
 
-        <HorizontalStack fill height='100%' onMouseEnter={(e) => this.closePopover(e)} itemAlignment='right'>
+        <HorizontalStack
+          fill
+          height='100%'
+          onMouseEnter={(e) => this.closePopover(e)}
+          itemAlignment='right'
+          verticalItemAlignment='middle'
+        >
           {this.props.rightContent}
         </HorizontalStack>
       </div>

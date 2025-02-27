@@ -207,6 +207,8 @@
 }
 
 @mixin themeTypography() {
+  display: block;
+
   &.mn-typography-left {
     text-align: left;
   }
@@ -249,6 +251,22 @@
   }
   &.mn-typography-bullet {
     @include themeTypographyBullet();
+  }
+
+  &.mn-typography-large-font-size {
+    @include themeFont('large');
+  }
+  &.mn-typography-medium-font-size {
+    @include themeFont('medium');
+  }
+  &.mn-typography-regular-font-size {
+    @include themeFont('regular');
+  }
+  &.mn-typography-small-font-size {
+    @include themeFont('small');
+  }
+  &.mn-typography-tiny-font-size {
+    @include themeFont('tiny');
   }
 
   @include themeTypographyEnrichment();

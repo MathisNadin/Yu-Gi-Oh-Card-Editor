@@ -1,19 +1,23 @@
 import { isDefined, isString } from 'mn-tools';
-import { IRouterHrefParams, TForegroundColor } from '../../system';
+import { IRouterHrefParams, TForegroundColor, TRouterState } from '../../system';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
 
-interface IButtonLinkProps extends IContainableProps<HTMLAnchorElement> {
+interface IButtonLinkProps<T extends TRouterState = TRouterState> extends IContainableProps<HTMLAnchorElement> {
   label: string;
-  href?: string | IRouterHrefParams;
+  href?: string | IRouterHrefParams<T>;
   color?: TForegroundColor;
   pressed?: boolean;
 }
 
 interface IButtonLinkState extends IContainableState {
-  pressed: boolean;
+  pressed?: boolean;
 }
 
-export class ButtonLink extends Containable<IButtonLinkProps, IButtonLinkState, HTMLAnchorElement> {
+export class ButtonLink<T extends TRouterState = TRouterState> extends Containable<
+  IButtonLinkProps<T>,
+  IButtonLinkState,
+  HTMLAnchorElement
+> {
   public static override get defaultProps(): IButtonLinkProps {
     return {
       ...super.defaultProps,
@@ -23,22 +27,23 @@ export class ButtonLink extends Containable<IButtonLinkProps, IButtonLinkState, 
     };
   }
 
-  public constructor(props: IButtonLinkProps) {
+  public constructor(props: IButtonLinkProps<T>) {
     super(props);
-    if (isDefined(props.pressed)) {
-      this.state = { ...this.state, pressed: props.pressed as boolean };
-    }
+    this.state = {
+      ...this.state,
+      pressed: props.pressed!,
+    };
   }
 
   public override componentDidUpdate(
-    prevProps: Readonly<IButtonLinkProps>,
+    prevProps: Readonly<IButtonLinkProps<T>>,
     prevState: Readonly<IButtonLinkState>,
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
     if (this.props.pressed === this.state.pressed) return;
-    this.setState({ pressed: this.props.pressed as boolean });
+    this.setState({ pressed: this.props.pressed! });
   }
 
   public override renderClasses() {

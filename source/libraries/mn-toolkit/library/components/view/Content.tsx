@@ -2,9 +2,12 @@ import { Container, IContainerProps, IContainerState } from '../container';
 
 export interface IContentProps extends IContainerProps {}
 
-interface IContentState extends IContainerState {}
+export interface IContentState extends IContainerState {}
 
-export class Content extends Container<IContentProps, IContentState> {
+export class Content<
+  P extends IContentProps = IContentProps,
+  S extends IContentState = IContentState,
+> extends Container<P, S> {
   public static override get defaultProps(): IContentProps {
     return {
       ...super.defaultProps,

@@ -109,14 +109,23 @@
 @mixin themeChipsInput() {
   min-height: calc(#{$defaultItemHeight});
 
-  input {
-    border: none;
-    outline: none;
-    display: flex;
-    flex: 1;
-    border-radius: calc(#{$defaultBorderRadius});
-    min-height: calc(#{$defaultItemHeight});
-    background-color: transparent;
+  &.mn-layout-gutter {
+    > .mn-container-inside {
+      gap: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
+    }
+  }
+
+  > .mn-container-inside {
+    > input {
+      border: none;
+      outline: none;
+      display: flex;
+      flex: 1;
+      border-radius: calc(#{$defaultBorderRadius});
+      min-height: calc(#{$defaultItemHeight});
+      min-width: 190px;
+      background-color: transparent;
+    }
   }
 }
 
@@ -130,6 +139,7 @@
 
 @mixin themeChipsInputField() {
   .input-wrapper {
+    height: auto;
     min-height: auto;
     max-height: inherit;
     padding: 0;
@@ -168,6 +178,11 @@
     height: 100%;
     min-height: 100%;
     max-height: 100%;
+    align-self: normal;
+
+    > .mn-container-inside {
+      align-items: center;
+    }
   }
 }
 
@@ -197,6 +212,7 @@
 
 @mixin themeSelectChipsField() {
   .input-wrapper {
+    height: auto;
     min-height: auto;
     max-height: inherit;
     padding: 0;
@@ -219,6 +235,7 @@
         color: color-hsl($fg1);
         padding: calc(#{$defaultSpacing} / 4);
         min-height: calc(#{$defaultItemHeight});
+        height: auto;
         width: calc(#{$defaultItemHeight});
         cursor: pointer;
         justify-content: center;

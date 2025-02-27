@@ -231,19 +231,18 @@ export class StickyPane extends Pane<IStickyPaneProps, IStickyPaneState> impleme
 
   public override renderAttributes() {
     const attributes = super.renderAttributes();
-    /* if (this.props.position === 'top' || this.props.position === 'bottom') {
-      if (this.contentHeight) {
-        attributes.style!.height = this.contentHeight;
-        attributes.style!.minHeight = this.contentHeight;
-        attributes.style!.maxHeight = this.contentHeight;
-      }
-    } else if (this.props.position === 'left' || this.props.position === 'right') {
-      if (this.contentWidth) {
-        attributes.style!.width = this.contentWidth;
-        attributes.style!.minWidth = this.contentWidth;
-        attributes.style!.maxWidth = this.contentWidth;
-      }
-    } */
+    if (!this.state.sticky) return attributes;
+
+    if (this.contentWidth) {
+      attributes.style!.width = this.contentWidth;
+      attributes.style!.minWidth = this.contentWidth;
+      attributes.style!.maxWidth = this.contentWidth;
+    }
+    if (this.contentHeight) {
+      attributes.style!.height = this.contentHeight;
+      attributes.style!.minHeight = this.contentHeight;
+      attributes.style!.maxHeight = this.contentHeight;
+    }
     return attributes;
   }
 

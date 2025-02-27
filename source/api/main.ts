@@ -2,16 +2,82 @@
 
 import { TForbidTypeChanges, TJSONValue, TLanguageLocale } from 'mn-tools';
 
-// Pour faire de ceci un module
-export interface IDummy {}
+
+
+export interface ICategoryEntity extends TAbstractEntity {
+  parent?: ICategoryEntity['oid'];
+  active: boolean;
+  name: string;
+  path: string;
+}
+
+
+export type TCategoryTableIndexes = 'parent' | 'active' | 'path';
+
+
+export interface ICategoryTable extends IAbstractTable<ICategoryEntity, TCategoryTableIndexes> {
+  name: 'Category';
+  useDataField: true;
+  indexes: TTableIndexDefinitions & {
+    parent: ITableIndexDefinition<ICategoryEntity, ICategoryEntity['parent']>;
+    active: ITableIndexDefinition<ICategoryEntity, ICategoryEntity['active']>;
+    path: ITableIndexDefinition<ICategoryEntity, ICategoryEntity['path']>;
+  };
+}
+
+
+export interface ICategoryListOptions
+  extends IEntityListOptions<ICategoryEntity, ICategoryTable, TCategoryTableIndexes> {
+  parents?: TTableIndexReturnType<ICategoryEntity, ICategoryTable, 'parent', TCategoryTableIndexes>[];
+  active?: TTableIndexReturnType<ICategoryEntity, ICategoryTable, 'active', TCategoryTableIndexes>;
+  paths?: TTableIndexReturnType<ICategoryEntity, ICategoryTable, 'path', TCategoryTableIndexes>[];
+}
+
+
+export interface ICategoryApi {
+  count(options?: ICategoryListOptions): Promise<number>;
+  list(options?: ICategoryListOptions): Promise<ICategoryEntity[]>;
+  store(entity: Partial<ICategoryEntity>): Promise<ICategoryEntity>;
+  trash(options: IEntityTrashOptions): Promise<ICategoryEntity>;
+}
 
 
 declare global {
-  interface IDerivatives {
-    thumbnail: null;
-    media: null;
-    avatar: null;
+  interface IAPI {
+    category: ICategoryApi;
   }
+}
+
+
+export interface IMemberEntity extends TAbstractEntity {
+  userName?: string;
+}
+
+
+export interface IMemberTableIndexes {
+  userName: ITableIndexDefinition<IMemberEntity, IMemberEntity['userName']>;
+}
+
+
+export interface IMemberTable {}
+
+
+export interface IMemberListOptions {
+  userNames?: string[];
+}
+
+
+export interface IMemberApiCheckUserNameOptions {
+  userName: string;
+}
+
+export interface IMemberApiCheckUserNameResponse {
+  exists: boolean;
+}
+
+
+export interface IMemberApi {
+  checkUserName(options: IMemberApiCheckUserNameOptions): Promise<IMemberApiCheckUserNameResponse>;
 }
 
 
@@ -42,14 +108,28 @@ export type THeadMetaTagName =
 export type THeadMetaTagProperty =
   | 'og:type' // Type of content for Open Graph (e.g., website, article)
   | 'og:locale' // Locale of the content (e.g., en_US, fr_FR)
+  | 'og:locale:alternate' // Array of other locales the page is available in
   | 'og:site_name' // Name of the website for Open Graph
   | 'og:title' // Title for Open Graph sharing
   | 'og:description' // Description for Open Graph sharing
   | 'og:url' // Canonical URL of the page
   | 'og:image' // URL of the image for Open Graph sharing
+  | 'og:image:url' // Identical to og:image
+  | 'og:image:secure_url' // An alternate url to use if the webpage requires HTTPS
   | 'og:image:alt' // Alternative text for the Open Graph image
+  | 'og:image:type' // MIME type of the image for Open Graph
   | 'og:image:width' // Width of the Open Graph image in pixels
   | 'og:image:height' // Height of the Open Graph image in pixels
+  | 'og:video' // URL of the video for Open Graph sharing
+  | 'og:video:url' // Identical to og:video
+  | 'og:video:secure_url' // An alternate url to use if the webpage requires HTTPS
+  | 'og:video:alt' // Alternative text for the Open Graph image
+  | 'og:video:type' // MIME type of the video for Open Graph
+  | 'og:video:width' // Width of the Open Graph video in pixels
+  | 'og:video:height' // Height of the Open Graph video in pixels
+  | 'og:audio' // URL of the audio for Open Graph sharing
+  | 'og:audio:secure_url' // An alternate url to use if the webpage requires HTTPS
+  | 'og:audio:type' // MIME type of the audio for Open Graph
   | 'twitter:card' // (See above, also used in Open Graph context)
   | 'twitter:title' // (See above, also used in Open Graph context)
   | 'twitter:description' // (See above, also used in Open Graph context)
@@ -87,23 +167,31 @@ export interface IHeadLinkTag {
 export type THeadTag = IHeadTitleTag | IHeadMetaTag | IHeadLinkTag;
 export interface IRouteRecord {
   static: boolean;
-  raw?: boolean;
   className?: string;
   methodName: string;
   httpMethod: HttpMethod;
   path: string;
-  anonymousAccess: boolean;
+  anonymousAccess?: boolean;
 }
 
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'options' | 'delete' | 'all';
+
+
+declare global {
+  interface IApplicationCookie {
+    session_token: string;
+  }
+
+  type TApplicationCookie = keyof IApplicationCookie;
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface IJob<R = any> {
+export interface IJob<RESULT = any> {
   id: string;
   name: string;
   description: string;
-  error: string;
-  result: R;
+  error?: string;
+  result?: RESULT;
   message: string;
   total: number;
   state: JobState;
@@ -111,8 +199,9 @@ export interface IJob<R = any> {
 }
 
 
-export interface IJobResponse {
-  job: IJob;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface IJobResponse<RESULT = any> {
+  job: IJob<RESULT>;
 }
 
 
@@ -125,7 +214,7 @@ export interface IJobListOptions {
 
 
 export interface IJobApi {
-  list(request?: IJobListOptions): Promise<IJob[]>;
+  list(options?: IJobListOptions): Promise<IJob[]>;
 }
 
 
@@ -146,8 +235,11 @@ export interface IFileEntity extends TAbstractEntity {
   fileName: string;
   fileSize: number;
   mimeType: string;
-  caption?: string;
-  data?: string;
+  /** In pixels */
+  width?: number;
+  /** In pixels */
+  height?: number;
+  /** In seconds */
   duration?: number;
 }
 
@@ -184,7 +276,7 @@ export interface IFileEffect {
 
 export interface IFileCropEffect extends IFileEffect {
   uuid: 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
-  mimeType: 'image/png';
+  mimeType: 'image/webp';
   crop: {
     height: number;
     width: number;
@@ -197,7 +289,7 @@ export interface IFileCropEffect extends IFileEffect {
 
 export interface IFileResizeEffect extends IFileEffect {
   uuid: 'c3624031-9990-4c63-84c3-b6b6388bd68f';
-  mimeType: 'image/png';
+  mimeType: 'image/webp';
   scale: number;
   height: number;
   width: number;
@@ -206,7 +298,7 @@ export interface IFileResizeEffect extends IFileEffect {
 
 export interface IFileThumbnailEffect extends IFileEffect {
   uuid: '35c0f216-4551-4e09-ba48-20f3332e138f';
-  mimeType: 'image/png';
+  mimeType: 'image/webp';
 }
 
 
@@ -220,7 +312,7 @@ export interface IFileApiDownloadOptions {
 }
 
 
-export interface IFileListOptions extends IEntityListOptions<IFileEntity, TFileTableIndexes> {
+export interface IFileListOptions extends IEntityListOptions<IFileEntity, IFileTable, TFileTableIndexes> {
   fileIds?: TTableIndexReturnType<IFileEntity, IFileTable, 'fileId', TFileTableIndexes>[];
   public?: TTableIndexReturnType<IFileEntity, IFileTable, 'public', TFileTableIndexes>;
 }
@@ -251,13 +343,13 @@ export interface IFileApiCreateFromExternalUrlResponse {
 
 
 export interface IFileApi {
-  count(request?: IFileListOptions): Promise<number>;
-  list(request?: IFileListOptions): Promise<IFileEntity[]>;
+  count(options?: IFileListOptions): Promise<number>;
+  list(options?: IFileListOptions): Promise<IFileEntity[]>;
   store(entitySpec: Partial<IFileEntity>): Promise<IFileEntity>;
-  trash(request: IEntityTrashOptions): Promise<IFileEntity>;
-  duplicate(request: IFileApiDuplicateOptions): Promise<IFileEntity>;
-  createFromDataUrl(request: IFileApiCreateFromDataUrlOptions): Promise<IFileEntity>;
-  createFromExternalUrl(request: IFileApiCreateFromExternalUrlOptions): Promise<IFileApiCreateFromExternalUrlResponse>;
+  trash(options: IEntityTrashOptions): Promise<IFileEntity>;
+  duplicate(options: IFileApiDuplicateOptions): Promise<IFileEntity>;
+  createFromDataUrl(options: IFileApiCreateFromDataUrlOptions): Promise<IFileEntity>;
+  createFromExternalUrl(options: IFileApiCreateFromExternalUrlOptions): Promise<IFileApiCreateFromExternalUrlResponse>;
 }
 
 
@@ -269,10 +361,9 @@ declare global {
   interface IDerivatives {
     default: null;
   }
+
+  type TDerivative = keyof IDerivatives;
 }
-
-
-export type TDerivative = keyof IDerivatives;
 
 
 export interface IExceptionEntity extends TAbstractEntity {
@@ -298,7 +389,7 @@ export interface IExceptionTable extends IAbstractTable<IExceptionEntity, TExcep
 
 
 export interface IExceptionApi {
-  log(exception: IExceptionEntity): Promise<void>;
+  log(entitySpec: Partial<IExceptionEntity>): Promise<void>;
 }
 
 
@@ -361,11 +452,40 @@ export type TTableOtherIndexes<E extends TAbstractEntity, K extends string> = {
 };
 
 
-export interface IAbstractTable<E extends TAbstractEntity = TAbstractEntity, K extends string = never> {
+export type TDatabaseDictionary = 'simple' | 'french' | 'english';
+
+
+export interface ITableVectorIndexSegment<E extends TAbstractEntity> {
+  // Method to get the string that will be vectorized
+  getter: (entity: E) => string;
+  // Weight to be applied via setweight (one of 'A', 'B', 'C', 'D')
+  weight: 'A' | 'B' | 'C' | 'D';
+  // Dictionary to be used when constructing the tsvector.
+  dictionary: TDatabaseDictionary;
+}
+
+
+export interface ITableVectorIndexDefinition<E extends TAbstractEntity> {
+  // Bits of vectorized strings that will be combined into the vector index column
+  segments: [ITableVectorIndexSegment<E>, ...ITableVectorIndexSegment<E>[]];
+}
+
+
+export type TTableVectorIndexDefinitions<E extends TAbstractEntity, V extends string> = {
+  [index in V]: ITableVectorIndexDefinition<E>;
+};
+
+
+export interface IAbstractTable<
+  E extends TAbstractEntity = TAbstractEntity,
+  K extends string = never,
+  V extends string = never,
+> {
   query: IQuery<E, this, K>;
   name: string;
   useDataField: boolean;
   indexes: TTableIndexDefinitions & TTableOtherIndexes<E, K>;
+  vectorIndexes: TTableVectorIndexDefinitions<E, V>;
   normalize: (entity: Partial<E>) => void;
   store: (entity: Partial<E>) => Promise<E>;
   reindex: (entity: Partial<E>) => Promise<void>;
@@ -481,14 +601,50 @@ export type TQueryConditionOperator =
   | 'BETWEEN'
   | '&&'
   | 'NOT &&'
-  | '@@ to_tsquery';
+  | '@@ to_tsquery'
+  | '@@ websearch_to_tsquery';
 
 
-export interface IQueryCondition {
+interface IAbstractQueryCondition {
   field: string;
   operator: TQueryConditionOperator;
-  value?: TSQLValue;
 }
+
+
+interface IBasicQueryCondition extends IAbstractQueryCondition {
+  operator: 'IS NULL' | 'IS NOT NULL';
+}
+
+
+interface IQueryConditionWithValue extends IAbstractQueryCondition {
+  value: TSQLValue;
+  operator:
+    | '='
+    | '!='
+    | '>'
+    | '>='
+    | '<'
+    | '<='
+    | 'IN'
+    | 'NOT IN'
+    | 'LIKE'
+    | 'NOT LIKE'
+    | 'BETWEEN'
+    | '&&'
+    | 'NOT &&'
+    | '@@ to_tsquery';
+}
+
+
+interface IWebsearchTsQueryQueryCondition extends IAbstractQueryCondition {
+  operator: '@@ websearch_to_tsquery';
+  value: string;
+  dictionaries: TDatabaseDictionary[];
+  orderBy?: TEntitySortOrder;
+}
+
+
+export type TQueryCondition = IBasicQueryCondition | IQueryConditionWithValue | IWebsearchTsQueryQueryCondition;
 
 
 export type TQueryJoinType = 'JOIN' | 'INNER JOIN' | 'LEFT JOIN' | 'RIGHT JOIN' | 'FULL JOIN';
@@ -502,9 +658,14 @@ export interface IQueryJoin {
 }
 
 
-export interface IQuery<E extends TAbstractEntity, T extends IAbstractTable<E, K>, K extends string = never> {
+export interface IQuery<
+  E extends TAbstractEntity,
+  T extends IAbstractTable<E, K, V>,
+  K extends string = never,
+  V extends string = never,
+> {
   table: T;
-  conditions: IQueryCondition[];
+  conditions: TQueryCondition[];
   joins: IQueryJoin[];
   fields: string[];
   distinctField?: string;
@@ -539,6 +700,12 @@ export interface IQuery<E extends TAbstractEntity, T extends IAbstractTable<E, K
   arrayOverlap<I extends TValidIndexKeys<E, K>>(field: I, values: TTableIndexReturnType<E, T, I, K>): this;
   arrayNoOverlap<I extends TValidIndexKeys<E, K>>(field: I, values: TTableIndexReturnType<E, T, I, K>): this;
   textSearch<I extends TValidIndexKeys<E, K>>(field: I, value: TTableIndexReturnType<E, T, I, K>): this;
+  tsvectorSearch(
+    vectorField: keyof T['vectorIndexes'],
+    searchString: string,
+    dictionaries: TDatabaseDictionary[],
+    orderBy?: TEntitySortOrder
+  ): this;
   orderBy(field: TValidIndexKeys<E, K>, direction?: TEntitySortOrder): this;
   join<A extends TAbstractEntity, J extends IAbstractTable<A, O>, O extends string = never>(
     otherQuery: IQuery<A, J, O>,
@@ -560,7 +727,7 @@ export interface IQuery<E extends TAbstractEntity, T extends IAbstractTable<E, K
     otherQuery: IQuery<A, J, O>,
     joinConditions: IJoinCondition<E, K, A, O>[]
   ): this;
-  buildConditionClause(condition: IQueryCondition, startIndex: number): string;
+  buildConditionClause(condition: TQueryCondition, startIndex: number): string;
   count(): Promise<number>;
   grabIds(options?: IQueryPagerOptions): Promise<number[]>;
   grabId(options?: IQueryPagerOptions): Promise<number | undefined>;
@@ -578,18 +745,37 @@ export interface IEntityListSortOption<E extends TAbstractEntity, K extends stri
 }
 
 
+export interface IQuerySearchVectorOptions<
+  E extends TAbstractEntity,
+  T extends IAbstractTable<E, K, V>,
+  K extends string = never,
+  V extends string = never,
+> {
+  field: keyof T['vectorIndexes'];
+  search: string;
+  dictionaries: TDatabaseDictionary[];
+  orderBy?: TEntitySortOrder;
+}
+
+
 export interface IQueryPagerOptions {
   from: number;
   count: number;
 }
 
 
-export interface IEntityListOptions<E extends TAbstractEntity, K extends string = never> {
+export interface IEntityListOptions<
+  E extends TAbstractEntity,
+  T extends IAbstractTable<E, K, V>,
+  K extends string = never,
+  V extends string = never,
+> {
   sort?: IEntityListSortOption<E, K>[];
   oids?: TTableIndexReturnType<TAbstractEntity, IAbstractTable<TAbstractEntity, 'oid'>, 'oid'>[];
   excludeOids?: TTableIndexReturnType<TAbstractEntity, IAbstractTable<TAbstractEntity, 'oid'>, 'oid'>[];
   deleted?: boolean;
   creator?: TTableIndexReturnType<TAbstractEntity, IAbstractTable<TAbstractEntity, 'creator'>, 'creator'>;
+  searchVectors?: IQuerySearchVectorOptions<E, T, K, V>[];
   pager?: IQueryPagerOptions;
 }
 
@@ -621,8 +807,8 @@ export interface IEntityReindexOptions {
 
 
 export interface IEntityApi {
-  list(request?: IEntityListAllOptions): Promise<IEntityListResult[]>;
-  reindex(request: IEntityReindexOptions): Promise<IJobResponse>;
+  list(options?: IEntityListAllOptions): Promise<IEntityListResult[]>;
+  reindex(options: IEntityReindexOptions): Promise<IJobResponse>;
 }
 
 
@@ -709,14 +895,6 @@ export interface IBatchNextOptions {
 export interface IBatchListOptions {}
 
 
-export interface IBatchCheckResultsOptions {}
-
-
-export interface IBatchCheckResultsResponse {
-  toDo: string[];
-}
-
-
 export type TBatchParameter = string | boolean | number | number[] | string[];
 
 export interface IBatchParameters {
@@ -730,9 +908,8 @@ export interface IBatchStartOptions {
 
 
 export interface IBatchApi {
-  list(request?: IBatchListOptions): Promise<IBatchInfo[]>;
-  checkResults(request?: IBatchCheckResultsOptions): Promise<IBatchCheckResultsResponse>;
-  start(request: IBatchStartOptions): Promise<TBatchReport>;
+  list(options?: IBatchListOptions): Promise<IBatchInfo[]>;
+  start(options: IBatchStartOptions): Promise<IJobResponse<TBatchReport | void>>;
 }
 
 
@@ -764,7 +941,7 @@ export interface IApplicationInstanceTable
 
 
 export interface IApplicationInstanceListOptions
-  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  extends IEntityListOptions<IApplicationInstanceEntity, IApplicationInstanceTable, TApplicationInstanceTableIndexes> {
   name?: TTableIndexReturnType<
     IApplicationInstanceEntity,
     IApplicationInstanceTable,
@@ -775,7 +952,7 @@ export interface IApplicationInstanceListOptions
 
 
 export interface IApplicationInstanceCreateOptions
-  extends IEntityListOptions<IApplicationInstanceEntity, TApplicationInstanceTableIndexes> {
+  extends IEntityListOptions<IApplicationInstanceEntity, IApplicationInstanceTable, TApplicationInstanceTableIndexes> {
   instance: Partial<IApplicationInstanceEntity>;
   administrator: Partial<IMemberEntity>;
 }
@@ -786,7 +963,7 @@ export interface IApplicationInstanceApi {
   list(options?: IApplicationInstanceListOptions): Promise<IApplicationInstanceEntity[]>;
   store(entitySpec: Partial<IApplicationInstanceEntity>): Promise<IApplicationInstanceEntity>;
   trash(options: IEntityTrashOptions): Promise<IApplicationInstanceEntity>;
-  create(request: IApplicationInstanceCreateOptions): Promise<IApplicationInstanceEntity>;
+  create(options: IApplicationInstanceCreateOptions): Promise<IApplicationInstanceEntity>;
 }
 
 
@@ -821,7 +998,8 @@ export interface IEntityRolesTable extends IAbstractTable<IEntityRolesEntity, IE
 }
 
 
-export interface IEntityRolesListOptions extends IEntityListOptions<IEntityRolesEntity, IEntityRolesTableIndexes> {
+export interface IEntityRolesListOptions
+  extends IEntityListOptions<IEntityRolesEntity, IEntityRolesTable, IEntityRolesTableIndexes> {
   type?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'type', IEntityRolesTableIndexes>;
   ids?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'id', IEntityRolesTableIndexes>[];
 }
@@ -838,7 +1016,7 @@ export interface IEntityRolesApi {
 export interface IRoleEntity extends TAbstractEntity {
   machineName: string;
   title: string;
-  permissions: IPermission['permission'][];
+  permissions: TPermission[];
 }
 
 
@@ -854,17 +1032,20 @@ export interface IRoleTable extends IAbstractTable<IRoleEntity, TRoleTableIndexe
 }
 
 
+export interface IRoleListOptions extends IEntityListOptions<IRoleEntity, IRoleTable, TRoleTableIndexes> {}
+
+
 export interface IRoleApi {
-  count(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<number>;
-  list(request?: IEntityListOptions<IRoleEntity, TRoleTableIndexes>): Promise<IRoleEntity[]>;
+  count(options?: IRoleListOptions): Promise<number>;
+  list(options?: IRoleListOptions): Promise<IRoleEntity[]>;
   store(entitySpec: Partial<IRoleEntity>): Promise<IRoleEntity>;
-  trash(request: IEntityTrashOptions): Promise<IRoleEntity>;
+  trash(options: IEntityTrashOptions): Promise<IRoleEntity>;
 }
 
 
-export interface IPermission {
+export interface IServicePermission {
   service: string;
-  permission: string;
+  permission: TPermission;
 }
 
 
@@ -872,7 +1053,7 @@ export interface IPermissionListOptions {}
 
 
 export interface IPermissionApi {
-  list(query?: IPermissionListOptions): Promise<IPermission[]>;
+  list(options?: IPermissionListOptions): Promise<IServicePermission[]>;
 }
 
 
@@ -909,7 +1090,7 @@ export interface IPushServerApiRegisterResponse {}
 
 
 export interface IPushServerApi {
-  register(request: IPushServerApiRegisterOptions): Promise<IPushServerApiRegisterResponse>;
+  register(options: IPushServerApiRegisterOptions): Promise<IPushServerApiRegisterResponse>;
 }
 
 
@@ -974,7 +1155,8 @@ export interface INotificationTable extends IAbstractTable<INotificationEntity, 
 }
 
 
-export interface INotificationListOptions extends IEntityListOptions<INotificationEntity, TNotificationTableIndexes> {
+export interface INotificationListOptions
+  extends IEntityListOptions<INotificationEntity, INotificationTable, TNotificationTableIndexes> {
   recipient?: TTableIndexReturnType<INotificationEntity, INotificationTable, 'recipient', TNotificationTableIndexes>;
 }
 
@@ -989,7 +1171,7 @@ export interface INotificationApi {
   list(options?: INotificationListOptions): Promise<INotificationEntity[]>;
   store(entitySpec: Partial<INotificationEntity>): Promise<INotificationEntity>;
   trash(options: IEntityTrashOptions): Promise<INotificationEntity>;
-  seen(request: INotificationApiSeenOptions): Promise<void>;
+  seen(options: INotificationApiSeenOptions): Promise<void>;
 }
 
 
@@ -1046,33 +1228,30 @@ export interface IMemberEntity extends TAbstractEntity {
 
 export interface IMemberTableIndexes {
   mail: ITableIndexDefinition<IMemberEntity, IMemberEntity['mail']>;
-  searchContent: ITableIndexDefinition<IMemberEntity, string>;
 }
 
 
 export type TMemberTableIndexes = keyof IMemberTableIndexes;
 
 
-export interface IMemberTable extends IAbstractTable<IMemberEntity, TMemberTableIndexes> {
+export type TMemberTableVectorIndexes = 'searchVector';
+
+
+export interface IMemberTable extends IAbstractTable<IMemberEntity, TMemberTableIndexes, TMemberTableVectorIndexes> {
   name: 'Member';
   useDataField: true;
   indexes: TTableIndexDefinitions & IMemberTableIndexes;
+  vectorIndexes: {
+    searchVector: ITableVectorIndexDefinition<IMemberEntity>;
+  };
 }
 
 
-export interface IMemberListOptions extends IEntityListOptions<IMemberEntity, TMemberTableIndexes> {
+export interface IMemberListOptions
+  extends IEntityListOptions<IMemberEntity, IMemberTable, TMemberTableIndexes, TMemberTableVectorIndexes> {
   mails?: TTableIndexReturnType<IMemberEntity, IMemberTable, 'mail', TMemberTableIndexes>[];
   roles?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'roles', IEntityRolesTableIndexes>;
-  searchContent?: TTableIndexReturnType<IMemberEntity, IMemberTable, 'searchContent', TMemberTableIndexes>;
-}
-
-
-export interface IMemberAPILoginResponse {
-  error?: string;
-  member?: IMemberEntity;
-  token?: ISessionEntity['token'];
-  roles?: IRoleEntity['oid'][];
-  permissions?: IPermission['permission'][];
+  searchVector?: string;
 }
 
 
@@ -1081,6 +1260,19 @@ export interface IMemberApiLoginOptions {
   password: string;
   instance: IMemberEntity['applicationInstance'];
   device: IRemodeDeviceSpec;
+}
+
+export interface IMemberAPILoginResponse {
+  error?: string;
+  member?: IMemberEntity;
+  token?: ISessionEntity['token'];
+  roles?: IRoleEntity['oid'][];
+  permissions?: TPermission[];
+}
+
+
+export interface IMemberApiAuthenticateTokenOptions {
+  token: ISessionEntity['token'];
 }
 
 
@@ -1104,6 +1296,7 @@ export interface IMemberApiGetInstancesResponse {
   instances: { oid: number; title: string }[];
 }
 
+
 export interface IMemberApiCheckMailOptions {
   mail: string;
 }
@@ -1112,6 +1305,7 @@ export interface IMemberApiCheckMailResponse {
   exists: boolean;
 }
 
+
 export interface IMemberApiGetPermissionsOptions {
   member: number;
   applicationInstance: number;
@@ -1119,8 +1313,9 @@ export interface IMemberApiGetPermissionsOptions {
 
 export interface IMemberApiGetPermissionsResponse {
   roles: IRoleEntity['oid'][];
-  permissions: IPermission['permission'][];
+  permissions: TPermission[];
 }
+
 
 export interface IMemberApiForgotPasswordOptions {
   mail: string;
@@ -1131,24 +1326,19 @@ export interface IMemberApiForgotPasswordResponse {
 }
 
 
-export interface IMemberApiImportResponse {
-  created: number;
-  invited: IMemberEntity[];
-}
-
-
 export interface IMemberApi {
-  count(request?: IMemberListOptions): Promise<number>;
-  list(request?: IMemberListOptions): Promise<IMemberEntity[]>;
+  count(options?: IMemberListOptions): Promise<number>;
+  list(options?: IMemberListOptions): Promise<IMemberEntity[]>;
   store(entitySpec: Partial<IMemberEntity>): Promise<IMemberEntity>;
   trash(options: IEntityTrashOptions): Promise<IMemberEntity>;
-  getInstances(request: IMemberApiGetInstancesOptions): Promise<IMemberApiGetInstancesResponse>;
-  checkMail(request: IMemberApiCheckMailOptions): Promise<IMemberApiCheckMailResponse>;
-  login(request: IMemberApiLoginOptions): Promise<IMemberAPILoginResponse>;
-  register(request: IMemberApiRegisterOptions): Promise<IMemberAPILoginResponse>;
-  forgotPassword(request: IMemberApiForgotPasswordOptions): Promise<IMemberApiForgotPasswordResponse>;
+  getInstances(options: IMemberApiGetInstancesOptions): Promise<IMemberApiGetInstancesResponse>;
+  checkMail(options: IMemberApiCheckMailOptions): Promise<IMemberApiCheckMailResponse>;
+  authenticateToken(options: IMemberApiAuthenticateTokenOptions): Promise<IMemberAPILoginResponse>;
+  login(options: IMemberApiLoginOptions): Promise<IMemberAPILoginResponse>;
+  register(options: IMemberApiRegisterOptions): Promise<IMemberAPILoginResponse>;
+  forgotPassword(options: IMemberApiForgotPasswordOptions): Promise<IMemberApiForgotPasswordResponse>;
   logout(): Promise<void>;
-  getPermissions(request: IMemberApiGetPermissionsOptions): Promise<IMemberApiGetPermissionsResponse>;
+  getPermissions(options: IMemberApiGetPermissionsOptions): Promise<IMemberApiGetPermissionsResponse>;
 }
 
 
@@ -1256,9 +1446,13 @@ export interface ILogRecordTable extends IAbstractTable<ILogRecordEntity, TLogRe
 }
 
 
+export interface ILogRecordListOptions
+  extends IEntityListOptions<ILogRecordEntity, ILogRecordTable, TLogRecordTableIndexes> {}
+
+
 export interface ILogRecordApi {
-  count(options?: IEntityListOptions<ILogRecordEntity, TLogRecordTableIndexes>): Promise<number>;
-  list(options?: IEntityListOptions<ILogRecordEntity, TLogRecordTableIndexes>): Promise<ILogRecordEntity[]>;
+  count(options?: ILogRecordListOptions): Promise<number>;
+  list(options?: ILogRecordListOptions): Promise<ILogRecordEntity[]>;
   store(entitySpec: Partial<ILogRecordEntity>): Promise<ILogRecordEntity>;
   trash(options: IEntityTrashOptions): Promise<ILogRecordEntity>;
   flushRecordStack(exception?: object): Promise<void>;
@@ -1319,6 +1513,205 @@ export interface ISessionTable extends IAbstractTable<ISessionEntity, TSessionTa
 }
 
 
-export interface ISessionListOptions extends IEntityListOptions<ISessionEntity, TSessionTableIndexes> {
+export interface ISessionListOptions extends IEntityListOptions<ISessionEntity, ISessionTable, TSessionTableIndexes> {
   token?: TTableIndexReturnType<ISessionEntity, ISessionTable, 'token', TSessionTableIndexes>;
+  closed?: TTableIndexReturnType<ISessionEntity, ISessionTable, 'closed', TSessionTableIndexes>;
 }
+
+
+declare global {
+  interface IDerivatives {
+    thumbnail: null;
+    media: null;
+    avatar: null;
+    cardCompact: null;
+  }
+}
+
+
+export {};
+
+
+
+declare global {
+  type TAppGlobalAccessPermission =
+    | 'access - all instances'
+    | 'access - developper tools'
+    | 'access - administration tools';
+
+  type TEntityRolesEntityPermission =
+    | 'entity roles entity - count own'
+    | 'entity roles entity - count all'
+    | 'entity roles entity - list own'
+    | 'entity roles entity - list all'
+    | 'entity roles entity - create own'
+    | 'entity roles entity - store own'
+    | 'entity roles entity - store all'
+    | 'entity roles entity - trash own'
+    | 'entity roles entity - trash all';
+
+  type TRoleEntityPermission =
+    | 'role entity - count own'
+    | 'role entity - count all'
+    | 'role entity - list own'
+    | 'role entity - list all'
+    | 'role entity - create own'
+    | 'role entity - store own'
+    | 'role entity - store all'
+    | 'role entity - trash own'
+    | 'role entity - trash all';
+
+  type TApplicationInstanceEntityPermission =
+    | 'application instance entity - count own'
+    | 'application instance entity - count all'
+    | 'application instance entity - list own'
+    | 'application instance entity - list all'
+    | 'application instance entity - create own'
+    | 'application instance entity - store own'
+    | 'application instance entity - store all'
+    | 'application instance entity - trash own'
+    | 'application instance entity - trash all';
+
+  type TFileEntityPermission =
+    | 'file entity - count own'
+    | 'file entity - count all'
+    | 'file entity - list own'
+    | 'file entity - list all'
+    | 'file entity - create own'
+    | 'file entity - store own'
+    | 'file entity - store all'
+    | 'file entity - trash own'
+    | 'file entity - trash all';
+
+  type TLogRecordEntityPermission =
+    | 'log record entity - count own'
+    | 'log record entity - count all'
+    | 'log record entity - list own'
+    | 'log record entity - list all'
+    | 'log record entity - create own'
+    | 'log record entity - store own'
+    | 'log record entity - store all'
+    | 'log record entity - trash own'
+    | 'log record entity - trash all';
+
+  type TSessionEntityPermission =
+    | 'session entity - count own'
+    | 'session entity - count all'
+    | 'session entity - list own'
+    | 'session entity - list all'
+    | 'session entity - create own'
+    | 'session entity - store own'
+    | 'session entity - store all'
+    | 'session entity - trash own'
+    | 'session entity - trash all';
+
+  type TMemberEntityPermission =
+    | 'member entity - count own'
+    | 'member entity - count all'
+    | 'member entity - list own'
+    | 'member entity - list all'
+    | 'member entity - create own'
+    | 'member entity - store own'
+    | 'member entity - store all'
+    | 'member entity - trash own'
+    | 'member entity - trash all';
+
+  type TEntityRolesAPIPermission =
+    | 'entity roles api - count'
+    | 'entity roles api - list'
+    | 'entity roles api - store'
+    | 'entity roles api - trash';
+
+  type TRoleAPIPermission = 'role api - count' | 'role api - list' | 'role api - store' | 'role api - trash';
+
+  type TPermissionAPIPermission = 'permission api - list';
+
+  type TApplicationInstanceAPIPermission =
+    | 'application instance api - count'
+    | 'application instance api - list'
+    | 'application instance api - store'
+    | 'application instance api - trash'
+    | 'application instance api - create';
+
+  type TFileAPIPermission =
+    | 'file api - download'
+    | 'file api - count'
+    | 'file api - list'
+    | 'file api - store'
+    | 'file api - trash'
+    | 'file api - duplicate'
+    | 'file api - create from data url'
+    | 'file api - create from external url';
+
+  type TBatchAPIPermission = 'batch api - list' | 'batch api - start';
+
+  type TEntityAPIPermission = 'entity api - list' | 'entity api - reindex';
+
+  type TExceptionAPIPermission = 'exception api - log';
+
+  type TJobAPIPermission = 'job api - list';
+
+  type TLogRecordAPIPermission =
+    | 'log record api - count'
+    | 'log record api - list'
+    | 'log record api - store'
+    | 'log record api - trash'
+    | 'log record api - flush record stack';
+
+  type TNotificationAPIPermission =
+    | 'notification api - count'
+    | 'notification api - list'
+    | 'notification api - store'
+    | 'notification api - trash'
+    | 'notification api - seen';
+
+  type TPushServerAPIPermission = 'push server api - register';
+
+  type TMemberAPIPermission =
+    | 'member api - count'
+    | 'member api - list'
+    | 'member api - store'
+    | 'member api - trash'
+    | 'member api - get instances'
+    | 'member api - check mail'
+    | 'member api - check user name'
+    | 'member api - authenticate token'
+    | 'member api - login'
+    | 'member api - register'
+    | 'member api - get permissions'
+    | 'member api - logout'
+    | 'member api - forgot password';
+
+  type TRootAPIPermission = 'root api - get version';
+
+  type TPermission =
+    | TAppGlobalAccessPermission
+    | TEntityRolesEntityPermission
+    | TRoleEntityPermission
+    | TApplicationInstanceEntityPermission
+    | TFileEntityPermission
+    | TLogRecordEntityPermission
+    | TSessionEntityPermission
+    | TMemberEntityPermission
+    | TEntityRolesAPIPermission
+    | TRoleAPIPermission
+    | TPermissionAPIPermission
+    | TApplicationInstanceAPIPermission
+    | TFileAPIPermission
+    | TBatchAPIPermission
+    | TEntityAPIPermission
+    | TExceptionAPIPermission
+    | TJobAPIPermission
+    | TLogRecordAPIPermission
+    | TNotificationAPIPermission
+    | TPushServerAPIPermission
+    | TMemberAPIPermission
+    | TRootAPIPermission;
+}
+
+
+export {};
+
+
+
+

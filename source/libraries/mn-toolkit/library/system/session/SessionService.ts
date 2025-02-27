@@ -1,126 +1,91 @@
 import { extend, logger, Observable } from 'mn-tools';
-import { ISessionListener } from '.';
+import { IMemberAPILoginResponse, ISessionEntity } from 'api/main';
+import { ISessionListener, TSessionStoreKey } from '.';
 
 const log = logger('session');
 
-interface ISessionOptions {
-  apiUrl: string;
-}
-
-export interface IApiRestResponse {
-  ok: boolean;
-  message: string;
-  field: string;
-  code: string;
-}
-
 export class SessionService extends Observable<ISessionListener> {
-  private options: ISessionOptions = {} as ISessionOptions;
-  private _active: boolean;
-  private _token: string;
-  private _data: ISessionData;
+  private _data?: ISessionData;
 
-  public constructor() {
-    super();
-    this._token = undefined!;
-    this._data = undefined!;
-    this._active = false;
-  }
-
-  public fireSessionCreated() {
-    this.dispatch('sessionCreated');
-  }
-
-  public fireSessionDropped() {
-    this.dispatch('sessionDropped');
-  }
-
-  public fireSessionUpdated() {
-    this.dispatch('sessionUpdated');
-  }
-
-  public async setup() {
-    this._token = await app.$store.get('token', undefined!);
-    this._data = await app.$store.get('session', undefined!);
-    if (this._token) {
-      log.debug('Nous avons un token:', this._token);
-      if (this._data) {
-        log.debug('Nous avons des données:', this._data);
-        await this.start(this._token, this._data, true);
-      } else {
-        log.debug(`Pas de data, il faudrait une tentative de reconnection avec le token ${this._token}`);
-      }
-    } else {
-      if (this._data) {
-        log.warning(`Suppression des données puisque nous n'avons pas de token`);
-      }
-      this.drop();
-    }
-  }
-
-  public get active(): boolean {
-    return !!this._active;
-  }
-
-  public async update(data: Partial<ISessionData>) {
-    extend(this._data, data);
-    await app.$store.set('session', this._data);
-    this.fireSessionUpdated();
+  public get active() {
+    return !!this._data;
   }
 
   public get data() {
     return this._data;
   }
 
-  public get token() {
-    return this._token;
+  public fireSessionCreated() {
+    this.dispatch('sessionCreated', this.data!);
   }
 
-  public async start(token: string, data: ISessionData, fromPreexistingData = false) {
-    // MN : des fois on passe this._data en argument data, donc on utilise newData pour ne pas l'affecter
-    // quand on fait ensuite "await app.$store.set('session', this._data = {} as ISessionData);"
-    const newData = data;
-    log.debug(`Démarrage de la session avec le token ${token}`, newData);
-    await app.$store.set('token', (this._token = token));
-    await app.$store.set('session', (this._data = {} as ISessionData));
-    this._active = true;
+  public fireSessionUpdated() {
+    this.dispatch('sessionUpdated', this.data!);
+  }
 
-    // If from preexisting data (retrieved from storage during initial setup) then we update the entire member
-    if (fromPreexistingData && newData.member) {
-      try {
-        const [member] = await app.$api.member.list({ oids: [newData.member.oid] });
-        if (!member) return this.drop();
-        newData.member = member;
+  public fireSessionDropped() {
+    this.dispatch('sessionDropped');
+  }
 
-        const response = await app.$api.member.getPermissions({
-          member: newData.member.oid,
-          applicationInstance: newData.member.applicationInstance,
-        });
-        newData.roles = response.roles;
-        newData.permissions = response.permissions;
-      } catch (e) {
-        // We may have data, but if the session's expired this will fail, so we drop the session
-        app.$errorManager.trigger(e as Error);
-        return this.drop();
-      }
+  public async setup() {
+    if (!app.conf.sessionTokenName) return Promise.resolve();
+
+    const token = app.$cookie.get(app.conf.sessionTokenName);
+    const existingData = await app.$store.get<Partial<ISessionData>, TSessionStoreKey>('session');
+
+    if (!token) {
+      if (existingData) log.warning(`Suppression des données puisque nous n'avons pas de token`);
+      return await this.drop();
     }
 
-    await this.update(newData);
+    log.debug('Nous avons un token:', token);
+
+    if (existingData) log.debug('Nous avons des données:', existingData);
+    else log.debug('Pas de données => tentative de reconnection avec le token');
+
+    await this.restart(token, existingData || {});
+  }
+
+  public async restart(token: string, data: Partial<ISessionData>) {
+    log.debug(`Redémarrage de la session avec le token ${token}`, data);
+
+    let response: IMemberAPILoginResponse | undefined;
+    try {
+      response = await app.$api.member.authenticateToken({ token });
+    } catch (e) {
+      app.$errorManager.trigger(e as Error);
+    }
+
+    if (!response?.member) return await this.drop();
+
+    data.member = response.member;
+    data.roles = response.roles || [];
+    data.permissions = response.permissions || [];
+    await this.start(data);
+  }
+
+  public async start(data: Partial<ISessionData>, newToken?: ISessionEntity['token']) {
+    log.debug('Starting session with data:', data);
+    if (newToken && app.conf.sessionTokenName) {
+      log.debug('Storing new token:', newToken);
+      app.$cookie.set(app.conf.sessionTokenName, newToken);
+    }
+    await this.update(data);
     this.fireSessionCreated();
+  }
+
+  public async update(data: Partial<ISessionData>) {
+    if (this._data) extend(this._data, data);
+    else this._data = data as ISessionData;
+    await app.$store.set<ISessionData, TSessionStoreKey>('session', this._data);
     this.fireSessionUpdated();
   }
 
-  public drop() {
-    log.debug('drop');
-    this._active = false;
-    this._token = undefined!;
-    this._data = undefined!;
-    app.$store.remove('token');
-    app.$store.remove('session');
+  public async drop() {
+    log.debug('Dropping session');
+    if (app.conf.sessionTokenName) app.$cookie.delete(app.conf.sessionTokenName);
+    await app.$store.remove<TSessionStoreKey>('session');
+    this._data = undefined;
     this.fireSessionDropped();
-  }
-
-  public configure(options: Partial<ISessionOptions>) {
-    extend(this.options, options);
   }
 }

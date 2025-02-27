@@ -9,5 +9,6 @@ export * from './store';
 export * from './device';
 export * from './react';
 export * from './session';
+export * from './cookie';
 export * from './axios';
 export * from './permission';

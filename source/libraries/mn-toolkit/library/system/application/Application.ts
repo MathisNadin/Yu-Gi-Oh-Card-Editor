@@ -92,10 +92,8 @@ export class Application extends Observable<IApplicationListener> {
   }
 
   public async exit() {
-    if (app.$device.isApple) return; // Programatically exiting the app is prohibited on ios
-    if (app.$device.isCapacitor) {
-      await CapacitorApp.exitApp();
-    }
+    if (!app.$device.isCapacitor || app.$device.isApple) return; // Programatically exiting the app is prohibited on ios
+    await CapacitorApp.exitApp();
   }
 
   private async bootstrapServices() {

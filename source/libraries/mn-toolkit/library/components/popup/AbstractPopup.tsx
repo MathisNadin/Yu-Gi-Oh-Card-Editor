@@ -154,7 +154,14 @@ export abstract class AbstractPopup<
   protected renderHeader(): TJSXElementChild {
     return (
       <HorizontalStack key='header' className='mn-popup-header'>
-        <Typography className='mn-popup-title' bold variant='label' contentType='text' content={this.props.title} />
+        <Typography
+          className='mn-popup-title'
+          bold
+          fontSize='medium'
+          variant='label'
+          contentType='text'
+          content={this.props.title}
+        />
         <Spacer />
         <Icon icon='toolkit-close' onTap={() => this.close(undefined)} />
       </HorizontalStack>

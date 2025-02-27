@@ -197,7 +197,7 @@ export class PictureCropperDialog extends AbstractPopup<
 
     const cropEffect: IFileCropEffect = {
       uuid: 'a9339c53-7084-4a6a-be2f-92c257bcd2be',
-      mimeType: 'image/png',
+      mimeType: 'image/webp',
       crop: {
         height: cropHeight,
         width: cropWidth,

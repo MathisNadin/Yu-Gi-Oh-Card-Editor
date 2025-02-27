@@ -86,6 +86,12 @@ export class PopoverService extends Observable<IPopoverListener> {
     this.dispatch('popoversChanged');
   }
 
+  public removeLast() {
+    if (!this.popovers.length) return;
+    const lastId = this.popovers[this.popovers.length - 1].id;
+    this.remove(lastId);
+  }
+
   public removeAll() {
     this.popovers = [];
     this.focuses = [];

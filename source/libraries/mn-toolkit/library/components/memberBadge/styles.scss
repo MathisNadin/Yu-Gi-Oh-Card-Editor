@@ -48,16 +48,25 @@
     @include colorizeMemberBadge($fg4);
   }
 
-  .letter {
-    font-weight: bold;
-    text-transform: uppercase;
-  }
+  .content {
+    &.letter {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
 
-  .photo {
-    @include fill-all();
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    &.photo {
+      @include fill-all();
+      overflow: hidden;
+
+      // Style the <img> to cover the container similar to background-size: cover
+      img {
+        display: block; // Ensure the image is displayed as block
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // Equivalent to background-size: cover
+        object-position: center; // Equivalent to background-position: center
+      }
+    }
   }
 
   &.mn-shape-circle {

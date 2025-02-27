@@ -162,6 +162,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
       background-color 0.2s ease;
 
     .mn-left-menu-subitem-text {
+      @include text-overflow();
       opacity: 1;
       transition: opacity 0.2s ease;
 

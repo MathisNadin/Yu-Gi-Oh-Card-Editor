@@ -6,14 +6,11 @@ export * from './ApiJob';
 export * from './ApiService';
 
 export interface IApiRequestOptions {
-  sessionToken?: string;
-  noSessionToken?: boolean;
   headers?: { [key: string]: string };
 }
 
 export interface IApiSettings {
   apiUrl: string;
-  tokenKey?: string;
   router?: IRouteRecord[];
 }
 

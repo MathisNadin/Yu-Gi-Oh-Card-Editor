@@ -1,7 +1,127 @@
 ## mn-toolkit change log
 
+## 7.0.3
+
+- fix pour la shape
+
+## 7.0.2
+
+- bump to 7.0.2
+- utiliation d'un élément img au lieu de background-image pour le member badge
+
+## 7.0.1
+
+- bump to 7.0.1
+- utilisation d'un set dans PermissionService pour optimiser les performances
+
+## 7.0.0
+
+- bump to 7.0.0
+- utilisation des cookies pour le token de session + refonte de SessionService
+
+## 6.4.4
+
+- bump to 6.4.4
+- TDerivative devient gobal + ajout de TPermission en global + les effets utilisent désormais webp
+
+## 6.4.3
+
+- bump to 6.4.3
+- loaded false dans RouterViewPort sur StateStart pour éventuellement attendre pendant le getInitialData
+- searchDebounce sur SearchBar désactivable + fix classe du btn container sur Icon
+- classe de la platform constante + ajustement des espaces de scroll avec padding sur mobile
+- fix hauteur de certains fields pour le mobile
+
+## 6.4.2
+
+- bump to 6.4.2
+- max width sur le header content + class enabled sur sortable
+
+## 6.4.1
+
+- bump to 6.4.1
+- fix du didUpdate manquant sur ChipsInput
+
+## 6.4.0
+
+- bump to 6.4.0
+- ajout sortable dialog et reorder icon
+
+## 6.3.2
+
+- bump to 6.3.2
+- fix prise en compe absente du canReset sur les icon delete des time date et week picker
+
+## 6.3.1
+
+- bump to 6.3.1
+- typing des href là où ça manquait
+
+## 6.3.0
+
+- bump to 6.3.0
+- ajout Accordion
+- ajout checkbox field
+- optimisation href et ajout fontSize dans Typography
+- ajout AnchorContainer
+
+## 6.2.11
+
+- bump to 6.2.11
+- aligner verticalement les left et right contents dans TopMenu
+
+## 6.2.10
+
+- bump to 6.2.10
+- fix padding sub header + fix fullscr surimage
+
+## 6.2.9
+
+- bump to 6.2.9
+- fixs sur search bar et sub header
+
+## 6.2.8
+
+- bump to 6.2.8
+- fix ciblage des styles grid
+
+## 6.2.7
+
+- bump to 6.2.7
+- CheckboxTreeField + fix tailles dans Chips Input
+
+## 6.2.6
+
+- bump to 6.2.6
+- RichTextEditor ne gère que ses propres popups
+- ajout remove last sur popover et toaster
+
+## 6.2.5
+
+- bump to 6.2.5
+- grid, content, footer, et header étendables
+
+## 6.2.4
+
+- bump to 6.2.4
+- fix taille du sticky pane enmode sticky
+
+## 6.2.3
+
+- bump to 6.2.3
+- text overflow sur les left menu subitems
+
+## 6.2.2
+
+- bump to 6.2.2
+- gérer les query strings additionnels dans getLink
+- Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
+- typography doit être en display block
+- max content width en small screen doit être 100%
+
 ## 6.2.1
 
+- bump to 6.2.1
 - fix de certaines line-height
 
 ## 6.2.0

@@ -4,6 +4,7 @@ import { IChoiceDialogProps, ChoiceDialog } from './ChoiceDialog';
 import { IConfirmationDialogProps, ConfirmationDialog } from './ConfirmationDialog';
 import { IInformDialogProps, InformDialog } from './InformDialog';
 import { IPromptDialogProps, PromptDialog } from './PromptDialog';
+import { ISortableDialogProps, SortableDialog } from './SortableDialog';
 import { AbstractPopup } from './AbstractPopup';
 import { IAbstractPopupProps, IPopupListener, IPopupShowOptions } from '.';
 
@@ -75,6 +76,15 @@ export class PopupService extends Observable<IPopupListener> {
     return await this.show({
       type: 'choice',
       Component: ChoiceDialog<ID>,
+      componentProps: options,
+    });
+  }
+
+  public async sortable<ID = string>(options: ISortableDialogProps<ID>) {
+    options.width = options.width || (app.$device.isSmallScreen ? '90%' : '50%');
+    return await this.show({
+      type: 'sortable',
+      Component: SortableDialog<ID>,
       componentProps: options,
     });
   }

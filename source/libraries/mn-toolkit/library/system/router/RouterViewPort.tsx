@@ -32,6 +32,10 @@ export class RouterViewPort
     app.$router.addListener(this);
   }
 
+  public routerStateStart() {
+    this.setState({ loaded: false });
+  }
+
   public routerStateChanged() {
     this.setState({ loaded: false });
   }

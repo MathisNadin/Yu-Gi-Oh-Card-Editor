@@ -28,6 +28,27 @@ $scrollBarSize: 5px;
   }
 }
 
+// On mobile, the scroll bar doesn't take up space, so the adjustments are different
+.mn-platform-web,
+.mn-platform-desktop {
+  --container-scroll-padding-right: 0px;
+  --container-scroll-inside-width-margin: calc(#{$defaultSpacing} / 2);
+  --container-scroll-x-padding-bottom: 0px;
+  --container-scroll-x-inside-height-margin: calc(#{$defaultSpacing} / 2);
+}
+
+.mn-platform-mobile {
+  --container-scroll-padding-right: calc(#{$defaultSpacing});
+  --container-scroll-inside-width-margin: 0px;
+  --container-scroll-x-padding-bottom: calc(#{$defaultSpacing});
+  --container-scroll-x-inside-height-margin: 0px;
+}
+
+$container-scroll-padding-right: var(--container-scroll-padding-right);
+$container-scroll-inside-width-margin: var(--container-scroll-inside-width-margin);
+$container-scroll-x-padding-bottom: var(--container-scroll-x-padding-bottom);
+$container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height-margin);
+
 // ----------------------- Container ------------------------
 
 @mixin themeContainerInside() {
@@ -172,13 +193,13 @@ $scrollBarSize: 5px;
     }
 
     &.mn-layout-padding {
-      padding-right: 0;
+      padding-right: $container-scroll-padding-right;
 
       > .mn-container-inside {
         padding-right: 0;
-        width: calc(100% - #{$defaultSpacing} / 2);
-        min-width: calc(100% - #{$defaultSpacing} / 2);
-        max-width: calc(100% - #{$defaultSpacing} / 2);
+        width: calc(100% - #{$container-scroll-inside-width-margin});
+        min-width: calc(100% - #{$container-scroll-inside-width-margin});
+        max-width: calc(100% - #{$container-scroll-inside-width-margin});
 
         .without-webkit & {
           width: calc(100% - #{$defaultSpacing});
@@ -215,13 +236,13 @@ $scrollBarSize: 5px;
     }
 
     &.mn-layout-padding {
-      padding-bottom: 0;
+      padding-bottom: $container-scroll-x-padding-bottom;
 
       > .mn-container-inside {
         padding-bottom: 0;
-        height: calc(100% - #{$defaultSpacing} / 2);
-        min-height: calc(100% - #{$defaultSpacing} / 2);
-        max-height: calc(100% - #{$defaultSpacing} / 2);
+        height: calc(100% - #{$container-scroll-x-inside-height-margin});
+        min-height: calc(100% - #{$container-scroll-x-inside-height-margin});
+        max-height: calc(100% - #{$container-scroll-x-inside-height-margin});
 
         .without-webkit & {
           height: calc(100% - #{$defaultSpacing});
@@ -271,39 +292,25 @@ $COLUMNS: (
 
 @mixin gridset($bp) {
   @each $colwidth, $width in $COLUMNS {
-    .mn-containable-item-width#{$bp}#{$colwidth} {
-      width: $width;
-      flex-basis: $width;
+    > .mn-container-inside {
+      > .mn-containable-item-width#{$bp}#{$colwidth} {
+        width: $width;
+        flex-basis: $width;
+      }
     }
 
     &.mn-layout-gutter {
-      .mn-containable-item-width#{$bp}#{$colwidth} {
-        width: calc(#{$width} - #{$defaultSpacing});
-        flex-basis: calc(#{$width} - #{$defaultSpacing});
+      > .mn-container-inside {
+        > .mn-containable-item-width#{$bp}#{$colwidth} {
+          width: calc(#{$width} - #{$defaultSpacing});
+          flex-basis: calc(#{$width} - #{$defaultSpacing});
+        }
       }
     }
   }
 }
 
 @mixin themeGrid() {
-  > .mn-layout-gutter {
-    gap: initial;
-    margin-top: calc(-1 * #{$defaultSpacing});
-    margin-left: calc(-1 * #{$defaultSpacing});
-
-    > * {
-      padding: calc(#{$defaultSpacing}) 0 0 calc(#{$defaultSpacing});
-
-      > * {
-        width: 100%;
-      }
-    }
-  }
-
-  > .mn-grid-item {
-    display: flex;
-  }
-
   @include gridset('-s');
 
   @include on(medium) {
@@ -377,4 +384,86 @@ $COLUMNS: (
 
 .mn-masonry {
   @include themeMasonry();
+}
+
+// ----------------------------------------------------------
+
+// ------------------------ AnchorContainer -------------------------
+
+@mixin themeAnchorContainer() {
+  color: initial !important;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.mn-anchor-container {
+  @include themeAnchorContainer();
+}
+
+// ----------------------------------------------------------
+
+// ------------------------ Accordion -------------------------
+
+@mixin themeAccordion() {
+  > .mn-accordion-header {
+    border: 1px solid color-hsl($fg4);
+    padding: calc(#{$defaultSpacing} / 2);
+
+    > .mn-container-inside {
+      > .mn-accordion-header-inside {
+        > .mn-container-inside {
+          gap: calc(#{$defaultSpacing} / 2);
+        }
+      }
+    }
+  }
+
+  > .mn-accordion-content-wrapper {
+    display: flex;
+    overflow: hidden;
+    border: 1px solid color-hsl($fg4);
+
+    > .mn-accordion-content {
+      padding: calc(#{$defaultSpacing} / 2);
+    }
+  }
+
+  &.header-top-position,
+  &.header-bottom-position {
+    flex-direction: column;
+  }
+
+  &.header-left-position,
+  &.header-right-position {
+    flex-direction: row;
+  }
+
+  &.header-top-position {
+    > .mn-accordion-content-wrapper {
+      border-top: none;
+    }
+  }
+
+  &.header-bottom-position {
+    > .mn-accordion-content-wrapper {
+      border-bottom: none;
+    }
+  }
+
+  &.header-left-position {
+    > .mn-accordion-content-wrapper {
+      border-left: none;
+    }
+  }
+
+  &.header-right-position {
+    > .mn-accordion-content-wrapper {
+      border-right: none;
+    }
+  }
+}
+
+.mn-accordion {
+  @include themeAccordion();
 }

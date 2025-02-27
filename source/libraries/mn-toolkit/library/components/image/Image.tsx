@@ -26,7 +26,7 @@ export class Image extends Containable<IImageProps, IImageState, HTMLImageElemen
       attributes.onClick = (e) => {
         if (this.props.fullscreenSrc) {
           app.$fullscreenImage.image({
-            imgSrc: this.props.src,
+            imgSrc: this.props.fullscreenSrc,
             imgAlt: this.props.alt,
             imgHint: this.props.hint,
           });

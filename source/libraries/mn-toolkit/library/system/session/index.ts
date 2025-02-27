@@ -1,4 +1,4 @@
-import { IMemberEntity, IPermission, IRoleEntity } from 'api/main';
+import { IMemberEntity, IRoleEntity } from 'api/main';
 import { SessionService } from './SessionService';
 
 export * from './SessionService';
@@ -11,12 +11,14 @@ declare global {
   interface ISessionData {
     member: IMemberEntity;
     roles: IRoleEntity['oid'][];
-    permissions: IPermission['permission'][];
+    permissions: TPermission[];
   }
 }
 
+export type TSessionStoreKey = 'session';
+
 export interface ISessionListener {
-  sessionUpdated(): void;
-  sessionCreated(): void;
-  sessionDropped(): void;
+  sessionUpdated: (sessionData: ISessionData) => void;
+  sessionCreated: (sessionData: ISessionData) => void;
+  sessionDropped: () => void;
 }

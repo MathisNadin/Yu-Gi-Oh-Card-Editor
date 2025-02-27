@@ -516,6 +516,7 @@ export class ThemeService {
         fonts: smallFonts,
         others: {
           ...others,
+          'max-content-width': { value: 100, unit: '%' },
           'popup-active-animation-name': 'mn-enter-in',
           'popup-active-animation-duration': { value: 0.4, unit: 's' },
           'popup-hidding-animation-name': 'mn-leave-out',

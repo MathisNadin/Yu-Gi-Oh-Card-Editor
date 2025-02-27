@@ -6,13 +6,11 @@ import { Typography } from '../typography';
 export class TipService {
   public isAlreadySeen(uuid: string) {
     if (!uuid) return false;
-    const { member } = app.$session.data;
-    member.tips = member.tips || {};
-    if (!!member.tips[uuid]) return true;
-    return false;
+    return !!app.$session.data?.member?.tips?.[uuid];
   }
 
   public async markAsSeen(uuid: string) {
+    if (!app.$session.data?.member) return;
     let { member } = app.$session.data;
     member.tips = member.tips || {};
     member.tips[uuid] = true;

@@ -7,14 +7,18 @@ import { Checkbox } from './Checkbox';
 export interface ICheckboxTreeItem<ID = number> {
   id: ID;
   label: string;
+  disabled?: boolean;
   children?: ICheckboxTreeItem<ID>[];
 }
 
-interface ICheckboxTreeProps<ID = number> extends IContainerProps<HTMLUListElement> {
-  defaultValue: ID[];
+// To extend the corresponding Form Field props without parasitizing it with the base element's typing
+export interface ICheckboxTreeSpecificProps<ID = number> {
+  defaultValue?: ID[];
   items: ICheckboxTreeItem<ID>[];
   onChange?: (value: ID[]) => void | Promise<void>;
 }
+
+interface ICheckboxTreeProps<ID = number> extends ICheckboxTreeSpecificProps<ID>, IContainerProps<HTMLUListElement> {}
 
 interface ICheckboxTreeState<ID = number> extends IContainerState {
   selected: Set<ID>;
@@ -183,7 +187,7 @@ export class CheckboxTree<ID = number> extends Container<
       return (
         <li
           key={`${item.id}`}
-          className={classNames('checkbox-tree-item', { 'has-children': hasChildren })}
+          className={classNames('checkbox-tree-item', { 'has-children': hasChildren, 'mn-disabled': item.disabled })}
           style={{ paddingLeft }}
         >
           <Checkbox

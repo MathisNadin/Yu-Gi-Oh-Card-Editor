@@ -3,9 +3,10 @@ import { TJSXElementChildren } from '../../system';
 import { IContainerProps, IContainerState, Container } from './Container';
 
 export interface IGridProps extends IContainerProps {}
+
 export interface IGridState extends IContainerState {}
 
-export class Grid extends Container<IGridProps, IGridState> {
+export class Grid<P extends IGridProps = IGridProps, S extends IGridState = IGridState> extends Container<P, S> {
   public static override get defaultProps(): IGridProps {
     return {
       ...super.defaultProps,
@@ -15,7 +16,7 @@ export class Grid extends Container<IGridProps, IGridState> {
     };
   }
 
-  public get children(): TJSXElementChildren {
+  public override get children(): TJSXElementChildren {
     return (this.props.children as unknown as ReactNode[])
       .filter((x) => !!x)
       .map((x, i) => (
@@ -25,7 +26,7 @@ export class Grid extends Container<IGridProps, IGridState> {
       ));
   }
 
-  private getGridItemClasses(x: ReactElement): string {
+  protected getGridItemClasses(x: ReactElement): string {
     const classes = ['mn-grid-item'];
     if (!!x.props) {
       if (!!x.props.s) classes.push(`mn-containable-item-width-s-${x.props.s}`);

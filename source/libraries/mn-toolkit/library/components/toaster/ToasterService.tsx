@@ -32,6 +32,11 @@ export class ToasterService extends Observable<IToasterListener> {
     this.dispatch('toastersChanged');
   }
 
+  public removeLast() {
+    this.toasters.pop();
+    this.dispatch('toastersChanged');
+  }
+
   public removeAll() {
     this.toasters = [];
     this.dispatch('toastersChanged');

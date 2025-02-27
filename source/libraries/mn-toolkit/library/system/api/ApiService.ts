@@ -22,7 +22,6 @@ export class ApiService extends Observable<IApiListener> {
     super();
     this._settings = {
       apiUrl: 'api',
-      tokenKey: 'Token',
     };
   }
 
@@ -90,9 +89,6 @@ export class ApiService extends Observable<IApiListener> {
       headers: {},
     };
 
-    if ((options.sessionToken || (!options.noSessionToken && app.$session?.active)) && request.headers) {
-      request.headers[this._settings.tokenKey!] = options.sessionToken || app.$session.token;
-    }
     this.dispatch('apiAlterHeaders', request.headers);
     if (options.headers) {
       for (const key in options.headers) {
@@ -223,7 +219,6 @@ export class ApiService extends Observable<IApiListener> {
       const postUrl = `${this._settings.apiUrl}/file/upload/${ud.appInstance}`;
       xhr.open('POST', postUrl);
       xhr.setRequestHeader('Cache-Control', 'no-cache');
-      xhr.setRequestHeader('token', app.$session.token);
 
       log.debug(chunkData.size, postUrl);
       xhr.send(fd);
@@ -261,9 +256,20 @@ export class ApiService extends Observable<IApiListener> {
     return base64String;
   }
 
-  public fileStreamUrl(oid: number, appInstance: number) {
-    if (!oid || !appInstance) return undefined;
-    return `${this._settings.apiUrl}/file/stream/${appInstance}/${oid}?token=${app.$session.token}`;
+  public getFileStreamUrl(options: {
+    oid: IFileEntity['oid'];
+    instance?: IFileEntity['applicationInstance'];
+    token?: ISessionEntity['token'];
+  }) {
+    let { oid, instance, token } = options;
+    if (!oid) return undefined;
+
+    instance = instance || app.$session.data?.member?.applicationInstance || 1;
+
+    const url = new URL(`${this._settings.apiUrl}/file/stream/${instance}/${oid}/`);
+    if (token) url.searchParams.set('token', token);
+
+    return url.toString();
   }
 
   public async createFileFromFile(fileBlob: File, spec: Partial<IFileEntity> = {}) {

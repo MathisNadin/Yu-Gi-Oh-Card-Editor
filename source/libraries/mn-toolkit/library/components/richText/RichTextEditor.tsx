@@ -44,13 +44,14 @@ export interface IRichTextEditorProps extends IContainableProps {
 interface IRichtextEditorState extends IContainableState {}
 
 export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextEditorState> {
-  private _editor!: HTMLElement;
-  private _hasbeensetup!: boolean;
-  private _focus!: boolean;
-  private _placeholder!: boolean;
-  private _value!: string;
-  private _selectionTimeout!: NodeJS.Timeout;
-  private palettePopoverId!: string;
+  private _editor?: HTMLElement;
+  private _hasbeensetup?: boolean;
+  private _focus?: boolean;
+  private _placeholder?: boolean;
+  private _value: string = '';
+  private _selectionTimeout?: NodeJS.Timeout;
+  private selectionPopoverId?: string;
+  private palettePopoverId?: string;
 
   public static override get defaultProps(): IRichTextEditorProps {
     return {
@@ -101,7 +102,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   public override componentDidMount() {
     log.debug('componentDidMount');
     super.componentDidMount();
-    if (this._hasbeensetup) return;
+    if (this._hasbeensetup || !this._editor) return;
 
     this._editor.classList.add('mn-rich-text');
     this._editor.contentEditable = 'true';
@@ -120,7 +121,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     if (RichTextEditor.isEmpty(this._editor.textContent!) && !RichTextEditor.isEmpty(this.props.placeholder!)) {
       this._placeholder = true;
       this._value = EMPTY_VALUE;
-      this.setPlaceHolderToEditor();
+      this.setPlaceholderToEditor();
     }
   }
 
@@ -134,7 +135,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     if (!selection) return;
     if (selection.type === 'Caret') {
       log.debug('Selection is caret, leaving');
-      app.$popover.removeAll();
+      this.removeAllPopovers();
       return;
     }
     if (selection.rangeCount === 0) return; // Il n'y a pas de sélection
@@ -230,21 +231,22 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   }
 
   private onBlur(e: React.FocusEvent<HTMLDivElement>) {
-    if (!this.base.current) return;
+    if (!this.base.current || !this._editor) return;
     this.base.current.classList.remove('mn-focus');
     this._focus = false;
     if (isEmpty(this._editor.textContent)) {
       this._placeholder = true;
-      this.setPlaceHolderToEditor();
+      this.setPlaceholderToEditor();
     }
     if (!this._focus && !app.$popover.visible) {
-      app.$popover.removeAll();
+      this.removeAllPopovers();
       window.getSelection()?.removeAllRanges();
     }
     if (this.props.onBlur) app.$errorManager.handlePromise(this.props.onBlur(e));
   }
 
-  private setPlaceHolderToEditor() {
+  private setPlaceholderToEditor() {
+    if (!this._editor) return;
     let value = `<span class="placeholder">${this.props.placeholder}</span>`;
     let current = this._editor.innerHTML;
     if (current !== value) {
@@ -264,31 +266,32 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   }
 
   private onInput() {
+    if (!this._editor || !this.props.onChange) return;
     log.debug('onInput -', this._editor.innerHTML);
-    if (this.props.onChange) {
-      // this._value = this.removeEmptyParagraphs(this._editor.innerHTML);
-      this._value = `${this._editor.innerHTML}`;
-      this.props.onChange(this._value);
-    }
+
+    // this._value = this.removeEmptyParagraphs(this._editor.innerHTML);
+    this._value = `${this._editor.innerHTML}`;
+    this.props.onChange(this._value);
   }
 
-  public shouldComponentUpdate() {
+  public override shouldComponentUpdate() {
     return false;
   }
 
   private setValueToEditor(value: string) {
-    let current = this._editor.innerHTML;
-    if (current !== value) {
-      log.debug('seting value to editor', value);
-      this._editor.innerHTML = value;
-    }
+    if (!this._editor) return;
+
+    const current = this._editor.innerHTML;
+    if (current === value) return;
+
+    log.debug('seting value to editor', value);
+    this._editor.innerHTML = value;
   }
 
   private getCurrentSelectionRect(): DOMRect | null {
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return null; // Aucune sélection actuelle
-    }
+    if (!selection || selection.rangeCount === 0) return null; // Aucune sélection actuelle
+
     const range = selection.getRangeAt(0);
     return range.getBoundingClientRect();
   }
@@ -305,17 +308,18 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     this._selectionTimeout = setTimeout(() => {
       if (this.props.onSelectionChanged) this.props.onSelectionChanged(selection);
       const targetRectangle = this.getCurrentSelectionRect();
-      if (targetRectangle && !app.$popover.visible) {
-        app.$popover.bubble(targetRectangle, {
-          ignoreFocus: true,
-          content: (
-            <HorizontalStack wrap gutter padding>
-              {tools}
-            </HorizontalStack>
-          ),
-          width: 348,
-        });
-      }
+      if (!targetRectangle || app.$popover.visible) return;
+
+      this.selectionPopoverId = app.$popover.bubble(targetRectangle, {
+        ignoreFocus: true,
+        content: (
+          <HorizontalStack wrap gutter padding>
+            {tools}
+          </HorizontalStack>
+        ),
+        width: 348,
+        onClose: () => (this.selectionPopoverId = undefined),
+      });
     }, 200);
   }
 
@@ -329,6 +333,18 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     }
   }
 
+  private removeAllPopovers() {
+    if (this.selectionPopoverId) {
+      app.$popover.remove(this.selectionPopoverId);
+      this.selectionPopoverId = undefined;
+    }
+
+    if (this.palettePopoverId) {
+      app.$popover.remove(this.palettePopoverId);
+      this.palettePopoverId = undefined;
+    }
+  }
+
   public override renderAttributes() {
     const attributes = super.renderAttributes();
     attributes.tabIndex = 100;
@@ -338,7 +354,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-rich-text-editor'] = true;
-    classes['mn-focus'] = this._focus;
+    classes['mn-focus'] = !!this._focus;
     if (this.props.bg) classes[`mn-bg-${this.props.bg}`] = true;
     return classes;
   }
@@ -599,15 +615,18 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     return tool;
   }
 
-  private async showColors(event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) {
-    this.palettePopoverId = await app.$popover.bubble(event, {
+  private showColors(event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) {
+    this.palettePopoverId = app.$popover.bubble(event, {
       content: <ColorPicker colors={this.props.textColors} onSelectColor={(c) => this.doColor(c)} />,
     });
   }
 
   private doColor(color?: string) {
     // Ferme le popover du palette
-    app.$popover.remove(this.palettePopoverId);
+    if (this.palettePopoverId) {
+      app.$popover.remove(this.palettePopoverId);
+      this.palettePopoverId = undefined;
+    }
 
     // Récupère la sélection courante
     const selection = window.getSelection();
@@ -792,7 +811,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
       }
     }
 
-    app.$popover.removeAll();
+    this.removeAllPopovers();
     this.onInput();
   }
 
@@ -861,7 +880,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   }
   public doBlockQuote() {
     document.execCommand('indent', false, undefined);
-    this.removeAttributes(this._editor);
+    if (this._editor) this.removeAttributes(this._editor);
   }
   public doBold() {
     document.execCommand('bold', false, undefined);

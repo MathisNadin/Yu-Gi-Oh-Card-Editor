@@ -26,6 +26,7 @@ import {
   TipService,
   DrawerService,
   FullscreenImageService,
+  CookieService,
 } from './library';
 
 export * from './library';
@@ -44,7 +45,8 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$toaster', ToasterService, { depends: ['$react'] });
   app.service('$store', StoreService, { depends: ['$device', '$core'] });
   app.service('$permission', PermissionService);
-  app.service('$session', SessionService, { depends: ['$store', '$permission', '$api'] });
+  app.service('$cookie', CookieService, { depends: ['$store'] });
+  app.service('$session', SessionService, { depends: ['$store', '$cookie', '$permission', '$api'] });
   app.service('$xhr', XhrService);
   app.service('$header', HeaderService);
   app.service('$api', ApiService);

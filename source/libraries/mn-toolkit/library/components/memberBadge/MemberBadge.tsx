@@ -1,5 +1,5 @@
 import { isDefined } from 'mn-tools';
-import { IMemberEntity, TDerivative } from 'api/main';
+import { IMemberEntity } from 'api/main';
 import { TJSXElementChildren, TForegroundColor } from '../../system';
 import { Containable, IContainableProps, IContainableState } from '../containable';
 
@@ -61,18 +61,26 @@ export class MemberBadge extends Containable<IMemberBadgeProps, IMemberBadgeStat
       derivative,
     });
 
+    let alt: string;
     let letters: string;
     if (this.props.display === 'userName') {
       const userName = member.userName || '';
+      alt = userName;
       letters = `${userName[0] || '?'}${userName[1] || ''}`;
     } else if (!member.firstName && !member.lastName) {
+      alt = 'Member Photo';
       letters = '??';
     } else {
+      alt = `${member.firstName || ''} ${member.lastName || ''}`;
       letters = `${member.firstName?.[0] || ''}${member.lastName?.[0] || ''}`;
     }
 
     return [
-      !!picture && <div key='photo' className='content photo' style={{ backgroundImage: `url(${picture})` }} />,
+      !!picture && (
+        <div key='photo' className='content photo'>
+          <img src={picture} alt={alt} title={alt} />
+        </div>
+      ),
       !picture && (
         <div key='letter' className='content letter'>
           {letters}

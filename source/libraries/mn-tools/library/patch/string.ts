@@ -650,6 +650,9 @@ const _accentMap: { [key: string]: string } = {
   ƺ: 'z',
 };
 
+/**
+ * Remove accents from the string.
+ */
 prototype.stripAccents = function (this: string) {
   let ret = '';
   for (let i = 0; i < this.length; i++) {
@@ -658,6 +661,10 @@ prototype.stripAccents = function (this: string) {
   return ret;
 };
 
+/**
+ * Highlight occurrences of search terms in the string, ignoring accents and case.
+ * Wraps found occurrences with <span class="highlight"></span>.
+ */
 prototype.highlight = function (this: string, terms: string | string[]) {
   function _search(source: string, term: string) {
     let folderSource = source.stripAccents().toLowerCase().replace(/[<>]+/g, '');
@@ -688,36 +695,66 @@ prototype.highlight = function (this: string, terms: string | string[]) {
   return highlighted;
 };
 
+/**
+ * Capitalize the first character and lowercase the rest.
+ */
 prototype.ucfirst = function (this: string) {
   if (this.length < 1) return this;
   return this[0].toUpperCase() + this.substring(1).toLowerCase();
 };
 
+/**
+ * Compare two strings lexicographically.
+ */
 prototype.compare = function (this: string, to: string) {
   if (this === to) return 0;
   return this < to ? -1 : 1;
 };
 
+/**
+ * Return a trimmed, lowercased, and accent-free version of the string.
+ */
 prototype.canonical = function (this: string) {
   return this.trim().stripAccents().toLowerCase();
 };
 
-prototype.countWords = function (this: string) {
-  return this.canonical().split(/[^A-Za-z]+/g).length;
+/**
+ * Count the number of words in the string.
+ */
+prototype.countWords = function (this: string): number {
+  return this.canonical()
+    .split(/[^A-Za-z]+/g)
+    .filter((word) => word.length > 0).length;
 };
 
+/**
+ * Compare two strings ignoring case and accents.
+ *
+ * @param to - string to compare to.
+ * @returns 0 if equal, -1 if lower, 1 if greater.
+ */
 prototype.icompare = function (this: string, to: string) {
   return this.canonical().localeCompare(to.canonical());
 };
 
+/**
+ * Check if the string contains another string, ignoring case and accents.
+ */
 prototype.icontains = function (this: string, to: string) {
   return this.canonical().indexOf(to.canonical()) !== -1;
 };
 
+/**
+ * Check if two strings are equal, ignoring case and accents.
+ */
 prototype.iequals = function (this: string, to: string) {
   return this.icompare(to) === 0;
 };
 
+/**
+ * Replace tokens in the string with provided values.
+ * Example: "Hello $0, your score is $1".format("Alice", "95")
+ */
 prototype.format = function (this: string, ...tokens: object[]) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   let result = this;
@@ -727,35 +764,85 @@ prototype.format = function (this: string, ...tokens: object[]) {
   return result;
 };
 
-prototype.toUnderscore = function (this: string, separator = '_') {
-  return (this[0].toLowerCase() + this.substring(1)).replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase());
+/**
+ * Convert a camelCase string to snake_case (_ is the separator by default).
+ */
+prototype.toSnakeCase = function (this: string, separator: string = '_') {
+  return this.replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase()).replace(new RegExp('^' + separator), ''); // remove leading separator if any
 };
 
-prototype.toKebabCase = function (this: string) {
-  return this.toUnderscore('-');
+/**
+ * Convert a camelCase string to kebab-case.
+ */
+prototype.toKebabCase = function (this: string): string {
+  return this.toSnakeCase('-');
 };
 
-prototype.toIdentifierCase = function (this: string) {
-  return this[0].toLowerCase() + this.substring(1);
+/**
+ * Convert a camelCase string to snake_case.
+ */
+prototype.toUnderscore = function (this: string): string {
+  return this.toSnakeCase('_');
 };
 
-prototype.toClassCase = function (this: string) {
-  return this[0].toUpperCase() + this.substring(1);
+/**
+ * Convert a string to identifier case (first character lowercase).
+ */
+prototype.toIdentifierCase = function (this: string): string {
+  if (this.length === 0) return this;
+  return this[0].toLowerCase() + this.slice(1);
 };
 
-prototype.toSnakeCase = function (this: string, separator?: string) {
-  separator = separator || '_';
-  return (this[0].toLowerCase() + this.substring(1)).replace(/([A-Z])/g, ($1) => separator + $1.toLowerCase());
+/**
+ * Capitalize the first letter of each word in a string
+ */
+prototype.toTitleCase = function (this: string): string {
+  return this.replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
+/**
+ * Convert a string to class case (first character uppercase).
+ */
+prototype.toClassCase = function (this: string): string {
+  if (this.length === 0) return this;
+  return this[0].toUpperCase() + this.slice(1);
+};
+
+/**
+ * Convert a space separated string to PascalCase.
+ */
+prototype.toPascalCase = function (this: string): string {
+  return this.split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('');
+};
+
+/**
+ * Convert a PascalCase or camelCase to a normal lower case sentence
+ */
+prototype.decamelize = function (this: string, separator: string = ' '): string {
+  return this.replace(/([a-z\d])([A-Z])/g, `$1${separator}$2`) // Add separator before each upper case leter
+    .replace(/([A-Z]+)([A-Z][a-z\d]+)/g, `$1${separator}$2`) // Handle upper case groups
+    .toLowerCase(); // Convert to lower case
+};
+
+/**
+ * Remove HTML tags from the string.
+ */
 prototype.stripTags = function (this: string) {
   return this.replace(/(<([^>]+)>)/gi, '').replace(/&nbsp;/g, '');
 };
 
+/**
+ * Remove non-ASCII characters and certain punctuation (parentheses and brackets).
+ */
 prototype.stripExtended = function (this: string) {
   return this.replace(/([^(\x20-\x7F)]|\(|\)|\[|^])/g, '');
 };
 
+/**
+ * Decode a UTF-8 encoded string.
+ */
 prototype.utfDecode = function (this: string) {
   let string = '';
   let i = 0;
@@ -794,62 +881,97 @@ export function install() {
 declare global {
   interface String {
     /**
-     * Convert a string from camel to snake case  (e.g. thisTest to this_test)
+     * Convert a string from snake-case, kebab-case or space separated to camelCase.
      */
     toCamelCase(): string;
-    stripAccents(): string;
-    highlight(search: string | string[]): string;
-    ucfirst(): string;
-    compare(to: string): number;
-
     /**
-     * return a lower case, accent free, copy of the string.
+     * Remove accents from the string.
+     */
+    stripAccents(): string;
+    /**
+     * Highlight occurrences of search terms in the string (ignoring accents and case).
+     * Wraps found occurrences with <span class="highlight"></span>.
+     */
+    highlight(search: string | string[]): string;
+    /**
+     * Capitalize the first character and lowercase the rest.
+     */
+    ucfirst(): string;
+    /**
+     * Compare two strings lexicographically.
+     */
+    compare(to: string): number;
+    /**
+     * Return a trimmed, lowercased, and accent-free version of the string.
      */
     canonical(): string;
-
+    /**
+     * Count the number of words in the string.
+     */
     countWords(): number;
-
     /**
      * Compare two strings ignoring case and accents.
      *
-     * @param to a string to compare to
-     * @return 0 if equals, 1 if greater, -1 is lower.
+     * @param to - string to compare to.
+     * @returns 0 if equal, -1 if lower, 1 if greater.
      */
     icompare(to: string): number;
-    icontains(to: string): boolean;
-    iequals(to: string): boolean;
-    format(...tokens: object[]): string;
-
     /**
-     * Convert a string from camel to kebab case (e.g. thisTest to this-test)
-     *
-     * @return {string} converted value
+     * Check if the string contains another string, ignoring case and accents.
      */
-    toUnderscore(separator?: string): string;
-
+    icontains(to: string): boolean;
     /**
-     * Convert a string from camel to identifier case (e.g. thisTest to thisTest)
-     *
-     * @return {string} converted value
+     * Check if two strings are equal, ignoring case and accents.
+     */
+    iequals(to: string): boolean;
+    /**
+     * Replace tokens in the string with provided values.
+     * Example: "Hello $0, your score is $1".format("Alice", "95")
+     */
+    format(...tokens: object[]): string;
+    /**
+     * Convert a camelCase string to snake_case (_ is the separator by default).
+     */
+    toSnakeCase(separator?: string): string;
+    /**
+     * Convert a camelCase string to kebab-case.
      */
     toKebabCase(): string;
-
     /**
-     * Convert a string from camel to class case  (e.g. thisTest to ThisTest)
-     *
-     * @return {string} converted value
+     * Convert a camelCase string to snake_case.
+     */
+    toUnderscore(separator?: string): string;
+    /**
+     * Convert a string to identifier case (first character lowercase).
      */
     toIdentifierCase(): string;
-
     /**
-     * Convert a string from camel to snake case  (e.g. thisTest to this_test)
-     *
-     * @return {string} converted value
+     * Capitalize the first letter of each word in a string
+     */
+    toTitleCase(): string;
+    /**
+     * Convert a string to class case (first character uppercase).
      */
     toClassCase(): string;
-    toSnakeCase(separator?: string): string;
+    /**
+     * Convert a space separated string to PascalCase.
+     */
+    toPascalCase(): string;
+    /**
+     * Convert a PascalCase or camelCase to a normal lower case sentence
+     */
+    decamelize(separator?: string): string;
+    /**
+     * Remove HTML tags from the string.
+     */
     stripTags(): string;
+    /**
+     * Remove non-ASCII characters and certain punctuation.
+     */
     stripExtended(): string;
+    /**
+     * Decode a UTF-8 encoded string.
+     */
     utfDecode(): string;
   }
 }

@@ -36,6 +36,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-sortable'] = true;
+    classes['enabled'] = this.props.enabled;
     return classes;
   }
 

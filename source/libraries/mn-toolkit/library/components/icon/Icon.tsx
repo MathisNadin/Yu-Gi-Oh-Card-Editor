@@ -47,9 +47,12 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     // Case : top container is a button
     if (this.props.onTap) {
       classes['mn-icon-container-button'] = true;
-      if (this.props.className) classes[`${this.props.className}-container-button`] = true;
+      if (this.props.className) {
+        delete classes[this.props.className];
+        classes[`${this.props.className}-container-button`] = true;
+      }
     }
-    // Case : topcontainer is the icon itself
+    // Case : top container is the icon itself
     else {
       const iconClasses = this.renderIconClasses();
       for (const key in iconClasses) {
@@ -70,10 +73,16 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     return iconClasses;
   }
 
+  public override renderAttributes() {
+    const attributes = super.renderAttributes();
+    // Case : top container is a button
+    if (this.props.onTap) delete attributes.onClick;
+    return attributes;
+  }
+
   public override render() {
     const attributes = this.renderAttributes();
     if (this.props.onTap) {
-      delete attributes.onClick;
       return (
         <button
           ref={this.base as RefObject<HTMLButtonElement>}

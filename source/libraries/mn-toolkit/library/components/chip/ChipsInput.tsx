@@ -1,4 +1,5 @@
 import { TJSXElementChildren } from '../../system';
+import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { Chip } from './Chip';
 import { IChipItem } from './Chips';
@@ -37,6 +38,16 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
       items: props.defaultValue || [],
       inputValue: '',
     };
+  }
+
+  public override componentDidUpdate(
+    prevProps: Readonly<IChipsInputProps<ID>>,
+    prevState: Readonly<IChipsInputState<ID>>,
+    snapshot?: TDidUpdateSnapshot
+  ) {
+    super.componentDidUpdate(prevProps, prevState, snapshot);
+    if (prevProps.defaultValue === this.props.defaultValue) return;
+    this.setState({ items: this.props.defaultValue || [] });
   }
 
   private async handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {

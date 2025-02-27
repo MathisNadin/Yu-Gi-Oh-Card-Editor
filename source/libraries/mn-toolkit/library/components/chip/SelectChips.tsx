@@ -129,13 +129,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
           ))}
         </HorizontalStack>
       ),
-      <HorizontalStack
-        key='drop-icon'
-        className='drop-icon'
-        verticalItemAlignment='middle'
-        itemAlignment='center'
-        onTap={() => this.showItems()}
-      >
+      <HorizontalStack key='drop-icon' className='drop-icon' itemAlignment='center' onTap={() => this.showItems()}>
         <Icon icon='toolkit-angle-down' />
       </HorizontalStack>,
     ];

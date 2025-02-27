@@ -4,6 +4,8 @@ import { Icon } from '../icon';
 import { TextInput } from '../textInput';
 
 interface ISearchBarProps extends IContainerProps {
+  /** In milliseconds, assign null to deactivate the auto-search debounce and only search on press Enter or tap the search icon */
+  searchDebounce?: number | null;
   defaultValue: string;
   onChange?: (value: string) => void | Promise<void>;
   onSearch?: (value: string) => void | Promise<void>;
@@ -21,8 +23,10 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
+      verticalItemAlignment: 'middle',
       bg: '1',
       defaultValue: '',
+      searchDebounce: 200,
     };
   }
 
@@ -58,8 +62,8 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
     clearTimeout(this.timer);
     if (e.key === 'Enter') {
       app.$errorManager.handlePromise(this.doSearch());
-    } else {
-      this.timer = setTimeout(() => app.$errorManager.handlePromise(this.doSearch()), 200);
+    } else if (this.props.searchDebounce !== null) {
+      this.timer = setTimeout(() => app.$errorManager.handlePromise(this.doSearch()), this.props.searchDebounce);
     }
   }
 

@@ -187,7 +187,6 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     if (this.isCapacitor) {
       this._platform = CapacitorCore.getPlatform().toLowerCase();
       log.debug('deviceId', this._platform);
-      document.body.classList.add('mn-platform-mobile');
     } else if (this.isElectron(window)) {
       this._platform = 'desktop';
     } else {
@@ -195,6 +194,14 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     }
     log.debug('deviceId', this._platform);
     document.body.classList.add(`mn-platform-${this._platform}`);
+
+    if (this.isMobile) {
+      document.body.classList.add('mn-platform-mobile');
+    } else if (this.isDesktop) {
+      document.body.classList.add('mn-platform-desktop');
+    } else if (this.isWeb) {
+      document.body.classList.add('mn-platform-web');
+    }
 
     this._hasWebkit = /webkit/i.test(navigator.userAgent) && !/edge/i.test(navigator.userAgent);
     if (this._hasWebkit) {

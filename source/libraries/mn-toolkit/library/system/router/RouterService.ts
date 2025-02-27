@@ -159,11 +159,19 @@ export class RouterService extends Observable<IRouterListener> {
       parameters = {} as TRouterParams<TRouterState>;
     }
 
+    // Gather all keys to track those which are supported by the registered route
+    const allKeys = new Set<keyof TRouterParams<TRouterState>>(
+      Object.keys(parameters) as (keyof TRouterParams<TRouterState>)[]
+    );
+
     let path = this.buildPath(currentState.path);
     const qs: string[] = [];
     for (const key of currentState.pathKeys) {
       const keyName = key.name as keyof TRouterParams<TRouterState>;
       const param = parameters[keyName];
+
+      // This key is taken into account in this loop, so we know we don't have to handle it later
+      allKeys.delete(keyName);
 
       if (isUndefined(param)) {
         if (!key.optional) throw new Error(`param '${keyName}' for route '${options.state}' is not optional`);
@@ -183,7 +191,14 @@ export class RouterService extends Observable<IRouterListener> {
       }
     }
 
-    if (qs.length) path += '?' + qs.join('&');
+    // Add all additional keys, that would have been added to the url, which mean they are query strings
+    if (!ignoreQs) {
+      allKeys.forEach((key) => {
+        if (key) qs.push(`${key}=${parameters[key]}`);
+      });
+    }
+
+    if (qs.length) path += `?${qs.join('&')}`;
 
     return path;
   }

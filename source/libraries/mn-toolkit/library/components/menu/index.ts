@@ -17,7 +17,7 @@ export interface IMenuItem<T extends TRouterState = TRouterState> {
   href?: string | IRouterHrefParams<T>;
   className?: string;
   height?: number;
-  permission?: string;
+  permission?: TPermission;
   minHeight?: number;
   groupMinWidth?: number;
   below?: IMenuItem[];

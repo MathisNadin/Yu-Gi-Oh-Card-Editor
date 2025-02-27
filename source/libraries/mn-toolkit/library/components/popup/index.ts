@@ -8,6 +8,7 @@ export * from './ConfirmationDialog';
 export * from './PromptDialog';
 export * from './InformDialog';
 export * from './ChoiceDialog';
+export * from './SortableDialog';
 
 export interface IPopupListener {
   popupsChanged(): void;

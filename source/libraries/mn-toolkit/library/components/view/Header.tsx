@@ -11,9 +11,12 @@ export interface IHeaderProps extends IContainerProps {
   title?: string;
 }
 
-interface IHeaderState extends IContainerState {}
+export interface IHeaderState extends IContainerState {}
 
-export class Header extends Container<IHeaderProps, IHeaderState> implements Partial<IHeaderListener> {
+export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerState = IContainerState>
+  extends Container<P, S>
+  implements Partial<IHeaderListener>
+{
   private downloadTotal?: number;
   private downloadProgress?: number;
 
@@ -27,7 +30,7 @@ export class Header extends Container<IHeaderProps, IHeaderState> implements Par
     };
   }
 
-  public constructor(props: IHeaderProps) {
+  public constructor(props: P) {
     super(props);
   }
 

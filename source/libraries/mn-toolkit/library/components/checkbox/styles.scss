@@ -70,6 +70,29 @@
   @include themeCheckbox();
 }
 
+@mixin themeCheckboxField() {
+  .input-wrapper {
+    min-height: auto;
+    max-height: inherit;
+    height: auto;
+    border: none !important;
+    box-shadow: none;
+    padding: 0;
+    background-color: transparent;
+
+    .mn-checkbox {
+      .label {
+        @include themeFont('regular');
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.mn-form-field.mn-field-checkbox {
+  @include themeCheckboxField();
+}
+
 @mixin themeCheckboxTree() {
   // Reset ul/li styles
   list-style: none;
@@ -101,4 +124,18 @@
 
 .mn-checkbox-tree {
   @include themeCheckboxTree();
+}
+
+@mixin themeCheckboxTreeField() {
+  .input-wrapper {
+    height: auto;
+    min-height: auto;
+    max-height: inherit;
+    background-color: unset;
+    border: none;
+  }
+}
+
+.mn-form-field.mn-field-checkbox-tree {
+  @include themeCheckboxTreeField();
 }

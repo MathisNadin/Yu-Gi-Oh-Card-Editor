@@ -1,7 +1,17 @@
 ## mn-tools change log
 
+## 2.0.7
+
+- ajout toTitleCase et decamelize sur string
+
+## 2.0.6
+
+- bump to 2.0.6
+- documentation complète des fonctions patchées + toPascalCase
+
 ## 2.0.5
 
+- bump to 2.0.5
 - ajout de la license
 
 ## 2.0.4

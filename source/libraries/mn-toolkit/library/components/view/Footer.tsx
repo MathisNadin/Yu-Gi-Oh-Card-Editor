@@ -2,9 +2,12 @@ import { Container, IContainerProps, IContainerState } from '../container';
 
 export interface IFooterProps extends IContainerProps {}
 
-interface IFooterState extends IContainerState {}
+export interface IFooterState extends IContainerState {}
 
-export class Footer extends Container<IFooterProps, IFooterState> {
+export class Footer<P extends IFooterProps = IFooterProps, S extends IFooterState = IFooterState> extends Container<
+  P,
+  S
+> {
   public static override get defaultProps(): IFooterProps {
     return {
       ...super.defaultProps,

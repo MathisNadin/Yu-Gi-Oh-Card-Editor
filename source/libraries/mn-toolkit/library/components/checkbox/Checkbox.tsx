@@ -2,7 +2,7 @@ import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot }
 import { Typography } from '../typography';
 import { Icon } from '../icon';
 
-interface ICheckboxProps extends IContainableProps {
+export interface ICheckboxProps extends IContainableProps {
   /** Text in front of the check box. */
   label: string;
   /** Value of the check box. */

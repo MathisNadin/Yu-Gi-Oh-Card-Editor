@@ -1,7 +1,12 @@
 ## mn-webpack-builder change log
 
+## 1.0.2
+
+- gestion des exports dans les fichiers + ajout de api.d.ts dans les fichiers pris en compte
+
 ## 1.0.1
 
+- bump to 1.0.1
 - disinction entre config projet et platform + ajout plugin copy
 
 ## 1.0.0

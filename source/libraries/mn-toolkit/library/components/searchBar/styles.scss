@@ -1,5 +1,5 @@
 @mixin themeSearchBar() {
-  $height: calc(#{$defaultItemHeight});
+  height: fit-content;
 
   border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
   border-radius: calc(#{$defaultBorderRadius});
@@ -16,13 +16,14 @@
     border-color: color-hsl($primary);
   }
 
-  .search-icon {
+  .search-icon-container-button {
     margin-left: calc(#{$defaultSpacing} / 2);
   }
 
   input {
-    line-height: $height;
-    height: $height;
+    $inputHeight: calc(#{$defaultItemHeight});
+    line-height: $inputHeight;
+    height: $inputHeight;
     padding: 0 8px;
     width: 100%;
     background-color: transparent;

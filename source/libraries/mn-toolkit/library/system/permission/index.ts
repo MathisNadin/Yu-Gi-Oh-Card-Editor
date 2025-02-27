@@ -2,10 +2,6 @@ import { PermissionService } from './PermissionService';
 
 export * from './PermissionService';
 
-export interface IPermissions {
-  [permission: string]: boolean;
-}
-
 declare global {
   interface IApp {
     $permission: PermissionService;
@@ -13,5 +9,5 @@ declare global {
 }
 
 export interface IPermissionListener {
-  permissionLoaded(permissions: IPermissions, previous: IPermissions): void;
+  permissionLoaded(permissions: Set<TPermission>, previous: Set<TPermission> | undefined): void;
 }

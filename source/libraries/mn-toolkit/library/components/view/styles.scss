@@ -108,10 +108,11 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    max-width: 100%;
   }
 
   .mn-sub-header {
-    padding: calc(#{$defaultSpacing});
+    padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
 
     .mn-fab {
       position: absolute;

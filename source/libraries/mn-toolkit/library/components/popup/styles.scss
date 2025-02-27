@@ -69,13 +69,6 @@ $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
       animation-duration: $popup-hidding-animation-duration;
     }
 
-    .mn-popup-header {
-      .mn-popup-title {
-        @include themeFont('medium');
-        font-weight: 600;
-      }
-    }
-
     &.image {
       background-color: transparent;
       border: none;
@@ -102,6 +95,14 @@ $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
 
         .mn-typography {
           color: color-hsl($bg1);
+        }
+      }
+    }
+
+    &.sortable {
+      .mn-sortable {
+        .mn-sortable-item:nth-child(even) {
+          background-color: color-hsl($bg4);
         }
       }
     }
