@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.0.10
+
+- là c'est vraiment fix
+
 ## 2.0.9
 
+- bump to 2.0.9
 - fix des monkeyPatchs
 
 ## 2.0.8

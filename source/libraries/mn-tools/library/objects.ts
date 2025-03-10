@@ -1,4 +1,4 @@
-import { isArray, isFunction, isObject } from './is';
+import { isArray, isObject } from './is';
 
 export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
@@ -364,7 +364,7 @@ export function values<T>(object: TDictionary<T>): T[] {
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function monkeyPatch(obj: unknown, name: string, fn: Function): void {
-  if (obj !== null && (isObject(obj) || isFunction(obj)) && !(name in obj)) {
+  if (obj !== null && (typeof obj === 'object' || typeof obj === 'function') && !(name in obj)) {
     Object.defineProperty(obj, name, { value: fn });
   }
 }
@@ -377,7 +377,7 @@ export function monkeyPatch(obj: unknown, name: string, fn: Function): void {
  * @param fn An object containing a getter.
  */
 export function monkeyPatchGet(obj: unknown, name: string, fn: { get: () => number }): void {
-  if (obj !== null && (isObject(obj) || isFunction(obj)) && !(name in obj)) {
+  if (obj !== null && (typeof obj === 'object' || typeof obj === 'function') && !(name in obj)) {
     Object.defineProperty(obj, name, fn);
   }
 }
