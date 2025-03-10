@@ -125,7 +125,7 @@ export class CapacitorSQLiteService implements IStoreService {
     if (!value.startsWith('{')) {
       return value;
     } else {
-      return unserialize(value);
+      return unserialize<Record<string, TStoreValue>>(value);
     }
   }
 
@@ -168,7 +168,7 @@ export class CapacitorSQLiteService implements IStoreService {
 
   public async importData(jsonData: string) {
     await this.waitForConnection();
-    const data = unserialize(jsonData);
+    const data = unserialize<Record<string, TStoreValue>>(jsonData);
     for (const key in data) {
       await this.set(key, data[key]);
     }

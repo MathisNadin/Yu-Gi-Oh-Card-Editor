@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 7.0.4
+
+- adaptation aux nv typings dans mn-tols
+
 ## 7.0.3
 
+- bump to 7.0.3
 - fix pour la shape
 
 ## 7.0.2

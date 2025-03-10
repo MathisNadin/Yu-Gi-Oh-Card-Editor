@@ -1,4 +1,4 @@
-import { isArray, isDefined } from 'mn-tools';
+import { isDefined } from 'mn-tools';
 import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from './Container';
 
@@ -96,7 +96,7 @@ export class Masonry extends Container<IMasonryProps, IMasonryState> {
       space = app.$theme.getUnitString(app.$theme.settings.commons?.['default-spacing']);
     }
 
-    const children = isArray(this.props.children) ? this.props.children : [this.props.children];
+    const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
     return children.map((child, index) => {
       if (!child) return null;
 

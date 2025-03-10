@@ -94,22 +94,21 @@ export class IndexedDBService implements IStoreService {
     return new Promise<void>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
-      const data = unserialize(jsonData);
+      const data = unserialize<Record<string, TStoreValue>>(jsonData);
       const clearRequest = objectStore.clear();
       clearRequest.onerror = () => {
         reject(new Error(`Failed to clear object store ${this.objectStoreName}`));
       };
       clearRequest.onsuccess = () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data.forEach((obj: any) => {
-          const putRequest = objectStore.put(obj);
+        for (const key in data) {
+          const putRequest = objectStore.put(data[key], key);
           putRequest.onerror = () => {
-            reject(new Error(`Failed to put object with key ${obj.key}`));
+            reject(new Error(`Failed to put object with key ${key}`));
           };
           putRequest.onsuccess = () => {
             resolve();
           };
-        });
+        }
       };
     });
   }

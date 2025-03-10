@@ -1,7 +1,17 @@
 ## mn-tools change log
 
+## 2.0.9
+
+- fix des monkeyPatchs
+
+## 2.0.8
+
+- bump to 2.0.8
+- meilleur typing des fonction is et object
+
 ## 2.0.7
 
+- bump to 2.0.7
 - ajout toTitleCase et decamelize sur string
 
 ## 2.0.6

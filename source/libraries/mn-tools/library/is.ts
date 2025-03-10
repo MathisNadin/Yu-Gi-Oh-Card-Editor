@@ -7,218 +7,224 @@ const PHONE_NUMBER_REGEXP = /^[\s\(\)\+0-9]+$/i;
 
 const UUID_REGEXP = /^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function kind(variable: any): string {
+function kind(variable: unknown): string {
   return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
 }
 
 /**
- * Check if the subject has keys
+ * Check if the subject has keys.
  *
- * @param {object} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the object has at least one own property.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function hasKeys(subject: any): boolean {
-  for (let key in subject) if (subject.hasOwnProperty(key)) return true;
+export function hasKeys(subject: Record<string, unknown>): boolean {
+  for (const key in subject) {
+    if (Object.prototype.hasOwnProperty.call(subject, key)) return true;
+  }
   return false;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function stringify(o: any) {
+/**
+ * Stringify an object.
+ *
+ * @param o - The object to stringify.
+ */
+function stringify(o: unknown): string {
   return JSON.stringify(o);
 }
 
 /**
- * Check if the subject is a class
+ * Check if the subject is a class.
  *
- * @param {any} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the subject is a class.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isClass(func: any): boolean {
+export function isClass(subject: unknown): boolean {
   return (
-    hasKeys(func.prototype) || (typeof func === 'function' && /^class\s/.test(Function.prototype.toString.call(func)))
+    (typeof subject === 'function' && /^class\s/.test(Function.prototype.toString.call(subject))) ||
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    (isObject(subject) && hasKeys((subject as Function).prototype))
   );
 }
 
 /**
- * Check if the subject is a function
+ * Check if the subject is a function.
  *
- * @param {any} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the subject is a function.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type
-export function isFunction(obj: any): obj is Function {
-  return kind(obj) === 'function';
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+export function isFunction(subject: unknown): subject is Function {
+  return kind(subject) === 'function';
 }
 
 /**
- * Check if the subject is a string
+ * Check if the subject is a string.
  *
- * @param {any} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the subject is a string.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isString(obj: any): obj is string {
-  return kind(obj) === 'string';
+export function isString(subject: unknown): subject is string {
+  return kind(subject) === 'string';
 }
 
 /**
- * Check if the subject is a number
+ * Check if the subject is a number.
  *
- * @param {any} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the subject is a number.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isNumber(obj: any): obj is number {
-  return kind(obj) === 'number';
+export function isNumber(subject: unknown): subject is number {
+  return kind(subject) === 'number';
 }
 
 /**
- * Check if the subject is a date
+ * Check if the subject is a date.
  *
- * @param {any} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the subject is a date.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isDate(obj: any): obj is Date {
-  return kind(obj) === 'date';
+export function isDate(subject: unknown): subject is Date {
+  return kind(subject) === 'date';
 }
 
 /**
- * Check if the subject is an array
+ * Check if the subject is an array.
  *
- * @param {any} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @return True if the subject is an array.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isArray(obj: any): obj is any[] {
-  return kind(obj) === 'array';
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isError(obj: any): obj is Error {
-  return obj instanceof Error;
+export function isArray(subject: unknown): subject is unknown[] {
+  return kind(subject) === 'array';
 }
 
 /**
- * Check if subject is undefined (aka == undefined)
+ * Check if the subject is an error.
  *
- * @param {Object} subject subject to test.
+ * @param subject - The subject to test.
+ * @return True if the subject is an instance of Error.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isUndefined(subject: any): subject is undefined {
+export function isError(subject: unknown): subject is Error {
+  return subject instanceof Error;
+}
+
+/**
+ * Check if the subject is undefined.
+ *
+ * @param subject - The subject to test.
+ */
+export function isUndefined(subject: unknown): subject is undefined {
   return typeof subject === 'undefined';
 }
 
 /**
- * Check if subject is defined (aka !== undefined)
+ * Check if the subject is defined (i.e. not undefined).
  *
- * @param {Object} subject subject to test.
+ * @param subject - The subject to test.
  */
 export function isDefined<T>(subject: T | undefined): subject is T {
   return typeof subject !== 'undefined';
 }
 
 /**
- * Check if subject is numeric (even when it's a string).
+ * Check if the subject is numeric (even when it's a string).
  *
- * @param {Object} subject subject to test.
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isNumeric(subject: any): subject is number {
-  return NUMERIC_REGEXP.test(`${subject}`);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isInteger(subject: any): subject is number {
+export function isNumeric(subject: unknown): subject is number {
   return NUMERIC_REGEXP.test(`${subject}`);
 }
 
 /**
- * Check if subject is a well formed object
+ * Check if the subject is an integer.
  *
- * @param {Object} subject subject to test.
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isObject(subject: any): subject is object {
+export function isInteger(subject: unknown): subject is number {
+  return NUMERIC_REGEXP.test(`${subject}`);
+}
+
+/**
+ * Check if the subject is a well-formed object.
+ *
+ * @param subject - The subject to test.
+ */
+export function isObject(subject: unknown): subject is object {
   return !isUndefined(subject) && !isArray(subject) && typeof subject === 'object';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isBoolean(subject: any): subject is boolean {
+/**
+ * Check if the subject is a boolean.
+ *
+ * @param subject - The subject to test.
+ */
+export function isBoolean(subject: unknown): subject is boolean {
   return typeof subject === 'boolean';
 }
 
+type TEmptyPrimitives = undefined | null | '' | 0;
+
 /**
- * Check if subject is not empty (think php empty function)
+ * Check if the subject is empty (similar to PHP's empty function).
  *
- * @param {Object} subject subject to test.
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isEmpty(subject: any): boolean {
+export function isEmpty<T>(subject: T): subject is Extract<T, TEmptyPrimitives> {
   return (
     isUndefined(subject) ||
     subject === null ||
     subject === 0 ||
     subject === '' ||
     (isArray(subject) && subject.length === 0) ||
-    (!isDate(subject) && isObject(subject) && !hasKeys(subject))
+    (!isDate(subject) && isObject(subject) && !hasKeys(subject as Record<string, unknown>))
   );
 }
 
 /**
- * Check the minimum length of the subject
+ * Check the minimum length of the subject.
  *
- * @param {string} subject the subject
- * @param {number} min the length to check
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @param min - The minimum length.
+ * @return True if the subject is a string with a length >= min.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isMinimumLength(subject: any, min: number): boolean {
-  return typeof subject === 'string' && subject.length >= min;
+export function isMinimumLength(subject: unknown, min: number): subject is string {
+  return isString(subject) && subject.length >= min;
 }
 
 /**
- * Check if subject is equal to a value.
+ * Check if the subject is equal to a value.
  *
- * @param {Object} subject subject to test.
- * @param {Object} value the value
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @param value - The value to compare.
+ * @return True if the subject is equal to the value.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isEquals(subject: any, value: any): boolean {
+export function isEquals(subject: unknown, value: unknown): boolean {
   return stringify(subject) === stringify(value);
 }
 
 /**
- * Check if the subject is differente that the reference
+ * Check if the subject is different from the reference.
  *
- * @param {object} subject the subject
- * @param {object} reference the reference
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
+ * @param reference - The reference value.
+ * @return True if the subject is different from the reference.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isDifferent(subject: any, reference: any): boolean {
+export function isDifferent(subject: unknown, reference: unknown): boolean {
   return stringify(subject) !== stringify(reference);
 }
 
 /**
- * Check if the subject is differente that the reference with a checking of every possible key
- * Thus ignoring basic object comparison
+ * Check if the subject is deeply equal to another object.
  *
+ * @param obj1 - The first object.
+ * @param obj2 - The second object.
+ * @return True if the objects are deeply equal.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isDeepEqual(obj1: any, obj2: any): boolean {
-  // if (obj1 === obj2) return true;
+export function isDeepEqual(obj1: unknown, obj2: unknown): boolean {
   if (isUndefined(obj1) || isUndefined(obj2)) return obj1 === obj2;
   if (obj1 === null || obj2 === null) return obj1 === obj2;
 
-  const obj1Type = typeof obj1;
-  const obj2Type = typeof obj2;
-
-  if (obj1Type !== obj2Type) return false; // Early exit if types differ
+  if (typeof obj1 !== typeof obj2) return false; // Early exit if types differ
 
   // Handling Dates specifically
   if (obj1 instanceof Date && obj2 instanceof Date) {
@@ -226,7 +232,7 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
   }
 
   // Handle Arrays
-  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+  if (isArray(obj1) && isArray(obj2)) {
     if (obj1.length !== obj2.length) return false;
     for (let i = 0; i < obj1.length; i++) {
       if (!isDeepEqual(obj1[i], obj2[i])) return false;
@@ -242,8 +248,7 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
 
     for (const key of keys1) {
       if (!keys2.includes(key)) return false;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!isDeepEqual((obj1 as Record<string, any>)[key], (obj2 as Record<string, any>)[key])) return false;
+      if (!isDeepEqual((obj1 as Record<string, unknown>)[key], (obj2 as Record<string, unknown>)[key])) return false;
     }
     return true;
   }
@@ -253,45 +258,37 @@ export function isDeepEqual(obj1: any, obj2: any): boolean {
 }
 
 /**
- * Check if the subject is a regexp
+ * Check if the subject is a regular expression.
  *
- * @param {object} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isRegexp(subject: any): subject is RegExp {
+export function isRegexp(subject: unknown): subject is RegExp {
   return subject instanceof RegExp;
 }
 
 /**
- * Check if the subject is a valid email address
+ * Check if the subject is a valid email address.
  *
- * @param {string} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isEmail(subject: any): subject is string {
-  return EMAIL_REGEXP.test(`${subject}`);
+export function isEmail(subject: unknown): subject is string {
+  return isString(subject) && EMAIL_REGEXP.test(subject);
 }
 
 /**
- * Check if the subject is a valid phone number
+ * Check if the subject is a valid phone number.
  *
- * @param {object} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isPhoneNumber(subject: any): subject is string {
-  return PHONE_NUMBER_REGEXP.test(`${subject}`);
+export function isPhoneNumber(subject: unknown): subject is string {
+  return isString(subject) && PHONE_NUMBER_REGEXP.test(subject);
 }
 
 /**
- * Check if the subject is a valid UUID
+ * Check if the subject is a valid UUID.
  *
- * @param {object} subject the subject
- * @return {boolean} true if the test is successful
+ * @param subject - The subject to test.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isUuid(subject: any): subject is string {
-  return UUID_REGEXP.test(`${subject}`);
+export function isUuid(subject: unknown): subject is string {
+  return isString(subject) && UUID_REGEXP.test(subject);
 }

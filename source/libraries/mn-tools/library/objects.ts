@@ -1,20 +1,20 @@
-import { isArray, isObject } from './is';
+import { isArray, isFunction, isObject } from './is';
 
 export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 export type TDictionary<T> = { [key: string]: T } | { [oid: number]: T };
+
 /**
- * Make a clone of the source object.
+ * Make a shallow clone of the source object.
  *
- * @param object object to clone
- * @return resulting clone
+ * @param object Object to clone.
+ * @return A shallow copy of the object.
  */
 export function clone<T>(object: T): T {
   if (object === undefined) return undefined as T;
   if (object === null) return null as T;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (isArray(object)) return (object as any).slice(0);
-  let copy = Object.create(Object.getPrototypeOf(object));
+  if (isArray(object)) return object.slice(0) as unknown as T;
+  const copy = Object.create(Object.getPrototypeOf(object));
   extend(copy, object);
   return copy;
 }
@@ -22,33 +22,39 @@ export function clone<T>(object: T): T {
 /**
  * Make a deep clone of the source object.
  *
- * @param object object to clone
- * @return resulting clone
+ * @param object Object to clone.
+ * @return A deep copy of the object.
  */
 export function deepClone<T>(object: T): T {
-  return unserialize(serialize(object));
+  return unserialize<T>(serialize(object));
 }
 
-export function unserialize(json: string) {
+/**
+ * Deserialize a JSON string, converting date strings into Date objects.
+ *
+ * @param json JSON string.
+ */
+export function unserialize<T = unknown>(json: string): T {
   try {
     return JSON.parse(json, (_key, value) => {
       if (typeof value === 'string' && DATE_REGEXP.exec(value)) {
-        // let ns = value.substring(0, value.length- 1)+'-07:00';
-        // console.log(ns);
-        // return new Date(ns);
         return new Date(value);
       }
       return value;
     });
   } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (error as any).more = { json };
+    // Add additional info to error if needed.
+    (error as { more?: { json: string } }).more = { json };
     throw error;
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function serialize(data: any) {
+/**
+ * Serialize data to a JSON string, omitting keys starting with '$'.
+ *
+ * @param data Data to serialize.
+ */
+export function serialize(data: unknown): string {
   return JSON.stringify(data, (k, v) => {
     if (typeof k === 'string' && k.length > 0 && k.charAt(0) === '$') return undefined;
     return v;
@@ -57,53 +63,50 @@ export function serialize(data: any) {
 
 /**
  * Convert any value to an array.
- * If the value is an array, it stays the same.
+ * If the value is already an array, it is returned unchanged.
  *
- * @param {any} x source value
- * @return {any[]} resulting array
+ * @param x Source value.
+ * @return An array containing the value(s).
  */
 export function asArray<T>(x: T | T[]): T[] {
-  if (isArray(x)) return x;
-  return [x];
+  return isArray(x) ? x : [x];
 }
 
 /**
  * Add default properties to an object.
  *
- * @param object target object
- * @param defaults list of defaults objects
- * @return Resulting augmented object
+ * @param object Target object.
+ * @param defaults List of default objects.
+ * @return The augmented object.
  */
 export function defaults<T>(object: T, ...args: Partial<T>[]): T {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!object) (object as any) = {};
+  // Ensure object is an object; if not, assign an empty object.
+  if (!object) object = {} as T;
   if (!isObject(object)) return object;
-  for (let source of args) {
-    for (let prop in source) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (object[prop] === void 0) object[prop] = source[prop] as any;
+  for (const source of args) {
+    for (const prop in source) {
+      if ((object as Record<string, unknown>)[prop] === undefined) {
+        (object as Record<string, unknown>)[prop] = source[prop] as unknown;
+      }
     }
   }
   return object;
 }
 
 /**
- * Extend an object properties.
+ * Extend an object with properties from additional objects.
  *
- * @param object target object
- * @param defaults list of extender objects
- * @return resulting augmented object
+ * @param object Target object.
+ * @param sources List of source objects.
+ * @return The extended object.
  */
-export function extend<T>(object: T, ...args: Partial<T>[]): T {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!object) (object as any) = {};
+export function extend<T>(object: T, ...sources: Partial<T>[]): T {
+  if (!object) object = {} as T;
   if (!isObject(object)) return object;
-  let property;
-  for (let source of args) {
-    for (property in source) {
-      if (source.hasOwnProperty(property)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (object as any)[property] = (source as any)[property];
+  for (const source of sources) {
+    for (const property in source) {
+      if (Object.prototype.hasOwnProperty.call(source, property)) {
+        (object as Record<string, unknown>)[property] = (source as Record<string, unknown>)[property];
       }
     }
   }
@@ -126,19 +129,17 @@ export function deepExtend<T>(target: T, ...sources: Partial<T>[]): T {
     if (!isObject(source)) continue;
 
     for (const key in source) {
-      if (!source.hasOwnProperty(key)) continue;
+      if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
 
       const sourceValue = source[key];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const targetValue = (target as any)[key];
+      const targetValue = (target as Record<string, unknown>)[key];
 
       if (isObject(sourceValue) && isObject(targetValue)) {
         // Recursive merge for nested objects
         deepExtend(targetValue, sourceValue);
       } else {
         // Direct assignment for non-object properties
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (target as any)[key] = sourceValue;
+        (target as Record<string, unknown>)[key] = sourceValue;
       }
     }
   }
@@ -147,215 +148,236 @@ export function deepExtend<T>(target: T, ...sources: Partial<T>[]): T {
 }
 
 /**
- * Same as @see _#map but returns an array.
+ * Same as map but returns an array.
  *
- * @param source source array to filter
- * @param iteratee source array to filter
- * @param context
- * @return the array
+ * @param source Source object.
+ * @param iteratee Function to iterate over object properties.
+ * @param context Optional context for the iteratee.
+ * @return An array of values returned by iteratee.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function mapa<T>(source: { [key: string]: T }, iteratee: (item: T, key?: string) => any, context?: any): any[] {
+export function mapa<T, U>(source: Record<string, T>, iteratee: (item: T, key: string) => U, context?: unknown): U[] {
   if (source === null) return [];
-  // eslint-disable-next-line no-restricted-syntax
-  iteratee = iteratee.bind(context);
-  let result = [];
-  for (let i in source) {
-    result.push(iteratee(source[i], i));
+  const boundIteratee = iteratee.bind(context);
+  let result: U[] = [];
+  for (const key in source) {
+    result.push(boundIteratee(source[key], key));
   }
   return result;
 }
 
 /**
- * Check if an object own a property.
+ * Check if an object owns a property.
  *
- * @param object object to test
- * @param key property name to test
- * @return true is it owns it
+ * @param object Object to test.
+ * @param key Property name to test.
+ * @return True if object has the property.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function has(object: any, key: string): boolean {
-  return object !== null && object.hasOwnProperty(key);
+export function has(object: unknown, key: string): boolean {
+  return object !== null && typeof object === 'object' && Object.prototype.hasOwnProperty.call(object, key);
 }
 
 /**
- * Iterate over object properties
+ * Iterate over object properties.
  *
- * @param object source object
- * @param iteratee function that will iterate
- * @param context a context to apply the callback to
+ * @param object Source object.
+ * @param iteratee Function to call for each property.
+ * @param context Optional context for the callback.
  */
 export function each<T>(
-  object: { [key: string]: T },
+  object: Record<string, T>,
   iteratee: (item: T, key: string) => boolean | void,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: any
+  context?: unknown
 ): void {
   if (object === null) return;
-  // eslint-disable-next-line no-restricted-syntax
-  iteratee = iteratee.bind(context);
-  let ks = Object.keys(object);
-  for (let i = 0, length = ks.length; i < length; i++) {
-    if (iteratee(object[ks[i]], ks[i])) break;
+  const boundIteratee = iteratee.bind(context);
+  const keysArray = Object.keys(object);
+  for (let i = 0, length = keysArray.length; i < length; i++) {
+    if (boundIteratee(object[keysArray[i]], keysArray[i])) break;
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function diff(o: any[], n: any[]) {
-  o = o.slice(0);
-  n = n.slice(0);
-  for (let i = 0; i < o.length; i++) {
-    for (let j = 0; j < n.length; j++) {
-      if (n[j] && o[i] && o[i] === n[j]) {
-        o[i] = null;
-        n[j] = null;
+/**
+ * Compute the difference between two arrays.
+ *
+ * @param o First array.
+ * @param n Second array.
+ * @return A tuple of arrays containing differences or undefined if none.
+ */
+export function diff<T>(o: T[], n: T[]): [T[], T[]] | undefined {
+  const oCopy = o.slice(0);
+  const nCopy = n.slice(0);
+  for (let i = 0; i < oCopy.length; i++) {
+    for (let j = 0; j < nCopy.length; j++) {
+      if (oCopy[i] === nCopy[j]) {
+        oCopy[i] = null as unknown as T;
+        nCopy[j] = null as unknown as T;
       }
     }
   }
-  o = o.filter((x) => !!x);
-  n = n.filter((x) => !!x);
-  if (o.length || n.length) return [o, n];
+  const diffO = oCopy.filter((x) => x != null);
+  const diffN = nCopy.filter((x) => x != null);
+  if (diffO.length || diffN.length) return [diffO, diffN];
   return undefined;
 }
 
 type KeyByPayload<T> = Partial<T>;
 
 type KeyByCallback<T> = (item: KeyByPayload<T>) => string;
+
 /**
- * Index an array of object by key
- * FIXME: n'a rien à faire ici
+ * Index an array of objects by a key.
  *
  * @template T
- * @param {T[]} a array of objects
- * @param {string} field the field to index
- * @return {Object.<string,T>} index object
+ * @param a Array of objects.
+ * @param fieldOrCallback The field name or a callback to generate the key.
+ * @return An object indexed by the key.
  */
 export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): { [key: string]: T } {
-  let result: { [key: string]: T } = {};
+  const result: { [key: string]: T } = {};
+
   let callback: KeyByCallback<T>;
   if (typeof fieldOrCallback === 'string') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback = (x) => x[fieldOrCallback] as any;
+    callback = (x) => String(x[fieldOrCallback]);
   } else {
     callback = fieldOrCallback as KeyByCallback<T>;
   }
-  a.forEach((v: T) => {
-    result[callback(v)] = v;
-  });
+
+  a.forEach((v) => (result[callback(v)] = v));
   return result;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function sortBy<T>(a: T[], field: keyof T, orderList: any[]) {
-  let kb = keyBy(a, field);
-  return orderList.map((x) => kb[x]);
+/**
+ * Sort an array of objects by a field based on a given order.
+ *
+ * @param a Array of objects.
+ * @param field Field name to index.
+ * @param orderList The desired order.
+ * @return A sorted array.
+ */
+export function sortBy<T>(a: T[], field: keyof T, orderList: unknown[]): T[] {
+  const kb = keyBy(a, field);
+  return orderList.map((x) => kb[String(x)]);
 }
 
+/**
+ * Group an array of objects by a key, accumulating values.
+ *
+ * @param a Array of objects.
+ * @param fieldOrCallback Field name or callback to determine the key.
+ * @return An object where each key maps to an array of objects.
+ */
 export function keyByAccumulated<T>(a: T[], fieldOrCallback: string | KeyByCallback<T>): { [key: string]: T[] } {
-  let result: { [key: string]: T[] } = {};
+  const result: { [key: string]: T[] } = {};
+
   let callback: KeyByCallback<T>;
   if (typeof fieldOrCallback === 'string') {
     callback = ((x: { [key: string]: string }) => x[fieldOrCallback]) as unknown as KeyByCallback<T>;
   } else {
     callback = fieldOrCallback;
   }
-  a.forEach((v: T) => {
-    if (typeof result[callback(v)] === 'undefined') {
-      result[callback(v)] = [];
+
+  a.forEach((v) => {
+    const key = callback(v);
+    if (result[key] === undefined) {
+      result[key] = [];
     }
-    result[callback(v)].push(v);
+    result[key].push(v);
   });
   return result;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type keyByMultipleCallback<T> = (root: { [k: string]: any }, value: string, item: T) => void;
+type KeyByMultipleCallback<T> = (root: { [k: string]: unknown }, value: string, item: T) => void;
+
 /**
- * Index an array of object by key. Each record is itself an array so
- * the function conserve multiple objects with the same key.
+ * Index an array of objects by multiple keys. Each record is an array to hold multiple objects with the same key.
  *
- * @param items array of objects
- * @param field the field to index
- * @return index object
+ * @param items Array of objects.
+ * @param fieldsOrField Field name(s) to index.
+ * @param aggregateOrNull Optional custom aggregator.
+ * @return An object indexed by the key(s).
  */
 export function keyByMultiple<T>(
   items: T[],
   fieldsOrField: string | string[],
-  aggregateOrNull?: keyByMultipleCallback<T>
+  aggregateOrNull?: KeyByMultipleCallback<T>
 ): { [key: string]: T[] } {
-  let fields = asArray(fieldsOrField);
-  let aggregate: keyByMultipleCallback<T>;
-  if (typeof aggregateOrNull === 'undefined') {
-    aggregate = (root, value, item) => {
-      if (typeof root[value] === 'undefined') root[value] = [];
-      root[value].push(item);
-    };
-  } else {
-    aggregate = aggregateOrNull;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let result: { [k: string]: any } = {};
-  let last = fields.length - 1;
+  const fields = asArray(fieldsOrField);
+  const aggregate: KeyByMultipleCallback<T> =
+    aggregateOrNull ??
+    ((root, value, item) => {
+      if (root[value] === undefined) root[value] = [];
+      (root[value] as T[]).push(item);
+    });
+
+  const result: { [k: string]: unknown } = {};
+  const last = fields.length - 1;
   items.forEach((item) => {
     let root = result;
     for (let i = 0, length = fields.length; i < length; i++) {
-      let key = fields[i];
+      const key = fields[i];
+      const keyStr = String((item as Record<string, unknown>)[key]);
       if (i < last) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!root[(item as any)[key] as string]) root[(item as any)[key] as string] = {};
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        root = root[(item as any)[key] as string];
+        if (!root[keyStr]) root[keyStr] = {};
+        root = root[keyStr] as { [k: string]: unknown };
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        aggregate(root, (item as any)[key] as string, item);
+        aggregate(root, keyStr, item);
       }
     }
   });
-  return result;
+
+  return result as { [key: string]: T[] };
 }
 
 /**
  * Return the keys of an object.
  *
- * @param object the object
- * @return the keys
+ * @param object The source object.
+ * @return An array of keys.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function keys(object: any): string[] {
+export function keys(object: unknown): string[] {
   if (!isObject(object)) return [];
-  if (Object.keys) return Object.keys(object);
-  let keys = [];
-  for (let key in object) if (has(object, key)) keys.push(key);
-  return keys;
+  return Object.keys(object as object);
 }
 
 /**
  * Return all values of an object as an array.
  *
- * @param object source object
- * @return array of values
+ * @param object The source object.
+ * @return An array of values.
  */
 export function values<T>(object: TDictionary<T>): T[] {
-  let ks = keys(object);
-  let length = ks.length;
-  let values: T[] = Array(length);
+  const ks = keys(object);
+  const length = ks.length;
+  const vals: T[] = new Array(length);
   for (let i = 0; i < length; i++) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    values[i] = (object as any)[ks[i]];
+    vals[i] = (object as Record<string, T>)[ks[i]];
   }
-  return values;
+  return vals;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type
-export function monkeyPatch(obj: any, name: string, fn: Function) {
-  if (!(name in obj)) {
+/**
+ * Monkey-patch an object by adding a method if it does not already exist.
+ *
+ * @param obj The target object.
+ * @param name The property name.
+ * @param fn The function to assign.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+export function monkeyPatch(obj: unknown, name: string, fn: Function): void {
+  if (obj !== null && (isObject(obj) || isFunction(obj)) && !(name in obj)) {
     Object.defineProperty(obj, name, { value: fn });
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function monkeyPatchGet(obj: any, name: string, fn: { get: () => number }) {
-  if (!(name in obj)) {
+/**
+ * Monkey-patch an object by adding a getter if it does not already exist.
+ *
+ * @param obj The target object.
+ * @param name The property name.
+ * @param fn An object containing a getter.
+ */
+export function monkeyPatchGet(obj: unknown, name: string, fn: { get: () => number }): void {
+  if (obj !== null && (isObject(obj) || isFunction(obj)) && !(name in obj)) {
     Object.defineProperty(obj, name, fn);
   }
 }

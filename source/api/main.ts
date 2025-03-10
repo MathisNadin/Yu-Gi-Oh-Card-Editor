@@ -1545,8 +1545,8 @@ declare global {
     | 'entity roles entity - list own'
     | 'entity roles entity - list all'
     | 'entity roles entity - create own'
-    | 'entity roles entity - store own'
-    | 'entity roles entity - store all'
+    | 'entity roles entity - update own'
+    | 'entity roles entity - update all'
     | 'entity roles entity - trash own'
     | 'entity roles entity - trash all';
 
@@ -1556,8 +1556,8 @@ declare global {
     | 'role entity - list own'
     | 'role entity - list all'
     | 'role entity - create own'
-    | 'role entity - store own'
-    | 'role entity - store all'
+    | 'role entity - update own'
+    | 'role entity - update all'
     | 'role entity - trash own'
     | 'role entity - trash all';
 
@@ -1567,8 +1567,8 @@ declare global {
     | 'application instance entity - list own'
     | 'application instance entity - list all'
     | 'application instance entity - create own'
-    | 'application instance entity - store own'
-    | 'application instance entity - store all'
+    | 'application instance entity - update own'
+    | 'application instance entity - update all'
     | 'application instance entity - trash own'
     | 'application instance entity - trash all';
 
@@ -1578,8 +1578,8 @@ declare global {
     | 'file entity - list own'
     | 'file entity - list all'
     | 'file entity - create own'
-    | 'file entity - store own'
-    | 'file entity - store all'
+    | 'file entity - update own'
+    | 'file entity - update all'
     | 'file entity - trash own'
     | 'file entity - trash all';
 
@@ -1589,8 +1589,8 @@ declare global {
     | 'log record entity - list own'
     | 'log record entity - list all'
     | 'log record entity - create own'
-    | 'log record entity - store own'
-    | 'log record entity - store all'
+    | 'log record entity - update own'
+    | 'log record entity - update all'
     | 'log record entity - trash own'
     | 'log record entity - trash all';
 
@@ -1600,8 +1600,8 @@ declare global {
     | 'session entity - list own'
     | 'session entity - list all'
     | 'session entity - create own'
-    | 'session entity - store own'
-    | 'session entity - store all'
+    | 'session entity - update own'
+    | 'session entity - update all'
     | 'session entity - trash own'
     | 'session entity - trash all';
 
@@ -1611,10 +1611,14 @@ declare global {
     | 'member entity - list own'
     | 'member entity - list all'
     | 'member entity - create own'
-    | 'member entity - store own'
-    | 'member entity - store all'
+    | 'member entity - update own'
+    | 'member entity - update all'
     | 'member entity - trash own'
-    | 'member entity - trash all';
+    | 'member entity - trash all'
+    | 'member entity - count self'
+    | 'member entity - list self'
+    | 'member entity - update self'
+    | 'member entity - trash self';
 
   type TEntityRolesAPIPermission =
     | 'entity roles api - count'
