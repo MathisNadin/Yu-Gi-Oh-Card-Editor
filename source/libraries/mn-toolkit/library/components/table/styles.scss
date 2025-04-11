@@ -48,10 +48,7 @@
 
   tr {
     border-bottom: 1px solid color-hsla($fg1, 0.1);
-  }
 
-  tr,
-  td {
     &.has-click:hover {
       background-color: color-hsl($bg3);
     }

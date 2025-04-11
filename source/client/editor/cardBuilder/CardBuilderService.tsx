@@ -11,6 +11,7 @@ export class CardBuilderService {
   public getNameSpecialCharClass(part: string, tcgAt: boolean) {
     return classNames('special-char-span', {
       'tcg-at': tcgAt && part === '@',
+      hash: part === '#',
       plusminus: part === '±',
     });
   }
@@ -71,11 +72,18 @@ export class CardBuilderService {
         nextHasBullet = true;
       } else {
         // Split the part on '@' and '±' while keeping the symbols
-        const modifiedPart = part.split(/(@|±)/).map((token, subIndex) => {
+        const modifiedPart = part.split(/(@|#|±)/).map((token, subIndex) => {
           if (token === '@') {
             return (
               <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
                 @
+              </span>
+            );
+          }
+          if (token === '#') {
+            return (
+              <span key={`pm-${index}-${i}-${subIndex}`} className='hash-char'>
+                #
               </span>
             );
           }

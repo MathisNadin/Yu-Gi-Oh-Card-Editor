@@ -145,6 +145,11 @@
         &.plusminus {
           font-family: fontName;
         }
+
+        &.hash {
+          font-family: fontName;
+          font-size: 78px;
+        }
       }
 
       &.token-name-container,
@@ -387,6 +392,10 @@
           }
 
           .plusminus-char {
+            font-family: fontName;
+          }
+
+          .hash-char {
             font-family: fontName;
           }
         }

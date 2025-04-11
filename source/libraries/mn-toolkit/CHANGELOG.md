@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 7.0.9
+
+- eviter le highlight case par case dans une table
+
 ## 7.0.8
 
+- bump to 7.0.8
 - AxiosService plus complet
 
 ## 7.0.7
