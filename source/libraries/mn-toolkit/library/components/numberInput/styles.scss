@@ -1,4 +1,5 @@
 @mixin themeNumberInput() {
+  display: block;
   line-height: calc(#{$defaultItemHeight} - 2px);
   min-height: calc(#{$defaultItemHeight} - 2px);
 

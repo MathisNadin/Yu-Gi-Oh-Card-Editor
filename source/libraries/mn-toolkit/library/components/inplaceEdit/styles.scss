@@ -41,6 +41,7 @@ div.mn-inplace-edit {
 
 @mixin themeInplaceEditInput() {
   @include themeInplaceEdit();
+  display: block;
   line-height: calc(#{$defaultItemHeight} - 2px);
   min-height: calc(#{$defaultItemHeight} - 2px);
 

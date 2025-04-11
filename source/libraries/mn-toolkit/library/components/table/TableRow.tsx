@@ -26,6 +26,7 @@ export class TableRow<C extends ITableHeaderCell | ITableDataCell> extends Toolk
 > {
   public renderClasses() {
     const classes: { [key: string]: boolean } = {};
+    if (this.props.row.className) classes[this.props.row.className] = true;
     classes['has-click'] = !!this.props.row.onTap;
     return classes;
   }

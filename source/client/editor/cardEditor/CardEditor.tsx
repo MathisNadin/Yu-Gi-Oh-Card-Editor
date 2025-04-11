@@ -880,16 +880,6 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
         <Grid>
           <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} icon='toolkit-id' color='1' />
-            <TextInput
-              fill
-              placeholder='Set'
-              defaultValue={this.state.card.cardSet}
-              onChange={(cardSet) => this.onCardSetChange(cardSet)}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-print' color='1' />
             <Select<TEdition>
               fill
@@ -904,6 +894,15 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               ]}
               defaultValue={this.state.card.edition}
               onChange={(edition) => this.onEditionChange(edition)}
+            />
+          </HorizontalStack>
+          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+            <Icon className='field-icon' size={24} icon='toolkit-id' color='1' />
+            <TextInput
+              fill
+              placeholder='Set'
+              defaultValue={this.state.card.cardSet}
+              onChange={(cardSet) => this.onCardSetChange(cardSet)}
             />
           </HorizontalStack>
         </Grid>

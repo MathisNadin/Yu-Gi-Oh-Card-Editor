@@ -21,7 +21,7 @@ export class SelectChipsPopover<ID = number> extends ActionsPopover<
         onClick={(event) => !!action.onTap && app.$errorManager.handlePromise(this.onTapAction(event, action))}
       >
         <Checkbox defaultValue={action.selected} />
-        <Typography fill bold={action.isTitle} variant='document' contentType='text' content={action.label} />
+        <Typography fill noWrap bold={action.isTitle} variant='document' contentType='text' content={action.label} />
       </li>
     );
   }

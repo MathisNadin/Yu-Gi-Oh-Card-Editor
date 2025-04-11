@@ -1,5 +1,6 @@
+import { IDeviceListener, IScreenSpec } from 'mn-toolkit/library/system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
-import { classNames, integer } from 'mn-tools';
+import { classNames, integer, isUndefined } from 'mn-tools';
 import { FormEvent } from 'react';
 
 export interface ITextAreaInputProps extends IContainableProps {
@@ -19,11 +20,14 @@ export interface ITextAreaInputProps extends IContainableProps {
 
 interface ITextAreaInputState extends IContainableState {
   value: string;
-  rows: number;
+  rows?: number;
   activateScroll: boolean;
 }
 
-export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInputState> {
+export class TextAreaInput
+  extends Containable<ITextAreaInputProps, ITextAreaInputState>
+  implements Partial<IDeviceListener>
+{
   public inputElement!: HTMLTextAreaElement;
   private hiddenInputElement!: HTMLTextAreaElement;
   private lineHeight!: number;
@@ -55,8 +59,20 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
 
   public override componentDidMount() {
     super.componentDidMount();
+    app.$device.addListener(this);
+    this.setupStyle();
     if (!this.props.autofocus || app.$device.isNative) return;
     setTimeout(() => this.inputElement.focus(), 100);
+  }
+
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    app.$device.removeListener(this);
+  }
+
+  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec) {
+    if (isUndefined(this.state.rows)) return;
+    app.$errorManager.handlePromise(this.onTextAreaChange());
   }
 
   public override componentDidUpdate(
@@ -66,8 +82,27 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
-    if (this.props.defaultValue?.trim() === this.state.value?.trim()) return;
-    this.setState({ value: this.props.defaultValue! }, () => this.onTextAreaChange());
+    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
+      this.setState({ value: this.props.defaultValue! }, () =>
+        app.$errorManager.handlePromise(this.onTextAreaChange())
+      );
+    }
+    // If for one reason or another (ex. Tabs) the TextArea was in the DOM byt with a display none then rows was negative, thus undefined
+    // If it is refreshed, check the rows again
+    else if (isUndefined(this.state.rows)) {
+      this.onTextAreaChange();
+    }
+  }
+
+  private setupStyle() {
+    if (!this.inputElement || !this.hiddenInputElement) return;
+    const hiddenInputStyle = getComputedStyle(this.hiddenInputElement);
+    this.lineHeight = integer(hiddenInputStyle.lineHeight);
+    this.paddingTop = integer(hiddenInputStyle.paddingTop);
+    this.paddingBottom = integer(hiddenInputStyle.paddingBottom);
+    this.borderTopWidth = integer(hiddenInputStyle.borderTopWidth);
+    this.borderBottomWidth = integer(hiddenInputStyle.borderBottomWidth);
+    app.$errorManager.handlePromise(this.onTextAreaChange());
   }
 
   public override renderClasses() {
@@ -116,26 +151,11 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     if (!c || this.inputElement) return;
     this.inputElement = c;
     if (this.props.onRef) this.props.onRef(this.inputElement);
-    this.setupStyle();
   }
 
   private hiddenOnDomInput(c: HTMLTextAreaElement) {
     if (!c || this.hiddenInputElement) return;
     this.hiddenInputElement = c;
-    this.setupStyle();
-  }
-
-  private setupStyle() {
-    if (!this.inputElement || !this.hiddenInputElement) return;
-    setTimeout(() => {
-      const hiddenInputStyle = getComputedStyle(this.hiddenInputElement);
-      this.lineHeight = integer(hiddenInputStyle.lineHeight);
-      this.paddingTop = integer(hiddenInputStyle.paddingTop);
-      this.paddingBottom = integer(hiddenInputStyle.paddingBottom);
-      this.borderTopWidth = integer(hiddenInputStyle.borderTopWidth);
-      this.borderBottomWidth = integer(hiddenInputStyle.borderBottomWidth);
-      this.onTextAreaChange();
-    });
   }
 
   private async onChange(e: FormEvent) {
@@ -146,7 +166,7 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
     if (this.props.onChange) await this.props.onChange(value);
   }
 
-  private onTextAreaChange() {
+  private async onTextAreaChange() {
     if (!this.props.autoGrow || !this.inputElement) return;
 
     if (this.hiddenInputElement) {
@@ -164,20 +184,21 @@ export class TextAreaInput extends Containable<ITextAreaInputProps, ITextAreaInp
       // Utilisez innerHeight pour le calcul des lignes
       const currentRows = Math.round(innerHeight / this.lineHeight);
 
-      let rows: number;
+      let rows: number | undefined;
       let activateScroll: boolean;
 
       if (currentRows > this.props.maxRows!) {
         rows = this.props.maxRows!;
         activateScroll = true;
-      } else {
+      } else if (currentRows > 0) {
         rows = currentRows;
+        activateScroll = false;
+      } else {
+        rows = undefined;
         activateScroll = false;
       }
 
-      this.inputElement.rows = rows;
-      this.hiddenInputElement.rows = rows;
-      this.setState({ rows, activateScroll });
+      await this.setStateAsync({ rows, activateScroll });
     }
   }
 }

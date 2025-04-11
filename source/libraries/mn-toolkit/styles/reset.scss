@@ -201,6 +201,10 @@
     box-sizing: border-box;
   }
 
+  input {
+    min-width: 0;
+  }
+
   input,
   textarea {
     @include themeTypographyText();

@@ -201,6 +201,7 @@ export class ActionsPopover<
 
         <Typography
           fill
+          noWrap
           bold={action.isTitle}
           variant='document'
           contentType='text'

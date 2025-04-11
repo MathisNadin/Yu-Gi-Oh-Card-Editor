@@ -42,6 +42,13 @@ textarea {
   }
 }
 
+// Fix to adapt the UX to the font
+.mn-checkbox {
+  .label {
+    line-height: 130%;
+  }
+}
+
 /* .home-left-pane {
   max-width: 22%;
 }

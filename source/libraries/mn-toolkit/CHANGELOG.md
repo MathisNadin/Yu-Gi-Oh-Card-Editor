@@ -1,7 +1,14 @@
 ## mn-toolkit change log
 
+## 7.0.10
+
+- display block sur les inputs + min-width imposée à 0 sur les inputs pour ignorer les valeurs user agent des navigateurs
+- adaptation des rows sur TextAreaInput au resize et au display none
+- dedoublonnage de la mixin text overflow + nowrap dans les popovers actions
+
 ## 7.0.9
 
+- bump to 7.0.9
 - eviter le highlight case par case dans une table
 
 ## 7.0.8

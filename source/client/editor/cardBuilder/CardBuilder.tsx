@@ -359,7 +359,7 @@ export class CardBuilder extends Containable<ICardBuilderProps, ICardBuilderStat
           <img className='card-layer sticker' src={paths.stickers[card.sticker]} alt='sticker' />
         )}
 
-        {card.edition !== 'forbidden' && (
+        {card.edition !== 'forbidden' && card.edition !== 'forbiddenDeck' && (
           <p
             className={`card-layer passcode ${(!card.pendulum && includesXyz) || includesSkill ? 'white' : 'black'}-text`}
           >
