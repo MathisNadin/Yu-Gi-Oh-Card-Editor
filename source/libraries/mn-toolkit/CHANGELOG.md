@@ -1,7 +1,22 @@
 ## mn-toolkit change log
 
+## 7.0.7
+
+- ajout gestion transparent dans les fonctions hsl + frame shadow de 0 à 6 sur les props de Container
+
+## 7.0.6
+
+- bump to 7.0.6
+- ajout style hover sur table row
+
+## 7.0.5
+
+- bump to 7.0.5
+- bg transparent sur les nums du ClassicPager + loaded initial pris en compte sur AbstractView + plus d'options sur ScreenSpec
+
 ## 7.0.4
 
+- bump to 7.0.4
 - adaptation aux nv typings dans mn-tols
 
 ## 7.0.3

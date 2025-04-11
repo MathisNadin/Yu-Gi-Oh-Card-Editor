@@ -97,20 +97,55 @@
 
 @mixin frame($name) {
   border-radius: calc(#{$defaultBorderRadius});
-  @if ($name== 'shadow-1') {
+  @if ($name== 'shadow-0') {
     @include shadow(0);
-  }
-  @if ($name== 'dashed') {
+  } @else if ($name== 'shadow-1') {
+    @include shadow(1);
+  } @else if ($name== 'shadow-2') {
+    @include shadow(2);
+  } @else if ($name== 'shadow-3') {
+    @include shadow(3);
+  } @else if ($name== 'shadow-4') {
+    @include shadow(4);
+  } @else if ($name== 'shadow-5') {
+    @include shadow(5);
+  } @else if ($name== 'shadow-6') {
+    @include shadow(6);
+  } @else if ($name== 'dashed') {
     border-style: dashed;
     border-width: 1px;
     border-color: color-hsl($fg3);
   }
 }
 
+.mn-frame-dashed {
+  @include frame('dashed');
+}
+
+.mn-frame-shadow-0 {
+  @include frame('shadow-0');
+}
+
 .mn-frame-shadow-1 {
   @include frame('shadow-1');
 }
 
-.mn-frame-dashed {
-  @include frame('dashed');
+.mn-frame-shadow-2 {
+  @include frame('shadow-2');
+}
+
+.mn-frame-shadow-3 {
+  @include frame('shadow-3');
+}
+
+.mn-frame-shadow-4 {
+  @include frame('shadow-4');
+}
+
+.mn-frame-shadow-5 {
+  @include frame('shadow-5');
+}
+
+.mn-frame-shadow-6 {
+  @include frame('shadow-6');
 }

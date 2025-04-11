@@ -8,7 +8,15 @@ export type THorizontalAlignment = 'left' | 'right' | 'center';
 
 export type TVerticalAlignment = 'top' | 'bottom' | 'middle';
 
-export type TFrame = 'dashed' | 'shadow-1';
+export type TFrame =
+  | 'dashed'
+  | 'shadow-0'
+  | 'shadow-1'
+  | 'shadow-2'
+  | 'shadow-3'
+  | 'shadow-4'
+  | 'shadow-5'
+  | 'shadow-6';
 
 export interface EventTargetWithValue extends EventTarget {
   value: string;

@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.0.11
+
+- ajout de sanitizeFilename
+
 ## 2.0.10
 
+- bump to 2.0.10
 - là c'est vraiment fix
 
 ## 2.0.9

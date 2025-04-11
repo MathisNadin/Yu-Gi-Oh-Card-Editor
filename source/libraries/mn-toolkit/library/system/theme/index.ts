@@ -1,6 +1,6 @@
 export * from './ThemeService';
 
-import { TScreenSizes } from '../device';
+import { TScreenSize } from '../device';
 import { ThemeService } from './ThemeService';
 
 declare global {
@@ -138,7 +138,7 @@ declare global {
   }
 
   // Variables that can depend on the screen size
-  type TAppThemeScreens = Record<TScreenSizes, Partial<IAppThemeScreensSizes>>;
+  type TAppThemeScreens = Record<TScreenSize, Partial<IAppThemeScreensSizes>>;
 
   // Variables that are always the same, no matter the teme or screen size
   interface IAppThemeCommons {

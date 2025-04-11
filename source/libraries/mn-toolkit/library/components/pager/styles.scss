@@ -71,7 +71,7 @@ $pager-page-size: calc(#{$defaultItemHeight});
 
         &.number {
           color: color-hsl($fg1);
-          background-color: color-hsl($bg1);
+          background-color: transparent;
 
           .label {
             padding: 0;

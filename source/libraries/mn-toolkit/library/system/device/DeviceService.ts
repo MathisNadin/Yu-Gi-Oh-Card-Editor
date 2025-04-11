@@ -33,21 +33,22 @@ interface IDeviceRecord {
 }
 
 export interface IScreenSpec {
-  width?: number;
-  height?: number;
-  isSmallScreen?: boolean;
-  isMediumScreen?: boolean;
-  isLargeScreen?: boolean;
-  isXLargeScreen?: boolean;
-  isXXLargeScreen?: boolean;
-  isPortrait?: boolean;
-  isLandscape?: boolean;
+  width: number;
+  height: number;
+  screenSize: TScreenSize;
+  isSmallScreen: boolean;
+  isMediumScreen: boolean;
+  isLargeScreen: boolean;
+  isXLargeScreen: boolean;
+  isXXLargeScreen: boolean;
+  isPortrait: boolean;
+  isLandscape: boolean;
 }
 
-export type TScreenSizes = 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge';
+export type TScreenSize = 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge';
 
 export interface IDeviceListener {
-  deviceScreenSpecificationChanged(newSpec: IScreenSpec): void;
+  deviceScreenSpecificationChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec): void;
   deviceForeground(): void;
   deviceBackground(): void;
   deviceOnline(): void;
@@ -72,7 +73,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   private _isConnected = false;
   private _hasWebkit = false;
 
-  private _screenClasses: Record<TScreenSizes, string> = {
+  private _screenClasses: Record<TScreenSize, string> = {
     small: 'mn-screen-small',
     medium: 'mn-screen-medium',
     large: 'mn-screen-large',
@@ -80,8 +81,8 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     xxlarge: 'mn-screen-xxlarge',
   };
 
-  public fireScreenSpecChanged(spec: IScreenSpec) {
-    this.dispatch('deviceScreenSpecificationChanged', spec);
+  public fireScreenSpecChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec) {
+    this.dispatch('deviceScreenSpecificationChanged', newSpec, oldSpec);
   }
   public fireForeground() {
     this.dispatch('deviceForeground');
@@ -213,6 +214,8 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
 
   private onScreenSpecChanged(data: boolean | IScreenSpec = false) {
     log.debug('onScreenSpecChanged');
+    const oldSpec = { ...this._screenSpec };
+
     const smallBreakpoint = 576;
     const mediumBreakpoint = 768;
     const largeBreakpoint = 992;
@@ -234,8 +237,20 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       isLandscape: !isPortrait,
     });
 
+    if (this._screenSpec.isSmallScreen) {
+      this._screenSpec.screenSize = 'small';
+    } else if (this._screenSpec.isMediumScreen) {
+      this._screenSpec.screenSize = 'medium';
+    } else if (this._screenSpec.isLargeScreen) {
+      this._screenSpec.screenSize = 'large';
+    } else if (this._screenSpec.isXLargeScreen) {
+      this._screenSpec.screenSize = 'xlarge';
+    } else if (this._screenSpec.isXXLargeScreen) {
+      this._screenSpec.screenSize = 'xxlarge';
+    }
+
     for (const size in this._screenClasses) {
-      document.body.classList.remove(this._screenClasses[size as TScreenSizes]);
+      document.body.classList.remove(this._screenClasses[size as TScreenSize]);
     }
 
     document.body.classList.add(this._screenClasses.small);
@@ -248,7 +263,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       extend(this._screenSpec, data);
     }
     log.debug('spec updated', this._screenSpec);
-    this.fireScreenSpecChanged(this._screenSpec);
+    this.fireScreenSpecChanged(this._screenSpec, oldSpec);
   }
 
   public async keyboardClose() {
@@ -280,6 +295,9 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
   public get isLandscape() {
     return !!this._screenSpec.isLandscape;
+  }
+  public get screenSize() {
+    return this._screenSpec.screenSize;
   }
   public get isSmallScreen() {
     return !!this._screenSpec.isSmallScreen;

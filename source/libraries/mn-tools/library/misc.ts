@@ -89,6 +89,34 @@ export function preloadVideo(url: string) {
   });
 }
 
+export function sanitizeFileName(input: string): string {
+  // Normalize the string using NFKD form to separate accented characters from their diacritics
+  let sanitized = input.normalize('NFKD');
+
+  // Replace invalid characters: < > : " / \ | ? * and control characters (ASCII 0x00-0x1F)
+  sanitized = sanitized.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_');
+
+  // Remove additional non-printable characters (like zero-width spaces)
+  sanitized = sanitized.replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+  // Remove dots at the beginning and the end, and trim spaces
+  sanitized = sanitized.replace(/^\.+/, '').replace(/\.+$/, '').trim();
+
+  // Prevent Windows reserved file names (case-insensitive)
+  const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
+  if (reserved.test(sanitized)) {
+    sanitized = `_${sanitized}`;
+  }
+
+  // Limit filename length to 255 characters
+  if (sanitized.length > 255) {
+    sanitized = sanitized.slice(0, 255);
+  }
+
+  // Return a default name if the result is empty
+  return sanitized || 'unnamed_file';
+}
+
 /**
  * Convert a string version to its numeric version.
  *

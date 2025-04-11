@@ -69,7 +69,7 @@ export class SplitPane extends Containable<ISplitPaneProps, ISplitPaneState> imp
     });
   }
 
-  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec) {
+  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec) {
     const masterPaneSize = this.applyContraints(this.state.masterPaneSize);
     this.updateMasterPaneSize(masterPaneSize);
   }

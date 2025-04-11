@@ -14,7 +14,7 @@ export class Paper extends Container<IPaperProps, IPaperState> {
       gutter: true,
       margin: false,
       bg: '1',
-      frame: 'shadow-1',
+      frame: 'shadow-0',
     };
   }
 

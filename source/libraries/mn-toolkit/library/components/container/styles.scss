@@ -193,7 +193,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
     }
 
     &.mn-layout-padding {
-      padding-right: $container-scroll-padding-right;
+      padding-right: calc($container-scroll-padding-right);
 
       > .mn-container-inside {
         padding-right: 0;
@@ -236,7 +236,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
     }
 
     &.mn-layout-padding {
-      padding-bottom: $container-scroll-x-padding-bottom;
+      padding-bottom: calc($container-scroll-x-padding-bottom);
 
       > .mn-container-inside {
         padding-bottom: 0;

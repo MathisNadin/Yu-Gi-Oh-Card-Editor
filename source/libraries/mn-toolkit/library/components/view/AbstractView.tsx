@@ -45,7 +45,7 @@ export abstract class AbstractView<P extends IAbstractViewProps, S extends IAbst
     this.viewName = viewName;
 
     if (state) {
-      this.state = { ...(state as S), loaded: false };
+      this.state = { ...(state as S), loaded: state.loaded || false };
     } else {
       this.state = { ...this.state, loaded: false };
     }

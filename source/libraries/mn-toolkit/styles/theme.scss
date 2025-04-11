@@ -258,21 +258,29 @@ $calloutDataIconInfoBgImg: var(--callout-data-icon-info-bg-img);
 $topMenuBelowActionBg: var(--top-menu-below-action-bg);
 
 @function color-hsl($color) {
+  @if $color == transparent {
+    @return transparent;
+  }
   @return unquote('hsl(' + $color + ')');
 }
 
 @function color-hsla($color, $alpha) {
-  // Si $color est une valeur CSS brute
-  @if type-of($color) == string {
+  // Handle transparent case
+  @if $color == transparent {
+    @return transparent;
+  }
+
+  // If $color is a raw CSS value
+  @else if type-of($color) == string {
     @return unquote('hsla(' + $color + ', ' + $alpha + ')');
   }
 
-  // Gestion des autres cas (par ex., une liste HSL brute)
+  // Handle other cases (for ex., raw HSL list)
   @else if type-of($color) == list and length($color) == 3 {
     @return unquote('hsla(' + nth($color, 1) + ', ' + nth($color, 2) + ', ' + nth($color, 3) + ', ' + $alpha + ')');
   }
 
-  // Gestion des valeurs non reconnues (par défaut)
+  // Handle non-identified values (by default)
   @else {
     @return unquote('hsla(' + $color + ', ' + $alpha + ')');
   }
@@ -295,6 +303,8 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
     @return var(--secondary-darken);
   } @else if $color == $tertiary {
     @return var(--tertiary-darken);
+  } @else if $color == transparent {
+    @return transparent;
   } @else {
     @return $color;
   }
@@ -317,6 +327,8 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
     @return unquote('hsl(' + var(--secondary-darken) + ')');
   } @else if $color == $tertiary {
     @return unquote('hsl(' + var(--tertiary-darken) + ')');
+  } @else if $color == transparent {
+    @return transparent;
   } @else {
     @return unquote('hsl(' + $color + ')');
   }
@@ -339,6 +351,8 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
     @return var(--secondary-lighten);
   } @else if $color == $tertiary {
     @return var(--tertiary-lighten);
+  } @else if $color == transparent {
+    @return transparent;
   } @else {
     @return $color;
   }
@@ -361,6 +375,8 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
     @return unquote('hsl(' + var(--secondary-lighten) + ')');
   } @else if $color == $tertiary {
     @return unquote('hsl(' + var(--tertiary-lighten) + ')');
+  } @else if $color == transparent {
+    @return transparent;
   } @else {
     @return unquote('hsl(' + $color + ')');
   }

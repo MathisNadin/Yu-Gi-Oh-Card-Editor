@@ -67,7 +67,7 @@ export class StickyPane extends Pane<IStickyPaneProps, IStickyPaneState> impleme
   }
 
   // Let the container take its new default size, and then reset the height and width
-  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec) {
+  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec) {
     this.contentHeight = 0;
     this.contentWidth = 0;
     this.forceUpdate(() => {
