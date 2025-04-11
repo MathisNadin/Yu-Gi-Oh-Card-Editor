@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.0.12
+
+- sanitize file name sans mettre d'underscore sur les replaces
+
 ## 2.0.11
 
+- bump to 2.0.11
 - ajout de sanitizeFilename
 
 ## 2.0.10

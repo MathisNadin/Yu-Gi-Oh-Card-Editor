@@ -3,7 +3,7 @@ import { RouterService, setupAppAndToolkit } from 'mn-toolkit';
 import { CoreService } from './kernel';
 import {
   SettingsService,
-  MediaWikiService,
+  YugipediaService,
   CardService,
   YuginewsService,
   HomeView,
@@ -39,7 +39,7 @@ setupAppAndToolkit(
   () => {
     app.service('$core', CoreService);
     app.service('$settings', SettingsService, { depends: ['$store'] });
-    app.service('$mediaWiki', MediaWikiService, { depends: ['$axios'] });
+    app.service('$yugipedia', YugipediaService, { depends: ['$axios'] });
     app.service('$card', CardService, { depends: ['$store'] });
     app.service('$cardBuilder', CardBuilderService);
     app.service('$yuginews', YuginewsService, { depends: ['$axios'] });

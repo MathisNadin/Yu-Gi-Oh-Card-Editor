@@ -89,7 +89,7 @@ export class YuginewsService {
     const response = await app.$axios.get<{ content?: { rendered?: string } }[]>(
       `https://yuginews.fr/wp-json/wp/v2/posts?slug=${slug}&timestamp=${new Date().getTime()}`
     );
-    return response[0]?.content?.rendered;
+    return response?.data[0]?.content?.rendered;
   }
 
   /**

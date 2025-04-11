@@ -4,6 +4,17 @@ import { classNames } from 'mn-tools';
 export type TTextAdjustState = 'unknown' | 'tooBig' | 'tooSmall';
 
 export class CardBuilderService {
+  public get specialCharsRegex() {
+    return /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
+  }
+
+  public getNameSpecialCharClass(part: string, tcgAt: boolean) {
+    return classNames('special-char-span', {
+      'tcg-at': tcgAt && part === '@',
+      plusminus: part === '±',
+    });
+  }
+
   private adjustLineHeight(fontSize: number): number {
     const newLineHeight = Math.round((1 + (30 - fontSize) / 90) * 10) / 10;
     if (newLineHeight < 1.05) return 1.05;
@@ -48,27 +59,37 @@ export class CardBuilderService {
     const { text, index, tcgAt, forceBulletAtStart } = options;
 
     const parts = text.split(/(●|•)/).map((part) => part.trim() || '\u00A0');
-    // If there are multiple strings, but the first is empty,
-    // then it means the second one is a bullet point because the text started with one
+    // If the first part is empty while there are multiple parts,
+    // it means the text started with a bullet point
     if (parts.length > 1 && parts[0] === '\u00A0') parts.shift();
 
     let nextHasBullet = false;
     const processedText: JSX.Element[] = [];
+
     parts.forEach((part, i) => {
       if (part === '●' || part === '•') {
         nextHasBullet = true;
       } else {
-        // Replace each occurrence of "@" with a span
-        const modifiedPart = part.split('@').map((subPart, subIndex, array) => (
-          <Fragment key={`fragment-${index}-${i}-${subIndex}`}>
-            {subPart}
-            {subIndex < array.length - 1 && (
+        // Split the part on '@' and '±' while keeping the symbols
+        const modifiedPart = part.split(/(@|±)/).map((token, subIndex) => {
+          if (token === '@') {
+            return (
               <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
                 @
               </span>
-            )}
-          </Fragment>
-        ));
+            );
+          }
+          if (token === '±') {
+            return (
+              <span key={`pm-${index}-${i}-${subIndex}`} className='plusminus-char'>
+                ±
+              </span>
+            );
+          }
+          // Regular text fragment
+          return <Fragment key={`fragment-${index}-${i}-${subIndex}`}>{token}</Fragment>;
+        });
+
         processedText.push(
           <span
             key={`processed-text-${index}-${i}`}
@@ -81,6 +102,7 @@ export class CardBuilderService {
             {modifiedPart}
           </span>
         );
+
         nextHasBullet = false;
       }
     });

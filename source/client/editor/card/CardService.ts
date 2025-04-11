@@ -2,7 +2,7 @@
 import { Crop } from 'react-image-crop';
 import { toPng } from 'mn-html-to-image';
 import { IStoreListener } from 'mn-toolkit';
-import { Observable, deepClone, uuid } from 'mn-tools';
+import { Observable, deepClone, sanitizeFileName, uuid } from 'mn-tools';
 import { CardImportDialog } from '../cardImportDialog';
 import { ICard, TCardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage, TSticker, TEdition, TLegendType } from '.';
 
@@ -795,7 +795,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     this.dispatch('cardImported', newCard);
   }
 
-  public correct(card: ICard) {
+  public correct(card: Partial<ICard>) {
     card.language = card.language || 'fr';
     card.name = card.name || '';
     card.nameStyle = card.nameStyle || 'default';
@@ -860,6 +860,8 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     card.legendType = card.legendType || 'gold';
     card.atkMax = typeof card.atkMax === 'number' ? '' : card.atkMax || '';
     card.maximum = card.maximum || false;
+
+    return card as ICard;
   }
 
   private async load(initial: boolean) {
@@ -975,10 +977,10 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
 
     try {
       const dataUrl = await toPng(element);
-      if (!dataUrl) return;
+      if (!dataUrl) throw new Error(`No data URL for card ${cardUuid}`);
       await window.electron.ipcRenderer.invoke(
         'writePngFile',
-        cardName.replace(/[\\/:"*?<>|]/g, '') || 'Sans nom',
+        sanitizeFileName(cardName || 'Sans nom'),
         dataUrl.replace(/^data:image\/\w+;base64,/, ''),
         this._renderPath
       );
@@ -986,13 +988,11 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
       console.error(error);
     }
 
-    if (this._renderCardsQueue.length) {
-      this._renderCardsQueue = this._renderCardsQueue.filter((c) => c.uuid !== cardUuid);
-      this.fireCardRenderer(cardUuid);
-      if (this._renderCardsQueue.length) {
-        this.setRenderCard();
-      }
-    }
+    if (!this._renderCardsQueue.length) return;
+
+    this._renderCardsQueue = this._renderCardsQueue.filter((c) => c.uuid !== cardUuid);
+    this.fireCardRenderer(cardUuid);
+    if (this._renderCardsQueue.length) this.setRenderCard();
   }
 
   public async resetCurrentCard() {
@@ -1203,7 +1203,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     };
   }
 
-  public getDefaultImportCard(): ICard {
+  public get defaultImportCard(): ICard {
     return {
       language: 'en',
       name: '',

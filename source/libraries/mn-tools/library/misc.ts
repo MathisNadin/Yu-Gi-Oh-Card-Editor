@@ -94,7 +94,7 @@ export function sanitizeFileName(input: string): string {
   let sanitized = input.normalize('NFKD');
 
   // Replace invalid characters: < > : " / \ | ? * and control characters (ASCII 0x00-0x1F)
-  sanitized = sanitized.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_');
+  sanitized = sanitized.replace(/[<>:"/\\|?*\x00-\x1F]/g, '');
 
   // Remove additional non-printable characters (like zero-width spaces)
   sanitized = sanitized.replace(/[\u200B-\u200D\uFEFF]/g, '');

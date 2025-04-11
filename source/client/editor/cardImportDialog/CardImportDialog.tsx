@@ -22,7 +22,7 @@ import {
   ITableHeadRow,
   TTableHeaderSortOrder,
 } from 'mn-toolkit';
-import { IReplaceMatrix } from '../mediaWiki';
+import { IReplaceMatrix } from '../yugipedia';
 import { IYuginewsCardData } from '../yuginews';
 import { ICard } from '../card';
 
@@ -144,12 +144,12 @@ export class CardImportDialog extends AbstractPopup<
       const cardsBatch = await Promise.all(
         batch.map((importLink) => {
           const splitImport = importLink.split('yugipedia.com/wiki/');
-          return app.$mediaWiki.getCardInfo({
+          return app.$yugipedia.importCard({
             titles: splitImport[splitImport.length - 1],
             useFr: this.state.useFr,
             generatePasscode: this.state.generatePasscode,
             replaceMatrixes: this.state.replaceMatrixes,
-            importArtworks: this.state.importArtworks,
+            importArtwork: this.state.importArtworks,
             artworkDirectoryPath: this.state.artworkSaveDirPath,
           });
         })
@@ -160,13 +160,11 @@ export class CardImportDialog extends AbstractPopup<
       }
     }
 
-    if (newCards.length) {
-      this.setState({ cardsToImport: newCards.length });
-      await app.$card.importCards(newCards);
-      await this.close();
-    } else {
-      this.setState({ importing: false, import: '' });
-    }
+    if (!newCards.length) return await this.setStateAsync({ importing: false, import: '' });
+
+    await this.setStateAsync({ cardsToImport: newCards.length });
+    await app.$card.importCards(newCards);
+    await this.close();
   }
 
   private async getYuginewsCards() {
@@ -175,16 +173,14 @@ export class CardImportDialog extends AbstractPopup<
 
     const cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
 
-    let cardsDataSortOption = this.state.cardsDataSortOption;
     if (cardsData.length) {
-      if (cardsDataSortOption === 'theme' && !cardsData[0].theme?.length) {
-        cardsDataSortOption = 'id';
-      } else if (cardsDataSortOption === 'set' && cardsData[0].theme?.length) {
-        cardsDataSortOption = 'theme';
+      if (this.state.cardsDataSortOption === 'theme' && !cardsData[0].theme?.length) {
+        await this.setStateAsync({ cardsDataSortOption: 'id' });
+      } else if (this.state.cardsDataSortOption === 'set' && cardsData[0].theme?.length) {
+        await this.setStateAsync({ cardsDataSortOption: 'theme' });
       }
     }
 
-    await this.setStateAsync({ cardsDataSortOption });
     await this.sortCardsData(cardsData);
     await this.setStateAsync({ yuginewsImporting: false });
   }

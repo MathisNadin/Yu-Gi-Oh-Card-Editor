@@ -131,15 +131,12 @@ export class RushCardName extends ToolkitComponent<IRushCardNameProps, IRushCard
       }
     }
 
-    const specialCharsRegex = /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
+    const specialCharsRegex = app.$cardBuilder.specialCharsRegex;
     const parts = cardName.split(specialCharsRegex);
 
-    let processedText = parts.map((part, i) =>
+    let processedText = parts.map((part, index) =>
       specialCharsRegex.test(part) ? (
-        <span
-          key={`special-char-span-${i}`}
-          className={classNames('special-char-span', { 'tcg-at': tcgAt && part === '@' })}
-        >
+        <span key={index} className={app.$cardBuilder.getNameSpecialCharClass(part, tcgAt)}>
           {part}
         </span>
       ) : (

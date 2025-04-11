@@ -134,12 +134,16 @@
       .special-char-span {
         font-family: fontDesc;
         font-size: 66px;
+        font-weight: bold;
+
         &.tcg-at {
+          font-weight: unset;
           font-family: fontDescTcgAt;
           font-size: 70px;
         }
-        &:not(.tcg-at) {
-          font-weight: bold;
+
+        &.plusminus {
+          font-family: fontName;
         }
       }
 
@@ -381,6 +385,10 @@
               font-family: fontDescTcgAt;
             }
           }
+
+          .plusminus-char {
+            font-family: fontName;
+          }
         }
 
         .with-bullet-point {
@@ -438,6 +446,10 @@
             .at-char {
               font-family: fontDescTcgAt;
             }
+          }
+
+          .plusminus-char {
+            font-family: fontName;
           }
         }
 

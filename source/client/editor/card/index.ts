@@ -56,6 +56,11 @@ export type TSticker =
   | 'aqua'
   | 'green';
 
+export interface IScales {
+  left: number;
+  right: number;
+}
+
 export type TLinkArrows = 'top' | 'bottom' | 'left' | 'right' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 export type TLegendType = 'gold' | 'goldFoil' | 'silver' | 'silverFoil';
@@ -95,10 +100,7 @@ export interface ICard {
   description: string;
   pendulum: boolean;
   pendEffect: string;
-  scales: {
-    left: number;
-    right: number;
-  };
+  scales: IScales;
   linkArrows: { [key in TLinkArrows]: boolean };
   edition: TEdition;
   cardSet: string;
