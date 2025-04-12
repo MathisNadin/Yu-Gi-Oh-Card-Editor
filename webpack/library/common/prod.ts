@@ -36,7 +36,7 @@ const commonProdConfig: Configuration = {
       {
         'style-src': ["'self'", 'https://fonts.googleapis.com'],
         'style-src-elem': ["'self'", 'https://fonts.googleapis.com'],
-        'font-src': ["'self'", 'https://fonts.gstatic.com'],
+        'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
       },
       {
         enabled: true,

@@ -1,7 +1,7 @@
 {
   "name": "mn-webpack-builder",
   "displayName": "MN Webpack Builder",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Builder Webpack en Typescript pour divers environnements",
   "repository": {
     "type": "git",

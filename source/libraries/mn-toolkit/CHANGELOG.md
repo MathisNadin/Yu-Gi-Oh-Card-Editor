@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 7.1.0
+
+- chargement de Roboto en local plutôt que via les urls google
+
 ## 7.0.10
 
+- bump to 7.0.10
 - display block sur les inputs + min-width imposée à 0 sur les inputs pour ignorer les valeurs user agent des navigateurs
 - adaptation des rows sur TextAreaInput au resize et au display none
 - dedoublonnage de la mixin text overflow + nowrap dans les popovers actions

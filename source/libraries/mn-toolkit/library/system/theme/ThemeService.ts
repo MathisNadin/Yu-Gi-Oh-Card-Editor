@@ -186,11 +186,6 @@ export class ThemeService {
    */
   public constructor() {
     this._defaultTheme = {
-      fontLinks: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap' },
-      ],
       themes: this.buildDefaultThemes(),
       screens: this.buildDefaultScreens(),
       commons: {
