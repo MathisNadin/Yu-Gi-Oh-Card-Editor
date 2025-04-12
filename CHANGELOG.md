@@ -1,7 +1,12 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.2.1
+
+- fix du chargement des fonts
+
 ## 2.2.0
 
+- bump to 2.2.0
 - ajout tests jest
 - contenu du README
 - logos des sites plus sympas
