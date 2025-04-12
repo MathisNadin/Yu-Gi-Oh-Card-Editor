@@ -1,7 +1,40 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.2.0
+
+- ajout tests jest
+- contenu du README
+- logos des sites plus sympas
+- ajustements de style
+- gestion du char #
+- utilisation de sanitizeFileName + mediaWiki -> yugipedia + parsers pour le wikitext + gestion du char plusminus
+- up libs
+- fix import des K9 + import des artworks yugipedia plus robuste
+- up libs
+- forcer le zoom à 100% pour eviter les pb de rendu de l'image
+- up libs
+- up libs
+- chgt logique pour recup l'artwork name
+- ajout de l'app icon en mode dev
+- up electron-main et tk + adaptations aux nouvelles pratiques du router
+- up libs
+- léger reworking des fichiers de config
+- réorga des imports, fix des scripts pour webpack, et utilisation des variables d'env pour les ports devServer
+- sync des scripts et deps
+- début de la reorganisation du builder webpack
+- mise à jour des deps eslint et electron
+- fix condition manquante dans RushCardDesc + possibiel de suppr un rush choice eff que si on en a plus de 2
+- up libs
+- fix date modifiée dans la library + fix letter spacing dans les cartes + goto renvoie désormais des promises
+- ajustements visuels pour concorder avec le nouveau tk
+- up toolkit et tools + update webpack
+- implémentation de config
+- update dependencies
+- up toolkit
+
 ## 2.1.6
 
+- bump to 2.1.6
 - nettoyage import card interfaces + unification des logiques de taille des descriptions et effets
 - utilisation de Promise.all pour gagner du temps sur l'import yugipedia + fonctions à paramètres pour améliorer la clareté
 - up libs
