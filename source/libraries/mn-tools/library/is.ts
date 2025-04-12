@@ -150,7 +150,7 @@ export function isInteger(subject: unknown): subject is number {
  * @param subject - The subject to test.
  */
 export function isObject(subject: unknown): subject is object {
-  return !isUndefined(subject) && !isArray(subject) && typeof subject === 'object';
+  return subject !== null && !isUndefined(subject) && !isArray(subject) && typeof subject === 'object';
 }
 
 /**

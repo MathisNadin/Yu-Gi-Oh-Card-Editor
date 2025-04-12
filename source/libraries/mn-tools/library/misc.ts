@@ -90,8 +90,8 @@ export function preloadVideo(url: string) {
 }
 
 export function sanitizeFileName(input: string): string {
-  // Normalize the string using NFKD form to separate accented characters from their diacritics
-  let sanitized = input.normalize('NFKD');
+  // Normalize the string using NFKD form to separate accented characters from their diacritics, and trim spaces
+  let sanitized = input.normalize('NFKD').trim();
 
   // Replace invalid characters: < > : " / \ | ? * and control characters (ASCII 0x00-0x1F)
   sanitized = sanitized.replace(/[<>:"/\\|?*\x00-\x1F]/g, '');
@@ -99,8 +99,8 @@ export function sanitizeFileName(input: string): string {
   // Remove additional non-printable characters (like zero-width spaces)
   sanitized = sanitized.replace(/[\u200B-\u200D\uFEFF]/g, '');
 
-  // Remove dots at the beginning and the end, and trim spaces
-  sanitized = sanitized.replace(/^\.+/, '').replace(/\.+$/, '').trim();
+  // Remove dots at the beginning and the end
+  sanitized = sanitized.replace(/^\.+/, '').replace(/\.+$/, '');
 
   // Prevent Windows reserved file names (case-insensitive)
   const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
@@ -344,16 +344,12 @@ export function md5(string: string) {
   }
 
   function wordToHex(lValue: number) {
-    let wordToHexValue = '';
-    let wordToHexValueTemp = '';
-    let lByte;
-    let lCount;
-    for (lCount = 0; lCount <= 3; lCount++) {
-      lByte = (lValue >>> (lCount * 8)) & 255;
-      wordToHexValueTemp = `0${lByte.toString(16)}`;
-      wordToHexValue = wordToHexValue + wordToHexValueTemp.substring(wordToHexValueTemp.length - 2, 2);
+    let hex = '';
+    for (let i = 0; i < 4; i++) {
+      const byte = (lValue >>> (i * 8)) & 0xff;
+      hex += ('00' + byte.toString(16)).slice(-2);
     }
-    return wordToHexValue;
+    return hex;
   }
 
   function utf8Encode(string: string) {
@@ -856,9 +852,10 @@ export interface IParsedURI {
  * @param String uri l'uri à parser
  * @return Array un tableau contenant les éléments parsés
  */
-type IParsedURIKeys = keyof IParsedURI;
 export function parseUri(uri: string): IParsedURI {
-  let keys: IParsedURIKeys[] = [
+  if (!uri) throw new Error('URI is empty, nothing to parse');
+
+  let keys: (keyof IParsedURI)[] = [
     'source',
     'protocol',
     'authority',
@@ -877,7 +874,9 @@ export function parseUri(uri: string): IParsedURI {
   let strictParser =
     /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/;
   let matches = strictParser.exec(uri);
-  if (!matches) throw new Error('Unable to parse this url');
+  if (!matches) {
+    throw new Error('Unable to parse this URL: format is invalid or unsupported');
+  }
   let result: IParsedURI = {} as IParsedURI;
 
   for (let iKey = 14; iKey >= 0; iKey--) {
@@ -999,8 +998,8 @@ export function dataFromDataUrl(dataUrl: string) {
 }
 
 export function mimeTypeFromDataUrl(dataUrl: string) {
-  const ipos = dataUrl.indexOf(',');
-  return dataUrl.substring(5, ipos - 12);
+  const match = /^data:([^;]+);/.exec(dataUrl);
+  return match ? match[1] : 'unknown';
 }
 
 const MIME_TO_EXT: { [mime: string]: string[] } = {

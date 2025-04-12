@@ -1,7 +1,7 @@
 {
   "name": "mn-webpack-builder",
   "displayName": "MN Webpack Builder",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Builder Webpack en Typescript pour divers environnements",
   "repository": {
     "type": "git",
@@ -45,6 +45,7 @@
     "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\" \"./scripts/**/*.{js,jsx,ts,tsx,json}\" \"./webpack/**/*.{js,jsx,ts,tsx,json}\"",
     "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./scripts/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./webpack/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "validate": "npm run format && npm run lint && npm run typecheck",
+    "test": "jest",
     "list-dependencies": "node scripts/list-dependencies.mjs",
     "sync-dependencies": "node scripts/sync-dependencies.mjs",
     "update-changelog": "node scripts/update-changelog.mjs",
@@ -53,6 +54,7 @@
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@types/copy-webpack-plugin": "^8.0.1",
+    "@types/jest": "^29.5.14",
     "@types/node": "^18.15.7",
     "@types/node-sass": "^4.11.3",
     "@types/semver": "^7.5.8",
@@ -75,6 +77,7 @@
     "glob": "^11.0.0",
     "html-webpack-plugin": "^5.6.0",
     "husky": "^4.3.8",
+    "jest": "^29.7.0",
     "mini-css-extract-plugin": "^2.8.0",
     "node-sass": "^9.0.0",
     "nodemon": "^3.0.2",
@@ -87,6 +90,7 @@
     "semver": "^7.6.3",
     "style-loader": "^3.3.4",
     "terser-webpack-plugin": "^5.3.10",
+    "ts-jest": "^29.3.1",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths-webpack-plugin": "^4.1.0",

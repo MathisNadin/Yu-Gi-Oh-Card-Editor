@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.1.0
+
+- ajout de tests jest et corrections dans is et misc
+
 ## 2.0.12
 
+- bump to 2.0.12
 - sanitize file name sans mettre d'underscore sur les replaces
 
 ## 2.0.11
