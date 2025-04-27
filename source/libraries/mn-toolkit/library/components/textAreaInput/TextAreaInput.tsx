@@ -70,7 +70,7 @@ export class TextAreaInput
     app.$device.removeListener(this);
   }
 
-  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec) {
+  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec, _screenSizeChanged: boolean) {
     if (isUndefined(this.state.rows)) return;
     app.$errorManager.handlePromise(this.onTextAreaChange());
   }

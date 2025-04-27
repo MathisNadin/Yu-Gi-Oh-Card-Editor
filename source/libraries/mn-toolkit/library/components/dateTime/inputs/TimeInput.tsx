@@ -6,7 +6,7 @@ import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot }
 export interface ITimeInputProps extends IContainableProps {
   defaultValue?: Date;
   canReset?: boolean;
-  onChange?: (value: Date) => void | Promise<void>;
+  onChange?: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface ITimeInputState extends IContainableState {
@@ -103,7 +103,7 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
       await this.setStateAsync({ time: undefined, activeSection: 'hour', hour: '', minute: '' });
-      if (this.props.onChange) await this.props.onChange(undefined!);
+      if (this.props.onChange) await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       this.handleDigitInput(key);

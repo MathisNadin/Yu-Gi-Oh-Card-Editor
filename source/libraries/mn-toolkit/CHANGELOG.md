@@ -1,7 +1,17 @@
 ## mn-toolkit change log
 
+## 7.2.0
+
+- nouveau grid + xxxlarge
+
+## 7.1.1
+
+- bump to 7.1.1
+- meilleur typing sur le onChange des date time
+
 ## 7.1.0
 
+- bump to 7.1.0
 - chargement de Roboto en local plutôt que via les urls google
 
 ## 7.0.10

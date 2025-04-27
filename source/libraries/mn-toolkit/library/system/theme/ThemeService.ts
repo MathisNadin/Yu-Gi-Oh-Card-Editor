@@ -377,7 +377,7 @@ export class ThemeService {
    * By default, the theme will treat each screen size as these device equivalents :
    * - Small: Mobile
    * - Medium & Large: Tablet
-   * - XLarge & XXLarge: Desktop
+   * - XLarge & XXLarge & XXXLarge: Desktop
    */
   private buildDefaultScreens(): Partial<TAppThemeScreens> {
     // Default values for every size, unless specifically changed on specific sizes
@@ -399,7 +399,7 @@ export class ThemeService {
     };
 
     // Sizes for Desktop (used as default values for everything else, when not overriden)
-    const xxlargeFonts: Partial<IAppThemeScreensSizesFonts> = {
+    const xxxlargeFonts: Partial<IAppThemeScreensSizesFonts> = {
       h1: {
         ...fontCommons,
         size: { value: 56, unit: 'px' },
@@ -469,7 +469,7 @@ export class ThemeService {
     };
 
     // Sizes for Tablet
-    const largeFonts = deepExtend(deepClone(xxlargeFonts), {
+    const largeFonts = deepExtend(deepClone(xxxlargeFonts), {
       h1: {
         size: { value: 52, unit: 'px' },
       },
@@ -485,7 +485,7 @@ export class ThemeService {
     });
 
     // Sizes for Mobile
-    const smallFonts = deepExtend(deepClone(xxlargeFonts), {
+    const smallFonts = deepExtend(deepClone(xxxlargeFonts), {
       h1: {
         size: { value: 40, unit: 'px' },
       },
@@ -527,11 +527,15 @@ export class ThemeService {
         others,
       },
       xlarge: {
-        fonts: xxlargeFonts,
+        fonts: xxxlargeFonts,
         others,
       },
       xxlarge: {
-        fonts: xxlargeFonts,
+        fonts: xxxlargeFonts,
+        others,
+      },
+      xxxlarge: {
+        fonts: xxxlargeFonts,
         others,
       },
     };

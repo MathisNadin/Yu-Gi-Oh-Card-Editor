@@ -41,14 +41,15 @@ export interface IScreenSpec {
   isLargeScreen: boolean;
   isXLargeScreen: boolean;
   isXXLargeScreen: boolean;
+  isXXXLargeScreen: boolean;
   isPortrait: boolean;
   isLandscape: boolean;
 }
 
-export type TScreenSize = 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge';
+export type TScreenSize = 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge' | 'xxxlarge';
 
 export interface IDeviceListener {
-  deviceScreenSpecificationChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec): void;
+  deviceScreenSpecificationChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec, screenSizeChanged: boolean): void;
   deviceForeground(): void;
   deviceBackground(): void;
   deviceOnline(): void;
@@ -79,10 +80,11 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     large: 'mn-screen-large',
     xlarge: 'mn-screen-xlarge',
     xxlarge: 'mn-screen-xxlarge',
+    xxxlarge: 'mn-screen-xxxlarge',
   };
 
   public fireScreenSpecChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec) {
-    this.dispatch('deviceScreenSpecificationChanged', newSpec, oldSpec);
+    this.dispatch('deviceScreenSpecificationChanged', newSpec, oldSpec, newSpec.screenSize !== oldSpec.screenSize);
   }
   public fireForeground() {
     this.dispatch('deviceForeground');
@@ -212,15 +214,22 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     }
   }
 
+  /** Breakpoints used to separate standard device sizes:
+   * - smallBreakpoint (480px): mobile devices
+   * - mediumBreakpoint (768px): tablets in portrait mode
+   * - largeBreakpoint (1024px): tablets in landscape mode and small laptops
+   * - xlargeBreakpoint (1280px): typical laptops and mid-sized desktops
+   * - xxlargeBreakpoint (1536px): large desktops and high-resolution screens
+   */
   private onScreenSpecChanged(data: boolean | IScreenSpec = false) {
     log.debug('onScreenSpecChanged');
     const oldSpec = { ...this._screenSpec };
 
-    const smallBreakpoint = 576;
+    const smallBreakpoint = 480;
     const mediumBreakpoint = 768;
-    const largeBreakpoint = 992;
-    const xlargeBreakpoint = 1200;
-    // const xxlargeBreakpoint = 1600;
+    const largeBreakpoint = 1024;
+    const xlargeBreakpoint = 1280;
+    const xxlargeBreakpoint = 1536;
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -228,11 +237,12 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     this._screenSpec = extend(this._screenSpec, {
       width,
       height,
-      isSmallScreen: width <= smallBreakpoint,
-      isMediumScreen: width > smallBreakpoint && width < mediumBreakpoint,
-      isLargeScreen: width > mediumBreakpoint && width < largeBreakpoint,
-      isXLargeScreen: width > largeBreakpoint && width < xlargeBreakpoint,
-      isXXLargeScreen: width >= xlargeBreakpoint,
+      isSmallScreen: width < smallBreakpoint,
+      isMediumScreen: width >= smallBreakpoint && width < mediumBreakpoint,
+      isLargeScreen: width >= mediumBreakpoint && width < largeBreakpoint,
+      isXLargeScreen: width >= largeBreakpoint && width < xlargeBreakpoint,
+      isXXLargeScreen: width >= xlargeBreakpoint && width < xxlargeBreakpoint,
+      isXXXLargeScreen: width >= xxlargeBreakpoint,
       isPortrait,
       isLandscape: !isPortrait,
     });
@@ -247,6 +257,8 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       this._screenSpec.screenSize = 'xlarge';
     } else if (this._screenSpec.isXXLargeScreen) {
       this._screenSpec.screenSize = 'xxlarge';
+    } else if (this._screenSpec.isXXXLargeScreen) {
+      this._screenSpec.screenSize = 'xxxlarge';
     }
 
     for (const size in this._screenClasses) {
@@ -254,10 +266,11 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     }
 
     document.body.classList.add(this._screenClasses.small);
-    if (width > smallBreakpoint) document.body.classList.add(this._screenClasses.medium);
-    if (width > mediumBreakpoint) document.body.classList.add(this._screenClasses.large);
-    if (width > largeBreakpoint) document.body.classList.add(this._screenClasses.xlarge);
-    if (width > xlargeBreakpoint) document.body.classList.add(this._screenClasses.xxlarge);
+    if (width >= smallBreakpoint) document.body.classList.add(this._screenClasses.medium);
+    if (width >= mediumBreakpoint) document.body.classList.add(this._screenClasses.large);
+    if (width >= largeBreakpoint) document.body.classList.add(this._screenClasses.xlarge);
+    if (width >= xlargeBreakpoint) document.body.classList.add(this._screenClasses.xxlarge);
+    if (width >= xxlargeBreakpoint) document.body.classList.add(this._screenClasses.xxxlarge);
 
     if (!isBoolean(data)) {
       extend(this._screenSpec, data);
@@ -313,6 +326,9 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
   public get isXXLargeScreen() {
     return !!this._screenSpec.isXXLargeScreen;
+  }
+  public get isXXXLargeScreen() {
+    return !!this._screenSpec.isXXXLargeScreen;
   }
 
   private async setupStatusBar() {

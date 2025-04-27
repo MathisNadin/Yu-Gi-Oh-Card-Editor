@@ -1,6 +1,7 @@
 import { IContainerProps, IContainerState, Container } from './Container';
 
 export interface IVerticalStackProps extends IContainerProps {}
+
 interface IVerticalStackState extends IContainerState {}
 
 export class VerticalStack extends Container<IVerticalStackProps, IVerticalStackState> {

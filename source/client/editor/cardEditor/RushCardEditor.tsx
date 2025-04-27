@@ -527,7 +527,11 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 }
               }
               return (
-                <HorizontalStack key={`card-frame-${i}`} className={className} s='12' m='6' l='3' xl='2' xxl='1'>
+                <HorizontalStack
+                  key={`card-frame-${i}`}
+                  className={className}
+                  colSpans={{ small: 12, medium: 6, large: 3, xlarge: 2, xxxlarge: 1 }}
+                >
                   <Image
                     src={paths.frames[frame]}
                     alt={`frame-${frame}`}
@@ -552,11 +556,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 <HorizontalStack
                   key={`card-attribute-${i}`}
                   className={`card-attribute${this.state.card.attribute === attribute ? ' selected' : ''}`}
-                  s='12'
-                  m='6'
-                  l='3'
-                  xl='2'
-                  xxl='1'
+                  colSpans={{ small: 12, medium: 6, large: 3, xlarge: 2, xxxlarge: 1 }}
                 >
                   <Image
                     src={paths.attributeIcons[attribute]}
@@ -579,11 +579,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 <HorizontalStack
                   key={`card-st-icon-${i}`}
                   className={classNames('card-st-icon', { selected: this.state.card.stType === stType })}
-                  s='12'
-                  m='6'
-                  l='3'
-                  xl='2'
-                  xxl='1'
+                  colSpans={{ small: 12, medium: 6, large: 3, xlarge: 2, xxxlarge: 1 }}
                 >
                   <Image
                     src={paths.spellTraps[stType]}
@@ -836,8 +832,8 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         <Typography fill className='sub-title' variant='help' content='Détails' />
 
         {!this.state.card.dontCoverRushArt && (
-          <HorizontalStack gutter>
-            <HorizontalStack fill verticalItemAlignment='middle'>
+          <Grid>
+            <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />
               <NumberInput
                 fill
@@ -849,7 +845,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               />
             </HorizontalStack>
 
-            <HorizontalStack fill verticalItemAlignment='middle'>
+            <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
               <TextInput
                 fill
@@ -859,7 +855,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
               />
             </HorizontalStack>
 
-            <HorizontalStack fill verticalItemAlignment='middle'>
+            <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
               <TextInput
                 fill
@@ -868,7 +864,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 onChange={(def) => this.onDefChange(def)}
               />
             </HorizontalStack>
-          </HorizontalStack>
+          </Grid>
         )}
 
         {!this.state.card.dontCoverRushArt && (
@@ -942,7 +938,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         <Typography fill className='sub-title' variant='help' content='Autres' />
 
         <Grid>
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-id' color='1' />
             <TextInput
               fill
@@ -952,7 +948,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             />
           </HorizontalStack>
 
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-print' color='1' />
             <Select<TEdition>
               fill
@@ -973,7 +969,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         </Grid>
 
         <Grid>
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
@@ -995,7 +991,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             />
           </HorizontalStack>
 
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
               <Checkbox

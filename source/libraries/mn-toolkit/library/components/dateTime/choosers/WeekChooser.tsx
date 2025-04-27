@@ -239,9 +239,10 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
       years.push(
         <HorizontalStack
           key={year}
-          s='4'
-          m='4'
-          l='3'
+          colSpans={{
+            small: 4,
+            large: 3,
+          }}
           fill
           className={classNames('year', { selected: year === selectedYear })}
           itemAlignment='center'

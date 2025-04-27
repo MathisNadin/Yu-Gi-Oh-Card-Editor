@@ -7,7 +7,7 @@ export interface IDateInputProps extends IContainableProps {
   defaultValue?: Date;
   yearRange?: [number, number];
   canReset?: boolean;
-  onChange?: (value: Date) => void | Promise<void>;
+  onChange?: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface IDateInputState extends IContainableState {
@@ -110,7 +110,7 @@ export class DateInput extends Containable<IDateInputProps, IDateInputState> {
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
       await this.setStateAsync({ date: undefined, activeSection: 'day', day: '', month: '', year: '' });
-      if (this.props.onChange) this.props.onChange(undefined!);
+      if (this.props.onChange) this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       this.handleDigitInput(key);

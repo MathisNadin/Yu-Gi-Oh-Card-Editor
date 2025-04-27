@@ -76,7 +76,7 @@ export abstract class AbstractPopup<
     app.$device.removeListener(this);
   }
 
-  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec) {
+  public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec, _screenSizeChanged: boolean) {
     app.$errorManager.handlePromise(this.checkSize());
   }
 

@@ -533,7 +533,11 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                 }
               }
               return (
-                <HorizontalStack key={`card-frame-${i}`} className={className} s='12' m='6' l='3' xl='2' xxl='1'>
+                <HorizontalStack
+                  key={`card-frame-${i}`}
+                  className={className}
+                  colSpans={{ small: 12, medium: 6, large: 3, xlarge: 2, xxxlarge: 1 }}
+                >
                   <Image
                     src={paths.frames[frame]}
                     alt={`frame-${frame}`}
@@ -563,11 +567,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                 <HorizontalStack
                   key={`card-attribute-${i}`}
                   className={`card-attribute${this.state.card.attribute === attribute ? ' selected' : ''}`}
-                  s='12'
-                  m='6'
-                  l='3'
-                  xl='2'
-                  xxl='1'
+                  colSpans={{ small: 12, medium: 6, large: 3, xlarge: 2, xxxlarge: 1 }}
                 >
                   <Image
                     src={paths.attributeIcons[attribute]}
@@ -590,11 +590,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                 <HorizontalStack
                   key={`card-st-icon-${i}`}
                   className={classNames('card-st-icon', { selected: this.state.card.stType === stType })}
-                  s='12'
-                  m='6'
-                  l='3'
-                  xl='2'
-                  xxl='1'
+                  colSpans={{ small: 12, medium: 6, large: 3, xlarge: 2, xxxlarge: 1 }}
                 >
                   <Image
                     src={paths.stIcons[stType]}
@@ -733,7 +729,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <Typography fill className='sub-title' variant='help' content='Détails' />
 
         <Grid>
-          <HorizontalStack xl='12' xxl={includesLink ? '6' : '4'} fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxlarge: includesLink ? 6 : 4 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />
             <NumberInput
               fill
@@ -745,7 +741,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <HorizontalStack xl='12' xxl={includesLink ? '6' : '4'} fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxlarge: includesLink ? 6 : 4 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
             <TextInput
               fill
@@ -756,7 +752,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </HorizontalStack>
 
           {!includesLink && (
-            <HorizontalStack xl='12' xxl='4' verticalItemAlignment='middle'>
+            <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
               <TextInput
                 fill
@@ -879,7 +875,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <Typography fill className='sub-title' variant='help' content='Autres' />
 
         <Grid>
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-print' color='1' />
             <Select<TEdition>
               fill
@@ -896,7 +892,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               onChange={(edition) => this.onEditionChange(edition)}
             />
           </HorizontalStack>
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-id' color='1' />
             <TextInput
               fill
@@ -923,7 +919,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         </HorizontalStack>
 
         <Grid>
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-sticker' color='1' />
             <Select<TSticker>
               fill
@@ -944,7 +940,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <HorizontalStack xl='12' xxl='6' fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
             <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
               <Checkbox

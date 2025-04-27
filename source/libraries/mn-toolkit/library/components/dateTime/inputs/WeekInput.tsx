@@ -9,7 +9,7 @@ export interface IWeekInputProps extends IContainerProps {
   defaultValue?: Date;
   yearRange?: [number, number];
   canReset?: boolean;
-  onChange?: (value: Date) => void | Promise<void>;
+  onChange?: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface IWeekInputState extends IContainerState {
@@ -118,7 +118,7 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
       await this.setStateAsync({ week: '', year: '', activeSection: 'week' });
-      if (this.props.onChange) await this.props.onChange(undefined!);
+      if (this.props.onChange) await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       await this.handleDigitInput(key);

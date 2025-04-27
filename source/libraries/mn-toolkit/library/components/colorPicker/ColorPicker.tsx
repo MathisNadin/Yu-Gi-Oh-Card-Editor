@@ -58,9 +58,11 @@ export class ColorPicker extends Container<IColorPickerProps, IColorPickerState>
   private renderColorSwatch(color: string) {
     return (
       <HorizontalStack
-        s='6'
-        m='4'
-        l='3'
+        colSpans={{
+          small: 6,
+          medium: 4,
+          large: 3,
+        }}
         key={color}
         className={classNames('mn-color-swatch', { selected: this.state.selectedColor === color })}
         style={{ backgroundColor: color }}

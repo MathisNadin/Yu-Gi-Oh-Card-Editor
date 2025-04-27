@@ -9,14 +9,13 @@ import {
   TDidUpdateSnapshot,
 } from './ToolkitComponent';
 
-export type TColSpan = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
-
-export interface IColSpanParams {
-  s?: TColSpan;
-  m?: TColSpan;
-  l?: TColSpan;
-  xl?: TColSpan;
-  xxl?: TColSpan;
+export interface IGridSpanParams {
+  small?: number;
+  medium?: number;
+  large?: number;
+  xlarge?: number;
+  xxlarge?: number;
+  xxxlarge?: number;
 }
 
 export type TFloatPosition =
@@ -51,9 +50,7 @@ export interface IContainableTip {
   icon: TIconId;
 }
 
-export interface IContainableProps<BASE_ELEMENT extends HTMLElement = HTMLDivElement>
-  extends IColSpanParams,
-    IToolkitComponentProps {
+export interface IContainableProps<BASE_ELEMENT extends HTMLElement = HTMLDivElement> extends IToolkitComponentProps {
   className?: string;
   name?: string;
   id?: string;
@@ -72,8 +69,9 @@ export interface IContainableProps<BASE_ELEMENT extends HTMLElement = HTMLDivEle
   width?: number | string;
   maxWidth?: number | string;
   minWidth?: number | string;
-  scrollerPositionY?: number;
   draggable?: boolean;
+  colSpans?: IGridSpanParams;
+  rowSpans?: IGridSpanParams;
   onDrop?: (event: React.DragEvent<BASE_ELEMENT>) => void | Promise<void>;
   onDragStart?: (event: React.DragEvent<BASE_ELEMENT>) => void | Promise<void>;
   onDragEnd?: (event: React.DragEvent<BASE_ELEMENT>) => void | Promise<void>;

@@ -7,7 +7,7 @@ export interface IDateTimeInputProps extends IContainableProps {
   defaultValue?: Date;
   yearRange?: [number, number];
   canReset?: boolean;
-  onChange?: (value: Date) => void | Promise<void>;
+  onChange?: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface IDateTimeInputState extends IContainableState {
@@ -137,7 +137,7 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
         hour: '',
         minute: '',
       });
-      if (this.props.onChange) await this.props.onChange(undefined!);
+      if (this.props.onChange) await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       this.handleDigitInput(key);

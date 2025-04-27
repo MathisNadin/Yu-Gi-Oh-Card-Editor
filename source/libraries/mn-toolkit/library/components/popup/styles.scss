@@ -25,6 +25,10 @@
   @include themeScreenPopup('xxlarge');
 }
 
+.mn-screen-xxxlarge {
+  @include themeScreenPopup('xxxlarge');
+}
+
 $popup-active-animation-name: var(--popup-active-animation-name);
 $popup-active-animation-duration: var(--popup-active-animation-duration);
 $popup-hidding-animation-name: var(--popup-hidding-animation-name);

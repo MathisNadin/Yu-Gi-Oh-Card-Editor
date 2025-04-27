@@ -78,8 +78,11 @@ export class DateTimePickerService {
 
     let width: number;
     switch (true) {
-      case app.$device.isXXLargeScreen:
+      case app.$device.isXXXLargeScreen:
         width = app.$device.screenWidth / 3;
+        break;
+      case app.$device.isXXLargeScreen:
+        width = app.$device.screenWidth / 2.5;
         break;
       case app.$device.isXLargeScreen:
         width = app.$device.screenWidth / 2;

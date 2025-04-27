@@ -175,9 +175,10 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
       hours.push(
         <VerticalStack
           key={hour}
-          s='4'
-          m='4'
-          l='3'
+          colSpans={{
+            small: 4,
+            large: 3,
+          }}
           fill
           className={classNames('hour', { selected: hour === selectedHour })}
           itemAlignment='center'
@@ -198,9 +199,10 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
       minutes.push(
         <VerticalStack
           key={minute}
-          s='4'
-          m='4'
-          l='3'
+          colSpans={{
+            small: 4,
+            large: 3,
+          }}
           fill
           className={classNames('minute', { selected: minute === selectedMinute })}
           itemAlignment='center'

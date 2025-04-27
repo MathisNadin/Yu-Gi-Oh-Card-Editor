@@ -91,6 +91,10 @@
     .mn-screen-xxlarge & {
       @content;
     }
+  } @else if $media == xxxlarge {
+    .mn-screen-xxxlarge & {
+      @content;
+    }
   } @else {
     @error "Unknown media '"+$media+"'";
   }

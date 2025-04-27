@@ -32,6 +32,10 @@
   @include themeDrawerSize('xxlarge');
 }
 
+.mn-screen-xxxlarge {
+  @include themeDrawerSize('xxxlarge');
+}
+
 $right-left-drawer-min-width: var(--right-left-drawer-min-width);
 $right-left-drawer-max-width: var(--right-left-drawer-max-width);
 $top-bottom-drawer-min-height: var(--top-bottom-drawer-min-height);
