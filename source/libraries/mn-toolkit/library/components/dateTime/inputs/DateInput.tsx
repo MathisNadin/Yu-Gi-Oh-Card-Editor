@@ -200,7 +200,7 @@ export class DateInput extends Containable<IDateInputProps, IDateInputState> {
     if (newIndex < 0) newIndex = 0;
     if (newIndex > sections.length - 1) newIndex = sections.length - 1;
 
-    await this.setStateAsync({ activeSection: sections[newIndex], day, month, year });
+    await this.setStateAsync({ activeSection: sections[newIndex]!, day, month, year });
     this.setSelectionRange();
     await this.onChange();
   }

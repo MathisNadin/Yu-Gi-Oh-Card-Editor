@@ -260,7 +260,7 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
     if (newIndex < 0) newIndex = 0;
     if (newIndex > sections.length - 1) newIndex = sections.length - 1;
 
-    await this.setStateAsync({ activeSection: sections[newIndex], day, month, year, hour, minute });
+    await this.setStateAsync({ activeSection: sections[newIndex]!, day, month, year, hour, minute });
     this.setSelectionRange();
     await this.onChange();
   }

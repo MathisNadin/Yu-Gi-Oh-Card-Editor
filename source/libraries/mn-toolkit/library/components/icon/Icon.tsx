@@ -56,7 +56,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     else {
       const iconClasses = this.renderIconClasses();
       for (const key in iconClasses) {
-        classes[key] = iconClasses[key];
+        classes[key] = iconClasses[key]!;
       }
     }
     return classes;

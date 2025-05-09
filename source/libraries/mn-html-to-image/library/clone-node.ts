@@ -184,7 +184,7 @@ async function ensureSVGSymbols<T extends HTMLElement>(
 
   const processedDefs: { [key: string]: HTMLElement } = {};
   for (let i = 0; i < uses.length; i++) {
-    const use = uses[i];
+    const use = uses[i]!;
     const id = use.getAttribute('xlink:href');
     if (id) {
       const exist = clone.querySelector(id);
@@ -211,7 +211,7 @@ async function ensureSVGSymbols<T extends HTMLElement>(
     svg.appendChild(defs);
 
     for (let i = 0; i < nodes.length; i++) {
-      defs.appendChild(nodes[i]);
+      defs.appendChild(nodes[i]!);
     }
 
     clone.appendChild(svg);

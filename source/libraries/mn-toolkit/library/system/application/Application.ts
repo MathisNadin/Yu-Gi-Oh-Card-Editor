@@ -101,7 +101,7 @@ export class Application extends Observable<IApplicationListener> {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     each(this._services, (options: IServiceOptions<any>, name: string) => {
-      if (this._services[name].depends!.length === 0 && !this._services[name].clazz.prototype.setup) {
+      if (this._services[name]!.depends!.length === 0 && !this._services[name]!.clazz.prototype.setup) {
         return;
       }
       graph[name] = options.depends!;
@@ -130,15 +130,15 @@ export class Application extends Observable<IApplicationListener> {
     this._services[name] = options;
     Object.defineProperty(this, name, {
       get: () => {
-        if (!this._services[name].instance) {
+        if (!this._services[name]!.instance) {
           try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this._services[name].instance = new (clazz as any)();
+            this._services[name]!.instance = new (clazz as any)();
           } catch (e) {
             console.error(e);
           }
         }
-        return this._services[name].instance;
+        return this._services[name]!.instance;
       },
     });
   }

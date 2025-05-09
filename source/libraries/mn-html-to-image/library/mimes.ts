@@ -16,7 +16,7 @@ const mimes: { [key: string]: string } = {
 
 function getExtension(url: string): string {
   const match = /\.([^./]*?)$/g.exec(url);
-  return match ? match[1] : '';
+  return match ? match[1]! : '';
 }
 
 export function getMimeType(url: string): string {

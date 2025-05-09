@@ -1,7 +1,27 @@
 ## mn-toolkit change log
 
+## 7.2.4
+
+- ajout de noUncheckedIndexedAccess dans la config ts
+
+## 7.2.3
+
+- bump to 7.2.3
+- amélioration http et ApiJob
+
+## 7.2.2
+
+- bump to 7.2.2
+- form et typo rendus extensibles
+
+## 7.2.1
+
+- bump to 7.2.1
+- éviter de trop utiliser popover remove all
+
 ## 7.2.0
 
+- bump to 7.2.0
 - nouveau grid + xxxlarge
 
 ## 7.1.1

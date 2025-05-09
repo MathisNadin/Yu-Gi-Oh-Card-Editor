@@ -29,14 +29,14 @@ files.forEach((file) => {
 
   while ((match = requireRegex.exec(content)) !== null) {
     const dep = match[1];
-    if (!dep.startsWith('.')) {
+    if (dep && !dep.startsWith('.')) {
       dependencies.add(dep);
     }
   }
 
   while ((match = importRegex.exec(content)) !== null) {
     const dep = match[1];
-    if (!dep.startsWith('.')) {
+    if (dep && !dep.startsWith('.')) {
       dependencies.add(dep);
     }
   }

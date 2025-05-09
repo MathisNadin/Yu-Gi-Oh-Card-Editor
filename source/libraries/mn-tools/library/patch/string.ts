@@ -700,7 +700,7 @@ prototype.highlight = function (this: string, terms: string | string[]) {
  */
 prototype.ucfirst = function (this: string) {
   if (this.length < 1) return this;
-  return this[0].toUpperCase() + this.substring(1).toLowerCase();
+  return (this[0] ?? '').toUpperCase() + this.substring(1).toLowerCase();
 };
 
 /**
@@ -759,7 +759,7 @@ prototype.format = function (this: string, ...tokens: object[]) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   let result = this;
   for (let i = 0; i < tokens.length; i++) {
-    result = result.replace(`$${i}`, tokens[i].toString());
+    result = result.replace(`$${i}`, tokens[i]?.toString() || '');
   }
   return result;
 };
@@ -790,7 +790,7 @@ prototype.toUnderscore = function (this: string): string {
  */
 prototype.toIdentifierCase = function (this: string): string {
   if (this.length === 0) return this;
-  return this[0].toLowerCase() + this.slice(1);
+  return (this[0] || '').toLowerCase() + this.slice(1);
 };
 
 /**
@@ -805,7 +805,7 @@ prototype.toTitleCase = function (this: string): string {
  */
 prototype.toClassCase = function (this: string): string {
   if (this.length === 0) return this;
-  return this[0].toUpperCase() + this.slice(1);
+  return (this[0] || '').toUpperCase() + this.slice(1);
 };
 
 /**
@@ -872,9 +872,20 @@ prototype.utfDecode = function (this: string) {
   return string;
 };
 
+/**
+ * Remove smallest common indentation.
+ */
+prototype.normalizeIndentation = function (this: string) {
+  const lines = this.split('\n');
+  const indentLengths = lines.filter((line) => line.trim()).map((line) => line.match(/^(\s*)/)?.[0].length || 0);
+  const minIndent = indentLengths.length > 0 ? Math.min(...indentLengths) : 0;
+
+  return lines.map((line) => line.substring(minIndent)).join('\n');
+};
+
 export function install() {
   for (const name in prototype) {
-    monkeyPatch(String.prototype, name, prototype[name]);
+    monkeyPatch(String.prototype, name, prototype[name]!);
   }
 }
 
@@ -973,5 +984,9 @@ declare global {
      * Decode a UTF-8 encoded string.
      */
     utfDecode(): string;
+    /**
+     * Remove smallest common indentation.
+     */
+    normalizeIndentation(): string;
   }
 }

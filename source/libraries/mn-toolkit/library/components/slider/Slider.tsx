@@ -101,7 +101,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
 
     // Différencier entre les événements de souris et de toucher pour obtenir la position X
     if ('touches' in e) {
-      clientX = e.touches[0].clientX;
+      clientX = e.touches[0]!.clientX;
     } else {
       clientX = e.clientX;
     }

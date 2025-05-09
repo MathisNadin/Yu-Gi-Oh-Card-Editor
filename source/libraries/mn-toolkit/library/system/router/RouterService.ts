@@ -437,15 +437,15 @@ export class RouterService extends Observable<IRouterListener> {
 
     if (qs) {
       qs.split('&').forEach((q) => {
-        let [name, value] = q.split('=');
-        (state.parameters as { [key in typeof name]: string })[name] = value;
+        const [name, value] = q.split('=');
+        if (name && value) (state.parameters as { [key in typeof name]: string })[name] = value;
       });
     }
 
     for (let i = 1; i < match.length; ++i) {
       key = eligible.pathKeys[i - 1];
       try {
-        val = isString(match[i]) ? decodeURIComponent(match[i]) : match[i];
+        val = isString(match[i]) ? decodeURIComponent(match[i]!) : match[i]!;
       } catch {
         throw new Error(`Failed to decode param '${match[i]}'`);
       }

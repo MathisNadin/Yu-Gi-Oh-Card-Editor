@@ -1,7 +1,12 @@
 ## mn-webpack-builder change log
 
+## 1.0.5
+
+- ajout de noUncheckedIndexedAccess dans la config ts
+
 ## 1.0.4
 
+- bump to 1.0.4
 - ajout de font-src data en dev et en prod pour les sources autorisées
 
 ## 1.0.3

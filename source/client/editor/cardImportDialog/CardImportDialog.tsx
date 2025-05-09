@@ -145,7 +145,7 @@ export class CardImportDialog extends AbstractPopup<
         batch.map((importLink) => {
           const splitImport = importLink.split('yugipedia.com/wiki/');
           return app.$yugipedia.importCard({
-            titles: splitImport[splitImport.length - 1],
+            titles: splitImport[splitImport.length - 1]!,
             useFr: this.state.useFr,
             generatePasscode: this.state.generatePasscode,
             replaceMatrixes: this.state.replaceMatrixes,
@@ -174,9 +174,9 @@ export class CardImportDialog extends AbstractPopup<
     const cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
 
     if (cardsData.length) {
-      if (this.state.cardsDataSortOption === 'theme' && !cardsData[0].theme?.length) {
+      if (this.state.cardsDataSortOption === 'theme' && !cardsData[0]!.theme?.length) {
         await this.setStateAsync({ cardsDataSortOption: 'id' });
-      } else if (this.state.cardsDataSortOption === 'set' && cardsData[0].theme?.length) {
+      } else if (this.state.cardsDataSortOption === 'set' && cardsData[0]!.theme?.length) {
         await this.setStateAsync({ cardsDataSortOption: 'theme' });
       }
     }
@@ -408,7 +408,7 @@ export class CardImportDialog extends AbstractPopup<
       cardsToImport,
       selectedCardsNum,
     } = this.state;
-    const showTheme = cardsData.length && cardsData[0].theme?.length;
+    const showTheme = !!cardsData.length && !!cardsData[0]!.theme?.length;
     const headers: ITableHeadRow = {
       cells: [
         {

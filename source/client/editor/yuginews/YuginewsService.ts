@@ -330,7 +330,7 @@ export class YuginewsService {
         // Other lines
         const setIdMatch = plainLine.match(/^([^-]+)/);
         const idMatch = plainLine.match(/-(.*?)\s*\(JAP/);
-        if (setIdMatch && idMatch) {
+        if (setIdMatch && isDefined(setIdMatch[1]) && idMatch && isDefined(idMatch[1])) {
           parsedCardData.setId = setIdMatch[1].trim();
           if (parsedCardData.setId?.startsWith('RD/')) parsedCardData.isRush = true;
           parsedCardData.id = integer(idMatch[1].slice(-3).replace(/\D/g, '').trim());
@@ -350,7 +350,7 @@ export class YuginewsService {
 
     // Retirer tout ce qui est en dehors des parenthèses pour limiter le contexte
     const matchParentheses = plainLine.match(/\((.*?)\)$/);
-    if (!matchParentheses) {
+    if (!matchParentheses || !matchParentheses[1]) {
       // Si aucune parenthèse, retourner des noms vides
       return { nameJP, nameEN };
     }
@@ -460,9 +460,9 @@ export class YuginewsService {
           else parsedCardData.otherEffectTexts.push(effect);
         }
       }
-    } else if (effects[0].startsWith('Effet Pendule :')) {
+    } else if (effects[0]?.startsWith('Effet Pendule :')) {
       parsedCardData.pendulumEffects = effects.slice(1);
-    } else if (effects[0].startsWith('Effet de Monstre :')) {
+    } else if (effects[0]?.startsWith('Effet de Monstre :')) {
       parsedCardData.effects = effects.slice(1);
     } else {
       parsedCardData.effects = effects;
@@ -503,7 +503,7 @@ export class YuginewsService {
     ];
     const noAccent = ['A', 'a', 'E', 'e', 'I', 'i', 'O', 'o', 'U', 'u', 'N', 'n', 'C', 'c'];
     for (let i = 0; i < accents.length; i++) {
-      str = str.replace(accents[i], noAccent[i]);
+      str = str.replace(accents[i]!, noAccent[i]!);
     }
     // Remplacer les /, -, ", ', :, !, ?, et les .
     str = str.replace(/[\/\\\-"'()=:!?\.]/g, '');

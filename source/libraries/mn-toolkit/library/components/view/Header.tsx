@@ -91,14 +91,14 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
     return (
       <div className='mn-header-content'>
         <div className='title-bar'>
-          {app.$header.parts.left.map((part) => part.component)}
+          {!!app.$header.parts.left && app.$header.parts.left.map((part) => part.component)}
 
           <HorizontalStack fill className='center-part' verticalItemAlignment='middle'>
             <Breadcrumb key='breadcrumb' crumbs={crumbs} onlyShowLastCrumb={this.props.onlyShowLastCrumb} />
-            {app.$header.parts.center.map((part) => part.component)}
+            {!!app.$header.parts.center && app.$header.parts.center.map((part) => part.component)}
           </HorizontalStack>
 
-          {app.$header.parts.right.map((part) => part.component)}
+          {!!app.$header.parts.right && app.$header.parts.right.map((part) => part.component)}
 
           {this.hasPageActions() && <Icon icon='toolkit-menu-kebab' onTap={(e) => this.doShowPageActions(e)} />}
         </div>

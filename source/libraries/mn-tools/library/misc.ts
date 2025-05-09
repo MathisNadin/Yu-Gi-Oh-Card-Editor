@@ -125,7 +125,7 @@ export function sanitizeFileName(input: string): string {
  */
 export function toNumericVersion(string: string) {
   let tokens: number[] = string.split(/\./).map((x) => integer(x));
-  return 1 * tokens[2] + tokens[1] * 100 + 10000 * tokens[0];
+  return 1 * (tokens[2] ?? 0) + (tokens[1] ?? 0) * 100 + 10000 * (tokens[0] ?? 0);
 }
 
 export function toStringVersion(value: number) {
@@ -251,7 +251,7 @@ export function sortDependencies(graph: { [name: string]: string[] }) {
   function visit(name: string) {
     if (visited[name]) return;
     visited[name] = true;
-    if (graph[name]) graph[name].forEach((dependency) => visit(dependency));
+    if (graph[name]) graph[name]!.forEach((dependency) => visit(dependency));
     sorted.push(name);
   }
   return sorted;
@@ -332,12 +332,12 @@ export function md5(string: string) {
     while (lByteCount < lMessageLength) {
       lWordCount = (lByteCount - (lByteCount % 4)) / 4;
       lBytePosition = (lByteCount % 4) * 8;
-      lWordArray[lWordCount] = lWordArray[lWordCount] | (string.charCodeAt(lByteCount) << lBytePosition);
+      lWordArray[lWordCount] = lWordArray[lWordCount]! | (string.charCodeAt(lByteCount) << lBytePosition);
       lByteCount++;
     }
     lWordCount = (lByteCount - (lByteCount % 4)) / 4;
     lBytePosition = (lByteCount % 4) * 8;
-    lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80 << lBytePosition);
+    lWordArray[lWordCount] = lWordArray[lWordCount]! | (0x80 << lBytePosition);
     lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
     lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
     return lWordArray;
@@ -414,70 +414,70 @@ export function md5(string: string) {
     BB = xxb;
     CC = xxc;
     DD = xxd;
-    xxa = ff(xxa, xxb, xxc, xxd, x[k + 0], S11, 0xd76aa478);
-    xxd = ff(xxd, xxa, xxb, xxc, x[k + 1], S12, 0xe8c7b756);
-    xxc = ff(xxc, xxd, xxa, xxb, x[k + 2], S13, 0x242070db);
-    xxb = ff(xxb, xxc, xxd, xxa, x[k + 3], S14, 0xc1bdceee);
-    xxa = ff(xxa, xxb, xxc, xxd, x[k + 4], S11, 0xf57c0faf);
-    xxd = ff(xxd, xxa, xxb, xxc, x[k + 5], S12, 0x4787c62a);
-    xxc = ff(xxc, xxd, xxa, xxb, x[k + 6], S13, 0xa8304613);
-    xxb = ff(xxb, xxc, xxd, xxa, x[k + 7], S14, 0xfd469501);
-    xxa = ff(xxa, xxb, xxc, xxd, x[k + 8], S11, 0x698098d8);
-    xxd = ff(xxd, xxa, xxb, xxc, x[k + 9], S12, 0x8b44f7af);
-    xxc = ff(xxc, xxd, xxa, xxb, x[k + 10], S13, 0xffff5bb1);
-    xxb = ff(xxb, xxc, xxd, xxa, x[k + 11], S14, 0x895cd7be);
-    xxa = ff(xxa, xxb, xxc, xxd, x[k + 12], S11, 0x6b901122);
-    xxd = ff(xxd, xxa, xxb, xxc, x[k + 13], S12, 0xfd987193);
-    xxc = ff(xxc, xxd, xxa, xxb, x[k + 14], S13, 0xa679438e);
-    xxb = ff(xxb, xxc, xxd, xxa, x[k + 15], S14, 0x49b40821);
-    xxa = gg(xxa, xxb, xxc, xxd, x[k + 1], S21, 0xf61e2562);
-    xxd = gg(xxd, xxa, xxb, xxc, x[k + 6], S22, 0xc040b340);
-    xxc = gg(xxc, xxd, xxa, xxb, x[k + 11], S23, 0x265e5a51);
-    xxb = gg(xxb, xxc, xxd, xxa, x[k + 0], S24, 0xe9b6c7aa);
-    xxa = gg(xxa, xxb, xxc, xxd, x[k + 5], S21, 0xd62f105d);
-    xxd = gg(xxd, xxa, xxb, xxc, x[k + 10], S22, 0x2441453);
-    xxc = gg(xxc, xxd, xxa, xxb, x[k + 15], S23, 0xd8a1e681);
-    xxb = gg(xxb, xxc, xxd, xxa, x[k + 4], S24, 0xe7d3fbc8);
-    xxa = gg(xxa, xxb, xxc, xxd, x[k + 9], S21, 0x21e1cde6);
-    xxd = gg(xxd, xxa, xxb, xxc, x[k + 14], S22, 0xc33707d6);
-    xxc = gg(xxc, xxd, xxa, xxb, x[k + 3], S23, 0xf4d50d87);
-    xxb = gg(xxb, xxc, xxd, xxa, x[k + 8], S24, 0x455a14ed);
-    xxa = gg(xxa, xxb, xxc, xxd, x[k + 13], S21, 0xa9e3e905);
-    xxd = gg(xxd, xxa, xxb, xxc, x[k + 2], S22, 0xfcefa3f8);
-    xxc = gg(xxc, xxd, xxa, xxb, x[k + 7], S23, 0x676f02d9);
-    xxb = gg(xxb, xxc, xxd, xxa, x[k + 12], S24, 0x8d2a4c8a);
-    xxa = hh(xxa, xxb, xxc, xxd, x[k + 5], S31, 0xfffa3942);
-    xxd = hh(xxd, xxa, xxb, xxc, x[k + 8], S32, 0x8771f681);
-    xxc = hh(xxc, xxd, xxa, xxb, x[k + 11], S33, 0x6d9d6122);
-    xxb = hh(xxb, xxc, xxd, xxa, x[k + 14], S34, 0xfde5380c);
-    xxa = hh(xxa, xxb, xxc, xxd, x[k + 1], S31, 0xa4beea44);
-    xxd = hh(xxd, xxa, xxb, xxc, x[k + 4], S32, 0x4bdecfa9);
-    xxc = hh(xxc, xxd, xxa, xxb, x[k + 7], S33, 0xf6bb4b60);
-    xxb = hh(xxb, xxc, xxd, xxa, x[k + 10], S34, 0xbebfbc70);
-    xxa = hh(xxa, xxb, xxc, xxd, x[k + 13], S31, 0x289b7ec6);
-    xxd = hh(xxd, xxa, xxb, xxc, x[k + 0], S32, 0xeaa127fa);
-    xxc = hh(xxc, xxd, xxa, xxb, x[k + 3], S33, 0xd4ef3085);
-    xxb = hh(xxb, xxc, xxd, xxa, x[k + 6], S34, 0x4881d05);
-    xxa = hh(xxa, xxb, xxc, xxd, x[k + 9], S31, 0xd9d4d039);
-    xxd = hh(xxd, xxa, xxb, xxc, x[k + 12], S32, 0xe6db99e5);
-    xxc = hh(xxc, xxd, xxa, xxb, x[k + 15], S33, 0x1fa27cf8);
-    xxb = hh(xxb, xxc, xxd, xxa, x[k + 2], S34, 0xc4ac5665);
-    xxa = ii(xxa, xxb, xxc, xxd, x[k + 0], S41, 0xf4292244);
-    xxd = ii(xxd, xxa, xxb, xxc, x[k + 7], S42, 0x432aff97);
-    xxc = ii(xxc, xxd, xxa, xxb, x[k + 14], S43, 0xab9423a7);
-    xxb = ii(xxb, xxc, xxd, xxa, x[k + 5], S44, 0xfc93a039);
-    xxa = ii(xxa, xxb, xxc, xxd, x[k + 12], S41, 0x655b59c3);
-    xxd = ii(xxd, xxa, xxb, xxc, x[k + 3], S42, 0x8f0ccc92);
-    xxc = ii(xxc, xxd, xxa, xxb, x[k + 10], S43, 0xffeff47d);
-    xxb = ii(xxb, xxc, xxd, xxa, x[k + 1], S44, 0x85845dd1);
-    xxa = ii(xxa, xxb, xxc, xxd, x[k + 8], S41, 0x6fa87e4f);
-    xxd = ii(xxd, xxa, xxb, xxc, x[k + 15], S42, 0xfe2ce6e0);
-    xxc = ii(xxc, xxd, xxa, xxb, x[k + 6], S43, 0xa3014314);
-    xxb = ii(xxb, xxc, xxd, xxa, x[k + 13], S44, 0x4e0811a1);
-    xxa = ii(xxa, xxb, xxc, xxd, x[k + 4], S41, 0xf7537e82);
-    xxd = ii(xxd, xxa, xxb, xxc, x[k + 11], S42, 0xbd3af235);
-    xxc = ii(xxc, xxd, xxa, xxb, x[k + 2], S43, 0x2ad7d2bb);
-    xxb = ii(xxb, xxc, xxd, xxa, x[k + 9], S44, 0xeb86d391);
+    xxa = ff(xxa, xxb, xxc, xxd, x[k + 0]!, S11, 0xd76aa478);
+    xxd = ff(xxd, xxa, xxb, xxc, x[k + 1]!, S12, 0xe8c7b756);
+    xxc = ff(xxc, xxd, xxa, xxb, x[k + 2]!, S13, 0x242070db);
+    xxb = ff(xxb, xxc, xxd, xxa, x[k + 3]!, S14, 0xc1bdceee);
+    xxa = ff(xxa, xxb, xxc, xxd, x[k + 4]!, S11, 0xf57c0faf);
+    xxd = ff(xxd, xxa, xxb, xxc, x[k + 5]!, S12, 0x4787c62a);
+    xxc = ff(xxc, xxd, xxa, xxb, x[k + 6]!, S13, 0xa8304613);
+    xxb = ff(xxb, xxc, xxd, xxa, x[k + 7]!, S14, 0xfd469501);
+    xxa = ff(xxa, xxb, xxc, xxd, x[k + 8]!, S11, 0x698098d8);
+    xxd = ff(xxd, xxa, xxb, xxc, x[k + 9]!, S12, 0x8b44f7af);
+    xxc = ff(xxc, xxd, xxa, xxb, x[k + 10]!, S13, 0xffff5bb1);
+    xxb = ff(xxb, xxc, xxd, xxa, x[k + 11]!, S14, 0x895cd7be);
+    xxa = ff(xxa, xxb, xxc, xxd, x[k + 12]!, S11, 0x6b901122);
+    xxd = ff(xxd, xxa, xxb, xxc, x[k + 13]!, S12, 0xfd987193);
+    xxc = ff(xxc, xxd, xxa, xxb, x[k + 14]!, S13, 0xa679438e);
+    xxb = ff(xxb, xxc, xxd, xxa, x[k + 15]!, S14, 0x49b40821);
+    xxa = gg(xxa, xxb, xxc, xxd, x[k + 1]!, S21, 0xf61e2562);
+    xxd = gg(xxd, xxa, xxb, xxc, x[k + 6]!, S22, 0xc040b340);
+    xxc = gg(xxc, xxd, xxa, xxb, x[k + 11]!, S23, 0x265e5a51);
+    xxb = gg(xxb, xxc, xxd, xxa, x[k + 0]!, S24, 0xe9b6c7aa);
+    xxa = gg(xxa, xxb, xxc, xxd, x[k + 5]!, S21, 0xd62f105d);
+    xxd = gg(xxd, xxa, xxb, xxc, x[k + 10]!, S22, 0x2441453);
+    xxc = gg(xxc, xxd, xxa, xxb, x[k + 15]!, S23, 0xd8a1e681);
+    xxb = gg(xxb, xxc, xxd, xxa, x[k + 4]!, S24, 0xe7d3fbc8);
+    xxa = gg(xxa, xxb, xxc, xxd, x[k + 9]!, S21, 0x21e1cde6);
+    xxd = gg(xxd, xxa, xxb, xxc, x[k + 14]!, S22, 0xc33707d6);
+    xxc = gg(xxc, xxd, xxa, xxb, x[k + 3]!, S23, 0xf4d50d87);
+    xxb = gg(xxb, xxc, xxd, xxa, x[k + 8]!, S24, 0x455a14ed);
+    xxa = gg(xxa, xxb, xxc, xxd, x[k + 13]!, S21, 0xa9e3e905);
+    xxd = gg(xxd, xxa, xxb, xxc, x[k + 2]!, S22, 0xfcefa3f8);
+    xxc = gg(xxc, xxd, xxa, xxb, x[k + 7]!, S23, 0x676f02d9);
+    xxb = gg(xxb, xxc, xxd, xxa, x[k + 12]!, S24, 0x8d2a4c8a);
+    xxa = hh(xxa, xxb, xxc, xxd, x[k + 5]!, S31, 0xfffa3942);
+    xxd = hh(xxd, xxa, xxb, xxc, x[k + 8]!, S32, 0x8771f681);
+    xxc = hh(xxc, xxd, xxa, xxb, x[k + 11]!, S33, 0x6d9d6122);
+    xxb = hh(xxb, xxc, xxd, xxa, x[k + 14]!, S34, 0xfde5380c);
+    xxa = hh(xxa, xxb, xxc, xxd, x[k + 1]!, S31, 0xa4beea44);
+    xxd = hh(xxd, xxa, xxb, xxc, x[k + 4]!, S32, 0x4bdecfa9);
+    xxc = hh(xxc, xxd, xxa, xxb, x[k + 7]!, S33, 0xf6bb4b60);
+    xxb = hh(xxb, xxc, xxd, xxa, x[k + 10]!, S34, 0xbebfbc70);
+    xxa = hh(xxa, xxb, xxc, xxd, x[k + 13]!, S31, 0x289b7ec6);
+    xxd = hh(xxd, xxa, xxb, xxc, x[k + 0]!, S32, 0xeaa127fa);
+    xxc = hh(xxc, xxd, xxa, xxb, x[k + 3]!, S33, 0xd4ef3085);
+    xxb = hh(xxb, xxc, xxd, xxa, x[k + 6]!, S34, 0x4881d05);
+    xxa = hh(xxa, xxb, xxc, xxd, x[k + 9]!, S31, 0xd9d4d039);
+    xxd = hh(xxd, xxa, xxb, xxc, x[k + 12]!, S32, 0xe6db99e5);
+    xxc = hh(xxc, xxd, xxa, xxb, x[k + 15]!, S33, 0x1fa27cf8);
+    xxb = hh(xxb, xxc, xxd, xxa, x[k + 2]!, S34, 0xc4ac5665);
+    xxa = ii(xxa, xxb, xxc, xxd, x[k + 0]!, S41, 0xf4292244);
+    xxd = ii(xxd, xxa, xxb, xxc, x[k + 7]!, S42, 0x432aff97);
+    xxc = ii(xxc, xxd, xxa, xxb, x[k + 14]!, S43, 0xab9423a7);
+    xxb = ii(xxb, xxc, xxd, xxa, x[k + 5]!, S44, 0xfc93a039);
+    xxa = ii(xxa, xxb, xxc, xxd, x[k + 12]!, S41, 0x655b59c3);
+    xxd = ii(xxd, xxa, xxb, xxc, x[k + 3]!, S42, 0x8f0ccc92);
+    xxc = ii(xxc, xxd, xxa, xxb, x[k + 10]!, S43, 0xffeff47d);
+    xxb = ii(xxb, xxc, xxd, xxa, x[k + 1]!, S44, 0x85845dd1);
+    xxa = ii(xxa, xxb, xxc, xxd, x[k + 8]!, S41, 0x6fa87e4f);
+    xxd = ii(xxd, xxa, xxb, xxc, x[k + 15]!, S42, 0xfe2ce6e0);
+    xxc = ii(xxc, xxd, xxa, xxb, x[k + 6]!, S43, 0xa3014314);
+    xxb = ii(xxb, xxc, xxd, xxa, x[k + 13]!, S44, 0x4e0811a1);
+    xxa = ii(xxa, xxb, xxc, xxd, x[k + 4]!, S41, 0xf7537e82);
+    xxd = ii(xxd, xxa, xxb, xxc, x[k + 11]!, S42, 0xbd3af235);
+    xxc = ii(xxc, xxd, xxa, xxb, x[k + 2]!, S43, 0x2ad7d2bb);
+    xxb = ii(xxb, xxc, xxd, xxa, x[k + 9]!, S44, 0xeb86d391);
     xxa = addUnsigned(xxa, AA);
     xxb = addUnsigned(xxb, BB);
     xxc = addUnsigned(xxc, CC);
@@ -754,7 +754,7 @@ export function uuid(): string {
   let C = Math.random() * 0xffffffff;
   let D = Math.random() * 0xffffffff;
 
-  return `${t[A & 0xff] + t[(A >> 8) & 0xff] + t[(A >> 16) & 0xff] + t[(A >> 24) & 0xff]}-${t[B & 0xff]}${t[(B >> 8) & 0xff]}-${t[((B >> 16) & 0x0f) | 0x40]}${t[(B >> 24) & 0xff]}-${t[(C & 0x3f) | 0x80]}${t[(C >> 8) & 0xff]}-${t[(C >> 16) & 0xff]}${t[(C >> 24) & 0xff]}${t[D & 0xff]}${t[(D >> 8) & 0xff]}${t[(D >> 16) & 0xff]}${t[(D >> 24) & 0xff]}`;
+  return `${t[A & 0xff]! + t[(A >> 8) & 0xff]! + t[(A >> 16) & 0xff] + t[(A >> 24) & 0xff]}-${t[B & 0xff]}${t[(B >> 8) & 0xff]}-${t[((B >> 16) & 0x0f) | 0x40]}${t[(B >> 24) & 0xff]}-${t[(C & 0x3f) | 0x80]}${t[(C >> 8) & 0xff]}-${t[(C >> 16) & 0xff]}${t[(C >> 24) & 0xff]}${t[D & 0xff]}${t[(D >> 8) & 0xff]}${t[(D >> 16) & 0xff]}${t[(D >> 24) & 0xff]}`;
 }
 
 export function smallUuid(length: number): string {
@@ -881,7 +881,7 @@ export function parseUri(uri: string): IParsedURI {
 
   for (let iKey = 14; iKey >= 0; iKey--) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (result as any)[keys[iKey]] = matches[iKey] || '';
+    (result as any)[keys[iKey]!] = matches[iKey] || '';
   }
   result.parameters = {};
   result.query.replace(/(?:^|&)([^&=]*)=?([^&]*)/g, (foo, key: string, value: string) => {
@@ -932,7 +932,7 @@ export function queryGet(name: string, defaultValue: string) {
   if (results === null) {
     return defaultValue;
   } else {
-    return decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return decodeURIComponent(results[1]?.replace(/\+/g, ' ') || '');
   }
 }
 
@@ -1337,7 +1337,7 @@ export function mimetype(filename: string) {
   const match = /\.(.+)$/.exec(filename);
   if (match) {
     for (const mime in MIME_TO_EXT) {
-      if (MIME_TO_EXT[mime].includes(match[1])) return mime;
+      if (MIME_TO_EXT[mime]!.includes(match[1]!)) return mime;
     }
   }
   return 'unknown';
@@ -1345,6 +1345,6 @@ export function mimetype(filename: string) {
 
 export function mimetypeToExt(mimetype: string) {
   const exts = MIME_TO_EXT[mimetype];
-  if (!exts.length) return '';
-  return exts[0];
+  if (!exts?.length) return '';
+  return exts[0]!;
 }

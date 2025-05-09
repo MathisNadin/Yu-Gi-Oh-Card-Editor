@@ -18,6 +18,8 @@ interface ITopMenuState extends IContainerState {
 }
 
 export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement> implements Partial<IDeviceListener> {
+  private menuPopoverId?: string;
+
   public static override get defaultProps(): ITopMenuProps {
     return {
       ...super.defaultProps,
@@ -167,7 +169,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
       return;
     }
 
-    app.$popover.removeAll();
+    if (this.menuPopoverId) app.$popover.remove(this.menuPopoverId);
     await this.setStateAsync({ currentlyShown: undefined });
   }
 
@@ -178,7 +180,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
     const eventTargetParent = eventTarget?.parentElement as HTMLDivElement;
     if (!eventTargetParent) return;
 
-    app.$popover.removeAll();
+    if (this.menuPopoverId) app.$popover.remove(this.menuPopoverId);
 
     await this.setStateAsync({ currentlyShown: item });
 
@@ -216,7 +218,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
       };
     }
 
-    app.$popover.actions(rect, {
+    this.menuPopoverId = app.$popover.actions(rect, {
       actions,
       width,
       className: 'mn-top-menu-below-popover',

@@ -19,12 +19,12 @@ export class AbstractWikitextParser {
     const pageKeys = Object.keys(this.page.query.pages);
     if (!pageKeys?.length) return [];
 
-    const pageInfo = this.page.query.pages[pageKeys[0]];
+    const pageInfo = this.page.query.pages[pageKeys[0]!];
     if (!pageInfo?.revisions?.length) return [];
 
     this.pageTitle = pageInfo.title;
 
-    const wikitext = pageInfo.revisions[0]['*'];
+    const wikitext = pageInfo.revisions[0]!['*'];
     return wikitext ? wikitext.split('\n') : [];
   }
 

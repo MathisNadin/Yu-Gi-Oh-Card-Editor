@@ -163,15 +163,15 @@ export class Container<
 
     // Single loop to resolve both column and row spans
     for (let i = 0; i <= currentIndex; i++) {
-      const key = screenOrder[i];
+      const key = screenOrder[i]!;
 
       // if a specific colSpan is provided for this breakpoint, use it
       const c = props.colSpans?.[key];
-      if (c != null) colSpan = c;
+      if (c != null) colSpan = c!;
 
       // if a specific rowSpan is provided for this breakpoint, use it
       const r = props.rowSpans?.[key];
-      if (r != null) rowSpan = r;
+      if (r != null) rowSpan = r!;
     }
 
     return {

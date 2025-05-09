@@ -24,7 +24,10 @@ export class YugipediaService {
 
   private async getCardImageUrl(yugipediaCardPage: IYugipediaGetPageByTitleApiResponse) {
     const pageKeys = Object.keys(yugipediaCardPage.query.pages);
+    if (!pageKeys[0]) return undefined;
+
     const pageInfo = yugipediaCardPage.query.pages[pageKeys[0]];
+    if (!pageInfo) return undefined;
 
     const yugipediaCardPageImg = await this.getCardPageImg(pageInfo.title);
     if (!yugipediaCardPageImg?.parse?.images?.length) return undefined;
@@ -38,7 +41,7 @@ export class YugipediaService {
     const imgKeys = Object.keys(yugipediaCardImg.query.pages);
     if (!imgKeys.length) return undefined;
 
-    const imgInfo = yugipediaCardImg.query.pages[imgKeys[0]];
+    const imgInfo = yugipediaCardImg.query.pages[imgKeys[0]!];
     return imgInfo?.imageinfo?.[0]?.url || null;
   }
 
@@ -108,11 +111,11 @@ export class YugipediaService {
       if (!pageKeys.length) return undefined;
 
       // Extract page data from the response
-      const page = response.data.query.pages[pageKeys[0]];
+      const page = response.data.query.pages[pageKeys[0]!];
       if (!page?.revisions?.length) return undefined;
 
       // Check if the page content indicates a redirect
-      const content = page.revisions[0]['*'];
+      const content = page.revisions[0]!['*'];
       const redirectMatch = content.match(/#REDIRECT\s+\[\[([^\]]+)\]\]/i);
       if (redirectMatch && redirectMatch[1]) {
         // Recursively fetch the page using the new title from the redirect

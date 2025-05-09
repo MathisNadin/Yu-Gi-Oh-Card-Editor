@@ -852,7 +852,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
     if (!card.rushChoiceEffects?.length) {
       card.rushChoiceEffects = ['', ''];
     } else if (card.rushChoiceEffects.length === 1) {
-      card.rushChoiceEffects = [card.rushChoiceEffects[0], ''];
+      card.rushChoiceEffects = [card.rushChoiceEffects[0]!, ''];
     }
 
     card.rushEffectType = card.rushEffectType || 'effect';
@@ -1599,7 +1599,7 @@ export class CardService extends Observable<ICardListener> implements Partial<IS
   }
 
   public getDescriptionPlaceholder(card: ICard) {
-    if (card.frames.length === 1 && FRAMES_WITH_DESCRIPTION.includes(card.frames[0])) return 'Description';
+    if (card.frames.length === 1 && FRAMES_WITH_DESCRIPTION.includes(card.frames[0]!)) return 'Description';
     return 'Effet';
   }
 

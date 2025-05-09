@@ -121,7 +121,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
   private async onMultipleFramesChange() {
     const newCard: ICard = { ...this.state.card, multipleFrames: !this.state.card.multipleFrames };
     if (newCard.frames.length > 1) {
-      newCard.frames = [newCard.frames[0]];
+      newCard.frames = [newCard.frames[0]!];
     }
     await this.setStateAsync({ card: newCard });
   }
@@ -285,7 +285,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (!index) return;
     const newCard: ICard = { ...this.state.card };
     const newIndex = index - 1;
-    const element = newCard.rushChoiceEffects[index];
+    const element = newCard.rushChoiceEffects[index]!;
     newCard.rushChoiceEffects.splice(index, 1);
     newCard.rushChoiceEffects.splice(newIndex, 0, element);
     await this.setStateAsync({ card: newCard });
@@ -295,7 +295,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (index === this.state.card.rushChoiceEffects.length - 1) return;
     const newCard: ICard = { ...this.state.card };
     const newIndex = index + 1;
-    const element = newCard.rushChoiceEffects[index];
+    const element = newCard.rushChoiceEffects[index]!;
     newCard.rushChoiceEffects.splice(index, 1);
     newCard.rushChoiceEffects.splice(newIndex, 0, element);
     await this.setStateAsync({ card: newCard });
@@ -323,7 +323,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (index === 0) return;
     const newCard: ICard = { ...this.state.card };
     const newIndex = index - 1;
-    const element = newCard.abilities[index];
+    const element = newCard.abilities[index]!;
     newCard.abilities.splice(index, 1);
     newCard.abilities.splice(newIndex, 0, element);
     await this.setStateAsync({ card: newCard });
@@ -333,7 +333,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     if (index === this.state.card.abilities.length - 1) return;
     const newCard: ICard = { ...this.state.card };
     const newIndex = index + 1;
-    const element = newCard.abilities[index];
+    const element = newCard.abilities[index]!;
     newCard.abilities.splice(index, 1);
     newCard.abilities.splice(newIndex, 0, element);
     await this.setStateAsync({ card: newCard });

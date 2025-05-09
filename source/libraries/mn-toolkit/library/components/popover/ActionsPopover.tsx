@@ -73,7 +73,7 @@ export class ActionsPopover<
     let maxActionsHeight = 0;
     for (let i = 0; i < totalActions; i++) {
       if (maxVisibleActions && i === maxVisibleActions) break;
-      if (actions[i].separator) maxActionsHeight += 1;
+      if (actions[i]!.separator) maxActionsHeight += 1;
       else maxActionsHeight += actionHeight;
     }
 

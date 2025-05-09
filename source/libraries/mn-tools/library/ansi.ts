@@ -124,7 +124,7 @@ class Ansi {
   public table(headers: string[], rows: TJSONValue[][]): void {
     const columnWidths: number[] = [];
     headers.forEach((header, index) => {
-      const maxLength = Math.max(header.length, ...rows.map((row) => this.filterAnsi(row[index]).length));
+      const maxLength = Math.max(header.length, ...rows.map((row) => this.filterAnsi(row[index]!).length));
       columnWidths[index] = maxLength + 2;
     });
 
@@ -133,7 +133,7 @@ class Ansi {
     console.log(topLine);
 
     const headerRow =
-      '│' + headers.map((header, index) => (' ' + header + ' ').padEnd(columnWidths[index])).join('│') + '│';
+      '│' + headers.map((header, index) => (' ' + header + ' ').padEnd(columnWidths[index]!)).join('│') + '│';
     // eslint-disable-next-line no-console
     console.log(headerRow);
 
@@ -144,7 +144,9 @@ class Ansi {
     rows.forEach((row) => {
       const rowString =
         '│' +
-        row.map((value, index) => ' ' + this.formatValue(value) + ' ' + this.pad(value, columnWidths[index])).join('│'); // Remove ANSI formatting codes
+        row
+          .map((value, index) => ' ' + this.formatValue(value) + ' ' + this.pad(value, columnWidths[index]!))
+          .join('│'); // Remove ANSI formatting codes
       // eslint-disable-next-line no-console
       console.log(rowString + '│');
     });

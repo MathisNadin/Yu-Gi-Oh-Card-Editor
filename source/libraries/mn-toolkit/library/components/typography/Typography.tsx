@@ -11,7 +11,8 @@ export type TTypographyHTMLElement = HTMLDivElement | HTMLAnchorElement | HTMLHe
 
 export type TTypographyFontSize = keyof Omit<IAppThemeScreensSizesFonts, 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'>;
 
-interface ITypographyProps<T extends TRouterState = TRouterState> extends IContainableProps<TTypographyHTMLElement> {
+export interface ITypographyProps<T extends TRouterState = TRouterState>
+  extends IContainableProps<TTypographyHTMLElement> {
   fontSize?: TTypographyFontSize;
   variant: TVariant;
   alignment: 'left' | 'right' | 'center';
@@ -25,15 +26,15 @@ interface ITypographyProps<T extends TRouterState = TRouterState> extends IConta
   href?: string | IRouterHrefParams<T>;
 }
 
-interface ITypographyState extends IContainableState {
+export interface ITypographyState extends IContainableState {
   href: AnchorHTMLAttributes<HTMLAnchorElement>['href'];
 }
 
-export class Typography<T extends TRouterState = TRouterState> extends Containable<
-  ITypographyProps<T>,
-  ITypographyState,
-  TTypographyHTMLElement
-> {
+export class Typography<
+  T extends TRouterState = TRouterState,
+  PROPS extends ITypographyProps<T> = ITypographyProps<T>,
+  STATE extends ITypographyState = ITypographyState,
+> extends Containable<PROPS, STATE, TTypographyHTMLElement> {
   public static override get defaultProps(): ITypographyProps {
     return {
       ...super.defaultProps,
@@ -45,7 +46,7 @@ export class Typography<T extends TRouterState = TRouterState> extends Containab
     };
   }
 
-  public constructor(props: ITypographyProps<T>) {
+  public constructor(props: PROPS) {
     super(props);
 
     let href: ITypographyState['href'];
@@ -64,8 +65,8 @@ export class Typography<T extends TRouterState = TRouterState> extends Containab
   }
 
   public override componentDidUpdate(
-    prevProps: Readonly<ITypographyProps<T>>,
-    prevState: Readonly<ITypographyState>,
+    prevProps: Readonly<PROPS>,
+    prevState: Readonly<STATE>,
     snapshot?: TDidUpdateSnapshot
   ): void {
     super.componentDidUpdate(prevProps, prevState, snapshot);

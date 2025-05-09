@@ -43,9 +43,9 @@ export class ReactService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       element.style[key as any] = convert(key, value as string | number | boolean);
     } else {
-      for (let k in key) {
+      for (const k in key) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (element.style as any)[k] = convert(k, key[k]);
+        (element.style as any)[k] = convert(k, key[k]!);
       }
     }
   }

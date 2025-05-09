@@ -243,7 +243,7 @@ export class Containable<
     const style: { [key: string]: number | boolean | string } = {};
     if (this.props.style) {
       for (const k in this.props.style) {
-        style[k] = this.props.style[k];
+        style[k] = this.props.style[k]!;
       }
     }
     if (isDefined(this.props.height)) {

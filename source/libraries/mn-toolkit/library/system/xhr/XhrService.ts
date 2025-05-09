@@ -73,7 +73,7 @@ export class XhrService extends Observable<IXhrListener> {
 
         for (let i = 0, len = versions.length; i < len; i++) {
           try {
-            request = new ActiveXObject(versions[i]);
+            request = new ActiveXObject(versions[i]!);
             break;
           } catch {}
         }
@@ -86,10 +86,10 @@ export class XhrService extends Observable<IXhrListener> {
       if (options.method === 'GET') {
         let pairs = [];
         for (let key in options.data) {
-          pairs.push(key + '=' + encodeURIComponent(options.data[key]));
+          pairs.push(`${key}=${encodeURIComponent(options.data[key]!)}`);
         }
         if (pairs.length) {
-          url += '?' + pairs.join('&');
+          url += `?${pairs.join('&')}`;
         }
       }
       request.open(options.method, url, true);
@@ -169,9 +169,9 @@ export class XhrService extends Observable<IXhrListener> {
       this.fireStart(request.$id);
       let data;
       if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
-        let pairs = [];
-        for (let key in options.data) {
-          pairs.push(key + '=' + encodeURIComponent(options.data[key]));
+        const pairs = [];
+        for (const key in options.data) {
+          pairs.push(`${key}=${encodeURIComponent(options.data[key]!)}`);
         }
         data = pairs.join('&');
       } else if (options.data instanceof FormData) {

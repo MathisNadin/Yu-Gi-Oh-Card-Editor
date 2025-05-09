@@ -97,7 +97,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
 
     let clientX: number;
     if ('touches' in e) {
-      clientX = e.touches[0].clientX;
+      clientX = e.touches[0]!.clientX;
     } else {
       clientX = e.clientX;
     }
@@ -106,7 +106,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
     const moveHandler = async (moveEvent: TMouseEvents | TTouchEvents) => {
       let clientX: number;
       if ('touches' in moveEvent) {
-        clientX = moveEvent.touches[0].clientX;
+        clientX = moveEvent.touches[0]!.clientX;
       } else {
         clientX = moveEvent.clientX;
       }

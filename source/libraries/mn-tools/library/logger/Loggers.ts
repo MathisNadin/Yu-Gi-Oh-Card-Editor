@@ -20,11 +20,11 @@ export class Loggers {
   public constructor() {}
 
   public createLogger(name: string): ILoggerWrapper {
-    if (this.loggers[name]) return this.loggers[name];
-    let logger = new Logger(this, name);
+    if (this.loggers[name]) return this.loggers[name]!;
+    const logger = new Logger(this, name);
 
     this.loggers[name] = (() => {
-      let _f: any = (...args: any[]) => {
+      const _f: any = (...args: any[]) => {
         logger.info(...args);
       };
       _f.warning = (...args: any[]) => {
@@ -42,6 +42,6 @@ export class Loggers {
       return _f;
     })();
 
-    return this.loggers[name];
+    return this.loggers[name]!;
   }
 }

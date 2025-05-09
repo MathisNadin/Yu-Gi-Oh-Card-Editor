@@ -1,14 +1,15 @@
 import { sleep } from 'mn-tools';
 import { IJob } from 'api/main';
 
-const REFRESH_PERIOD = 3100;
+// Arbitrary 3 seconds
+const REFRESH_PERIOD = 3000;
 
 export class ApiJob {
   private _id: string;
-  private _progress!: number;
-  private _total!: number;
-  private _description!: string;
-  private _message!: string;
+  private _progress?: number;
+  private _total?: number;
+  private _description?: string;
+  private _message?: string;
 
   public constructor(jobId: string) {
     this._id = jobId;
@@ -30,36 +31,36 @@ export class ApiJob {
     return this._message;
   }
 
-  public async wait<RES>(cb?: (job: IJob) => void) {
+  public async wait<RESULT>(onProgress?: (job: IJob<RESULT>) => void, signal?: AbortSignal) {
+    let attempts = 0;
     while (true) {
-      let response = await app.$api.job.list({ id: this._id });
-      if (!response.length) {
+      if (signal?.aborted) throw new Error('Aborted');
+      attempts++;
+
+      const jobs = await app.$api.job.list({ id: this._id });
+      if (!jobs.length) {
+        if (attempts > 10) throw new Error('Job not found');
         await sleep(REFRESH_PERIOD);
         continue;
       }
 
-      let job = response[0];
+      const job = jobs[0] as IJob<RESULT>;
       this._total = job.total;
       this._message = job.message;
       this._description = job.description;
       this._progress = job.progress;
 
-      if (cb) {
-        cb(job);
-      } else {
-        app.$api.dispatch('apiJobProgress', job);
-      }
+      if (onProgress) onProgress(job);
+      app.$api.dispatch('apiJobProgress', job);
+
       if (job.state !== 'done') {
         await sleep(REFRESH_PERIOD);
         continue;
       }
-      if (cb) {
-        cb(job);
-      } else {
-        app.$api.dispatch('apiJobFinished', job);
-      }
 
-      return job.result as RES;
+      app.$api.dispatch('apiJobFinished', job);
+
+      return job.result;
     }
   }
 }

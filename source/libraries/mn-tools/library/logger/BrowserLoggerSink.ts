@@ -34,7 +34,7 @@ export class BrowserLoggerSinkRenderer extends AbstractLoggerSink {
   private rgba(hex: string, opacity: number): string {
     let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (!result) return '#FF00FF';
-    return `rgba(${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)},${opacity})`;
+    return `rgba(${parseInt(result[1] ?? '', 16)},${parseInt(result[2] ?? '', 16)},${parseInt(result[3] ?? '', 16)},${opacity})`;
   }
 
   private label(color: string) {
@@ -52,13 +52,13 @@ export class BrowserLoggerSinkRenderer extends AbstractLoggerSink {
     let colors = [];
 
     if (!this.colorMap[record.bulk]) {
-      this.colorMap[record.bulk] = COLORS[this.icolor];
+      this.colorMap[record.bulk] = COLORS[this.icolor]!;
       this.icolor++;
       if (this.icolor === COLORS.length) {
         this.icolor = 0;
       }
     }
-    colors.push(this.label(this.colorMap[record.bulk]));
+    colors.push(this.label(this.colorMap[record.bulk]!));
     let args = record.data.slice(0);
     colors.reverse();
     colors.forEach((a) => {

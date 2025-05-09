@@ -145,7 +145,7 @@ export function canvasToBlob(canvas: HTMLCanvasElement, options: Options = {}): 
     const binaryString = window.atob(
       canvas
         .toDataURL(options.type ? options.type : undefined, options.quality ? options.quality : undefined)
-        .split(',')[1]
+        .split(',')[1]!
     );
     const len = binaryString.length;
     const binaryArray = new Uint8Array(len);

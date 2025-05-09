@@ -36,7 +36,7 @@ function arrayMove<T>(this: T[], fromIndex: number, toIndex: number): T[] {
   if (toIndex < 0 || toIndex > this.length) {
     throw new Error('toIndex is out of bounds.');
   }
-  const element = this[fromIndex];
+  const element = this[fromIndex]!;
   this.splice(fromIndex, 1);
   this.splice(toIndex, 0, element);
   return this;

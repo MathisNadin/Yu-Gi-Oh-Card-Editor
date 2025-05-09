@@ -1,8 +1,7 @@
 import { extend, isDefined, isString, logger, Observable, parseUri, serialize } from 'mn-tools';
-import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, IJobResponse, ISessionEntity } from 'api/main';
+import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, ISessionEntity } from 'api/main';
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
-import { ApiJob } from './ApiJob';
 
 interface IFileGetUrlOptions extends Omit<IFileApiDownloadOptions, 'oid' | 'effects' | 'instance'> {
   oid?: IFileEntity['oid'];
@@ -92,23 +91,13 @@ export class ApiService extends Observable<IApiListener> {
     this.dispatch('apiAlterHeaders', request.headers);
     if (options.headers) {
       for (const key in options.headers) {
-        if (request.headers) request.headers[key] = options.headers[key];
+        if (request.headers) request.headers[key] = options.headers[key]!;
       }
     }
     log.debug('Envoi', request);
     const data = await app.$xhr.request(request);
     log.debug('Résultat', data);
-    if (data.result && typeof data.result.job === 'object') {
-      log.debug('Job', data.result.job);
-      const job = new ApiJob((data.result as IJobResponse).job.id);
-      app.$api.dispatch('apiJobStarted', job);
-      const res = await job.wait<RES>();
-      log.debug('Réponse Job', res);
-      return { result: res };
-    } else {
-      log.debug('Réponse');
-      return data;
-    }
+    return data as RES;
   }
 
   public async post<REQ = object, RES = object>(path: string, request: REQ, options?: IApiRequestOptions) {
@@ -148,7 +137,7 @@ export class ApiService extends Observable<IApiListener> {
     });
   }
 
-  public async fileToString(file: File): Promise<string> {
+  public async fileToString(file: File | undefined): Promise<string> {
     if (!file) return '';
     const reader = new FileReader();
     return new Promise<string>((resolve, reject) => {

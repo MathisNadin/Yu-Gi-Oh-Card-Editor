@@ -33,6 +33,8 @@ interface ISelectState<ID> extends IContainableState {
 }
 
 export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectState<ID>> {
+  private listPopoverId?: string;
+
   public static override get defaultProps(): ISelectProps<number> {
     return {
       ...super.defaultProps,
@@ -89,14 +91,14 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
   }
 
   private async selectItem(item: IActionsPopoverAction<ID>) {
-    await this.hideList();
+    this.hideList();
     await this.setStateAsync({ value: item.id as ID });
     if (!this.props.onChange) return;
     await this.props.onChange(this.state.value);
   }
 
   private async hideList() {
-    await app.$popover.removeAll();
+    if (this.listPopoverId) app.$popover.remove(this.listPopoverId);
     if (this.base.current) this.base.current.blur();
   }
 
@@ -106,7 +108,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     const actions = this.generatePopOverActions();
     if (!actions.length) return;
 
-    app.$popover.actions(this.base.current.getBoundingClientRect(), {
+    this.listPopoverId = app.$popover.actions(this.base.current.getBoundingClientRect(), {
       syncWidth: true,
       actions,
       className: 'mn-select-popover',

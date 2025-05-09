@@ -1,4 +1,4 @@
-import { isArray, isObject } from './is';
+import { isArray, isDefined, isObject } from './is';
 
 export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
@@ -160,7 +160,7 @@ export function mapa<T, U>(source: Record<string, T>, iteratee: (item: T, key: s
   const boundIteratee = iteratee.bind(context);
   let result: U[] = [];
   for (const key in source) {
-    result.push(boundIteratee(source[key], key));
+    if (isDefined(source[key])) result.push(boundIteratee(source[key]!, key));
   }
   return result;
 }
@@ -192,7 +192,7 @@ export function each<T>(
   const boundIteratee = iteratee.bind(context);
   const keysArray = Object.keys(object);
   for (let i = 0, length = keysArray.length; i < length; i++) {
-    if (boundIteratee(object[keysArray[i]], keysArray[i])) break;
+    if (boundIteratee(object[keysArray[i]!]!, keysArray[i]!)) break;
   }
 }
 
@@ -256,7 +256,7 @@ export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): {
  */
 export function sortBy<T>(a: T[], field: keyof T, orderList: unknown[]): T[] {
   const kb = keyBy(a, field);
-  return orderList.map((x) => kb[String(x)]);
+  return orderList.map((x) => kb[String(x)]!);
 }
 
 /**
@@ -281,7 +281,7 @@ export function keyByAccumulated<T>(a: T[], fieldOrCallback: string | KeyByCallb
     if (result[key] === undefined) {
       result[key] = [];
     }
-    result[key].push(v);
+    result[key]!.push(v);
   });
   return result;
 }
@@ -314,7 +314,7 @@ export function keyByMultiple<T>(
   items.forEach((item) => {
     let root = result;
     for (let i = 0, length = fields.length; i < length; i++) {
-      const key = fields[i];
+      const key = fields[i]!;
       const keyStr = String((item as Record<string, unknown>)[key]);
       if (i < last) {
         if (!root[keyStr]) root[keyStr] = {};
@@ -350,7 +350,7 @@ export function values<T>(object: TDictionary<T>): T[] {
   const length = ks.length;
   const vals: T[] = new Array(length);
   for (let i = 0; i < length; i++) {
-    vals[i] = (object as Record<string, T>)[ks[i]];
+    vals[i] = (object as Record<string, T>)[ks[i]!]!;
   }
   return vals;
 }

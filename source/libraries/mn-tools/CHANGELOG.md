@@ -1,7 +1,17 @@
 ## mn-tools change log
 
+## 2.1.2
+
+- ajout de noUncheckedIndexedAccess dans la config ts
+
+## 2.1.1
+
+- bump to 2.1.1
+- ajout de normalizeIndentation sur string
+
 ## 2.1.0
 
+- bump to 2.1.0
 - ajout de tests jest et corrections dans is et misc
 
 ## 2.0.12

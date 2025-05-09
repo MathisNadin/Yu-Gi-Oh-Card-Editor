@@ -1177,7 +1177,7 @@ export function timeZoneRecord(timezone: string) {
     if (!record) throw new Error(`Unable to find a timezone record for ${timezone}`);
     cache[timezone] = record;
   }
-  return cache[timezone];
+  return cache[timezone]!;
 }
 
 export function isDaySavingTime(date: Date) {
@@ -1201,7 +1201,7 @@ export function isDaySavingTime(date: Date) {
 }
 
 export function timeZoneOffset(date: Date, timezone: string) {
-  let record = timeZoneRecord(timezone);
+  const record = timeZoneRecord(timezone);
   let offset = record.offset;
   if (record.isDst && !isDaySavingTime(date)) offset--;
   offset *= 60;

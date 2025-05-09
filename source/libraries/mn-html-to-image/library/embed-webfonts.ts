@@ -128,7 +128,7 @@ async function getCSSRules(styleSheets: CSSStyleSheet[], options: Options): Prom
           }
         });
       } catch (e) {
-        const inline = styleSheets.find((a) => a.href == null) || document.styleSheets[0];
+        const inline = styleSheets.find((a) => a.href == null) || document.styleSheets[0]!;
         if (sheet.href != null) {
           deferreds.push(
             fetchCSS(sheet.href)

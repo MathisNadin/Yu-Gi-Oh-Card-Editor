@@ -37,7 +37,7 @@ export function shortnameToUnicode(str: string) {
       // if the shortname doesnt exist just return the entire match
       return shortname;
     }
-    unicode = emojioneList[shortname].unicode[0].toUpperCase();
+    unicode = emojioneList[shortname]!.unicode[0]?.toUpperCase() || '';
     return convert(unicode);
   });
 
@@ -48,7 +48,7 @@ export function shortnameToUnicode(str: string) {
     }
 
     m3 = unescapeHTML(m3);
-    unicode = asciiList[m3].toUpperCase();
+    unicode = asciiList[m3]!.toUpperCase();
     return m2 + convert(unicode);
   });
 
@@ -67,7 +67,7 @@ export function shortnameToImage(str: string) {
     if (typeof shortname === 'undefined' || shortname === '' || !(shortname in emojioneList)) {
       return shortname;
     } else {
-      unicode = emojioneList[shortname].unicode[emojioneList[shortname].unicode.length - 1];
+      unicode = emojioneList[shortname]!.unicode[emojioneList[shortname]!.unicode.length - 1] || '';
       replaceWith = `<svg class="emoji"><use xlink:href="${bundlePath}#emoji-${unicode}"></use></svg>`;
       return replaceWith;
     }
@@ -80,7 +80,7 @@ export function shortnameToImage(str: string) {
     }
 
     m3 = unescapeHTML(m3);
-    unicode = asciiList[m3];
+    unicode = asciiList[m3]!;
 
     replaceWith = `${m2}<svg class="emoji"><use xlink:href="${bundlePath}#emoji-${unicode}"></use></svg>`;
     return replaceWith;
@@ -179,7 +179,7 @@ export function escapeHTML(string: string) {
   };
 
   return string.replace(/[&<>"'¢£¥€©®™§°¶»«¡¿áéíóúñüºª]/g, (match) => {
-    return escaped[match];
+    return escaped[match] || '';
   });
 }
 
@@ -277,18 +277,18 @@ export function unescapeHTML(string: string) {
   return string.replace(
     /&(?:amp|#38|#x26|lt|#60|#x3C|gt|#62|#x3E|quot|#34|#x22|apos|#39|#x27|nbsp|#160|#xA0|cent|#162|#xA2|pound|#163|#xA3|yen|#165|#xA5|euro|#8364|#x20AC|copy|#169|#xA9|reg|#174|#xAE|trade|#8482|#x2122|sect|#167|#xA7|deg|#176|#xB0|para|#182|#xB6|raquo|#187|#xBB|laquo|#171|#xAB|iexcl|#161|#xA1|iquest|#191|#xBF|aacute|#225|#xE1|eacute|#233|#xE9|iacute|#237|#xED|oacute|#243|#xF3|uacute|#250|#xFA|ntilde|#241|#xF1|uuml|#252|#xFC|ordm|#186|#xBA|ordf|#170|#xAA);/gi,
     (match) => {
-      return unescaped[match];
+      return unescaped[match] || '';
     }
   );
 }
 
 function mapEmojioneList(addToMapStorage: (unicode: string, shortname: string) => void) {
-  for (let shortname in emojioneList) {
+  for (const shortname in emojioneList) {
     if (!emojioneList.hasOwnProperty(shortname)) {
       continue;
     }
-    for (let i = 0, len = emojioneList[shortname].unicode.length; i < len; i++) {
-      let unicode = emojioneList[shortname].unicode[i];
+    for (let i = 0, len = emojioneList[shortname]!.unicode.length; i < len; i++) {
+      const unicode = emojioneList[shortname]!.unicode[i]!;
       addToMapStorage(unicode, shortname);
     }
   }
@@ -300,7 +300,7 @@ function memoizeReplacement() {
     memMapShortToUnicodeCharacters = {};
     mapEmojioneList((unicode: string, shortname: string) => {
       let emojiCharacter = convert(unicode);
-      if (emojioneList[shortname].isCanonical) {
+      if (emojioneList[shortname]!.isCanonical) {
         memMapShortToUnicodeCharacters[emojiCharacter] = shortname;
       }
       unicodeList.push(emojiCharacter);
@@ -334,7 +334,7 @@ function replaceAll(string: string, find: string, replacementList: { [k: string]
 
   // callback prevents replacing anything inside of these common html tags as well as between an <object></object> tag
   let replace = (entire: string, m1: string) => {
-    return typeof m1 === 'undefined' || m1 === '' ? entire : replacementList[m1];
+    return typeof m1 === 'undefined' || m1 === '' ? entire : replacementList[m1]!;
   };
 
   return string.replace(search, replace);

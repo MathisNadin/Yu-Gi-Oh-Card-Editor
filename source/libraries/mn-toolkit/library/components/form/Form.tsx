@@ -6,9 +6,12 @@ export interface IFormProps extends IContainerProps<HTMLFormElement> {
   onFieldSubmit?: (field: TFormField) => void | Promise<void>;
 }
 
-interface IFormState extends IContainerState {}
+export interface IFormState extends IContainerState {}
 
-export class Form extends Container<IFormProps, IFormState, HTMLFormElement> implements IFormFieldListener {
+export class Form<PROPS extends IFormProps = IFormProps, STATE extends IFormState = IFormState>
+  extends Container<PROPS, STATE, HTMLFormElement>
+  implements IFormFieldListener
+{
   private fields: TFormField[] = [];
 
   public get hasError() {
@@ -35,7 +38,7 @@ export class Form extends Container<IFormProps, IFormState, HTMLFormElement> imp
     };
   }
 
-  public constructor(props: IFormProps) {
+  public constructor(props: PROPS) {
     super(props);
   }
 

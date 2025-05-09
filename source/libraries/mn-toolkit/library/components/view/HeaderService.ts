@@ -59,7 +59,7 @@ export class HeaderService extends Observable<IHeaderListener> implements Partia
     parts.sort((a, b) => {
       return (a.weight || 0) - (b.weight || 0);
     });
-    parts.forEach((part) => this._parts[part.position].push(part));
+    parts.forEach((part) => this._parts[part.position]!.push(part));
     this.dispatch('headerUpdated');
   }
 }

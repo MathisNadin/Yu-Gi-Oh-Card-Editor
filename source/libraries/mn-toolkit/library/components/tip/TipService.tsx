@@ -19,8 +19,8 @@ export class TipService {
   }
 
   public show(targetRectangle: DOMRect, tip: IContainableTip) {
-    app.$popover.removeAll();
-    app.$popover.walkthrough(targetRectangle, {
+    if (app.$popover.visible) return;
+    const popupId = app.$popover.walkthrough(targetRectangle, {
       focus: true,
       ignoreFocus: true,
       innerContent: (
@@ -34,7 +34,7 @@ export class TipService {
           label: "J'ai compris",
           onTap: async () => {
             await app.$tips.markAsSeen(tip.uuid);
-            app.$popover.removeAll();
+            app.$popover.remove(popupId);
           },
         },
       ],

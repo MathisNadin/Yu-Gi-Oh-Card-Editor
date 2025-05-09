@@ -127,7 +127,7 @@ export class CheckboxTree<ID = number> extends Container<
       //    => The `path` array contains [rootParent, ..., directParent, currentItem].
       //    So we iterate from the second-to-last item up to the beginning.
       for (let i = path.length - 2; i >= 0; i--) {
-        const ancestor = path[i];
+        const ancestor = path[i]!;
         selected.add(ancestor.id);
       }
     } else {
@@ -143,7 +143,7 @@ export class CheckboxTree<ID = number> extends Container<
       // 3) Traverse up the parent chain to uncheck them if necessary,
       //    but only if they have no checked children left.
       for (let i = path.length - 2; i >= 0; i--) {
-        const ancestor = path[i];
+        const ancestor = path[i]!;
         const hasChildChecked = ancestor.children?.some((child) => selected.has(child.id));
         // If no child is checked, we can uncheck the parent...
         if (!hasChildChecked) {

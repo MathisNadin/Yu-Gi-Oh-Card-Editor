@@ -1,7 +1,7 @@
 {
   "name": "mn-html-to-image",
   "displayName": "MN HTML to Image",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bibliothèque Typescript pour convertir des éléments HTML en image",
   "repository": {
     "type": "git",

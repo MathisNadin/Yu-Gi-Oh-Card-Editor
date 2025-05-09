@@ -15,7 +15,7 @@ export class PopoverService extends Observable<IPopoverListener> {
     this.popovers = [];
     this.focuses = [];
     app.$device.addListener({
-      deviceBackButton: () => app.$popover.removeAll(),
+      deviceBackButton: () => app.$popover.removeLast(),
     });
   }
 
@@ -88,7 +88,7 @@ export class PopoverService extends Observable<IPopoverListener> {
 
   public removeLast() {
     if (!this.popovers.length) return;
-    const lastId = this.popovers[this.popovers.length - 1].id;
+    const lastId = this.popovers[this.popovers.length - 1]!.id;
     this.remove(lastId);
   }
 

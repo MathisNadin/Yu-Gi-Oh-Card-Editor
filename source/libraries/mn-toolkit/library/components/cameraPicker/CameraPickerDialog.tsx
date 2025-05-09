@@ -9,7 +9,7 @@ export interface ICameraPickerDialogProps extends IAbstractPopupProps<string> {
 }
 
 interface ICameraPickerDialogState extends IAbstractPopupState {
-  selected: string;
+  selected?: string;
   deviceItems: ISelectItem<string>[];
 }
 

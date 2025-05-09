@@ -353,8 +353,8 @@ describe('Prototype methods on Date (truncation, day adjustments, etc.)', () => 
     const days = start.generateDays(end);
     // Expect days from Jan 1 to Jan 4 (since Jan 5 is end day exclusive based on toBeginOfDay/toEndOfDay)
     expect(days.length).toBe(4);
-    expect(days[0].getDate()).toBe(1);
-    expect(days[days.length - 1].getDate()).toBe(4);
+    expect(days[0]?.getDate()).toBe(1);
+    expect(days[days.length - 1]?.getDate()).toBe(4);
   });
 
   it('should generate a calendar covering full weeks of the month', () => {

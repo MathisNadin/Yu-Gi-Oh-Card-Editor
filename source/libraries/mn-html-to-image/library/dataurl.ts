@@ -1,7 +1,7 @@
 import { Options } from './types';
 
 function getContentFromDataUrl(dataURL: string) {
-  return dataURL.split(/,/)[1];
+  return dataURL.split(/,/)[1] || '';
 }
 
 export function isDataUrl(url: string) {

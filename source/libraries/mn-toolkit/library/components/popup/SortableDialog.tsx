@@ -74,7 +74,7 @@ export class SortableDialog<ID = string> extends AbstractPopup<
     const insertionIndex = before ? adjustedTo : adjustedTo + 1;
 
     // Insert the item at the new position
-    items.splice(insertionIndex, 0, item);
+    items.splice(insertionIndex, 0, item!);
 
     // Update the state
     await this.setStateAsync({ items });

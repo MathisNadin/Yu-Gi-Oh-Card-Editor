@@ -34,7 +34,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
 
     // Process each line with dedicated functions.
     for (let i = 0; i < this.wikitextLines.length; i++) {
-      const line = this.wikitextLines[i];
+      const line = this.wikitextLines[i]!;
 
       // Process prints sections (jp, en, fr) in one go.
       if (line.includes('| jp_sets')) {
@@ -314,7 +314,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
     }
     // If only two are present and the first is effect, then remove it as it is useless
     else if (this.card.frames.length === 2 && this.card.frames[0] === 'effect') {
-      this.card.frames = [this.card.frames[1]];
+      this.card.frames = [this.card.frames[1]!];
     }
 
     this.card.translations.en_us.abilities = value.split(' / ');
@@ -412,8 +412,8 @@ export class WikitextCardParser extends AbstractWikitextParser {
   private extractPrints(lines: string[], startIndex: number): { prints: IYugipediaCardPrint[]; newIndex: number } {
     const prints: IYugipediaCardPrint[] = [];
     let i = startIndex + 1;
-    while (i < lines.length && !lines[i].startsWith('| ')) {
-      const sections = lines[i].split(';');
+    while (i < lines.length && !lines[i]!.startsWith('| ')) {
+      const sections = lines[i]!.split(';');
       if (sections.length) {
         const print: IYugipediaCardPrint = {};
         if (sections[0]) print.code = sections[0].trim();
@@ -572,7 +572,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
         .split(/(●|•)/)
         .map((part) => part.trim())
         .filter((part) => part && part !== '●' && part !== '•');
-    } else if (this.card.frames.length === 1 && ['normal', 'token', 'monsterToken'].includes(this.card.frames[0])) {
+    } else if (this.card.frames.length === 1 && ['normal', 'token', 'monsterToken'].includes(this.card.frames[0]!)) {
       this.card.translations[language].description = lore;
     } else {
       this.card.translations[language].rushEffect = lore;

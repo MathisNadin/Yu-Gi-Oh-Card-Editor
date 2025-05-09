@@ -315,8 +315,8 @@ describe('objects.ts utility functions', () => {
       const grouped = keyByAccumulated(people, 'gender');
       expect(grouped.male).toBeDefined();
       expect(grouped.female).toBeDefined();
-      expect(grouped.male.length).toBe(2);
-      expect(grouped.female.length).toBe(1);
+      expect(grouped.male?.length).toBe(2);
+      expect(grouped.female?.length).toBe(1);
     });
   });
 
@@ -339,7 +339,7 @@ describe('objects.ts utility functions', () => {
       // Convert the nested value explicitly.
       const electronicsGroup = result['Electronics'] as unknown as Record<string, Product[]>;
       const electronicsLaptops = electronicsGroup['Laptop'];
-      expect(electronicsLaptops.length).toBe(2);
+      expect(electronicsLaptops?.length).toBe(2);
     });
   });
 

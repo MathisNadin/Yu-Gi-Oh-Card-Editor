@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.4
+
+- ajout de noUncheckedIndexedAccess dans la config ts
+
 ## 1.1.3
 
+- bump to 1.1.3
 - ajout de l'app icon en mode dev
 
 ## 1.1.2

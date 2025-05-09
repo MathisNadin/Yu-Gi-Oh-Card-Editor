@@ -177,7 +177,7 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
     if (newIndex < 0) newIndex = 0;
     if (newIndex > sections.length - 1) newIndex = sections.length - 1;
 
-    await this.setStateAsync({ activeSection: sections[newIndex], hour, minute });
+    await this.setStateAsync({ activeSection: sections[newIndex]!, hour, minute });
     this.setSelectionRange();
     await this.onChange();
   }

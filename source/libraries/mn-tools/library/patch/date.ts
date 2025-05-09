@@ -120,7 +120,7 @@ object.offsetToISO = function (offset: number): string {
  */
 object.fromISODate = function (s: string): Date {
   const tokens = s.split(/-/);
-  return new Date(parseInt(tokens[0], 10), parseInt(tokens[1], 10) - 1, parseInt(tokens[2], 10));
+  return new Date(parseInt(tokens[0] ?? '', 10), parseInt(tokens[1] ?? '', 10) - 1, parseInt(tokens[2] ?? '', 10));
 };
 
 //------------------------------------------------------------------------------
@@ -749,11 +749,11 @@ export function install(): void {
 
   // Patch static methods
   for (const name in object) {
-    monkeyPatch(Date, name, object[name]);
+    monkeyPatch(Date, name, object[name]!);
   }
   // Patch prototype methods
   for (const name in prototype) {
-    monkeyPatch(Date.prototype, name, prototype[name]);
+    monkeyPatch(Date.prototype, name, prototype[name]!);
   }
 }
 

@@ -142,7 +142,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   private async onMultipleFramesChange() {
     const newCard: ICard = { ...this.state.card, multipleFrames: !this.state.card.multipleFrames };
     if (newCard.frames.length > 1) {
-      newCard.frames = [newCard.frames[0]];
+      newCard.frames = [newCard.frames[0]!];
     }
     await this.setStateAsync({ card: newCard });
   }
@@ -314,7 +314,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     if (index === 0) return;
     const newCard: ICard = { ...this.state.card };
     const newIndex = index - 1;
-    const element = newCard.abilities[index];
+    const element = newCard.abilities[index]!;
     newCard.abilities.splice(index, 1);
     newCard.abilities.splice(newIndex, 0, element);
     await this.setStateAsync({ card: newCard });
@@ -324,7 +324,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     if (index === this.state.card.abilities.length - 1) return;
     const newCard: ICard = { ...this.state.card };
     const newIndex = index + 1;
-    const element = newCard.abilities[index];
+    const element = newCard.abilities[index]!;
     newCard.abilities.splice(index, 1);
     newCard.abilities.splice(newIndex, 0, element);
     await this.setStateAsync({ card: newCard });

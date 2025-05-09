@@ -62,7 +62,7 @@ export function setupIpcMainHandleChannels() {
       filters,
     });
     if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
-    return readFileSync(directoryPath.filePaths[0], 'utf-8');
+    return readFileSync(directoryPath.filePaths[0]!, 'utf-8');
   });
 
   addIpcMainHandleChannel(
@@ -135,7 +135,7 @@ export function setupIpcMainHandleChannels() {
       let win = BrowserWindow.getFocusedWindow();
       if (!win) {
         const allWindows = BrowserWindow.getAllWindows();
-        if (allWindows?.length) win = allWindows[0];
+        if (allWindows?.length) win = allWindows[0]!;
       }
       if (!win) throw new Error('No window found');
       const file = await download(win, url, { directory, filename });

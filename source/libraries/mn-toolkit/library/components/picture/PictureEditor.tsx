@@ -113,7 +113,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
 
     let croppedUrl!: string;
     try {
-      const cropEffect = cropEffects[0];
+      const cropEffect = cropEffects[0]!;
       croppedUrl = await getCroppedArtworkBase64({
         src: referenceUrl,
         height: cropEffect.crop.height,
@@ -188,7 +188,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     if (!actions.length) return;
 
     if (actions.length === 1) {
-      return await actions[0].onTap!(undefined!);
+      return await actions[0]!.onTap!(undefined!);
     }
 
     let eventOrRect: React.MouseEvent<HTMLDivElement> | DOMRect;
@@ -236,7 +236,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       });
       if (!result?.length) return;
 
-      const file = result[0];
+      const file = result[0]!;
       await this.onUploadFile(file);
     } catch (error) {
       console.error('Failed to select image', error);

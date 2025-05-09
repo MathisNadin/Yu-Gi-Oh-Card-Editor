@@ -130,8 +130,8 @@ export class PictureCropperDialog extends AbstractPopup<
 
   private startDrag(event: React.MouseEvent<HTMLDivElement> | React.TouchEvent) {
     const isTouch = this.isReactTouchEvent(event);
-    this.lastClientX = isTouch ? event.touches[0].clientX : event.clientX;
-    this.lastClientY = isTouch ? event.touches[0].clientY : event.clientY;
+    this.lastClientX = isTouch ? event.touches[0]!.clientX : event.clientX;
+    this.lastClientY = isTouch ? event.touches[0]!.clientY : event.clientY;
     this.isDragging = true;
 
     document.addEventListener(isTouch ? 'touchmove' : 'mousemove', this.handleDrag);
@@ -148,8 +148,8 @@ export class PictureCropperDialog extends AbstractPopup<
     const { scale, imageDimensions, cropAreaDimensions, position } = this.state;
 
     const isTouch = this.isTouchEvent(event);
-    const clientX = isTouch ? event.touches[0].clientX : event.clientX;
-    const clientY = isTouch ? event.touches[0].clientY : event.clientY;
+    const clientX = isTouch ? event.touches[0]!.clientX : event.clientX;
+    const clientY = isTouch ? event.touches[0]!.clientY : event.clientY;
 
     const deltaX = clientX - this.lastClientX;
     const deltaY = clientY - this.lastClientY;

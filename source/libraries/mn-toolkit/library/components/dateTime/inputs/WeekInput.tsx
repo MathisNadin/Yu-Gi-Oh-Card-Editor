@@ -193,7 +193,7 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
     if (newIndex < 0) newIndex = 0;
     if (newIndex > sections.length - 1) newIndex = sections.length - 1;
 
-    await this.setStateAsync({ activeSection: sections[newIndex], week, year });
+    await this.setStateAsync({ activeSection: sections[newIndex]!, week, year });
     this.setSelectionRange();
     await await this.onChange();
   }

@@ -289,7 +289,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
       // This logic can be improved if you want to expand equally on both sides, etc.
 
       // Attempt expanding left (if we haven't merged with page 3, for example).
-      const firstVal = combined[0]; // should be 1
+      const firstVal = combined[0]!; // should be 1
       if (firstVal > 1) {
         // not likely with the logic above, but let's keep the structure
         combined.unshift(firstVal - 1);
@@ -298,7 +298,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
       }
 
       // Attempt expanding right
-      const lastVal = combined[combined.length - 1]; // might be totalPages
+      const lastVal = combined[combined.length - 1]!; // might be totalPages
       if (lastVal < totalPages) {
         combined.push(lastVal + 1);
         extraNeeded--;
@@ -324,12 +324,12 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
     if (pages.length <= 1) return pages.map((p, i) => this.renderPage(p, i));
 
     const result: TJSXElementChild[] = [];
-    result.push(this.renderPage(pages[0], 0));
+    result.push(this.renderPage(pages[0]!, 0));
 
     for (let i = 1; i < pages.length; i++) {
-      const prev = pages[i - 1];
-      const current = pages[i];
-      const next = pages[i + 1];
+      const prev = pages[i - 1]!;
+      const current = pages[i]!;
+      const next = pages[i + 1]!;
 
       // if there's a gap > 1 on second, push dots instead
       if (i === 1 && current < next - 1) {
