@@ -670,6 +670,13 @@ export class YuginewsService {
   private getDescription(cardData: IYuginewsCardData, hasMaterials: boolean): string {
     let description = '';
 
+    // Check for special MD cases where no material is listed
+    if (hasMaterials && !cardData.isRush && cardData.effects?.[0]) {
+      if (cardData.effects[0].startsWith('Uniquement')) hasMaterials = false;
+      if (cardData.effects[0].startsWith("Doit d'abord être Invoqué")) hasMaterials = false;
+      if (cardData.effects[0].startsWith('Non Invocable')) hasMaterials = false;
+    }
+
     if (cardData.normalText) {
       description = cardData.normalText;
     } else if (cardData.effects?.length) {
@@ -686,7 +693,7 @@ export class YuginewsService {
 
         if (
           isDefined(cardData.effects![i + 1]) &&
-          ((!i && hasMaterials) || (eff.startsWith('(') && !eff.startsWith('(Effet')))
+          ((!i && hasMaterials) || (eff.startsWith('(') && !eff.startsWith('(Effet')) || eff.startsWith('FLIP'))
         ) {
           description = `${description}\n`;
           lastHasLineBreak = true;
