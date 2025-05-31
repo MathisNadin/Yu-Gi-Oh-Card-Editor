@@ -158,15 +158,15 @@
       }
 
       &.skill-name-container {
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: bold;
         top: 61px;
-        font-size: 62px;
-        letter-spacing: -4px;
 
         .card-name {
           -webkit-text-stroke: 2.5px black;
           text-shadow: 0 0 2px black;
+          font-family: Arial, Helvetica, sans-serif;
+          font-weight: 800;
+          font-size: 62px;
+          letter-spacing: -4px;
         }
       }
 

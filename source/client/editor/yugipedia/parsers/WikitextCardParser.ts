@@ -204,6 +204,14 @@ export class WikitextCardParser extends AbstractWikitextParser {
     else if (line.includes('| fr_pendulum_effect')) {
       this.card.translations.fr_fr.pendEffect = this.parseWikitextLore(line);
     }
+    // --- Process skill activation (EN)
+    else if (line.includes('| skill_activation')) {
+      this.card.translations.en_us.skillBack = this.parseWikitextLore(line);
+    }
+    // --- Process skill activation (FR)
+    else if (line.includes('| fr_skill_activation')) {
+      this.card.translations.fr_fr.skillBack = this.parseWikitextLore(line);
+    }
     // --- Process card password
     else if (line.includes('| password')) {
       this.card.password = this.getMetadataLineValue(line);
@@ -584,6 +592,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
    */
   private getFrenchAbility(ability: string): string {
     switch (ability.trim()) {
+      // Card Types
       case 'Normal':
         return 'Normal';
       case 'Effect':
@@ -620,6 +629,28 @@ export class WikitextCardParser extends AbstractWikitextParser {
         return 'Flip';
       case 'Gemini':
         return 'Gémeau';
+      case 'Normal Spell':
+        return 'Magie Normale';
+      case 'Continuous Spell':
+        return 'Magie Continue';
+      case 'Equip Spell':
+        return "Magie d'Équipement";
+      case 'Field Spell':
+        return 'Magie de Terrain';
+      case 'Quick-Play Spell':
+        return 'Magie Jeu-Rapide';
+      case 'Ritual Spell':
+        return 'Magie Rituelle';
+      case 'Link Spell':
+        return 'Magie de Lien';
+      case 'Normal Trap':
+        return 'Piège Normal';
+      case 'Continuous Trap':
+        return 'Piège Continu';
+      case 'Counter Trap':
+        return 'Contre-Piège';
+
+      // Monster Types
       case 'Aqua':
         return 'Aqua';
       case 'Beast':
@@ -686,6 +717,49 @@ export class WikitextCardParser extends AbstractWikitextParser {
         return 'Guerrier Céleste';
       case 'Galaxy':
         return 'Galaxie';
+
+      // Skill characters
+      case 'Weevil':
+        return 'Haga';
+      case 'Keith':
+        return 'Ken';
+      case 'Paradox':
+        return 'Paradoxe';
+      case 'Rare Hunter':
+        return "Pilleur de l'Ombre";
+      case 'Strings':
+        return 'Sting';
+      case 'Umbra & Lumis':
+        return 'Lumis et Umbra';
+      case 'Espa Roba':
+        return 'Esparo';
+      case 'Ishizu':
+        return 'Shizu';
+      case 'Jaden & Syrus':
+        return 'Jaden et Syrus';
+      case 'Chazz':
+        return 'Chad';
+      case 'Alexis':
+        return 'Alexia';
+      case 'Zane':
+        return 'Zen';
+      case 'Bastion':
+        return 'Bastien';
+      case 'Chumley':
+        return 'Charlie';
+      case 'Dr. Crowler':
+        return 'Docteur Crowler';
+      case 'Nightshroud':
+        return 'Masque des Ténèbres';
+      case 'Hassleberry':
+        return 'Cricket';
+      case 'Society':
+        return 'Société';
+      case 'Adrian':
+        return 'Adrien';
+      case 'Supreme King':
+        return 'Roi Suprême';
+
       default:
         return ability;
     }
