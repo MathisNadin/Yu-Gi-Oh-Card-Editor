@@ -443,6 +443,9 @@ export class WikitextCardParser extends AbstractWikitextParser {
       this.card.rush = true;
     }
 
+    // This may have been defined from the effect_types line but end up irrelevant
+    if (!this.card.rush && this.card.rushEffectType) delete this.card.rushEffectType;
+
     // Determine the English name based on priority.
     this.card.translations.en_us.name = (this.name || this.enName || this.main || this.pageTitle || '')
       .replaceAll(' (card)', '')

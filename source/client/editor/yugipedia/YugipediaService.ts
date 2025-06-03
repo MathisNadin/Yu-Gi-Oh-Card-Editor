@@ -174,6 +174,20 @@ export class YugipediaService {
     if (useFr) rushChoiceEffects = frTranslations.rushChoiceEffects;
     else rushChoiceEffects = enTranslations.rushChoiceEffects;
 
+    let rushTextMode = this.getEditorCardRushTextMode(yugipediaCard);
+
+    // Cheat a bit here for the display purpose when there is maybe only otherEffects (on a Ritual/Fusion for example)
+    if (
+      yugipediaCard.rush &&
+      rushTextMode === 'regular' &&
+      !rushCondition &&
+      !rushEffect &&
+      !rushChoiceEffects?.length
+    ) {
+      if (rushOtherEffects) description = rushOtherEffects;
+      rushTextMode = 'vanilla';
+    }
+
     let abilities: ICard['abilities'] | undefined;
     if (useFr) abilities = frTranslations.abilities;
     else abilities = enTranslations.abilities;
@@ -205,7 +219,7 @@ export class YugipediaService {
       name,
       description,
       pendEffect,
-      rushTextMode: this.getEditorCardRushTextMode(yugipediaCard),
+      rushTextMode,
       rushOtherEffects,
       rushCondition,
       rushEffect,
