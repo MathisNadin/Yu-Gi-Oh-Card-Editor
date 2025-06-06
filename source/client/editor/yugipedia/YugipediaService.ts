@@ -76,6 +76,19 @@ export class YugipediaService {
     nextTask();
   }
 
+  private async electronAxiosGet<R = unknown>(params: object) {
+    if (!app.$device.isElectron(window)) return undefined;
+    return await this.scheduleRequest(
+      () =>
+        window.electron!.ipcRenderer.invoke('axiosGetData', this.baseApiUrl, {
+          params,
+          headers: {
+            'User-Agent': this.userAgent,
+          },
+        }) as Promise<R | undefined>
+    );
+  }
+
   private async getCardImageUrl(yugipediaCardPage: IYugipediaGetPageByTitleApiResponse) {
     const pageKeys = Object.keys(yugipediaCardPage.query.pages);
     if (!pageKeys[0]) return undefined;
@@ -101,22 +114,12 @@ export class YugipediaService {
 
   private async getCardPageImg(cardName: string) {
     try {
-      // Use scheduleRequest to enforce rate limit
-      const response = await this.scheduleRequest(() =>
-        app.$axios.get<IYugipediaGetCardPageImgApiResponse>(this.baseApiUrl, {
-          params: {
-            action: 'parse',
-            page: cardName,
-            prop: 'images',
-            format: 'json',
-          },
-          headers: {
-            'User-Agent': this.userAgent,
-          },
-        })
-      );
-
-      return response?.data;
+      return await this.electronAxiosGet<IYugipediaGetCardPageImgApiResponse>({
+        action: 'parse',
+        page: cardName,
+        prop: 'images',
+        format: 'json',
+      });
     } catch (error) {
       throw new Error(`Failed to fetch card page images: ${(error as Error).message}`);
     }
@@ -124,23 +127,13 @@ export class YugipediaService {
 
   private async getCardImg(fileName: string) {
     try {
-      // Use scheduleRequest to enforce rate limit
-      const response = await this.scheduleRequest(() =>
-        app.$axios.get<IYugipediaGetCardImgApiResponse>(this.baseApiUrl, {
-          params: {
-            action: 'query',
-            titles: `File:${fileName}`,
-            prop: 'imageinfo',
-            iiprop: 'url',
-            format: 'json',
-          },
-          headers: {
-            'User-Agent': this.userAgent,
-          },
-        })
-      );
-
-      return response?.data;
+      return await this.electronAxiosGet<IYugipediaGetCardImgApiResponse>({
+        action: 'query',
+        titles: `File:${fileName}`,
+        prop: 'imageinfo',
+        iiprop: 'url',
+        format: 'json',
+      });
     } catch (error) {
       throw new Error(`Failed to fetch card image: ${(error as Error).message}`);
     }
@@ -160,30 +153,21 @@ export class YugipediaService {
         .replace(/\]/g, ')') // replace ] with )
         .replace(/[<>#]/g, ''); // remove <, >, and #
 
-      // Use scheduleRequest to enforce rate limit
-      const response = await this.scheduleRequest(() =>
-        // Perform the API request with the common parameters
-        app.$axios.get<IYugipediaGetPageByTitleApiResponse>(this.baseApiUrl, {
-          params: {
-            action: 'query',
-            titles,
-            prop: 'revisions',
-            rvprop: 'content',
-            format: 'json',
-          },
-          headers: {
-            'User-Agent': this.userAgent,
-          },
-        })
-      );
+      const response = await this.electronAxiosGet<IYugipediaGetPageByTitleApiResponse>({
+        action: 'query',
+        titles,
+        prop: 'revisions',
+        rvprop: 'content',
+        format: 'json',
+      });
 
       // Verify the presence of pages data
-      if (!response?.data?.query?.pages) return undefined;
-      const pageKeys = Object.keys(response.data.query.pages);
+      if (!response?.query?.pages) return undefined;
+      const pageKeys = Object.keys(response.query.pages);
       if (!pageKeys.length) return undefined;
 
       // Extract page data from the response
-      const page = response.data.query.pages[pageKeys[0]!];
+      const page = response.query.pages[pageKeys[0]!];
       if (!page?.revisions?.length) return undefined;
 
       // Check if the page content indicates a redirect
@@ -193,7 +177,7 @@ export class YugipediaService {
         // Recursively fetch the page using the new title from the redirect
         return await this.getPageByTitle(redirectMatch[1]);
       } else {
-        return response.data;
+        return response;
       }
     } catch (error) {
       throw new Error(`Failed to fetch page by title: ${(error as Error).message}`);

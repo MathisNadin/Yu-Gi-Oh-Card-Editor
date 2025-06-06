@@ -1,5 +1,7 @@
-import { app } from 'electron';
+import axios, { AxiosRequestConfig } from 'axios';
+import { app, IpcMainInvokeEvent } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import { addIpcMainHandleChannel } from '../../libraries/mn-electron-main';
 
 declare global {
   interface IIpcMainSendChannel {
@@ -9,12 +11,30 @@ declare global {
     importData: [];
     exportData: [];
   }
+
+  interface IIpcRendererInvokeChannel {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    axiosGetData: { args: [url: string, options?: AxiosRequestConfig]; response: any | undefined };
+  }
 }
 
 // Ignore OS zoom as html-to-img does not handle it well
 app.commandLine.appendSwitch('force-device-scale-factor', '1');
 
-export function patchIpcMain(_ipcMain: TIpcMain) {}
+export function patchIpcMain(_ipcMain: TIpcMain) {
+  addIpcMainHandleChannel(
+    'axiosGetData',
+    async (_event: IpcMainInvokeEvent, url: string, options?: AxiosRequestConfig) => {
+      try {
+        const response = await axios.get(url, options);
+        return response?.data;
+      } catch (error) {
+        console.error('GET request error:', error);
+        return undefined;
+      }
+    }
+  );
+}
 
 export function buildProjectMenuDarwinTemplate(
   mainWindow: IBrowserWindow,
