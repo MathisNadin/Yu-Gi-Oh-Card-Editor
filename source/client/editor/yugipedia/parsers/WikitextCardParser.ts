@@ -5,7 +5,6 @@ import { AbstractWikitextParser } from './AbstractWikitextParser';
 export class WikitextCardParser extends AbstractWikitextParser {
   private card: IYugipediaCard;
 
-  private main?: string;
   private name?: string;
   private enName?: string;
 
@@ -22,6 +21,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
       frames: [],
       jpPrints: [],
       enPrints: [],
+      naPrints: [],
       frPrints: [],
     };
   }
@@ -36,7 +36,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
     for (let i = 0; i < this.wikitextLines.length; i++) {
       const line = this.wikitextLines[i]!;
 
-      // Process prints sections (jp, en, fr) in one go.
+      // Process prints sections (jp, en, na, fr) in one go.
       if (line.includes('| jp_sets')) {
         const { prints, newIndex } = this.extractPrints(this.wikitextLines, i);
         this.card.jpPrints.push(...prints);
@@ -44,6 +44,10 @@ export class WikitextCardParser extends AbstractWikitextParser {
       } else if (line.includes('| en_sets')) {
         const { prints, newIndex } = this.extractPrints(this.wikitextLines, i);
         this.card.enPrints.push(...prints);
+        i = newIndex;
+      } else if (line.includes('| na_sets')) {
+        const { prints, newIndex } = this.extractPrints(this.wikitextLines, i);
+        this.card.naPrints.push(...prints);
         i = newIndex;
       } else if (line.includes('| fr_sets')) {
         const { prints, newIndex } = this.extractPrints(this.wikitextLines, i);
@@ -71,10 +75,6 @@ export class WikitextCardParser extends AbstractWikitextParser {
     // --- Process card class
     else if (line.includes('| cardclass')) {
       this.card.class = this.getMetadataLineValue(line) as TYugipediaCardClass;
-    }
-    // --- Process main name
-    else if (line.includes('| main')) {
-      this.main = this.getMetadataLineValue(line);
     }
     // --- Process card name
     else if (line.includes('| name')) {
@@ -434,6 +434,15 @@ export class WikitextCardParser extends AbstractWikitextParser {
     return { prints, newIndex: i - 1 };
   }
 
+  private extractNameBeforeParenthesis(input: string | undefined) {
+    if (!input) return input;
+
+    const index = input.indexOf('(');
+    if (index === -1) return input.trim();
+
+    return input.substring(0, index).trim();
+  }
+
   /**
    * Finalize the card by setting translations and applying forced name if needed.
    */
@@ -447,14 +456,8 @@ export class WikitextCardParser extends AbstractWikitextParser {
     if (!this.card.rush && this.card.rushEffectType) delete this.card.rushEffectType;
 
     // Determine the English name based on priority.
-    this.card.translations.en_us.name = (this.name || this.enName || this.main || this.pageTitle || '')
-      .replaceAll(' (card)', '')
-      .replaceAll(' (Skill Card)', '')
-      .replaceAll(' (Rush Duel)', '')
-      .replaceAll(' (Master Duel)', '')
-      .replaceAll(' (original)', '')
-      .replaceAll(' (anime)', '')
-      .replaceAll(' (manga)', '');
+    this.card.translations.en_us.name =
+      this.name || this.enName || this.extractNameBeforeParenthesis(this.pageTitle) || '';
 
     if (this.card.translations.en_us.name && this.card.frames.length === 1 && this.card.frames[0] === 'normal') {
       if (this.card.translations.en_us.name === 'Token') this.card.frames.push('token');

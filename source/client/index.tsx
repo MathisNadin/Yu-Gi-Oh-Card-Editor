@@ -17,6 +17,14 @@ export interface IPackageJSON {
   version: string;
   dbName: string;
   objectStoreName: string;
+  repository: {
+    type: string;
+    url: string;
+  };
+  author: {
+    name: string;
+    email: string;
+  };
 }
 
 import confJson from '../../package.json';
@@ -24,6 +32,19 @@ const conf = confJson as unknown as IPackageJSON;
 
 import patchConfig from '../../config/platform.js';
 patchConfig(conf);
+
+declare global {
+  interface IApplicationConfig {
+    repository: {
+      type: string;
+      url: string;
+    };
+    author: {
+      name: string;
+      email: string;
+    };
+  }
+}
 
 setupAppAndToolkit(
   {
@@ -35,6 +56,8 @@ setupAppAndToolkit(
     apiUrl: '',
     dbName: conf.dbName,
     objectStoreName: conf.objectStoreName,
+    author: conf.author,
+    repository: conf.repository,
   },
   () => {
     app.service('$core', CoreService);

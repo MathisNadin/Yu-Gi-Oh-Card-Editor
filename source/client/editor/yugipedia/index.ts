@@ -132,5 +132,6 @@ export interface IYugipediaCard {
 
   jpPrints: IYugipediaCardPrint[];
   enPrints: IYugipediaCardPrint[];
+  naPrints: IYugipediaCardPrint[];
   frPrints: IYugipediaCardPrint[];
 }

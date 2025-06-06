@@ -16,10 +16,64 @@ export interface IReplaceMatrix {
 export class YugipediaService {
   private baseApiUrl: string;
   private baseArtworkUrl: string;
+  private userAgent = '';
+  private requestQueue: Array<() => void> = [];
+  private isQueueProcessing = false;
 
   public constructor() {
     this.baseApiUrl = 'https://yugipedia.com/api.php';
     this.baseArtworkUrl = 'F:\\Images\\Images Yu-Gi-Oh!\\Artworks\\';
+  }
+
+  public async setup() {
+    const { displayName, version, author, repository } = app.conf;
+    if (displayName && version && repository.url && author.email) {
+      this.userAgent = `${displayName}/${version} (${repository.url}; ${author.email})`;
+    }
+  }
+
+  /**
+   * Adds fn to the queue and returns a promise that resolves/rejects when fn() completes.
+   * Ensures only one request is processed at a time, with a 1-second delay between requests.
+   */
+  private scheduleRequest<T>(fn: () => Promise<T>): Promise<T> {
+    return new Promise<T>((resolveOuter, rejectOuter) => {
+      // Wrap the original function to handle resolution, rejection, and the 1-second delay
+      const taskWrapper = () => {
+        fn()
+          .then((result) => {
+            resolveOuter(result);
+          })
+          .catch((err) => {
+            rejectOuter(err);
+          })
+          .finally(() => {
+            // After fn() completes (success or failure), wait 1 second before processing next task
+            setTimeout(() => {
+              this.isQueueProcessing = false;
+              this._processNext();
+            }, 1000);
+          });
+      };
+
+      // Add the wrapper to the queue
+      this.requestQueue.push(taskWrapper);
+      // Start processing if not already running
+      this._processNext();
+    });
+  }
+
+  /**
+   * Processes the next task in the queue if none is currently being processed.
+   */
+  private _processNext() {
+    if (this.isQueueProcessing) return;
+
+    const nextTask = this.requestQueue.shift();
+    if (!nextTask) return;
+
+    this.isQueueProcessing = true;
+    nextTask();
   }
 
   private async getCardImageUrl(yugipediaCardPage: IYugipediaGetPageByTitleApiResponse) {
@@ -47,14 +101,20 @@ export class YugipediaService {
 
   private async getCardPageImg(cardName: string) {
     try {
-      const response = await app.$axios.get<IYugipediaGetCardPageImgApiResponse>(this.baseApiUrl, {
-        params: {
-          action: 'parse',
-          page: cardName,
-          prop: 'images',
-          format: 'json',
-        },
-      });
+      // Use scheduleRequest to enforce rate limit
+      const response = await this.scheduleRequest(() =>
+        app.$axios.get<IYugipediaGetCardPageImgApiResponse>(this.baseApiUrl, {
+          params: {
+            action: 'parse',
+            page: cardName,
+            prop: 'images',
+            format: 'json',
+          },
+          headers: {
+            'User-Agent': this.userAgent,
+          },
+        })
+      );
 
       return response?.data;
     } catch (error) {
@@ -64,15 +124,21 @@ export class YugipediaService {
 
   private async getCardImg(fileName: string) {
     try {
-      const response = await app.$axios.get<IYugipediaGetCardImgApiResponse>(this.baseApiUrl, {
-        params: {
-          action: 'query',
-          titles: `File:${fileName}`,
-          prop: 'imageinfo',
-          iiprop: 'url',
-          format: 'json',
-        },
-      });
+      // Use scheduleRequest to enforce rate limit
+      const response = await this.scheduleRequest(() =>
+        app.$axios.get<IYugipediaGetCardImgApiResponse>(this.baseApiUrl, {
+          params: {
+            action: 'query',
+            titles: `File:${fileName}`,
+            prop: 'imageinfo',
+            iiprop: 'url',
+            format: 'json',
+          },
+          headers: {
+            'User-Agent': this.userAgent,
+          },
+        })
+      );
 
       return response?.data;
     } catch (error) {
@@ -94,16 +160,22 @@ export class YugipediaService {
         .replace(/\]/g, ')') // replace ] with )
         .replace(/[<>#]/g, ''); // remove <, >, and #
 
-      // Perform the API request with the common parameters
-      const response = await app.$axios.get<IYugipediaGetPageByTitleApiResponse>(this.baseApiUrl, {
-        params: {
-          action: 'query',
-          titles,
-          prop: 'revisions',
-          rvprop: 'content',
-          format: 'json',
-        },
-      });
+      // Use scheduleRequest to enforce rate limit
+      const response = await this.scheduleRequest(() =>
+        // Perform the API request with the common parameters
+        app.$axios.get<IYugipediaGetPageByTitleApiResponse>(this.baseApiUrl, {
+          params: {
+            action: 'query',
+            titles,
+            prop: 'revisions',
+            rvprop: 'content',
+            format: 'json',
+          },
+          headers: {
+            'User-Agent': this.userAgent,
+          },
+        })
+      );
 
       // Verify the presence of pages data
       if (!response?.data?.query?.pages) return undefined;
@@ -133,8 +205,11 @@ export class YugipediaService {
     const enTranslations = yugipediaCard.translations.en_us;
 
     let cardSet: ICard['cardSet'] | undefined;
-    if (useFr) cardSet = yugipediaCard.frPrints[0]?.code;
-    else cardSet = yugipediaCard.enPrints[0]?.code;
+    if (useFr) {
+      cardSet = yugipediaCard.frPrints[0]?.code;
+    } else {
+      cardSet = yugipediaCard.enPrints[0]?.code || yugipediaCard.naPrints[0]?.code;
+    }
 
     let edition: ICard['edition'] | undefined;
     if (
