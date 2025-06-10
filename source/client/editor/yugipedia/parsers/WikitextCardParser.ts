@@ -455,6 +455,17 @@ export class WikitextCardParser extends AbstractWikitextParser {
     // This may have been defined from the effect_types line but end up irrelevant
     if (!this.card.rush && this.card.rushEffectType) delete this.card.rushEffectType;
 
+    // Define default rushEffectType when needed
+    if (
+      this.card.rush &&
+      !this.card.rushEffectType &&
+      (this.card.translations.en_us.rushCondition ||
+        this.card.translations.en_us.rushEffect ||
+        this.card.translations.en_us.rushChoiceEffects?.length)
+    ) {
+      this.card.rushEffectType = 'effect';
+    }
+
     // Determine the English name based on priority.
     this.card.translations.en_us.name =
       this.name || this.enName || this.extractNameBeforeParenthesis(this.pageTitle) || '';
