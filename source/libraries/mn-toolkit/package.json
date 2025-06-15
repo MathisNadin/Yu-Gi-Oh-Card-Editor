@@ -1,7 +1,7 @@
 {
   "name": "mn-toolkit",
   "displayName": "MN Toolkit",
-  "version": "7.2.4",
+  "version": "7.4.3",
   "description": "Bibliothèque React Typescript pour des fonctions et composants réutilisables",
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "axios": "^1.7.4",
+    "html-react-parser": "^5.2.5",
     "react": "^18.3.1",
     "react-router-dom": "^6.24.1"
   }

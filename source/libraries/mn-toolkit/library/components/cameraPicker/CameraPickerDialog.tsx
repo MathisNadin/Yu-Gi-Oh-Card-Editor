@@ -32,6 +32,7 @@ export class CameraPickerDialog extends AbstractPopup<string, ICameraPickerDialo
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Prendre la photo',
       label: 'Prendre la photo',
       color: 'primary',
       onTap: () => this.takePicture(),

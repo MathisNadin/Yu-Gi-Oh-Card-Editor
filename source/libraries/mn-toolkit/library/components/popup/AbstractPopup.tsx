@@ -151,6 +151,10 @@ export abstract class AbstractPopup<
     return this.state.height === '100%';
   }
 
+  protected get title() {
+    return this.props.title;
+  }
+
   protected renderHeader(): TJSXElementChild {
     return (
       <HorizontalStack key='header' className='mn-popup-header'>
@@ -160,10 +164,10 @@ export abstract class AbstractPopup<
           fontSize='medium'
           variant='label'
           contentType='text'
-          content={this.props.title}
+          content={this.title}
         />
         <Spacer />
-        <Icon icon='toolkit-close' onTap={() => this.close(undefined)} />
+        <Icon icon='toolkit-close' name='Fermer le popup' onTap={() => this.close(undefined)} />
       </HorizontalStack>
     );
   }

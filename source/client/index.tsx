@@ -50,7 +50,7 @@ setupAppAndToolkit(
   {
     name: conf.name,
     displayName: conf.displayName,
-    stage: process.env.NODE_ENV as TAppplicationStage,
+    stage: process.env.NODE_ENV as TApplicationStage,
     version: conf.version,
     baseUrl: RouterService.baseUrlWithHash,
     apiUrl: '',

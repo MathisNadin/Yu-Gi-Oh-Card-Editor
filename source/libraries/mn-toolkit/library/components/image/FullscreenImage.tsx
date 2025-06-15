@@ -1,6 +1,6 @@
 import { IContainerProps, IContainerState, Container, HorizontalStack } from '../container';
 import { Icon } from '../icon';
-import { IImageProps, Image } from '../image';
+import { IImageProps, Image as ToolkitImage } from '../image';
 import { Spacer } from '../spacer';
 import { Typography } from '../typography';
 
@@ -45,7 +45,18 @@ export class FullscreenImage extends Container<IFullscreenImageProps, IFullscree
 
   public override componentDidMount() {
     super.componentDidMount();
-    requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ visible: true })));
+
+    const makeVisible = () =>
+      requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ visible: true })));
+
+    // Preload image to display it instantly at the right size
+    if (this.props.imgSrc) {
+      const img = new Image();
+      img.onload = makeVisible;
+      img.src = this.props.imgSrc;
+    } else {
+      makeVisible();
+    }
   }
 
   public close() {
@@ -69,7 +80,7 @@ export class FullscreenImage extends Container<IFullscreenImageProps, IFullscree
     return (
       <HorizontalStack key='header' className='mn-fullscreen-image-header'>
         <Spacer />
-        <Icon icon='toolkit-close' onTap={() => this.close()} />
+        <Icon icon='toolkit-close' name='Fermer' onTap={() => this.close()} />
       </HorizontalStack>
     );
   }
@@ -78,7 +89,7 @@ export class FullscreenImage extends Container<IFullscreenImageProps, IFullscree
     if (!this.props.imgSrc) return null;
     return (
       <figure key='content' className='mn-fullscreen-image-content'>
-        <Image src={this.props.imgSrc} alt={this.props.imgAlt} maxHeight={this.imgMaxHeight} />
+        <ToolkitImage src={this.props.imgSrc} alt={this.props.imgAlt} maxHeight={this.imgMaxHeight} />
 
         {!!this.props.imgHint && (
           <figcaption>

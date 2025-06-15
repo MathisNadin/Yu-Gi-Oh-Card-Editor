@@ -28,6 +28,7 @@ export class DateTimeChooserDialog extends AbstractPopup<
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: "Valider la date et l'heure choisies",
       label: 'Valider',
       color: 'primary',
       onTap: () => this.close(this.state.dateTime),

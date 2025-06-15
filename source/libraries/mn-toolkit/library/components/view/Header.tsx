@@ -100,7 +100,13 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
 
           {!!app.$header.parts.right && app.$header.parts.right.map((part) => part.component)}
 
-          {this.hasPageActions() && <Icon icon='toolkit-menu-kebab' onTap={(e) => this.doShowPageActions(e)} />}
+          {this.hasPageActions() && (
+            <Icon
+              icon='toolkit-menu-kebab'
+              name='Voir les actions de la page'
+              onTap={(e) => this.doShowPageActions(e)}
+            />
+          )}
         </div>
 
         {!!this.downloadTotal && <Progress total={this.downloadTotal} progress={this.downloadProgress} />}

@@ -60,6 +60,7 @@ export class DateTimePickerService {
 
             <HorizontalStack itemAlignment='right' verticalItemAlignment='middle'>
               <Button
+                name="Valider l'heure choisie"
                 label='OK'
                 onTap={() => {
                   app.$popover.remove(id);
@@ -114,6 +115,7 @@ export class DateTimePickerService {
 
             <HorizontalStack itemAlignment='right' verticalItemAlignment='middle'>
               <Button
+                name="Valider la date et l'heure choisies"
                 label='OK'
                 onTap={() => {
                   app.$popover.remove(id);

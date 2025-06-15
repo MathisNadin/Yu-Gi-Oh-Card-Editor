@@ -7,6 +7,8 @@ import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './Abstr
 export interface IChoiceDialogChoice<ID = string> {
   id: ID;
   label: string;
+  name?: string;
+  hint?: string;
   color?: TForegroundColor;
 }
 
@@ -36,6 +38,8 @@ export class ChoiceDialog<ID = string> extends AbstractPopup<ID, IChoiceDialogPr
         {this.props.choices.map((choice, i) => (
           <ButtonLink
             key={`choice-${i}`}
+            hint={choice.hint}
+            name={choice.name}
             label={choice.label}
             color={choice.color}
             onTap={() => this.close(choice.id)}

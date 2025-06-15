@@ -6,12 +6,6 @@
 
   @include shadow(0);
 
-  &:not(.mn-focus) {
-    &:hover {
-      background-color: color-hsla($fg1, 0.15);
-    }
-  }
-
   &.mn-focus {
     border-color: color-hsl($primary);
   }

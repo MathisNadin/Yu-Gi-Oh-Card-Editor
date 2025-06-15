@@ -24,6 +24,7 @@ export class DateChooserDialog extends AbstractPopup<Date, IDateChooserDialogPro
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Valider la date choisie',
       label: 'Valider',
       color: 'primary',
       onTap: () => this.close(this.state.date),

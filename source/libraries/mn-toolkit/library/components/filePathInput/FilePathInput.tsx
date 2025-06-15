@@ -78,7 +78,13 @@ export class FilePathInput extends Container<IFilePathInputProps, IFilePathInput
         value={this.state.value}
         onChange={(e) => app.$errorManager.handlePromise(this.onChange(e.target.value as string))}
       />,
-      <Icon key='icon' icon='toolkit-menu-meatballs' size={26} onTap={(e) => this.onTapIcon(e)} />,
+      <Icon
+        key='icon'
+        icon='toolkit-menu-meatballs'
+        name='Choisir un fichier'
+        size={26}
+        onTap={(e) => this.onTapIcon(e)}
+      />,
     ];
   }
 }

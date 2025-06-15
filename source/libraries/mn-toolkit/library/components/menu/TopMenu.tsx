@@ -188,8 +188,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
     for (const subItem of item.below!) {
       if (subItem.permission && !app.$permission.hasPermission(subItem.permission)) continue;
       actions.push({
-        icon: subItem.icon,
-        iconColor: '1',
+        icon: { icon: subItem.icon, color: '1' },
         label: subItem.label,
         href: subItem.href,
         selected: isMenuItemActive(subItem),

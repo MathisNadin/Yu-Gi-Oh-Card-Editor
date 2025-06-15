@@ -39,6 +39,7 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
           <Icon
             key='back'
             icon='toolkit-angle-left'
+            name='Revenir en arrière'
             onTap={!crumbs[crumbs.length - 2]?.onTap ? undefined : () => crumbs[crumbs.length - 2]!.onTap!()}
           />
         ),

@@ -287,64 +287,68 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
   border-top: 0;
 
   .mn-popover-actions-container {
-    .action {
-      background-color: color-hsl($topMenuBelowActionBg);
+    > .mn-container-inside {
+      > ul {
+        > li.action {
+          background-color: color-hsl($topMenuBelowActionBg);
 
-      // Override the anchor-specific color
-      .mn-typography.mn-typography-anchor {
-        color: color-hsl($fg1);
-      }
-
-      &:first-child {
-        border-radius: 0;
-      }
-
-      &:only-child {
-        border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
-      }
-
-      &.selected {
-        background-color: color-hsl($topMenuBelowActionBg);
-
-        .mn-icon {
-          color: color-hsl($primary);
-
-          // Pour certains svg
-          path,
-          rect,
-          polyline,
-          line {
-            color: color-hsl($primary);
+          // Override the anchor-specific color
+          .mn-typography.mn-typography-anchor {
+            color: color-hsl($fg1);
           }
-        }
 
-        .mn-typography.mn-content-type-text {
-          color: color-hsl($primary);
-        }
-      }
+          &:first-child {
+            border-radius: 0;
+          }
 
-      &:not(.mn-disabled):not(.separator) {
-        &:hover {
-          background-color: color-hsl($dark-bg1);
+          &:only-child {
+            border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
+          }
 
-          .mn-icon {
-            color: color-hsl($primary);
+          &.selected {
+            background-color: color-hsl($topMenuBelowActionBg);
 
-            // Pour certains svg
-            path,
-            rect,
-            polyline,
-            line {
+            .mn-icon {
+              color: color-hsl($primary);
+
+              // Pour certains svg
+              path,
+              rect,
+              polyline,
+              line {
+                color: color-hsl($primary);
+              }
+            }
+
+            .mn-typography.mn-content-type-text {
               color: color-hsl($primary);
             }
           }
 
-          .mn-typography.mn-content-type-text {
-            color: color-hsl($primary);
+          &:not(.mn-disabled):not(.separator) {
+            &:hover {
+              background-color: color-hsl($dark-bg1);
 
-            &.mn-typography-anchor {
-              &:hover {
-                text-decoration: none;
+              .mn-icon {
+                color: color-hsl($primary);
+
+                // Pour certains svg
+                path,
+                rect,
+                polyline,
+                line {
+                  color: color-hsl($primary);
+                }
+              }
+
+              .mn-typography.mn-content-type-text {
+                color: color-hsl($primary);
+
+                &.mn-typography-anchor {
+                  &:hover {
+                    text-decoration: none;
+                  }
+                }
               }
             }
           }

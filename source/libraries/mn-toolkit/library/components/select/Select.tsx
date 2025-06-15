@@ -133,7 +133,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
       </div>,
 
       <span key='drop-icon' className='drop-icon' onClick={(e) => this.showListItems(e)}>
-        <Icon icon='toolkit-angle-down' />
+        <Icon icon='toolkit-angle-down' name='Voir les items' />
       </span>,
     ];
   }

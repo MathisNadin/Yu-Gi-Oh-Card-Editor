@@ -5,32 +5,8 @@ import { Keyboard as CapacitorKeyboard } from '@capacitor/keyboard';
 import { SplashScreen as CapacitorSplashScreen } from '@capacitor/splash-screen';
 import { StatusBar as CapacitorStatusBar, Style as StatusBarStyle } from '@capacitor/status-bar';
 import { extend, isBoolean, isDefined, isString, TLanguageLocale, logger, Observable, serialize } from 'mn-tools';
+import { IDeviceSpec } from 'api/main';
 import { IApplicationListener } from '../../system';
-
-interface IDeviceRecord {
-  device: {
-    id: string;
-    native: boolean;
-    platform: string;
-    model: string;
-    version: string;
-    language: string;
-    time: Date;
-    timeOffset: number;
-    screen: {
-      width: number;
-      height: number;
-      pixelWidth: number;
-    };
-  };
-  client: {
-    // language: TLanguageLocale;
-    name: string;
-    stage: string;
-    version: string;
-    userAgent: string;
-  };
-}
 
 export interface IScreenSpec {
   width: number;
@@ -113,7 +89,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
   }
 
   public async getSpec() {
-    const deviceRecord: IDeviceRecord = {
+    const deviceRecord: IDeviceSpec = {
       device: {
         id: undefined!,
         native: false,
@@ -133,8 +109,8 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
         name: app.name,
         version: app.version,
         stage: app.stage,
-        // language: app.$i18n.currentLanguage,
         userAgent: navigator.userAgent,
+        language: 'fr_fr', // app.$i18n.currentLanguage,
       },
     };
 

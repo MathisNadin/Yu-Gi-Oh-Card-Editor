@@ -146,18 +146,18 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       const display = this.props.display;
       if (cropEffect) {
         actions.push({
-          icon: 'toolkit-crop',
+          icon: { icon: 'toolkit-crop' },
           label: 'Modifier le recadrage',
           onTap: () => this.cropPicture(display),
         });
         actions.push({
-          icon: 'toolkit-crop',
+          icon: { icon: 'toolkit-crop' },
           label: 'Supprimer le recadrage',
           onTap: () => this.removeCropping(),
         });
       } else {
         actions.push({
-          icon: 'toolkit-crop',
+          icon: { icon: 'toolkit-crop' },
           label: 'Recadrer',
           onTap: () => this.cropPicture(display),
         });
@@ -165,21 +165,21 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     }
     if (options.camera) {
       actions.push({
-        icon: 'toolkit-camera',
+        icon: { icon: 'toolkit-camera' },
         label: 'Prendre une photo',
         onTap: () => this.takePicture(),
       });
     }
     if (options.file) {
       actions.push({
-        icon: 'toolkit-image',
+        icon: { icon: 'toolkit-image' },
         label: referenceUrl ? "Changer l'image" : 'Importer',
         onTap: () => this.pickFile(),
       });
     }
     if (options.delete && referenceUrl) {
       actions.push({
-        icon: 'toolkit-trash',
+        icon: { icon: 'toolkit-trash' },
         label: 'Supprimer',
         onTap: () => this.resetPicture(),
       });
@@ -338,9 +338,12 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
 
   private checkOnDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    if (!this.base.current || !e.target) return;
-    if (this.base.current !== e.target && this.base.current.contains(e.target as Node)) return;
-    this.base.current?.classList.remove('dragged-over');
+    if (!this.base.current) return;
+    const rect = this.base.current.getBoundingClientRect();
+    const { clientX: x, clientY: y } = e;
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      this.base.current?.classList.remove('dragged-over');
+    }
   }
 
   private async onDropFiles(event: React.DragEvent<HTMLDivElement>) {

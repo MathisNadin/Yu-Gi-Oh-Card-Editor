@@ -2,6 +2,7 @@ import {
   Observable,
   extend,
   isBoolean,
+  isDefined,
   isNumber,
   isObject,
   isString,
@@ -186,7 +187,7 @@ export class RouterService extends Observable<IRouterListener> {
 
       if (key.type === 'path') {
         path = path.replace(`:${key.name}`, value);
-      } else if (!ignoreQs && key.type === 'qs') {
+      } else if (!ignoreQs && key.type === 'qs' && (isString(value) || isNumber(value) || isBoolean(value))) {
         qs.push(`${key.name}=${value}`);
       }
     }
@@ -194,7 +195,10 @@ export class RouterService extends Observable<IRouterListener> {
     // Add all additional keys, that would have been added to the url, which mean they are query strings
     if (!ignoreQs) {
       allKeys.forEach((key) => {
-        if (key) qs.push(`${key}=${parameters[key]}`);
+        const value = parameters[key];
+        if (key && (isString(value) || isNumber(value) || isBoolean(value))) {
+          qs.push(`${key}=${value}`);
+        }
       });
     }
 
@@ -203,19 +207,16 @@ export class RouterService extends Observable<IRouterListener> {
     return path;
   }
 
-  // Update the current URL without reloading the current view
-  public updateUrl<T extends TRouterState = TRouterState>(state: T, params?: TRouterParams<T>) {
+  /** Update the current URL without reloading the current view */
+  public updateCurrentUrl<T extends TRouterState = TRouterState>(state: T, params?: TRouterParams<T>) {
     // Makes no sense to get here without a current state
     if (!this.currentResolvedState) return;
 
     // 1) Merge params and get new path
-    params = {
-      ...(this.currentResolvedState.parameters as unknown as TRouterParams<T>),
-      ...params,
-    };
+    params = params || (this.currentResolvedState.parameters as unknown as TRouterParams<T>);
     const path = this.getLink({ state, params });
     if (!path) {
-      console.warn(`updateUrl : cannot find path "${state}"`);
+      console.warn(`updateCurrentUrl : cannot find path "${state}"`);
       return;
     }
 
@@ -237,6 +238,13 @@ export class RouterService extends Observable<IRouterListener> {
 
     const breadcrumb = this.buildBreadcrumb();
     this.currentResolvedState.breadcrumb = breadcrumb;
+  }
+
+  /** Update the current DOM Head Tags without changing the current state */
+  public updateCurrentHeadTags(newHeadTags: THeadTag[]) {
+    if (!this.currentResolvedState) return;
+    this.updateDomHead(newHeadTags, this.currentResolvedState.headTags);
+    this.currentResolvedState.headTags = newHeadTags;
   }
 
   private async checkCanLeave() {
@@ -436,10 +444,20 @@ export class RouterService extends Observable<IRouterListener> {
     };
 
     if (qs) {
-      qs.split('&').forEach((q) => {
+      for (const q of qs.split('&')) {
         const [name, value] = q.split('=');
-        if (name && value) (state.parameters as { [key in typeof name]: string })[name] = value;
-      });
+        if (!name || !value) continue;
+
+        let decodedValue: string;
+        try {
+          decodedValue = decodeURIComponent(value);
+        } catch {
+          throw new Error(`Failed to decode param '${value}'`);
+        }
+        if (!decodedValue) continue;
+
+        (state.parameters as { [key in typeof name]: string })[name] = decodedValue;
+      }
     }
 
     for (let i = 1; i < match.length; ++i) {
@@ -516,7 +534,8 @@ export class RouterService extends Observable<IRouterListener> {
       this.currentResolvedState = state;
 
       // Check if we have server data
-      this.currentResolvedState.parameters.initialServerData = this.getInitialServerData();
+      const initialServerData = this.getInitialServerData();
+      if (isDefined(initialServerData)) this.currentResolvedState.parameters.initialServerData = initialServerData;
 
       const AbstractViewComponent = this.currentResolvedState.state.component as IAbstractViewStaticFunctions;
 

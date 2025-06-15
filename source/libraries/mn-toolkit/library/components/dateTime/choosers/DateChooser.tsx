@@ -167,16 +167,22 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
     return [
       <HorizontalStack key='header' className='header' gutter verticalItemAlignment='middle'>
         <Typography bold variant='label' content={`${date.toLocaleString('default', { month: 'short' })} ${year}`} />
-        <Icon icon={showCalendar ? 'toolkit-angle-down' : 'toolkit-angle-up'} onTap={() => this.onSwitchDisplay()} />
+        <Icon
+          icon={showCalendar ? 'toolkit-angle-down' : 'toolkit-angle-up'}
+          name={showCalendar ? 'Cacher le calendrier' : 'Afficher le calendrier'}
+          onTap={() => this.onSwitchDisplay()}
+        />
         <Spacer />
         <Icon
           disabled={month === 0 && year === yearRange[0]}
           icon='toolkit-angle-left'
+          name="Reculer d'un mois"
           onTap={() => this.onChangeMonth(-1)}
         />
         <Icon
           disabled={month === 11 && year === yearRange[1]}
           icon='toolkit-angle-right'
+          name="Avancer d'un mois"
           onTap={() => this.onChangeMonth(1)}
         />
       </HorizontalStack>,

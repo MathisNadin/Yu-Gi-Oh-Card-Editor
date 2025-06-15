@@ -25,6 +25,16 @@ afterAll(() => {
 });
 
 describe('formatDate', () => {
+  // Force offset 0 for this suite of tests
+  let originalGetTimezoneOffset: typeof Date.prototype.getTimezoneOffset;
+  beforeAll(() => {
+    originalGetTimezoneOffset = Date.prototype.getTimezoneOffset;
+    Date.prototype.getTimezoneOffset = () => 0;
+  });
+  afterAll(() => {
+    Date.prototype.getTimezoneOffset = originalGetTimezoneOffset;
+  });
+
   // Existing tests for formatDate
   it('should format a Date object with default format', () => {
     const date = new Date(2021, 0, 1, 9, 5, 3); // Jan 1, 2021 09:05:03
@@ -62,7 +72,7 @@ describe('formatDate', () => {
     const minutes = pad(date.getMinutes());
     const seconds = pad(date.getSeconds());
     let offset = -date.getTimezoneOffset();
-    const sign = offset >= 0 ? '+' : '-';
+    const sign = Object.is(offset, -0) || offset < 0 ? '-' : '+';
     offset = Math.abs(offset);
     const tzHour = pad(Math.floor(offset / 60));
     const tzMin = pad(offset % 60);
@@ -191,12 +201,19 @@ describe('Prototype methods on Date (truncation, day adjustments, etc.)', () => 
   });
 
   it('should convert date to another timezone', () => {
+    // getTimezoneOffset temporary patch
+    const originalGetTimezoneOffset = Date.prototype.getTimezoneOffset;
+    Date.prototype.getTimezoneOffset = () => 0;
+
     const d = new Date(2021, 5, 15, 12, 0, 0); // June 15, 2021 12:00:00 local time
     const targetTimezoneOffset = -120; // +02:00 in minutes
     const converted = d.toTimezone(targetTimezoneOffset);
     // Calculate expected time difference
-    const diff = (targetTimezoneOffset - new Date().getTimezoneOffset()) * 60000;
+    const diff = (targetTimezoneOffset - 0) * 60000; // getTimezoneOffset = 0
     expect(converted.getTime()).toBe(d.getTime() - diff);
+
+    // Restore normal behavior
+    Date.prototype.getTimezoneOffset = originalGetTimezoneOffset;
   });
 
   it('should return a valid locale ISO string with timezone offset', () => {

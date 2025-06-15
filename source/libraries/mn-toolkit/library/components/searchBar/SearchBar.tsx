@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { Icon } from '../icon';
@@ -7,6 +8,8 @@ interface ISearchBarProps extends IContainerProps {
   /** In milliseconds, assign null to deactivate the auto-search debounce and only search on press Enter or tap the search icon */
   searchDebounce?: number | null;
   defaultValue: string;
+  placeholder?: string;
+  autofocus?: boolean;
   onChange?: (value: string) => void | Promise<void>;
   onSearch?: (value: string) => void | Promise<void>;
 }
@@ -17,6 +20,7 @@ interface ISearchBarState extends IContainerState {
 }
 
 export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
+  protected inputElement = createRef<TextInput>();
   private timer?: NodeJS.Timeout;
 
   public static get defaultProps(): ISearchBarProps {
@@ -27,6 +31,7 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
       bg: '1',
       defaultValue: '',
       searchDebounce: 200,
+      placeholder: 'rechercher...',
     };
   }
 
@@ -36,6 +41,16 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
       ...this.state,
       value: props.defaultValue,
     };
+  }
+
+  public override componentDidMount() {
+    super.componentDidMount();
+    if (!this.props.autofocus || app.$device.isNative) return;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        if (this.inputElement.current) this.inputElement.current.doFocus();
+      })
+    );
   }
 
   public override componentDidUpdate(
@@ -76,10 +91,17 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
 
   public override get children() {
     return [
-      <Icon key='search-icon' className='search-icon' icon='toolkit-search' onTap={() => this.doSearch()} />,
+      <Icon
+        key='search-icon'
+        className='search-icon'
+        icon='toolkit-search'
+        name='Lancer la recherche'
+        onTap={() => this.doSearch()}
+      />,
       <TextInput
         key='input'
-        placeholder='rechercher...'
+        ref={this.inputElement}
+        placeholder={this.props.placeholder}
         defaultValue={this.state.value}
         onKeyUp={(e) => this.onKeyUp(e)}
         onChange={(value) => this.onInput(value)}

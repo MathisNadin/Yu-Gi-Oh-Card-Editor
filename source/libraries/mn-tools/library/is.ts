@@ -7,10 +7,6 @@ const PHONE_NUMBER_REGEXP = /^[\s\(\)\+0-9]+$/i;
 
 const UUID_REGEXP = /^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i;
 
-function kind(variable: unknown): string {
-  return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
-}
-
 /**
  * Check if the subject has keys.
  *
@@ -40,11 +36,13 @@ function stringify(o: unknown): string {
  * @return True if the subject is a class.
  */
 export function isClass(subject: unknown): boolean {
-  return (
-    (typeof subject === 'function' && /^class\s/.test(Function.prototype.toString.call(subject))) ||
+  if (typeof subject === 'function') {
+    const str = Function.prototype.toString.call(subject);
+    if (/^class\s/.test(str)) return true;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    (isObject(subject) && hasKeys((subject as Function).prototype))
-  );
+    return hasKeys((subject as Function).prototype);
+  }
+  return false;
 }
 
 /**
@@ -55,7 +53,7 @@ export function isClass(subject: unknown): boolean {
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function isFunction(subject: unknown): subject is Function {
-  return kind(subject) === 'function';
+  return typeof subject === 'function';
 }
 
 /**
@@ -65,7 +63,7 @@ export function isFunction(subject: unknown): subject is Function {
  * @return True if the subject is a string.
  */
 export function isString(subject: unknown): subject is string {
-  return kind(subject) === 'string';
+  return typeof subject === 'string';
 }
 
 /**
@@ -75,7 +73,7 @@ export function isString(subject: unknown): subject is string {
  * @return True if the subject is a number.
  */
 export function isNumber(subject: unknown): subject is number {
-  return kind(subject) === 'number';
+  return typeof subject === 'number';
 }
 
 /**
@@ -85,7 +83,7 @@ export function isNumber(subject: unknown): subject is number {
  * @return True if the subject is a date.
  */
 export function isDate(subject: unknown): subject is Date {
-  return kind(subject) === 'date';
+  return subject instanceof Date;
 }
 
 /**
@@ -95,7 +93,7 @@ export function isDate(subject: unknown): subject is Date {
  * @return True if the subject is an array.
  */
 export function isArray(subject: unknown): subject is unknown[] {
-  return kind(subject) === 'array';
+  return Array.isArray(subject);
 }
 
 /**
@@ -131,17 +129,28 @@ export function isDefined<T>(subject: T | undefined): subject is T {
  *
  * @param subject - The subject to test.
  */
-export function isNumeric(subject: unknown): subject is number {
+export function isNumeric(subject: unknown): boolean {
   return NUMERIC_REGEXP.test(`${subject}`);
 }
 
 /**
- * Check if the subject is an integer.
+ * Check if the subject is an integer number.
  *
  * @param subject - The subject to test.
+ * @return True if the subject is a number and an integer.
  */
 export function isInteger(subject: unknown): subject is number {
-  return NUMERIC_REGEXP.test(`${subject}`);
+  return typeof subject === 'number' && Number.isInteger(subject);
+}
+
+/**
+ * Check if the subject is a float (nombre à virgule).
+ *
+ * @param subject - The subject to test.
+ * @return True if the subject is a number, fini, et non entier.
+ */
+export function isFloat(subject: unknown): subject is number {
+  return typeof subject === 'number' && Number.isFinite(subject) && !Number.isInteger(subject);
 }
 
 /**

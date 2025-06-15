@@ -30,11 +30,13 @@ export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDial
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Annuler',
       label: 'Annuler',
       color: 'neutral',
       onTap: () => this.close(false),
     });
     buttons.push({
+      name: 'Valider',
       label: 'Valider',
       color: 'primary',
       onTap: async () => {

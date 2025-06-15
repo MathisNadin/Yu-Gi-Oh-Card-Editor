@@ -1,7 +1,80 @@
 ## mn-toolkit change log
 
+## 7.4.3
+
+- utilisation de html-react-parser pour contourner les erreurs csp
+
+## 7.4.2
+
+- bump to 7.4.2
+- padding nécessaire sur lelabel du pager classique
+
+## 7.4.1
+
+- bump to 7.4.1
+- ajout Section + meilleurs boutons sur classic pager
+
+## 7.4.0
+
+- bump to 7.4.0
+- ajout du video player + davantage d'events sur Image
+
+## 7.3.3
+
+- bump to 7.3.3
+- fix navigation router avec popstate et pagination
+
+## 7.3.2
+
+- bump to 7.3.2
+- touch swipe pour close le dernier drawer
+
+## 7.3.1
+
+- bump to 7.3.1
+- meilleure définition de app stage
+
+## 7.3.0
+
+- bump to 7.3.0
+- update current head tags dans router
+- utilisation de l'interface device spec de l'api
+- fix hauteur toasters pour mobile
+- autofocus sur la search bar
+- placeholder dynamique sur searchbar
+- plus de style specifique au hover d'une search bar
+- fix decode sq dans testState
+- un qs doit être un string un number ou un boolean
+- fixs dans router service
+- fix get selection dans rich text editor
+- fix logique des onDragleave
+- chgt margin sur les listes
+- fix style top menu below popover pour bien overrider les listes d'actions
+- fix actions popover sur button et icon
+- pictur eeditor dans field amin width 100%
+- names sur les boutons
+- icon ontap pour button plus flexible en interne + icones login et logout changées
+- meilleur preload de l'img sur fullscreenImage
+- fix couleur textes sur chips
+
+## 7.2.7
+
+- bump to 7.2.7
+- title plus flexible dans popup + fix validation form field
+
+## 7.2.6
+
+- bump to 7.2.6
+- ajout icones comment
+
+## 7.2.5
+
+- bump to 7.2.5
+- icon plus facile à extend + nv icones
+
 ## 7.2.4
 
+- bump to 7.2.4
 - ajout de noUncheckedIndexedAccess dans la config ts
 
 ## 7.2.3

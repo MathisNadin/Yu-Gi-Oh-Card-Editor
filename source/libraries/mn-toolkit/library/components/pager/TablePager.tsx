@@ -103,6 +103,8 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
         {this.props.showFirstButton && (
           <Icon
             key='go-first-btn'
+            hint='Aller à la première page'
+            name='Aller à la première page'
             disabled={this.isFirstPage}
             icon='toolkit-double-angle-left'
             onTap={() => this.onChangePosition(0)}
@@ -111,6 +113,8 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
 
         <Icon
           key='go-previous-btn'
+          hint='Aller à la page précédente'
+          name='Aller à la page précédente'
           disabled={this.isFirstPage}
           icon='toolkit-angle-left'
           onTap={() => this.onChangePosition(this.state.position - 1)}
@@ -118,6 +122,8 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
 
         <Icon
           key='go-next-btn'
+          hint='Aller à la prochaine page'
+          name='Aller à la prochaine page'
           disabled={this.isLastPage}
           icon='toolkit-angle-right'
           onTap={() => this.onChangePosition(this.state.position + 1)}
@@ -127,6 +133,8 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
           <Icon
             key='go-last-btn'
             disabled={this.isLastPage}
+            hint='Aller à la dernière page'
+            name='Aller à la dernière page'
             icon='toolkit-double-angle-right'
             onTap={() => this.onChangePosition(this.nbPages - 1)}
           />

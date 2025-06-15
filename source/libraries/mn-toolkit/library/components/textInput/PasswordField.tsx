@@ -25,6 +25,7 @@ export class PasswordField extends TextInputField<IPasswordFieldProps, IPassword
     return (
       <Icon
         className='prop-icon'
+        name={this.state.revealPassword ? 'Cacher le mot de passe' : 'Voir le mot de passe en clair'}
         icon={this.state.revealPassword ? 'toolkit-eye-close' : 'toolkit-eye-open'}
         onTap={() => this.setStateAsync({ revealPassword: !this.state.revealPassword })}
       />

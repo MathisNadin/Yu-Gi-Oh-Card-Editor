@@ -1,10 +1,11 @@
 import { Observable, uuid } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { Drawer, IDrawerProps } from './Drawer';
+import { Drawer, IDrawerProps, TDrawerOrientation } from './Drawer';
 import { IDrawerListener, IDrawerShowOptions } from '.';
 
 interface IDrawerData {
   id: string;
+  orientation?: TDrawerOrientation;
   element: TJSXElementChild;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ref: Drawer<any> | null;
@@ -56,7 +57,7 @@ export class DrawerService extends Observable<IDrawerListener> {
   public show<P extends IDrawerProps>(options: IDrawerShowOptions<P>) {
     const { Component, componentProps } = options;
     const id = `${componentProps.orientation}-drawer-${this.drawers.length + 1}-${uuid()}`;
-    const drawer: IDrawerData = { id, element: null, ref: null };
+    const drawer: IDrawerData = { id, orientation: componentProps.orientation, element: null, ref: null };
     drawer.element = (
       <Component
         {...componentProps}

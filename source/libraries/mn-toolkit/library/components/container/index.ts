@@ -7,3 +7,4 @@ export * from './VerticalStack';
 export * from './Group';
 export * from './LabeledGroup';
 export * from './Masonry';
+export * from './Section';

@@ -8,7 +8,7 @@ interface IColorPickerProps extends IContainerProps {
 }
 
 interface IColorPickerState extends IContainerState {
-  selectedColor: string;
+  selectedColor?: string;
 }
 
 export class ColorPicker extends Container<IColorPickerProps, IColorPickerState> {
@@ -38,7 +38,7 @@ export class ColorPicker extends Container<IColorPickerProps, IColorPickerState>
   }
 
   private async onSelectColor(selectedColor?: string) {
-    await this.setStateAsync({ selectedColor: selectedColor! });
+    await this.setStateAsync({ selectedColor });
     if (this.props.onSelectColor) await this.props.onSelectColor(selectedColor);
   }
 
@@ -51,7 +51,12 @@ export class ColorPicker extends Container<IColorPickerProps, IColorPickerState>
   public override get children() {
     return [
       ...this.props.colors!.map((c) => this.renderColorSwatch(c)),
-      <Icon key='unformat' icon='toolkit-format-unformat' onTap={() => this.onSelectColor()} />,
+      <Icon
+        key='unformat'
+        icon='toolkit-format-unformat'
+        name='Retirer la couleur'
+        onTap={() => this.onSelectColor()}
+      />,
     ];
   }
 

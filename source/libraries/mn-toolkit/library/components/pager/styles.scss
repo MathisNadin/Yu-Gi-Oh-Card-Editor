@@ -51,6 +51,24 @@ $pager-page-size: calc(#{$defaultItemHeight});
     }
   }
 
+  .left-icons,
+  .right-icons {
+    height: $pager-page-size;
+    min-height: $pager-page-size;
+    max-height: $pager-page-size;
+
+    .mn-icon-container-button {
+      height: 100% !important;
+      min-height: 100% !important;
+      max-height: 100% !important;
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   .pages {
     > .mn-container-inside {
       gap: calc(0.5 * #{$defaultSpacing});
@@ -74,8 +92,6 @@ $pager-page-size: calc(#{$defaultItemHeight});
           background-color: transparent;
 
           .label {
-            padding: 0;
-
             // Override default button behavior
             &:hover {
               background-color: transparent;

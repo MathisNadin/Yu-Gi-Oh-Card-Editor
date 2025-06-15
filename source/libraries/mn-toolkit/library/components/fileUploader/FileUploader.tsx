@@ -159,6 +159,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
           key='upload-btn'
           color={this.props.uploadBtnColor}
           icon='toolkit-upload'
+          name='Choisir un fichier'
           label='Choisir un fichier'
           onTap={() => this.onPickFile()}
         />
@@ -182,7 +183,12 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
                 </HorizontalStack>
 
                 <HorizontalStack>
-                  <Icon icon='toolkit-close' disabled={this.state.loadingFiles} onTap={() => this.onRemoveFile(i)} />
+                  <Icon
+                    icon='toolkit-close'
+                    disabled={this.state.loadingFiles}
+                    name='Supprimer le fichier'
+                    onTap={() => this.onRemoveFile(i)}
+                  />
                 </HorizontalStack>
               </HorizontalStack>
             ))}
@@ -193,6 +199,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
               <Button
                 color={this.props.resetBtnColor}
                 icon='toolkit-trash'
+                name='Supprimer tous les fichiers'
                 label='Tout supprimer'
                 onTap={() => this.onRemoveAll()}
               />
@@ -201,6 +208,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
                 <Button
                   color={this.props.uploadBtnColor}
                   icon='toolkit-upload'
+                  name='Choisir un fichier'
                   label='Choisir un fichier'
                   onTap={() => this.onPickFile()}
                 />
@@ -224,9 +232,12 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
 
   private checkOnDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    if (!this.base.current || !e.target) return;
-    if (this.base.current !== e.target && this.base.current.contains(e.target as Node)) return;
-    this.base.current?.classList.remove('dragged-over');
+    if (!this.base.current) return;
+    const rect = this.base.current.getBoundingClientRect();
+    const { clientX: x, clientY: y } = e;
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      this.base.current?.classList.remove('dragged-over');
+    }
   }
 
   private async onDropFiles(event: React.DragEvent<HTMLDivElement>) {

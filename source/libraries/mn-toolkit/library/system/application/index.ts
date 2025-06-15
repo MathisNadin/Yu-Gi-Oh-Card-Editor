@@ -20,12 +20,18 @@ declare global {
     value: any;
   }
 
-  type TAppplicationStage = 'development' | 'production';
+  interface IApplicationStage {
+    development: null;
+    integration: null;
+    preProduction: null;
+    production: null;
+  }
+  type TApplicationStage = keyof IApplicationStage;
 
   interface IApplicationConfig {
     name: string;
     displayName: string;
-    stage: TAppplicationStage;
+    stage: TApplicationStage;
     version: string;
     baseUrl: string;
     apiUrl?: string;

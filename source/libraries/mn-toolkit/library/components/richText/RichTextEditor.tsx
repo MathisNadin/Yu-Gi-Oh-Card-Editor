@@ -93,8 +93,8 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps === this.props) return;
-    if (!RichTextEditor.isEmpty(this.props.defaultValue!)) {
-      this._value = this.props.defaultValue!;
+    if (!RichTextEditor.isEmpty(this.props.defaultValue)) {
+      this._value = this.props.defaultValue || '';
       this.setValueToEditor(this._value);
     }
   }
@@ -114,7 +114,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     this.setValueToEditor(this._value);
 
     if (!RichTextEditor.isEmpty(this.props.defaultValue!)) {
-      this._value = this.props.defaultValue!;
+      this._value = this.props.defaultValue || '';
       this.setValueToEditor(this._value);
     }
 
@@ -162,7 +162,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
     return result;
   }
 
-  public static isEmpty(value: string) {
+  public static isEmpty(value: string | undefined) {
     return isEmpty(value) || isEmpty(RichTextEditor.removeEmptyParagraphs(value));
   }
 
@@ -290,10 +290,30 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
 
   private getCurrentSelectionRect(): DOMRect | null {
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return null; // Aucune sélection actuelle
+    if (!selection || selection.rangeCount === 0) {
+      // No selection object or no ranges → nothing selected
+      return null;
+    }
 
+    // 1. If the selection is collapsed (just a caret), ignore it
+    if (selection.isCollapsed) {
+      return null;
+    }
+
+    // 2. If the selected text is empty (e.g. quickly deleted), ignore it
+    const text = selection.toString().trim();
+    if (!text) {
+      return null;
+    }
+
+    // 3. Compute the bounding rect and discard zero-sized ghosts
     const range = selection.getRangeAt(0);
-    return range.getBoundingClientRect();
+    const rect = range.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) {
+      return null;
+    }
+
+    return rect;
   }
 
   private applyDocumentSelectionChanged() {
@@ -403,6 +423,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-bold'
+            name='Passer la sélection en gras'
             hint='Passer la sélection en gras'
             onTap={() => this.doBold()}
           />
@@ -415,6 +436,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-blockquote'
+            name='Passer la sélection en citation'
             hint='Passer la sélection en citation'
             onTap={() => this.doBlockQuote()}
           />
@@ -427,6 +449,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-italic'
+            name='Passer la sélection en italique'
             hint='Passer la sélection en italique'
             onTap={() => this.doItalic()}
           />
@@ -439,6 +462,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-underline'
+            name='Souligner la sélection'
             hint='Souligner la sélection'
             onTap={() => this.doUnderline()}
           />
@@ -451,6 +475,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-color'
+            name='Choisir la couleur du texte'
             hint='Choisir la couleur du texte'
             onTap={(e) => this.showColors(e)}
           />
@@ -463,6 +488,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-ul'
+            name='Transformer en liste à puces'
             hint='Transformer en liste à puces'
             onTap={() => this.doInsertUnorderedList()}
           />
@@ -475,6 +501,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-ol'
+            name='Transformer en liste numérotée'
             hint='Transformer en liste numérotée'
             onTap={() => this.doInsertOrderedList()}
           />
@@ -487,6 +514,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-indent'
+            name='Indenter la sélection'
             hint='Indenter la sélection'
             onTap={() => this.doIndent()}
           />
@@ -499,6 +527,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-callout'
+            name='Transformer en encadré'
             hint='Transformer en encadré'
             onTap={() => this.doCallout()}
           />
@@ -510,6 +539,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-header-1'
+            name='Passer en titre 1'
             hint='Passer en titre 1'
             onTap={() => this.doH1()}
           />
@@ -522,6 +552,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-header-2'
+            name='Passer en titre 2'
             hint='Passer en titre 2'
             onTap={() => this.doH2()}
           />
@@ -534,6 +565,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-header-3'
+            name='Passer en titre 3'
             hint='Passer en titre 3'
             onTap={() => this.doH3()}
           />
@@ -546,6 +578,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-paragraph'
+            name='Passer en paragraphe'
             hint='Passer en paragraphe'
             onTap={() => this.doNormal()}
           />
@@ -558,6 +591,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-align-left'
+            name='Aligner à gauche'
             hint='Aligner à gauche'
             onTap={() => this.doAlignLeft()}
           />
@@ -570,6 +604,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-align-center'
+            name='Centrer'
             hint='Centrer'
             onTap={() => this.doAlignCenter()}
           />
@@ -582,6 +617,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-unformat'
+            name='Retirer le formatage'
             hint='Retirer le formatage'
             onTap={() => this.doRemoveFormat()}
           />
@@ -594,6 +630,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-link'
+            name='Créer un lien à partir de la sélection'
             hint='Créer un lien à partir de la sélection'
             onTap={() => this.doLink()}
           />
@@ -606,6 +643,7 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichtextE
             key={id}
             disabled={!range}
             icon='toolkit-format-unlink'
+            name='Supprimer ce lien'
             hint='Supprimer ce lien'
             onTap={() => this.doUnlink()}
           />

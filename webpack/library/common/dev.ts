@@ -1,10 +1,7 @@
 import 'webpack-dev-server';
-import { Configuration, EnvironmentPlugin, LoaderOptionsPlugin } from 'webpack';
-import { TWebpackNodeEnv } from '..';
+import { Configuration, LoaderOptionsPlugin } from 'webpack';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
-
-const devEnv: TWebpackNodeEnv = 'development';
 
 const commonDevConfig: Configuration = {
   mode: 'development',
@@ -19,9 +16,6 @@ const commonDevConfig: Configuration = {
     ],
   },
   plugins: [
-    new EnvironmentPlugin({
-      NODE_ENV: devEnv,
-    }),
     new LoaderOptionsPlugin({
       debug: true,
     }),

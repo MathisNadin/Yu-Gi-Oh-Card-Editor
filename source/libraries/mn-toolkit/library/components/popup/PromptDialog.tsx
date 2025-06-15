@@ -18,6 +18,7 @@ export class PromptDialog extends AbstractPopup<string, IPromptDialogProps, IPro
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Valider',
       label: 'Valider',
       color: 'primary',
       onTap: () => this.close(this.state.value),

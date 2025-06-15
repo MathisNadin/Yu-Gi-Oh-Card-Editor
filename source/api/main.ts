@@ -1182,7 +1182,7 @@ declare global {
 }
 
 
-export interface IRemodeDeviceSpec {
+export interface IDeviceSpec {
   device: {
     id: string;
     native: boolean;
@@ -1259,7 +1259,7 @@ export interface IMemberApiLoginOptions {
   mail: IMemberEntity['mail'];
   password: string;
   instance: IMemberEntity['applicationInstance'];
-  device: IRemodeDeviceSpec;
+  device: IDeviceSpec;
 }
 
 export interface IMemberAPILoginResponse {
@@ -1283,7 +1283,7 @@ export interface IMemberApiRegisterOptions {
   mail: IMemberEntity['mail'];
   password: string;
   instance: IMemberEntity['applicationInstance'];
-  device: IRemodeDeviceSpec;
+  device: IDeviceSpec;
 }
 
 
@@ -1487,7 +1487,7 @@ export interface IVariableTable extends IAbstractTable<IVariableEntity, TVariabl
 
 export interface ISessionEntity extends TAbstractEntity {
   token: string;
-  device: IRemodeDeviceSpec;
+  device: IDeviceSpec;
   foreground: boolean;
   push?: { token: string; provider: TPushProvider; timestamp: Date };
   lastAccess: Date;

@@ -21,6 +21,8 @@ export interface IWalkthroughPopoverProps extends IAbstractPopoverProps {
   triangleHeight?: number;
   innerContent: TJSXElementChild;
   innerButtons?: {
+    hint?: string;
+    name?: string;
     label: string;
     onTap: () => void | Promise<void>;
   }[];
@@ -163,7 +165,13 @@ export class WalkthroughPopover<
       !!this.props.innerButtons?.length && (
         <HorizontalStack key='inner-buttons' gutter itemAlignment='right' verticalItemAlignment='middle'>
           {this.props.innerButtons.map((button, i) => (
-            <ButtonLink key={`button-${i}`} label={button.label} onTap={button.onTap} />
+            <ButtonLink
+              key={`button-${i}`}
+              hint={button.hint}
+              name={button.name}
+              label={button.label}
+              onTap={button.onTap}
+            />
           ))}
         </HorizontalStack>
       ),

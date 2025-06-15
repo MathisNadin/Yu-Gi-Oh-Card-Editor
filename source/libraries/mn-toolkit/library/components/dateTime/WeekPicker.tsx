@@ -97,10 +97,21 @@ export class WeekPicker extends Container<IWeekPickerProps, IWeekPickerState> {
         />
       </HorizontalStack>,
       !app.$device.isTouch && (
-        <Icon key='toolkit-calendar' icon='toolkit-calendar' onTap={(e) => this.showWeekPicker(e)} />
+        <Icon
+          key='toolkit-calendar'
+          icon='toolkit-calendar'
+          name='Choisir la semaine'
+          onTap={(e) => this.showWeekPicker(e)}
+        />
       ),
       app.$device.isTouch && this.props.canReset && (
-        <Icon key='toolkit-close' icon='toolkit-close' color='negative' onTap={() => this.onChange(undefined)} />
+        <Icon
+          key='toolkit-close'
+          icon='toolkit-close'
+          color='negative'
+          name='Réinitialiser'
+          onTap={() => this.onChange(undefined)}
+        />
       ),
     ];
   }

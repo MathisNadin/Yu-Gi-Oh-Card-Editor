@@ -1,4 +1,4 @@
-import { Configuration } from 'webpack';
+import { Configuration, EnvironmentPlugin } from 'webpack';
 import { merge } from 'webpack-merge';
 import { commonConfig, commonDevConfig, commonProdConfig } from './common';
 import { webServedCommonConfig, webServedDevConfig, webServedProdConfig } from './web-served';
@@ -7,7 +7,7 @@ import { desktopCommonConfig, desktopPreloadConfig, desktopMainConfig, desktopRe
 import { projectWebpackConfig } from '../../config/project-webpack';
 import { platformWebpackConfig } from '../../config/platform-webpack';
 
-export type TWebpackNodeEnv = 'development' | 'production';
+export type TWebpackNodeEnv = 'development' | 'integration' | 'preProduction' | 'production';
 
 export type TWebpackPlatform =
   | 'web-served'
@@ -22,12 +22,21 @@ export const buildConfig = () => {
   const envConfigs: Configuration[] = [];
 
   switch (nodeEnv) {
-    case 'production':
+    case 'development':
+      envConfigs.push(commonDevConfig);
+      break;
+
+    case 'integration':
       envConfigs.push(commonProdConfig);
       break;
 
-    case 'development':
-      envConfigs.push(commonDevConfig);
+    case 'preProduction':
+      envConfigs.push(commonProdConfig);
+      break;
+
+    case 'production':
+    default:
+      envConfigs.push(commonProdConfig);
       break;
   }
 
@@ -47,12 +56,12 @@ export const buildConfig = () => {
     case 'web-standalone':
       envConfigs.push(webStandaloneCommonConfig);
       switch (nodeEnv) {
-        case 'production':
-          envConfigs.push(webStandaloneProdConfig);
-          break;
-
         case 'development':
           envConfigs.push(webStandaloneDevConfig);
+          break;
+
+        default:
+          envConfigs.push(webStandaloneProdConfig);
           break;
       }
       break;
@@ -60,16 +69,24 @@ export const buildConfig = () => {
     case 'web-served':
       envConfigs.push(webServedCommonConfig);
       switch (nodeEnv) {
-        case 'production':
-          envConfigs.push(webServedProdConfig);
-          break;
-
         case 'development':
           envConfigs.push(webServedDevConfig);
+          break;
+
+        default:
+          envConfigs.push(webServedProdConfig);
           break;
       }
       break;
   }
+
+  envConfigs.push({
+    plugins: [
+      new EnvironmentPlugin({
+        BUILD_ENV: nodeEnv,
+      }),
+    ],
+  });
 
   return merge(commonConfig, ...envConfigs, projectWebpackConfig, platformWebpackConfig);
 };

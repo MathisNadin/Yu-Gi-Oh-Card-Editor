@@ -22,6 +22,7 @@ import {
   isEmail,
   isPhoneNumber,
   isUuid,
+  isFloat,
 } from '../library/is';
 
 describe('Utility Functions Tests', () => {
@@ -170,30 +171,69 @@ describe('Utility Functions Tests', () => {
   // Test for isNumeric
   describe('isNumeric', () => {
     it('should return true for numeric values and numeric strings', () => {
-      // A number or its string representation should pass
       expect(isNumeric(123)).toBe(true);
       expect(isNumeric('123')).toBe(true);
       expect(isNumeric('-123')).toBe(true);
     });
 
     it('should return false for non-numeric values', () => {
-      // Values with decimals or letters should fail (regex only allows integers)
-      expect(isNumeric('12.3')).toBe(false);
+      expect(isNumeric('12.3')).toBe(false); // la regex n’autorise pas les décimales
       expect(isNumeric('abc')).toBe(false);
+      expect(isNumeric(null)).toBe(false);
+      expect(isNumeric(undefined)).toBe(false);
     });
   });
 
   // Test for isInteger
   describe('isInteger', () => {
-    it('should return true for integer values and strings', () => {
-      // Integer numbers and their string form should return true
+    it('should return true for integer number values', () => {
+      expect(isInteger(0)).toBe(true);
       expect(isInteger(42)).toBe(true);
-      expect(isInteger('42')).toBe(true);
+      expect(isInteger(-7)).toBe(true);
     });
 
     it('should return false for non-integer values', () => {
-      // Decimal values are not considered integers
-      expect(isInteger('42.5')).toBe(false);
+      expect(isInteger(3.14)).toBe(false);
+      expect(isInteger(NaN)).toBe(false);
+      expect(isInteger(Infinity)).toBe(false);
+    });
+
+    it('should return false for numeric strings', () => {
+      expect(isInteger('42')).toBe(false);
+      expect(isInteger('-7')).toBe(false);
+    });
+
+    it('should return false for non-numeric types', () => {
+      expect(isInteger('abc')).toBe(false);
+      expect(isInteger(null)).toBe(false);
+      expect(isInteger(undefined)).toBe(false);
+    });
+  });
+
+  // Test for isFloat
+  describe('isFloat', () => {
+    it('should return true for finite non-integer numbers', () => {
+      expect(isFloat(3.14)).toBe(true);
+      expect(isFloat(-0.001)).toBe(true);
+    });
+
+    it('should return false for integer numbers', () => {
+      expect(isFloat(0)).toBe(false);
+      expect(isFloat(42)).toBe(false);
+      expect(isFloat(-5)).toBe(false);
+    });
+
+    it('should return false for non-finite numbers', () => {
+      expect(isFloat(NaN)).toBe(false);
+      expect(isFloat(Infinity)).toBe(false);
+      expect(isFloat(-Infinity)).toBe(false);
+    });
+
+    it('should return false for non-number types', () => {
+      expect(isFloat('3.14')).toBe(false);
+      expect(isFloat(null)).toBe(false);
+      expect(isFloat(undefined)).toBe(false);
+      expect(isFloat({})).toBe(false);
     });
   });
 

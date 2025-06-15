@@ -29,6 +29,7 @@ export * from './icon';
 export * from './image';
 export * from './inplaceEdit';
 export * from './numberInput';
+export * from './videoPlayer';
 export * from './popover';
 export * from './popup';
 export * from './toggle';

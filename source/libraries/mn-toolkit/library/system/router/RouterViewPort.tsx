@@ -15,9 +15,10 @@ export class RouterViewPort
   extends Containable<IRouterViewPortProps, IRouterViewPortState>
   implements Partial<IRouterListener>
 {
-  private currentContentKey!: string;
+  private navVersion = 0;
+  private currentContentKey?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private currentComponent!: DOMElement<any, any>;
+  private currentComponent?: DOMElement<any, any>;
 
   public static override get defaultProps(): IRouterViewPortProps {
     return {
@@ -29,10 +30,14 @@ export class RouterViewPort
   public constructor(props: IRouterViewPortProps) {
     super(props);
     this.state = { ...this.state, loaded: false };
+    // When the user clicks on the browser's "back" or "forward" button
+    // To account for pagination which changes the url without restarting a router state
+    window.addEventListener('popstate', () => this.navVersion++);
     app.$router.addListener(this);
   }
 
   public routerStateStart() {
+    this.navVersion = 0;
     this.setState({ loaded: false });
   }
 
@@ -58,12 +63,14 @@ export class RouterViewPort
     const currentState = app.$router.currentState!;
 
     const routerParameters = app.$router.getParameters();
-    const routerKey = `${currentState.name}${serialize(routerParameters)}`;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { initialServerData, ...paramsWithoutData } = routerParameters;
+    const routerKey = `${this.navVersion}${currentState.name}${serialize(paramsWithoutData)}`;
     const key = 'key' in routerParameters ? routerParameters.key : '';
     const newContentKey = `${key}${routerKey}content`;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let content: DOMElement<any, any>;
+    let content: DOMElement<any, any> | undefined;
     if (this.currentContentKey !== newContentKey) {
       content = createElement(currentState.component as unknown as string, { ...routerParameters, key: newContentKey });
       this.currentComponent = content;

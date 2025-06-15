@@ -827,11 +827,13 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       }
     }
 
+    const isOnlySkill = this.state.card.frames.length === 1 && this.state.card.frames[0] === 'skill';
+
     return (
       <VerticalStack gutter className='card-editor-section abilities-section'>
         <Typography fill className='sub-title' variant='help' content='Détails' />
 
-        {!this.state.card.dontCoverRushArt && (
+        {!isOnlySkill && !this.state.card.dontCoverRushArt && (
           <Grid>
             <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />

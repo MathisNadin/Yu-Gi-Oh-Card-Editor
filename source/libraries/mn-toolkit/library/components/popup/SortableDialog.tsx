@@ -32,11 +32,13 @@ export class SortableDialog<ID = string> extends AbstractPopup<
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Annuler',
       label: 'Annuler',
       color: 'neutral',
       onTap: () => this.close(),
     });
     buttons.push({
+      name: 'Valider',
       label: 'Valider',
       color: 'primary',
       onTap: async () => await this.close(this.state.items.map((i) => i.id)),

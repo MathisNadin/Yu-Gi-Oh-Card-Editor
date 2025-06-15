@@ -23,6 +23,7 @@ export class TimeChooserDialog extends AbstractPopup<Date, ITimeChooserDialogPro
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: "Valider l'heure choisie",
       label: 'Valider',
       color: 'primary',
       onTap: () => this.close(this.state.time),

@@ -3,13 +3,19 @@
 @mixin colorizeChip($color) {
   .mn-typography,
   .mn-icon {
-    color: color-hsl($bg1);
-    fill: color-hsl($fg1);
+    color: color-hsl($light-bg1);
+    fill: color-hsl($light-bg1);
   }
 
   &.mn-selected {
     background-color: color-hsl($color);
-    color: white;
+    color: color-hsl($bg1);
+
+    .mn-typography,
+    .mn-icon {
+      color: color-hsl($bg1);
+      fill: color-hsl($bg1);
+    }
   }
 }
 

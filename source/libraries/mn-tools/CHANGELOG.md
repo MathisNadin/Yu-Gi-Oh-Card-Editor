@@ -1,7 +1,33 @@
 ## mn-tools change log
 
+## 2.2.2
+
+- fix tests date jest
+
+## 2.2.1
+
+- bump to 2.2.1
+- rajout de arrayToRecordMultiple
+
+## 2.2.0
+
+- bump to 2.2.0
+- ajout arrayToRecord et ses tests
+
+## 2.1.4
+
+- bump to 2.1.4
+- fix fonctions isClass et isInteger/isNumeric + ajout isFloat et tests associés
+- suppr de kind() pour utiliser des alternatives natives pour identifier les types d'objets
+
+## 2.1.3
+
+- bump to 2.1.3
+- ajout fonction objectDiff + diff -> arrayDiff
+
 ## 2.1.2
 
+- bump to 2.1.2
 - ajout de noUncheckedIndexedAccess dans la config ts
 
 ## 2.1.1

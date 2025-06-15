@@ -27,8 +27,12 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
       size: 20,
       color: '1',
       buttonType: 'button',
-      icon: 'toolkit-plus',
+      icon: 'toolkit-error-circle',
     };
+  }
+
+  protected get icon(): TIconId {
+    return this.props.icon;
   }
 
   public override renderStyle() {
@@ -45,7 +49,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
   public override renderClasses() {
     const classes = super.renderClasses();
     // Case : top container is a button
-    if (this.props.onTap) {
+    if (this.onTapFunction) {
       classes['mn-icon-container-button'] = true;
       if (this.props.className) {
         delete classes[this.props.className];
@@ -62,13 +66,13 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     return classes;
   }
 
-  private renderIconClasses() {
+  protected renderIconClasses() {
     const iconClasses: { [key: string]: boolean } = {};
     iconClasses['mn-containable'] = true;
     if (this.props.className) iconClasses[this.props.className] = true;
-    iconClasses['has-click'] = !!this.props.onTap;
+    iconClasses['has-click'] = !!this.onTapFunction;
     iconClasses['mn-icon'] = true;
-    if (this.props.icon) iconClasses[`mn-icon-${this.props.icon}`] = true;
+    if (this.icon) iconClasses[`mn-icon-${this.icon}`] = true;
     if (this.props.color) iconClasses[`mn-color-${this.props.color}`] = true;
     return iconClasses;
   }
@@ -76,30 +80,33 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
   public override renderAttributes() {
     const attributes = super.renderAttributes();
     // Case : top container is a button
-    if (this.props.onTap) delete attributes.onClick;
+    if (this.onTapFunction) delete attributes.onClick;
     return attributes;
   }
 
+  /** Defines if the icon is a button */
+  protected get onTapFunction() {
+    return this.onTap || this.props.onTap;
+  }
+
+  protected onTap?(): void;
+
   public override render() {
     const attributes = this.renderAttributes();
-    if (this.props.onTap) {
+    if (this.onTapFunction) {
       return (
         <button
           ref={this.base as RefObject<HTMLButtonElement>}
           {...attributes}
-          onClick={(e) => this.props.onTap!(e)}
+          onClick={(e) => this.onTapFunction!(e)}
           type={this.props.buttonType}
         >
-          {app.$icon.get(
-            this.props.icon,
-            { ...attributes, className: classNames(this.renderIconClasses()) },
-            this.iconRef
-          )}
+          {app.$icon.get(this.icon, { ...attributes, className: classNames(this.renderIconClasses()) }, this.iconRef)}
         </button>
       );
     }
 
-    const icon = app.$icon.get(this.props.icon, attributes, this.iconRef);
-    return icon || <div ref={this.base as RefObject<HTMLDivElement>}>{this.props.icon}</div>;
+    const icon = app.$icon.get(this.icon, attributes, this.iconRef);
+    return icon || <div ref={this.base as RefObject<HTMLDivElement>}>{this.icon}</div>;
   }
 }

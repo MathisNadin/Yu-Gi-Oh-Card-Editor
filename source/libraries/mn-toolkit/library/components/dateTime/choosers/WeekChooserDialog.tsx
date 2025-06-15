@@ -24,6 +24,7 @@ export class WeekChooserDialog extends AbstractPopup<Date, IWeekChooserDialogPro
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Valider la semaine choisie',
       label: 'Valider',
       color: 'primary',
       onTap: () => this.close(this.state.date),

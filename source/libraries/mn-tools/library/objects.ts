@@ -203,7 +203,7 @@ export function each<T>(
  * @param n Second array.
  * @return A tuple of arrays containing differences or undefined if none.
  */
-export function diff<T>(o: T[], n: T[]): [T[], T[]] | undefined {
+export function arrayDiff<T>(o: T[], n: T[]): [T[], T[]] | undefined {
   const oCopy = o.slice(0);
   const nCopy = n.slice(0);
   for (let i = 0; i < oCopy.length; i++) {
@@ -217,6 +217,41 @@ export function diff<T>(o: T[], n: T[]): [T[], T[]] | undefined {
   const diffO = oCopy.filter((x) => x != null);
   const diffN = nCopy.filter((x) => x != null);
   if (diffO.length || diffN.length) return [diffO, diffN];
+  return undefined;
+}
+
+/**
+ * Compute the difference between two flat objects of the same type.
+ *
+ * @param o Old object.
+ * @param n New object.
+ * @returns A tuple [diffO, diffN] or undefined if no differences:
+ *   - diffO: properties removed or changed in n
+ *   - diffN: properties added or changed in n
+ */
+export function objectDiff<T extends object>(o: T, n: T): [Partial<T>, Partial<T>] | undefined {
+  const diffO: Partial<T> = {};
+  const diffN: Partial<T> = {};
+
+  // Identify properties that were removed or changed
+  for (const key of Object.keys(o) as (keyof T)[]) {
+    if (!(key in n) || o[key] !== n[key]) {
+      diffO[key] = o[key];
+    }
+  }
+
+  // Identify properties that were added or changed
+  for (const key of Object.keys(n) as (keyof T)[]) {
+    if (!(key in o) || n[key] !== o[key]) {
+      diffN[key] = n[key];
+    }
+  }
+
+  // Return differences if any, otherwise undefined
+  if (Object.keys(diffO).length || Object.keys(diffN).length) {
+    return [diffO, diffN];
+  }
+
   return undefined;
 }
 
@@ -244,6 +279,67 @@ export function keyBy<T>(a: T[], fieldOrCallback: keyof T | KeyByCallback<T>): {
 
   a.forEach((v) => (result[callback(v)] = v));
   return result;
+}
+
+/**
+ * Converts an array of objects into a record indexed by a key property.
+ * If allowOverride is true, duplicate keys are allowed and the last object wins.
+ * If allowOverride is false (default), throws an error if a duplicate key is found.
+ *
+ * @param array - The array of objects to convert.
+ * @param key - The property name to use as the record key. Must be string or number.
+ * @param allowOverride - Whether to allow overriding existing keys (default: false).
+ * @returns A record mapping each unique key to its corresponding object.
+ * @throws If allowOverride is false and a duplicate key is found.
+ */
+export function arrayToRecord<T, K extends keyof T, KeyType extends Extract<T[K], string | number>>(
+  array: T[],
+  key: K,
+  allowOverride: boolean = false
+): Record<KeyType, T> {
+  const record = {} as Record<KeyType, T>;
+  for (const item of array) {
+    const value = item[key];
+    if (typeof value !== 'string' && typeof value !== 'number') {
+      throw new Error(`Key property "${String(key)}" must be of type string or number, got: ${typeof value}`);
+    }
+    if (!allowOverride && value in record) {
+      throw new Error(`Duplicate key found: "${value}"`);
+    }
+    record[value as KeyType] = item;
+  }
+  return record;
+}
+
+/**
+ * Groups an array of objects into a record keyed by a specified property.
+ * If multiple objects share the same key value, they are all collected in an array.
+ *
+ * @param array - The array of objects to convert.
+ * @param key - The property name to use as the record key. Must be of type string or number.
+ * @returns A record mapping each unique key to an array of objects that have that key value.
+ * @throws Error if a key property value is not a string or number.
+ */
+export function arrayToRecordMultiple<T, K extends keyof T, KeyType extends Extract<T[K], string | number>>(
+  array: T[],
+  key: K
+): Record<KeyType, T[]> {
+  const record = {} as Record<KeyType, T[]>;
+
+  for (const item of array) {
+    const value = item[key];
+    if (typeof value !== 'string' && typeof value !== 'number') {
+      throw new Error(`Key property "${String(key)}" must be of type string or number, got: ${typeof value}`);
+    }
+
+    const mapKey = value as KeyType;
+    if (!record[mapKey]) {
+      record[mapKey] = [];
+    }
+    record[mapKey].push(item);
+  }
+
+  return record;
 }
 
 /**

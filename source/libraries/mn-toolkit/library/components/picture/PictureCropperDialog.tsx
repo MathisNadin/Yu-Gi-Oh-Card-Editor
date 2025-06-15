@@ -46,6 +46,7 @@ export class PictureCropperDialog extends AbstractPopup<
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Valider',
       label: 'Valider',
       color: 'primary',
       onTap: () => this.onValidate(),

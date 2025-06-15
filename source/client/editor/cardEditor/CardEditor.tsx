@@ -723,46 +723,57 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     }
 
     const hasPendulumFrame = app.$card.hasPendulumFrame(this.state.card);
+    const isOnlySkill = this.state.card.frames.length === 1 && this.state.card.frames[0] === 'skill';
 
     return (
       <VerticalStack gutter className='card-editor-section abilities-section'>
         <Typography fill className='sub-title' variant='help' content='Détails' />
 
-        <Grid>
-          <HorizontalStack colSpans={{ small: 12, xxlarge: includesLink ? 6 : 4 }} fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />
-            <NumberInput
+        {!isOnlySkill && (
+          <Grid>
+            <HorizontalStack
+              colSpans={{ small: 12, xxlarge: includesLink ? 6 : 4 }}
               fill
-              min={0}
-              max={max}
-              placeholder={levelPlaceholder}
-              defaultValue={this.state.card.level}
-              onChange={(level) => this.onLevelChange(level, max)}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack colSpans={{ small: 12, xxlarge: includesLink ? 6 : 4 }} fill verticalItemAlignment='middle'>
-            <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
-            <TextInput
-              fill
-              placeholder='ATK'
-              defaultValue={this.state.card.atk}
-              onChange={(atk) => this.onAtkChange(atk)}
-            />
-          </HorizontalStack>
-
-          {!includesLink && (
-            <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
-              <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
-              <TextInput
+              verticalItemAlignment='middle'
+            >
+              <Icon className='field-icon' size={24} icon='toolkit-star' color='1' />
+              <NumberInput
                 fill
-                placeholder='DEF'
-                defaultValue={this.state.card.def}
-                onChange={(def) => this.onDefChange(def)}
+                min={0}
+                max={max}
+                placeholder={levelPlaceholder}
+                defaultValue={this.state.card.level}
+                onChange={(level) => this.onLevelChange(level, max)}
               />
             </HorizontalStack>
-          )}
-        </Grid>
+
+            <HorizontalStack
+              colSpans={{ small: 12, xxlarge: includesLink ? 6 : 4 }}
+              fill
+              verticalItemAlignment='middle'
+            >
+              <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
+              <TextInput
+                fill
+                placeholder='ATK'
+                defaultValue={this.state.card.atk}
+                onChange={(atk) => this.onAtkChange(atk)}
+              />
+            </HorizontalStack>
+
+            {!includesLink && (
+              <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
+                <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
+                <TextInput
+                  fill
+                  placeholder='DEF'
+                  defaultValue={this.state.card.def}
+                  onChange={(def) => this.onDefChange(def)}
+                />
+              </HorizontalStack>
+            )}
+          </Grid>
+        )}
 
         <VerticalStack className='card-abilities'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
@@ -802,12 +813,14 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </VerticalStack>
         </VerticalStack>
 
-        <Checkbox
-          className='sub-title-checkbox'
-          label='Pendule'
-          defaultValue={this.state.card.pendulum}
-          onChange={() => this.onPendChange()}
-        />
+        {!isOnlySkill && (
+          <Checkbox
+            className='sub-title-checkbox'
+            label='Pendule'
+            defaultValue={this.state.card.pendulum}
+            onChange={() => this.onPendChange()}
+          />
+        )}
 
         {hasPendulumFrame && this.renderPendulumCardDetails()}
       </VerticalStack>

@@ -151,7 +151,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
 
       this.props.addButton && (
         <span key='mn-tabset-add-button-holder' className='mn-tabset-add-button-holder'>
-          <Icon icon='toolkit-plus' onTap={() => this.onAddButton()} />
+          <Icon icon='toolkit-plus' name='Ajouter' onTap={() => this.onAddButton()} />
         </span>
       ),
     ];

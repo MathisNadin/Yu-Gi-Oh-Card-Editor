@@ -163,6 +163,10 @@ $pictureBigSize: 300px;
     max-height: fit-content;
     padding: 0;
     border-radius: 0;
+
+    .mn-picture-editor {
+      min-width: 100%;
+    }
   }
 }
 

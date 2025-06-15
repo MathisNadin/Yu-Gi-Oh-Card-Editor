@@ -96,10 +96,21 @@ export class DateTimePicker extends Container<IDateTimePickerProps, IDateTimePic
         />
       </HorizontalStack>,
       !app.$device.isTouch && (
-        <Icon key='icon-calendar' icon='toolkit-calendar' onTap={(e) => this.showDateTimePicker(e)} />
+        <Icon
+          key='icon-calendar'
+          icon='toolkit-calendar'
+          name="Choisir la date et l'heure"
+          onTap={(e) => this.showDateTimePicker(e)}
+        />
       ),
       app.$device.isTouch && this.props.canReset && (
-        <Icon key='icon-delete' icon='toolkit-close' color='negative' onTap={() => this.onChange(undefined)} />
+        <Icon
+          key='icon-delete'
+          icon='toolkit-close'
+          color='negative'
+          name='Réinitialiser'
+          onTap={() => this.onChange(undefined)}
+        />
       ),
     ];
   }

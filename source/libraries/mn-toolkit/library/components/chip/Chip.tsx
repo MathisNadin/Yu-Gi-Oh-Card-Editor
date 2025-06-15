@@ -9,6 +9,8 @@ export interface IChipProps extends IContainerProps {
   selected: boolean;
   icon?: TIconId;
   actionIcon?: TIconId;
+  actionHint?: string;
+  actionName?: string;
   onActionTap?: (event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void | Promise<void>;
 }
 
@@ -54,6 +56,8 @@ export class Chip extends Container<IChipProps, IChipState> {
           key='icon-right'
           className='icon-right'
           icon={this.props.actionIcon}
+          hint={this.props.actionHint}
+          name={this.props.actionName}
           onTap={(e) => this.props.onActionTap && this.props.onActionTap(e)}
         />
       ),

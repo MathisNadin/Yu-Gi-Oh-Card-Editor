@@ -96,7 +96,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
   public override get children() {
     return [
       (this.props.showFirstButton || !this.props.hidePreviousButton) && (
-        <HorizontalStack key='left-icons'>
+        <HorizontalStack key='left-icons' className='left-icons' itemAlignment='center' verticalItemAlignment='middle'>
           {this.props.showFirstButton && (
             <Icon
               key='go-first-btn'
@@ -121,7 +121,12 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
       </HorizontalStack>,
 
       (!this.props.hideNextButton || this.props.showLastButton) && (
-        <HorizontalStack key='right-icons'>
+        <HorizontalStack
+          key='right-icons'
+          className='right-icons'
+          itemAlignment='center'
+          verticalItemAlignment='middle'
+        >
           {!this.props.hideNextButton && (
             <Icon
               key='go-next-btn'
@@ -354,6 +359,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
       <Button
         key={index}
         className={classNames('page', 'number', { current: position === this.state.position })}
+        name={`Aller à la page N°${number}`}
         label={`${number}`}
         onTap={() => this.onChangePosition(position)}
       />

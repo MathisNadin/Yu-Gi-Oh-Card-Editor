@@ -1,3 +1,4 @@
+import parse from 'html-react-parser';
 import { AnchorHTMLAttributes, RefObject } from 'react';
 import { escapeHTML, isDefined, isString, isUndefined, markdownToHtml } from 'mn-tools';
 import { IRouterHrefParams, TForegroundColor, TRouterState } from '../../system';
@@ -193,87 +194,66 @@ export class Typography<
       if (this.props.contentType !== 'html') content = escapeHTML(content);
     }
 
+    const parsedNode = parse(content);
+    const finalNode = this.props.variant === 'bullet' ? <>• {parsedNode}</> : parsedNode;
+
     if (this.state.href) {
       return (
-        <a
-          {...this.renderAttributes()}
-          ref={this.base as RefObject<HTMLAnchorElement>}
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
+        <a {...this.renderAttributes()} ref={this.base as RefObject<HTMLAnchorElement>}>
+          {finalNode}
+        </a>
       );
     }
 
     switch (this.props.variant) {
       case 'h1':
         return (
-          <h1
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLHeadingElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <h1 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {finalNode}
+          </h1>
         );
 
       case 'h2':
         return (
-          <h2
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLHeadingElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <h2 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {finalNode}
+          </h2>
         );
 
       case 'h3':
         return (
-          <h3
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLHeadingElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <h3 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {finalNode}
+          </h3>
         );
 
       case 'h4':
         return (
-          <h4
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLHeadingElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <h4 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {finalNode}
+          </h4>
         );
 
       case 'h5':
         return (
-          <h5
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLHeadingElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <h5 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {finalNode}
+          </h5>
         );
 
       case 'h6':
         return (
-          <h6
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLHeadingElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <h6 {...this.renderAttributes()} ref={this.base as RefObject<HTMLHeadingElement>}>
+            {finalNode}
+          </h6>
         );
 
       case 'bullet':
-        return (
-          <div
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLDivElement>}
-            dangerouslySetInnerHTML={{ __html: `• ${content}` }}
-          />
-        );
-
       default:
         return (
-          <div
-            {...this.renderAttributes()}
-            ref={this.base as RefObject<HTMLDivElement>}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <div {...this.renderAttributes()} ref={this.base as RefObject<HTMLDivElement>}>
+            {finalNode}
+          </div>
         );
     }
   }

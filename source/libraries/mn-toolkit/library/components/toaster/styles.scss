@@ -10,7 +10,7 @@
     position: absolute;
     min-width: 50%;
     max-width: 70%;
-    height: fit-content;
+    min-height: fit-content;
     border-radius: calc(#{$defaultBorderRadius});
     transform: translateY(-100px);
     @include fx(all);

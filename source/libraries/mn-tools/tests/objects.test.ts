@@ -13,7 +13,7 @@ import {
   mapa,
   has,
   each,
-  diff,
+  arrayDiff,
   keyBy,
   sortBy,
   keyByAccumulated,
@@ -22,6 +22,9 @@ import {
   values,
   monkeyPatch,
   monkeyPatchGet,
+  objectDiff,
+  arrayToRecord,
+  arrayToRecordMultiple,
 } from '../library/objects';
 
 describe('objects.ts utility functions', () => {
@@ -240,18 +243,39 @@ describe('objects.ts utility functions', () => {
     });
   });
 
-  // diff: compute the differences between two arrays.
-  describe('diff', () => {
+  // arrayDiff: compute the differences between two arrays.
+  describe('arrayDiff', () => {
     it('should return the differences between two arrays', () => {
       const arr1 = [1, 2, 3, 4];
       const arr2 = [3, 4, 5];
-      const result = diff(arr1, arr2);
+      const result = arrayDiff(arr1, arr2);
       expect(result).toEqual([[1, 2], [5]]);
     });
     it('should return undefined when arrays are identical', () => {
       const arr1 = [1, 2, 3];
       const arr2 = [1, 2, 3];
-      expect(diff(arr1, arr2)).toBeUndefined();
+      expect(arrayDiff(arr1, arr2)).toBeUndefined();
+    });
+  });
+
+  // objectDiff: compute the differences between two objects.
+  describe('objectDiff', () => {
+    it('should return the differences between two flat objects', () => {
+      const obj1 = { a: 1, b: 2, c: 3 };
+      const obj2 = { a: 1, b: 20, d: 4 };
+      const result = objectDiff<{ a: number; b: number; c?: number; d?: number }>(obj1, obj2);
+      expect(result).toEqual([
+        // diffO: properties removed or changed in obj2
+        { b: 2, c: 3 },
+        // diffN: properties added or changed in obj2
+        { b: 20, d: 4 },
+      ]);
+    });
+
+    it('should return undefined when objects are identical', () => {
+      const obj1 = { x: 'foo', y: 'bar' };
+      const obj2 = { x: 'foo', y: 'bar' };
+      expect(objectDiff(obj1, obj2)).toBeUndefined();
     });
   });
 
@@ -275,6 +299,144 @@ describe('objects.ts utility functions', () => {
       const indexed = keyBy(users, (user: Partial<User>) => user.name!.toLowerCase());
       expect(Object.keys(indexed).sort()).toEqual(['alice', 'bob'].sort());
       expect(indexed['bob']).toEqual(users[1]);
+    });
+  });
+
+  // arrayToRecord: create a record from an array of objects by a property.
+  describe('arrayToRecord', () => {
+    interface User {
+      id: number;
+      name: string;
+    }
+    const users: User[] = [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ];
+
+    it('should index the array by a given field (no override, default)', () => {
+      const indexed = arrayToRecord(users, 'id');
+      expect(indexed).toEqual({
+        1: { id: 1, name: 'Alice' },
+        2: { id: 2, name: 'Bob' },
+      });
+    });
+
+    it('should throw if duplicate keys are found and allowOverride is false', () => {
+      const duplicate = [
+        { id: 1, name: 'A' },
+        { id: 1, name: 'B' },
+      ];
+      expect(() => arrayToRecord(duplicate, 'id')).toThrow('Duplicate key found: "1"');
+      expect(() => arrayToRecord(duplicate, 'id', false)).toThrow('Duplicate key found: "1"');
+    });
+
+    it('should override previous values with later ones if allowOverride is true', () => {
+      const duplicate = [
+        { id: 1, name: 'A' },
+        { id: 1, name: 'B' },
+        { id: 2, name: 'C' },
+      ];
+      const indexed = arrayToRecord(duplicate, 'id', true);
+      expect(indexed).toEqual({
+        1: { id: 1, name: 'B' }, // Last one with id 1
+        2: { id: 2, name: 'C' },
+      });
+    });
+
+    it('should throw if key type is invalid', () => {
+      const weird = [{ id: {}, name: 'C' }];
+      expect(() => arrayToRecord(weird, 'id')).toThrow(
+        'Key property "id" must be of type string or number, got: object'
+      );
+    });
+
+    it('should work with string keys and allowOverride', () => {
+      const items = [
+        { slug: 'foo', value: 1 },
+        { slug: 'bar', value: 2 },
+        { slug: 'foo', value: 3 },
+      ];
+      const result = arrayToRecord(items, 'slug', true);
+      expect(result).toEqual({
+        foo: { slug: 'foo', value: 3 },
+        bar: { slug: 'bar', value: 2 },
+      });
+    });
+  });
+
+  // arrayToRecordMultiple: create a record from an array of objects by a property while grouping objects with the same property
+  describe('arrayToRecordMultiple', () => {
+    interface User {
+      id: number;
+      name: string;
+    }
+
+    const users: User[] = [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ];
+
+    it('should group items by a numeric key when all keys are unique', () => {
+      const result = arrayToRecordMultiple(users, 'id');
+      expect(result).toEqual({
+        1: [{ id: 1, name: 'Alice' }],
+        2: [{ id: 2, name: 'Bob' }],
+      });
+    });
+
+    it('should collect multiple items under the same numeric key', () => {
+      const duplicateUsers: User[] = [
+        { id: 1, name: 'A' },
+        { id: 1, name: 'B' },
+        { id: 2, name: 'C' },
+        { id: 1, name: 'D' },
+      ];
+      const result = arrayToRecordMultiple(duplicateUsers, 'id');
+      expect(result).toEqual({
+        1: [
+          { id: 1, name: 'A' },
+          { id: 1, name: 'B' },
+          { id: 1, name: 'D' },
+        ],
+        2: [{ id: 2, name: 'C' }],
+      });
+    });
+
+    it('should group items by a string key', () => {
+      interface Item {
+        slug: string;
+        value: number;
+      }
+      const items: Item[] = [
+        { slug: 'apple', value: 10 },
+        { slug: 'banana', value: 20 },
+        { slug: 'apple', value: 30 },
+      ];
+      const result = arrayToRecordMultiple(items, 'slug');
+      expect(result).toEqual({
+        apple: [
+          { slug: 'apple', value: 10 },
+          { slug: 'apple', value: 30 },
+        ],
+        banana: [{ slug: 'banana', value: 20 }],
+      });
+    });
+
+    it('should return an empty record when given an empty array', () => {
+      const empty: User[] = [];
+      const result = arrayToRecordMultiple(empty, 'id');
+      expect(result).toEqual({});
+    });
+
+    it('should throw if a key property value is neither string nor number', () => {
+      interface Bad {
+        id: object;
+        name: string;
+      }
+      const badArray: Bad[] = [{ id: {}, name: 'X' }];
+      expect(() => arrayToRecordMultiple(badArray, 'id')).toThrowError(
+        'Key property "id" must be of type string or number, got: object'
+      );
     });
   });
 

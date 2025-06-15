@@ -43,6 +43,7 @@ export interface IFormFieldProps<TFormFieldDataType, FORM_ELEMENT extends HTMLEl
   infoIcon?: {
     icon: TIconId;
     hint: string;
+    name?: string;
     className?: string;
     size?: number;
     onTap?: (event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void | Promise<void>;
@@ -52,6 +53,7 @@ export interface IFormFieldProps<TFormFieldDataType, FORM_ELEMENT extends HTMLEl
     icon: TIconId;
     color?: TForegroundColor;
     hint?: string;
+    name?: string;
     className?: string;
     size?: number;
     onTap?: (event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void | Promise<void>;
@@ -248,6 +250,7 @@ export abstract class FormField<
         icon={this.props.propIcon.icon}
         color={this.props.propIcon.color}
         hint={this.props.propIcon.hint}
+        name={this.props.propIcon.name}
         size={this.props.propIcon.size}
         onTap={this.props.propIcon.onTap}
       />
@@ -259,12 +262,15 @@ export abstract class FormField<
   protected renderStatusIcon(): TJSXElementChildren {
     if (!this.props.onValidate) return;
     let statusIcon: TIconId;
+    let statusName: string;
     switch (this.state.validationState) {
       case 'validating':
         statusIcon = 'toolkit-sync';
+        statusName = 'En cours de validation';
         break;
       case 'validated':
         statusIcon = this.state.error ? 'toolkit-close-disc' : 'toolkit-check-disc';
+        statusName = this.state.error ? 'Le champ a une erreur' : 'Le champ est valide';
         break;
       default:
         return null;
@@ -273,6 +279,7 @@ export abstract class FormField<
       <Icon
         key='status-icon'
         className='status-icon'
+        name={statusName}
         icon={statusIcon}
         onTap={!this.onStatusIconTap ? undefined : (e) => this.onStatusIconTap!(e)}
       />
@@ -304,6 +311,7 @@ export abstract class FormField<
               className={classNames('form-field-info-icon', this.props.infoIcon.className)}
               icon={this.props.infoIcon.icon || 'toolkit-info-circle'}
               size={this.props.infoIcon.size || 18}
+              name={this.props.infoIcon.name}
               onTap={this.props.infoIcon.onTap}
             />
           </HorizontalStack>
@@ -322,7 +330,7 @@ export abstract class FormField<
 
   protected async onChange(value: TFormFieldDataType) {
     await this.setStateAsync({ value });
-    if (this.props.onChange) await this.props.onChange(this.state.value);
     await this.fireValueChanged();
+    if (this.props.onChange) await this.props.onChange(this.state.value);
   }
 }

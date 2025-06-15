@@ -104,7 +104,7 @@ export class Toaster<
   public override get children() {
     return [
       <Typography key='message' fill content={this.props.message} contentType='text' />,
-      <Icon key='close-icon' icon='toolkit-close' onTap={() => this.close()} />,
+      <Icon key='close-icon' icon='toolkit-close' name='Fermer' onTap={() => this.close()} />,
     ];
   }
 }

@@ -12,12 +12,18 @@ export interface IActionsPopoverAction<ID = number, T extends TRouterState = TRo
   label?: string;
   onTap?: (event: React.MouseEvent<HTMLLIElement>) => void | Promise<void>;
   bg?: TBackgroundColor;
-  icon?: TIconId;
-  iconColor?: TForegroundColor;
+  icon?: {
+    icon?: TIconId;
+    name?: string;
+    hint?: string;
+    color?: TForegroundColor;
+  };
   separator?: boolean;
   disabled?: boolean;
   selected?: boolean;
   button?: {
+    name?: string;
+    hint?: string;
     icon: TIconId;
     onTap: (event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => void | Promise<void>;
   };
@@ -191,10 +197,12 @@ export class ActionsPopover<
         className={classNames(this.renderActionClasses(action))}
         onClick={(event) => !!action.onTap && app.$errorManager.handlePromise(this.onTapAction(event, action))}
       >
-        {!!action.icon && (
+        {!!action.icon?.icon && (
           <Icon
-            icon={action.icon}
-            color={action.iconColor}
+            icon={action.icon.icon}
+            name={action.icon.name}
+            hint={action.icon.hint}
+            color={action.icon.color}
             onTap={!action.href ? undefined : () => this.onGoToHref(action)}
           />
         )}
@@ -210,7 +218,14 @@ export class ActionsPopover<
           onTap={!action.href ? undefined : () => this.close()}
         />
 
-        {!!action.button && <Icon icon={action.button.icon} onTap={(e) => this.onTapActionButton(e, action)} />}
+        {!!action.button?.icon && (
+          <Icon
+            icon={action.button.icon}
+            name={action.button.name}
+            hint={action.button.hint}
+            onTap={(e) => this.onTapActionButton(e, action)}
+          />
+        )}
       </li>
     );
   }

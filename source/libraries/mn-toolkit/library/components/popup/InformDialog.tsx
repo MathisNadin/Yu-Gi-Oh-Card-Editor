@@ -12,6 +12,7 @@ export class InformDialog extends AbstractPopup<void, IInformDialogProps, IInfor
   protected override async onInitializePopup() {
     const buttons = this.state.buttons;
     buttons.push({
+      name: 'Compris',
       label: 'Compris',
       color: 'primary',
       onTap: () => this.close(),

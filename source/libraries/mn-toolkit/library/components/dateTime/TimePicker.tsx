@@ -93,9 +93,17 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
           onChange={(time) => this.onChange(time)}
         />
       </HorizontalStack>,
-      !app.$device.isTouch && <Icon key='icon-calendar' icon='toolkit-time' onTap={(e) => this.showTimePicker(e)} />,
+      !app.$device.isTouch && (
+        <Icon key='icon-calendar' icon='toolkit-time' name="Choisir l'heure" onTap={(e) => this.showTimePicker(e)} />
+      ),
       app.$device.isTouch && this.props.canReset && (
-        <Icon key='icon-delete' icon='toolkit-close' color='negative' onTap={() => this.onChange(undefined)} />
+        <Icon
+          key='icon-delete'
+          icon='toolkit-close'
+          color='negative'
+          name='Réinitialiser'
+          onTap={() => this.onChange(undefined)}
+        />
       ),
     ];
   }

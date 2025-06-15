@@ -140,6 +140,7 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState, HTMLElem
           <Icon
             icon={subItem.icon}
             className='mn-left-menu-icon'
+            name={!subItem.href ? undefined : 'Visiter le lien'}
             onTap={!subItem.href ? undefined : () => this.goToHref(subItem.href)}
           />
         )}

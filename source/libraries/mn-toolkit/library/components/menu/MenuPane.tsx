@@ -104,6 +104,8 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
         <Icon
           key='mn-menu-pane-shrink-btn'
           className='shrink-btn'
+          name={this.state.open ? 'Fermer le menu' : 'Ouvrir le menu'}
+          hint={this.state.open ? 'Fermer le menu' : 'Ouvrir le menu'}
           onTap={() => this.toggle()}
           icon={this.getCloseIcon()}
         />
