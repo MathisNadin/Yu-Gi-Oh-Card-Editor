@@ -808,6 +808,8 @@ export class YuginewsService {
         frame.push('effect');
       } else if (types.includes('Normal')) {
         frame.push('normal');
+      } else {
+        frame.push('effect');
       }
     } else if (cardData.cardType) {
       if (cardData.cardType === '2') {

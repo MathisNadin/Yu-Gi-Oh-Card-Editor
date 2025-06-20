@@ -40,6 +40,8 @@ $legendaryDragon: #82b8d4;
     &.yuginews {
       tbody {
         tr {
+          background: $effect;
+
           @each $class,
             $color
               in (
