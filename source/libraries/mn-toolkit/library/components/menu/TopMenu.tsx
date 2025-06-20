@@ -1,5 +1,4 @@
 import { IDeviceListener, TJSXElementChildren, TForegroundColor, TJSXElementChild } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, IContainerState, Container, HorizontalStack } from '../container';
 import { Typography } from '../typography';
 import { IActionsPopoverAction } from '../popover';
@@ -13,14 +12,13 @@ interface ITopMenuProps extends IContainerProps<HTMLElement> {
 }
 
 interface ITopMenuState extends IContainerState {
-  items: IMenuItem[];
   currentlyShown?: IMenuItem;
 }
 
 export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement> implements Partial<IDeviceListener> {
   private menuPopoverId?: string;
 
-  public static override get defaultProps(): ITopMenuProps {
+  public static override get defaultProps(): Omit<ITopMenuProps, 'items'> {
     return {
       ...super.defaultProps,
       theme: 'dark',
@@ -29,26 +27,12 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
       layout: 'horizontal',
       gutter: true,
       itemAlignment: 'center',
-      items: [],
     };
   }
 
   public constructor(props: ITopMenuProps) {
     super(props);
-    this.state = { ...this.state, items: props.items };
     app.$device.addListener(this);
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ITopMenuProps>,
-    prevState: Readonly<ITopMenuState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.items !== this.state.items) {
-      this.setState({ items: this.props.items });
-    }
   }
 
   public override componentWillUnmount() {
@@ -87,7 +71,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
           {this.props.leftContent}
         </HorizontalStack>
 
-        <ul>{this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>
+        <ul>{this.props.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>
 
         <HorizontalStack
           fill

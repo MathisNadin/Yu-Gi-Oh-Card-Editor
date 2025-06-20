@@ -1,5 +1,4 @@
 import { TJSXElementChildren } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { Chip } from './Chip';
 import { IChipItem } from './Chips';
@@ -8,26 +7,23 @@ export interface IChipInputItem<ID = number> extends Omit<IChipItem<ID>, 'action
 
 export interface IChipsInputProps<ID = number> extends IContainerProps {
   placeholder?: string;
-  defaultValue?: IChipInputItem<ID>[];
-  onChange?: (value: IChipInputItem<ID>[]) => void | Promise<void>;
+  value: IChipInputItem<ID>[];
+  onChange: (value: IChipInputItem<ID>[]) => void | Promise<void>;
   onAskCreateId: (label: string) => ID;
 }
 
-interface IChipsInputState<ID> extends IContainerState {
-  items: IChipInputItem<ID>[];
+interface IChipsInputState extends IContainerState {
   inputValue: string;
 }
 
-export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, IChipsInputState<ID>> {
-  public static override get defaultProps(): IChipsInputProps {
+export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, IChipsInputState> {
+  public static override get defaultProps(): Omit<IChipsInputProps, 'value' | 'onChange' | 'onAskCreateId'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
       gutter: true,
       wrap: true,
-      defaultValue: [],
       placeholder: 'Écrivez puis faites "entrer" pour valider...',
-      onAskCreateId: (_label: string) => Math.random(),
     };
   }
 
@@ -35,23 +31,12 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
     super(props);
     this.state = {
       ...this.state,
-      items: props.defaultValue || [],
       inputValue: '',
     };
   }
 
-  public override componentDidUpdate(
-    prevProps: Readonly<IChipsInputProps<ID>>,
-    prevState: Readonly<IChipsInputState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue === this.props.defaultValue) return;
-    this.setState({ items: this.props.defaultValue || [] });
-  }
-
   private async handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    await this.setState({ inputValue: event.target.value });
+    await this.setStateAsync({ inputValue: (event.target as HTMLInputElement).value || '' });
   }
 
   private async handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -65,15 +50,13 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
       id: this.props.onAskCreateId(label),
       label,
     };
-    const items = [...this.state.items, newItem];
-    await this.setStateAsync({ items });
-    if (this.props.onChange) await this.props.onChange(items);
+    const items = [...this.props.value, newItem];
+    await this.props.onChange(items);
   }
 
   private async removeChip(id: ID) {
-    const items = this.state.items.filter((item) => item.id !== id);
-    await this.setStateAsync({ items });
-    if (this.props.onChange) await this.props.onChange(items);
+    const items = this.props.value.filter((item) => item.id !== id);
+    await this.props.onChange(items);
   }
 
   public override renderClasses() {
@@ -84,24 +67,24 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
 
   public override get children(): TJSXElementChildren {
     return [
-      this.state.items.map((item, i) => (
+      this.props.value.map((chip, i) => (
         <Chip
           key={`chip-${i}`}
           selected
-          className={item.className}
-          label={item.label}
-          color={item.color}
-          onTap={(e) => item.onTapOverride && item.onTapOverride(e)}
-          icon={item.icon}
+          className={chip.className}
+          label={chip.label}
+          color={chip.color}
+          onTap={chip.onTapOverride ? (e) => chip.onTapOverride!(e) : undefined}
+          icon={chip.icon}
           actionIcon='toolkit-close-disc'
-          onActionTap={() => this.removeChip(item.id)}
+          onActionTap={() => this.removeChip(chip.id)}
         />
       )),
       <input
         key='input'
         type='text'
-        value={this.state.inputValue}
         placeholder={this.props.disabled ? '' : this.props.placeholder}
+        value={this.state.inputValue}
         onChange={(e) => app.$errorManager.handlePromise(this.handleInputChange(e))}
         onKeyDown={(e) => app.$errorManager.handlePromise(this.handleKeyDown(e))}
       />,

@@ -1,70 +1,36 @@
 import { TJSXElementChild } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState, HorizontalStack } from '../container';
 import { Icon } from '../icon';
-import { Select } from '../select';
+import { ISelectItem, Select } from '../select';
 import { Typography } from '../typography';
 
 interface ITablePagerProps extends IContainerProps<HTMLElement> {
-  position: number;
-  total: number;
-  pageSize: number;
   showFirstButton?: boolean;
   showLastButton?: boolean;
-  onChange?: (position: number, pageSize: number) => void | Promise<void>;
-}
-
-interface ITablePagerState extends IContainerState {
+  pageSizeItems: ISelectItem<number>[];
+  pageSize: number;
   total: number;
   position: number;
-  pageSize: number;
+  onChange: (position: number, pageSize: number) => void | Promise<void>;
 }
 
+interface ITablePagerState extends IContainerState {}
+
 export class TablePager extends Container<ITablePagerProps, ITablePagerState, HTMLElement> {
-  public static override get defaultProps(): ITablePagerProps {
+  public static override get defaultProps(): Omit<ITablePagerProps, 'position' | 'total' | 'pageSize' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
       gutter: true,
       verticalItemAlignment: 'middle',
-      position: 0,
-      total: 1,
-      pageSize: 10,
+      pageSizeItems: [
+        { id: 5, label: '5' },
+        { id: 10, label: '10' },
+        { id: 25, label: '25' },
+        { id: 50, label: '50' },
+        { id: 100, label: '100' },
+      ],
     };
-  }
-
-  public constructor(props: ITablePagerProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      total: props.total,
-      position: props.position,
-      pageSize: props.pageSize,
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ITablePagerProps>,
-    prevState: Readonly<ITablePagerState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    this.setState({
-      total: this.props.total,
-      position: this.props.position,
-      pageSize: this.props.pageSize,
-    });
-  }
-
-  private async onChangePageSize(pageSize: number) {
-    await this.setStateAsync({ pageSize });
-    if (this.props.onChange) await this.props.onChange(this.state.position, this.state.pageSize);
-  }
-
-  private async onChangePosition(position: number) {
-    await this.setStateAsync({ position });
-    if (this.props.onChange) await this.props.onChange(this.state.position, this.state.pageSize);
   }
 
   public override renderClasses() {
@@ -84,20 +50,14 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
 
   public override get children() {
     return [
-      <Select
+      <Select<number>
         key='select'
-        items={[
-          { id: 5, label: '5' },
-          { id: 10, label: '10' },
-          { id: 25, label: '25' },
-          { id: 50, label: '50' },
-          { id: 100, label: '100' },
-        ]}
-        defaultValue={this.state.pageSize}
-        onChange={(value) => this.onChangePageSize(value)}
+        items={this.props.pageSizeItems}
+        value={this.props.pageSize}
+        onChange={(pageSize) => this.props.onChange(this.props.position, pageSize)}
       />,
 
-      <Typography key='count' className='page-count' content={`Page ${this.state.position + 1} sur ${this.nbPages}`} />,
+      <Typography key='count' className='page-count' content={`Page ${this.props.position + 1} sur ${this.nbPages}`} />,
 
       <HorizontalStack key='icons'>
         {this.props.showFirstButton && (
@@ -107,7 +67,7 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
             name='Aller à la première page'
             disabled={this.isFirstPage}
             icon='toolkit-double-angle-left'
-            onTap={() => this.onChangePosition(0)}
+            onTap={() => this.props.onChange(0, this.props.pageSize)}
           />
         )}
 
@@ -117,7 +77,7 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
           name='Aller à la page précédente'
           disabled={this.isFirstPage}
           icon='toolkit-angle-left'
-          onTap={() => this.onChangePosition(this.state.position - 1)}
+          onTap={() => this.props.onChange(this.props.position - 1, this.props.pageSize)}
         />
 
         <Icon
@@ -126,7 +86,7 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
           name='Aller à la prochaine page'
           disabled={this.isLastPage}
           icon='toolkit-angle-right'
-          onTap={() => this.onChangePosition(this.state.position + 1)}
+          onTap={() => this.props.onChange(this.props.position + 1, this.props.pageSize)}
         />
 
         {this.props.showLastButton && (
@@ -136,7 +96,7 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
             hint='Aller à la dernière page'
             name='Aller à la dernière page'
             icon='toolkit-double-angle-right'
-            onTap={() => this.onChangePosition(this.nbPages - 1)}
+            onTap={() => this.props.onChange(this.nbPages - 1, this.props.pageSize)}
           />
         )}
       </HorizontalStack>,
@@ -148,20 +108,20 @@ export class TablePager extends Container<ITablePagerProps, ITablePagerState, HT
   }
 
   private get isLastPage(): boolean {
-    return this.lastRow >= this.state.total - 1;
+    return this.lastRow >= this.props.total - 1;
   }
 
   private get firstRow(): number {
-    return this.state.position * this.state.pageSize;
+    return this.props.position * this.props.pageSize;
   }
 
   private get lastRow(): number {
-    let i = (this.state.position + 1) * this.state.pageSize - 1;
-    if (i > this.state.total) i = this.state.total - 1;
+    let i = (this.props.position + 1) * this.props.pageSize - 1;
+    if (i > this.props.total) i = this.props.total - 1;
     return i;
   }
 
   private get nbPages(): number {
-    return Math.ceil(this.state.total / this.state.pageSize);
+    return Math.ceil(this.props.total / this.props.pageSize);
   }
 }

@@ -15,7 +15,7 @@ interface IButtonIconProps extends IContainableProps<HTMLButtonElement> {
 interface IButtonIconState extends IContainableState {}
 
 export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState, HTMLButtonElement> {
-  public static override get defaultProps(): IButtonIconProps {
+  public static override get defaultProps(): Omit<IButtonIconProps, 'icon'> {
     return {
       ...super.defaultProps,
       color: '1',
@@ -23,7 +23,6 @@ export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState, 
       pressed: false,
       size: 'normal',
       buttonType: 'button',
-      icon: 'toolkit-plus',
     };
   }
 

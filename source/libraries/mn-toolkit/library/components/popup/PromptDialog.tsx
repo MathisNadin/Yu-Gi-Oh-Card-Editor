@@ -1,11 +1,11 @@
 import { Form } from '../form';
-import { TextAreaField } from '../textAreaInput';
+import { TextAreaInputField } from '../textAreaInput';
 import { TextInputField } from '../textInput';
 import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './AbstractPopup';
 
 export interface IPromptDialogProps extends IAbstractPopupProps<string> {
   defaultValue?: string;
-  label?: string;
+  label: string;
   placeholder?: string;
   type?: 'text' | 'textarea';
 }
@@ -30,11 +30,11 @@ export class PromptDialog extends AbstractPopup<string, IPromptDialogProps, IPro
     return (
       <Form fill={false} scroll={false}>
         {this.props.type === 'textarea' ? (
-          <TextAreaField
+          <TextAreaInputField
             autofocus
             label={this.props.label}
             placeholder={this.props.placeholder}
-            defaultValue={this.state.value}
+            value={this.state.value}
             onChange={(value) => this.setStateAsync({ value })}
           />
         ) : (
@@ -42,7 +42,7 @@ export class PromptDialog extends AbstractPopup<string, IPromptDialogProps, IPro
             autofocus
             label={this.props.label}
             placeholder={this.props.placeholder}
-            defaultValue={this.state.value}
+            value={this.state.value}
             onChange={(value) => this.setStateAsync({ value })}
             onSubmit={() => this.close(this.state.value)}
           />

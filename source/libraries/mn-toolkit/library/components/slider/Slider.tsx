@@ -9,34 +9,27 @@ export type TSliderValueDisplayMode = 'hidden' | 'auto' | 'always';
 
 export interface ISliderProps extends IContainableProps {
   color?: TForegroundColor;
-  defaultValue?: number;
   valueDisplayMode: TSliderValueDisplayMode;
   min: number;
   max: number;
   step: number;
-  disabled?: boolean;
   marks?: number[];
-  onChange?: (value: number) => void | Promise<void>;
+  value: number;
+  onChange: (value: number) => void | Promise<void>;
 }
 
 interface ISliderState extends IContainableState {
-  value: number;
   isHovered: boolean;
   isDragging: boolean;
   stepDecimals: number;
 }
 
 export class Slider extends Containable<ISliderProps, ISliderState> {
-  public static override get defaultProps(): ISliderProps {
+  public static override get defaultProps(): Omit<ISliderProps, 'min' | 'max' | 'step' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       color: 'primary',
-      min: 1,
-      max: 10,
-      step: 1,
-      defaultValue: 5,
       valueDisplayMode: 'always',
-      marks: [],
     };
   }
 
@@ -44,7 +37,6 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     super(props);
     this.state = {
       ...this.state,
-      value: props.defaultValue ?? 0,
       isHovered: false,
       isDragging: false,
       stepDecimals: (props.step.toString().split('.')[1] || '').length,
@@ -57,18 +49,9 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (
-      (!this.props.onChange || prevProps.defaultValue === this.props.defaultValue) &&
-      prevProps.step === this.props.step
-    ) {
-      return;
-    }
-
-    this.setState({
-      value: this.props.defaultValue ?? 0,
-      stepDecimals: (this.props.step.toString().split('.')[1] || '').length,
-    });
+    if (prevProps.step === this.props.step) return;
+    const stepDecimals = (this.props.step.toString().split('.')[1] || '').length;
+    if (stepDecimals !== this.state.stepDecimals) this.setState({ stepDecimals });
   }
 
   public handleMouseDown = async (_e: TMouseEvents | TTouchEvents) => {
@@ -99,31 +82,30 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     const { min, max, step, onChange } = this.props;
     let clientX = 0;
 
-    // Différencier entre les événements de souris et de toucher pour obtenir la position X
+    // Differenciate between mouse and touch events to get X position
     if ('touches' in e) {
       clientX = e.touches[0]!.clientX;
     } else {
       clientX = e.clientX;
     }
 
-    const sliderRect = this.base.current.getBoundingClientRect(); // this.base fait référence à l'élément racine du composant
+    const sliderRect = this.base.current.getBoundingClientRect();
     const sliderStart = sliderRect.left;
     const sliderWidth = sliderRect.width;
 
-    // Calculer la position relative du clic/toucher dans le slider
+    // Calculate relative position of the click/touch in the slider
     let relativePosition = (clientX - sliderStart) / sliderWidth;
-    relativePosition = Math.max(0, Math.min(1, relativePosition)); // Limiter entre 0 et 1
+    relativePosition = Math.max(0, Math.min(1, relativePosition)); // Limit between 0 and 1
 
     // Calculer la valeur proportionnelle
     let newValue = min + (max - min) * relativePosition;
-    newValue = Math.round(newValue / step) * step; // Ajuster à l'étape la plus proche
-    newValue = Math.max(min, Math.min(max, newValue)); // S'assurer que la valeur reste entre min et max
+    newValue = Math.round(newValue / step) * step; // Adjust to closest step
+    newValue = Math.max(min, Math.min(max, newValue)); // Make sure the value is between min/max
 
-    // Appliquer la limite des décimales au newValue
+    // Apply decimals limit to new vaue
     newValue = parseFloat(newValue.toFixed(this.state.stepDecimals));
 
-    await this.setStateAsync({ value: newValue });
-    if (onChange) await onChange(newValue);
+    await onChange(newValue);
   }
 
   private calculateMarkPosition(mark: number) {
@@ -152,8 +134,8 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
   }
 
   public override get children() {
-    const { min, max, valueDisplayMode, marks } = this.props;
-    const { value, isHovered, isDragging } = this.state;
+    const { value, min, max, valueDisplayMode, marks } = this.props;
+    const { isHovered, isDragging } = this.state;
 
     const thumbSize = 20;
     const filled = `${((value - min) / (max - min)) * 100}%`;

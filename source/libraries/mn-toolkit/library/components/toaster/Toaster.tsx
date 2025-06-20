@@ -25,7 +25,7 @@ export class Toaster<
 > extends Container<P, S> {
   private timeout!: NodeJS.Timeout;
 
-  public static override get defaultProps(): IToasterProps {
+  public static override get defaultProps(): Omit<IToasterProps, 'key' | 'message' | 'type' | 'id'> {
     return {
       ...super.defaultProps,
       bg: undefined,
@@ -33,10 +33,6 @@ export class Toaster<
       gutter: true,
       zIndex: 'toaster',
       verticalItemAlignment: 'middle',
-      key: undefined!,
-      message: '',
-      type: undefined!,
-      id: undefined!,
     };
   }
 
@@ -75,7 +71,7 @@ export class Toaster<
         if (this.props.type === 'error') return;
         this.timeout = setTimeout(() => this.close(), TIMEOUT);
       });
-    }, 200);
+    });
   }
 
   public async close() {
@@ -84,7 +80,7 @@ export class Toaster<
     await this.setStateAsync({ hidding: true });
     setTimeout(() => {
       app.$toaster.remove(this.props.id!);
-    }, 200);
+    }, 250);
   }
 
   public override renderAttributes() {

@@ -19,7 +19,7 @@ export class Drawer<P extends IDrawerProps = IDrawerProps, S extends IDrawerStat
   P,
   S
 > {
-  public static override get defaultProps(): IDrawerProps {
+  public static override get defaultProps(): Omit<IDrawerProps, 'content'> {
     return {
       ...super.defaultProps,
       layout: 'vertical',
@@ -29,7 +29,6 @@ export class Drawer<P extends IDrawerProps = IDrawerProps, S extends IDrawerStat
       bg: '1',
       zIndex: 'drawer',
       orientation: 'left',
-      content: null,
     };
   }
 

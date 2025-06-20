@@ -1,24 +1,20 @@
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
 import { WeekPicker, IWeekPickerProps } from './WeekPicker';
 
-interface IWeekPickerFieldProps extends IFormFieldProps<Date>, IWeekPickerProps {}
+interface IWeekPickerFieldProps extends IFormFieldProps<Date | undefined>, IWeekPickerProps {}
 
-interface IWeekPickerFieldState extends IFormFieldState<Date> {}
+interface IWeekPickerFieldState extends IFormFieldState {}
 
-export class WeekPickerField extends FormField<Date, IWeekPickerFieldProps, IWeekPickerFieldState> {
-  public constructor(props: IWeekPickerFieldProps) {
-    super(props, 'week-picker');
-    this.state = {
-      ...this.state,
-      value: props.defaultValue!,
+export class WeekPickerField extends FormField<Date | undefined, IWeekPickerFieldProps, IWeekPickerFieldState> {
+  public static override get defaultProps(): Omit<IWeekPickerFieldProps, 'label' | 'value' | 'onChange'> {
+    return {
+      ...super.defaultProps,
+      canReset: WeekPicker.defaultProps.canReset,
     };
   }
 
-  protected override async updateFromNewProps(prevProps: Readonly<IWeekPickerFieldProps>) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.getTime() === this.state.value?.getTime()) return;
-    await this.setStateAsync({ value: this.props.defaultValue! });
-    if (this.hasValue) await this.doValidation();
+  public constructor(props: IWeekPickerFieldProps) {
+    super(props, 'week-picker');
   }
 
   protected override renderControl() {
@@ -28,7 +24,7 @@ export class WeekPickerField extends FormField<Date, IWeekPickerFieldProps, IWee
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         canReset={this.props.canReset}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

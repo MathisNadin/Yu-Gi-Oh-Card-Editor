@@ -17,7 +17,7 @@ interface IRushCardArtworkState extends IToolkitComponentState {
   pendulum: boolean;
   artworkBg: string;
   loadArtwork: boolean;
-  artworkData: string;
+  artworkData: string | undefined;
 }
 
 export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRushCardArtworkState> {
@@ -32,7 +32,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
       pendulum: props.card.artwork.pendulum,
       artworkBg: props.artworkBg,
       loadArtwork: true,
-      artworkData: '',
+      artworkData: undefined,
     };
   }
 
@@ -63,7 +63,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
         width: nextProps.card.artwork.width,
         pendulum: nextProps.card.artwork.pendulum,
         artworkBg: nextProps.artworkBg,
-        artworkData: '',
+        artworkData: undefined,
       };
     } else {
       return null;
@@ -84,8 +84,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
   }
 
   private get isEmpty() {
-    const { url } = this.state;
-    return !url;
+    return !this.state.url;
   }
 
   private async loadArtwork() {
@@ -94,7 +93,7 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
     const { url, x, y, height, width, artworkBg } = this.state;
 
     let artworkExists = false;
-    let artworkData!: string;
+    let artworkData: string | undefined;
     if (app.$device.isElectron(window)) {
       try {
         artworkExists = await window.electron.ipcRenderer.invoke('checkFileExists', url);
@@ -113,19 +112,17 @@ export class RushCardArtwork extends ToolkitComponent<IRushCardArtworkProps, IRu
       }
     }
 
-    if (!artworkExists) artworkData = artworkBg;
+    if (!artworkExists || !artworkData) artworkData = artworkBg;
 
-    await preloadImage(artworkData);
+    if (artworkData) await preloadImage(artworkData);
     this.setState({ loadArtwork: false, artworkData });
   }
 
   public override render() {
     if (this.isEmpty) return null;
-
-    const { artworkData } = this.state;
     return (
       <div className='card-layer artwork-container'>
-        <img className='artwork' src={artworkData} alt='artwork' />
+        <img className='artwork' src={this.state.artworkData || undefined} alt='artwork' />
       </div>
     );
   }

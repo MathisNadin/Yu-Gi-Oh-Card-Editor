@@ -1,5 +1,4 @@
 import { TJSXElementChildren } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, Container, IContainerState } from '../container';
 import { Icon } from '../icon';
 import { DatePicker } from './DatePicker';
@@ -12,18 +11,16 @@ export interface IDateRange {
 export interface IDateRangePickerProps extends IContainerProps {
   lowerPopupTitle?: string;
   higherPopupTitle?: string;
-  defaultValue?: IDateRange;
   yearRange?: [number, number];
-  canReset?: boolean;
-  onChange?: (value: IDateRange) => void | Promise<void>;
+  canReset: boolean;
+  value: IDateRange;
+  onChange: (value: IDateRange) => void | Promise<void>;
 }
 
-interface IDateRangePickerState extends IContainerState {
-  dateRange: IDateRange;
-}
+interface IDateRangePickerState extends IContainerState {}
 
 export class DateRangePicker extends Container<IDateRangePickerProps, IDateRangePickerState> {
-  public static override get defaultProps(): IDateRangePickerProps {
+  public static override get defaultProps(): Omit<IDateRangePickerProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       gutter: true,
@@ -31,49 +28,24 @@ export class DateRangePicker extends Container<IDateRangePickerProps, IDateRange
       verticalItemAlignment: 'middle',
       lowerPopupTitle: 'Choisissez une date de début',
       higherPopupTitle: 'Choisissez une date de fin',
-      defaultValue: { lowerDate: undefined, higherDate: undefined },
+      canReset: true,
     };
   }
 
-  public constructor(props: IDateRangePickerProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      dateRange: props.defaultValue || { lowerDate: undefined, higherDate: undefined },
-    };
+  private async onChangeLower(lowerDate: Date | undefined) {
+    let higherDate = this.props.value.higherDate;
+    if (higherDate && lowerDate && lowerDate > higherDate) {
+      higherDate = lowerDate;
+    }
+    await this.props.onChange({ lowerDate, higherDate });
   }
 
-  public override componentDidUpdate(
-    prevProps: Readonly<IDateRangePickerProps>,
-    prevState: Readonly<IDateRangePickerState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (
-      this.props.defaultValue !== this.state.dateRange ||
-      this.props.defaultValue?.lowerDate?.getTime() !== this.state.dateRange.lowerDate?.getTime() ||
-      this.props.defaultValue?.higherDate?.getTime() !== this.state.dateRange.higherDate?.getTime()
-    ) {
-      this.setState({ dateRange: this.props.defaultValue || { lowerDate: undefined, higherDate: undefined } });
+  private async onChangeHigher(higherDate: Date | undefined) {
+    let lowerDate = this.props.value.lowerDate;
+    if (lowerDate && higherDate && higherDate < lowerDate) {
+      lowerDate = higherDate;
     }
-  }
-
-  private async onChangeLower(lowerDate: Date) {
-    const dateRange = { ...this.state.dateRange, lowerDate };
-    if (dateRange.higherDate && lowerDate > dateRange.higherDate) {
-      dateRange.higherDate = new Date(lowerDate);
-    }
-    await this.setStateAsync({ dateRange });
-    if (this.props.onChange) await this.props.onChange(dateRange);
-  }
-
-  private async onChangeHigher(higherDate: Date) {
-    const dateRange = { ...this.state.dateRange, higherDate };
-    if (dateRange.lowerDate && higherDate < dateRange.lowerDate) {
-      dateRange.lowerDate = new Date(higherDate);
-    }
-    await this.setStateAsync({ dateRange });
-    if (this.props.onChange) await this.props.onChange(dateRange);
+    await this.props.onChange({ lowerDate, higherDate });
   }
 
   public override renderClasses() {
@@ -83,7 +55,6 @@ export class DateRangePicker extends Container<IDateRangePickerProps, IDateRange
   }
 
   public override get children(): TJSXElementChildren {
-    const { lowerDate, higherDate } = this.state.dateRange;
     return [
       <DatePicker
         key='lower-date-picker'
@@ -91,7 +62,7 @@ export class DateRangePicker extends Container<IDateRangePickerProps, IDateRange
         yearRange={this.props.yearRange}
         popupTitle={this.props.lowerPopupTitle}
         canReset={this.props.canReset}
-        defaultValue={lowerDate}
+        value={this.props.value.lowerDate}
         onChange={(lowerDate) => this.onChangeLower(lowerDate)}
       />,
       <Icon key='separator' icon='toolkit-minus' />,
@@ -101,7 +72,7 @@ export class DateRangePicker extends Container<IDateRangePickerProps, IDateRange
         yearRange={this.props.yearRange}
         popupTitle={this.props.higherPopupTitle}
         canReset={this.props.canReset}
-        defaultValue={higherDate}
+        value={this.props.value.higherDate}
         onChange={(higherDate) => this.onChangeHigher(higherDate)}
       />,
     ];

@@ -1,30 +1,29 @@
 import { createRef } from 'react';
-import { isString } from 'mn-tools';
-import { FormField, IFormFieldProps, IFormFieldState } from '../form';
+import { FormField, IFormFieldProps, IFormFieldState, TFormField } from '../form';
 import { ITextInputSpecificProps, TextInput } from './TextInput';
 
-export interface ITextInputFieldProps extends IFormFieldProps<string, HTMLInputElement>, ITextInputSpecificProps {}
+export interface ITextInputFieldProps extends IFormFieldProps<string>, ITextInputSpecificProps {
+  onSubmit?: (event: React.KeyboardEvent<HTMLInputElement>) => void | Promise<void>;
+}
 
-export interface ITextInputFieldState extends IFormFieldState<string> {}
+export interface ITextInputFieldState extends IFormFieldState {}
 
 export class TextInputField<PROPS extends ITextInputFieldProps, STATE extends ITextInputFieldState> extends FormField<
   string,
   PROPS,
-  STATE,
-  HTMLInputElement
+  STATE
 > {
   protected inputElement = createRef<TextInput>();
 
-  public static override get defaultProps(): ITextInputFieldProps {
+  public static override get defaultProps(): Omit<ITextInputFieldProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      inputType: 'text',
-      defaultValue: '',
+      spellCheck: TextInput.defaultProps.spellCheck,
+      inputType: TextInput.defaultProps.inputType,
     };
   }
 
-  public constructor(props: PROPS, type?: string) {
-    if (!isString(type)) type = 'text';
+  public constructor(props: PROPS, type: string = 'text') {
     super(props, type);
   }
 
@@ -43,16 +42,17 @@ export class TextInputField<PROPS extends ITextInputFieldProps, STATE extends IT
       <TextInput
         ref={this.inputElement}
         name={this.props.name}
+        spellCheck={this.props.spellCheck}
         inputType={this.props.inputType!}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
-        defaultValue={this.state.value}
+        value={this.value}
+        onChange={(value) => this.onChange(value)}
         onKeyDown={(e) => this.onKeyDown(e)}
         onBlur={() => this.onBlur()}
         onFocus={() => this.onFocus()}
-        onChange={(value) => this.onChange(value)}
       />
     );
   }
@@ -63,7 +63,7 @@ export class TextInputField<PROPS extends ITextInputFieldProps, STATE extends IT
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         if (!this.hasValue) return;
-        this.observers.dispatch('formFieldSubmit', this);
+        if (this.context?.notifyFieldSubmit) this.context.notifyFieldSubmit(this as unknown as TFormField);
         if (this.props.onSubmit) app.$errorManager.handlePromise(this.props.onSubmit(e));
       })
     );

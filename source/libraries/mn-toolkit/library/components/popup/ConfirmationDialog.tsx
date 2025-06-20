@@ -85,7 +85,8 @@ export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDial
           <TextInputField
             autofocus
             hideLabel
-            defaultValue={confirmationResponse}
+            label=''
+            value={confirmationResponse}
             onChange={(confirmationResponse) => this.setState({ confirmationResponse })}
           />
           {!!confirmationError && (

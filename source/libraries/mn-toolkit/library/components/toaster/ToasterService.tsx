@@ -1,3 +1,4 @@
+import { JSX } from 'react';
 import { Observable, uuid } from 'mn-tools';
 import { IToasterListener, Toaster, TToastType } from '.';
 

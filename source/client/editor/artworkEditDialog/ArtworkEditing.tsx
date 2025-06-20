@@ -22,8 +22,6 @@ interface IArtworkEditingProps extends IContainerProps {
   artworkBase64: string;
   keepRatio: boolean;
   pendulumRatio: boolean;
-  hasPendulumFrame: boolean;
-  hasLinkFrame: boolean;
   isRush: boolean;
   crop: Crop;
   onKeepRatioChange: (keepRatio: boolean) => void | Promise<void>;
@@ -69,8 +67,22 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
     snapshot?: TDidUpdateSnapshot
   ): void {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    app.$errorManager.handlePromise(this.load());
+
+    // Déclenche le rechargement seulement si une des props suivantes a changé
+    const shouldReload =
+      prevProps.artworkURL !== this.props.artworkURL ||
+      prevProps.artworkBase64 !== this.props.artworkBase64 ||
+      prevProps.keepRatio !== this.props.keepRatio ||
+      !this.isCropDeepEqual(prevProps.crop, this.props.crop);
+
+    if (shouldReload) app.$errorManager.handlePromise(this.load());
+  }
+
+  // Utilitaire pour comparer deux objets crop
+  private isCropDeepEqual(a: Crop, b: Crop): boolean {
+    if (a !== b) return false;
+    if (!a || !b) return false;
+    return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height && a.unit === b.unit;
   }
 
   private async load() {
@@ -221,7 +233,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
         <FilePathInput
           key='file-input'
           placeholder="Chemin vers l'artwork"
-          defaultValue={artworkURL}
+          value={artworkURL}
           onChange={(url) => this.onArtworkURLChange(url)}
           overrideOnTapIcon={() => this.doSelectImgPath()}
         />
@@ -245,7 +257,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
       !!croppedArtworkBase64?.length && (
         <HorizontalStack key='ratio-checkbox' itemAlignment='center' verticalItemAlignment='middle' gutter>
           <Spacer />
-          <Checkbox label='Conserver le ratio 1:1' defaultValue={keepRatio} onChange={() => this.switchKeepRatio()} />
+          <Checkbox label='Conserver le ratio 1:1' value={keepRatio} onChange={() => this.switchKeepRatio()} />
         </HorizontalStack>
       ),
 
@@ -257,7 +269,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               min={0}
               max={100}
               label='X'
-              defaultValue={crop.x}
+              value={crop.x}
               onChange={(x) => this.onCropPropertyChange('x', x)}
             />
             <NumberInputField
@@ -265,7 +277,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               min={0}
               max={100}
               label='Y'
-              defaultValue={crop.y}
+              value={crop.y}
               onChange={(y) => this.onCropPropertyChange('y', y)}
             />
           </VerticalStack>
@@ -276,7 +288,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               min={1}
               max={100}
               label='Largeur'
-              defaultValue={crop.width}
+              value={crop.width}
               onChange={(width) => this.onCropPropertyChange('width', width)}
             />
             <NumberInputField
@@ -284,7 +296,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               min={1}
               max={100}
               label='Hauteur'
-              defaultValue={crop.height}
+              value={crop.height}
               onChange={(height) => this.onCropPropertyChange('height', height)}
             />
           </VerticalStack>

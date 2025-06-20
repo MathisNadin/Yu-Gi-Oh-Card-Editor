@@ -1,22 +1,32 @@
 import { classNames } from 'mn-tools';
-import { Container, IContainerProps, IContainerState, HorizontalStack } from '../container';
+import { TJSXElementChild, TJSXElementChildren } from '../../system';
+import { Grid, IGridProps, IGridState, HorizontalStack } from '../container';
+import { IGridSpanParams } from '../containable';
 import { Icon } from '../icon';
 
-interface IColorPickerProps extends IContainerProps {
-  colors?: string[];
-  onSelectColor?: (color?: string) => void | Promise<void>;
+interface IColorPickerProps extends IGridProps {
+  iconColSpans: IGridSpanParams;
+  iconRowSpans?: IGridSpanParams;
+  colors: string[];
+  selectedColor: string | undefined;
+  onSelectColor: (color: string | undefined) => void | Promise<void>;
 }
 
-interface IColorPickerState extends IContainerState {
-  selectedColor?: string;
-}
+interface IColorPickerState extends IGridState {}
 
-export class ColorPicker extends Container<IColorPickerProps, IColorPickerState> {
-  public static override get defaultProps(): IColorPickerProps {
+export class ColorPicker extends Grid<IColorPickerProps, IColorPickerState> {
+  public static override get defaultProps(): Omit<IColorPickerProps, 'selectedColor' | 'onSelectColor'> {
     return {
       ...super.defaultProps,
-      wrap: true,
+      gutter: false,
       padding: true,
+      gridColumns: 8,
+      gridRows: 1,
+      iconColSpans: {
+        small: 4,
+        medium: 2,
+        large: 1,
+      },
       colors: [
         '#000000', // Noir
         '#808080', // Gris
@@ -37,41 +47,36 @@ export class ColorPicker extends Container<IColorPickerProps, IColorPickerState>
     };
   }
 
-  private async onSelectColor(selectedColor?: string) {
-    await this.setStateAsync({ selectedColor });
-    if (this.props.onSelectColor) await this.props.onSelectColor(selectedColor);
-  }
-
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-color-picker'] = true;
     return classes;
   }
 
-  public override get children() {
-    return [
+  public override get children(): TJSXElementChildren {
+    const children: TJSXElementChild[] = [
       ...this.props.colors!.map((c) => this.renderColorSwatch(c)),
       <Icon
         key='unformat'
+        colSpans={this.props.iconColSpans}
+        rowSpans={this.props.iconRowSpans}
         icon='toolkit-format-unformat'
         name='Retirer la couleur'
-        onTap={() => this.onSelectColor()}
+        onTap={() => this.props.onSelectColor(undefined)}
       />,
     ];
+    return children.map((element, idx) => this.renderGridItem(element, idx));
   }
 
   private renderColorSwatch(color: string) {
     return (
       <HorizontalStack
-        colSpans={{
-          small: 6,
-          medium: 4,
-          large: 3,
-        }}
         key={color}
-        className={classNames('mn-color-swatch', { selected: this.state.selectedColor === color })}
+        colSpans={this.props.iconColSpans}
+        rowSpans={this.props.iconRowSpans}
+        className={classNames('mn-color-swatch', { selected: this.props.selectedColor === color })}
         style={{ backgroundColor: color }}
-        onTap={() => this.onSelectColor(color)}
+        onTap={() => this.props.onSelectColor(color)}
       />
     );
   }

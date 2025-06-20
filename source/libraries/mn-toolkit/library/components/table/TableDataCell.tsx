@@ -1,12 +1,13 @@
 import { AllHTMLAttributes } from 'react';
 import { classNames, isNumber, isString } from 'mn-tools';
-import { TJSXElementChild } from '../../system';
+import { IRouterHrefParams, TJSXElementChild, TRouterState } from '../../system';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from '../containable';
-import { HorizontalStack, THorizontalAlignment, TVerticalAlignment } from '../container';
+import { AnchorContainer, HorizontalStack, THorizontalAlignment, TVerticalAlignment } from '../container';
 import { Typography } from '../typography';
 
-export interface ITableDataCell {
+export interface ITableDataCell<T extends TRouterState = TRouterState> {
   content: string | TJSXElementChild;
+  href?: string | IRouterHrefParams<T>;
   className?: string;
   header?: boolean;
   colspan?: number;
@@ -16,8 +17,8 @@ export interface ITableDataCell {
   onTap?: (event: React.MouseEvent<HTMLTableCellElement>) => void | Promise<void>;
 }
 
-export interface ITableDataCellProps extends IToolkitComponentProps {
-  cell: ITableDataCell;
+export interface ITableDataCellProps<T extends TRouterState = TRouterState> extends IToolkitComponentProps {
+  cell: ITableDataCell<T>;
   onTapRow?: (event: React.MouseEvent<HTMLTableCellElement>) => void | Promise<void>;
 }
 
@@ -61,13 +62,25 @@ export class TableDataCell extends ToolkitComponent<ITableDataCellProps, ITableD
     }
     return (
       <td {...this.renderAttributes()} ref={this.base}>
-        <HorizontalStack
-          className='mn-cell-content'
-          itemAlignment={cell.align || 'center'}
-          verticalItemAlignment={cell.verticalAlign || 'middle'}
-        >
-          {content}
-        </HorizontalStack>
+        {cell.href ? (
+          <AnchorContainer
+            className='mn-cell-content'
+            layout='horizontal'
+            href={cell.href}
+            itemAlignment={cell.align || 'center'}
+            verticalItemAlignment={cell.verticalAlign || 'middle'}
+          >
+            {content}
+          </AnchorContainer>
+        ) : (
+          <HorizontalStack
+            className='mn-cell-content'
+            itemAlignment={cell.align || 'center'}
+            verticalItemAlignment={cell.verticalAlign || 'middle'}
+          >
+            {content}
+          </HorizontalStack>
+        )}
       </td>
     );
   }

@@ -17,7 +17,7 @@ export interface IChipProps extends IContainerProps {
 interface IChipState extends IContainerState {}
 
 export class Chip extends Container<IChipProps, IChipState> {
-  public static override get defaultProps(): IChipProps {
+  public static override get defaultProps(): Omit<IChipProps, 'label'> {
     return {
       ...super.defaultProps,
       color: 'primary',
@@ -27,7 +27,6 @@ export class Chip extends Container<IChipProps, IChipState> {
       bg: '4',
       itemAlignment: 'center',
       verticalItemAlignment: 'middle',
-      label: '',
     };
   }
 

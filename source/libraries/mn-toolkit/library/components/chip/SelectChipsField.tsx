@@ -3,18 +3,12 @@ import { SelectChips, ISelectChipsProps } from './SelectChips';
 
 interface ISelectChipsFieldProps<ID = number> extends IFormFieldProps<ID[]>, ISelectChipsProps<ID> {}
 
-interface ISelectChipsFieldState<ID> extends IFormFieldState<ID[]> {}
+interface ISelectChipsFieldState extends IFormFieldState {}
 
-export class SelectChipsField<ID = number> extends FormField<
-  ID[],
-  ISelectChipsFieldProps<ID>,
-  ISelectChipsFieldState<ID>
-> {
-  public static override get defaultProps(): ISelectChipsFieldProps {
+export class SelectChipsField<ID = number> extends FormField<ID[], ISelectChipsFieldProps<ID>, ISelectChipsFieldState> {
+  public static override get defaultProps(): Omit<ISelectChipsFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: [],
-      items: [],
     };
   }
 
@@ -27,8 +21,8 @@ export class SelectChipsField<ID = number> extends FormField<
       <SelectChips<ID>
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
-        defaultValue={this.props.defaultValue}
         items={this.props.items}
+        value={this.props.value}
         onChange={(value) => this.onChange(value)}
       />
     );

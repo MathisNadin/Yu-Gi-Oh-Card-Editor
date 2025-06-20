@@ -33,8 +33,14 @@
     border-radius: calc(#{$defaultBorderRadius});
     @include fx(color);
 
+    // Override the anchor-specific color
+    &.mn-typography-anchor {
+      color: color-hsl($fg1) !important;
+      text-decoration: none !important;
+    }
+
     &:hover {
-      color: color-hsl($primary);
+      color: color-hsl($primary) !important;
     }
   }
 

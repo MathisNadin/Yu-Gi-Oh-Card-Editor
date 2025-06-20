@@ -1,28 +1,27 @@
 import { TJSXElementChildren } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, Container, IContainerState, HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { DateInput } from './inputs';
 
 export interface IDatePickerProps extends IContainerProps {
   popupTitle?: string;
-  defaultValue?: Date;
   yearRange?: [number, number];
-  canReset?: boolean;
-  onChange?: (value: Date) => void | Promise<void>;
+  canReset: boolean;
+  value: Date | undefined;
+  onChange: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface IDatePickerState extends IContainerState {
   focus: boolean;
-  date?: Date;
 }
 
 export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
-  public static override get defaultProps(): IDatePickerProps {
+  public static override get defaultProps(): Omit<IDatePickerProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       gutter: true,
       verticalItemAlignment: 'middle',
+      canReset: true,
     };
   }
 
@@ -31,33 +30,16 @@ export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
     this.state = {
       ...this.state,
       focus: false,
-      date: props.defaultValue,
     };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IDatePickerProps>,
-    prevState: Readonly<IDatePickerState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props.defaultValue?.getTime() !== prevProps.defaultValue?.getTime()) {
-      this.setState({ date: this.props.defaultValue });
-    }
-  }
-
-  private async onChange(date: Date | undefined) {
-    await this.setStateAsync({ date });
-    if (this.props.onChange) await this.props.onChange(date!);
   }
 
   private async showDatePicker(event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) {
     const date = await app.$dateTimePicker.pickDate(event, {
-      defaultValue: this.state.date,
+      defaultValue: this.props.value || new Date(),
       title: this.props.popupTitle,
       yearRange: this.props.yearRange,
     });
-    if (date) await this.onChange(date);
+    if (date) await this.props.onChange(date);
   }
 
   public override renderClasses() {
@@ -78,7 +60,6 @@ export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
   }
 
   public override get children(): TJSXElementChildren {
-    const { date } = this.state;
     return [
       <HorizontalStack
         key='input'
@@ -91,8 +72,8 @@ export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
           disabled={app.$device.isTouch}
           fill={this.props.fill}
           canReset={this.props.canReset}
-          defaultValue={date}
-          onChange={(date) => this.onChange(date)}
+          value={this.props.value}
+          onChange={(date) => this.props.onChange(date)}
         />
       </HorizontalStack>,
       !app.$device.isTouch && (
@@ -109,7 +90,7 @@ export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
           icon='toolkit-close'
           color='negative'
           name='Réinitialiser'
-          onTap={() => this.onChange(undefined)}
+          onTap={() => this.props.onChange(undefined)}
         />
       ),
     ];

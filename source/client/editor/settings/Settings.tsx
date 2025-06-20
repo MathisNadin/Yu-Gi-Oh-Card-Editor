@@ -113,7 +113,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
             <FilePathInput
               fill
               placeholder='Chemin du dossier'
-              defaultValue={this.state.settings.defaultRenderPath}
+              value={this.state.settings.defaultRenderPath}
               onChange={(url) => this.onDefaultRenderPathChanged(url)}
               overrideOnTapIcon={() => this.getDefaultRenderPath()}
             />
@@ -130,7 +130,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
             <FilePathInput
               fill
               placeholder='Chemin du dossier'
-              defaultValue={this.state.settings.defaultArtworkPath}
+              value={this.state.settings.defaultArtworkPath}
               onChange={(path) => this.onDefaultArtworkPathChanged(path)}
               overrideOnTapIcon={() => this.getDefaultArtworkPath()}
             />
@@ -147,7 +147,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
             <FilePathInput
               fill
               placeholder='Chemin du dossier'
-              defaultValue={this.state.settings.defaultImgImportPath}
+              value={this.state.settings.defaultImgImportPath}
               onChange={(path) => this.onDefaultImgImportPathChanged(path)}
               overrideOnTapIcon={() => this.getDefaultImgImportPath()}
             />

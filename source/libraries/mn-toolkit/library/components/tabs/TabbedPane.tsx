@@ -1,5 +1,4 @@
 import { TJSXElementChildren } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState, VerticalStack } from '../container';
 import { ITabSetProps, TabSet, TTabPosition } from './TabSet';
 import { ITabPaneProps, TabPane } from './TabPane';
@@ -9,19 +8,17 @@ export interface ITabbedPanePane<ID = number> {
   content: TJSXElementChildren;
 }
 
-interface ITabbedPaneProps<ID = number> extends IContainerProps, ITabSetProps<ID> {
+interface ITabbedPaneProps<ID = number> extends IContainerProps, Omit<ITabSetProps<ID>, 'items'> {
   panes: ITabbedPanePane<ID>[];
   tabPosition?: TTabPosition;
   tabSetMaxWidth?: string;
   noSpacer?: boolean;
 }
 
-interface ITabbedPaneState<ID> extends IContainerState {
-  value: ID;
-}
+interface ITabbedPaneState extends IContainerState {}
 
-export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITabbedPaneState<ID>> {
-  public static override get defaultProps(): ITabbedPaneProps {
+export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITabbedPaneState> {
+  public static override get defaultProps(): Omit<ITabbedPaneProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       panes: [],
@@ -30,28 +27,7 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
       layout: 'vertical',
       tabPosition: 'top',
       fill: true,
-      defaultValue: undefined!,
-      items: [],
     };
-  }
-
-  public get tabIndex() {
-    return this.state.value;
-  }
-
-  public constructor(props: ITabbedPaneProps<ID>) {
-    super(props);
-    this.state = { ...this.state, value: this.props.defaultValue };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ITabbedPaneProps<ID>>,
-    prevState: Readonly<ITabbedPaneState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue === this.props.defaultValue) return;
-    this.setState({ value: this.props.defaultValue });
   }
 
   public override renderClasses() {
@@ -87,7 +63,7 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
 
       <VerticalStack key='tab-panes' className='mn-tab-panes' fill bg='1'>
         {filteredPanes.map((pane, i) => (
-          <TabPane key={i} {...pane.props} hidden={pane.props.hidden || pane.props.tabId !== this.state.value}>
+          <TabPane key={i} {...pane.props} hidden={pane.props.hidden || pane.props.tabId !== this.props.value}>
             {pane.content}
           </TabPane>
         ))}
@@ -101,31 +77,29 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
     return (
       <TabSet<ID>
         key='tab-set'
+        disabled={this.props.disabled}
         noSpacer={this.props.noSpacer}
         maxWidth={this.props.tabSetMaxWidth}
         legend={this.props.legend}
-        defaultValue={this.state.value}
         tabPosition={this.props.tabPosition}
-        disabled={this.props.disabled}
+        value={this.props.value}
+        onChange={(value) => this.props.onChange(value)}
         onClose={(id) => this.onClose(id)}
         addButton={this.props.addButton}
         onAdd={() => this.onAdd()}
-        onChange={(value) => this.onChange(value)}
-        items={filteredPanes.map((pane) => {
-          return {
-            tabId: pane.props.tabId,
-            label: pane.props.label,
-            icon: pane.props.icon,
-            iconColor: pane.props.iconColor,
-            stateIcon: pane.props.stateIcon,
-            stateIconColor: pane.props.stateIconColor,
-            onTap: pane.props.onTap,
-            selected: pane.props.selected,
-            disabled: pane.props.disabled,
-            closable: pane.props.closable,
-            selectedBg: this.props.bg,
-          };
-        })}
+        items={filteredPanes.map((pane) => ({
+          tabId: pane.props.tabId,
+          label: pane.props.label,
+          icon: pane.props.icon,
+          iconColor: pane.props.iconColor,
+          stateIcon: pane.props.stateIcon,
+          stateIconColor: pane.props.stateIconColor,
+          onTap: pane.props.onTap,
+          selected: pane.props.selected,
+          disabled: pane.props.disabled,
+          closable: pane.props.closable,
+          selectedBg: this.props.bg,
+        }))}
       />
     );
   }
@@ -136,11 +110,5 @@ export class TabbedPane<ID = number> extends Container<ITabbedPaneProps<ID>, ITa
 
   private async onClose(id: ID) {
     if (this.props.onClose) await this.props.onClose(id);
-  }
-
-  public async onChange(value: ID) {
-    if (this.state.value === value) return;
-    await this.setStateAsync({ value });
-    if (this.props.onChange) await this.props.onChange(this.state.value);
   }
 }

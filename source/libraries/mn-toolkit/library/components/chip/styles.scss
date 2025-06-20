@@ -11,7 +11,10 @@
     background-color: color-hsl($color);
     color: color-hsl($bg1);
 
-    .mn-typography,
+    .mn-typography {
+      color: color-hsl($bg1);
+    }
+
     .mn-icon {
       color: color-hsl($bg1);
       fill: color-hsl($bg1);

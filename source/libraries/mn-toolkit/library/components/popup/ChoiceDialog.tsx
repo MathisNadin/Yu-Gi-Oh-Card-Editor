@@ -21,12 +21,10 @@ export interface IChoiceDialogProps<ID = string> extends IAbstractPopupProps<ID>
 interface IChoiceDialogState extends IAbstractPopupState {}
 
 export class ChoiceDialog<ID = string> extends AbstractPopup<ID, IChoiceDialogProps<ID>, IChoiceDialogState> {
-  public static override get defaultProps(): IChoiceDialogProps<string> {
+  public static override get defaultProps(): Omit<IChoiceDialogProps<string>, 'message' | 'choices'> {
     return {
       ...super.defaultProps,
       messageType: 'text',
-      choices: [],
-      message: '',
     };
   }
 

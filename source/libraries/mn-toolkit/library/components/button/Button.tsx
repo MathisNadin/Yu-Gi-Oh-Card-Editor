@@ -16,7 +16,7 @@ export interface IButtonProps extends IContainableProps<HTMLButtonElement> {
 interface IButtonState extends IContainableState {}
 
 export class Button extends Containable<IButtonProps, IButtonState, HTMLButtonElement> {
-  public static override get defaultProps(): IButtonProps {
+  public static override get defaultProps(): Omit<IButtonProps, 'label'> {
     return {
       ...super.defaultProps,
       block: false,
@@ -24,7 +24,6 @@ export class Button extends Containable<IButtonProps, IButtonState, HTMLButtonEl
       color: 'primary',
       iconPosition: 'left',
       buttonType: 'button',
-      label: '',
     };
   }
 

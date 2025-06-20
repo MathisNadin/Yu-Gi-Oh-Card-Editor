@@ -4,32 +4,23 @@ import { Icon } from '../icon';
 
 interface InplaceEditProps extends IContainableProps<HTMLInputElement | HTMLDivElement> {
   validateOnEnter?: boolean;
-  placeholder?: string;
-  defaultValue?: string;
-  onChange?: (value: string, fromBlur: boolean) => void | Promise<void>;
+  idlePlaceholder?: string;
+  inputPlaceholder?: string;
+  value: string;
+  onChange: (value: string) => void | Promise<void>;
 }
 
 interface InplaceEditState extends IContainableState {
-  value: string;
-  isFocused: boolean;
+  isFocused?: boolean;
 }
 
 export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState, HTMLInputElement | HTMLDivElement> {
-  public static override get defaultProps(): InplaceEditProps {
+  public static override get defaultProps(): Omit<InplaceEditProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       validateOnEnter: true,
-      placeholder: 'Cliquez pour modifier...',
-      defaultValue: '',
-    };
-  }
-
-  public constructor(props: InplaceEditProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      isFocused: false,
-      value: props.defaultValue!,
+      idlePlaceholder: 'Cliquez pour modifier...',
+      inputPlaceholder: 'Érivez ici...',
     };
   }
 
@@ -39,40 +30,37 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState,
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    const doFocus = () =>
+    if (this.state.isFocused && !prevState.isFocused && this.base.current instanceof HTMLInputElement) {
       requestAnimationFrame(() =>
         requestAnimationFrame(() => {
           if (!this.base.current || !(this.base.current instanceof HTMLInputElement) || !this.state.isFocused) return;
           this.base.current.focus();
         })
       );
-    if (prevProps !== this.props && this.state.value !== this.props.defaultValue) {
-      this.setState({ value: this.props.defaultValue! }, doFocus);
-    } else {
-      doFocus();
     }
   }
 
-  private async onKeyDown(e: React.KeyboardEvent) {
+  private async onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!this.props.validateOnEnter || e.key !== 'Enter') return;
-    await this.doBlur();
+    if (this.base.current instanceof HTMLInputElement) {
+      this.base.current.blur();
+    }
   }
 
-  private async doBlur() {
+  private async onBlur(e: React.FocusEvent<HTMLInputElement>) {
     await this.setStateAsync({ isFocused: false });
-    if (this.props.onChange) await this.props.onChange(this.state.value, true);
+    if (this.props.onBlur) await this.props.onBlur(e);
   }
 
   private async onChange(e: React.FormEvent<HTMLInputElement>) {
-    const value = (e.target.value as string) || '';
-    await this.setStateAsync({ value });
-    if (this.props.onChange) await this.props.onChange(this.state.value, false);
+    const value = (e.target as HTMLInputElement).value || '';
+    await this.props.onChange(value);
   }
 
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-inplace-edit'] = true;
-    classes['with-placeholder'] = !this.state.value;
+    classes['with-placeholder'] = !this.props.value;
     return classes;
   }
 
@@ -85,13 +73,12 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState,
           type='text'
           name={this.props.name}
           disabled={this.props.disabled}
-          placeholder={this.props.placeholder}
-          value={this.state.value}
+          placeholder={this.props.inputPlaceholder}
+          value={this.props.value}
           onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
           onKeyUp={(e) => this.props.onKeyUp && app.$errorManager.handlePromise(this.props.onKeyUp(e))}
           onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
-          onBlur={() => app.$errorManager.handlePromise(this.doBlur())}
-          onFocus={(e) => this.props.onFocus && app.$errorManager.handlePromise(this.props.onFocus(e))}
+          onBlur={(e) => app.$errorManager.handlePromise(this.onBlur(e))}
         />
       );
     } else {
@@ -101,7 +88,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState,
           ref={this.base as RefObject<HTMLDivElement>}
           onClick={() => this.setState({ isFocused: true })}
         >
-          <div className='value'>{this.state.value || this.props.placeholder}</div>
+          <div className='value'>{this.props.value || this.props.idlePlaceholder}</div>
           <Icon color='2' icon='toolkit-pen' />
         </div>
       );

@@ -3,17 +3,19 @@ import { IPicture, IPictureEditorProps, PictureEditor } from './PictureEditor';
 
 interface IPictureEditorFieldProps extends IFormFieldProps<IPicture>, IPictureEditorProps {}
 
-interface IPictureEditorFieldState extends IFormFieldState<IPicture> {}
+interface IPictureEditorFieldState extends IFormFieldState {}
 
 export class PictureEditorField extends FormField<IPicture, IPictureEditorFieldProps, IPictureEditorFieldState> {
-  public static override get defaultProps(): IPictureEditorFieldProps {
+  public static override get defaultProps(): Omit<
+    IPictureEditorFieldProps,
+    'imgAlt' | 'imgHint' | 'label' | 'value' | 'onChange'
+  > {
     return {
       ...super.defaultProps,
-      imgAlt: PictureEditor.defaultProps.imgAlt,
       display: PictureEditor.defaultProps.display,
       size: PictureEditor.defaultProps.size,
+      placeholder: PictureEditor.defaultProps.placeholder,
       options: PictureEditor.defaultProps.options,
-      defaultValue: PictureEditor.defaultProps.defaultValue,
     };
   }
 
@@ -32,7 +34,9 @@ export class PictureEditorField extends FormField<IPicture, IPictureEditorFieldP
         size={this.props.size}
         options={this.props.options}
         placeholder={this.props.placeholder}
-        defaultValue={this.props.defaultValue}
+        imgAlt={this.props.imgAlt}
+        imgHint={this.props.imgHint}
+        value={this.props.value}
         onChange={(value) => this.onChange(value)}
       />
     );

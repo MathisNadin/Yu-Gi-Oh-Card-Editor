@@ -1,6 +1,6 @@
 import { isDefined, isString } from 'mn-tools';
 import { IRouterHrefParams, TForegroundColor, TRouterState } from '../../system';
-import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
+import { IContainableProps, IContainableState, Containable } from '../containable';
 
 interface IButtonLinkProps<T extends TRouterState = TRouterState> extends IContainableProps<HTMLAnchorElement> {
   label: string;
@@ -9,41 +9,19 @@ interface IButtonLinkProps<T extends TRouterState = TRouterState> extends IConta
   pressed?: boolean;
 }
 
-interface IButtonLinkState extends IContainableState {
-  pressed?: boolean;
-}
+interface IButtonLinkState extends IContainableState {}
 
 export class ButtonLink<T extends TRouterState = TRouterState> extends Containable<
   IButtonLinkProps<T>,
   IButtonLinkState,
   HTMLAnchorElement
 > {
-  public static override get defaultProps(): IButtonLinkProps {
+  public static override get defaultProps(): Omit<IButtonLinkProps, 'label'> {
     return {
       ...super.defaultProps,
       color: 'neutral',
       disabled: false,
-      label: '',
     };
-  }
-
-  public constructor(props: IButtonLinkProps<T>) {
-    super(props);
-    this.state = {
-      ...this.state,
-      pressed: props.pressed!,
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IButtonLinkProps<T>>,
-    prevState: Readonly<IButtonLinkState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.pressed === this.state.pressed) return;
-    this.setState({ pressed: this.props.pressed! });
   }
 
   public override renderClasses() {
@@ -51,8 +29,8 @@ export class ButtonLink<T extends TRouterState = TRouterState> extends Containab
     classes['mn-button-link'] = true;
     if (this.props.color) classes[`mn-color-${this.props.color}`] = true;
 
-    if (isDefined(this.state.pressed)) {
-      if (this.state.pressed) {
+    if (isDefined(this.props.pressed)) {
+      if (this.props.pressed) {
         classes['mn-button-pressed'] = true;
       } else {
         classes['mn-button-unpressed'] = true;
@@ -66,9 +44,9 @@ export class ButtonLink<T extends TRouterState = TRouterState> extends Containab
     const attributes = super.renderAttributes();
     if (this.props.href) {
       if (isString(this.props.href)) {
-        attributes.href = this.props.href;
+        attributes.href = this.props.href || undefined;
       } else {
-        attributes.href = app.$router.getLink(this.props.href);
+        attributes.href = app.$router.getLink(this.props.href) || undefined;
       }
     }
     return attributes;

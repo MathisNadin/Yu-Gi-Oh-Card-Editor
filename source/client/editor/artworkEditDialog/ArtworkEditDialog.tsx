@@ -13,8 +13,6 @@ export interface IArtworkEditDialogResult {
 interface IArtworkEditDialogProps extends IAbstractPopupProps<IArtworkEditDialogResult> {
   artworkURL: string;
   pendulumRatio: boolean;
-  hasPendulumFrame: boolean;
-  hasLinkFrame: boolean;
   isRush: boolean;
   crop: Crop;
   keepRatio: boolean;
@@ -116,8 +114,6 @@ export class ArtworkEditDialog extends AbstractPopup<
           artworkBase64={this.state.artworkBase64}
           keepRatio={this.state.keepRatio}
           pendulumRatio={this.props.pendulumRatio}
-          hasPendulumFrame={this.props.hasPendulumFrame}
-          hasLinkFrame={this.props.hasLinkFrame}
           isRush={this.props.isRush}
           crop={this.state.crop}
           onKeepRatioChange={(keepRatio) => this.setStateAsync({ keepRatio })}

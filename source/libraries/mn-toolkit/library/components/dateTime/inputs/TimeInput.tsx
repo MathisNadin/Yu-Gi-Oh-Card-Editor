@@ -4,22 +4,21 @@ import { TJSXElementChildren } from '../../../system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../../containable';
 
 export interface ITimeInputProps extends IContainableProps {
-  defaultValue?: Date;
-  canReset?: boolean;
-  onChange?: (value: Date | undefined) => void | Promise<void>;
+  canReset: boolean;
+  value: Date | undefined;
+  onChange: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface ITimeInputState extends IContainableState {
   hour: string;
   minute: string;
   activeSection: 'hour' | 'minute';
-  time?: Date;
 }
 
 export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
   private inputRef = createRef<HTMLInputElement>();
 
-  public static override get defaultProps(): ITimeInputProps {
+  public static override get defaultProps(): Omit<ITimeInputProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       canReset: true,
@@ -28,13 +27,11 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
 
   public constructor(props: ITimeInputProps) {
     super(props);
-    const { defaultValue } = props;
     this.state = {
       ...this.state,
-      hour: defaultValue ? String(defaultValue.getHours()).padStart(2, '0') : '',
-      minute: defaultValue ? String(defaultValue.getMinutes()).padStart(2, '0') : '',
+      hour: props.value ? String(props.value.getHours()).padStart(2, '0') : '',
+      minute: props.value ? String(props.value.getMinutes()).padStart(2, '0') : '',
       activeSection: 'hour',
-      time: defaultValue,
     };
   }
 
@@ -43,25 +40,22 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
     prevState: Readonly<ITimeInputState>,
     snapshot?: TDidUpdateSnapshot
   ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props.defaultValue?.getTime() !== this.state.time?.getTime()) {
-      const { defaultValue } = this.props;
+    super.componentDidUpdate?.(prevProps, prevState, snapshot);
+    if (prevProps.value?.getTime() !== this.props.value?.getTime()) {
       this.setState({
-        hour: defaultValue ? String(defaultValue.getHours()).padStart(2, '0') : '',
-        minute: defaultValue ? String(defaultValue.getMinutes()).padStart(2, '0') : '',
-        time: defaultValue,
+        hour: this.props.value ? String(this.props.value.getHours()).padStart(2, '0') : '',
+        minute: this.props.value ? String(this.props.value.getMinutes()).padStart(2, '0') : '',
       });
     }
   }
 
-  private onChange() {
-    if (!this.props.onChange) return;
-    let { hour, minute, time: oldTime } = this.state;
+  private async onChange() {
+    let { hour, minute } = this.state;
     if (hour.length === 2 && minute.length === 2) {
-      const time = oldTime ? new Date(oldTime) : new Date().toBeginOfDay();
+      const time = this.props.value ? new Date(this.props.value) : new Date().toBeginOfDay();
       time.setHours(integer(hour));
       time.setMinutes(integer(minute));
-      this.props.onChange(time);
+      await this.props.onChange(isNaN(time.getTime()) ? undefined : time);
     }
   }
 
@@ -102,8 +96,8 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
       this.moveSection(key === 'ArrowLeft' ? -1 : 1);
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
-      await this.setStateAsync({ time: undefined, activeSection: 'hour', hour: '', minute: '' });
-      if (this.props.onChange) await this.props.onChange(undefined);
+      await this.setStateAsync({ activeSection: 'hour', hour: '', minute: '' });
+      await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       this.handleDigitInput(key);
@@ -216,13 +210,13 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
         ref={this.inputRef}
         key='time-input'
         type='text'
-        value={value}
         placeholder='HH:MM'
+        value={value}
+        onChange={() => {}} // Not used here but necessary for React
         onFocus={(e) => app.$errorManager.handlePromise(this.onFocusIn(e))}
         onBlur={() => app.$errorManager.handlePromise(this.onFocusOut())}
         onClick={(e) => app.$errorManager.handlePromise(this.onTap(e))}
         onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
-        onChange={() => {}}
       />,
     ];
   }

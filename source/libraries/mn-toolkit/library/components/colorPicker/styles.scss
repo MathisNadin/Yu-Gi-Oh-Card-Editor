@@ -1,6 +1,6 @@
 @mixin themeColorPicker() {
   .mn-color-swatch,
-  .mn-icon {
+  .mn-icon-container-button {
     $size: 20px;
     height: $size;
     min-height: $size;
@@ -14,6 +14,11 @@
 
   .mn-color-swatch {
     border: 1px solid color-hsla($fg1, 0.2);
+
+    &.selected {
+      border-width: 2px;
+      border-color: color-hsl($primary);
+    }
   }
 }
 

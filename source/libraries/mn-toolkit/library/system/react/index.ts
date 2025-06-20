@@ -1,3 +1,4 @@
+import { JSX } from 'react';
 import { ReactService } from './ReactService';
 
 export * from './ReactService';

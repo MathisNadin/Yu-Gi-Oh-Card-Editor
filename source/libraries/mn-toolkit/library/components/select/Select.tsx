@@ -1,10 +1,23 @@
-import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { Icon } from '../icon';
 import { IActionsPopoverAction } from '../popover';
 
-export function DefaultSelectLabelDecorator(label: string | undefined) {
-  if (!label) return null;
-  return <span>{label}</span>;
+export function DefaultSelectLabelDecorator<ID = number>(selectItem: ISelectItem<ID>) {
+  if (!selectItem?.label) return null;
+  return (
+    <span className='default-select-label-decorator'>
+      {!!selectItem.icon?.icon && (
+        <Icon
+          key='icon'
+          icon={selectItem.icon.icon}
+          name={selectItem.icon.name}
+          hint={selectItem.icon.hint}
+          color={selectItem.icon.color}
+        />
+      )}
+      {!!selectItem.label && <span key='label'>{selectItem.label}</span>}
+    </span>
+  );
 }
 
 export interface ISelectItem<ID = number> extends IActionsPopoverAction<ID> {
@@ -15,27 +28,26 @@ export interface ISelectItem<ID = number> extends IActionsPopoverAction<ID> {
 export interface ISelectProps<ID = number> extends IContainableProps {
   items: ISelectItem<ID>[];
   maxVisibleItems?: number;
-  defaultValue?: ID;
-  disabled?: boolean;
-  labelDecorator?: (label: string | undefined) => React.ReactNode;
-  onChange?: (value: ID) => void | Promise<void>;
   width?: number;
   minWidth?: number;
   noTopContainer?: boolean;
   fill?: boolean;
   undefinedLabel?: string;
   sort?: boolean;
-}
-
-interface ISelectState<ID> extends IContainableState {
-  items: ISelectItem<ID>[];
   value: ID;
+  onChange: (value: ID) => void | Promise<void>;
+  labelDecorator: (selectItem: ISelectItem<ID>) => React.ReactNode;
 }
 
-export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectState<ID>> {
+interface ISelectState extends IContainableState {}
+
+export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectState> {
   private listPopoverId?: string;
 
-  public static override get defaultProps(): ISelectProps<number> {
+  public static override get defaultProps(): Omit<
+    ISelectProps<number>,
+    'width' | 'minWidth' | 'items' | 'value' | 'onChange'
+  > {
     return {
       ...super.defaultProps,
       name: '',
@@ -43,42 +55,20 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
       undefinedLabel: '',
       labelDecorator: DefaultSelectLabelDecorator,
       noTopContainer: false,
-      items: [],
-      width: undefined,
-      minWidth: undefined,
     };
   }
 
-  public constructor(props: ISelectProps<ID>) {
-    super(props);
-    if (this.props.sort) props.items.sort((a, b) => a.label.icompare(b.label));
-    this.state = { ...this.state, value: props.defaultValue as ID, items: props.items };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ISelectProps<ID>>,
-    prevState: Readonly<ISelectState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue !== this.state.value || this.props.items !== this.state.items) {
-      this.setState({ value: this.props.defaultValue!, items: this.props.items });
-    }
-  }
-
   private generatePopOverActions() {
-    const result: IActionsPopoverAction<ID>[] = [];
-    if (!this.state.items?.length) return result;
+    const result: ISelectItem<ID>[] = [];
+    if (!this.props.items?.length) return result;
 
-    for (const item of this.state.items) {
-      const listItem: IActionsPopoverAction<ID> = {
-        id: item.id,
-        label: item.label,
-        selected: this.state.value === item.id,
-        icon: item.icon,
-        separator: item.separator,
-        disabled: item.disabled,
+    let items = [...this.props.items];
+    if (this.props.sort) items.sort((a, b) => a.label.icompare(b.label));
+
+    for (const item of items) {
+      const listItem: ISelectItem<ID> = {
+        ...item,
+        selected: this.props.value === item.id,
       };
 
       listItem.onTap = ((x) => () => {
@@ -90,11 +80,9 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     return result;
   }
 
-  private async selectItem(item: IActionsPopoverAction<ID>) {
+  private async selectItem(item: ISelectItem<ID>) {
     this.hideList();
-    await this.setStateAsync({ value: item.id as ID });
-    if (!this.props.onChange) return;
-    await this.props.onChange(this.state.value);
+    await this.props.onChange(item.id);
   }
 
   private async hideList() {
@@ -115,24 +103,36 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
       maxVisibleActions: this.props.maxVisibleItems,
     });
 
-    this.base.current.value = this.state.value?.toString() || '';
+    this.base.current.value = this.props.value?.toString() || '';
     this.base.current.focus();
+  }
+
+  public override renderAttributes() {
+    const attributes = super.renderAttributes();
+    attributes.onClick = (e) => {
+      this.showListItems(e);
+      if (this.props.onTap) app.$errorManager.handlePromise(this.props.onTap(e));
+    };
+    return attributes;
   }
 
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-select'] = true;
+    classes['has-click'] = true;
     return classes;
   }
 
   public override get children() {
     const selectedItem = this.generatePopOverActions().find((action) => action.selected);
     return [
-      <div key='label' className='label' onClick={(e) => this.showListItems(e)}>
-        {this.props.labelDecorator!(selectedItem?.label ?? this.props.undefinedLabel)}
+      <div key='label' className='label'>
+        {this.props.labelDecorator(
+          selectedItem?.label ? selectedItem : { id: undefined!, label: this.props.undefinedLabel || '' }
+        )}
       </div>,
 
-      <span key='drop-icon' className='drop-icon' onClick={(e) => this.showListItems(e)}>
+      <span key='drop-icon' className='drop-icon'>
         <Icon icon='toolkit-angle-down' name='Voir les items' />
       </span>,
     ];

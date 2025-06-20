@@ -1,6 +1,5 @@
 import { classNames } from 'mn-tools';
 import { TBackgroundColor, TJSXElementChild } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, HorizontalStack, IContainerProps, IContainerState } from '../container';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
@@ -9,70 +8,34 @@ import { Button } from '../button';
 export type TClassicPagerShape = 'round' | 'square';
 
 interface IClassicPagerProps extends IContainerProps<HTMLElement> {
-  position: number;
-  total: number;
-  pageSize: number;
-  maxLineLength?: number;
-  outlined?: boolean;
-  shape?: TClassicPagerShape;
-  color?: TBackgroundColor;
+  maxLineLength: number;
+  outlined: boolean;
+  shape: TClassicPagerShape;
+  color: TBackgroundColor;
   showFirstButton?: boolean;
   showLastButton?: boolean;
   hidePreviousButton?: boolean;
   hideNextButton?: boolean;
-  onChange?: (position: number) => void | Promise<void>;
-}
-
-interface IClassicPagerState extends IContainerState {
+  pageSize: number;
   total: number;
   position: number;
-  pageSize: number;
+  onChange: (position: number) => void | Promise<void>;
 }
 
+interface IClassicPagerState extends IContainerState {}
+
 export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerState, HTMLElement> {
-  public static override get defaultProps(): IClassicPagerProps {
+  public static override get defaultProps(): Omit<IClassicPagerProps, 'position' | 'total' | 'pageSize' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
       gutter: true,
       verticalItemAlignment: 'middle',
-      position: 0,
-      total: 1,
-      pageSize: 10,
       maxLineLength: 7,
       outlined: false,
       shape: 'square',
       color: 'primary',
     };
-  }
-
-  public constructor(props: IClassicPagerProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      total: props.total,
-      position: props.position,
-      pageSize: props.pageSize,
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IClassicPagerProps>,
-    prevState: Readonly<IClassicPagerState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    this.setState({
-      total: this.props.total,
-      position: this.props.position,
-      pageSize: this.props.pageSize,
-    });
-  }
-
-  private async onChangePosition(position: number) {
-    await this.setStateAsync({ position });
-    if (this.props.onChange) await this.props.onChange(this.state.position);
   }
 
   public override renderClasses() {
@@ -100,9 +63,9 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
           {this.props.showFirstButton && (
             <Icon
               key='go-first-btn'
-              disabled={this.state.position === 0}
+              disabled={this.props.position === 0}
               icon='toolkit-double-angle-left'
-              onTap={() => this.onChangePosition(0)}
+              onTap={() => this.props.onChange(0)}
             />
           )}
           {!this.props.hidePreviousButton && (
@@ -110,7 +73,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
               key='go-previous-btn'
               disabled={this.isFirstPage}
               icon='toolkit-angle-left'
-              onTap={() => this.onChangePosition(this.state.position - 1)}
+              onTap={() => this.props.onChange(this.props.position - 1)}
             />
           )}
         </HorizontalStack>
@@ -132,7 +95,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
               key='go-next-btn'
               disabled={this.isLastPage}
               icon='toolkit-angle-right'
-              onTap={() => this.onChangePosition(this.state.position + 1)}
+              onTap={() => this.props.onChange(this.props.position + 1)}
             />
           )}
 
@@ -141,7 +104,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
               key='go-last-btn'
               disabled={this.isLastPage}
               icon='toolkit-double-angle-right'
-              onTap={() => this.onChangePosition(this.nbPages - 1)}
+              onTap={() => this.props.onChange(this.nbPages - 1)}
             />
           )}
         </HorizontalStack>
@@ -155,8 +118,8 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
    */
   private get pagesToDisplay(): TJSXElementChild[] {
     const totalPages = this.nbPages; // total number of pages (1-based)
-    const currentPage = this.state.position + 1; // current page in 1-based numbering
-    const maxLineLength = this.props.maxLineLength!; // how many items we can show at once
+    const currentPage = this.props.position + 1; // current page in 1-based numbering
+    const maxLineLength = this.props.maxLineLength; // how many items we can show at once
 
     // --- 1) Simple case: all pages fit on one line
     if (totalPages <= maxLineLength) {
@@ -358,10 +321,10 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
     return (
       <Button
         key={index}
-        className={classNames('page', 'number', { current: position === this.state.position })}
+        className={classNames('page', 'number', { current: position === this.props.position })}
         name={`Aller à la page N°${number}`}
         label={`${number}`}
-        onTap={() => this.onChangePosition(position)}
+        onTap={() => this.props.onChange(position)}
       />
     );
   }
@@ -384,20 +347,20 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
   }
 
   private get isLastPage(): boolean {
-    return this.lastRow >= this.state.total - 1;
+    return this.lastRow >= this.props.total - 1;
   }
 
   private get firstRow(): number {
-    return this.state.position * this.state.pageSize;
+    return this.props.position * this.props.pageSize;
   }
 
   private get lastRow(): number {
-    let i = (this.state.position + 1) * this.state.pageSize - 1;
-    if (i > this.state.total) i = this.state.total - 1;
+    let i = (this.props.position + 1) * this.props.pageSize - 1;
+    if (i > this.props.total) i = this.props.total - 1;
     return i;
   }
 
   private get nbPages(): number {
-    return Math.ceil(this.state.total / this.state.pageSize);
+    return Math.ceil(this.props.total / this.props.pageSize);
   }
 }

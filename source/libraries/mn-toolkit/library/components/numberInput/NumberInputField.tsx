@@ -1,37 +1,32 @@
 import { createRef } from 'react';
-import { isNumber, isUndefined } from 'mn-tools';
-import { FormField, IFormFieldProps, IFormFieldState } from '../form';
+import { isNumber } from 'mn-tools';
+import { FormField, IFormFieldProps, IFormFieldState, TFormField } from '../form';
 import { INumberInputSpecificProps, NumberInput } from './NumberInput';
 
-export interface INumberInputFieldProps extends IFormFieldProps<number, HTMLInputElement>, INumberInputSpecificProps {}
+export interface INumberInputFieldProps extends IFormFieldProps<number>, INumberInputSpecificProps {
+  onSubmit?: (event: React.KeyboardEvent<HTMLInputElement>) => void | Promise<void>;
+}
 
-export interface INumberInputFieldState extends IFormFieldState<number> {}
+export interface INumberInputFieldState extends IFormFieldState {}
 
-export class NumberInputField extends FormField<
-  number,
-  INumberInputFieldProps,
-  INumberInputFieldState,
-  HTMLInputElement
-> {
+export class NumberInputField extends FormField<number, INumberInputFieldProps, INumberInputFieldState> {
   protected inputElement = createRef<NumberInput>();
 
-  public static override get defaultProps(): INumberInputFieldProps {
+  public static override get defaultProps(): Omit<INumberInputFieldProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: 0,
     };
   }
 
   public constructor(props: INumberInputFieldProps) {
     super(props, 'number');
     this.validators.unshift((field) => {
-      if (isNumber(field.value)) field.validate();
-      else field.addError("Ceci n'est pas un nombre");
+      if (!isNumber(field.value)) field.addError("Ceci n'est pas un nombre");
     });
   }
 
   public override get hasValue() {
-    return !isUndefined(this.state.value);
+    return isNumber(this.value);
   }
 
   public override componentDidMount() {
@@ -54,11 +49,11 @@ export class NumberInputField extends FormField<
         placeholder={this.props.placeholder}
         min={this.props.min}
         max={this.props.max}
-        defaultValue={this.state.value}
+        value={this.value}
+        onChange={(value) => this.onChange(value)}
         onKeyDown={(e) => this.onKeyDown(e)}
         onBlur={() => this.onBlur()}
         onFocus={() => this.onFocus()}
-        onChange={(value) => this.onChange(value)}
       />
     );
   }
@@ -69,7 +64,7 @@ export class NumberInputField extends FormField<
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         if (!this.hasValue) return;
-        this.observers.dispatch('formFieldSubmit', this);
+        if (this.context?.notifyFieldSubmit) this.context.notifyFieldSubmit(this as unknown as TFormField);
         if (this.props.onSubmit) app.$errorManager.handlePromise(this.props.onSubmit(e));
       })
     );

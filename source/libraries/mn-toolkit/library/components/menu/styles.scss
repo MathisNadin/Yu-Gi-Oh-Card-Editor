@@ -50,6 +50,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
     .mn-icon {
       transition: 0.3s;
       color: white;
+      fill: white;
     }
 
     &:hover {
@@ -179,14 +180,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
     &.active {
       .mn-left-menu-icon {
         color: color-hsl($primary);
-
-        // Pour certains svg
-        path,
-        rect,
-        polyline,
-        line {
-          color: color-hsl($primary);
-        }
+        fill: color-hsl($primary);
       }
 
       .mn-left-menu-subitem-text {
@@ -257,14 +251,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
 
         .mn-icon {
           color: color-hsl($primary);
-
-          // Pour certains svg
-          path,
-          rect,
-          polyline,
-          line {
-            color: color-hsl($primary);
-          }
+          fill: color-hsl($primary);
         }
       }
     }
@@ -310,14 +297,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
 
             .mn-icon {
               color: color-hsl($primary);
-
-              // Pour certains svg
-              path,
-              rect,
-              polyline,
-              line {
-                color: color-hsl($primary);
-              }
+              fill: color-hsl($primary);
             }
 
             .mn-typography.mn-content-type-text {
@@ -331,14 +311,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
 
               .mn-icon {
                 color: color-hsl($primary);
-
-                // Pour certains svg
-                path,
-                rect,
-                polyline,
-                line {
-                  color: color-hsl($primary);
-                }
+                fill: color-hsl($primary);
               }
 
               .mn-typography.mn-content-type-text {

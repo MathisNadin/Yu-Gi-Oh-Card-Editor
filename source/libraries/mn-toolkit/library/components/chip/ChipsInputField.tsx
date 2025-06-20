@@ -3,18 +3,19 @@ import { ChipsInput, IChipInputItem, IChipsInputProps } from './ChipsInput';
 
 interface IChipsInputFieldProps<ID = number> extends IFormFieldProps<IChipInputItem<ID>[]>, IChipsInputProps<ID> {}
 
-interface IChipsInputFieldState<ID = number> extends IFormFieldState<IChipInputItem<ID>[]> {}
+interface IChipsInputFieldState extends IFormFieldState {}
 
 export class ChipsInputField<ID = number> extends FormField<
   IChipInputItem<ID>[],
   IChipsInputFieldProps<ID>,
-  IChipsInputFieldState<ID>
+  IChipsInputFieldState
 > {
-  public static override get defaultProps(): IChipsInputFieldProps {
+  public static override get defaultProps(): Omit<
+    IChipsInputFieldProps,
+    'label' | 'value' | 'onChange' | 'onAskCreateId'
+  > {
     return {
       ...super.defaultProps,
-      defaultValue: [],
-      onAskCreateId: (_label: string) => Math.random(),
     };
   }
 
@@ -27,7 +28,7 @@ export class ChipsInputField<ID = number> extends FormField<
       <ChipsInput<ID>
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
-        defaultValue={this.props.defaultValue}
+        value={this.props.value}
         onChange={(value) => this.onChange(value)}
         onAskCreateId={(label) => this.props.onAskCreateId(label)}
       />

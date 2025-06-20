@@ -1,27 +1,27 @@
 import { classNames } from 'mn-tools';
 import { TJSXElementChildren } from '../../../system';
-import { TDidUpdateSnapshot } from '../../containable';
 import { IContainerProps, Container, IContainerState, HorizontalStack, VerticalStack } from '../../container';
 import { Icon } from '../../icon';
-import { DateChooser } from './DateChooser';
-import { TimeChooser } from './TimeChooser';
+import { DateChooser, TDateChooserChangeSource } from './DateChooser';
+import { TimeChooser, TTimeChooserChangeSource } from './TimeChooser';
 
 type TDateTimeTab = 'date' | 'time';
 
+export type TDateTimeChooserChangeSource = TDateChooserChangeSource | TTimeChooserChangeSource;
+
 export interface IDateTimeChooserProps extends IContainerProps {
-  mode?: 'scroller' | 'tabs';
-  defaultValue?: Date;
+  mode: 'scroller' | 'tabs';
   yearRange?: [number, number];
-  onChoose?: (value: Date) => void | Promise<void>;
+  value: Date;
+  onChange: (value: Date, source: TDateTimeChooserChangeSource) => void | Promise<void>;
 }
 
 interface IDateTimeChooserState extends IContainerState {
   tab: TDateTimeTab;
-  dateTime: Date;
 }
 
 export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeChooserState> {
-  public static override get defaultProps(): IDateTimeChooserProps {
+  public static override get defaultProps(): Omit<IDateTimeChooserProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
@@ -38,25 +38,8 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
     super(props);
     this.state = {
       ...this.state,
-      dateTime: props.defaultValue || new Date(),
       tab: 'date',
     };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IDateTimeChooserProps>,
-    prevState: Readonly<IDateTimeChooserState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue?.getTime() !== this.props.defaultValue?.getTime()) {
-      this.setState({ dateTime: this.props.defaultValue || new Date() });
-    }
-  }
-
-  private async onChange(dateTime: Date) {
-    await this.setStateAsync({ dateTime });
-    if (this.props.onChoose) this.props.onChoose(dateTime);
   }
 
   public override renderClasses() {
@@ -66,10 +49,8 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
   }
 
   public override get children(): TJSXElementChildren {
-    const { dateTime, tab } = this.state;
-
     if (this.props.mode === 'tabs') {
-      const tabIsDate = tab === 'date';
+      const tabIsDate = this.state.tab === 'date';
       return [
         <VerticalStack key='choosers' fill gutter>
           <HorizontalStack key='tabs' className='tabs'>
@@ -96,8 +77,8 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
             <DateChooser
               key='date-chooser'
               yearRange={this.props.yearRange}
-              defaultValue={dateTime}
-              onChoose={(dateTime) => this.onChange(dateTime)}
+              value={this.props.value}
+              onChange={(dateTime, source) => this.props.onChange(dateTime, source)}
             />
           )}
 
@@ -105,8 +86,8 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
             <TimeChooser
               key='time-chooser'
               mode='grid'
-              defaultValue={dateTime}
-              onChoose={(dateTime) => this.onChange(dateTime)}
+              value={this.props.value}
+              onChange={(dateTime, source) => this.props.onChange(dateTime, source)}
             />
           )}
         </VerticalStack>,
@@ -117,15 +98,15 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
           key='date-chooser'
           fill
           yearRange={this.props.yearRange}
-          defaultValue={dateTime}
-          onChoose={(dateTime) => this.onChange(dateTime)}
+          value={this.props.value}
+          onChange={(dateTime, source) => this.props.onChange(dateTime, source)}
         />,
         <TimeChooser
           key='time-chooser'
           fill={false}
           mode='scroller'
-          defaultValue={dateTime}
-          onChoose={(dateTime) => this.onChange(dateTime)}
+          value={this.props.value}
+          onChange={(dateTime, source) => this.props.onChange(dateTime, source)}
         />,
       ];
     }

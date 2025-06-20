@@ -3,35 +3,53 @@
   pointer-events: none;
   transition: background-color 0.1s ease;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   z-index: $z-index-toaster;
 
   .mn-toaster {
-    position: absolute;
-    min-width: 50%;
-    max-width: 70%;
-    min-height: fit-content;
-    border-radius: calc(#{$defaultBorderRadius});
-    transform: translateY(-100px);
-    @include fx(all);
-    top: calc(#{$defaultSpacing});
+    overflow: hidden;
     pointer-events: auto;
+    border-radius: calc(#{$defaultBorderRadius});
+    min-width: 30%;
+    width: fit-content;
+    max-width: 80%;
+    height: fit-content;
+    max-height: 0;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(calc(-100vh - #{$defaultSpacing}));
+    will-change: transform, opacity;
+    transition:
+      margin 0.25s ease,
+      max-height 0.25s ease,
+      transform 0.25s ease,
+      opacity 0.25s ease;
 
     &.visible {
+      max-height: 500px;
+      margin: calc(#{$defaultSpacing}) 0 0 0;
       transform: translateY(0);
+      opacity: 1;
     }
 
     &.hidding {
+      max-height: 0;
+      margin: 0;
+      transform: translateY(-100vh);
       opacity: 0;
-      transform: translateY(-100px);
     }
 
     .mn-container-inside {
       padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
 
-      .mn-typography,
+      .mn-typography {
+        color: color-hsl($bg1);
+      }
+
       .mn-icon {
         color: color-hsl($bg1);
+        fill: color-hsl($bg1);
       }
     }
   }

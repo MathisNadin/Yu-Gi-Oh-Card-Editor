@@ -1,4 +1,4 @@
-import { Observable, each, sortDependencies } from 'mn-tools';
+import { Observable, each, isArray, sortDependencies } from 'mn-tools';
 import { App as CapacitorApp } from '@capacitor/app';
 
 export interface IApplicationListener {
@@ -123,7 +123,7 @@ export class Application extends Observable<IApplicationListener> {
     if (!clazz) throw new Error(`Nous avons besoin d'une classe pour ${name}`);
 
     options.depends = options.depends || [];
-    if (!Array.isArray(options.depends)) throw new Error(`Mauvaises dépendances pour ${name} : ${options.depends}`);
+    if (!isArray(options.depends)) throw new Error(`Mauvaises dépendances pour ${name} : ${options.depends}`);
 
     options.name = name;
     options.clazz = clazz;

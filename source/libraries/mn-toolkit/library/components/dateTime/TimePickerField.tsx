@@ -1,24 +1,20 @@
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
 import { TimePicker, ITimePickerProps } from './TimePicker';
 
-interface ITimePickerFieldProps extends IFormFieldProps<Date>, ITimePickerProps {}
+interface ITimePickerFieldProps extends IFormFieldProps<Date | undefined>, ITimePickerProps {}
 
-interface ITimePickerFieldState extends IFormFieldState<Date> {}
+interface ITimePickerFieldState extends IFormFieldState {}
 
-export class TimePickerField extends FormField<Date, ITimePickerFieldProps, ITimePickerFieldState> {
-  public constructor(props: ITimePickerFieldProps) {
-    super(props, 'time-picker');
-    this.state = {
-      ...this.state,
-      value: props.defaultValue!,
+export class TimePickerField extends FormField<Date | undefined, ITimePickerFieldProps, ITimePickerFieldState> {
+  public static override get defaultProps(): Omit<ITimePickerFieldProps, 'label' | 'value' | 'onChange'> {
+    return {
+      ...super.defaultProps,
+      canReset: TimePicker.defaultProps.canReset,
     };
   }
 
-  protected override async updateFromNewProps(prevProps: Readonly<ITimePickerFieldProps>) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.getTime() === this.state.value?.getTime()) return;
-    await this.setStateAsync({ value: this.props.defaultValue! });
-    if (this.hasValue) await this.doValidation();
+  public constructor(props: ITimePickerFieldProps) {
+    super(props, 'time-picker');
   }
 
   protected override renderControl() {
@@ -27,7 +23,7 @@ export class TimePickerField extends FormField<Date, ITimePickerFieldProps, ITim
         disabled={this.props.disabled}
         fill={this.props.fill}
         canReset={this.props.canReset}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

@@ -1,15 +1,15 @@
 import { createRef } from 'react';
 import { integer, isDefined } from 'mn-tools';
 import { TJSXElementChildren } from '../../../system';
-import { TDidUpdateSnapshot } from '../../containable';
 import { Container, IContainerProps, IContainerState } from '../../container';
 import { Typography } from '../../typography';
+import { TDidUpdateSnapshot } from '../../containable';
 
 export interface IWeekInputProps extends IContainerProps {
-  defaultValue?: Date;
   yearRange?: [number, number];
-  canReset?: boolean;
-  onChange?: (value: Date | undefined) => void | Promise<void>;
+  canReset: boolean;
+  value: Date | undefined;
+  onChange: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface IWeekInputState extends IContainerState {
@@ -21,7 +21,7 @@ interface IWeekInputState extends IContainerState {
 export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
   private inputRef = createRef<HTMLInputElement>();
 
-  public static override get defaultProps(): IWeekInputProps {
+  public static override get defaultProps(): Omit<IWeekInputProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
@@ -32,9 +32,8 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
 
   public constructor(props: IWeekInputProps) {
     super(props);
-    const { defaultValue } = props;
-    const week = defaultValue?.getWeekNumber();
-    const year = defaultValue?.getFullYear();
+    const week = props.value?.getWeekNumber();
+    const year = props.value?.getFullYear();
     this.state = {
       ...this.state,
       week: isDefined(week) ? String(week).padStart(2, '0') : '',
@@ -48,26 +47,29 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
     prevState: Readonly<IWeekInputState>,
     snapshot?: TDidUpdateSnapshot
   ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props === prevProps) return;
-    const weekNumber = this.props.defaultValue?.getWeekNumber();
-    const week = isDefined(weekNumber) ? String(weekNumber).padStart(2, '0') : '';
-    const yearNumber = this.props.defaultValue?.getFullYear();
-    const year = isDefined(yearNumber) ? String(yearNumber) : '';
-    if (week !== this.state.week || year !== this.state.year) {
-      this.setState({ week, year });
+    super.componentDidUpdate?.(prevProps, prevState, snapshot);
+
+    const prevWeek = prevProps.value?.getWeekNumber();
+    const prevYear = prevProps.value?.getFullYear();
+    const currWeek = this.props.value?.getWeekNumber();
+    const currYear = this.props.value?.getFullYear();
+
+    if (prevWeek !== currWeek || prevYear !== currYear) {
+      this.setState({
+        week: isDefined(currWeek) ? String(currWeek).padStart(2, '0') : '',
+        year: isDefined(currYear) ? String(currYear) : '',
+      });
     }
   }
 
   private async onChange() {
-    if (!this.props.onChange) return;
     let { week, year } = this.state;
     if (week.length === 2 && year.length === 4) {
       const weekNumber = integer(week);
       const yearNumber = integer(year);
       if (weekNumber >= 1 && weekNumber <= 52) {
         const date = this.getDateFromWeekYear(weekNumber, yearNumber);
-        await this.props.onChange(date);
+        await this.props.onChange(isNaN(date.getTime()) ? undefined : date);
       }
     }
   }
@@ -118,7 +120,7 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
       await this.setStateAsync({ week: '', year: '', activeSection: 'week' });
-      if (this.props.onChange) await this.props.onChange(undefined);
+      await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       await this.handleDigitInput(key);
@@ -233,13 +235,13 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
         key='week-input'
         ref={this.inputRef}
         type='text'
-        value={value}
         placeholder='SS/AAAA'
+        value={value}
+        onChange={() => {}} // Not used here but necessary for React
         onFocus={(e) => app.$errorManager.handlePromise(this.onFocusIn(e))}
         onBlur={() => app.$errorManager.handlePromise(this.onFocusOut())}
         onClick={(e) => app.$errorManager.handlePromise(this.onTap(e))}
         onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
-        onChange={() => {}}
       />,
     ];
   }

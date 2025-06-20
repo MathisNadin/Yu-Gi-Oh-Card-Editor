@@ -4,10 +4,10 @@ import { TJSXElementChildren } from '../../../system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../../containable';
 
 export interface IDateTimeInputProps extends IContainableProps {
-  defaultValue?: Date;
   yearRange?: [number, number];
   canReset?: boolean;
-  onChange?: (value: Date | undefined) => void | Promise<void>;
+  value: Date | undefined;
+  onChange: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface IDateTimeInputState extends IContainableState {
@@ -17,13 +17,12 @@ interface IDateTimeInputState extends IContainableState {
   hour: string;
   minute: string;
   activeSection: 'day' | 'month' | 'year' | 'hour' | 'minute';
-  dateTime?: Date;
 }
 
 export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInputState> {
   private inputRef = createRef<HTMLInputElement>();
 
-  public static override get defaultProps(): IDateTimeInputProps {
+  public static override get defaultProps(): Omit<IDateTimeInputProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       canReset: true,
@@ -32,16 +31,14 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
 
   public constructor(props: IDateTimeInputProps) {
     super(props);
-    const { defaultValue } = props;
     this.state = {
       ...this.state,
-      day: defaultValue ? String(defaultValue.getDate()).padStart(2, '0') : '',
-      month: defaultValue ? String(defaultValue.getMonth() + 1).padStart(2, '0') : '',
-      year: defaultValue ? String(defaultValue.getFullYear()) : '',
-      hour: defaultValue ? String(defaultValue.getHours()).padStart(2, '0') : '',
-      minute: defaultValue ? String(defaultValue.getMinutes()).padStart(2, '0') : '',
+      day: props.value ? String(props.value.getDate()).padStart(2, '0') : '',
+      month: props.value ? String(props.value.getMonth() + 1).padStart(2, '0') : '',
+      year: props.value ? String(props.value.getFullYear()) : '',
+      hour: props.value ? String(props.value.getHours()).padStart(2, '0') : '',
+      minute: props.value ? String(props.value.getMinutes()).padStart(2, '0') : '',
       activeSection: 'day',
-      dateTime: defaultValue,
     };
   }
 
@@ -50,32 +47,28 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
     prevState: Readonly<IDateTimeInputState>,
     snapshot?: TDidUpdateSnapshot
   ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props.defaultValue?.getTime() !== this.state.dateTime?.getTime()) {
-      const { defaultValue } = this.props;
+    super.componentDidUpdate?.(prevProps, prevState, snapshot);
+    if (prevProps.value?.getTime() !== this.props.value?.getTime()) {
       this.setState({
-        day: defaultValue ? String(defaultValue.getDate()).padStart(2, '0') : '',
-        month: defaultValue ? String(defaultValue.getMonth() + 1).padStart(2, '0') : '',
-        year: defaultValue ? String(defaultValue.getFullYear()) : '',
-        hour: defaultValue ? String(defaultValue.getHours()).padStart(2, '0') : '',
-        minute: defaultValue ? String(defaultValue.getMinutes()).padStart(2, '0') : '',
-        dateTime: defaultValue,
+        day: this.props.value ? String(this.props.value.getDate()).padStart(2, '0') : '',
+        month: this.props.value ? String(this.props.value.getMonth() + 1).padStart(2, '0') : '',
+        year: this.props.value ? String(this.props.value.getFullYear()) : '',
+        hour: this.props.value ? String(this.props.value.getHours()).padStart(2, '0') : '',
+        minute: this.props.value ? String(this.props.value.getMinutes()).padStart(2, '0') : '',
       });
     }
   }
 
   private async onChange() {
-    if (!this.props.onChange) return;
-    let { day, month, year, hour, minute, dateTime: oldDateTime } = this.state;
+    let { day, month, year, hour, minute } = this.state;
     if (day.length === 2 && month.length === 2 && year.length === 4 && hour.length === 2 && minute.length === 2) {
-      const dateTime = oldDateTime ? new Date(oldDateTime) : new Date().toBeginOfDay();
+      const dateTime = this.props.value ? new Date(this.props.value) : new Date().toBeginOfDay();
       dateTime.setFullYear(integer(year));
       dateTime.setMonth(integer(month) - 1);
       dateTime.setDate(integer(day));
       dateTime.setHours(integer(hour));
       dateTime.setMinutes(integer(minute));
-      await this.setStateAsync({ dateTime });
-      this.props.onChange(dateTime);
+      await this.props.onChange(isNaN(dateTime.getTime()) ? undefined : dateTime);
     }
   }
 
@@ -129,7 +122,6 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
       await this.setStateAsync({
-        dateTime: undefined,
         activeSection: 'day',
         day: '',
         month: '',
@@ -137,7 +129,7 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
         hour: '',
         minute: '',
       });
-      if (this.props.onChange) await this.props.onChange(undefined);
+      await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
       this.handleDigitInput(key);
@@ -308,13 +300,13 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
         ref={this.inputRef}
         key='date-time-input'
         type='text'
-        value={value}
         placeholder='JJ/MM/AAAA HH:MM'
+        value={value}
+        onChange={() => {}} // Not used here but necessary for React
         onFocus={(e) => app.$errorManager.handlePromise(this.onFocusIn(e))}
         onBlur={() => app.$errorManager.handlePromise(this.onFocusOut())}
         onClick={(e) => app.$errorManager.handlePromise(this.onTap(e))}
         onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
-        onChange={() => {}}
       />,
     ];
   }

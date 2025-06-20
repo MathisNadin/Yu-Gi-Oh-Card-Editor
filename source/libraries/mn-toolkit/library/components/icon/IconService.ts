@@ -1,4 +1,4 @@
-import { AllHTMLAttributes, cloneElement } from 'react';
+import { AllHTMLAttributes, cloneElement, JSX, RefObject } from 'react';
 import { TIconId } from './Icon';
 
 export class IconService {
@@ -12,7 +12,7 @@ export class IconService {
     this._icons[name] = svg;
   }
 
-  public get(name: TIconId, props?: AllHTMLAttributes<HTMLElement>, ref?: React.RefObject<HTMLElement>) {
+  public get(name: TIconId, props?: AllHTMLAttributes<HTMLElement>, ref?: RefObject<HTMLElement | null>) {
     try {
       const icon = this._icons[name];
       // Clone the JSX Element to return a new instance

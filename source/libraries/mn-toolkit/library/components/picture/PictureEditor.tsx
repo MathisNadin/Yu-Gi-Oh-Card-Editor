@@ -31,23 +31,32 @@ export interface IPictureEditorOptions {
 }
 
 export interface IPictureEditorProps extends IContainableProps {
-  display?: 'circle' | 'square' | 'free';
-  size?: 'small' | 'normal' | 'big' | 'free';
-  options?: IPictureEditorOptions;
-  placeholder?: string;
+  display: 'circle' | 'square' | 'free';
+  size: 'small' | 'normal' | 'big' | 'free';
+  options: IPictureEditorOptions;
+  placeholder: string;
   imgAlt: IImageProps['alt'];
-  imgHint?: IImageProps['hint'];
-  defaultValue?: IPicture;
-  onChange?: (value: IPicture) => void | Promise<void>;
+  imgHint: IImageProps['hint'];
+  value: IPicture;
+  onChange: (value: IPicture) => void | Promise<void>;
 }
 
 interface IPictureEditorState extends IContainableState {
-  picture: IPicture;
   displayUrl: string;
 }
 
 export class PictureEditor extends Containable<IPictureEditorProps, IPictureEditorState> {
   private iconRef = createRef<Icon<IIconProps, IIconState>>();
+
+  public static override get defaultProps(): Omit<IPictureEditorProps, 'imgAlt' | 'imgHint' | 'value' | 'onChange'> {
+    return {
+      ...super.defaultProps,
+      display: 'circle',
+      size: 'normal',
+      placeholder: defaultPicturePlaceholder,
+      options: { crop: true, camera: true, file: true, delete: true },
+    };
+  }
 
   public static getPictureReferenceUrl(picture: IPicture) {
     let referenceUrl: string;
@@ -61,30 +70,17 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     return referenceUrl;
   }
 
-  public static override get defaultProps(): IPictureEditorProps {
-    return {
-      ...super.defaultProps,
-      display: 'circle',
-      size: 'normal',
-      placeholder: defaultPicturePlaceholder,
-      imgAlt: 'Image',
-      options: { crop: true, camera: true, file: true, delete: true },
-      defaultValue: { effects: [] },
-    };
-  }
-
   public constructor(props: IPictureEditorProps) {
     super(props);
     this.state = {
       ...this.state,
-      picture: this.props.defaultValue!,
       displayUrl: '',
     };
   }
 
   public override componentDidMount() {
     super.componentDidMount();
-    app.$errorManager.handlePromise(this.setPicture(this.state.picture));
+    app.$errorManager.handlePromise(this.setDisplayUrl());
   }
 
   public override componentDidUpdate(
@@ -93,22 +89,24 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props === prevProps) return;
-    if (this.props.defaultValue === prevProps.defaultValue) return;
-    app.$errorManager.handlePromise(this.setPicture(this.props.defaultValue!));
+    if (prevProps.value !== this.props.value) {
+      app.$errorManager.handlePromise(this.setDisplayUrl());
+    }
   }
 
-  private async setPicture(picture: IPicture) {
-    const referenceUrl = PictureEditor.getPictureReferenceUrl(picture);
+  private async setDisplayUrl() {
+    const referenceUrl = PictureEditor.getPictureReferenceUrl(this.props.value);
 
-    if (!picture.effects?.length) {
-      return await this.setStateAsync({ picture, displayUrl: referenceUrl });
+    if (!this.props.value.effects?.length) {
+      return await this.setStateAsync({ displayUrl: referenceUrl });
     }
 
     const cropEffectUuid: IFileCropEffect['uuid'] = 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
-    const cropEffects = picture.effects.filter((effect): effect is IFileCropEffect => effect.uuid === cropEffectUuid);
+    const cropEffects = this.props.value.effects.filter(
+      (effect): effect is IFileCropEffect => effect.uuid === cropEffectUuid
+    );
     if (!cropEffects.length) {
-      return await this.setStateAsync({ picture, displayUrl: referenceUrl });
+      return await this.setStateAsync({ displayUrl: referenceUrl });
     }
 
     let croppedUrl!: string;
@@ -126,7 +124,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       console.error('Failed to crop picture', error);
       app.$errorManager.trigger(error as Error);
     } finally {
-      await this.setStateAsync({ picture, displayUrl: croppedUrl || referenceUrl });
+      await this.setStateAsync({ displayUrl: croppedUrl || referenceUrl });
     }
   }
 
@@ -135,12 +133,12 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
 
     const options = this.props.options!;
     const cropEffectUuid: IFileCropEffect['uuid'] = 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
-    const cropEffects = this.state.picture.effects.filter(
+    const cropEffects = this.props.value.effects.filter(
       (effect): effect is IFileCropEffect => effect.uuid === cropEffectUuid
     );
     const cropEffect = cropEffects[0];
 
-    const referenceUrl = PictureEditor.getPictureReferenceUrl(this.state.picture);
+    const referenceUrl = PictureEditor.getPictureReferenceUrl(this.props.value);
     const actions: IActionsPopoverAction[] = [];
     if (options.crop && referenceUrl && (this.props.display === 'circle' || this.props.display === 'square')) {
       const display = this.props.display;
@@ -181,7 +179,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       actions.push({
         icon: { icon: 'toolkit-trash' },
         label: 'Supprimer',
-        onTap: () => this.resetPicture(),
+        onTap: () => this.props.onChange({ effects: [] }),
       });
     }
 
@@ -202,30 +200,27 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
 
   private async cropPicture(areaType: TPictureCropperAreaType) {
     const cropEffectUuid: IFileCropEffect['uuid'] = 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
-    const cropEffects = this.state.picture.effects.filter(
+    const cropEffects = this.props.value.effects.filter(
       (effect): effect is IFileCropEffect => effect.uuid === cropEffectUuid
     );
     const cropEffect = cropEffects[0];
     const newCropEffect = await PictureCropperDialog.show({
-      imageUrl: PictureEditor.getPictureReferenceUrl(this.state.picture),
+      imageUrl: PictureEditor.getPictureReferenceUrl(this.props.value),
       cropEffect,
       areaType,
     });
     if (!newCropEffect || cropEffect?.changed?.getTime() === newCropEffect.changed!.getTime()) return;
 
-    const picture = { ...this.state.picture };
-    picture.effects = picture.effects.filter((effect) => effect.uuid !== cropEffectUuid);
-    picture.effects.push(newCropEffect);
-
-    await this.setPicture(picture);
-    if (this.props.onChange) await this.props.onChange(picture);
+    const newValue = { ...this.props.value };
+    newValue.effects = newValue.effects.filter((effect) => effect.uuid !== cropEffectUuid);
+    newValue.effects.push(newCropEffect);
+    await this.props.onChange(newValue);
   }
 
   private async removeCropping() {
-    const picture = { ...this.state.picture };
-    picture.effects = picture.effects.filter((effect) => effect.uuid !== 'a9339c53-7084-4a6a-be2f-92c257bcd2be');
-    await this.setPicture(picture);
-    if (this.props.onChange) await this.props.onChange(picture);
+    const newValue = { ...this.props.value };
+    newValue.effects = newValue.effects.filter((effect) => effect.uuid !== 'a9339c53-7084-4a6a-be2f-92c257bcd2be');
+    await this.props.onChange(newValue);
   }
 
   private async pickFile() {
@@ -249,7 +244,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       // Start by checking the MIME type (especially for drag and drop)
       if (!file.type.startsWith('image/')) return;
 
-      const picture: IPicture = {
+      const newValue: IPicture = {
         file,
         fileDataUrl: await app.$api.fileToDataURL(file),
         effects: [],
@@ -257,19 +252,18 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
 
       if (
         this.props.options!.crop &&
-        picture.fileDataUrl &&
+        newValue.fileDataUrl &&
         (this.props.display === 'circle' || this.props.display === 'square')
       ) {
         const newCropEffect = await PictureCropperDialog.show({
-          imageUrl: picture.fileDataUrl,
+          imageUrl: newValue.fileDataUrl,
           areaType: this.props.display,
         });
         if (!newCropEffect) return;
-        picture.effects.push(newCropEffect);
+        newValue.effects.push(newCropEffect);
       }
 
-      await this.setPicture(picture);
-      if (this.props.onChange) await this.props.onChange(picture);
+      await this.props.onChange(newValue);
     } catch (error) {
       console.error('Failed to select image', error);
       app.$errorManager.trigger(error as Error);
@@ -280,31 +274,24 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     const cameraDataUrl = await app.$cameraPicker.show();
     if (!cameraDataUrl) return;
 
-    const picture: IPicture = {
+    const newValue: IPicture = {
       cameraDataUrl,
       effects: [],
     };
     if (
       this.props.options!.crop &&
-      picture.cameraDataUrl &&
+      newValue.cameraDataUrl &&
       (this.props.display === 'circle' || this.props.display === 'square')
     ) {
       const newCropEffect = await PictureCropperDialog.show({
-        imageUrl: picture.cameraDataUrl,
+        imageUrl: newValue.cameraDataUrl,
         areaType: this.props.display,
       });
       if (!newCropEffect) return;
-      picture.effects.push(newCropEffect);
+      newValue.effects.push(newCropEffect);
     }
 
-    await this.setPicture(picture);
-    if (this.props.onChange) await this.props.onChange(picture);
-  }
-
-  private async resetPicture() {
-    const picture: IPicture = { effects: [] };
-    await this.setPicture(picture);
-    if (this.props.onChange) await this.props.onChange(picture);
+    await this.props.onChange(newValue);
   }
 
   public override renderClasses() {

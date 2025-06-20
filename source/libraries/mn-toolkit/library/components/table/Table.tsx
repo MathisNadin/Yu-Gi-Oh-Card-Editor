@@ -12,12 +12,10 @@ export interface ITableProps extends IContainerProps {
 interface ITableState extends IContainerState {}
 
 export class Table extends Container<ITableProps, ITableState> {
-  public static override get defaultProps(): ITableProps {
+  public static override get defaultProps(): Omit<ITableProps, 'headers' | 'rows'> {
     return {
       ...super.defaultProps,
       scrollX: true,
-      headers: [],
-      rows: [],
     };
   }
 
@@ -32,7 +30,7 @@ export class Table extends Container<ITableProps, ITableState> {
       <table>
         <TableHead headers={this.props.headers} />
         <TableBody rows={this.props.rows} />
-        {this.props.footers && <TableFoot footers={this.props.footers} />}
+        {this.props.footers?.length && <TableFoot footers={this.props.footers} />}
       </table>
     );
   }

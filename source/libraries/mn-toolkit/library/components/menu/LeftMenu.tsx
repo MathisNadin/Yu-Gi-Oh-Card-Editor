@@ -1,6 +1,5 @@
 import { classNames, isString } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, IContainerState, Container } from '../container';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
@@ -13,37 +12,23 @@ interface ILeftMenuProps extends IContainerProps<HTMLElement> {
 }
 
 interface ILeftMenuState extends IContainerState {
-  items: IMenuItem[];
   open: IMenuItem[];
 }
 
 export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState, HTMLElement> {
-  public static override get defaultProps(): ILeftMenuProps {
+  public static override get defaultProps(): Omit<ILeftMenuProps, 'items'> {
     return {
       ...super.defaultProps,
       theme: 'dark',
       scroll: true,
       layout: 'vertical',
       hideGroupLabels: false,
-      items: [],
     };
   }
 
   public constructor(props: ILeftMenuProps) {
     super(props);
-    this.state = { ...this.state, items: props.items, open: [] };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ILeftMenuProps>,
-    prevState: Readonly<ILeftMenuState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.items !== this.state.items) {
-      this.setState({ items: this.props.items });
-    }
+    this.state = { ...this.state, open: [] };
   }
 
   private hideBeforeClick() {
@@ -66,8 +51,8 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState, HTMLElem
   }
 
   public override get children() {
-    if (!this.state.items.length) return null;
-    return <ul>{this.state.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>;
+    if (!this.props.items.length) return null;
+    return <ul>{this.props.items.filter((item) => this.hasPermission(item)).map((item) => this.renderGroup(item))}</ul>;
   }
 
   private renderGroup(item: IMenuItem) {

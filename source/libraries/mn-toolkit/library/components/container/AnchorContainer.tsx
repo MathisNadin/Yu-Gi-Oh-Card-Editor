@@ -10,7 +10,7 @@ export interface IAnchorContainerProps<T extends TRouterState = TRouterState>
 }
 
 interface IAnchorContainerState extends IContainerState {
-  href: AnchorHTMLAttributes<HTMLAnchorElement>['href'];
+  hrefAttribute: AnchorHTMLAttributes<HTMLAnchorElement>['href'];
 }
 
 export class AnchorContainer<T extends TRouterState = TRouterState> extends Container<
@@ -18,27 +18,26 @@ export class AnchorContainer<T extends TRouterState = TRouterState> extends Cont
   IAnchorContainerState,
   HTMLAnchorElement
 > {
-  public static override get defaultProps(): IAnchorContainerProps {
+  public static override get defaultProps(): Omit<IAnchorContainerProps, 'href'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
-      href: '',
     };
   }
 
   public constructor(props: IAnchorContainerProps<T>) {
     super(props);
 
-    let href: IAnchorContainerState['href'];
+    let hrefAttribute: IAnchorContainerState['hrefAttribute'];
     if (isString(this.props.href)) {
-      href = this.props.href;
+      hrefAttribute = this.props.href;
     } else {
-      href = app.$router.getLink(this.props.href);
+      hrefAttribute = app.$router.getLink(this.props.href);
     }
 
     this.state = {
       ...this.state,
-      href,
+      hrefAttribute,
     };
   }
 
@@ -50,13 +49,13 @@ export class AnchorContainer<T extends TRouterState = TRouterState> extends Cont
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps.href === this.props.href) return;
 
-    let href: IAnchorContainerState['href'];
+    let hrefAttribute: IAnchorContainerState['hrefAttribute'];
     if (isString(this.props.href)) {
-      href = this.props.href;
+      hrefAttribute = this.props.href;
     } else {
-      href = app.$router.getLink(this.props.href);
+      hrefAttribute = app.$router.getLink(this.props.href);
     }
-    this.setState({ href });
+    this.setState({ hrefAttribute });
   }
 
   public override renderClasses() {
@@ -67,7 +66,7 @@ export class AnchorContainer<T extends TRouterState = TRouterState> extends Cont
 
   public override render(): TJSXElementChild {
     return (
-      <a ref={this.base} {...this.renderAttributes()} href={this.state.href}>
+      <a ref={this.base} {...this.renderAttributes()} href={this.state.hrefAttribute || undefined}>
         {this.inside}
       </a>
     );

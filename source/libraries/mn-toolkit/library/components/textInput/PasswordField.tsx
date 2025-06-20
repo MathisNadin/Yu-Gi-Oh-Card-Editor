@@ -10,7 +10,7 @@ interface IPasswordFieldState extends ITextInputFieldState {
 }
 
 export class PasswordField extends TextInputField<IPasswordFieldProps, IPasswordFieldState> {
-  public static override get defaultProps(): IPasswordFieldProps {
+  public static override get defaultProps(): Omit<IPasswordFieldProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       inputType: 'password',
@@ -42,7 +42,7 @@ export class PasswordField extends TextInputField<IPasswordFieldProps, IPassword
         placeholder={this.props.placeholder}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
-        defaultValue={this.state.value}
+        value={this.value}
         onKeyDown={(e) => this.onKeyDown(e)}
         onBlur={() => this.onBlur()}
         onFocus={() => this.onFocus()}

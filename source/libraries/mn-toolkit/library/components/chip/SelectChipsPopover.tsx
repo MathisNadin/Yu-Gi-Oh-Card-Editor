@@ -20,7 +20,13 @@ export class SelectChipsPopover<ID = number> extends ActionsPopover<
         className={classNames(this.renderActionClasses(action))}
         onClick={(event) => !!action.onTap && app.$errorManager.handlePromise(this.onTapAction(event, action))}
       >
-        <Checkbox defaultValue={action.selected} />
+        <Checkbox
+          value={action.selected || false}
+          onChange={async (selected) => {
+            action.selected = selected;
+            await this.forceUpdateAsync();
+          }}
+        />
         <Typography fill noWrap bold={action.isTitle} variant='document' contentType='text' content={action.label} />
       </li>
     );

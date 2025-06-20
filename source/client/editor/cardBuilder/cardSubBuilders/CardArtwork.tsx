@@ -21,7 +21,7 @@ interface ICardArtworkState extends IToolkitComponentState {
   hasPendulumFrame: boolean;
   includesLink: boolean;
   loadArtwork: boolean;
-  artworkData: string;
+  artworkData: string | undefined;
 }
 
 export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtworkState> {
@@ -38,7 +38,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
       hasPendulumFrame: props.hasPendulumFrame,
       includesLink: props.includesLink,
       loadArtwork: true,
-      artworkData: '',
+      artworkData: undefined,
     };
   }
 
@@ -73,7 +73,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
         artworkBg: nextProps.artworkBg,
         hasPendulumFrame: nextProps.hasPendulumFrame,
         includesLink: nextProps.includesLink,
-        artworkData: '',
+        artworkData: undefined,
       };
     } else {
       return null;
@@ -104,7 +104,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
     const { url, x, y, height, width, artworkBg } = this.state;
 
     let artworkExists = false;
-    let artworkData!: string;
+    let artworkData: string | undefined;
     if (app.$device.isElectron(window)) {
       try {
         artworkExists = await window.electron.ipcRenderer.invoke('checkFileExists', url);
@@ -123,9 +123,9 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
       }
     }
 
-    if (!artworkExists) artworkData = artworkBg;
+    if (!artworkExists || !artworkData) artworkData = artworkBg;
 
-    await preloadImage(artworkData);
+    if (artworkData) await preloadImage(artworkData);
     this.setState({ loadArtwork: false, artworkData });
   }
 
@@ -149,7 +149,7 @@ export class CardArtwork extends ToolkitComponent<ICardArtworkProps, ICardArtwor
 
     return (
       <div className={artworkClass}>
-        <img className='artwork' src={artworkData} alt='artwork' />
+        <img className='artwork' src={artworkData || undefined} alt='artwork' />
       </div>
     );
   }

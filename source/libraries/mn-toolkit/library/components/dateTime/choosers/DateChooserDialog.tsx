@@ -2,16 +2,16 @@ import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from '../../p
 import { DateChooser } from './DateChooser';
 
 export interface IDateChooserDialogProps extends IAbstractPopupProps<Date> {
-  defaultValue?: Date;
+  defaultValue: Date;
   yearRange?: [number, number];
 }
 
 interface IDateChooserDialogState extends IAbstractPopupState {
-  date?: Date;
+  date: Date;
 }
 
 export class DateChooserDialog extends AbstractPopup<Date, IDateChooserDialogProps, IDateChooserDialogState> {
-  public static async show(options: IDateChooserDialogProps = {}) {
+  public static async show(options: IDateChooserDialogProps) {
     options.title = options.title || 'Choisissez une date';
     options.width = options.width || '90%';
     return await app.$popup.show<Date, IDateChooserDialogProps>({
@@ -29,7 +29,10 @@ export class DateChooserDialog extends AbstractPopup<Date, IDateChooserDialogPro
       color: 'primary',
       onTap: () => this.close(this.state.date),
     });
-    await this.setStateAsync({ buttons, date: this.props.defaultValue });
+    await this.setStateAsync({
+      buttons,
+      date: this.props.defaultValue ? new Date(this.props.defaultValue) : new Date(),
+    });
   }
 
   public override renderContent() {
@@ -37,8 +40,8 @@ export class DateChooserDialog extends AbstractPopup<Date, IDateChooserDialogPro
       <DateChooser
         key='date-chooser'
         yearRange={this.props.yearRange}
-        defaultValue={this.state.date}
-        onChoose={(date) => this.setStateAsync({ date })}
+        value={this.state.date}
+        onChange={(date) => this.setStateAsync({ date })}
       />,
     ];
   }

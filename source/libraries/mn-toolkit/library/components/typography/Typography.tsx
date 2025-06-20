@@ -1,4 +1,5 @@
 import parse from 'html-react-parser';
+import DOMPurify from 'dompurify';
 import { AnchorHTMLAttributes, RefObject } from 'react';
 import { escapeHTML, isDefined, isString, isUndefined, markdownToHtml } from 'mn-tools';
 import { IRouterHrefParams, TForegroundColor, TRouterState } from '../../system';
@@ -16,6 +17,7 @@ export interface ITypographyProps<T extends TRouterState = TRouterState>
   extends IContainableProps<TTypographyHTMLElement> {
   fontSize?: TTypographyFontSize;
   variant: TVariant;
+  sanitizeHTML?: boolean;
   alignment: 'left' | 'right' | 'center';
   content?: string;
   contentType: TControlTextContentType;
@@ -23,12 +25,13 @@ export interface ITypographyProps<T extends TRouterState = TRouterState>
   bold?: boolean;
   italic?: boolean;
   underlined?: boolean;
+  strikethrough?: boolean;
   color?: TForegroundColor;
   href?: string | IRouterHrefParams<T>;
 }
 
 export interface ITypographyState extends IContainableState {
-  href: AnchorHTMLAttributes<HTMLAnchorElement>['href'];
+  hrefAttribute: AnchorHTMLAttributes<HTMLAnchorElement>['href'];
 }
 
 export class Typography<
@@ -44,24 +47,25 @@ export class Typography<
       contentType: 'text',
       color: '1',
       noWrap: false,
+      sanitizeHTML: false,
     };
   }
 
   public constructor(props: PROPS) {
     super(props);
 
-    let href: ITypographyState['href'];
+    let hrefAttribute: ITypographyState['hrefAttribute'];
     if (props.href) {
       if (isString(props.href)) {
-        href = props.href;
+        hrefAttribute = props.href;
       } else {
-        href = app.$router.getLink(props.href);
+        hrefAttribute = app.$router.getLink(props.href);
       }
     }
 
     this.state = {
       ...this.state,
-      href,
+      hrefAttribute,
     };
   }
 
@@ -73,15 +77,15 @@ export class Typography<
     super.componentDidUpdate(prevProps, prevState, snapshot);
     if (prevProps.href === this.props.href) return;
 
-    let href: ITypographyState['href'];
+    let hrefAttribute: ITypographyState['hrefAttribute'];
     if (this.props.href) {
       if (isString(this.props.href)) {
-        href = this.props.href;
+        hrefAttribute = this.props.href;
       } else {
-        href = app.$router.getLink(this.props.href);
+        hrefAttribute = app.$router.getLink(this.props.href);
       }
     }
-    this.setState({ href });
+    this.setState({ hrefAttribute });
   }
 
   public override renderClasses() {
@@ -97,6 +101,7 @@ export class Typography<
     classes['bold-weight'] = !!this.props.bold;
     classes['italic-style'] = !!this.props.italic;
     classes['underline-decoration'] = !!this.props.underlined;
+    classes['strikethrough-decoration'] = !!this.props.strikethrough;
 
     if (this.props.href && isDefined(this.props.content)) {
       classes['mn-typography-anchor'] = true;
@@ -109,7 +114,7 @@ export class Typography<
 
   public override renderAttributes() {
     const attributes = super.renderAttributes();
-    attributes.href = this.state.href;
+    if (this.state.hrefAttribute) attributes.href = this.state.hrefAttribute;
     return attributes;
   }
 
@@ -123,7 +128,7 @@ export class Typography<
   private renderWithChildren() {
     if (isDefined(this.props.content)) return null;
 
-    if (this.state.href) {
+    if (this.state.hrefAttribute) {
       return (
         <a {...this.renderAttributes()} ref={this.base as RefObject<HTMLAnchorElement>}>
           {this.children}
@@ -191,13 +196,17 @@ export class Typography<
       content = markdownToHtml(this.props.content, this.props.variant !== 'document');
     } else {
       content = this.props.content.replace(/<a/g, '<a target="_blank"');
-      if (this.props.contentType !== 'html') content = escapeHTML(content);
+      if (this.props.contentType !== 'html') {
+        content = escapeHTML(content);
+      } else if (this.props.sanitizeHTML) {
+        content = DOMPurify.sanitize(content);
+      }
     }
 
     const parsedNode = parse(content);
     const finalNode = this.props.variant === 'bullet' ? <>• {parsedNode}</> : parsedNode;
 
-    if (this.state.href) {
+    if (this.state.hrefAttribute) {
       return (
         <a {...this.renderAttributes()} ref={this.base as RefObject<HTMLAnchorElement>}>
           {finalNode}

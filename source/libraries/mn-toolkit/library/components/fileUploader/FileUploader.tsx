@@ -1,5 +1,5 @@
 import { TForegroundColor } from '../../system';
-import { TDidUpdateSnapshot, IContainableProps, Containable, IContainableState } from '../containable';
+import { IContainableProps, Containable, IContainableState } from '../containable';
 import { HorizontalStack, VerticalStack } from '../container';
 import { Progress } from '../progress';
 import { Typography } from '../typography';
@@ -17,29 +17,27 @@ export interface IFile {
 
 export interface IFileUploaderProps extends IContainableProps {
   progressColor?: TForegroundColor;
-  uploadBtnColor?: TForegroundColor;
-  resetBtnColor?: TForegroundColor;
+  uploadBtnColor: TForegroundColor;
+  resetBtnColor: TForegroundColor;
 
-  defaultValue?: IFile[];
-  multiple?: boolean;
-  accept?: string; // Uniquement pour le filePicker, penser à vérifier file.type manuellement en cas de drag-and-drop
-  imageMimeType?: string; // Uniquement pour le filePicker
-  imageQuality?: number; // Uniquement pour le filePicker
-  onChange?: (files: IFile[]) => void | Promise<void>;
+  multiple: boolean;
+  accept?: string; // Only for filePicker, remember to check file.type manually for drag-and-drop
+  imageMimeType?: string; // Only for filePicker
+  imageQuality?: number; // Only for filePicker
+  value: IFile[];
+  onChange: (files: IFile[]) => void | Promise<void>;
 }
 
 interface IFileUploaderState extends IContainableState {
-  files: IFile[];
   loadingFiles: boolean;
   loadingProgress: number;
   loadingTotal: number;
 }
 
 export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderState> {
-  public static override get defaultProps(): IFileUploaderProps {
+  public static override get defaultProps(): Omit<IFileUploaderProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: [],
       multiple: false,
       uploadBtnColor: 'positive',
       resetBtnColor: 'negative',
@@ -50,28 +48,10 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
     super(props);
     this.state = {
       ...this.state,
-      loaded: true,
-      files: props.defaultValue!,
       loadingFiles: false,
       loadingProgress: 0,
       loadingTotal: 0,
     };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IFileUploaderProps>,
-    prevState: Readonly<IFileUploaderState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue !== this.state.files) {
-      this.setState({ files: this.props.defaultValue! });
-    }
-  }
-
-  private fireOnFilesChanged() {
-    if (this.props.onChange) app.$errorManager.handlePromise(this.props.onChange(this.state.files));
   }
 
   private async onFileListImported(fileList: FileList) {
@@ -90,7 +70,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
           const match = orgFile.name?.match(/\.[0-9a-z]+$/i);
           let path: string | undefined;
           if (app.$device.isElectron(window)) {
-            path = await window.electron.ipcRenderer.getPathForFile(orgFile);
+            path = window.electron.ipcRenderer.getPathForFile(orgFile);
           }
 
           const file: IFile = {
@@ -98,7 +78,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
             name: orgFile.name,
             size: orgFile.size,
             type: orgFile.type,
-            extension: match ? match[0] : '',
+            extension: match?.[0] || '',
             path,
           };
 
@@ -110,21 +90,15 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       }
     }
 
-    if (this.props.multiple) files = [...this.state.files, ...files];
+    let nextFiles: IFile[];
+    if (this.props.multiple) {
+      nextFiles = [...(this.props.value ?? []), ...files];
+    } else {
+      nextFiles = files;
+    }
 
-    await this.setStateAsync({ files, loadingFiles: false, loadingProgress: 0, loadingTotal: 0 });
-    this.fireOnFilesChanged();
-  }
-
-  private async onRemoveFile(index: number) {
-    this.state.files.splice(index, 1);
-    await this.forceUpdateAsync();
-    this.fireOnFilesChanged();
-  }
-
-  private async onRemoveAll() {
-    await this.setStateAsync({ files: [] });
-    this.fireOnFilesChanged();
+    this.setState({ loadingFiles: false, loadingProgress: 0, loadingTotal: 0 });
+    await this.props.onChange(nextFiles);
   }
 
   public override renderClasses() {
@@ -154,7 +128,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
 
   public override get children() {
     return [
-      !this.state.loadingFiles && !this.state.files.length && (
+      !this.state.loadingFiles && !this.props.value.length && (
         <Button
           key='upload-btn'
           color={this.props.uploadBtnColor}
@@ -165,7 +139,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
         />
       ),
 
-      !this.state.loadingFiles && !this.state.files.length && (
+      !this.state.loadingFiles && !this.props.value.length && (
         <Typography
           key='instruction'
           variant='help'
@@ -173,10 +147,10 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
         />
       ),
 
-      !!this.state.files.length && (
+      !!this.props.value.length && (
         <VerticalStack key='files' gutter itemAlignment='center'>
           <VerticalStack gutter itemAlignment='right'>
-            {this.state.files.map((file, i) => (
+            {this.props.value.map((file, i) => (
               <HorizontalStack key={`file-uploader-file-${i}`} gutter width='100%'>
                 <HorizontalStack itemAlignment='center' width='100%'>
                   <Typography variant='label' content={file.name} />
@@ -187,7 +161,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
                     icon='toolkit-close'
                     disabled={this.state.loadingFiles}
                     name='Supprimer le fichier'
-                    onTap={() => this.onRemoveFile(i)}
+                    onTap={() => this.props.onChange(this.props.value.filter((_, index) => index !== i))}
                   />
                 </HorizontalStack>
               </HorizontalStack>
@@ -201,7 +175,7 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
                 icon='toolkit-trash'
                 name='Supprimer tous les fichiers'
                 label='Tout supprimer'
-                onTap={() => this.onRemoveAll()}
+                onTap={() => this.props.onChange([])}
               />
 
               {this.props.multiple && (

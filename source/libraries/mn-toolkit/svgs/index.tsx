@@ -73,20 +73,27 @@ declare global {
     'toolkit-format-blockquote': ISvgIcons;
     'toolkit-format-italic': ISvgIcons;
     'toolkit-format-underline': ISvgIcons;
+    'toolkit-format-strikethrough': ISvgIcons;
     'toolkit-format-color': ISvgIcons;
+    'toolkit-format-background-color': ISvgIcons;
     'toolkit-format-ul': ISvgIcons;
     'toolkit-format-ol': ISvgIcons;
     'toolkit-format-indent': ISvgIcons;
+    'toolkit-format-outdent': ISvgIcons;
     'toolkit-format-header-1': ISvgIcons;
     'toolkit-format-header-2': ISvgIcons;
     'toolkit-format-header-3': ISvgIcons;
     'toolkit-format-paragraph': ISvgIcons;
     'toolkit-format-align-left': ISvgIcons;
     'toolkit-format-align-center': ISvgIcons;
+    'toolkit-format-align-right': ISvgIcons;
+    'toolkit-format-align-justify': ISvgIcons;
     'toolkit-format-unformat': ISvgIcons;
     'toolkit-format-link': ISvgIcons;
     'toolkit-format-unlink': ISvgIcons;
     'toolkit-format-callout': ISvgIcons;
+    'toolkit-undo': ISvgIcons;
+    'toolkit-redo': ISvgIcons;
     'toolkit-search': ISvgIcons;
     'toolkit-image-info': ISvgIcons;
     'toolkit-embeded-video': ISvgIcons;
@@ -111,6 +118,118 @@ declare global {
 }
 
 export function loadSvgs() {
+  app.$icon.register(
+    'toolkit-format-bold',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-italic',
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
+      <path fill='currentColor' d='M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-underline',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M5,21H19V19H5V21M12,17A6,6 0 0,0 18,11V3H15.5V11A3.5,3.5 0 0,1 12,14.5A3.5,3.5 0 0,1 8.5,11V3H6V11A6,6 0 0,0 12,17Z'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-background-color',
+    <svg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+      <g>
+        <path fill='none' d='M0 0h24v24H0z' />
+        <path d='M19.228 18.732l1.768-1.768 1.767 1.768a2.5 2.5 0 1 1-3.535 0zM8.878 1.08l11.314 11.313a1 1 0 0 1 0 1.415l-8.485 8.485a1 1 0 0 1-1.414 0l-8.485-8.485a1 1 0 0 1 0-1.415l7.778-7.778-2.122-2.121L8.88 1.08zM11 6.03L3.929 13.1 11 20.173l7.071-7.071L11 6.029z' />
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-color',
+    <svg width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+      <g>
+        <path fill='none' d='M0 0h24v24H0z' />
+        <path d='M15.246 14H8.754l-1.6 4H5l6-15h2l6 15h-2.154l-1.6-4zm-.8-2L12 5.885 9.554 12h4.892zM3 20h18v2H3v-2z' />
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-align-left',
+    <svg fill='currentColot' width='800px' height='800px' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M1 1h18v2H1V1zm0 8h18v2H1V9zm0 8h18v2H1v-2zM1 5h12v2H1V5zm0 8h12v2H1v-2z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-align-center',
+    <svg fill='currentColot' width='800px' height='800px' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M1 1h18v2H1V1zm0 8h18v2H1V9zm0 8h18v2H1v-2zM4 5h12v2H4V5zm0 8h12v2H4v-2z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-align-justify',
+    <svg fill='currentColor' width='800px' height='800px' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M1 1h18v2H1V1zm0 8h18v2H1V9zm0 8h18v2H1v-2zM1 5h18v2H1V5zm0 8h18v2H1v-2z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-align-right',
+    <svg fill='currentColor' width='800px' height='800px' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M1 1h18v2H1V1zm0 8h18v2H1V9zm0 8h18v2H1v-2zM7 5h12v2H7V5zm0 8h12v2H7v-2z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-strikethrough',
+    <svg fill='currentColor' width='800px' height='800px' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+      <path d='M20 11h-8c-4 0-4-1.816-4-2.5C8 7.882 8 6 12 6c2.8 0 2.99 1.678 3 2.014L16 8h1c0-1.384-1.045-4-5-4-5.416 0-6 3.147-6 4.5 0 .728.148 1.667.736 2.5H4v2h16v-2zm-8 7c-3.793 0-3.99-1.815-4-2H6c0 .04.069 4 6 4 5.221 0 6-2.819 6-4.5 0-.146-.009-.317-.028-.5h-2.006c.032.2.034.376.034.5 0 .684 0 2.5-4 2.5z' />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-undo',
+    <svg fill='currentColor' width='800px' height='800px' viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M55.265 167.072c-.975-1.973-3.388-2.796-5.372-1.847L42 169s22.5 53.5 85.5 56c60-1.5 96.627-48.626 97-96.5.373-47.874-37-95.5-95.5-96-57.5-1-79.556 45.004-79.556 45.004-1.073 1.93-1.944 1.698-1.944-.501V51.997a4 4 0 0 0-4-3.997H37c-2.209 0-4 1.8-4 4.008v48.984A3.998 3.998 0 0 0 36.998 105h50.504a3.995 3.995 0 0 0 3.998-3.993v-6.014c0-2.205-1.79-4.02-4.008-4.053l-25.484-.38c-2.214-.033-3.223-1.679-2.182-3.628C59.826 86.932 78 45 128.5 45.5c49 .5 82.751 41.929 82.5 83.242C208 184 166 211 127.5 210c-54.5 0-72.235-42.928-72.235-42.928z'
+        fillRule='evenodd'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-redo',
+    <svg fill='currentColor' width='800px' height='800px' viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M202.238 167.072c.974-1.973 3.388-2.796 5.372-1.847l7.893 3.775s-22.5 53.5-85.5 56c-60-1.5-96.627-48.626-97-96.5-.373-47.874 37-95.5 95.5-96 57.5-1 79.555 45.004 79.555 45.004 1.074 1.93 1.945 1.698 1.945-.501V51.997a4 4 0 0 1 4-3.997h6.5c2.209 0 4 1.8 4 4.008v48.984a3.998 3.998 0 0 1-3.998 4.008H170a3.995 3.995 0 0 1-3.998-3.993v-6.014c0-2.205 1.789-4.02 4.007-4.053l25.485-.38c2.213-.033 3.223-1.679 2.182-3.628 0 0-18.174-41.932-68.674-41.432-49 .5-82.751 41.929-82.5 83.242 3 55.258 45 82.258 83.5 81.258 54.5 0 72.235-42.928 72.235-42.928z'
+        fillRule='evenodd'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-format-outdent',
+    <svg viewBox='0 0 24 24'>
+      <path
+        fill='currentColor'
+        d='M13,13H3V11H13,M13,9H3V7H13,M21,3V5H3V3,M13,17H3V15H13,M21,8V16L17,12,M21,21H3V19H21V21Z'
+      />
+    </svg>
+  );
+
   app.$icon.register(
     'toolkit-comment-right',
     <svg
@@ -541,43 +660,9 @@ export function loadSvgs() {
   );
 
   app.$icon.register(
-    'toolkit-format-bold',
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
-      <path
-        fill='currentColor'
-        d='M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z'
-      />
-    </svg>
-  );
-
-  app.$icon.register(
     'toolkit-format-blockquote',
     <svg viewBox='0 0 24 24'>
       <path fill='currentColor' d='M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z' />
-    </svg>
-  );
-
-  app.$icon.register(
-    'toolkit-format-italic',
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
-      <path fill='currentColor' d='M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z' />
-    </svg>
-  );
-
-  app.$icon.register(
-    'toolkit-format-underline',
-    <svg viewBox='0 0 24 24'>
-      <path
-        fill='currentColor'
-        d='M5,21H19V19H5V21M12,17A6,6 0 0,0 18,11V3H15.5V11A3.5,3.5 0 0,1 12,14.5A3.5,3.5 0 0,1 8.5,11V3H6V11A6,6 0 0,0 12,17Z'
-      />
-    </svg>
-  );
-
-  app.$icon.register(
-    'toolkit-format-color',
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
-      <path fill='currentColor' d='M9.62,12L12,5.67L14.37,12M11,3L5.5,17H7.75L8.87,14H15.12L16.25,17H18.5L13,3H11Z' />
     </svg>
   );
 
@@ -648,20 +733,6 @@ export function loadSvgs() {
         fill='currentColor'
         d='M13,4A4,4 0 0,1 17,8A4,4 0 0,1 13,12H11V18H9V4H13M13,10A2,2 0 0,0 15,8A2,2 0 0,0 13,6H11V10H13Z'
       />
-    </svg>
-  );
-
-  app.$icon.register(
-    'toolkit-format-align-left',
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
-      <path fill='currentColor' d='M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z' />
-    </svg>
-  );
-
-  app.$icon.register(
-    'toolkit-format-align-center',
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
-      <path fill='currentColor' d='M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z' />
     </svg>
   );
 

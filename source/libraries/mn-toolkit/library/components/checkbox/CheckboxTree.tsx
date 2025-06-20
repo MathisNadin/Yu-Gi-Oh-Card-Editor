@@ -1,6 +1,6 @@
+import { JSX } from 'react';
 import { classNames } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { Checkbox } from './Checkbox';
 
@@ -13,52 +13,22 @@ export interface ICheckboxTreeItem<ID = number> {
 
 // To extend the corresponding Form Field props without parasitizing it with the base element's typing
 export interface ICheckboxTreeSpecificProps<ID = number> {
-  defaultValue?: ID[];
+  value: ID[];
   items: ICheckboxTreeItem<ID>[];
-  onChange?: (value: ID[]) => void | Promise<void>;
+  onChange: (value: ID[]) => void | Promise<void>;
 }
 
 interface ICheckboxTreeProps<ID = number> extends ICheckboxTreeSpecificProps<ID>, IContainerProps<HTMLUListElement> {}
 
-interface ICheckboxTreeState<ID = number> extends IContainerState {
-  selected: Set<ID>;
-  items: ICheckboxTreeItem<ID>[];
-}
+interface ICheckboxTreeState extends IContainerState {}
 
-export class CheckboxTree<ID = number> extends Container<
-  ICheckboxTreeProps<ID>,
-  ICheckboxTreeState<ID>,
-  HTMLUListElement
-> {
-  public static get defaultProps(): ICheckboxTreeProps {
+export class CheckboxTree<ID = number> extends Container<ICheckboxTreeProps<ID>, ICheckboxTreeState, HTMLUListElement> {
+  public static get defaultProps(): Omit<ICheckboxTreeProps, 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       gutter: true,
       layout: 'vertical',
-      defaultValue: [],
-      items: [],
     };
-  }
-
-  public constructor(props: ICheckboxTreeProps<ID>) {
-    super(props);
-    this.state = {
-      ...this.state,
-      selected: new Set(props.defaultValue || []),
-      items: props.items || [],
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ICheckboxTreeProps<ID>>,
-    prevState: Readonly<ICheckboxTreeState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (prevProps.items !== this.props.items || prevProps.defaultValue !== this.props.defaultValue) {
-      this.setState({ items: this.props.items, selected: new Set(this.props.defaultValue || []) });
-    }
   }
 
   /**
@@ -103,10 +73,10 @@ export class CheckboxTree<ID = number> extends Container<
    * - Unchecking an item → unchecks all its descendants and unchecks the parents if no other child is checked.
    */
   private async onCheckItem(id: ID, checked: boolean) {
-    const selected = new Set(this.state.selected);
+    const selected = new Set(this.props.value);
 
     // Finds the path from the root to the checked/unchecked item.
-    const path = this.findPathById(this.state.items, id);
+    const path = this.findPathById(this.props.items, id);
     if (!path) return; // ID not found in the tree
 
     const currentItem = path[path.length - 1];
@@ -155,9 +125,8 @@ export class CheckboxTree<ID = number> extends Container<
       }
     }
 
-    // Updates the state and calls the onChange callback if provided.
-    await this.setStateAsync({ selected });
-    if (this.props.onChange) await this.props.onChange(Array.from(this.state.selected));
+    // Updates the parent
+    await this.props.onChange(Array.from(selected));
   }
 
   public override renderClasses() {
@@ -175,13 +144,14 @@ export class CheckboxTree<ID = number> extends Container<
   }
 
   public override get children() {
-    return this.renderItems(this.state.items);
+    return this.renderItems(this.props.items);
   }
 
   private renderItems(items: ICheckboxTreeItem<ID>[], level: number = 0): JSX.Element[] {
     let paddingLeft = '';
     if (level) paddingLeft = app.$theme.getUnitString(app.$theme.settings.commons?.['default-spacing']) || '16px';
 
+    const selected = new Set(this.props.value);
     return items.map((item) => {
       const hasChildren = !!item.children?.length;
       return (
@@ -192,7 +162,7 @@ export class CheckboxTree<ID = number> extends Container<
         >
           <Checkbox
             label={item.label}
-            defaultValue={this.state.selected.has(item.id)}
+            value={selected.has(item.id)}
             onChange={(checked) => this.onCheckItem(item.id, checked)}
           />
 

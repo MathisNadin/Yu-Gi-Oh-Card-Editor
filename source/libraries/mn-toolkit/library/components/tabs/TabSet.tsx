@@ -1,6 +1,6 @@
 import { classNames } from 'mn-tools';
 import { TJSXElementChild, TForegroundColor, TBackgroundColor } from '../../system';
-import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { TIconId, Icon } from '../icon';
 import { Spacer } from '../spacer';
 import { Typography } from '../typography';
@@ -22,10 +22,10 @@ export interface ITabItem<ID = string> {
 }
 
 export interface ITabSetProps<ID> extends IContainableProps {
-  items: ITabItem<ID>[];
   tabPosition?: TTabPosition;
-  defaultValue: ID;
-  onChange?: (value: ID) => Promise<void> | void;
+  items: ITabItem<ID>[];
+  value: ID;
+  onChange: (value: ID) => Promise<void> | void;
   onClose?: (tabId: ID) => Promise<void> | void;
   addButton?: boolean;
   onAdd?: () => Promise<void> | void;
@@ -33,50 +33,24 @@ export interface ITabSetProps<ID> extends IContainableProps {
   noSpacer?: boolean;
 }
 
-interface ITabSetState<ID> extends IContainableState {
-  value: ID;
-  items: ITabItem<ID>[];
-}
+interface ITabSetState extends IContainableState {}
 
-export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetState<ID>> {
-  public static override get defaultProps(): ITabSetProps<number> {
+export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetState> {
+  public static override get defaultProps(): Omit<ITabSetProps<number>, 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      name: '',
-      disabled: false,
-      defaultValue: undefined!,
-      items: [],
     };
-  }
-
-  public get tabIndex() {
-    return this.state.value;
-  }
-
-  public constructor(props: ITabSetProps<ID>) {
-    super(props);
-    this.state = { ...this.state, value: props.defaultValue, items: props.items };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ITabSetProps<ID>>,
-    prevState: Readonly<ITabSetState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue === this.props.defaultValue && prevProps.items === this.props.items) return;
-    this.setState({ value: this.props.defaultValue, items: this.props.items });
   }
 
   private getListItems() {
     const result: ITabItem<ID>[] = [];
     let first!: ITabItem<ID>;
 
-    for (const item of this.state.items) {
+    for (const item of this.props.items) {
       const listItem: ITabItem<ID> = {
         tabId: item.tabId,
         label: item.label,
-        selected: this.state.value === item.tabId,
+        selected: this.props.value === item.tabId,
         icon: item.icon,
         iconColor: item.iconColor,
         disabled: item.disabled,
@@ -85,7 +59,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
       };
 
       listItem.onTap = ((x) => () => {
-        this.selectItem(x);
+        this.props.onChange(x.tabId);
       })(listItem);
 
       if (!first) {
@@ -95,12 +69,6 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
       result.push(listItem);
     }
     return result;
-  }
-
-  public async selectItem(item: ITabItem<ID>) {
-    await this.setStateAsync({ value: item.tabId });
-    if (!this.props.onChange) return;
-    await this.props.onChange(this.state.value);
   }
 
   public override renderClasses() {
@@ -122,7 +90,7 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
         <span
           key={`${item.tabId}-${index}`}
           id={`mn-tab-button-${item.tabId}`}
-          onClick={() => app.$errorManager.handlePromise(this.selectItem(item))}
+          onClick={() => app.$errorManager.handlePromise(this.props.onChange(item.tabId))}
           className={classNames(
             'item',
             {

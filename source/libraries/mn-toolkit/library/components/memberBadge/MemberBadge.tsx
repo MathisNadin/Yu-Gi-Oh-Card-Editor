@@ -17,7 +17,7 @@ interface IMemberBadgeProps extends IContainableProps {
 interface IMemberBadgeState extends IContainableState {}
 
 export class MemberBadge extends Containable<IMemberBadgeProps, IMemberBadgeState> {
-  public static override get defaultProps(): IMemberBadgeProps {
+  public static override get defaultProps(): Omit<IMemberBadgeProps, 'member'> {
     return {
       ...super.defaultProps,
       shape: 'circle',
@@ -25,7 +25,6 @@ export class MemberBadge extends Containable<IMemberBadgeProps, IMemberBadgeStat
       derivative: 'default',
       color: 'primary',
       display: 'personNames',
-      member: undefined!,
     };
   }
 

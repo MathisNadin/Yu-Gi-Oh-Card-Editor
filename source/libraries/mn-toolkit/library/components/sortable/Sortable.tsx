@@ -1,6 +1,7 @@
+import { JSX } from 'react';
+import { classNames, isUndefined } from 'mn-tools';
 import { IContainerProps, IContainerState, Container } from '../container';
 import { Icon } from '../icon';
-import { classNames, isUndefined } from 'mn-tools';
 
 interface ISortableProps extends IContainerProps {
   enabled: boolean;

@@ -4,15 +4,15 @@ import { ISliderProps, Slider } from './Slider';
 
 interface ISliderFieldProps extends IFormFieldProps<number>, ISliderProps {}
 
-interface ISliderFieldState extends IFormFieldState<number> {}
+interface ISliderFieldState extends IFormFieldState {}
 
 export class SliderField extends FormField<number, ISliderFieldProps, ISliderFieldState> {
-  public static get defaultProps(): ISliderFieldProps {
+  public static get defaultProps(): Omit<ISliderFieldProps, 'min' | 'max' | 'step' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      ...Slider.defaultProps,
       hideLabel: true,
-      defaultValue: 0,
+      label: '',
+      valueDisplayMode: Slider.defaultProps.valueDisplayMode,
     };
   }
 
@@ -30,13 +30,13 @@ export class SliderField extends FormField<number, ISliderFieldProps, ISliderFie
         {this.renderLabel()}
         <Slider
           disabled={this.props.disabled}
-          defaultValue={this.state.value}
-          valueDisplayMode={this.props.valueDisplayMode}
           min={this.props.min}
           max={this.props.max}
           step={this.props.step}
           color={this.props.color}
           marks={this.props.marks}
+          valueDisplayMode={this.props.valueDisplayMode}
+          value={this.value}
           onChange={(value) => this.onChange(value)}
         />
       </HorizontalStack>

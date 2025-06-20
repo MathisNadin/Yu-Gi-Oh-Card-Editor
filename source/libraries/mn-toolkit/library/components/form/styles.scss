@@ -127,11 +127,6 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
       box-shadow: 0 0 10px color-hsla($primary, 0.26) inset;
       border-color: color-hsl($primary);
     }
-    .form-label {
-      .mn-typography-label {
-        color: color-hsl($fg1);
-      }
-    }
   }
 
   &.required {
@@ -149,10 +144,6 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
   }
 
   &.error {
-    .form-label {
-      color: color-hsl($negative);
-    }
-
     .form-helper {
       color: color-hsl($negative);
     }

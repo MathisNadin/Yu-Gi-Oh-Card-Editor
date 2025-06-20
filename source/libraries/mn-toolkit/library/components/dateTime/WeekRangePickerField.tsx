@@ -3,44 +3,28 @@ import { WeekRangePicker, IWeekRange, IWeekRangePickerProps } from './WeekRangeP
 
 interface IWeekRangePickerFieldProps extends IFormFieldProps<IWeekRange>, IWeekRangePickerProps {}
 
-interface IWeekRangePickerFieldState extends IFormFieldState<IWeekRange> {}
+interface IWeekRangePickerFieldState extends IFormFieldState {}
 
 export class WeekRangePickerField extends FormField<
   IWeekRange,
   IWeekRangePickerFieldProps,
   IWeekRangePickerFieldState
 > {
-  public static override get defaultProps(): IWeekRangePickerFieldProps {
+  public static override get defaultProps(): Omit<IWeekRangePickerFieldProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: { lowerWeek: undefined, higherWeek: undefined },
+      canReset: WeekRangePicker.defaultProps.canReset,
+      higherPopupTitle: WeekRangePicker.defaultProps.higherPopupTitle,
+      lowerPopupTitle: WeekRangePicker.defaultProps.lowerPopupTitle,
     };
   }
 
   public constructor(props: IWeekRangePickerFieldProps) {
     super(props, 'week-range-picker');
-    this.state = {
-      ...this.state,
-      value: props.defaultValue || { lowerWeek: undefined, higherWeek: undefined },
-    };
-  }
-
-  protected override async updateFromNewProps(prevProps: Readonly<IWeekRangePickerFieldProps>) {
-    if (prevProps === this.props) return;
-    if (
-      this.props.defaultValue !== this.state.value ||
-      this.props.defaultValue?.lowerWeek?.getTime() !== this.state.value?.lowerWeek?.getTime() ||
-      this.props.defaultValue?.higherWeek?.getTime() !== this.state.value?.higherWeek?.getTime()
-    ) {
-      await this.setStateAsync({
-        value: this.props.defaultValue || { lowerWeek: undefined, higherWeek: undefined },
-      });
-      if (this.hasValue) await this.doValidation();
-    }
   }
 
   public override get hasValue(): boolean {
-    return !!this.state.value?.lowerWeek && !!this.state.value?.higherWeek;
+    return !!this.value?.lowerWeek && !!this.value?.higherWeek;
   }
 
   protected override renderControl() {
@@ -49,7 +33,7 @@ export class WeekRangePickerField extends FormField<
         disabled={this.props.disabled}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

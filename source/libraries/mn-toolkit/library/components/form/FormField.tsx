@@ -1,41 +1,30 @@
-import { classNames, isEmpty, Observable } from 'mn-tools';
+import { classNames, isEmpty } from 'mn-tools';
 import { TJSXElementChildren, TForegroundColor } from '../../system';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { HorizontalStack, VerticalStack } from '../container';
 import { TIconId, Icon } from '../icon';
 import { Typography } from '../typography';
+import { FormContext, IFormContext } from './FormContext';
 
-type TFormFieldData = string | number | boolean | object;
+type TFormFieldData = string | number | boolean | object | undefined;
 export type TFormFieldDataType = TFormFieldData | TFormFieldData[];
 
-export type TFormField = FormField<
-  TFormFieldDataType,
-  IFormFieldProps<TFormFieldDataType>,
-  IFormFieldState<TFormFieldDataType>
->;
-
-export interface IFormFieldListener {
-  formFieldValidated(field: TFormField): void;
-  formFieldSubmit(field: TFormField): void;
-}
+export type TFormField = FormField<TFormFieldDataType, IFormFieldProps<TFormFieldDataType>, IFormFieldState>;
 
 export interface IFormField {
   addError(message: string): Promise<void>;
   validate(): Promise<void>;
-  invalidate(): Promise<void>;
+  unvalidate(): Promise<void>;
 }
 
-export interface IFormFieldProps<TFormFieldDataType, FORM_ELEMENT extends HTMLElement = HTMLDivElement>
-  extends IContainableProps {
-  disabled?: boolean;
+export interface IFormFieldProps<TFormFieldDataType> extends IContainableProps {
   autofocus?: boolean;
 
-  defaultValue?: TFormFieldDataType;
-  onChange?: (value: TFormFieldDataType) => void | Promise<void>;
+  value: TFormFieldDataType;
+  onChange: (value: TFormFieldDataType) => void | Promise<void>;
 
   required?: boolean;
   onValidate?: (field: IFormField) => void | Promise<void>;
-  onSubmit?: (event: React.KeyboardEvent<FORM_ELEMENT>) => void | Promise<void>;
 
   hideLabel?: boolean;
   label: string;
@@ -66,8 +55,7 @@ export interface IFormFieldProps<TFormFieldDataType, FORM_ELEMENT extends HTMLEl
   };
 }
 
-export interface IFormFieldState<K> extends IContainableState {
-  value: K;
+export interface IFormFieldState extends IContainableState {
   focus: boolean;
   error: boolean;
   errorMessage: string;
@@ -76,30 +64,23 @@ export interface IFormFieldState<K> extends IContainableState {
 
 export abstract class FormField<
     TFormFieldDataType,
-    PROPS extends IFormFieldProps<TFormFieldDataType, FORM_ELEMENT>,
-    STATE extends IFormFieldState<TFormFieldDataType>,
-    FORM_ELEMENT extends HTMLElement = HTMLDivElement,
+    PROPS extends IFormFieldProps<TFormFieldDataType>,
+    STATE extends IFormFieldState,
   >
   extends Containable<PROPS, STATE>
   implements IFormField
 {
+  public static override contextType = FormContext;
+  public override context: IFormContext | undefined;
+
   private type: string;
   protected validators: ((field: this) => void | Promise<void>)[];
-  protected observers = new Observable<IFormFieldListener>();
-
-  public get value() {
-    return this.state.value;
-  }
-
-  public get hasValue() {
-    return !isEmpty(this.value);
-  }
+  private shouldValidateValue = false;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static override get defaultProps(): IFormFieldProps<any, any> {
+  public static override get defaultProps(): Omit<IFormFieldProps<any>, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      label: '',
     };
   }
 
@@ -107,7 +88,6 @@ export abstract class FormField<
     super(props);
     this.state = {
       ...this.state,
-      value: props.defaultValue!,
       error: false,
       focus: false,
       errorMessage: '',
@@ -115,16 +95,21 @@ export abstract class FormField<
     };
 
     this.type = type;
+
     this.validators = [];
     if (props.onValidate) this.validators.push(props.onValidate);
+
+    // built-in required check
     this.validators.push((field) => {
-      if (!field.isRequired || field.hasValue) field.validate();
-      else field.addError('Nous avons besoin de quelque chose ici');
+      if (field.props.required && !field.hasValue) {
+        field.addError('Nous avons besoin de quelque chose ici');
+      }
     });
   }
 
   public override componentDidMount() {
     super.componentDidMount();
+    if (this.context?.registerField) this.context.registerField(this as unknown as TFormField);
     if (this.hasValue) app.$errorManager.handlePromise(this.doValidation());
   }
 
@@ -134,34 +119,30 @@ export abstract class FormField<
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    app.$errorManager.handlePromise(this.updateFromNewProps(prevProps));
+    if (this.shouldValidateValue) {
+      this.shouldValidateValue = false;
+      app.$errorManager.handlePromise(this.fireValueChanged());
+    }
   }
 
-  protected async updateFromNewProps(prevProps: Readonly<PROPS>) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue === this.state.value) return;
-    await this.setStateAsync({ value: this.props.defaultValue! });
-    if (this.hasValue) await this.doValidation();
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    if (this.context?.unregisterField) this.context.unregisterField(this as unknown as TFormField);
   }
 
-  public addListener(listener: IFormFieldListener) {
-    this.observers.addListener(listener);
+  public get value(): PROPS['value'] {
+    return this.props.value;
   }
 
-  protected async fireValueChanged() {
-    await this.doValidation();
-    this.observers.dispatch('formFieldValidated', this);
+  public get hasValue(): boolean {
+    return !isEmpty(this.value);
   }
 
-  public get isRequired() {
-    return !!this.props.required;
-  }
-
-  public get hasError() {
+  public get hasError(): boolean {
     return this.state.validationState === 'validated' && !!this.state.error;
   }
 
-  public get isValid() {
+  public get isValid(): boolean {
     return this.state.validationState === 'validated' && !this.state.error;
   }
 
@@ -172,11 +153,10 @@ export abstract class FormField<
 
     for (const validator of this.validators) {
       await validator(this);
-      if (this.hasError) break;
+      if (this.hasError) return;
     }
 
-    if (this.hasError) return;
-    await this.setStateAsync({ validationState: 'validated' });
+    await this.validate();
   }
 
   public async addError(errorMessage: string) {
@@ -195,12 +175,31 @@ export abstract class FormField<
     });
   }
 
-  public async invalidate() {
+  public async unvalidate() {
     await this.setStateAsync({
       validationState: undefined,
       error: false,
       errorMessage: '',
     });
+  }
+
+  protected async onBlur() {
+    await this.setStateAsync({ focus: false });
+  }
+
+  protected async onFocus() {
+    await this.setStateAsync({ focus: true });
+  }
+
+  protected async onChange(value: TFormFieldDataType) {
+    this.shouldValidateValue = true;
+    await this.props.onChange(value);
+  }
+
+  // notify form of validation result
+  protected async fireValueChanged() {
+    await this.doValidation();
+    if (this.context?.notifyFieldChange) this.context.notifyFieldChange(this as unknown as TFormField);
   }
 
   public override renderClasses() {
@@ -209,7 +208,7 @@ export abstract class FormField<
     if (this.type) classes[`mn-field-${this.type}`] = true;
     classes['mn-focus'] = this.state.focus;
     classes['has-value'] = this.hasValue;
-    classes['required'] = !!this.isRequired;
+    classes['required'] = !!this.props.required;
     classes['error'] = this.hasError;
     if (this.state.validationState) classes[this.state.validationState] = true;
     return classes;
@@ -318,19 +317,5 @@ export abstract class FormField<
         )}
       </HorizontalStack>
     );
-  }
-
-  protected async onBlur() {
-    await this.setStateAsync({ focus: false });
-  }
-
-  protected async onFocus() {
-    await this.setStateAsync({ focus: true });
-  }
-
-  protected async onChange(value: TFormFieldDataType) {
-    await this.setStateAsync({ value });
-    await this.fireValueChanged();
-    if (this.props.onChange) await this.props.onChange(this.state.value);
   }
 }

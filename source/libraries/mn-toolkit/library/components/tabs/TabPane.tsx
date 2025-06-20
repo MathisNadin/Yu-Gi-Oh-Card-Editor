@@ -11,7 +11,7 @@ export interface ITabPaneProps<ID> extends IContainerProps, ITabItem<ID> {
 interface ITabPaneState extends IContainerState {}
 
 export class TabPane<ID = number> extends Container<ITabPaneProps<ID>, ITabPaneState> {
-  public static override get defaultProps(): ITabPaneProps<number> {
+  public static override get defaultProps(): Omit<ITabPaneProps<number>, 'tabId' | 'label'> {
     return {
       ...super.defaultProps,
       tabPosition: 'top',
@@ -19,8 +19,6 @@ export class TabPane<ID = number> extends Container<ITabPaneProps<ID>, ITabPaneS
       fill: true,
       padding: true,
       bg: '1',
-      label: '',
-      tabId: undefined!,
     };
   }
 

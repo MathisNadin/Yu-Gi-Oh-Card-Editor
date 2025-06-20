@@ -14,11 +14,10 @@ interface IBreadcrumbState extends IContainerState {
 }
 
 export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
-  public static override get defaultProps(): IBreadcrumbProps {
+  public static override get defaultProps(): Omit<IBreadcrumbProps, 'crumbs'> {
     return {
       ...super.defaultProps,
       verticalItemAlignment: 'middle',
-      crumbs: [],
       onlyShowLastCrumb: false,
     };
   }
@@ -40,7 +39,11 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
             key='back'
             icon='toolkit-angle-left'
             name='Revenir en arrière'
-            onTap={!crumbs[crumbs.length - 2]?.onTap ? undefined : () => crumbs[crumbs.length - 2]!.onTap!()}
+            onTap={
+              crumbs[crumbs.length - 2]?.href?.state
+                ? () => app.$router.go(crumbs[crumbs.length - 2]!.href!.state, crumbs[crumbs.length - 2]!.href!.params)
+                : undefined
+            }
           />
         ),
         <Typography
@@ -55,15 +58,15 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
 
     return [
       crumbs.map((crumb, i) => {
-        if (!!crumb.onTap) {
+        if (!!crumb.href) {
           return [
             <Typography
-              key={`${i}-crumb-clickable-${crumb.title}`}
+              key={`${i}-crumb-href-${crumb.title}`}
               className='crumb'
               variant='document'
               contentType='markdown'
               content={crumb.title}
-              onTap={() => app.$errorManager.handlePromise(crumb.onTap!())}
+              href={crumb.href}
             />,
             i < crumbs.length - 1 && <Icon key='separator' className='separator' icon='toolkit-angle-right' />,
           ];

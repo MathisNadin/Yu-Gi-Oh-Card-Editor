@@ -3,42 +3,26 @@ import { DateRangePicker, IDateRange, IDateRangePickerProps } from './DateRangeP
 
 interface IDateRangePickerFieldProps extends IFormFieldProps<IDateRange>, IDateRangePickerProps {}
 
-interface IDateRangePickerFieldState extends IFormFieldState<IDateRange> {}
+interface IDateRangePickerFieldState extends IFormFieldState {}
 
 export class DateRangePickerField extends FormField<
   IDateRange,
   IDateRangePickerFieldProps,
   IDateRangePickerFieldState
 > {
-  public static override get defaultProps(): IDateRangePickerFieldProps {
+  public static override get defaultProps(): Omit<IDateRangePickerFieldProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: { lowerDate: undefined, higherDate: undefined },
+      canReset: DateRangePicker.defaultProps.canReset,
     };
   }
 
   public constructor(props: IDateRangePickerFieldProps) {
     super(props, 'date-range-picker');
-    this.state = {
-      ...this.state,
-      value: props.defaultValue || { lowerDate: undefined, higherDate: undefined },
-    };
-  }
-
-  protected override async updateFromNewProps(prevProps: Readonly<IDateRangePickerFieldProps>) {
-    if (prevProps === this.props) return;
-    if (
-      this.props.defaultValue !== this.state.value ||
-      this.props.defaultValue?.lowerDate?.getTime() !== this.state.value?.lowerDate?.getTime() ||
-      this.props.defaultValue?.higherDate?.getTime() !== this.state.value?.higherDate?.getTime()
-    ) {
-      await this.setStateAsync({ value: this.props.defaultValue || { lowerDate: undefined, higherDate: undefined } });
-      if (this.hasValue) await this.doValidation();
-    }
   }
 
   public override get hasValue() {
-    return !!this.state.value?.lowerDate && !!this.state.value?.higherDate;
+    return !!this.value?.lowerDate && !!this.value?.higherDate;
   }
 
   protected override renderControl() {
@@ -49,7 +33,7 @@ export class DateRangePickerField extends FormField<
         lowerPopupTitle={this.props.lowerPopupTitle}
         higherPopupTitle={this.props.higherPopupTitle}
         yearRange={this.props.yearRange}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

@@ -11,14 +11,13 @@ interface ILabeledGroupProps extends IContainerProps {
 interface ILabeledGroupState extends IContainerState {}
 
 export class LabeledGroup extends Container<ILabeledGroupProps, ILabeledGroupState> {
-  public static override get defaultProps(): ILabeledGroupProps {
+  public static override get defaultProps(): Omit<ILabeledGroupProps, 'label'> {
     return {
       ...super.defaultProps,
       layout: 'vertical',
       groupLayout: 'vertical',
       padding: true,
       gutter: true,
-      label: '',
       bg: '1',
     };
   }

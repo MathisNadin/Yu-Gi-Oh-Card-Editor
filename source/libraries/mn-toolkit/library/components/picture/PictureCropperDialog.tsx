@@ -186,7 +186,7 @@ export class PictureCropperDialog extends AbstractPopup<
   private async onValidate() {
     const { position, scale, imageDimensions } = this.state;
 
-    // Retirer le concept de scale, ramener les dimensions à une échelle de 1
+    // Remove the concept of scale, bring the dimensions back to a scale of 1
     const scaledWidth = imageDimensions.width * scale;
     const scaledHeight = imageDimensions.height * scale;
 
@@ -218,13 +218,13 @@ export class PictureCropperDialog extends AbstractPopup<
     const scaledWidth = imageDimensions.width * scale;
     const scaledHeight = imageDimensions.height * scale;
 
-    // Calculer les nouvelles limites de déplacement
+    // Calculate the new movement limits
     const minX = cropAreaDimensions.width - scaledWidth;
     const minY = cropAreaDimensions.height - scaledHeight;
     const maxX = 0;
     const maxY = 0;
 
-    // Vérifier si la nouvelle position dépasse les limites
+    // Check if the new position exceeds the limits
     let newPosition = { ...position };
 
     if (position.x < minX) {
@@ -271,9 +271,9 @@ export class PictureCropperDialog extends AbstractPopup<
               height: containerIsHigher ? `${containerDimensions.width}px` : `${containerDimensions.height}px`,
             }}
           >
-            {/* Image en arrière-plan avec opacité réduite */}
+            {/* Background image with reduced opacity */}
             <img
-              src={imageUrl}
+              src={imageUrl || undefined}
               alt='Croppable Background'
               className='background-image'
               style={{
@@ -282,7 +282,7 @@ export class PictureCropperDialog extends AbstractPopup<
                 transform: `translate(${position.x}px, ${position.y}px)`,
               }}
             />
-            {/* Zone de crop avec image en opacité normale */}
+            {/* Crop area with image at normal opacity */}
             <div
               className={classNames('crop-area', areaType)}
               style={{
@@ -291,7 +291,7 @@ export class PictureCropperDialog extends AbstractPopup<
               }}
             >
               <img
-                src={imageUrl}
+                src={imageUrl || undefined}
                 alt='Croppable'
                 style={{
                   width: `${imageDimensions.width * scale}px`,
@@ -309,7 +309,7 @@ export class PictureCropperDialog extends AbstractPopup<
         max={3}
         step={0.1}
         valueDisplayMode='auto'
-        defaultValue={scale}
+        value={scale}
         onChange={(scale) => this.onChangeScale(scale)}
       />,
     ];

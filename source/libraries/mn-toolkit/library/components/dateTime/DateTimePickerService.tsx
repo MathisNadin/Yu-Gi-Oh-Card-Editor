@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { HorizontalStack, VerticalStack } from '../container';
 import { Button } from '../button';
 import {
@@ -18,6 +19,22 @@ import {
 export class DateTimePickerService {
   public async pickDate(eventOrRect: React.MouseEvent | DOMRect, options: IDateChooserDialogProps) {
     if (app.$device.isTouch) return await DateChooserDialog.show(options);
+
+    function DateChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
+      const [date, setDate] = useState<Date>(new Date(options.defaultValue));
+      return (
+        <DateChooser
+          padding
+          value={date}
+          onChange={(newDate, source) => {
+            setDate(newDate);
+            if (source !== 'day') return;
+            props.onChoose(newDate);
+          }}
+        />
+      );
+    }
+
     return await new Promise<Date | undefined>((resolve) => {
       const id = app.$popover.bubble(eventOrRect, {
         preferBottom: true,
@@ -26,9 +43,7 @@ export class DateTimePickerService {
           if (onBlur) resolve(undefined);
         },
         content: (
-          <DateChooser
-            padding
-            defaultValue={options.defaultValue}
+          <DateChooserPopoverContent
             onChoose={(date) => {
               app.$popover.remove(id);
               resolve(date);
@@ -41,7 +56,19 @@ export class DateTimePickerService {
 
   public async pickTime(eventOrRect: React.MouseEvent | DOMRect, options: ITimeChooserDialogProps) {
     if (app.$device.isTouch) return await TimeChooserDialog.show(options);
-    let time: Date;
+
+    function TimeChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
+      const [time, setTime] = useState<Date>(new Date(options.defaultValue));
+      return (
+        <VerticalStack padding gutter>
+          <TimeChooser value={time} onChange={(newTime) => setTime(newTime)} />
+          <HorizontalStack itemAlignment='right' verticalItemAlignment='middle'>
+            <Button name="Valider l'heure choisie" label='OK' onTap={() => props.onChoose(time)} />
+          </HorizontalStack>
+        </VerticalStack>
+      );
+    }
+
     return await new Promise<Date | undefined>((resolve) => {
       const id = app.$popover.bubble(eventOrRect, {
         preferBottom: true,
@@ -50,25 +77,12 @@ export class DateTimePickerService {
           if (onBlur) resolve(undefined);
         },
         content: (
-          <VerticalStack padding gutter>
-            <TimeChooser
-              defaultValue={options.defaultValue}
-              onChoose={(newTime) => {
-                time = newTime;
-              }}
-            />
-
-            <HorizontalStack itemAlignment='right' verticalItemAlignment='middle'>
-              <Button
-                name="Valider l'heure choisie"
-                label='OK'
-                onTap={() => {
-                  app.$popover.remove(id);
-                  resolve(time);
-                }}
-              />
-            </HorizontalStack>
-          </VerticalStack>
+          <TimeChooserPopoverContent
+            onChoose={(time) => {
+              app.$popover.remove(id);
+              resolve(time);
+            }}
+          />
         ),
       });
     });
@@ -96,7 +110,18 @@ export class DateTimePickerService {
         break;
     }
 
-    let dateTime: Date;
+    function DateTimeChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
+      const [dateTime, setDateTime] = useState<Date>(new Date(options.defaultValue));
+      return (
+        <VerticalStack padding gutter>
+          <DateTimeChooser value={dateTime} onChange={(newDateTime) => setDateTime(newDateTime)} />
+          <HorizontalStack itemAlignment='right' verticalItemAlignment='middle'>
+            <Button name="Valider la date et l'heure choisies" label='OK' onTap={() => props.onChoose(dateTime)} />
+          </HorizontalStack>
+        </VerticalStack>
+      );
+    }
+
     return await new Promise<Date | undefined>((resolve) => {
       const id = app.$popover.bubble(eventOrRect, {
         preferBottom: true,
@@ -105,25 +130,12 @@ export class DateTimePickerService {
           if (onBlur) resolve(undefined);
         },
         content: (
-          <VerticalStack padding gutter>
-            <DateTimeChooser
-              defaultValue={options.defaultValue}
-              onChoose={(newDateTime) => {
-                dateTime = newDateTime;
-              }}
-            />
-
-            <HorizontalStack itemAlignment='right' verticalItemAlignment='middle'>
-              <Button
-                name="Valider la date et l'heure choisies"
-                label='OK'
-                onTap={() => {
-                  app.$popover.remove(id);
-                  resolve(dateTime);
-                }}
-              />
-            </HorizontalStack>
-          </VerticalStack>
+          <DateTimeChooserPopoverContent
+            onChoose={(dateTime) => {
+              app.$popover.remove(id);
+              resolve(dateTime);
+            }}
+          />
         ),
       });
     });
@@ -131,6 +143,23 @@ export class DateTimePickerService {
 
   public async pickWeek(eventOrRect: React.MouseEvent | DOMRect, options: IWeekChooserDialogProps) {
     if (app.$device.isTouch) return await WeekChooserDialog.show(options);
+
+    function WeekChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
+      const [date, setDate] = useState<Date>(new Date(options.defaultValue));
+      return (
+        <WeekChooser
+          padding
+          yearRange={options.yearRange}
+          value={date}
+          onChange={(newDate, source) => {
+            setDate(newDate);
+            if (source !== 'week') return;
+            props.onChoose(newDate);
+          }}
+        />
+      );
+    }
+
     return await new Promise<Date | undefined>((resolve) => {
       const id = app.$popover.bubble(eventOrRect, {
         preferBottom: true,
@@ -139,10 +168,7 @@ export class DateTimePickerService {
           if (onBlur) resolve(undefined);
         },
         content: (
-          <WeekChooser
-            padding
-            yearRange={options.yearRange}
-            defaultValue={options.defaultValue}
+          <WeekChooserPopoverContent
             onChoose={(date) => {
               app.$popover.remove(id);
               resolve(date);

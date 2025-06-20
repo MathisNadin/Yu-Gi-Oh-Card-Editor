@@ -13,7 +13,6 @@
   background-color: color-hsl($bg1);
 
   .label {
-    cursor: pointer;
     margin: 0 calc(#{$defaultSpacing});
     flex: 1;
     position: relative;
@@ -24,12 +23,17 @@
     padding-right: 26px;
   }
 
+  .default-select-label-decorator {
+    display: flex;
+    gap: calc(#{$defaultSpacing} / 2);
+    align-items: center;
+  }
+
   .drop-icon {
     background-color: color-hsl($bg3);
     color: color-hsl($fg1);
     height: calc(#{$defaultItemHeight});
     width: calc(#{$defaultItemHeight});
-    cursor: pointer;
     justify-content: center;
     display: flex;
     align-items: center;

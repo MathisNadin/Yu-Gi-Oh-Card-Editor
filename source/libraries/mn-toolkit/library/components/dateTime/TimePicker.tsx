@@ -1,27 +1,26 @@
 import { TJSXElementChildren } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { IContainerProps, Container, IContainerState, HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { TimeInput } from './inputs';
 
 export interface ITimePickerProps extends IContainerProps {
   popupTitle?: string;
-  defaultValue?: Date;
-  canReset?: boolean;
-  onChange?: (value: Date) => void | Promise<void>;
+  canReset: boolean;
+  value: Date | undefined;
+  onChange: (value: Date | undefined) => void | Promise<void>;
 }
 
 interface ITimePickerState extends IContainerState {
   focus: boolean;
-  time?: Date;
 }
 
 export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
-  public static override get defaultProps(): ITimePickerProps {
+  public static override get defaultProps(): Omit<ITimePickerProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       gutter: true,
       verticalItemAlignment: 'middle',
+      canReset: true,
     };
   }
 
@@ -30,32 +29,15 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
     this.state = {
       ...this.state,
       focus: false,
-      time: props.defaultValue,
     };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ITimePickerProps>,
-    prevState: Readonly<ITimePickerState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props.defaultValue?.getTime() !== prevProps.defaultValue?.getTime()) {
-      this.setState({ time: this.props.defaultValue });
-    }
-  }
-
-  private async onChange(time: Date | undefined) {
-    await this.setStateAsync({ time });
-    if (this.props.onChange) await this.props.onChange(time!);
   }
 
   private async showTimePicker(event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) {
     const time = await app.$dateTimePicker.pickTime(event, {
-      defaultValue: this.state.time,
+      defaultValue: this.props.value || new Date(),
       title: this.props.popupTitle,
     });
-    if (time) await this.onChange(time);
+    if (time) await this.props.onChange(time);
   }
 
   public override renderClasses() {
@@ -76,7 +58,6 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
   }
 
   public override get children(): TJSXElementChildren {
-    const { time } = this.state;
     return [
       <HorizontalStack
         key='input'
@@ -89,8 +70,8 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
           disabled={app.$device.isTouch}
           fill={this.props.fill}
           canReset={this.props.canReset}
-          defaultValue={time}
-          onChange={(time) => this.onChange(time)}
+          value={this.props.value}
+          onChange={(time) => this.props.onChange(time)}
         />
       </HorizontalStack>,
       !app.$device.isTouch && (
@@ -102,7 +83,7 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
           icon='toolkit-close'
           color='negative'
           name='Réinitialiser'
-          onTap={() => this.onChange(undefined)}
+          onTap={() => this.props.onChange(undefined)}
         />
       ),
     ];

@@ -2,15 +2,15 @@ import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from '../../p
 import { TimeChooser } from './TimeChooser';
 
 export interface ITimeChooserDialogProps extends IAbstractPopupProps<Date> {
-  defaultValue?: Date;
+  defaultValue: Date;
 }
 
 interface ITimeChooserDialogState extends IAbstractPopupState {
-  time?: Date;
+  time: Date;
 }
 
 export class TimeChooserDialog extends AbstractPopup<Date, ITimeChooserDialogProps, ITimeChooserDialogState> {
-  public static async show(options: ITimeChooserDialogProps = {}) {
+  public static async show(options: ITimeChooserDialogProps) {
     options.title = options.title || 'Choisissez une heure';
     options.width = options.width || '90%';
     return await app.$popup.show<Date, ITimeChooserDialogProps>({
@@ -28,7 +28,10 @@ export class TimeChooserDialog extends AbstractPopup<Date, ITimeChooserDialogPro
       color: 'primary',
       onTap: () => this.close(this.state.time),
     });
-    await this.setStateAsync({ buttons, time: this.props.defaultValue });
+    await this.setStateAsync({
+      buttons,
+      time: this.props.defaultValue ? new Date(this.props.defaultValue) : new Date(),
+    });
   }
 
   public override renderContent() {
@@ -36,8 +39,8 @@ export class TimeChooserDialog extends AbstractPopup<Date, ITimeChooserDialogPro
       <TimeChooser
         key='time-chooser'
         mode='grid'
-        defaultValue={this.state.time}
-        onChoose={(time) => this.setStateAsync({ time })}
+        value={this.state.time}
+        onChange={(time) => this.setStateAsync({ time })}
       />,
     ];
   }

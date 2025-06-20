@@ -36,13 +36,12 @@ export class WalkthroughPopover<
   P extends IWalkthroughPopoverProps = IWalkthroughPopoverProps,
   S extends IWalkthroughPopoverState = IWalkthroughPopoverState,
 > extends AbstractPopover<P, S> {
-  public static override get defaultProps(): IWalkthroughPopoverProps {
+  public static override get defaultProps(): Omit<IWalkthroughPopoverProps, 'innerContent'> {
     return {
       ...super.defaultProps,
       triangleWidth: 25,
       triangleHeight: 15,
       innerButtons: [],
-      innerContent: undefined,
     };
   }
 

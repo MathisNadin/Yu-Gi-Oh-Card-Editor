@@ -1,45 +1,27 @@
 import { HTMLInputTypeAttribute } from 'react';
-import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
+import { IContainableProps, IContainableState, Containable } from '../containable';
 
 export interface ITextInputSpecificProps {
+  spellCheck: boolean;
   inputType?: HTMLInputTypeAttribute;
   placeholder?: string;
-  defaultValue?: string;
   minLength?: number;
   maxLength?: number;
-  onChange?: (value: string) => void | Promise<void>;
+  value: string;
+  onChange: (value: string) => void | Promise<void>;
 }
 
 export interface ITextInputProps extends IContainableProps<HTMLInputElement>, ITextInputSpecificProps {}
 
-interface ITextInputState extends IContainableState {
-  value: string;
-}
+interface ITextInputState extends IContainableState {}
 
 export class TextInput extends Containable<ITextInputProps, ITextInputState, HTMLInputElement> {
-  public static override get defaultProps(): ITextInputProps {
+  public static override get defaultProps(): Omit<ITextInputProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      spellCheck: true,
       inputType: 'text',
-      defaultValue: '',
     };
-  }
-
-  public constructor(props: ITextInputProps) {
-    super(props);
-    this.state = { ...this.state, value: props.defaultValue! };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ITextInputProps>,
-    prevState: Readonly<ITextInputState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue! });
-    }
   }
 
   public doFocus() {
@@ -61,12 +43,13 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState, HTM
       <input
         {...this.renderAttributes()}
         ref={this.base}
+        spellCheck={this.props.spellCheck}
         type={this.props.inputType}
         disabled={this.props.disabled}
-        placeholder={this.props.placeholder}
-        value={this.state.value}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}
+        placeholder={this.props.placeholder}
+        value={this.props.value}
         onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
         onKeyUp={(e) => this.props.onKeyUp && app.$errorManager.handlePromise(this.props.onKeyUp(e))}
         onKeyDown={(e) => this.props.onKeyDown && app.$errorManager.handlePromise(this.props.onKeyDown(e))}
@@ -77,8 +60,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState, HTM
   }
 
   private async onChange(e: React.FormEvent<HTMLInputElement>) {
-    const value = e.target.value as string;
-    await this.setStateAsync({ value });
-    if (this.props.onChange) await this.props.onChange(value);
+    const value = (e.target as HTMLInputElement).value || '';
+    await this.props.onChange(value);
   }
 }

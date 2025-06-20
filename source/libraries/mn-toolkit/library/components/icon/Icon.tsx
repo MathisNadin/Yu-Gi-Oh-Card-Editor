@@ -21,13 +21,12 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
 > {
   public iconRef = createRef<HTMLElement>();
 
-  public static override get defaultProps(): IIconProps {
+  public static override get defaultProps(): Omit<IIconProps, 'icon'> {
     return {
       ...super.defaultProps,
       size: 20,
       color: '1',
       buttonType: 'button',
-      icon: 'toolkit-error-circle',
     };
   }
 
@@ -51,6 +50,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
     // Case : top container is a button
     if (this.onTapFunction) {
       classes['mn-icon-container-button'] = true;
+      if (this.icon) classes[`mn-icon-${this.icon}-container-button`] = true;
       if (this.props.className) {
         delete classes[this.props.className];
         classes[`${this.props.className}-container-button`] = true;

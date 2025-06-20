@@ -12,14 +12,13 @@ interface IButtonOutlineProps extends IContainableProps<HTMLButtonElement> {
 interface IButtonOutlineState extends IContainableState {}
 
 export class ButtonOutline extends Containable<IButtonOutlineProps, IButtonOutlineState, HTMLButtonElement> {
-  public static override get defaultProps(): IButtonOutlineProps {
+  public static override get defaultProps(): Omit<IButtonOutlineProps, 'label'> {
     return {
       ...super.defaultProps,
       color: 'primary',
       block: false,
       disabled: false,
       buttonType: 'button',
-      label: '',
     };
   }
 

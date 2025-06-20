@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { IRouterHrefParams, TRouterState } from '../../system';
 import { IActionsPopoverAction } from '../popover';
 import { HeaderService } from './HeaderService';
 
@@ -20,9 +21,9 @@ export interface IHeaderComponent {
   position: TPartPosition;
 }
 
-export interface IHeaderCrumb {
+export interface IHeaderCrumb<T extends TRouterState = TRouterState> {
   title: string;
-  onTap?: () => void | Promise<void>;
+  href?: IRouterHrefParams<T>;
 }
 
 export interface IHeaderListener {

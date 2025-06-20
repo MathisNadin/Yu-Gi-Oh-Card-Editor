@@ -1,5 +1,4 @@
-import { AllHTMLAttributes, ReactNode, RefObject } from 'react';
-import { isString, isNumber, isBoolean } from 'mn-tools';
+import { AllHTMLAttributes, isValidElement, ReactNode, RefObject } from 'react';
 import { IDeviceListener, IScreenSpec, TJSXElementChild, TJSXElementChildren } from '../../system';
 import { Containable, IContainableProps, IContainableState, IGridSpanParams } from '../containable';
 
@@ -139,7 +138,7 @@ export class Container<
 
   protected getSpanVars(element: NonNullable<ReactNode>): React.CSSProperties {
     // if it's a primitive or has no props, nothing to span
-    if (isString(element) || isNumber(element) || isBoolean(element) || !('props' in element)) {
+    if (!isValidElement(element)) {
       return {};
     }
 

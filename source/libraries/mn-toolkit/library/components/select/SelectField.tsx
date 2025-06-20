@@ -1,18 +1,15 @@
-import { ISelectItem, ISelectProps, Select } from './Select';
+import { ISelectProps, Select } from './Select';
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
 
-interface ISelectFieldProps<ID = number> extends IFormFieldProps<ID>, Omit<ISelectProps<ID>, 'width' | 'minWidth'> {
-  items: ISelectItem<ID>[];
-  sort?: boolean;
-}
+interface ISelectFieldProps<ID = number> extends IFormFieldProps<ID>, Omit<ISelectProps<ID>, 'width' | 'minWidth'> {}
 
-interface ISelectFieldState<ID> extends IFormFieldState<ID> {}
+interface ISelectFieldState extends IFormFieldState {}
 
-export class SelectField<ID = number> extends FormField<ID, ISelectFieldProps<ID>, ISelectFieldState<ID>> {
-  public static override get defaultProps(): ISelectFieldProps {
+export class SelectField<ID = number> extends FormField<ID, ISelectFieldProps<ID>, ISelectFieldState> {
+  public static override get defaultProps(): Omit<ISelectFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      items: [],
+      labelDecorator: Select.defaultProps.labelDecorator,
     };
   }
 
@@ -23,15 +20,15 @@ export class SelectField<ID = number> extends FormField<ID, ISelectFieldProps<ID
   protected override renderControl() {
     return (
       <Select<ID>
-        items={this.props.items}
-        defaultValue={this.state.value}
         disabled={this.props.disabled}
+        items={this.props.items}
+        value={this.value}
+        onChange={(value) => this.onChange(value)}
         sort={this.props.sort}
         noTopContainer={this.props.noTopContainer}
         maxVisibleItems={this.props.maxVisibleItems}
         undefinedLabel={this.props.required ? 'Choisissez une valeur' : ''}
         labelDecorator={this.props.labelDecorator}
-        onChange={(value) => this.onChange(value)}
       />
     );
   }

@@ -9,7 +9,7 @@ export interface ICameraPickerDialogProps extends IAbstractPopupProps<string> {
 }
 
 interface ICameraPickerDialogState extends IAbstractPopupState {
-  selected?: string;
+  selected: string;
   deviceItems: ISelectItem<string>[];
 }
 
@@ -51,7 +51,7 @@ export class CameraPickerDialog extends AbstractPopup<string, ICameraPickerDialo
         id: device.deviceId,
         label: device.label,
       }));
-      const selected = deviceItems[0]?.id;
+      const selected = deviceItems[0]?.id || '';
       await this.setStateAsync({ deviceItems, selected });
       await this.start();
     } catch (error) {
@@ -124,7 +124,7 @@ export class CameraPickerDialog extends AbstractPopup<string, ICameraPickerDialo
       <Select<string>
         key='devices'
         items={this.state.deviceItems}
-        defaultValue={this.state.selected}
+        value={this.state.selected}
         onChange={async (selected) => {
           await this.setStateAsync({ selected });
           await this.start();

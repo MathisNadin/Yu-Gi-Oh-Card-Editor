@@ -1,7 +1,38 @@
 ## mn-toolkit change log
 
+## 8.0.0
+
+- sécurités sur les src et href pour mettre undefined à la place d'éventuels strings vides et ainsi éviter les rechargements du navigateur inutiles
+- meilleure logique sur l'update de text area input
+- tabbed pane construit les items, donc props.items inutiles
+- ajout spell check sur text input
+- meilleur style pour la toolbar
+- rendu de la toolbar dans le body directement en mode ghost pour eviter les overflow hidden
+- pas de margin bottom pour le dernier paragraphe dans l'editeur rich text
+- derniers ajustement pour convertir en custom text node correctement
+- custm text node + améliorations sur les deux customs
+- override du ParagraphNode pour gérer les styles custom sur les paragraphs
+- gestion de la valeur html correspondant à du vide
+- rich text editor n'appellele parent on change que si la valeur htmla bien changé
+- fix padding placeholder rich text
+- fix couleur breadcrumb anchor
+- fix pointer events sur toaster
+- fix select label decorator
+- meilleure abstraction au niveau du rich text editor pour simplifier l'utilisation
+- href sur les table cells + nettoyage d'autres defaultProps
+- href au lieu de onTap sur les breadcrumbs
+- meilleur label decorator pour select + fix construction des items du popover
+- fix on click sur select
+- fix style inutile sur form label + option sanitize sur typography
+- toasters empilés
+- rich text -> version lexical
+- diverses corrections + ajout et modifs de certains svgs
+- les editeurs et qq autres composants deviennent contrôéls + meilleurs defaltProps selon le composant + rework des forms avec context
+- migration react 19 + début correctifs
+
 ## 7.4.3
 
+- bump to 7.4.3
 - utilisation de html-react-parser pour contourner les erreurs csp
 
 ## 7.4.2

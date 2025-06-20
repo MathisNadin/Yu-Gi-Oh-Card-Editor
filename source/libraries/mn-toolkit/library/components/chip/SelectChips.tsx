@@ -1,5 +1,4 @@
 import { TJSXElementChildren } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, HorizontalStack, IContainerProps, IContainerState } from '../container';
 import { Typography } from '../typography';
 import { Icon } from '../icon';
@@ -14,48 +13,22 @@ export interface ISelectChipItem<ID = number> extends Omit<IChipItem<ID>, 'actio
 
 export interface ISelectChipsProps<ID = number> extends IContainerProps {
   placeholder?: string;
-  defaultValue?: ID[];
   items: ISelectChipItem<ID>[];
-  onChange?: (value: ID[]) => void | Promise<void>;
+  value: ID[];
+  onChange: (value: ID[]) => void | Promise<void>;
 }
 
-interface ISelectChipsState<ID = number> extends IContainerState {
-  selected: ID[];
-  items: ISelectChipItem<ID>[];
-}
+interface ISelectChipsState extends IContainerState {}
 
-export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, ISelectChipsState<ID>> {
-  public static override get defaultProps(): ISelectChipsProps {
+export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, ISelectChipsState> {
+  public static override get defaultProps(): Omit<ISelectChipsProps, 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
       verticalItemAlignment: 'middle',
       gutter: true,
-      defaultValue: [],
-      items: [],
       placeholder: 'Choisissez une option',
     };
-  }
-
-  public constructor(props: ISelectChipsProps<ID>) {
-    super(props);
-    this.state = {
-      ...this.state,
-      selected: props.defaultValue || [],
-      items: props.items || [],
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ISelectChipsProps<ID>>,
-    prevState: Readonly<ISelectChipsState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (prevProps.items !== this.props.items || prevProps.defaultValue !== this.props.defaultValue) {
-      this.setState({ items: this.props.items, selected: this.props.defaultValue || [] });
-    }
   }
 
   private showItems() {
@@ -67,12 +40,12 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
       componentProps: {
         syncWidth: true,
         maxVisibleActions: 5,
-        actions: this.state.items.map((item) => ({
+        actions: this.props.items.map((item) => ({
           id: item.id,
           label: item.label,
           isTitle: item.isTitle,
           isSubTitle: item.isSubTitle,
-          selected: this.state.selected.includes(item.id),
+          selected: this.props.value.includes(item.id),
           onTap: () => this.toggleChip(item.id),
         })),
       },
@@ -80,14 +53,13 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
   }
 
   private async toggleChip(id: ID) {
-    let selected: ID[] = [];
-    if (this.state.selected.includes(id)) {
-      selected = this.state.selected.filter((itemId) => itemId !== id);
+    let newValue: ID[];
+    if (this.props.value.includes(id)) {
+      newValue = this.props.value.filter((itemId) => itemId !== id);
     } else {
-      selected = [...this.state.selected, id];
+      newValue = [...this.props.value, id];
     }
-    await this.setStateAsync({ selected });
-    if (this.props.onChange) await this.props.onChange(this.state.selected);
+    await this.props.onChange(newValue);
   }
 
   public override renderClasses() {
@@ -97,7 +69,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
   }
 
   public override get children(): TJSXElementChildren {
-    const selectedItems = this.state.items.filter((item) => this.state.selected.includes(item.id));
+    const selectedItems = this.props.items.filter((item) => this.props.value.includes(item.id));
     return [
       !selectedItems.length && (
         <Typography

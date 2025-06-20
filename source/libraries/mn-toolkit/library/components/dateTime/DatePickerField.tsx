@@ -1,20 +1,20 @@
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
 import { DatePicker, IDatePickerProps } from './DatePicker';
 
-interface IDatePickerFieldProps extends IFormFieldProps<Date>, IDatePickerProps {}
+interface IDatePickerFieldProps extends IFormFieldProps<Date | undefined>, IDatePickerProps {}
 
-interface IDatePickerFieldState extends IFormFieldState<Date> {}
+interface IDatePickerFieldState extends IFormFieldState {}
 
-export class DatePickerField extends FormField<Date, IDatePickerFieldProps, IDatePickerFieldState> {
-  public constructor(props: IDatePickerFieldProps) {
-    super(props, 'date-picker');
+export class DatePickerField extends FormField<Date | undefined, IDatePickerFieldProps, IDatePickerFieldState> {
+  public static override get defaultProps(): Omit<IDatePickerFieldProps, 'label' | 'value' | 'onChange'> {
+    return {
+      ...super.defaultProps,
+      canReset: DatePicker.defaultProps.canReset,
+    };
   }
 
-  protected override async updateFromNewProps(prevProps: Readonly<IDatePickerFieldProps>) {
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.getTime() === this.state.value?.getTime()) return;
-    await this.setStateAsync({ value: this.props.defaultValue! });
-    if (this.hasValue) await this.doValidation();
+  public constructor(props: IDatePickerFieldProps) {
+    super(props, 'date-picker');
   }
 
   protected override renderControl() {
@@ -24,7 +24,7 @@ export class DatePickerField extends FormField<Date, IDatePickerFieldProps, IDat
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         canReset={this.props.canReset}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

@@ -1,25 +1,25 @@
 import { classNames, isDefined } from 'mn-tools';
 import { TJSXElementChild, TJSXElementChildren } from '../../../system';
-import { TDidUpdateSnapshot } from '../../containable';
 import { IContainerProps, Container, IContainerState, HorizontalStack, VerticalStack, Grid } from '../../container';
 import { Spacer } from '../../spacer';
 import { Typography } from '../../typography';
 import { Icon } from '../../icon';
 
+export type TWeekChooserChangeSource = 'week' | 'month' | 'year';
+
 export interface IWeekChooserProps extends IContainerProps {
-  defaultValue?: Date;
   yearRange?: [number, number];
-  onChoose?: (value: Date) => void | Promise<void>;
+  value: Date;
+  onChange: (value: Date, source: TWeekChooserChangeSource) => void | Promise<void>;
 }
 
 interface IWeekChooserState extends IContainerState {
-  date: Date;
   display: 'calendar' | 'years';
   height: string;
 }
 
 export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState> {
-  public static override get defaultProps(): IWeekChooserProps {
+  public static override get defaultProps(): Omit<IWeekChooserProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'vertical',
@@ -34,7 +34,6 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
     super(props);
     this.state = {
       ...this.state,
-      date: props.defaultValue || new Date(),
       display: 'calendar',
     };
   }
@@ -43,17 +42,6 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
     super.componentDidMount();
     if (!this.base.current?.clientHeight) return;
     this.setState({ height: `${this.base.current.clientHeight}px` });
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IWeekChooserProps>,
-    prevState: Readonly<IWeekChooserState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue?.getTime() !== this.props.defaultValue?.getTime()) {
-      this.setState({ date: this.props.defaultValue || new Date() });
-    }
   }
 
   private async onSwitchDisplay() {
@@ -81,7 +69,7 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
   }
 
   private async onChangeYear(year: number) {
-    const date = new Date(this.state.date);
+    const date = new Date(this.props.value);
     date.setFullYear(year);
 
     const lastDayOfNewMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -89,11 +77,12 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
       date.setDate(lastDayOfNewMonth);
     }
 
-    await this.setStateAsync({ date, display: 'calendar' });
+    this.setState({ display: 'calendar' });
+    this.props.onChange(date, 'year');
   }
 
   private async onChangeMonth(offset: number) {
-    const date = new Date(this.state.date);
+    const date = new Date(this.props.value);
     date.setMonth(date.getMonth() + offset);
 
     const lastDayOfNewMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -101,12 +90,7 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
       date.setDate(lastDayOfNewMonth);
     }
 
-    await this.setStateAsync({ date });
-  }
-
-  private async onChooseWeek(weekStartDate: Date) {
-    this.setState({ date: weekStartDate });
-    if (this.props.onChoose) await this.props.onChoose(weekStartDate);
+    this.props.onChange(date, 'month');
   }
 
   public override renderClasses() {
@@ -125,9 +109,8 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
 
   public override get children(): TJSXElementChildren {
     const yearRange = this.props.yearRange!;
-    const { date, display } = this.state;
-    const month = date.getMonth();
-    const year = date.getFullYear();
+    const month = this.props.value.getMonth();
+    const year = this.props.value.getFullYear();
 
     const firstDayOfMonth = (new Date(year, month, 1).getDay() - Date.getFirstDayOfWeek() + 7) % 7;
     const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
@@ -162,11 +145,15 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
       weeks.push({ weekNumber, days: week, startDate });
     }
 
-    const showCalendar = display === 'calendar';
+    const showCalendar = this.state.display === 'calendar';
 
     return [
       <HorizontalStack key='header' className='header' gutter verticalItemAlignment='middle'>
-        <Typography bold variant='label' content={`${date.toLocaleString('default', { month: 'short' })} ${year}`} />
+        <Typography
+          bold
+          variant='label'
+          content={`${this.props.value.toLocaleString('default', { month: 'short' })} ${year}`}
+        />
         <Icon
           icon={showCalendar ? 'toolkit-angle-down' : 'toolkit-angle-up'}
           name={showCalendar ? 'Cacher le calendrier' : 'Afficher le calendrier'}
@@ -192,7 +179,7 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
   }
 
   private renderCalendar(weeks: { weekNumber: number; days: (number | null)[]; startDate: Date }[]) {
-    const selectedWeek = this.state.date?.getWeekNumber();
+    const selectedWeek = this.props.value.getWeekNumber();
     return (
       <VerticalStack key='calendar' className='calendar' fill>
         <HorizontalStack className='weekdays'>
@@ -209,7 +196,7 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
             <HorizontalStack
               key={i}
               className={classNames('week', { selected: weekNumber === selectedWeek })}
-              onTap={() => this.onChooseWeek(startDate)}
+              onTap={() => this.props.onChange(startDate, 'week')}
             >
               <HorizontalStack fill className='week-number' itemAlignment='center' verticalItemAlignment='middle'>
                 <Typography alignment='center' variant='document' content={`S${weekLabel}`} />

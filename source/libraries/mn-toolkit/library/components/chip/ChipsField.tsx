@@ -3,14 +3,12 @@ import { Chips, IChipsProps } from './Chips';
 
 interface IChipsFieldProps<ID = number> extends IFormFieldProps<ID[]>, IChipsProps<ID> {}
 
-interface IChipsFieldState<ID> extends IFormFieldState<ID[]> {}
+interface IChipsFieldState extends IFormFieldState {}
 
-export class ChipsField<ID = number> extends FormField<ID[], IChipsFieldProps<ID>, IChipsFieldState<ID>> {
-  public static override get defaultProps(): IChipsFieldProps {
+export class ChipsField<ID = number> extends FormField<ID[], IChipsFieldProps<ID>, IChipsFieldState> {
+  public static override get defaultProps(): Omit<IChipsFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      items: [],
-      defaultValue: [],
     };
   }
 
@@ -24,7 +22,7 @@ export class ChipsField<ID = number> extends FormField<ID[], IChipsFieldProps<ID
         disabled={this.props.disabled}
         multiple={this.props.multiple}
         items={this.props.items}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

@@ -1,25 +1,25 @@
 import { classNames, isDefined } from 'mn-tools';
 import { TJSXElementChild, TJSXElementChildren } from '../../../system';
-import { TDidUpdateSnapshot } from '../../containable';
 import { IContainerProps, Container, IContainerState, HorizontalStack, VerticalStack, Grid } from '../../container';
 import { Spacer } from '../../spacer';
 import { Typography } from '../../typography';
 import { Icon } from '../../icon';
 
+export type TDateChooserChangeSource = 'day' | 'month' | 'year';
+
 export interface IDateChooserProps extends IContainerProps {
-  defaultValue?: Date;
   yearRange?: [number, number];
-  onChoose?: (value: Date) => void | Promise<void>;
+  value: Date;
+  onChange: (value: Date, source: TDateChooserChangeSource) => void | Promise<void>;
 }
 
 interface IDateChooserState extends IContainerState {
-  date: Date;
   display: 'calendar' | 'years';
   height: string;
 }
 
 export class DateChooser extends Container<IDateChooserProps, IDateChooserState> {
-  public static override get defaultProps(): IDateChooserProps {
+  public static override get defaultProps(): Omit<IDateChooserProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'vertical',
@@ -34,7 +34,6 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
     super(props);
     this.state = {
       ...this.state,
-      date: props.defaultValue || new Date(),
       display: 'calendar',
     };
   }
@@ -43,17 +42,6 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
     super.componentDidMount();
     if (!this.base.current?.clientHeight) return;
     this.setState({ height: `${this.base.current.clientHeight}px` });
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IDateChooserProps>,
-    prevState: Readonly<IDateChooserState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue?.getTime() !== this.props.defaultValue?.getTime()) {
-      this.setState({ date: this.props.defaultValue || new Date() });
-    }
   }
 
   private async onSwitchDisplay() {
@@ -81,7 +69,7 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
   }
 
   private async onChangeYear(year: number) {
-    const date = new Date(this.state.date);
+    const date = new Date(this.props.value);
     date.setFullYear(year);
 
     const lastDayOfNewMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -89,11 +77,12 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
       date.setDate(lastDayOfNewMonth);
     }
 
-    await this.setStateAsync({ date, display: 'calendar' });
+    this.setState({ display: 'calendar' });
+    await this.props.onChange(date, 'year');
   }
 
   private async onChangeMonth(offset: number) {
-    const date = new Date(this.state.date);
+    const date = new Date(this.props.value);
     date.setMonth(date.getMonth() + offset);
 
     const lastDayOfNewMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -101,14 +90,13 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
       date.setDate(lastDayOfNewMonth);
     }
 
-    await this.setStateAsync({ date });
+    await this.props.onChange(date, 'month');
   }
 
-  private async onChooseDay(day: number) {
-    const date = new Date(this.state.date);
+  private async onChangeDay(day: number) {
+    const date = new Date(this.props.value);
     date.setDate(day);
-    await this.setStateAsync({ date });
-    if (this.props.onChoose) this.props.onChoose(date);
+    await this.props.onChange(date, 'day');
   }
 
   public override renderClasses() {
@@ -127,10 +115,9 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
 
   public override get children(): TJSXElementChildren {
     const yearRange = this.props.yearRange!;
-    const { date, display } = this.state;
-    const month = date.getMonth();
-    const year = date.getFullYear();
-    const selectedDay = date.getDate();
+    const month = this.props.value.getMonth();
+    const year = this.props.value.getFullYear();
+    const selectedDay = this.props.value.getDate();
 
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
@@ -162,11 +149,15 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
       weeks.push(week);
     }
 
-    const showCalendar = display === 'calendar';
+    const showCalendar = this.state.display === 'calendar';
 
     return [
       <HorizontalStack key='header' className='header' gutter verticalItemAlignment='middle'>
-        <Typography bold variant='label' content={`${date.toLocaleString('default', { month: 'short' })} ${year}`} />
+        <Typography
+          bold
+          variant='label'
+          content={`${this.props.value.toLocaleString('default', { month: 'short' })} ${year}`}
+        />
         <Icon
           icon={showCalendar ? 'toolkit-angle-down' : 'toolkit-angle-up'}
           name={showCalendar ? 'Cacher le calendrier' : 'Afficher le calendrier'}
@@ -212,7 +203,7 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
                   key={j}
                   fill
                   disabled={disabled}
-                  className={classNames('day', { selected: dayAbs === selectedDay })}
+                  className={classNames('day', { selected: !disabled && dayAbs === selectedDay })}
                   itemAlignment='center'
                   verticalItemAlignment='middle'
                 >
@@ -221,7 +212,7 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
                       alignment='center'
                       variant='document'
                       content={`${dayAbs}`}
-                      onTap={disabled ? undefined : () => this.onChooseDay(dayAbs)}
+                      onTap={disabled ? undefined : () => this.onChangeDay(dayAbs)}
                     />
                   )}
                 </HorizontalStack>

@@ -1,5 +1,4 @@
 import { TJSXElementChildren, TForegroundColor } from '../../system';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { TIconId } from '../icon';
 import { Chip } from './Chip';
@@ -18,64 +17,45 @@ export interface IChipItem<ID = number> {
 export interface IChipsProps<ID = number> extends IContainerProps {
   multiple?: boolean;
   items: IChipItem<ID>[];
-  defaultValue?: ID[];
-  onChange?: (items: ID[]) => void | Promise<void>;
+  value: ID[];
+  onChange: (items: ID[]) => void | Promise<void>;
 }
 
-interface IChipsState<ID> extends IContainerState {
-  items: ID[];
-}
+interface IChipsState extends IContainerState {}
 
-export class Chips<ID = number> extends Container<IChipsProps<ID>, IChipsState<ID>> {
-  public static override get defaultProps(): IChipsProps {
+export class Chips<ID = number> extends Container<IChipsProps<ID>, IChipsState> {
+  public static override get defaultProps(): Omit<IChipsProps, 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
       gutter: true,
       wrap: true,
-      items: [],
     };
-  }
-
-  public constructor(props: IChipsProps<ID>) {
-    super(props);
-    this.state = {
-      ...this.state,
-      items: props.defaultValue || [],
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IChipsProps<ID>>,
-    prevState: Readonly<IChipsState<ID>>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue !== this.state.items) {
-      this.setState({ items: this.props.defaultValue || [] });
-    }
   }
 
   private isSelected(item: IChipItem<ID>) {
-    return this.state.items.includes(item.id);
+    return this.props.value.includes(item.id);
   }
 
   private async onItemTap(event: React.MouseEvent<HTMLDivElement>, item: IChipItem<ID>) {
     if (item.onTapOverride) {
       await item.onTapOverride(event);
-    } else {
-      if (this.props.multiple) {
-        if (this.isSelected(item)) {
-          await this.setStateAsync({ items: this.state.items.filter((i) => i !== item.id) });
-        } else {
-          await this.setStateAsync({ items: this.state.items.concat([item.id]) });
-        }
-      } else {
-        await this.setStateAsync({ items: [item.id] });
-      }
-      if (this.props.onChange) await this.props.onChange(this.state.items);
+      return;
     }
+
+    let newValue: ID[];
+
+    if (this.props.multiple) {
+      if (this.isSelected(item)) {
+        newValue = this.props.value.filter((i) => i !== item.id);
+      } else {
+        newValue = [...this.props.value, item.id];
+      }
+    } else {
+      newValue = [item.id];
+    }
+
+    await this.props.onChange(newValue);
   }
 
   public override renderClasses() {

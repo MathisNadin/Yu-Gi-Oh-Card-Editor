@@ -22,10 +22,9 @@ export class SortableDialog<ID = string> extends AbstractPopup<
   ISortableDialogProps<ID>,
   ISortableDialogState<ID>
 > {
-  public static override get defaultProps(): ISortableDialogProps<string> {
+  public static override get defaultProps(): Omit<ISortableDialogProps<string>, 'items'> {
     return {
       ...super.defaultProps,
-      items: [],
     };
   }
 

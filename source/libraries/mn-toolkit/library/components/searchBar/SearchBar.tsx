@@ -1,5 +1,4 @@
 import { createRef } from 'react';
-import { TDidUpdateSnapshot } from '../containable';
 import { Container, IContainerProps, IContainerState } from '../container';
 import { Icon } from '../icon';
 import { TextInput } from '../textInput';
@@ -7,15 +6,14 @@ import { TextInput } from '../textInput';
 interface ISearchBarProps extends IContainerProps {
   /** In milliseconds, assign null to deactivate the auto-search debounce and only search on press Enter or tap the search icon */
   searchDebounce?: number | null;
-  defaultValue: string;
   placeholder?: string;
   autofocus?: boolean;
-  onChange?: (value: string) => void | Promise<void>;
+  value: string;
+  onChange: (value: string) => void | Promise<void>;
   onSearch?: (value: string) => void | Promise<void>;
 }
 
 interface ISearchBarState extends IContainerState {
-  value: string;
   focus: boolean;
 }
 
@@ -23,23 +21,14 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
   protected inputElement = createRef<TextInput>();
   private timer?: NodeJS.Timeout;
 
-  public static get defaultProps(): ISearchBarProps {
+  public static get defaultProps(): Omit<ISearchBarProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
       verticalItemAlignment: 'middle',
       bg: '1',
-      defaultValue: '',
       searchDebounce: 200,
       placeholder: 'rechercher...',
-    };
-  }
-
-  public constructor(props: ISearchBarProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      value: props.defaultValue,
     };
   }
 
@@ -53,24 +42,8 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
     );
   }
 
-  public override componentDidUpdate(
-    prevProps: Readonly<ISearchBarProps>,
-    prevState: Readonly<ISearchBarState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue === this.state.value) return;
-    this.setState({ value: this.props.defaultValue });
-  }
-
   private async doSearch() {
-    if (this.props.onSearch) await this.props.onSearch(this.state.value);
-  }
-
-  private async onInput(value: string) {
-    await this.setStateAsync({ value });
-    if (this.props.onChange) await this.props.onChange(this.state.value);
+    if (this.props.onSearch) await this.props.onSearch(this.props.value);
   }
 
   public onKeyUp(e: React.KeyboardEvent) {
@@ -102,9 +75,9 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
         key='input'
         ref={this.inputElement}
         placeholder={this.props.placeholder}
-        defaultValue={this.state.value}
+        value={this.props.value}
+        onChange={(value) => this.props.onChange(value)}
         onKeyUp={(e) => this.onKeyUp(e)}
-        onChange={(value) => this.onInput(value)}
         onFocus={(e) => this.onFocus(e)}
         onBlur={(e) => this.onBlur(e)}
       />,

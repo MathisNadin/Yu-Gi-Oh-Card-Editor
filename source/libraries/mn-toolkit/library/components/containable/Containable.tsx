@@ -2,12 +2,7 @@ import { AllHTMLAttributes, RefObject } from 'react';
 import { classNames, isDefined, isNumber } from 'mn-tools';
 import { TJSXElementChild, TBackgroundColor } from '../../system';
 import { TIconId } from '../icon';
-import {
-  ToolkitComponent,
-  IToolkitComponentProps,
-  IToolkitComponentState,
-  TDidUpdateSnapshot,
-} from './ToolkitComponent';
+import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from './ToolkitComponent';
 
 export interface IGridSpanParams {
   small?: number;
@@ -120,18 +115,6 @@ export class Containable<
   public override componentDidMount() {
     super.componentDidMount();
     this.showTips();
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<PROPS>,
-    prevState: Readonly<STATE>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-  }
-
-  public override componentWillUnmount() {
-    super.componentWillUnmount();
   }
 
   protected showTips() {

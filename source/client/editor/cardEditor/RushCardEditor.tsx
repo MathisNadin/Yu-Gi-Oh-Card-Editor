@@ -301,12 +301,6 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
     await this.setStateAsync({ card: newCard });
   }
 
-  private async onAbilityChange(newValue: string, iAbility: number) {
-    const newCard: ICard = { ...this.state.card };
-    newCard.abilities[iAbility] = newValue;
-    await this.setStateAsync({ card: newCard });
-  }
-
   private async onAddAbility() {
     const newCard: ICard = { ...this.state.card };
     newCard.abilities.push('');
@@ -368,8 +362,6 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       },
       keepRatio: this.state.card.artwork.keepRatio,
       pendulumRatio: this.state.card.pendulum && !this.state.card.artwork.pendulum,
-      hasPendulumFrame: app.$card.hasPendulumFrame(this.state.card),
-      hasLinkFrame: this.state.card.frames.includes('link'),
     });
     if (!result) return;
 
@@ -442,12 +434,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       <VerticalStack gutter className='card-editor-section basic-section'>
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-title' color='1' />
-          <TextInput
-            fill
-            placeholder='Nom'
-            defaultValue={this.state.card.name}
-            onChange={(name) => this.onNameChange(name)}
-          />
+          <TextInput fill placeholder='Nom' value={this.state.card.name} onChange={(name) => this.onNameChange(name)} />
         </HorizontalStack>
 
         <HorizontalStack gutter>
@@ -467,7 +454,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 { id: 'ultra', label: 'Ultra Rare' },
                 { id: 'secret', label: 'Secret Rare' },
               ]}
-              defaultValue={this.state.card.nameStyle}
+              value={this.state.card.nameStyle}
               onChange={(nameStyle) => this.onNameStyleChange(nameStyle)}
             />
           </HorizontalStack>
@@ -481,16 +468,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 { id: 'fr', label: 'Français' },
                 { id: 'en', label: 'Anglais' },
               ]}
-              defaultValue={this.state.card.language}
+              value={this.state.card.language}
               onChange={(language) => this.onLanguageChange(language)}
             />
           </HorizontalStack>
 
-          <Checkbox
-            label='@ TCG'
-            defaultValue={this.state.card.tcgAt}
-            onChange={(tcgAt) => this.onTcgAtChange(tcgAt)}
-          />
+          <Checkbox label='@ TCG' value={this.state.card.tcgAt} onChange={(tcgAt) => this.onTcgAtChange(tcgAt)} />
         </HorizontalStack>
 
         <HorizontalStack verticalItemAlignment='middle'>
@@ -499,7 +482,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             <FilePathInput
               fill
               placeholder="Chemin vers l'artwork"
-              defaultValue={this.state.card.artwork.url}
+              value={this.state.card.artwork.url}
               onChange={(url) => this.onArtworkURLChange(url)}
               overrideOnTapIcon={() => this.showArtworkPopup()}
             />
@@ -511,7 +494,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             <Typography fill variant='help' content={this.state.card.multipleFrames ? 'Bordures' : 'Bordure'} />
             <Checkbox
               label='Cumuler'
-              defaultValue={this.state.card.multipleFrames}
+              value={this.state.card.multipleFrames}
               onChange={() => this.onMultipleFramesChange()}
             />
           </HorizontalStack>
@@ -598,7 +581,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           tabPosition='top'
           bg='2'
           noSpacer
-          defaultValue={this.state.card.rushTextMode}
+          value={this.state.card.rushTextMode}
           onChange={(rushTextMode) => this.onRushTextModeChange(rushTextMode)}
           panes={[
             {
@@ -611,7 +594,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     minRows={5}
                     maxRows={100}
                     spellCheck={false}
-                    defaultValue={this.state.card.description}
+                    value={this.state.card.description}
                     placeholder='Description'
                     onChange={(description) => this.onDescChange(description)}
                   />
@@ -628,7 +611,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     minRows={3}
                     maxRows={100}
                     spellCheck={false}
-                    defaultValue={this.state.card.rushOtherEffects}
+                    value={this.state.card.rushOtherEffects}
                     placeholder='Autres'
                     onChange={(rushOtherEffects) => this.onRushOtherEffectsChange(rushOtherEffects)}
                   />
@@ -641,7 +624,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     minRows={3}
                     maxRows={100}
                     spellCheck={false}
-                    defaultValue={this.state.card.rushCondition}
+                    value={this.state.card.rushCondition}
                     placeholder='Condition'
                     onChange={(rushCondition) => this.onRushConditionChange(rushCondition)}
                   />
@@ -654,7 +637,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     minRows={3}
                     maxRows={100}
                     spellCheck={false}
-                    defaultValue={this.state.card.rushEffect}
+                    value={this.state.card.rushEffect}
                     placeholder='Effet'
                     onChange={(rushEffect) => this.onRushEffectChange(rushEffect)}
                   />
@@ -669,7 +652,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                       { id: 'effect', label: 'Effet' },
                       { id: 'continuous', label: 'Effet Continu' },
                     ]}
-                    defaultValue={this.state.card.rushEffectType}
+                    value={this.state.card.rushEffectType}
                     onChange={(rushEffectType) => this.onRushEffectTypeChange(rushEffectType)}
                   />
                 </HorizontalStack>,
@@ -686,7 +669,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     maxRows={100}
                     spellCheck={false}
                     placeholder='Autres'
-                    defaultValue={this.state.card.rushOtherEffects}
+                    value={this.state.card.rushOtherEffects}
                     onChange={(rushOtherEffects) => this.onRushOtherEffectsChange(rushOtherEffects)}
                   />
                 </HorizontalStack>,
@@ -699,7 +682,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     maxRows={100}
                     spellCheck={false}
                     placeholder='Condition'
-                    defaultValue={this.state.card.rushCondition}
+                    value={this.state.card.rushCondition}
                     onChange={(rushCondition) => this.onRushConditionChange(rushCondition)}
                   />
                 </HorizontalStack>,
@@ -747,7 +730,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                           maxRows={100}
                           spellCheck={false}
                           placeholder='Effet'
-                          defaultValue={choiceEff}
+                          value={choiceEff}
                           onChange={(choiceEff) => this.onRushChoiceEffectsChange(choiceEff, iChoiceEff)}
                         />
                       </VerticalStack>
@@ -763,7 +746,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           <Icon className='field-icon' size={24} icon='toolkit-eye-close' color='1' />
           <Checkbox
             label="Ne pas couvrir l'artwork"
-            defaultValue={this.state.card.dontCoverRushArt}
+            value={this.state.card.dontCoverRushArt}
             onChange={() => this.onDontCoverRushArtChange()}
           />
         </HorizontalStack>
@@ -772,7 +755,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           <HorizontalStack gutter className='line-with-checkbox'>
             <HorizontalStack verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-diamond-shine' color='1' />
-              <Checkbox label='LEGEND' defaultValue={this.state.card.legend} onChange={() => this.onLegendChange()} />
+              <Checkbox label='LEGEND' value={this.state.card.legend} onChange={() => this.onLegendChange()} />
             </HorizontalStack>
 
             {this.state.card.legend && (
@@ -786,7 +769,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     { id: 'silver', label: 'Argent' },
                     { id: 'silverFoil', label: 'Argent Foil' },
                   ]}
-                  defaultValue={this.state.card.legendType}
+                  value={this.state.card.legendType}
                   onChange={(legendType) => this.onLegendTypeChange(legendType)}
                 />
               </HorizontalStack>
@@ -842,29 +825,19 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 min={0}
                 max={max}
                 placeholder={levelPlaceholder}
-                defaultValue={this.state.card.level}
+                value={this.state.card.level}
                 onChange={(level) => this.onLevelChange(level, max)}
               />
             </HorizontalStack>
 
             <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-sword' color='1' />
-              <TextInput
-                fill
-                placeholder='ATK'
-                defaultValue={this.state.card.atk}
-                onChange={(atk) => this.onAtkChange(atk)}
-              />
+              <TextInput fill placeholder='ATK' value={this.state.card.atk} onChange={(atk) => this.onAtkChange(atk)} />
             </HorizontalStack>
 
             <HorizontalStack colSpans={{ small: 12, xxlarge: 4 }} verticalItemAlignment='middle'>
               <Icon className='field-icon' size={24} icon='toolkit-shield' color='1' />
-              <TextInput
-                fill
-                placeholder='DEF'
-                defaultValue={this.state.card.def}
-                onChange={(def) => this.onDefChange(def)}
-              />
+              <TextInput fill placeholder='DEF' value={this.state.card.def} onChange={(def) => this.onDefChange(def)} />
             </HorizontalStack>
           </Grid>
         )}
@@ -872,11 +845,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         {!this.state.card.dontCoverRushArt && (
           <HorizontalStack gutter className='line-with-checkbox'>
             <HorizontalStack verticalItemAlignment='middle'>
-              <Checkbox
-                label='Maximum'
-                defaultValue={this.state.card.maximum}
-                onChange={() => this.onMaximumChange()}
-              />
+              <Checkbox label='Maximum' value={this.state.card.maximum} onChange={() => this.onMaximumChange()} />
             </HorizontalStack>
 
             {this.state.card.maximum && (
@@ -885,7 +854,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 <TextInput
                   fill
                   placeholder='ATK MAX'
-                  defaultValue={this.state.card.atkMax}
+                  value={this.state.card.atkMax}
                   onChange={(atkMax) => this.onAtkMaxChange(atkMax)}
                 />
               </HorizontalStack>
@@ -911,10 +880,12 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 <InplaceEdit
                   fill
                   validateOnEnter
-                  defaultValue={ability}
-                  onChange={(ability, fromBlur) => {
-                    if (fromBlur) this.onAbilityChange(ability, iAbility);
+                  value={ability}
+                  onChange={(ability) => {
+                    this.state.card.abilities[iAbility] = ability;
+                    this.forceUpdateAsync();
                   }}
+                  onBlur={() => this.setStateAsync({ card: { ...this.state.card } })}
                 />
 
                 <HorizontalStack className='abilities-line-icons'>
@@ -945,7 +916,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
             <TextInput
               fill
               placeholder='Set'
-              defaultValue={this.state.card.cardSet}
+              value={this.state.card.cardSet}
               onChange={(cardSet) => this.onCardSetChange(cardSet)}
             />
           </HorizontalStack>
@@ -964,7 +935,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 { id: 'duelTerminal', label: 'Duel Terminal' },
                 { id: 'anime', label: 'Édition Anime' },
               ]}
-              defaultValue={this.state.card.edition}
+              value={this.state.card.edition}
               onChange={(edition) => this.onEditionChange(edition)}
             />
           </HorizontalStack>
@@ -988,22 +959,22 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 { id: 'aqua', label: 'Aqua' },
                 { id: 'green', label: 'Vert' },
               ]}
-              defaultValue={this.state.card.sticker}
+              value={this.state.card.sticker}
               onChange={(sticker) => this.onStickerChange(sticker)}
             />
           </HorizontalStack>
 
-          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle'>
+          <HorizontalStack colSpans={{ small: 12, xxxlarge: 6 }} fill verticalItemAlignment='middle' height='100%'>
             <Icon className='field-icon' size={24} icon='toolkit-copyright' color='1' />
             <HorizontalStack gutter fill verticalItemAlignment='middle'>
               <Checkbox
                 label='Copyright'
-                defaultValue={this.state.card.hasCopyright}
+                value={this.state.card.hasCopyright}
                 onChange={() => this.onCopyrightChange()}
               />
               <Checkbox
                 label='1996'
-                defaultValue={this.state.card.oldCopyright}
+                value={this.state.card.oldCopyright}
                 onChange={() => this.onOldCopyrightChange()}
               />
             </HorizontalStack>

@@ -3,18 +3,16 @@ import { CheckboxTree, ICheckboxTreeSpecificProps } from './CheckboxTree';
 
 interface ICheckboxTreeFieldProps<ID = number> extends IFormFieldProps<ID[]>, ICheckboxTreeSpecificProps<ID> {}
 
-interface ICheckboxTreeFieldState<ID> extends IFormFieldState<ID[]> {}
+interface ICheckboxTreeFieldState extends IFormFieldState {}
 
 export class CheckboxTreeField<ID = number> extends FormField<
   ID[],
   ICheckboxTreeFieldProps<ID>,
-  ICheckboxTreeFieldState<ID>
+  ICheckboxTreeFieldState
 > {
-  public static override get defaultProps(): ICheckboxTreeFieldProps {
+  public static override get defaultProps(): Omit<ICheckboxTreeFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      items: [],
-      defaultValue: [],
     };
   }
 
@@ -27,7 +25,7 @@ export class CheckboxTreeField<ID = number> extends FormField<
       <CheckboxTree<ID>
         disabled={this.props.disabled}
         items={this.props.items}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );

@@ -1,7 +1,7 @@
 {
   "name": "mn-toolkit",
   "displayName": "MN Toolkit",
-  "version": "7.4.3",
+  "version": "8.0.0",
   "description": "Bibliothèque React Typescript pour des fonctions et composants réutilisables",
   "repository": {
     "type": "git",
@@ -31,11 +31,21 @@
     "@capacitor/push-notifications": "^6.0.0",
     "@capacitor/splash-screen": "^6.0.0",
     "@capacitor/status-bar": "^6.0.0",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
+    "@lexical/link": "^0.32.1",
+    "@lexical/list": "^0.32.1",
+    "@lexical/react": "^0.32.1",
+    "@lexical/rich-text": "^0.32.1",
+    "@lexical/selection": "^0.32.1",
+    "@lexical/utils": "^0.32.1",
+    "@types/dompurify": "^3.0.5",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "axios": "^1.7.4",
+    "dompurify": "^3.2.6",
     "html-react-parser": "^5.2.5",
-    "react": "^18.3.1",
-    "react-router-dom": "^6.24.1"
+    "lexical": "^0.32.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2"
   }
 }

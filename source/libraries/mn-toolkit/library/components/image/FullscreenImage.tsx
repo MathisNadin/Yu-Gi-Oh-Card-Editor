@@ -18,7 +18,7 @@ interface IFullscreenImageState extends IContainerState {
 }
 
 export class FullscreenImage extends Container<IFullscreenImageProps, IFullscreenImageState> {
-  public static override get defaultProps(): IFullscreenImageProps {
+  public static override get defaultProps(): Omit<IFullscreenImageProps, 'imgAlt' | 'imgSrc'> {
     return {
       ...super.defaultProps,
       layout: 'vertical',
@@ -29,8 +29,6 @@ export class FullscreenImage extends Container<IFullscreenImageProps, IFullscree
       minHeight: '50%',
       maxHeight: '95%',
       type: 'fullscreen-image',
-      imgSrc: '',
-      imgAlt: '',
     };
   }
 

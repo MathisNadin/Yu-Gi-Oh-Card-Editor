@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, JSX } from 'react';
 import { isArray, isDefined } from 'mn-tools';
 import { IDeviceListener, IScreenSpec } from '../../system';
 import { Containable, IContainableState } from '../containable';

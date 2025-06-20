@@ -1,21 +1,21 @@
 import { classNames } from 'mn-tools';
 import { TJSXElementChild, TJSXElementChildren } from '../../../system';
-import { TDidUpdateSnapshot } from '../../containable';
 import { IContainerProps, Container, IContainerState, VerticalStack, Grid } from '../../container';
 import { Typography } from '../../typography';
+import { TDidUpdateSnapshot } from '../../containable';
+
+export type TTimeChooserChangeSource = 'minute' | 'hour';
 
 export interface ITimeChooserProps extends IContainerProps {
-  mode?: 'scroller' | 'grid';
-  defaultValue?: Date;
-  onChoose?: (value: Date) => void | Promise<void>;
+  mode: 'scroller' | 'grid';
+  value: Date;
+  onChange: (value: Date, source: TTimeChooserChangeSource) => void | Promise<void>;
 }
 
-interface ITimeChooserState extends IContainerState {
-  time: Date;
-}
+interface ITimeChooserState extends IContainerState {}
 
 export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState> {
-  public static override get defaultProps(): ITimeChooserProps {
+  public static override get defaultProps(): Omit<ITimeChooserProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
@@ -28,30 +28,20 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
     };
   }
 
-  public constructor(props: ITimeChooserProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      time: props.defaultValue || new Date(),
-    };
-  }
-
   public override componentDidMount() {
     super.componentDidMount();
     this.scrollToSelectedHour('instant');
     this.scrollToSelectedMinute('instant');
   }
 
-  public override componentDidUpdate(
+  public componentDidUpdate(
     prevProps: Readonly<ITimeChooserProps>,
     prevState: Readonly<ITimeChooserState>,
     snapshot?: TDidUpdateSnapshot
-  ) {
+  ): void {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultValue?.getTime() !== this.props.defaultValue?.getTime()) {
-      this.setState({ time: this.props.defaultValue || new Date() });
+    if (prevProps.value !== this.props.value) {
       this.scrollToSelectedHour();
-      this.scrollToSelectedMinute();
     }
   }
 
@@ -108,19 +98,15 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
   }
 
   private async onChooseHour(hour: number) {
-    const time = new Date(this.state.time);
+    const time = new Date(this.props.value);
     time.setHours(hour);
-    await this.setStateAsync({ time });
-    this.scrollToSelectedHour();
-    if (this.props.onChoose) this.props.onChoose(time);
+    await this.props.onChange(time, 'hour');
   }
 
   private async onChooseMinute(minute: number) {
-    const time = new Date(this.state.time);
+    const time = new Date(this.props.value);
     time.setMinutes(minute);
-    await this.setStateAsync({ time });
-    this.scrollToSelectedMinute();
-    if (this.props.onChoose) this.props.onChoose(time);
+    await this.props.onChange(time, 'minute');
   }
 
   public override renderClasses() {
@@ -130,9 +116,8 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
   }
 
   public override get children(): TJSXElementChildren {
-    const { time } = this.state;
-    const selectedHour = time.getHours();
-    const selectedMinute = time.getMinutes();
+    const selectedHour = this.props.value.getHours();
+    const selectedMinute = this.props.value.getMinutes();
 
     if (this.props.mode === 'grid') {
       return [

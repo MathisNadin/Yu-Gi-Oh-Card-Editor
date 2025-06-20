@@ -67,6 +67,6 @@ export class Image extends Containable<IImageProps, IImageState, HTMLImageElemen
   }
 
   public override render() {
-    return <img ref={this.base} {...this.renderAttributes()} src={this.props.src} alt={this.props.alt} />;
+    return <img ref={this.base} {...this.renderAttributes()} src={this.props.src || undefined} alt={this.props.alt} />;
   }
 }

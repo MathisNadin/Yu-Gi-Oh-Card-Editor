@@ -25,8 +25,6 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
       ...super.defaultProps,
       fill: false,
       gutter: true,
-      crumbs: [],
-      title: undefined,
     };
   }
 
@@ -109,7 +107,7 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
           )}
         </div>
 
-        {!!this.downloadTotal && <Progress total={this.downloadTotal} progress={this.downloadProgress} />}
+        {!!this.downloadTotal && <Progress total={this.downloadTotal} progress={this.downloadProgress || 0} />}
 
         {this.props.children}
       </div>

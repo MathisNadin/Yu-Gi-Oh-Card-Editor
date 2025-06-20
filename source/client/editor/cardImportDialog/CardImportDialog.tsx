@@ -353,8 +353,8 @@ export class CardImportDialog extends AbstractPopup<
       <StepProgress<number>
         key='step-progress'
         color='1'
-        active={step}
-        defaultValue={website ? 1 : 0}
+        progress={website ? 1 : 0}
+        currentStep={step}
         onChange={(step) => this.setState({ step })}
         items={[
           { id: 0, label: 'Site', description: this.getWebsiteDesc() },
@@ -412,7 +412,7 @@ export class CardImportDialog extends AbstractPopup<
     const headers: ITableHeadRow = {
       cells: [
         {
-          content: <Checkbox defaultValue={selectedCardsNum === cardsData.length} onChange={() => this.toggleAll()} />,
+          content: <Checkbox value={selectedCardsNum === cardsData.length} onChange={() => this.toggleAll()} />,
         },
       ],
     };
@@ -450,7 +450,7 @@ export class CardImportDialog extends AbstractPopup<
           <TextInput
             fill
             placeholder="Lien de l'article"
-            defaultValue={yuginewsUrl}
+            value={yuginewsUrl}
             onChange={(value) => this.setState({ yuginewsUrl: value })}
           />
           <Button color='neutral' label='Rechercher' onTap={() => this.getYuginewsCards()} />
@@ -473,7 +473,7 @@ export class CardImportDialog extends AbstractPopup<
                 onTap: () => this.toggleSelectCard(uuid),
                 cells: [
                   {
-                    content: <Checkbox defaultValue={this.state.selectedCards[uuid]} />,
+                    content: <Checkbox value={this.state.selectedCards[uuid] ?? false} onChange={() => {}} />,
                   },
                   {
                     align: 'left',
@@ -525,15 +525,15 @@ export class CardImportDialog extends AbstractPopup<
           minRows={5}
           maxRows={15}
           autoGrow
-          defaultValue={this.state.import}
+          value={this.state.import}
           onChange={(value) => this.setState({ import: value })}
         />
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
-          <Checkbox label='Textes français' defaultValue={useFr} onChange={(useFr) => this.setState({ useFr })} />
+          <Checkbox label='Textes français' value={useFr} onChange={(useFr) => this.setState({ useFr })} />
           <Checkbox
             label='Si absent, générer un code'
-            defaultValue={generatePasscode}
+            value={generatePasscode}
             onChange={(generatePasscode) => this.setState({ generatePasscode })}
           />
           {this.renderUrlImporter('yugipedia')}
@@ -552,13 +552,13 @@ export class CardImportDialog extends AbstractPopup<
                 <HorizontalStack key={`replace-matrix-${i}`} gutter verticalItemAlignment='middle'>
                   <TextInput
                     fill
-                    defaultValue={m.toReplace}
+                    value={m.toReplace}
                     onChange={(value) => this.updateReplaceMatrix(i, value, m.newString)}
                   />
                   <Typography variant='help' content='devient' />
                   <TextInput
                     fill
-                    defaultValue={m.newString}
+                    value={m.newString}
                     onChange={(value) => this.updateReplaceMatrix(i, m.toReplace, value)}
                   />
                   <Icon size={24} icon='toolkit-minus' color='negative' onTap={() => this.removeReplaceMatrix(i)} />
@@ -590,13 +590,13 @@ export class CardImportDialog extends AbstractPopup<
       <HorizontalStack fill={website === 'yugipedia'} gutter>
         <Checkbox
           label='Importer les images'
-          defaultValue={this.state.importArtworks}
+          value={this.state.importArtworks}
           onChange={(importArtworks) => this.setState({ importArtworks })}
         />
         {this.state.importArtworks && (
           <FilePathInput
             fill
-            defaultValue={this.state.artworkSaveDirPath}
+            value={this.state.artworkSaveDirPath}
             onChange={(artworkSaveDirPath) => this.setState({ artworkSaveDirPath })}
             overrideOnTapIcon={() => this.selectArtworkSaveDirPath()}
           />

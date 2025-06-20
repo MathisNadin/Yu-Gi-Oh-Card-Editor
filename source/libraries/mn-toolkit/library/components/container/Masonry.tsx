@@ -55,8 +55,13 @@ export class Masonry extends Container<IMasonryProps, IMasonryState> {
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (this.props === prevProps) return;
-    this.computeLayout();
+    if (
+      prevProps.childSize.height !== this.props.childSize.height ||
+      prevProps.childSize.width !== this.props.childSize.width ||
+      prevProps.childSize.space !== this.props.childSize.space
+    ) {
+      this.computeLayout();
+    }
   }
 
   private computeLayout = () => {

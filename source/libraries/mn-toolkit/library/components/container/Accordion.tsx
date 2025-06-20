@@ -10,45 +10,34 @@ export type TAccordionHeaderPosition = 'top' | 'bottom' | 'left' | 'right';
 interface IAccordionProps extends IContainableProps {
   /** The header title which is clickable */
   title: string;
-  /** Whether the accordion is open by default */
-  defaultOpen?: boolean;
   /** Position of the header relative to the content */
-  headerPosition?: TAccordionHeaderPosition;
+  headerPosition: TAccordionHeaderPosition;
   /** Layout of the Container element around the children */
-  contentLayout?: TContainerLayout;
+  contentLayout: TContainerLayout;
+  /** Whether the accordion is open by default */
+  open: boolean;
   /** Callback when the accordion is toggled */
-  onToggle?: (open: boolean) => void | Promise<void>;
+  onToggle: (open: boolean) => void | Promise<void>;
 }
 
-interface IAccordionState extends IContainableState {
-  open: boolean;
-}
+interface IAccordionState extends IContainableState {}
 
 export class Accordion extends Containable<IAccordionProps, IAccordionState> {
   private contentWrapperRef = createRef<HTMLDivElement>();
 
-  public static override get defaultProps(): IAccordionProps {
+  public static override get defaultProps(): Omit<IAccordionProps, 'open' | 'onToggle'> {
     return {
       ...super.defaultProps,
       contentLayout: 'vertical',
       title: '',
       headerPosition: 'top',
-      defaultOpen: false,
-    };
-  }
-
-  public constructor(props: IAccordionProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      open: props.defaultOpen!,
     };
   }
 
   public override componentDidMount() {
     super.componentDidMount();
     const contentEl = this.contentWrapperRef.current;
-    if (contentEl && !this.state.open) {
+    if (contentEl && !this.props.open) {
       contentEl.style.display = 'none';
     }
   }
@@ -59,23 +48,15 @@ export class Accordion extends Containable<IAccordionProps, IAccordionState> {
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps.defaultOpen !== this.props.defaultOpen) {
-      this.setState({ open: this.props.defaultOpen! });
+    if (prevProps.open !== this.props.open) {
+      this.animateTransition();
     }
-    if (prevState.open !== this.state.open) {
-      this.animateTransition(this.state.open);
-    }
-  }
-
-  private async toggleAccordion() {
-    await this.setStateAsync((prevState) => ({ open: !prevState.open }));
-    if (this.props.onToggle) await this.props.onToggle(this.state.open);
   }
 
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-accordion'] = true;
-    classes['opened'] = this.state.open;
+    classes['opened'] = !!this.props.open;
     if (this.props.headerPosition) classes[`header-${this.props.headerPosition}-position`] = true;
     return classes;
   }
@@ -93,9 +74,13 @@ export class Accordion extends Containable<IAccordionProps, IAccordionState> {
 
   private renderHeader() {
     return (
-      <HorizontalStack className='mn-accordion-header' verticalItemAlignment='top' onTap={() => this.toggleAccordion()}>
+      <HorizontalStack
+        className='mn-accordion-header'
+        verticalItemAlignment='top'
+        onTap={() => this.props.onToggle(!this.props.open)}
+      >
         <HorizontalStack className='mn-accordion-header-inside' verticalItemAlignment='middle'>
-          <Icon color='1' icon={this.state.open ? 'toolkit-minus' : 'toolkit-plus'} />
+          <Icon color='1' icon={this.props.open ? 'toolkit-minus' : 'toolkit-plus'} />
           <Typography noWrap bold contentType='text' content={this.props.title} />
         </HorizontalStack>
       </HorizontalStack>
@@ -113,7 +98,7 @@ export class Accordion extends Containable<IAccordionProps, IAccordionState> {
   }
 
   // Method to animate the accordion open/close transition
-  private animateTransition(open: boolean) {
+  private animateTransition() {
     const contentEl = this.contentWrapperRef.current;
     if (!contentEl) return;
 
@@ -122,7 +107,7 @@ export class Accordion extends Containable<IAccordionProps, IAccordionState> {
     const dimension = headerPosition === 'left' || headerPosition === 'right' ? 'width' : 'height';
     const duration = 300; // Animation duration in ms
 
-    if (open) {
+    if (this.props.open) {
       // Opening: display the content and animate from 0 to full size
       contentEl.style.display = 'flex'; // Set display to flex when open
       contentEl.style.transition = ''; // Reset transition

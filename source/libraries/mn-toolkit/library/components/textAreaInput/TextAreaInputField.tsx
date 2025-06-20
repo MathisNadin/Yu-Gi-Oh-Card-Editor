@@ -1,23 +1,18 @@
-import { createRef } from 'react';
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
 import { ITextAreaInputProps, TextAreaInput } from './TextAreaInput';
 
-interface ITextAreaFieldProps extends IFormFieldProps<string>, ITextAreaInputProps {}
+interface ITextAreaInputFieldProps extends IFormFieldProps<string>, ITextAreaInputProps {}
 
-interface ITextAreaFieldState extends IFormFieldState<string> {}
+interface ITextAreaInputFieldState extends IFormFieldState {}
 
-export class TextAreaField extends FormField<string, ITextAreaFieldProps, ITextAreaFieldState> {
-  private textareaElement = createRef<TextAreaInput>();
-
-  public static override get defaultProps(): ITextAreaFieldProps {
+export class TextAreaInputField extends FormField<string, ITextAreaInputFieldProps, ITextAreaInputFieldState> {
+  public static override get defaultProps(): Omit<ITextAreaInputFieldProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      ...TextAreaInput.defaultProps,
-      defaultValue: '',
     };
   }
 
-  public constructor(props: ITextAreaFieldProps) {
+  public constructor(props: ITextAreaInputFieldProps) {
     super(props, 'textarea');
   }
 
@@ -30,16 +25,14 @@ export class TextAreaField extends FormField<string, ITextAreaFieldProps, ITextA
   protected override renderControl() {
     return (
       <TextAreaInput
-        ref={this.textareaElement}
         name={this.props.name}
         disabled={this.props.disabled}
-        rows={this.props.rows}
         minRows={this.props.minRows}
         maxRows={this.props.maxRows}
         autoGrow={this.props.autoGrow}
         autofocus={this.props.autofocus}
         placeholder={this.props.placeholder}
-        defaultValue={this.state.value}
+        value={this.value}
         spellCheck={this.props.spellCheck}
         onRef={(ref) => this.props.onRef && this.props.onRef(ref)}
         onBlurTextarea={() => this.onBlur()}

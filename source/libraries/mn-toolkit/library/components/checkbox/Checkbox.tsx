@@ -1,54 +1,33 @@
-import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { Typography } from '../typography';
 import { Icon } from '../icon';
 
 export interface ICheckboxProps extends IContainableProps {
   /** Text in front of the check box. */
   label: string;
-  /** Value of the check box. */
-  defaultValue?: boolean;
-  /** Function when changes was detected */
-  onChange?: (value: boolean) => void | Promise<void>;
+  /** Controlled value of the checkbox. */
+  value: boolean;
+  /** Function called when value changes. */
+  onChange: (value: boolean) => void | Promise<void>;
   /** Position of the check box. */
   labelPosition?: 'left' | 'right';
-  /** set the button to the specific style mn-checkbox-disabled. */
-  disabled?: boolean;
 }
 
-interface ICheckboxState extends IContainableState {
-  value: boolean;
-}
+interface ICheckboxState extends IContainableState {}
 
 export class Checkbox extends Containable<ICheckboxProps, ICheckboxState> {
-  public static override get defaultProps(): ICheckboxProps {
+  public static override get defaultProps(): Omit<ICheckboxProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: false,
       labelPosition: 'right',
       label: '',
     };
   }
 
-  public constructor(props: ICheckboxProps) {
-    super(props);
-    this.state = { ...this.state, value: props.defaultValue! };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<ICheckboxProps>,
-    prevState: Readonly<ICheckboxState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue === this.state.value) return;
-    this.setState({ value: this.props.defaultValue! });
-  }
-
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-checkbox'] = true;
-    classes['checked'] = this.state.value;
+    classes['checked'] = !!this.props.value;
     return classes;
   }
 
@@ -72,8 +51,7 @@ export class Checkbox extends Containable<ICheckboxProps, ICheckboxState> {
 
   private async onTap(e: React.MouseEvent<HTMLDivElement>) {
     if (this.props.disabled) return;
-    await this.setStateAsync({ value: !this.state.value });
-    if (this.props.onChange) await this.props.onChange(this.state.value);
     if (this.props.onTap) await this.props.onTap(e);
+    await this.props.onChange(!this.props.value);
   }
 }

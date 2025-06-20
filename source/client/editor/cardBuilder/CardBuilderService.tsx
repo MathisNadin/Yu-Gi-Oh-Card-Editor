@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, JSX } from 'react';
 import { classNames } from 'mn-tools';
 
 export type TTextAdjustState = 'unknown' | 'tooBig' | 'tooSmall';

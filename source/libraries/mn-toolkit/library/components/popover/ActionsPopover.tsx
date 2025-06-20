@@ -50,11 +50,10 @@ export class ActionsPopover<
   P extends IActionsPopoverProps<ID> = IActionsPopoverProps<ID>,
   S extends IActionsPopoverState<ID> = IActionsPopoverState<ID>,
 > extends AbstractPopover<P, S> {
-  public static override get defaultProps(): IActionsPopoverProps {
+  public static override get defaultProps(): Omit<IActionsPopoverProps, 'actions'> {
     return {
       ...super.defaultProps,
       actionHeight: app.$theme.settings.commons?.['default-item-height']?.value || 32,
-      actions: [],
     };
   }
 

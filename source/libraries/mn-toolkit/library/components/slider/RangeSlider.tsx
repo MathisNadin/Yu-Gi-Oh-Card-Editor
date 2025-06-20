@@ -1,5 +1,5 @@
 import { TForegroundColor } from '../../system';
-import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
+import { IContainableProps, Containable, IContainableState } from '../containable';
 import { TSliderValueDisplayMode } from './Slider';
 
 type TMouseEvents = MouseEvent | React.MouseEvent<HTMLButtonElement, MouseEvent>;
@@ -13,52 +13,27 @@ export interface IRangeSliderValues {
 
 export interface IRangeSliderProps extends IContainableProps {
   color?: TForegroundColor;
-  defaultValue?: IRangeSliderValues;
   valueDisplayMode: TSliderValueDisplayMode;
   min: number;
   max: number;
   step: number;
-  disabled?: boolean;
   marks?: number[];
-  onChange?: (values: IRangeSliderValues) => void | Promise<void>;
+  value: IRangeSliderValues;
+  onChange: (values: IRangeSliderValues) => void | Promise<void>;
 }
 
 interface IRangeSliderState extends IContainableState {
-  values: IRangeSliderValues;
   isHovered: boolean;
   isDragging: boolean;
 }
 
 export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderState> {
-  public static override get defaultProps(): IRangeSliderProps {
+  public static override get defaultProps(): Omit<IRangeSliderProps, 'min' | 'max' | 'step' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
       color: 'primary',
-      min: 1,
-      max: 10,
-      step: 1,
       valueDisplayMode: 'always',
-      marks: [],
     };
-  }
-
-  public constructor(props: IRangeSliderProps) {
-    super(props);
-    this.state = {
-      ...this.state,
-      values: props.defaultValue || { lower: props.min, upper: props.max },
-    };
-  }
-
-  public override componentDidUpdate(
-    prevProps: Readonly<IRangeSliderProps>,
-    prevState: Readonly<IRangeSliderState>,
-    snapshot?: TDidUpdateSnapshot
-  ) {
-    super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (!this.props.defaultValue || this.props.defaultValue === prevProps.defaultValue) return;
-    this.setState({ values: this.props.defaultValue || { lower: this.props.min, upper: this.props.max } });
   }
 
   private setPositionToValue(clientX: number): number {
@@ -72,23 +47,22 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
   }
 
   private updateValue = async (clientX: number, isLowerThumb: boolean) => {
-    const { step, onChange } = this.props;
-    let value = this.setPositionToValue(clientX);
-    value = Math.round(value / step) * step;
-    const values = { ...this.state.values };
+    const { step, onChange, value, min, max } = this.props;
+    let v = this.setPositionToValue(clientX);
+    v = Math.round(v / step) * step;
+
+    let newValues: IRangeSliderValues;
     if (isLowerThumb) {
-      if (value >= this.state.values.upper) {
-        value = this.state.values.upper - step;
-      }
-      values.lower = value;
+      let lower = Math.min(v, value.upper - step);
+      lower = Math.max(lower, min);
+      newValues = { lower, upper: value.upper };
     } else {
-      if (value <= this.state.values.lower) {
-        value = this.state.values.lower + step;
-      }
-      values.upper = value;
+      let upper = Math.max(v, value.lower + step);
+      upper = Math.min(upper, max);
+      newValues = { lower: value.lower, upper };
     }
-    await this.setStateAsync({ values });
-    if (onChange) onChange(this.state.values);
+
+    await onChange(newValues);
   };
 
   private handleMouseDown = (isLowerThumb: boolean) => async (e: TMouseEvents | TTouchEvents) => {
@@ -140,12 +114,12 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
   }
 
   public override get children() {
-    const { min, max, marks, valueDisplayMode } = this.props;
-    const { values, isHovered, isDragging } = this.state;
+    const { value, min, max, marks, valueDisplayMode } = this.props;
+    const { isHovered, isDragging } = this.state;
 
     const thumbSize = 20;
-    const lowerPercentage = ((values.lower - min) / (max - min)) * 100;
-    const upperPercentage = ((values.upper - min) / (max - min)) * 100;
+    const lowerPercentage = ((value.lower - min) / (max - min)) * 100;
+    const upperPercentage = ((value.upper - min) / (max - min)) * 100;
     const showValues = valueDisplayMode === 'always' || (valueDisplayMode === 'auto' && (isHovered || isDragging));
 
     return [
@@ -167,7 +141,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
         onMouseOut={() => this.setState({ isHovered: false })}
         onBlur={() => this.setState({ isHovered: false })}
       >
-        {showValues && <span className='slider-value lower'>{values.lower}</span>}
+        {showValues && <span className='slider-value lower'>{value.lower}</span>}
       </button>,
 
       <button
@@ -181,7 +155,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
         onMouseOut={() => this.setState({ isHovered: false })}
         onBlur={() => this.setState({ isHovered: false })}
       >
-        {showValues && <span className='slider-value upper'>{values.upper}</span>}
+        {showValues && <span className='slider-value upper'>{value.upper}</span>}
       </button>,
 
       !!marks?.length &&

@@ -1,22 +1,37 @@
 @mixin themeTypographyEnrichment() {
   &.bold-weight,
+  .bold-weight,
   strong,
   b {
     font-weight: bold;
   }
 
   &.italic-style,
+  .italic-style,
   em,
   i {
     font-style: italic;
   }
 
   &.underline-decoration,
+  .underline-decoration,
   u {
     text-decoration: underline;
   }
 
+  &.strikethrough-decoration,
+  .strikethrough-decoration,
+  s {
+    text-decoration: line-through;
+  }
+
+  &.underline-decoration.strikethrough-decoration,
+  .underline-decoration.strikethrough-decoration {
+    text-decoration: underline line-through;
+  }
+
   &.mn-typography-anchor,
+  .mn-typography-anchor,
   a {
     width: fit-content;
     color: color-hsl($link);

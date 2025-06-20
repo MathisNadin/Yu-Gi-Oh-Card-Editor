@@ -1,45 +1,43 @@
 import { IDeviceListener, IScreenSpec } from 'mn-toolkit/library/system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
-import { classNames, integer, isUndefined } from 'mn-tools';
+import { classNames, integer, isDefined, isUndefined } from 'mn-tools';
 import { FormEvent } from 'react';
 
 export interface ITextAreaInputProps extends IContainableProps {
-  rows?: number;
   minRows?: number;
   maxRows?: number;
   autoGrow?: boolean;
   autofocus?: boolean;
   placeholder?: string;
-  defaultValue?: string;
   spellCheck?: boolean;
+  value: string;
+  onChange: (value: string) => void | Promise<void>;
   onRef?: (ref: HTMLTextAreaElement) => void;
-  onChange?: (value: string) => void | Promise<void>;
   onFocusTextarea?: (event: React.FocusEvent<HTMLTextAreaElement>) => void | Promise<void>;
   onBlurTextarea?: (event: React.FocusEvent<HTMLTextAreaElement>) => void | Promise<void>;
 }
 
 interface ITextAreaInputState extends IContainableState {
-  value: string;
   rows?: number;
   activateScroll: boolean;
+  hasRetriedUndefinedRows?: boolean;
 }
 
 export class TextAreaInput
   extends Containable<ITextAreaInputProps, ITextAreaInputState>
   implements Partial<IDeviceListener>
 {
-  public inputElement!: HTMLTextAreaElement;
-  private hiddenInputElement!: HTMLTextAreaElement;
-  private lineHeight!: number;
-  private paddingTop!: number;
-  private paddingBottom!: number;
-  private borderTopWidth!: number;
-  private borderBottomWidth!: number;
+  public inputElement?: HTMLTextAreaElement;
+  private hiddenInputElement?: HTMLTextAreaElement;
+  private lineHeight = 0;
+  private paddingTop = 0;
+  private paddingBottom = 0;
+  private borderTopWidth = 0;
+  private borderBottomWidth = 0;
 
-  public static override get defaultProps(): ITextAreaInputProps {
+  public static override get defaultProps(): Omit<ITextAreaInputProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      defaultValue: '',
       minRows: 5,
       maxRows: 10,
       autoGrow: false,
@@ -52,7 +50,6 @@ export class TextAreaInput
     this.state = {
       ...this.state,
       rows: props.autoGrow ? 1 : props.minRows!,
-      value: props.defaultValue!,
       activateScroll: !props.autoGrow,
     };
   }
@@ -62,7 +59,7 @@ export class TextAreaInput
     app.$device.addListener(this);
     this.setupStyle();
     if (!this.props.autofocus || app.$device.isNative) return;
-    setTimeout(() => this.inputElement.focus(), 100);
+    setTimeout(() => !!this.inputElement && this.inputElement.focus(), 100);
   }
 
   public override componentWillUnmount() {
@@ -81,16 +78,25 @@ export class TextAreaInput
     snapshot?: TDidUpdateSnapshot
   ) {
     super.componentDidUpdate(prevProps, prevState, snapshot);
-    if (prevProps === this.props) return;
-    if (this.props.defaultValue?.trim() !== this.state.value?.trim()) {
-      this.setState({ value: this.props.defaultValue! }, () =>
-        app.$errorManager.handlePromise(this.onTextAreaChange())
-      );
-    }
-    // If for one reason or another (ex. Tabs) the TextArea was in the DOM byt with a display none then rows was negative, thus undefined
-    // If it is refreshed, check the rows again
-    else if (isUndefined(this.state.rows)) {
+    if (
+      prevProps.value !== this.props.value ||
+      prevProps.autoGrow !== this.props.autoGrow ||
+      prevProps.minRows !== this.props.minRows ||
+      prevProps.maxRows !== this.props.maxRows
+    ) {
       this.onTextAreaChange();
+    }
+    // If for one reason or another (ex. Tabs) the TextArea was in the DOM but with a display none then rows was negative, thus undefined
+    // If it is refreshed, check the rows again, but only once
+    else if (
+      this.inputElement &&
+      isUndefined(this.state.rows) &&
+      this.inputElement.offsetParent !== null && // visible in the flow
+      !this.state.hasRetriedUndefinedRows
+    ) {
+      this.setState({ hasRetriedUndefinedRows: true }, () => {
+        this.onTextAreaChange();
+      });
     }
   }
 
@@ -122,14 +128,16 @@ export class TextAreaInput
         disabled={this.props.disabled}
         rows={this.state.rows}
         placeholder={this.props.placeholder}
-        value={this.state.value}
-        onChange={() => {}}
+        value={this.props.value}
+        onChange={() => {}} // Not used here but necessary for React
         onBlur={(e) => this.props.onBlurTextarea && app.$errorManager.handlePromise(this.props.onBlurTextarea(e))}
         onFocus={(e) => this.props.onFocusTextarea && app.$errorManager.handlePromise(this.props.onFocusTextarea(e))}
         onInput={(e) => app.$errorManager.handlePromise(this.onChange(e))}
         onKeyUp={(e) => app.$errorManager.handlePromise(this.onChange(e))}
-        // FIXME MN : Un peu bâtard, ça empêche le scroll tant qu'on n'a pas dépassé le nombre de maxRows
-        // Utile notamment quand on force une police/lineHeight plus haut qu'à la normale
+        /**
+         * Prevents scrolling while the number of max rows has not been reached
+         * Useful when a higher font/lineHeight than normal is forced
+         */
         style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
       />,
 
@@ -140,9 +148,11 @@ export class TextAreaInput
         disabled={this.props.disabled}
         rows={this.state.rows}
         placeholder={this.props.placeholder}
-        value={this.state.value}
+        value={this.props.value}
         style={{ overflowY: this.state.activateScroll ? undefined : 'hidden' }}
-        onChange={() => {}}
+        onChange={() => {}} // Useless but must stay for React
+        tabIndex={-1}
+        aria-hidden='true'
       />,
     ];
   }
@@ -158,47 +168,52 @@ export class TextAreaInput
     this.hiddenInputElement = c;
   }
 
-  private async onChange(e: FormEvent) {
-    const value = e.target.value as string;
-    if (value === this.state.value) return;
-    await this.setStateAsync({ value });
-    this.onTextAreaChange();
-    if (this.props.onChange) await this.props.onChange(value);
+  private async onChange(e: FormEvent<HTMLTextAreaElement>) {
+    const value = (e.target as HTMLTextAreaElement).value || '';
+    if (value === this.props.value) return;
+    await this.props.onChange(value);
+    // onTextAreaChange will be called by componentDidUpdate to update size
   }
 
   private async onTextAreaChange() {
-    if (!this.props.autoGrow || !this.inputElement) return;
+    if (!this.props.autoGrow || !this.inputElement || !this.hiddenInputElement) return;
 
-    if (this.hiddenInputElement) {
-      this.hiddenInputElement.value = this.inputElement.value; // Synchronisez le texte avec le textarea invisible
-      this.hiddenInputElement.rows = 1;
+    this.hiddenInputElement.value = this.inputElement.value; // Synchronize text with the invisible textarea
+    this.hiddenInputElement.rows = 1;
 
-      // Assurez-vous que box-sizing est pris en compte
-      const innerHeight =
-        this.hiddenInputElement.scrollHeight -
-        this.paddingTop -
-        this.paddingBottom -
-        this.borderTopWidth -
-        this.borderBottomWidth;
+    // Make sure box-sizing is taken into account
+    const innerHeight =
+      this.hiddenInputElement.scrollHeight -
+      this.paddingTop -
+      this.paddingBottom -
+      this.borderTopWidth -
+      this.borderBottomWidth;
 
-      // Utilisez innerHeight pour le calcul des lignes
-      const currentRows = Math.round(innerHeight / this.lineHeight);
+    // Use innerHeight to calculate lines
+    const currentRows = Math.round(innerHeight / this.lineHeight);
 
-      let rows: number | undefined;
-      let activateScroll: boolean;
+    let rows: number | undefined;
+    let activateScroll: boolean;
 
-      if (currentRows > this.props.maxRows!) {
-        rows = this.props.maxRows!;
-        activateScroll = true;
-      } else if (currentRows > 0) {
-        rows = currentRows;
-        activateScroll = false;
-      } else {
-        rows = undefined;
-        activateScroll = false;
-      }
+    if (currentRows > this.props.maxRows!) {
+      rows = this.props.maxRows!;
+      activateScroll = true;
+    } else if (currentRows > 0) {
+      rows = currentRows;
+      activateScroll = false;
+    } else {
+      rows = undefined;
+      activateScroll = false;
+    }
 
-      await this.setStateAsync({ rows, activateScroll });
+    // Maximum security to prevent useless updates and potential loops
+    const hasRetriedUndefinedRows = isDefined(rows) ? true : false;
+    if (
+      rows !== this.state.rows ||
+      activateScroll !== this.state.activateScroll ||
+      hasRetriedUndefinedRows !== this.state.hasRetriedUndefinedRows
+    ) {
+      await this.setStateAsync({ rows, activateScroll, hasRetriedUndefinedRows });
     }
   }
 }

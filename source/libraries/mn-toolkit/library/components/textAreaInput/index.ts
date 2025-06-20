@@ -1,2 +1,2 @@
 export * from './TextAreaInput';
-export * from './TextAreaField';
+export * from './TextAreaInputField';

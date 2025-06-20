@@ -1,21 +1,46 @@
 @mixin themeRichTextEditor() {
+  position: relative;
   display: block;
   width: 100%;
-  cursor: text;
-  position: relative;
 
-  .placeholder {
-    @include themeTypographyParagraph();
-    color: color-hsl($fg2);
-    pointer-events: none;
+  $editorTopBottomPadding: calc(#{$defaultSpacing} * 3 / 4);
+  $editorLeftRightPadding: calc(#{$defaultSpacing} / 2);
+  .lexical-editor-inner {
+    position: relative;
+
+    .lexical-editor-input {
+      @include themeTypography();
+      position: relative;
+      padding: $editorTopBottomPadding $editorLeftRightPadding;
+      border-width: 1px;
+      border-style: solid;
+      border-color: color-hsl($fg4);
+      border-radius: calc(#{$defaultBorderRadius});
+
+      > p:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .lexical-editor-placeholder {
+      position: absolute;
+      top: $editorTopBottomPadding;
+      left: $editorLeftRightPadding;
+      color: color-hsl($fg2);
+      pointer-events: none;
+    }
   }
 
-  .mn-rich-text {
-    cursor: text;
+  &.toolbar-fixed-mode {
+    .mn-rich-text-editor-toolbar {
+      border-radius: calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0 0;
+      border-bottom: 0px;
+    }
 
-    > p:last-child,
-    > .placeholder {
-      margin-bottom: 0;
+    .lexical-editor-inner {
+      .lexical-editor-input {
+        border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
+      }
     }
   }
 }
@@ -24,11 +49,140 @@
   @include themeRichTextEditor();
 }
 
+@mixin themeRichTextEditorToolbar() {
+  $iconSize: 20px;
+  $padding: calc(#{$defaultSpacing} / 4);
+  $containerSize: calc(#{$iconSize} + #{$padding} * 2);
+
+  padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing} / 4);
+  border-width: 1px;
+  border-style: solid;
+  border-color: color-hsl($fg4);
+  border-radius: calc(#{$defaultBorderRadius});
+
+  &.mn-layout-gutter {
+    > .mn-container-inside {
+      gap: calc(#{$defaultSpacing} / 2);
+    }
+  }
+
+  .mn-icon-container-button {
+    height: $containerSize !important;
+    min-height: $containerSize !important;
+    max-height: $containerSize !important;
+    width: $containerSize !important;
+    min-width: $containerSize !important;
+    max-width: $containerSize !important;
+
+    padding: $padding;
+    border-radius: calc(#{$defaultBorderRadius});
+
+    &:not(.active-container-button):not(.mn-icon-toolkit-undo-container-button):not(
+        .mn-icon-toolkit-redo-container-button
+      ) {
+      opacity: 0.7;
+      filter: grayscale(1);
+    }
+
+    &.active-container-button {
+      background-color: color-hsl($bg2);
+
+      .mn-icon-toolkit-format-color {
+        color: var(--current-rich-text-color);
+        fill: var(--current-rich-text-color);
+      }
+
+      .mn-icon-toolkit-format-background-color {
+        color: var(--current-rich-text-background-color);
+        fill: var(--current-rich-text-background-color);
+      }
+    }
+  }
+
+  .mn-toolbar-separator {
+    display: inline-block;
+    width: 1px;
+    height: $containerSize;
+    background: color-hsl($fg4);
+    vertical-align: middle;
+    border-radius: 1px;
+
+    &:last-child {
+      display: none;
+    }
+  }
+}
+
+.mn-rich-text-editor-toolbar {
+  @include themeRichTextEditorToolbar();
+}
+
+@mixin themeRichTextEditorToolbarGhostContainer() {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(#{$defaultSpacing});
+  transition:
+    transform 300ms ease,
+    opacity 300ms ease;
+
+  &.visible {
+    pointer-events: auto;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .mn-rich-text-editor-toolbar {
+    background-color: color-hsl($bg1);
+    width: fit-content;
+  }
+}
+
+.mn-rich-text-editor-toolbar-ghost-mode-container {
+  @include themeRichTextEditorToolbarGhostContainer();
+}
+
 @mixin themeRichTextField() {
+  .field-wrapper {
+    // For the ghost toolbar
+    &.mn-fill {
+      overflow: visible;
+    }
+  }
+
   .input-wrapper {
-    height: auto;
-    max-height: none;
     position: relative;
+    height: unset;
+    min-height: unset;
+    max-height: unset;
+    padding: 0;
+
+    // For the ghost toolbar
+    &.mn-fill {
+      overflow: visible;
+    }
+
+    .mn-rich-text-editor {
+      .lexical-editor-inner {
+        .lexical-editor-input {
+          border-color: $fieldBorderColor;
+          border-right: none;
+          border-left: none;
+          border-bottom: none;
+        }
+      }
+
+      &.toolbar-fixed-mode {
+        .mn-rich-text-editor-toolbar {
+          border: none;
+        }
+      }
+
+      &.toolbar-ghost-mode {
+        .lexical-editor-input {
+          border-top: none;
+        }
+      }
+    }
 
     .mn-icon.status-icon {
       position: absolute !important;
@@ -41,33 +195,4 @@
 
 .mn-form-field.mn-field-rich-text-editor {
   @include themeRichTextField();
-}
-
-@mixin themeCalloutBlockquote() {
-  &:not(.code-block) {
-    border-left: none !important;
-
-    &:before {
-      content: '';
-      width: 1em;
-      height: 1em;
-      font-size: 1.3em;
-      margin-right: 0.5em;
-      vertical-align: 0;
-    }
-
-    &[data-icon='info']:before,
-    &:not([data-icon]):before,
-    &[data-icon='']:before {
-      display: inline-block;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-image: $calloutDataIconInfoBgImg;
-    }
-  }
-}
-
-blockquote.mn-blockquote-callout {
-  @include themeCalloutBlockquote();
 }

@@ -62,8 +62,6 @@ export interface IVideoPlayerProps extends IContainableProps<HTMLVideoElement> {
   onProgressCapture?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
   onRateChange?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
   onRateChangeCapture?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
-  onResize?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
-  onResizeCapture?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
   onSeeked?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
   onSeekedCapture?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
   onSeeking?: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
@@ -83,12 +81,10 @@ export interface IVideoPlayerProps extends IContainableProps<HTMLVideoElement> {
 interface IVideoPlayerState extends IContainableState {}
 
 export class VideoPlayer extends Containable<IVideoPlayerProps, IVideoPlayerState, HTMLVideoElement> {
-  public static override get defaultProps(): IVideoPlayerProps {
+  public static override get defaultProps(): Omit<IVideoPlayerProps, 'thumbnail' | 'sources'> {
     return {
       ...super.defaultProps,
       bg: '4',
-      thumbnail: '',
-      sources: [],
       controls: true,
       preload: 'metadata',
     };
@@ -147,8 +143,6 @@ export class VideoPlayer extends Containable<IVideoPlayerProps, IVideoPlayerStat
     attributes.onProgressCapture = this.props.onProgressCapture;
     attributes.onRateChange = this.props.onRateChange;
     attributes.onRateChangeCapture = this.props.onRateChangeCapture;
-    attributes.onResize = this.props.onResize;
-    attributes.onResizeCapture = this.props.onResizeCapture;
     attributes.onSeeked = this.props.onSeeked;
     attributes.onSeekedCapture = this.props.onSeekedCapture;
     attributes.onSeeking = this.props.onSeeking;

@@ -3,14 +3,14 @@ import { Checkbox, ICheckboxProps } from './Checkbox';
 
 interface ICheckboxFieldProps extends IFormFieldProps<boolean>, ICheckboxProps {}
 
-interface ICheckboxFieldState extends IFormFieldState<boolean> {}
+interface ICheckboxFieldState extends IFormFieldState {}
 
 export class CheckboxField extends FormField<boolean, ICheckboxFieldProps, ICheckboxFieldState> {
-  public static override get defaultProps(): ICheckboxFieldProps {
+  public static override get defaultProps(): Omit<ICheckboxFieldProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      label: '',
       hideLabel: true,
-      defaultValue: false,
     };
   }
 
@@ -24,7 +24,7 @@ export class CheckboxField extends FormField<boolean, ICheckboxFieldProps, IChec
         disabled={this.props.disabled}
         label={this.props.label}
         labelPosition={this.props.labelPosition}
-        defaultValue={this.state.value}
+        value={this.value}
         onChange={(value) => this.onChange(value)}
       />
     );
