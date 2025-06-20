@@ -611,6 +611,18 @@ export class YuginewsService {
       card.pendEffect = this.getPendEffect(cardData);
       card.rushOtherEffects = this.getRushOtherEffects(cardData, app.$card.hasMaterials(card));
 
+      // Cheat a bit here for the display purpose when there is maybe only otherEffects (on a Ritual/Fusion for example)
+      if (
+        card.rush &&
+        card.rushTextMode === 'regular' &&
+        !card.rushCondition &&
+        !card.rushEffect &&
+        !card.rushChoiceEffects?.some((e) => !!e?.length)
+      ) {
+        if (card.rushOtherEffects) card.description = card.rushOtherEffects;
+        card.rushTextMode = 'vanilla';
+      }
+
       if (card.frames.length === 1 && (card.frames[0] === 'token' || card.frames[0] === 'monsterToken')) {
         card.edition = 'forbiddenDeck';
       }
