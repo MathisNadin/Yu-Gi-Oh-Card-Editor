@@ -5,6 +5,7 @@ export interface IYuginewsCardData {
   artworkUrl?: string;
   uuid?: string;
   id?: number | string;
+  pageOrder?: number;
   added?: Date;
   setId?: string;
   picture?: string;
@@ -149,6 +150,10 @@ export class YuginewsService {
       parsedCardData.uuid = uuid();
       parsedCardData.pictureDate = parsedCardData.pictureDate?.replaceAll('"', '');
 
+      if (parsedCardData.added) {
+        parsedCardData.added = new Date(parsedCardData.added);
+      }
+
       parsedCardData.isRush = forceRush || foundRush || 'effectType' in parsedCardData;
 
       // Construct picture URL
@@ -236,6 +241,7 @@ export class YuginewsService {
       'section.elementor-section.elementor-inner-section.elementor-element.elementor-section-boxed.elementor-section-height-default.elementor-section-height-default'
     );
 
+    let pageOrder = 1;
     sections.forEach((section) => {
       const artworkUrl = section.querySelector('img')?.src;
       const subSections = section.querySelectorAll(
@@ -302,6 +308,8 @@ export class YuginewsService {
         if (artworkUrl) parsedCardData.artworkUrl = artworkUrl;
         if (!parsedCardData.setId) parsedCardData.setId = '';
         if (isUndefined(parsedCardData.id)) parsedCardData.id = '';
+        parsedCardData.pageOrder = pageOrder;
+        pageOrder++;
         cardsData.push(parsedCardData);
       });
     });

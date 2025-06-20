@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-import { classNames, isString } from 'mn-tools';
+import { classNames, formatDate, isString } from 'mn-tools';
 import {
   Spinner,
   HorizontalStack,
@@ -28,7 +28,7 @@ import { ICard } from '../card';
 
 type TWebsite = 'yugipedia' | 'yuginews';
 
-type TCardsDataSortOption = 'theme' | 'id' | 'name' | 'set';
+type TCardsDataSortOption = 'theme' | 'id' | 'name' | 'set' | 'added' | 'pageOrder';
 
 export interface ICardImportDialogResult {}
 
@@ -91,8 +91,8 @@ export class CardImportDialog extends AbstractPopup<
       cardsData: [],
       selectedCards: {},
       selectedCardsNum: 0,
-      cardsDataSortOption: 'theme',
-      cardsDataSortOrder: 'asc',
+      cardsDataSortOption: 'added',
+      cardsDataSortOrder: 'desc',
       artworkSaveDirPath: `${app.$settings.settings.defaultImgImportPath}`,
       yuginewsImporting: false,
       cardsImported: 0,
@@ -174,7 +174,11 @@ export class CardImportDialog extends AbstractPopup<
     const cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
 
     if (cardsData.length) {
-      if (this.state.cardsDataSortOption === 'theme' && !cardsData[0]!.theme?.length) {
+      if (this.state.cardsDataSortOption === 'added' && !cardsData[0]!.added) {
+        await this.setStateAsync({ cardsDataSortOption: 'pageOrder' });
+      } else if (this.state.cardsDataSortOption === 'pageOrder' && cardsData[0]!.added) {
+        await this.setStateAsync({ cardsDataSortOption: 'added' });
+      } else if (this.state.cardsDataSortOption === 'theme' && !cardsData[0]!.theme?.length) {
         await this.setStateAsync({ cardsDataSortOption: 'id' });
       } else if (this.state.cardsDataSortOption === 'set' && cardsData[0]!.theme?.length) {
         await this.setStateAsync({ cardsDataSortOption: 'theme' });
@@ -283,6 +287,38 @@ export class CardImportDialog extends AbstractPopup<
           if (cardsDataSortOrder === 'asc') return result;
           else return -1 * result;
         });
+        break;
+
+      case 'added':
+        if (cardsDataSortOrder === 'asc') {
+          cardsData.sort((a, b) => {
+            const dateA = a.added ? a.added.getTime() : 0;
+            const dateB = b.added ? b.added.getTime() : 0;
+            return dateA - dateB;
+          });
+        } else {
+          cardsData.sort((a, b) => {
+            const dateA = a.added ? a.added.getTime() : 0;
+            const dateB = b.added ? b.added.getTime() : 0;
+            return dateB - dateA;
+          });
+        }
+        break;
+
+      case 'pageOrder':
+        if (cardsDataSortOrder === 'asc') {
+          cardsData.sort((a, b) => {
+            const orderA = a.pageOrder ?? Number.NEGATIVE_INFINITY;
+            const orderB = b.pageOrder ?? Number.NEGATIVE_INFINITY;
+            return orderB - orderA;
+          });
+        } else {
+          cardsData.sort((a, b) => {
+            const orderA = a.pageOrder ?? Number.POSITIVE_INFINITY;
+            const orderB = b.pageOrder ?? Number.POSITIVE_INFINITY;
+            return orderA - orderB;
+          });
+        }
         break;
 
       default:
@@ -409,6 +445,7 @@ export class CardImportDialog extends AbstractPopup<
       selectedCardsNum,
     } = this.state;
     const showTheme = !!cardsData.length && !!cardsData[0]!.theme?.length;
+    const showAdded = !!cardsData.length && !!cardsData[0]!.added;
     const headers: ITableHeadRow = {
       cells: [
         {
@@ -443,6 +480,21 @@ export class CardImportDialog extends AbstractPopup<
       sortOrder: cardsDataSortOption === 'name' ? cardsDataSortOrder : undefined,
       onChangeOrder: () => this.onChangeOrder('name'),
     });
+    if (showAdded) {
+      headers.cells.push({
+        align: 'left',
+        content: 'Ajouté le',
+        sortOrder: cardsDataSortOption === 'added' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('added'),
+      });
+    } else {
+      headers.cells.push({
+        align: 'left',
+        content: "Ordre dans l'article",
+        sortOrder: cardsDataSortOption === 'pageOrder' ? cardsDataSortOrder : undefined,
+        onChangeOrder: () => this.onChangeOrder('pageOrder'),
+      });
+    }
 
     return (
       <VerticalStack key='yuginews' className='card-import-dialog-content yuginews' scroll gutter>
@@ -464,32 +516,40 @@ export class CardImportDialog extends AbstractPopup<
           <Table
             className='yuginews-cards-table'
             headers={[headers]}
-            rows={cardsData.map((card) => {
-              const uuid = card.uuid!;
-              return {
-                className: classNames('yuginews-card-row', this.getCardDataStyle(card), {
-                  selected: this.state.selectedCards[uuid],
-                }),
-                onTap: () => this.toggleSelectCard(uuid),
-                cells: [
-                  {
-                    content: <Checkbox value={this.state.selectedCards[uuid] ?? false} onChange={() => {}} />,
-                  },
-                  {
-                    align: 'left',
-                    content: <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />,
-                  },
-                  {
-                    align: 'left',
-                    content: <Typography content={`${card.id ?? '-'}`} variant='help' />,
-                  },
-                  {
-                    align: 'left',
-                    content: <Typography content={card.nameFR} variant='help' />,
-                  },
-                ],
-              };
-            })}
+            rows={cardsData.map((card) => ({
+              className: classNames('yuginews-card-row', this.getCardDataStyle(card), {
+                selected: this.state.selectedCards[card.uuid!],
+              }),
+              onTap: () => this.toggleSelectCard(card.uuid!),
+              cells: [
+                {
+                  content: <Checkbox value={this.state.selectedCards[card.uuid!] ?? false} onChange={() => {}} />,
+                },
+                {
+                  align: 'left',
+                  content: <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />,
+                },
+                {
+                  align: 'left',
+                  content: <Typography content={`${card.id ?? '-'}`} variant='help' />,
+                },
+                {
+                  align: 'left',
+                  content: <Typography content={card.nameFR} variant='help' />,
+                },
+                {
+                  align: 'left',
+                  content: (
+                    <Typography
+                      content={
+                        showAdded ? (card.added ? formatDate(card.added, '%d/%M/%Y') : '-') : `${card.pageOrder || '-'}`
+                      }
+                      variant='help'
+                    />
+                  ),
+                },
+              ],
+            }))}
           />
         )}
 
