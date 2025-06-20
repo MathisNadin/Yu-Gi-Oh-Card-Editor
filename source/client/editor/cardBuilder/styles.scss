@@ -353,6 +353,11 @@
 
       &.normal-text {
         font-style: italic;
+
+        p,
+        span {
+          font-style: italic;
+        }
       }
 
       &.with-abilities {
