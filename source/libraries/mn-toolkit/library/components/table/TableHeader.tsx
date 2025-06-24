@@ -31,7 +31,7 @@ export class TableHeader extends ToolkitComponent<ITableHeaderProps, ITableHeade
   private async onTap(e: React.MouseEvent<HTMLTableCellElement>) {
     if (this.props.cell.onChangeOrder) {
       const newOrder = this.props.cell.sortOrder === 'asc' ? 'desc' : 'asc';
-      this.props.cell.onChangeOrder(newOrder);
+      await this.props.cell.onChangeOrder(newOrder);
     }
 
     if (this.props.cell.onTap) {

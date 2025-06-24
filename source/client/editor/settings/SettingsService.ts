@@ -1,4 +1,4 @@
-import { Observable, deepClone, isObject, isString, unserialize } from 'mn-tools';
+import { AbstractObservable, deepClone, isObject, isString, unserialize } from 'mn-tools';
 import { IStoreListener } from 'mn-toolkit';
 import { ICardsExportData } from 'client/editor/card';
 
@@ -20,7 +20,7 @@ export interface ISettingsListener {
   settingsUpdated: (settings: IUserSettings) => void;
 }
 
-export class SettingsService extends Observable<ISettingsListener> implements Partial<IStoreListener> {
+export class SettingsService extends AbstractObservable<ISettingsListener> implements Partial<IStoreListener> {
   private _settings: IUserSettings = {} as IUserSettings;
 
   public get settings() {

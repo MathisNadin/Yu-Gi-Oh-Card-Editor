@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.5
+
+- fix misused promises
+
 ## 1.1.4
 
+- bump to 1.1.4
 - ajout de noUncheckedIndexedAccess dans la config ts
 
 ## 1.1.3

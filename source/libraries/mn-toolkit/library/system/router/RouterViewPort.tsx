@@ -1,4 +1,4 @@
-import { DOMElement, createElement } from 'react';
+import { ReactElement, createElement } from 'react';
 import { logger, serialize } from 'mn-tools';
 import { Containable, IContainableProps, IContainableState, Spinner } from '../../components';
 import { IRouterListener } from '.';
@@ -18,7 +18,7 @@ export class RouterViewPort
   private navVersion = 0;
   private currentContentKey?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private currentComponent?: DOMElement<any, any>;
+  private currentComponent?: ReactElement<any, any>;
 
   public static override get defaultProps(): IRouterViewPortProps {
     return {
@@ -29,7 +29,6 @@ export class RouterViewPort
 
   public constructor(props: IRouterViewPortProps) {
     super(props);
-    this.state = { ...this.state, loaded: false };
     // When the user clicks on the browser's "back" or "forward" button
     // To account for pagination which changes the url without restarting a router state
     window.addEventListener('popstate', () => this.navVersion++);
@@ -38,15 +37,15 @@ export class RouterViewPort
 
   public routerStateStart() {
     this.navVersion = 0;
-    this.setState({ loaded: false });
+    this.forceUpdate();
   }
 
   public routerStateChanged() {
-    this.setState({ loaded: false });
+    this.forceUpdate();
   }
 
   public routerStateLoaded() {
-    this.setState({ loaded: true });
+    this.forceUpdate();
   }
 
   public override renderClasses() {
@@ -70,7 +69,7 @@ export class RouterViewPort
     const newContentKey = `${key}${routerKey}content`;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let content: DOMElement<any, any> | undefined;
+    let content: ReactElement<any, any> | undefined;
     if (this.currentContentKey !== newContentKey) {
       content = createElement(currentState.component as unknown as string, { ...routerParameters, key: newContentKey });
       this.currentComponent = content;

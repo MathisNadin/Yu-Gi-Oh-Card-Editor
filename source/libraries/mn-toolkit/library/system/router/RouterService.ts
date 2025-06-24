@@ -1,5 +1,5 @@
 import {
-  Observable,
+  AbstractObservable,
   extend,
   isBoolean,
   isDefined,
@@ -27,7 +27,7 @@ type TRouterStates<T extends TRouterState = TRouterState, P extends TRouterState
   [name in T]?: IState<T, P>;
 };
 
-export class RouterService extends Observable<IRouterListener> {
+export class RouterService extends AbstractObservable<IRouterListener> {
   private currentResolvedState?: IResolvedState;
   private states: TRouterStates = {};
   private resolving = false;
@@ -105,22 +105,6 @@ export class RouterService extends Observable<IRouterListener> {
     });
   }
 
-  private fireStateWillLeave(resolvedState: IResolvedState) {
-    return this.askForResponse<string>('routerStateWillLeave', resolvedState);
-  }
-
-  private fireStateStart(resolvedState: IResolvedState) {
-    this.dispatch('routerStateStart', resolvedState);
-  }
-
-  private fireStateChanged(resolvedState: IResolvedState) {
-    this.dispatch('routerStateChanged', resolvedState);
-  }
-
-  private fireStateLoaded(resolvedState: IResolvedState) {
-    this.dispatch('routerStateLoaded', resolvedState);
-  }
-
   public async documentUrlToState(fallbackState?: TRouterState) {
     fallbackState = fallbackState || this.fallbackState;
     const resolvedState = this.resolveStateFromPath();
@@ -131,7 +115,7 @@ export class RouterService extends Observable<IRouterListener> {
     }
   }
 
-  public checkLocationState(stateName: string) {
+  public checkLocationState(stateName: TRouterState) {
     const resolvedState = this.resolveStateFromPath();
     if (!resolvedState) return false;
     return resolvedState.state.name === stateName;
@@ -250,7 +234,7 @@ export class RouterService extends Observable<IRouterListener> {
   private async checkCanLeave() {
     if (!this.currentResolvedState) return true;
 
-    const message = this.fireStateWillLeave(this.currentResolvedState);
+    const message = await this.askForResponseAsync('routerStateWillLeave', this.currentResolvedState);
     if (message) {
       const confirm = await app.$popup.confirm(message);
       if (!confirm) return false;
@@ -305,16 +289,13 @@ export class RouterService extends Observable<IRouterListener> {
    * Finalize navigation (trigger events, etc.)
    */
   private async finishNavigation<T extends TRouterState = TRouterState>(resolvedState: IResolvedState<T>) {
-    this.fireStateStart(resolvedState);
     await this.resolveState(resolvedState);
-    app.$react.domReady(() => this.fireStateLoaded(resolvedState));
+    app.$react.domReady(() => app.$errorManager.handlePromise(this.dispatchAsync('routerStateLoaded', resolvedState)));
   }
 
   public async back() {
     if (!this.hasHistory) return;
     const rs = this.history.pop()!;
-    this.fireStateChanged(rs);
-    this.fireStateStart(rs);
     return await this.resolveState(rs);
   }
 
@@ -520,6 +501,7 @@ export class RouterService extends Observable<IRouterListener> {
 
   private async resolveState(state: IResolvedState) {
     this.resolving = true;
+    await this.dispatchAsync('routerStateStart', state);
 
     // Retrieve current state name, if any, to handle an eventual error
     const oldState = this.currentResolvedState?.state?.name;
@@ -563,7 +545,7 @@ export class RouterService extends Observable<IRouterListener> {
       const breadcrumb = this.buildBreadcrumb();
       this.currentResolvedState.breadcrumb = breadcrumb;
       this.resolving = false;
-      this.fireStateChanged(this.currentResolvedState);
+      await this.dispatchAsync('routerStateChanged', this.currentResolvedState);
     } catch (e) {
       // If anything breaks, pivot to fallbackState if it's a different state
       app.$errorManager.trigger(e as Error);

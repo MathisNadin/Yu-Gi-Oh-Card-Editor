@@ -1,8 +1,8 @@
 import { JSX } from 'react';
-import { Observable, uuid } from 'mn-tools';
+import { AbstractObservable, uuid } from 'mn-tools';
 import { IToasterListener, Toaster, TToastType } from '.';
 
-export class ToasterService extends Observable<IToasterListener> {
+export class ToasterService extends AbstractObservable<IToasterListener> {
   public toasters: JSX.Element[] = [];
 
   public info(message: string) {

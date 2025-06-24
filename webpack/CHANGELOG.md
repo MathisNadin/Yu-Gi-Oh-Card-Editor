@@ -1,7 +1,12 @@
 ## mn-webpack-builder change log
 
+## 1.2.1
+
+- pas de linting du dossier scripts
+
 ## 1.2.0
 
+- bump to 1.2.0
 - migration react 19 + début correctifs
 
 ## 1.1.3

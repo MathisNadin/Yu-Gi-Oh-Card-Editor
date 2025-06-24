@@ -112,7 +112,7 @@ export abstract class AbstractPopover<
   }
 
   public async close() {
-    app.$device.keyboardClose();
+    await app.$device.keyboardClose();
     app.$popover.remove(this.props.id!);
     if (this.props.onClose) await this.props.onClose();
   }

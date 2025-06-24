@@ -1,7 +1,7 @@
 {
   "name": "mn-webpack-builder",
   "displayName": "MN Webpack Builder",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Builder Webpack en Typescript pour divers environnements",
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
     "build:web-served": "node scripts/build-platform.mjs web-served",
     "build:web-server": "rm -rf ./.build && npx tsc -p tsconfig.build.json && npx tsc-alias -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\" \"./scripts/**/*.{js,jsx,ts,tsx,json}\" \"./webpack/**/*.{js,jsx,ts,tsx,json}\"",
+    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\" \"./webpack/**/*.{js,jsx,ts,tsx,json}\"",
     "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./scripts/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./webpack/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "validate": "npm run format && npm run lint && npm run typecheck",
     "test": "jest",

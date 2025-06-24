@@ -50,10 +50,11 @@ export class LocalStorageService implements IStoreService {
   }
 
   public async importData(jsonData: string) {
-    const data = unserialize<Record<string, TStoreValue>>(jsonData);
+    const data = unserialize<Record<string | number, TStoreValue>>(jsonData);
     for (const key in data) {
-      await this.set(key, data[key]);
+      await this.set(`${key}`, data[key]);
     }
+    return data;
   }
 
   public async exportData() {

@@ -27,10 +27,10 @@ export interface IHeaderCrumb<T extends TRouterState = TRouterState> {
 }
 
 export interface IHeaderListener {
-  headerGetPageActions(actions: IActionsPopoverAction[]): void;
-  headerGetButtons(buttons: IHeaderComponent[]): void;
-  headerUpdated(): void;
-  breadcrumbAlter(crumbs: IHeaderCrumb[]): void;
+  headerGetPageActions: (actions: IActionsPopoverAction[]) => void;
+  headerGetButtons: (buttons: IHeaderComponent[]) => void;
+  headerUpdated: () => void;
+  breadcrumbAlter: (crumbs: IHeaderCrumb[]) => void;
 }
 
 declare global {

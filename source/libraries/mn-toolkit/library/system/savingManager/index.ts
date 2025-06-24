@@ -21,5 +21,5 @@ declare global {
 }
 
 export interface ISavingManagerListener {
-  onSavingManagerStatusChanged(status: TSavingStatus): void;
+  onSavingManagerStatusChanged: (status: TSavingStatus) => void | Promise<void>;
 }

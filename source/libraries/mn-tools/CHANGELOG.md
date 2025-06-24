@@ -1,7 +1,14 @@
 ## mn-tools change log
 
+## 2.3.0
+
+- fix appel des fonctions dans l'observable
+- try catch sur les listeners
+- observable bien mieux typé
+
 ## 2.2.2
 
+- bump to 2.2.2
 - fix tests date jest
 
 ## 2.2.1

@@ -1,10 +1,10 @@
-import { logger, Observable } from 'mn-tools';
+import { logger, AbstractObservable } from 'mn-tools';
 import { IPermissionListener } from '.';
 import { ISessionListener } from '../session';
 
 const log = logger('$permissions');
 
-export class PermissionService extends Observable<IPermissionListener> implements Partial<ISessionListener> {
+export class PermissionService extends AbstractObservable<IPermissionListener> implements Partial<ISessionListener> {
   private permissions?: Set<TPermission>;
 
   public async setup() {
@@ -12,23 +12,19 @@ export class PermissionService extends Observable<IPermissionListener> implement
     return Promise.resolve();
   }
 
-  public fireLoaded(permissions: Set<TPermission>, previous: Set<TPermission> | undefined) {
-    this.dispatch('permissionLoaded', permissions, previous);
+  public async sessionUpdated(sessionData: ISessionData) {
+    await this.load(sessionData.permissions);
   }
 
-  public sessionUpdated(sessionData: ISessionData) {
-    this.load(sessionData.permissions);
+  public async sessionDropped() {
+    await this.load([]);
   }
 
-  public sessionDropped() {
-    this.load([]);
-  }
-
-  public load(permissions: TPermission[]) {
+  public async load(permissions: TPermission[]) {
     const previous = this.permissions;
     this.permissions = new Set(permissions);
     log.debug('Loading new permissions', permissions);
-    this.fireLoaded(this.permissions, previous);
+    await this.dispatchAsync('permissionLoaded', this.permissions, previous);
   }
 
   public hasPermission<P extends TPermission = TPermission>(permission: P) {

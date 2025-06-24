@@ -225,7 +225,9 @@ export class CardImportDialog extends AbstractPopup<
       selectedCards = {};
     } else {
       selectedCardsNum = cardsData.length;
-      cardsData.forEach((card) => (selectedCards[card.uuid as string] = true));
+      for (const card of cardsData) {
+        if (card.uuid) selectedCards[card.uuid] = true;
+      }
     }
     this.setState({ selectedCards: { ...selectedCards }, selectedCardsNum });
   }

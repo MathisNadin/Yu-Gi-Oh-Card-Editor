@@ -4,7 +4,16 @@ import { Device as CapacitorDevice } from '@capacitor/device';
 import { Keyboard as CapacitorKeyboard } from '@capacitor/keyboard';
 import { SplashScreen as CapacitorSplashScreen } from '@capacitor/splash-screen';
 import { StatusBar as CapacitorStatusBar, Style as StatusBarStyle } from '@capacitor/status-bar';
-import { extend, isBoolean, isDefined, isString, TLanguageLocale, logger, Observable, serialize } from 'mn-tools';
+import {
+  extend,
+  isBoolean,
+  isDefined,
+  isString,
+  TLanguageLocale,
+  logger,
+  AbstractObservable,
+  serialize,
+} from 'mn-tools';
 import { IDeviceSpec } from 'api/main';
 import { IApplicationListener } from '../../system';
 
@@ -25,21 +34,21 @@ export interface IScreenSpec {
 export type TScreenSize = 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge' | 'xxxlarge';
 
 export interface IDeviceListener {
-  deviceScreenSpecificationChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec, screenSizeChanged: boolean): void;
-  deviceForeground(): void;
-  deviceBackground(): void;
-  deviceOnline(): void;
-  deviceOffline(): void;
-  deviceBackButton(): void;
-  deviceIdle(seconds: number): void;
-  deviceInitialized(): void;
+  deviceScreenSpecificationChanged: (newSpec: IScreenSpec, oldSpec: IScreenSpec, screenSizeChanged: boolean) => void;
+  deviceForeground: () => void | Promise<void>;
+  deviceBackground: () => void | Promise<void>;
+  deviceOnline: () => void | Promise<void>;
+  deviceOffline: () => void | Promise<void>;
+  deviceBackButton: () => void | Promise<void>;
+  deviceIdle: (seconds: number) => void | Promise<void>;
+  deviceInitialized: () => void | Promise<void>;
 }
 
 const log = logger('device');
 
 const IDLE_DELAY = 5;
 
-export class DeviceService extends Observable<IDeviceListener> implements Partial<IApplicationListener> {
+export class DeviceService extends AbstractObservable<IDeviceListener> implements Partial<IApplicationListener> {
   private _idleCount!: number;
   private _idleTimerId!: NodeJS.Timeout;
   private _timeOffset!: number;
@@ -59,29 +68,13 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     xxxlarge: 'mn-screen-xxxlarge',
   };
 
-  public fireScreenSpecChanged(newSpec: IScreenSpec, oldSpec: IScreenSpec) {
-    this.dispatch('deviceScreenSpecificationChanged', newSpec, oldSpec, newSpec.screenSize !== oldSpec.screenSize);
-  }
-  public fireForeground() {
-    this.dispatch('deviceForeground');
-  }
-  public fireBackground() {
-    this.dispatch('deviceBackground');
-  }
-  public fireOnline() {
-    this.dispatch('deviceOnline');
-  }
-  public fireOffline() {
-    this.dispatch('deviceOffline');
-  }
-
   public constructor() {
     super();
     document.addEventListener(
       'backbutton',
       (event: Event) => {
         event.preventDefault();
-        this.dispatch('deviceBackButton');
+        app.$errorManager.handlePromise(this.dispatchAsync('deviceBackButton'));
       },
       false
     );
@@ -139,7 +132,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     await this.setupNetwork();
     this.setupGlobalization();
     log.debug('hybrid', this.isNative);
-    this.dispatch('deviceInitialized');
+    await this.dispatchAsync('deviceInitialized');
   }
 
   private setupGlobalization() {
@@ -252,7 +245,12 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
       extend(this._screenSpec, data);
     }
     log.debug('spec updated', this._screenSpec);
-    this.fireScreenSpecChanged(this._screenSpec, oldSpec);
+    this.dispatch(
+      'deviceScreenSpecificationChanged',
+      this._screenSpec,
+      oldSpec,
+      this._screenSpec.screenSize !== oldSpec.screenSize
+    );
   }
 
   public async keyboardClose() {
@@ -321,13 +319,13 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     this.restartIdle();
     this._foreground = true;
     log.debug('Device foreground');
-    this.fireForeground();
+    app.$errorManager.handlePromise(this.dispatchAsync('deviceForeground'));
   }
 
   private doPause() {
     this.stopIdle();
     this._foreground = false;
-    this.fireBackground();
+    app.$errorManager.handlePromise(this.dispatchAsync('deviceBackground'));
   }
 
   private setupBackground() {
@@ -404,7 +402,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
     this._idleCount++;
     const time = IDLE_DELAY * this._idleCount;
     log.debug('idle', time, 's');
-    this.dispatch('deviceIdle', time);
+    app.$errorManager.handlePromise(this.dispatchAsync('deviceIdle', time));
     this.rearmIdleTimer();
   }
 
@@ -435,10 +433,10 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
         this._isConnected = status.connected;
         if (this.isConnected) {
           log.debug('Network connected');
-          this.fireOnline();
+          app.$errorManager.handlePromise(this.dispatchAsync('deviceOnline'));
         } else {
           log.debug('Network disconnected');
-          this.fireOffline();
+          app.$errorManager.handlePromise(this.dispatchAsync('deviceOffline'));
         }
       });
     } else {
@@ -449,7 +447,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
         () => {
           this._isConnected = navigator.onLine;
           log.debug('offline', this.isConnected);
-          this.fireOffline();
+          app.$errorManager.handlePromise(this.dispatchAsync('deviceOffline'));
         },
         false
       );
@@ -459,7 +457,7 @@ export class DeviceService extends Observable<IDeviceListener> implements Partia
         () => {
           this._isConnected = navigator.onLine;
           log.debug('online', this.isConnected);
-          this.fireOnline();
+          app.$errorManager.handlePromise(this.dispatchAsync('deviceOnline'));
         },
         false
       );

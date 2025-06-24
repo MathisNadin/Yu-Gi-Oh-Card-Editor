@@ -30,7 +30,7 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
 
   public override get children(): TJSXElementChildren {
     const crumbs = this.props.crumbs.map((x) => ({ ...x }));
-    app.$header.alterBreadCrumb(crumbs);
+    app.$header.dispatch('breadcrumbAlter', crumbs);
 
     if (this.props.onlyShowLastCrumb || app.$device.isSmallScreen) {
       return [
@@ -61,7 +61,7 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
         if (!!crumb.href) {
           return [
             <Typography
-              key={`${i}-crumb-href-${crumb.title}`}
+              key={i}
               className='crumb'
               variant='document'
               contentType='markdown'
@@ -71,15 +71,7 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
             i < crumbs.length - 1 && <Icon key='separator' className='separator' icon='toolkit-angle-right' />,
           ];
         }
-        return (
-          <Typography
-            key={`${i}-crumb-${crumb.title}`}
-            className='bread'
-            variant='document'
-            contentType='markdown'
-            content={crumb.title}
-          />
-        );
+        return <Typography key={i} className='bread' variant='document' contentType='markdown' content={crumb.title} />;
       }),
 
       this.props.children,

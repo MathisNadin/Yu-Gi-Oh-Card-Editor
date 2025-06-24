@@ -20,8 +20,10 @@ export class NumberInputField extends FormField<number, INumberInputFieldProps, 
 
   public constructor(props: INumberInputFieldProps) {
     super(props, 'number');
-    this.validators.unshift((field) => {
-      if (!isNumber(field.value)) field.addError("Ceci n'est pas un nombre");
+    this.validators.unshift(async (field) => {
+      if (!isNumber(field.value)) {
+        await field.addError("Ceci n'est pas un nombre");
+      }
     });
   }
 

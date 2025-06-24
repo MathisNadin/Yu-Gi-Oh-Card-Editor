@@ -84,7 +84,6 @@ export class VideoPlayer extends Containable<IVideoPlayerProps, IVideoPlayerStat
   public static override get defaultProps(): Omit<IVideoPlayerProps, 'thumbnail' | 'sources'> {
     return {
       ...super.defaultProps,
-      bg: '4',
       controls: true,
       preload: 'metadata',
     };

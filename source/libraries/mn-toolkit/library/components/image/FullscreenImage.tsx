@@ -1,10 +1,10 @@
-import { IContainerProps, IContainerState, Container, HorizontalStack } from '../container';
+import { IContainableProps, IContainableState, Containable } from '../containable';
+import { HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { IImageProps, Image as ToolkitImage } from '../image';
-import { Spacer } from '../spacer';
 import { Typography } from '../typography';
 
-export interface IFullscreenImageProps extends IContainerProps {
+export interface IFullscreenImageProps extends IContainableProps {
   key?: string;
   type?: string;
   onRef?: (ref: FullscreenImage) => void;
@@ -13,21 +13,18 @@ export interface IFullscreenImageProps extends IContainerProps {
   imgHint?: IImageProps['hint'];
 }
 
-interface IFullscreenImageState extends IContainerState {
+interface IFullscreenImageState extends IContainableState {
   visible: boolean;
 }
 
-export class FullscreenImage extends Container<IFullscreenImageProps, IFullscreenImageState> {
+export class FullscreenImage extends Containable<IFullscreenImageProps, IFullscreenImageState> {
   public static override get defaultProps(): Omit<IFullscreenImageProps, 'imgAlt' | 'imgSrc'> {
     return {
       ...super.defaultProps,
-      layout: 'vertical',
-      gutter: true,
-      padding: true,
       bg: undefined,
-      maxWidth: app.$device.isSmallScreen ? '95%' : '90%',
-      minHeight: '50%',
-      maxHeight: '95%',
+      maxWidth: app.$device.isSmallScreen ? '95vw' : '90vw',
+      minHeight: '50vh',
+      maxHeight: '95vh',
       type: 'fullscreen-image',
     };
   }
@@ -57,8 +54,8 @@ export class FullscreenImage extends Container<IFullscreenImageProps, IFullscree
     }
   }
 
-  public close() {
-    app.$device.keyboardClose();
+  public async close() {
+    await app.$device.keyboardClose();
     app.$fullscreenImage.remove(this.props.id!);
   }
 
@@ -71,35 +68,23 @@ export class FullscreenImage extends Container<IFullscreenImageProps, IFullscree
   }
 
   public override get children() {
-    return [this.state.loaded && this.renderHeader(), this.state.loaded && this.renderContent()];
-  }
-
-  protected renderHeader() {
+    if (!this.state.loaded) return null;
     return (
-      <HorizontalStack key='header' className='mn-fullscreen-image-header'>
-        <Spacer />
-        <Icon icon='toolkit-close' name='Fermer' onTap={() => this.close()} />
-      </HorizontalStack>
+      <Containable className='mn-fullscreen-image-inside'>
+        <figure className='mn-fullscreen-image-content'>
+          <HorizontalStack itemAlignment='right'>
+            <Icon size={20} icon='toolkit-close' name='Fermer' onTap={() => this.close()} />
+          </HorizontalStack>
+
+          <ToolkitImage src={this.props.imgSrc} alt={this.props.imgAlt} />
+
+          {!!this.props.imgSrc && !!this.props.imgHint && (
+            <figcaption>
+              <Typography italic variant='help' contentType='text' content={this.props.imgHint} />
+            </figcaption>
+          )}
+        </figure>
+      </Containable>
     );
-  }
-
-  public renderContent() {
-    if (!this.props.imgSrc) return null;
-    return (
-      <figure key='content' className='mn-fullscreen-image-content'>
-        <ToolkitImage src={this.props.imgSrc} alt={this.props.imgAlt} maxHeight={this.imgMaxHeight} />
-
-        {!!this.props.imgHint && (
-          <figcaption>
-            <Typography italic variant='help' contentType='text' content={this.props.imgHint} />
-          </figcaption>
-        )}
-      </figure>
-    );
-  }
-
-  private get imgMaxHeight() {
-    if (app.$device.isSmallScreen) return app.$device.screenHeight * 0.9;
-    return app.$device.screenHeight * 0.85;
   }
 }

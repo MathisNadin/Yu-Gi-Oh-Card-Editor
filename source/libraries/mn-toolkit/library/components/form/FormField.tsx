@@ -100,9 +100,9 @@ export abstract class FormField<
     if (props.onValidate) this.validators.push(props.onValidate);
 
     // built-in required check
-    this.validators.push((field) => {
+    this.validators.push(async (field) => {
       if (field.props.required && !field.hasValue) {
-        field.addError('Nous avons besoin de quelque chose ici');
+        await field.addError('Nous avons besoin de quelque chose ici');
       }
     });
   }

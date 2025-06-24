@@ -1,4 +1,4 @@
-import { Observable, uuid } from 'mn-tools';
+import { AbstractObservable, uuid } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
 import { FullscreenImage, IFullscreenImageProps } from './FullscreenImage';
 import { IFullscreenImageListener, IFullscreenImageShowOptions } from '.';
@@ -9,7 +9,7 @@ interface IFullscreenImageData {
   ref: FullscreenImage | null;
 }
 
-export class FullscreenImageService extends Observable<IFullscreenImageListener> {
+export class FullscreenImageService extends AbstractObservable<IFullscreenImageListener> {
   public fullscreenImages: IFullscreenImageData[];
 
   public constructor() {
@@ -65,23 +65,23 @@ export class FullscreenImageService extends Observable<IFullscreenImageListener>
     this.dispatch('fullscreenImagesChanged');
   }
 
-  public close(id: string) {
+  public async close(id: string) {
     if (!this.fullscreenImages.length) return;
     const fullscreenImage = this.fullscreenImages.find((p) => p.id === id);
     if (!fullscreenImage) return;
 
     if (fullscreenImage?.ref && typeof fullscreenImage.ref.close === 'function') {
-      fullscreenImage.ref.close();
+      await fullscreenImage.ref.close();
     } else {
       this.remove(id);
     }
   }
 
-  public closeLast() {
+  public async closeLast() {
     if (!this.fullscreenImages.length) return;
     const lastFullscreenImage = this.fullscreenImages[this.fullscreenImages.length - 1];
     if (lastFullscreenImage?.ref && typeof lastFullscreenImage.ref.close === 'function') {
-      lastFullscreenImage.ref.close();
+      await lastFullscreenImage.ref.close();
     } else {
       this.removeLast();
     }

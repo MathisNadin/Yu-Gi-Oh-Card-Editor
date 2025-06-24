@@ -1,7 +1,29 @@
 ## mn-toolkit change log
 
+## 8.1.0
+
+- fix events header
+- fix events du router
+- fix misued promises + adaptation au nv observable
+
+## 8.0.3
+
+- bump to 8.0.3
+- bg inutile voir moche sur la video
+
+## 8.0.2
+
+- bump to 8.0.2
+- fix affichage et taille de fullscreen image, surtout pour le mobile + ajout reset manquant pour webkit sur body
+
+## 8.0.1
+
+- bump to 8.0.1
+- check location state doit prendre un vrai state name
+
 ## 8.0.0
 
+- bump to 8.0.0
 - sécurités sur les src et href pour mettre undefined à la place d'éventuels strings vides et ainsi éviter les rechargements du navigateur inutiles
 - meilleure logique sur l'update de text area input
 - tabbed pane construit les items, donc props.items inutiles

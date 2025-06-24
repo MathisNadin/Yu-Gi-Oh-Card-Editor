@@ -76,7 +76,7 @@ export class Toaster<
 
   public async close() {
     if (this.timeout) clearTimeout(this.timeout);
-    app.$device.keyboardClose();
+    await app.$device.keyboardClose();
     await this.setStateAsync({ hidding: true });
     setTimeout(() => {
       app.$toaster.remove(this.props.id!);

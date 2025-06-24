@@ -1,7 +1,7 @@
 import { IOverlayListener } from '.';
-import { Observable } from 'mn-tools';
+import { AbstractObservable } from 'mn-tools';
 
-export class OverlayService extends Observable<IOverlayListener> {
+export class OverlayService extends AbstractObservable<IOverlayListener> {
   private _overlay!: HTMLElement;
   private allowClick = true;
 
@@ -23,13 +23,9 @@ export class OverlayService extends Observable<IOverlayListener> {
     return this.overlay.classList.contains('active');
   }
 
-  private fireClick() {
-    this.dispatch('overlayClick');
-  }
-
   private doClick() {
     if (!this.allowClick) return;
-    this.fireClick();
+    this.dispatch('overlayClick');
     this.hide();
   }
 

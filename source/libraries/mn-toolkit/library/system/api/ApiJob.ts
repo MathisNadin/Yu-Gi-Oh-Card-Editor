@@ -11,8 +11,9 @@ export class ApiJob {
   private _description?: string;
   private _message?: string;
 
-  public constructor(jobId: string) {
-    this._id = jobId;
+  public constructor(job: IJob) {
+    this._id = job.id;
+    app.$errorManager.handlePromise(app.$api.dispatchAsync('apiJobStarted', job));
   }
 
   public get id() {
@@ -51,14 +52,14 @@ export class ApiJob {
       this._progress = job.progress;
 
       if (onProgress) onProgress(job);
-      app.$api.dispatch('apiJobProgress', job);
+      await app.$api.dispatchAsync('apiJobProgress', job);
 
       if (job.state !== 'done') {
         await sleep(REFRESH_PERIOD);
         continue;
       }
 
-      app.$api.dispatch('apiJobFinished', job);
+      await app.$api.dispatchAsync('apiJobFinished', job);
 
       return job.result;
     }

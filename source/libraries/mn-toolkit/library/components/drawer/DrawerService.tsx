@@ -1,4 +1,4 @@
-import { Observable, uuid } from 'mn-tools';
+import { AbstractObservable, uuid } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
 import { Drawer, IDrawerProps, TDrawerOrientation } from './Drawer';
 import { IDrawerListener, IDrawerShowOptions } from '.';
@@ -11,7 +11,7 @@ interface IDrawerData {
   ref: Drawer<any> | null;
 }
 
-export class DrawerService extends Observable<IDrawerListener> {
+export class DrawerService extends AbstractObservable<IDrawerListener> {
   public drawers: IDrawerData[];
 
   public constructor() {

@@ -1,4 +1,4 @@
-import { logger, Observable, uuid } from 'mn-tools';
+import { logger, AbstractObservable, uuid } from 'mn-tools';
 import { ISaveJob, ISavingManagerListener, TSaver, TSavingStatus } from '.';
 import { IApplicationListener } from '../application';
 import { IRouterListener } from '../router';
@@ -6,7 +6,7 @@ import { IRouterListener } from '../router';
 const log = logger('SavingManager');
 
 export class SavingManagerService
-  extends Observable<ISavingManagerListener>
+  extends AbstractObservable<ISavingManagerListener>
   implements Partial<IApplicationListener>, Partial<IRouterListener>
 {
   private _timeout!: NodeJS.Timeout;
@@ -58,7 +58,7 @@ export class SavingManagerService
   protected onSaveState(savingState: TSavingStatus) {
     log.debug('Sauvegarde', savingState);
     this._status = savingState;
-    this.dispatch('onSavingManagerStatusChanged', this._status);
+    app.$errorManager.handlePromise(this.dispatchAsync('onSavingManagerStatusChanged', this._status));
   }
 
   public async forceSave() {

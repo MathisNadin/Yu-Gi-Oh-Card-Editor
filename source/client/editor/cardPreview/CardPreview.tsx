@@ -32,12 +32,13 @@ export class CardPreview extends Containable<ICardPreviewProps, ICardPreviewStat
     app.$card.removeListener(this);
   }
 
-  public renderCardChanged(renderCard: ICard) {
+  public renderCardChanged(renderCard: ICard | undefined) {
     this.setState({ renderCard });
   }
 
   private async onPlaceholderCardReady(element: HTMLDivElement) {
-    await app.$card.writeCardFile(element, this.state.renderCard!.uuid!, this.state.renderCard!.name);
+    if (!this.state.renderCard) return;
+    await app.$card.writeCardFile(element, this.state.renderCard);
   }
 
   private async onCardReady(element: HTMLDivElement) {

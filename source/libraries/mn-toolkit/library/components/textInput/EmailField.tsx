@@ -15,8 +15,10 @@ export class EmailField extends TextInputField<IEmailFieldProps, IEmailFieldStat
 
   public constructor(props: IEmailFieldProps) {
     super(props, 'email');
-    this.validators.unshift((field) => {
-      if (!isEmail(field.value)) field.addError("Ceci n'est pas un email");
+    this.validators.unshift(async (field) => {
+      if (!isEmail(field.value)) {
+        await field.addError("Ceci n'est pas un email");
+      }
     });
   }
 }

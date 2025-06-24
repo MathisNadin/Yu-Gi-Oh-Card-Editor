@@ -1,4 +1,4 @@
-import { Observable, uuid } from 'mn-tools';
+import { AbstractObservable, uuid } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
 import { IAbstractPopoverProps } from './AbstractPopover';
 import { ActionsPopover, IActionsPopoverProps } from './ActionsPopover';
@@ -6,7 +6,7 @@ import { BubblePopover, IBubblePopoverProps } from './BubblePopover';
 import { WalkthroughPopover, IWalkthroughPopoverProps } from './WalkthroughPopover';
 import { IPopoverListener, IPopoverOptions } from '.';
 
-export class PopoverService extends Observable<IPopoverListener> {
+export class PopoverService extends AbstractObservable<IPopoverListener> {
   public popovers: { id: string; element: TJSXElementChild; options: IPopoverOptions<IAbstractPopoverProps> }[];
   public focuses: { popoverId: string; targetRectangle: DOMRect }[];
 

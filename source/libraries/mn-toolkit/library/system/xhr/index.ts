@@ -17,10 +17,10 @@ export interface IXhrProgress {
 }
 
 export interface IXhrListener {
-  xhrStart(requestId: string): void;
-  xhrStop(requestId: string): void;
-  xhrError(requestId: string, statusCode: number, url?: string): void;
-  xhrProgress(requestId: string, progress: IXhrProgress): void;
+  xhrStart: (requestId: string) => void | Promise<void>;
+  xhrStop: (requestId: string) => void | Promise<void>;
+  xhrError: (requestId: string, statusCode: number, url?: string) => void | Promise<void>;
+  xhrProgress: (requestId: string, progress: IXhrProgress) => void | Promise<void>;
 }
 
 import { XhrService } from './XhrService';

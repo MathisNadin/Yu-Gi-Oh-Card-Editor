@@ -1,4 +1,4 @@
-import { Observable, unserialize, uuid, each, serialize } from 'mn-tools';
+import { AbstractObservable, unserialize, uuid, each, serialize } from 'mn-tools';
 import { IXhrListener, IXhrProgress, IXhrRequestOptions } from '.';
 
 declare global {
@@ -36,20 +36,7 @@ export function isXhrError(value: Error): value is XhrError {
  *
  * @memberOf $xhr
  */
-export class XhrService extends Observable<IXhrListener> {
-  private fireStart(requestId: string) {
-    this.dispatch('xhrStart', requestId);
-  }
-  private fireStop(requestId: string) {
-    this.dispatch('xhrStop', requestId);
-  }
-  private fireError(requestId: string, statusCode: number, url: string) {
-    this.dispatch('xhrError', requestId, statusCode, url);
-  }
-  private fireProgress(requestId: string, progress: IXhrProgress) {
-    this.dispatch('xhrProgress', requestId, progress);
-  }
-
+export class XhrService extends AbstractObservable<IXhrListener> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async request(options: IXhrRequestOptions): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -124,7 +111,7 @@ export class XhrService extends Observable<IXhrListener> {
               total: total,
               progress: event.loaded,
             };
-            this.fireProgress(request.$id, request.$uploadProgress);
+            app.$errorManager.handlePromise(this.dispatchAsync('xhrProgress', request.$id, request.$uploadProgress));
           }
         },
         false
@@ -136,7 +123,7 @@ export class XhrService extends Observable<IXhrListener> {
           let total = event.total || parseInt(request.getResponseHeader('Data-Size') as string, 10);
           if (total && event.loaded < total) {
             request.$downloadProgress = { id: request.$id, total: total, progress: event.loaded };
-            this.fireProgress(request.$id, request.$downloadProgress);
+            app.$errorManager.handlePromise(this.dispatchAsync('xhrProgress', request.$id, request.$downloadProgress));
           }
         },
         false
@@ -147,10 +134,10 @@ export class XhrService extends Observable<IXhrListener> {
       request.onreadystatechange = function () {
         if (this.readyState === this.DONE) {
           if (this.status !== 200) {
-            self.fireError(request.$id, this.status, request.$url);
+            app.$errorManager.handlePromise(self.dispatchAsync('xhrError', request.$id, this.status, request.$url));
             return reject(new XhrError(`Status HTTP Code ${this.status}`, this.status));
           } else {
-            self.fireStop(request.$id);
+            app.$errorManager.handlePromise(self.dispatchAsync('xhrStop', request.$id));
             let data = this.response;
             try {
               let contentType = this.getResponseHeader('content-type') as string;
@@ -166,7 +153,7 @@ export class XhrService extends Observable<IXhrListener> {
           }
         }
       };
-      this.fireStart(request.$id);
+      app.$errorManager.handlePromise(this.dispatchAsync('xhrStart', request.$id));
       let data;
       if (options.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
         const pairs = [];

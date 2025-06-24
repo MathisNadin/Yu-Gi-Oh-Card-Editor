@@ -1,9 +1,9 @@
-import { Observable, each, isArray, sortDependencies } from 'mn-tools';
+import { AbstractObservable, each, isArray, sortDependencies } from 'mn-tools';
 import { App as CapacitorApp } from '@capacitor/app';
 
 export interface IApplicationListener {
-  applicationReady(): void;
-  applicationWillClose(): void;
+  applicationReady: () => void | Promise<void>;
+  applicationWillClose: () => string | undefined;
 }
 
 interface IServiceOptions<T> {
@@ -19,7 +19,7 @@ export interface IBootstrapOptions {
   modules: string[];
 }
 
-export class Application extends Observable<IApplicationListener> {
+export class Application extends AbstractObservable<IApplicationListener> {
   private configurationCallBack: () => void = () => {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _services: { [name: string]: IServiceOptions<any> } = {};
@@ -56,24 +56,19 @@ export class Application extends Observable<IApplicationListener> {
     return this._ready;
   }
 
-  private fireReady() {
-    this.dispatch('applicationReady');
-  }
-
-  public bootstrap() {
+  public async bootstrap() {
     this.bootstrapConfig();
-    this.bootstrapServices()
-      .then(() => this.fireReady())
-      .catch((e: Error) => console.error(e));
+    await this.bootstrapServices();
+    await this.dispatchAsync('applicationReady');
 
     window.onbeforeunload = () => {
-      const response = this.askForResponse<string>('applicationWillClose');
+      const response = this.askForResponse('applicationWillClose');
       if (response) return response;
       return undefined;
     };
     /*     this.bootstrapDOM()
       .then(() => this.bootstrapServices())
-      .then(() => this.fireReady())
+      .then(() => app.$errorManager.handlePromise(this.dispatchAsync('applicationReady')))
       .catch((e: Error) => app.$errorManager.trigger(e)); */
   }
 

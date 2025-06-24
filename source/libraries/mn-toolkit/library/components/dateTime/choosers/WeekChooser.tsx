@@ -78,7 +78,7 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
     }
 
     this.setState({ display: 'calendar' });
-    this.props.onChange(date, 'year');
+    await this.props.onChange(date, 'year');
   }
 
   private async onChangeMonth(offset: number) {
@@ -90,7 +90,7 @@ export class WeekChooser extends Container<IWeekChooserProps, IWeekChooserState>
       date.setDate(lastDayOfNewMonth);
     }
 
-    this.props.onChange(date, 'month');
+    await this.props.onChange(date, 'month');
   }
 
   public override renderClasses() {

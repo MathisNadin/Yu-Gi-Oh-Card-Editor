@@ -45,7 +45,7 @@ export class HomeLeftPane extends Container<IHomeLeftPaneProps, IHomeLeftPaneSta
     this.setState({ currentCard, tabIndex: currentCard.rush ? 'rush' : 'master' });
   }
 
-  public tempCurrentCardLoaded(tempCurrentCard: ICard) {
+  public tempCurrentCardLoaded(tempCurrentCard: ICard | undefined) {
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else if (this.state.currentCard) {
@@ -55,7 +55,7 @@ export class HomeLeftPane extends Container<IHomeLeftPaneProps, IHomeLeftPaneSta
     }
   }
 
-  public tempCurrentCardUpdated(tempCurrentCard: ICard) {
+  public tempCurrentCardUpdated(tempCurrentCard: ICard | undefined) {
     if (tempCurrentCard) {
       this.setState({ loaded: true, tempCurrentCard, tabIndex: tempCurrentCard.rush ? 'rush' : 'master' });
     } else if (this.state.currentCard) {

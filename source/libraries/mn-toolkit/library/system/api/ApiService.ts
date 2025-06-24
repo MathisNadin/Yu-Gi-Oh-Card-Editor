@@ -1,4 +1,4 @@
-import { extend, isDefined, isString, logger, Observable, parseUri, serialize } from 'mn-tools';
+import { extend, isDefined, isString, logger, AbstractObservable, parseUri, serialize } from 'mn-tools';
 import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, ISessionEntity } from 'api/main';
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
@@ -14,7 +14,7 @@ const BYTES_PER_CHUNK = 1048576; // 1MB chunk sizes.
 
 const log = logger('api');
 
-export class ApiService extends Observable<IApiListener> {
+export class ApiService extends AbstractObservable<IApiListener> {
   private _settings: IApiSettings;
 
   public constructor() {
@@ -88,7 +88,7 @@ export class ApiService extends Observable<IApiListener> {
       headers: {},
     };
 
-    this.dispatch('apiAlterHeaders', request.headers);
+    await this.dispatchAsync('apiAlterHeaders', request.headers);
     if (options.headers) {
       for (const key in options.headers) {
         if (request.headers) request.headers[key] = options.headers[key]!;
@@ -168,7 +168,7 @@ export class ApiService extends Observable<IApiListener> {
       chunkCount: Math.ceil(fileBlob.size / BYTES_PER_CHUNK),
       targetFileId: file,
     };
-    this.dispatch('apiUploadProgress', ud);
+    await this.dispatchAsync('apiUploadProgress', ud);
     await this.uploadNextChunk(ud);
   }
 
@@ -184,7 +184,7 @@ export class ApiService extends Observable<IApiListener> {
       fd.append('targetFileId', `${ud.targetFileId}`);
       ud.offset = ud.offset + BYTES_PER_CHUNK;
 
-      this.dispatch('apiUploadProgress', ud);
+      app.$errorManager.handlePromise(this.dispatchAsync('apiUploadProgress', ud));
 
       const xhr = new XMLHttpRequest();
 

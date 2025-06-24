@@ -9,5 +9,5 @@ declare global {
 }
 
 export interface IPermissionListener {
-  permissionLoaded(permissions: Set<TPermission>, previous: Set<TPermission> | undefined): void;
+  permissionLoaded: (permissions: Set<TPermission>, previous: Set<TPermission> | undefined) => void | Promise<void>;
 }

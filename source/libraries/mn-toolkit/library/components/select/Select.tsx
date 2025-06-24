@@ -81,7 +81,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
   }
 
   private async selectItem(item: ISelectItem<ID>) {
-    this.hideList();
+    await this.hideList();
     await this.props.onChange(item.id);
   }
 

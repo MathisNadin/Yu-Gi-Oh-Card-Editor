@@ -91,10 +91,10 @@ export class IndexedDBService implements IStoreService {
   }
 
   public async importData(jsonData: string) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<object>((resolve, reject) => {
       const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
-      const data = unserialize<Record<string, TStoreValue>>(jsonData);
+      const data = unserialize<Record<string | number, TStoreValue>>(jsonData);
       const clearRequest = objectStore.clear();
       clearRequest.onerror = () => {
         reject(new Error(`Failed to clear object store ${this.objectStoreName}`));
@@ -106,7 +106,7 @@ export class IndexedDBService implements IStoreService {
             reject(new Error(`Failed to put object with key ${key}`));
           };
           putRequest.onsuccess = () => {
-            resolve();
+            resolve(data);
           };
         }
       };

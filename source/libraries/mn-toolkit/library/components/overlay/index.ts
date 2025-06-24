@@ -1,7 +1,7 @@
 export * from './OverlayService';
 
 export interface IOverlayListener {
-  overlayClick(): void;
+  overlayClick: () => void;
 }
 
 import { OverlayService } from './OverlayService';

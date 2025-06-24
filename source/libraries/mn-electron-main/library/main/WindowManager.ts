@@ -44,7 +44,7 @@ export class WindowManager {
     this._browserWindow.maximize();
 
     const url = await this.resolveHtmlPath('index.html');
-    this._browserWindow.loadURL(url);
+    await this._browserWindow.loadURL(url);
 
     this._browserWindow.on('ready-to-show', () => {
       if (!this._browserWindow) {
@@ -87,7 +87,7 @@ export class WindowManager {
 
     // Open urls in the user's browser
     this._browserWindow.webContents.setWindowOpenHandler((edata) => {
-      shell.openExternal(edata.url);
+      shell.openExternal(edata.url).catch(console.error);
       return { action: 'deny' };
     });
 

@@ -50,7 +50,7 @@ export class Drawer<P extends IDrawerProps = IDrawerProps, S extends IDrawerStat
   }
 
   public async close() {
-    app.$device.keyboardClose();
+    await app.$device.keyboardClose();
     await this.setStateAsync({ hidding: true });
     setTimeout(() => {
       app.$drawer.remove(this.props.id!);

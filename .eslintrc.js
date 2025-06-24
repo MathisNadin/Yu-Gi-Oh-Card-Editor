@@ -1,8 +1,10 @@
 module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
+  plugins: ['@typescript-eslint'],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
+    project: 'tsconfig.json',
   },
   extends: [
     'plugin:react/recommended',
@@ -24,6 +26,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-import-module-exports': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-floating-promises': 'error',
     'no-plusplus': 'off',
     'no-await-in-loop': 'off',
     'no-param-reassign': 'off',

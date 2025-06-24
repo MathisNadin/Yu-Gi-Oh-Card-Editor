@@ -38,7 +38,7 @@
     "watch:web-served": "cross-env NODE_ENV=development PLATFORM=web-served webpack --watch --config webpack/index.ts",
     "build:web-served": "node scripts/build-platform.mjs web-served",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\" \"./scripts/**/*.{js,jsx,ts,tsx,json}\" \"./webpack/**/*.{js,jsx,ts,tsx,json}\"",
+    "lint": "eslint --fix \"./source/**/*.{js,jsx,ts,tsx,json}\" \"./webpack/**/*.{js,jsx,ts,tsx,json}\"",
     "format": "prettier --write \"./source/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./scripts/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"./webpack/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "validate": "npm run format && npm run lint && npm run typecheck",
     "test": "jest",

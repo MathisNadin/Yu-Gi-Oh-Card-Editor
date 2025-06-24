@@ -7,7 +7,7 @@ export * from './FullscreenImageService';
 export * from './Image';
 
 export interface IFullscreenImageListener {
-  fullscreenImagesChanged(): void;
+  fullscreenImagesChanged: () => void;
 }
 
 export interface IFullscreenImageShowOptions<P extends IFullscreenImageProps> {

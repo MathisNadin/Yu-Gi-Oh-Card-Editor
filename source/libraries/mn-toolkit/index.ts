@@ -31,7 +31,7 @@ import {
 
 export * from './library';
 
-export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void) {
+export async function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: () => void | Promise<void>) {
   extendNativeObjects();
   Date.setFirstDayOfWeek(1);
 
@@ -63,9 +63,9 @@ export function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstrap?: (
   app.service('$drawer', DrawerService);
   app.service('$fullscreenImage', FullscreenImageService);
 
-  if (beforeBootstrap) beforeBootstrap();
-
-  app.bootstrap();
-
   loadSvgs();
+
+  if (beforeBootstrap) await beforeBootstrap();
+
+  await app.bootstrap();
 }

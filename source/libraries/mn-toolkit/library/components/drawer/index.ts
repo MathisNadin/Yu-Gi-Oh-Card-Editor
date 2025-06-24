@@ -6,7 +6,7 @@ export * from './Drawers';
 export * from './Drawer';
 
 export interface IDrawerListener {
-  drawersChanged(): void;
+  drawersChanged: () => void;
 }
 
 export interface IDrawerShowOptions<P extends IDrawerProps> {

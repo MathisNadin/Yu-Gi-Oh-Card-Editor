@@ -168,10 +168,11 @@ export class CapacitorSQLiteService implements IStoreService {
 
   public async importData(jsonData: string) {
     await this.waitForConnection();
-    const data = unserialize<Record<string, TStoreValue>>(jsonData);
+    const data = unserialize<Record<string | number, TStoreValue>>(jsonData);
     for (const key in data) {
       await this.set(key, data[key]);
     }
+    return data;
   }
 
   public async exportData() {

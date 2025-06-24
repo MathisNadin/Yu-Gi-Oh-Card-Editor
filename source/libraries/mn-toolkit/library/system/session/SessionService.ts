@@ -1,10 +1,10 @@
-import { extend, logger, Observable } from 'mn-tools';
+import { extend, logger, AbstractObservable } from 'mn-tools';
 import { IMemberAPILoginResponse, ISessionEntity } from 'api/main';
 import { ISessionListener, TSessionStoreKey } from '.';
 
 const log = logger('session');
 
-export class SessionService extends Observable<ISessionListener> {
+export class SessionService extends AbstractObservable<ISessionListener> {
   private _data?: ISessionData;
 
   public get active() {
@@ -13,18 +13,6 @@ export class SessionService extends Observable<ISessionListener> {
 
   public get data() {
     return this._data;
-  }
-
-  public fireSessionCreated() {
-    this.dispatch('sessionCreated', this.data!);
-  }
-
-  public fireSessionUpdated() {
-    this.dispatch('sessionUpdated', this.data!);
-  }
-
-  public fireSessionDropped() {
-    this.dispatch('sessionDropped');
   }
 
   public async setup() {
@@ -71,14 +59,14 @@ export class SessionService extends Observable<ISessionListener> {
       app.$cookie.set(app.conf.sessionTokenName, newToken);
     }
     await this.update(data);
-    this.fireSessionCreated();
+    await this.dispatchAsync('sessionCreated', this._data!);
   }
 
   public async update(data: Partial<ISessionData>) {
     if (this._data) extend(this._data, data);
     else this._data = data as ISessionData;
     await app.$store.set<ISessionData, TSessionStoreKey>('session', this._data);
-    this.fireSessionUpdated();
+    await this.dispatchAsync('sessionUpdated', this._data);
   }
 
   public async drop() {
@@ -86,6 +74,6 @@ export class SessionService extends Observable<ISessionListener> {
     if (app.conf.sessionTokenName) app.$cookie.delete(app.conf.sessionTokenName);
     await app.$store.remove<TSessionStoreKey>('session');
     this._data = undefined;
-    this.fireSessionDropped();
+    await this.dispatchAsync('sessionDropped');
   }
 }

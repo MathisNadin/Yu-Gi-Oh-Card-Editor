@@ -97,14 +97,14 @@ export class DateInput extends Containable<IDateInputProps, IDateInputState> {
     const { key } = e;
     if (key === 'ArrowLeft' || key === 'ArrowRight') {
       e.preventDefault();
-      this.moveSection(key === 'ArrowLeft' ? -1 : 1);
+      await this.moveSection(key === 'ArrowLeft' ? -1 : 1);
     } else if (key === 'Backspace' && this.props.canReset) {
       e.preventDefault();
       await this.setStateAsync({ activeSection: 'day', day: '', month: '', year: '' });
       await this.props.onChange(undefined);
     } else if (/^\d$/.test(key)) {
       e.preventDefault();
-      this.handleDigitInput(key);
+      await this.handleDigitInput(key);
     }
   }
 

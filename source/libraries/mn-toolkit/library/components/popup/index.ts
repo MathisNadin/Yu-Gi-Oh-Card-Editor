@@ -11,7 +11,7 @@ export * from './ChoiceDialog';
 export * from './SortableDialog';
 
 export interface IPopupListener {
-  popupsChanged(): void;
+  popupsChanged: () => void;
 }
 
 export interface IPopupShowOptions<R, P extends IAbstractPopupProps<R>> {

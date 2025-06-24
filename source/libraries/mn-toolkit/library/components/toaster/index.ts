@@ -5,7 +5,7 @@ export * from './Toasters';
 export * from './Toaster';
 
 export interface IToasterListener {
-  toastersChanged(): void;
+  toastersChanged: () => void;
 }
 
 export type TToastType = 'info' | 'success' | 'warning' | 'error';

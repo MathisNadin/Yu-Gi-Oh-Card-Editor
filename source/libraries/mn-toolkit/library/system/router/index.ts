@@ -76,8 +76,8 @@ export interface IState<T extends TRouterState = TRouterState, P extends TRouter
 }
 
 export interface IRouterListener {
-  routerStateWillLeave(resolvedState: IResolvedState): void;
-  routerStateStart(resolvedState: IResolvedState): void;
-  routerStateChanged(resolvedState: IResolvedState): void;
-  routerStateLoaded(resolvedState: IResolvedState): void;
+  routerStateWillLeave: (resolvedState: IResolvedState) => string | Promise<string> | undefined | Promise<undefined>;
+  routerStateStart: (resolvedState: IResolvedState) => void | Promise<void>;
+  routerStateChanged: (resolvedState: IResolvedState) => void | Promise<void>;
+  routerStateLoaded: (resolvedState: IResolvedState) => void | Promise<void>;
 }

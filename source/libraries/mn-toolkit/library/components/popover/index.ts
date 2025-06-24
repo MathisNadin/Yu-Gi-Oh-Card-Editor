@@ -9,7 +9,7 @@ export * from './BubblePopover';
 export * from './WalkthroughPopover';
 
 export interface IPopoverListener {
-  popoversChanged(): void;
+  popoversChanged: () => void;
 }
 
 export interface IPopoverOptions<P extends IAbstractPopoverProps> {

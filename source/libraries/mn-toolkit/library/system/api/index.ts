@@ -1,6 +1,5 @@
-import { IRouteRecord } from 'api/main';
+import { IJob, IRouteRecord } from 'api/main';
 import { ApiService } from './ApiService';
-import { ApiJob } from './ApiJob';
 
 export * from './ApiJob';
 export * from './ApiService';
@@ -25,12 +24,12 @@ export interface IUploadDescriptor {
 }
 
 export interface IApiListener {
-  apiAlterHeaders(headers: { [key: string]: string }): void;
-  apiUploadProgress(upload: IUploadDescriptor): void;
+  apiAlterHeaders: (headers: { [key: string]: string } | undefined) => void | Promise<void>;
+  apiUploadProgress: (upload: IUploadDescriptor) => void | Promise<void>;
 
-  apiJobStarted(job: ApiJob): void;
-  apiJobProgress(job: ApiJob): void;
-  apiJobFinished(job: ApiJob): void;
+  apiJobStarted: (job: IJob<unknown>) => void | Promise<void>;
+  apiJobProgress: (job: IJob<unknown>) => void | Promise<void>;
+  apiJobFinished: (job: IJob<unknown>) => void | Promise<void>;
 }
 
 declare global {

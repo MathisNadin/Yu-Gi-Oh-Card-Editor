@@ -6,7 +6,7 @@ interface IHomeCenterPaneProps extends IContainerProps {}
 
 interface IHomeCenterPaneState extends IContainerState {
   currentCard: ICard;
-  tempCurrentCard: ICard;
+  tempCurrentCard?: ICard;
 }
 
 export class HomeCenterPane
@@ -31,11 +31,11 @@ export class HomeCenterPane
     this.setState({ loaded: true, currentCard });
   }
 
-  public tempCurrentCardLoaded(tempCurrentCard: ICard) {
+  public tempCurrentCardLoaded(tempCurrentCard: ICard | undefined) {
     this.setState({ loaded: true, tempCurrentCard });
   }
 
-  public tempCurrentCardUpdated(tempCurrentCard: ICard) {
+  public tempCurrentCardUpdated(tempCurrentCard: ICard | undefined) {
     this.setState({ loaded: true, tempCurrentCard });
   }
 

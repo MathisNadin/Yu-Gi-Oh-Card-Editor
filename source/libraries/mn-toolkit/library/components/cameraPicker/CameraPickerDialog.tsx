@@ -106,7 +106,7 @@ export class CameraPickerDialog extends AbstractPopup<string, ICameraPickerDialo
 
     this.stop();
 
-    this.close(dataUrl);
+    await this.close(dataUrl);
   }
 
   public override async close(dataUrl?: string) {

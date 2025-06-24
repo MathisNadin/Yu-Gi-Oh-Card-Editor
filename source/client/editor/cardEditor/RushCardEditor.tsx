@@ -881,9 +881,9 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   fill
                   validateOnEnter
                   value={ability}
-                  onChange={(ability) => {
+                  onChange={async (ability) => {
                     this.state.card.abilities[iAbility] = ability;
-                    this.forceUpdateAsync();
+                    await this.forceUpdateAsync();
                   }}
                   onBlur={() => this.setStateAsync({ card: { ...this.state.card } })}
                 />

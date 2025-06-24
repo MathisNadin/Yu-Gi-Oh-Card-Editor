@@ -31,7 +31,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
 
   public constructor(props: IMenuPaneProps) {
     super(props);
-    this.update(!!this.props.open, true);
+    app.$errorManager.handlePromise(this.update(!!this.props.open, true));
 
     app.$overlay.addListener({
       overlayClick: () => {
@@ -41,7 +41,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
 
     app.$device.addListener({
       deviceScreenSpecificationChanged: () => {
-        this.update(false);
+        app.$errorManager.handlePromise(this.update(false));
       },
     });
   }
@@ -76,7 +76,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
 
     setTimeout(() => {
       if (this.props.onStateChanged) this.props.onStateChanged(open);
-      app.$header.update();
+      app.$errorManager.handlePromise(app.$header.update());
     }, 500);
   }
 

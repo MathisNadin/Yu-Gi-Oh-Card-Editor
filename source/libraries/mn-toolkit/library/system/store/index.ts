@@ -5,9 +5,9 @@ export * from './StoreService';
 export type TStoreValue = string | number | boolean | Date | ArrayBuffer | Blob | object | null | undefined;
 
 export interface IStoreListener {
-  storeSet<K extends string = string>(key: K, value: TStoreValue): void;
-  cleared: () => void;
-  dataImported: () => void;
+  storeSet: <K extends string = string>(key: K, value: TStoreValue) => void | Promise<void>;
+  cleared: () => void | Promise<void>;
+  dataImported: (data: object) => void | Promise<void>;
 }
 
 export interface IStoreOptions {
@@ -24,7 +24,7 @@ export interface IStoreService {
   get<T extends TStoreValue, K extends string = string>(key: K, defaultValue: T): Promise<T>;
   remove<K extends string = string>(key: K): Promise<void>;
   clear(): Promise<void>;
-  importData(jsonData: string): Promise<void>;
+  importData(jsonData: string): Promise<object>;
   exportData(): Promise<string>;
 }
 

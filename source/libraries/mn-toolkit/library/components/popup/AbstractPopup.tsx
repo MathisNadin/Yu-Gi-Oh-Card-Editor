@@ -101,7 +101,7 @@ export abstract class AbstractPopup<
   }
 
   public async close(R?: R) {
-    app.$device.keyboardClose();
+    await app.$device.keyboardClose();
     await this.setStateAsync({ hidding: true });
     setTimeout(() => {
       app.$popup.remove(this.props.id!);

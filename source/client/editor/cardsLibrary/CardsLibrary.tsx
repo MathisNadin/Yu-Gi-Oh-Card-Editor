@@ -24,8 +24,8 @@ interface ICardsLibraryState extends IContainerState {
   localCards: ICard[];
   sortOption: TCardSortOption;
   sortOrder: TTableHeaderSortOrder;
-  current: string;
-  edited: string;
+  current?: string;
+  edited?: string;
   selectAllMode: boolean;
   selectedCardsNum: number;
   selectedCards: { [cardUuid: string]: boolean };
@@ -47,8 +47,8 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     this.state = {
       ...this.state,
       loaded: true,
-      current: app.$card.tempCurrentCard?.uuid as string,
-      edited: app.$card.tempCurrentCard?.uuid as string,
+      current: app.$card.tempCurrentCard?.uuid,
+      edited: app.$card.tempCurrentCard?.uuid,
       sortOption: 'modified',
       sortOrder: 'desc',
       localCards: app.$card.localCards,
@@ -75,13 +75,13 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     this.sort(localCards);
   }
 
-  public tempCurrentCardLoaded(tempCurrentCard: ICard) {
-    this.setState({ edited: tempCurrentCard.uuid as string, current: tempCurrentCard.uuid as string });
+  public tempCurrentCardLoaded(tempCurrentCard: ICard | undefined) {
+    this.setState({ edited: tempCurrentCard?.uuid, current: tempCurrentCard?.uuid });
   }
 
-  public cardRenderer(cardUuid: string) {
+  public cardRenderer(card: ICard) {
     let { cardsRendered, selectedCards, selectedCardsNum } = this.state;
-    selectedCards[cardUuid] = false;
+    if (card.uuid) selectedCards[card.uuid] = false;
     selectedCardsNum--;
     cardsRendered++;
     this.setState({ cardsRendered, selectedCards, selectedCardsNum }, () => {
@@ -100,7 +100,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
   }
 
   public menuSaveTempToLocal() {
-    this.setState({ edited: '', current: '' });
+    this.setState({ edited: undefined, current: undefined });
   }
 
   private async onChangeOrder(sortOption: TCardSortOption) {
@@ -169,21 +169,21 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
   private async saveEdit(event?: MouseEvent) {
     if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
-    this.setState({ edited: '', current: '' });
+    this.setState({ edited: undefined, current: undefined });
     await app.$card.saveTempCurrentToLocal();
   }
 
   private async startEdit(card: ICard, event?: MouseEvent) {
     if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
-    this.setState({ edited: card.uuid as string, current: card.uuid as string });
+    this.setState({ edited: card.uuid, current: card.uuid });
     await app.$card.saveTempCurrentCard(deepClone(card));
   }
 
   private async abordEdit(event?: MouseEvent) {
     if (this.state.cardsToRender) return;
     if (event) event.stopPropagation();
-    this.setState({ edited: '', current: '' });
+    this.setState({ edited: undefined, current: undefined });
     await app.$card.saveTempCurrentCard(undefined);
   }
 
@@ -211,7 +211,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     let { localCards, selectedCards, selectedCardsNum } = this.state;
     selectedCardsNum = 0;
     for (const card of localCards) {
-      selectedCards[card.uuid as string] = true;
+      if (card.uuid) selectedCards[card.uuid] = true;
       selectedCardsNum++;
     }
     this.setState({ selectAllMode: false, selectedCards, selectedCardsNum });
@@ -225,7 +225,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
   private async renderSelectedCards() {
     if (this.state.edited) return;
 
-    let cards = this.state.localCards.filter((c) => this.state.selectedCards[c.uuid as string]);
+    const cards = this.state.localCards.filter((c) => !!c.uuid && this.state.selectedCards[c.uuid]);
     if (!cards.length) return;
 
     this.setState({ cardsToRender: cards.length, cardsRendered: 0 });

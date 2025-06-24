@@ -58,8 +58,8 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
         selectedBg: item.selectedBg,
       };
 
-      listItem.onTap = ((x) => () => {
-        this.props.onChange(x.tabId);
+      listItem.onTap = ((x) => async () => {
+        await this.props.onChange(x.tabId);
       })(listItem);
 
       if (!first) {

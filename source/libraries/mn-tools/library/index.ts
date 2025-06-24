@@ -145,5 +145,5 @@ export * from './misc';
 export * from './date';
 export * from './ansi';
 export * from './logger';
-export * from './observable';
 export * from './locales';
+export * from './AbstractObservable';

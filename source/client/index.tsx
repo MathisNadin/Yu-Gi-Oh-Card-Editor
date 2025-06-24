@@ -66,7 +66,6 @@ setupAppAndToolkit(
     app.service('$card', CardService, { depends: ['$store'] });
     app.service('$cardBuilder', CardBuilderService);
     app.service('$yuginews', YuginewsService, { depends: ['$axios'] });
+    app.$router.register('home', '/home/', HomeView);
   }
-);
-
-app.$router.register('home', '/home/', HomeView);
+).catch(console.error);

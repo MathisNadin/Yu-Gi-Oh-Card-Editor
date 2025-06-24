@@ -175,7 +175,7 @@ export class TextAreaInput
     // onTextAreaChange will be called by componentDidUpdate to update size
   }
 
-  private async onTextAreaChange() {
+  private onTextAreaChange() {
     if (!this.props.autoGrow || !this.inputElement || !this.hiddenInputElement) return;
 
     this.hiddenInputElement.value = this.inputElement.value; // Synchronize text with the invisible textarea
@@ -213,7 +213,7 @@ export class TextAreaInput
       activateScroll !== this.state.activateScroll ||
       hasRetriedUndefinedRows !== this.state.hasRetriedUndefinedRows
     ) {
-      await this.setStateAsync({ rows, activateScroll, hasRetriedUndefinedRows });
+      this.setState({ rows, activateScroll, hasRetriedUndefinedRows });
     }
   }
 }

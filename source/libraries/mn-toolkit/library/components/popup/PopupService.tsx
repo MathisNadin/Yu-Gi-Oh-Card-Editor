@@ -1,4 +1,4 @@
-import { isString, Observable, uuid } from 'mn-tools';
+import { isString, AbstractObservable, uuid } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
 import { IChoiceDialogProps, ChoiceDialog } from './ChoiceDialog';
 import { IConfirmationDialogProps, ConfirmationDialog } from './ConfirmationDialog';
@@ -15,7 +15,7 @@ interface IPopupData {
   ref: AbstractPopup<any> | null;
 }
 
-export class PopupService extends Observable<IPopupListener> {
+export class PopupService extends AbstractObservable<IPopupListener> {
   public popups: IPopupData[];
 
   public constructor() {
