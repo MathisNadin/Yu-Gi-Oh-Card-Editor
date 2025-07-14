@@ -210,6 +210,9 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
       display: flex;
       flex-direction: row;
       gap: calc(#{$defaultSpacing});
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
     }
   }
 

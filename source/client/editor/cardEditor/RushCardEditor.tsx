@@ -826,7 +826,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                 max={max}
                 placeholder={levelPlaceholder}
                 value={this.state.card.level}
-                onChange={(level) => this.onLevelChange(level, max)}
+                onChange={(level) => this.onLevelChange(level || 0, max)}
               />
             </HorizontalStack>
 

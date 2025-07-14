@@ -122,7 +122,7 @@ export class Containable<
     if (!tip || !!app.$tips.isAlreadySeen(tip.uuid)) return;
     setTimeout(() => {
       if (!this.base.current) return;
-      app.$tips.show(this.base.current.getBoundingClientRect(), tip);
+      app.$tips.show(this.base.current, tip);
     }, 1000);
   }
 

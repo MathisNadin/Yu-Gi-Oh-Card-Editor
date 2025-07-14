@@ -31,6 +31,7 @@ import confJson from '../../package.json';
 const conf = confJson as unknown as IPackageJSON;
 
 import patchConfig from '../../config/platform.js';
+import { loadCardEditorSvgs } from 'assets/svgs';
 patchConfig(conf);
 
 declare global {
@@ -60,6 +61,7 @@ setupAppAndToolkit(
     repository: conf.repository,
   },
   () => {
+    loadCardEditorSvgs();
     app.service('$core', CoreService);
     app.service('$settings', SettingsService, { depends: ['$store'] });
     app.service('$yugipedia', YugipediaService, { depends: ['$axios'] });

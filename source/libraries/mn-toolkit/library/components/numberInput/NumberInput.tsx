@@ -6,8 +6,8 @@ export interface INumberInputSpecificProps {
   placeholder?: string;
   min?: number;
   max?: number;
-  value: number;
-  onChange: (value: number) => void | Promise<void>;
+  value: number | undefined;
+  onChange: (value: number | undefined) => void | Promise<void>;
 }
 
 export interface INumberInputProps extends IContainableProps<HTMLInputElement>, INumberInputSpecificProps {}
@@ -56,7 +56,7 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
         max={this.props.max}
         value={this.props.value}
         onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
-        onKeyDown={(e) => this.props.onKeyDown && this.props.onKeyDown(e)}
+        onKeyDown={(e) => this.props.onKeyDown && app.$errorManager.handlePromise(this.props.onKeyDown(e))}
         onBlur={(e) => app.$errorManager.handlePromise(this.onBlur(e))}
         onFocus={(e) => app.$errorManager.handlePromise(this.onFocus(e))}
       />

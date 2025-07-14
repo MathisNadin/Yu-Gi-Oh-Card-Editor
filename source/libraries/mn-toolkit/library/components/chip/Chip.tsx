@@ -47,9 +47,7 @@ export class Chip extends Container<IChipProps, IChipState> {
   public override get children(): TJSXElementChildren {
     return [
       !!this.props.icon && <Icon key='icon-left' className='icon-left' icon={this.props.icon} />,
-      !!this.props.label && (
-        <Typography noWrap key='label' variant='document' contentType='text' content={this.props.label} />
-      ),
+      !!this.props.label && <Typography key='label' variant='document' contentType='text' content={this.props.label} />,
       !!this.props.actionIcon && (
         <Icon
           key='icon-right'

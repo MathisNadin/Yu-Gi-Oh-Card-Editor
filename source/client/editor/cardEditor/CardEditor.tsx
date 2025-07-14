@@ -714,7 +714,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                 max={max}
                 placeholder={levelPlaceholder}
                 value={this.state.card.level}
-                onChange={(level) => this.onLevelChange(level, max)}
+                onChange={(level) => this.onLevelChange(level || 0, max)}
               />
             </HorizontalStack>
 
@@ -807,7 +807,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               min={0}
               max={13}
               value={this.state.card.scales.left}
-              onChange={(left) => this.onLeftScaleChange(left)}
+              onChange={(left) => this.onLeftScaleChange(left || 0)}
             />
           </VerticalStack>
 
@@ -829,7 +829,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               min={0}
               max={13}
               value={this.state.card.scales.right}
-              onChange={(right) => this.onRightScaleChange(right)}
+              onChange={(right) => this.onRightScaleChange(right || 0)}
             />
           </VerticalStack>
         </HorizontalStack>

@@ -7,7 +7,7 @@ export interface IAbstractPopoverProps extends IContainerProps {
   type?: string;
   overlay?: boolean;
   focus?: boolean;
-  targetRectangle?: DOMRect;
+  targetElement?: HTMLElement;
   height?: number;
   width?: number;
   top?: number;
@@ -23,7 +23,7 @@ export interface IAbstractPopoverStyle {
   top: number;
   left: number;
   width: number;
-  height: number | 'fit-content';
+  height: number | 'auto';
 }
 
 export interface IAbstractPopoverState extends IContainerState {
@@ -49,45 +49,50 @@ export abstract class AbstractPopover<
     };
   }
 
-  public constructor(props: P) {
-    super(props);
-    this.state = {} as S;
-  }
+  protected resizeObserver?: ResizeObserver;
 
   protected abstract calculatePosition(): void;
-  protected abstract checkHeight(): void;
 
   public override componentDidMount() {
     super.componentDidMount();
 
     this.calculatePosition();
 
-    this.waitForStyle()
-      .then(() => setTimeout(() => this.checkHeight(), 100))
-      .catch((e) => app.$errorManager.trigger(e));
+    if (this.props.targetElement) {
+      // Observe changes in element size/position
+      this.resizeObserver = new ResizeObserver(() => this.calculatePosition());
+      this.resizeObserver.observe(this.props.targetElement);
+      // Listen to the scroll
+      window.addEventListener('scroll', this.handleScroll.bind(this), true);
+    }
 
     this.waitForVisible()
       .then(() => setTimeout(() => this.base.current?.focus(), 100))
       .catch((e) => app.$errorManager.trigger(e));
   }
 
-  public async waitForStyle() {
-    return await new Promise<void>((resolve) => {
-      const timer = setInterval(() => {
-        if (!this.state.style) return;
-        clearInterval(timer);
-        resolve();
-      }, 100);
-    });
+  public override componentWillUnmount() {
+    super.componentWillUnmount();
+    this.resizeObserver?.disconnect();
+    window.removeEventListener('scroll', this.handleScroll.bind(this), true);
+  }
+
+  protected handleScroll() {
+    this.calculatePosition();
   }
 
   public async waitForVisible() {
-    return await new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
       const timer = setInterval(() => {
-        if (!this.state.visible) return;
-        clearInterval(timer);
-        resolve();
+        if (this.state.visible) {
+          clearInterval(timer);
+          resolve();
+        }
       }, 100);
+      setTimeout(() => {
+        clearInterval(timer);
+        reject(new Error('Timeout waiting for visible'));
+      }, 5000);
     });
   }
 

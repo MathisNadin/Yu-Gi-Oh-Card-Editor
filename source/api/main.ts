@@ -1271,11 +1271,6 @@ export interface IMemberAPILoginResponse {
 }
 
 
-export interface IMemberApiAuthenticateTokenOptions {
-  token: ISessionEntity['token'];
-}
-
-
 export interface IMemberApiRegisterOptions {
   userName?: IMemberEntity['userName'];
   lastName?: IMemberEntity['lastName'];
@@ -1333,7 +1328,7 @@ export interface IMemberApi {
   trash(options: IEntityTrashOptions): Promise<IMemberEntity>;
   getInstances(options: IMemberApiGetInstancesOptions): Promise<IMemberApiGetInstancesResponse>;
   checkMail(options: IMemberApiCheckMailOptions): Promise<IMemberApiCheckMailResponse>;
-  authenticateToken(options: IMemberApiAuthenticateTokenOptions): Promise<IMemberAPILoginResponse>;
+  authenticateToken(): Promise<IMemberAPILoginResponse>;
   login(options: IMemberApiLoginOptions): Promise<IMemberAPILoginResponse>;
   register(options: IMemberApiRegisterOptions): Promise<IMemberAPILoginResponse>;
   forgotPassword(options: IMemberApiForgotPasswordOptions): Promise<IMemberApiForgotPasswordResponse>;

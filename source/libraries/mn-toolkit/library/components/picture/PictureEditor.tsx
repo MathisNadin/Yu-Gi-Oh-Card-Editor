@@ -189,13 +189,13 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       return await actions[0]!.onTap!(undefined!);
     }
 
-    let eventOrRect: React.MouseEvent<HTMLDivElement> | DOMRect;
+    let eventOrElement: React.MouseEvent<HTMLDivElement> | HTMLElement;
     if (this.iconRef.current?.iconRef?.current) {
-      eventOrRect = this.iconRef.current.iconRef.current.getBoundingClientRect();
+      eventOrElement = this.iconRef.current.iconRef.current;
     } else {
-      eventOrRect = e;
+      eventOrElement = e;
     }
-    app.$popover.actions(eventOrRect, { actions });
+    app.$popover.actions(eventOrElement, { actions });
   }
 
   private async cropPicture(areaType: TPictureCropperAreaType) {

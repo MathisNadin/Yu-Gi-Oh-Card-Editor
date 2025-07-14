@@ -1,8 +1,9 @@
-import { CSSProperties, FC, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { CSSProperties, FC, ReactNode, RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { classNames } from 'mn-tools';
 
 interface OverlayToolbarProps {
+  ref?: RefObject<HTMLDivElement | null>;
   /** The div containing the editor */
   anchor: HTMLElement | null;
   visible: boolean;
@@ -11,9 +12,15 @@ interface OverlayToolbarProps {
   offset?: number;
 }
 
-export const OverlayToolbar: FC<OverlayToolbarProps> = ({ anchor, visible, children, offset = 8 }) => {
+export const OverlayToolbar: FC<OverlayToolbarProps> = ({ ref, anchor, visible, children, offset = 8 }) => {
+  const [popoverContainer, setPopoverContainer] = useState<HTMLElement | null>(null);
   const [style, setStyle] = useState<CSSProperties>();
-  const toolbarRef = useRef<HTMLDivElement>(null);
+  const localRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = ref || localRef;
+
+  useEffect(() => {
+    setPopoverContainer(document.querySelector<HTMLDivElement>('.mn-popovers') || document.body);
+  }, []);
 
   const updatePosition = () => {
     if (!anchor || !toolbarRef.current) return;
@@ -47,6 +54,8 @@ export const OverlayToolbar: FC<OverlayToolbarProps> = ({ anchor, visible, child
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, anchor, offset]);
 
+  if (!popoverContainer) return null;
+
   return createPortal(
     <div
       ref={toolbarRef}
@@ -55,6 +64,6 @@ export const OverlayToolbar: FC<OverlayToolbarProps> = ({ anchor, visible, child
     >
       {children}
     </div>,
-    document.body
+    popoverContainer
   );
 };

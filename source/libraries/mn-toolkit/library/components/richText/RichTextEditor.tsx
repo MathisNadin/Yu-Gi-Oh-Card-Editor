@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { $getRoot, CLEAR_HISTORY_COMMAND, ParagraphNode, TextNode } from 'lexical';
 import { LexicalEditor } from 'lexical/LexicalEditor';
 import { EditorState } from 'lexical/LexicalEditorState';
@@ -12,7 +13,7 @@ import { $createCustomParagraphNode, CustomParagraphNode } from './CustomParagra
 import { $createCustomTextNode, CustomTextNode } from './CustomTextNode';
 import { IToolbarPluginProps, ToolbarPlugin } from './ToolbarPlugin';
 import { OverlayToolbar } from './OverlayToolbar';
-import { TRichTextToolId } from '.';
+import { TRichTextBaseToolId } from '.';
 
 const EMPTY_EDITOR_STATE: ReturnType<EditorState['toJSON']> = {
   root: {
@@ -58,7 +59,7 @@ const defaultInitialConfig: InitialConfigType = {
   onError: (error: Error) => console.error(error),
 };
 
-const defaultToolbarSettings: { [key in TRichTextToolId]: boolean } = {
+const defaultToolbarSettings: { [key in TRichTextBaseToolId]: boolean } = {
   undo: true,
   redo: true,
   bold: true,
@@ -70,6 +71,7 @@ const defaultToolbarSettings: { [key in TRichTextToolId]: boolean } = {
   ul: true,
   ol: true,
   indent: true,
+  outdent: true,
   blockquote: true,
   h1: true,
   h2: true,
@@ -82,12 +84,12 @@ const defaultToolbarSettings: { [key in TRichTextToolId]: boolean } = {
   link: true,
 };
 
-export interface IRichTextEditorProps extends IContainableProps {
+export interface IRichTextEditorProps<TOOL_IDS extends string = TRichTextBaseToolId> extends IContainableProps {
   initialConfig: InitialConfigType;
   toolbarMode: 'fixed' | 'ghost';
-  toolbarOptions: IToolbarPluginProps['options'];
-  toolbarColors?: IToolbarPluginProps['colors'];
-  toolbarCustomTools?: IToolbarPluginProps['customTools'];
+  toolbarOptions: IToolbarPluginProps<TOOL_IDS>['options'];
+  toolbarColors?: IToolbarPluginProps<TOOL_IDS>['colors'];
+  toolbarCustomTools?: IToolbarPluginProps<TOOL_IDS>['customTools'];
   placeholder: ILexicalRichTextEditorContentProps['placeholder'];
   value: string;
   onChange: (value: string) => void | Promise<void>;
@@ -99,10 +101,17 @@ interface IRichTextEditorState extends IContainableState {
   ghostToolbarVisible?: boolean;
 }
 
-export class RichTextEditor extends Containable<IRichTextEditorProps, IRichTextEditorState> {
+export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> extends Containable<
+  IRichTextEditorProps<TOOL_IDS>,
+  IRichTextEditorState
+> {
   private editor?: LexicalEditor;
+  private overlayToolbarRef = createRef<HTMLDivElement>();
 
-  public static override get defaultProps(): Omit<IRichTextEditorProps, 'value' | 'onChange' | 'onEditorInit'> {
+  public static override get defaultProps(): Omit<
+    IRichTextEditorProps,
+    'value' | 'onChange' | 'onEditorInit' | 'toolbarOptions'
+  > & { toolbarOptions: { [key in TRichTextBaseToolId]: boolean } } {
     return {
       ...super.defaultProps,
       initialConfig: defaultInitialConfig,
@@ -112,13 +121,13 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichTextE
     };
   }
 
-  public constructor(props: IRichTextEditorProps) {
+  public constructor(props: IRichTextEditorProps<TOOL_IDS>) {
     super(props);
     this.state = { ...this.state, lastHtmlValue: props.value };
   }
 
   public override componentDidUpdate(
-    prevProps: Readonly<IRichTextEditorProps>,
+    prevProps: Readonly<IRichTextEditorProps<TOOL_IDS>>,
     prevState: Readonly<IRichTextEditorState>,
     snapshot?: TDidUpdateSnapshot
   ) {
@@ -181,7 +190,10 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichTextE
       const active = document.activeElement as HTMLElement | null;
       if (!root || !active) return;
 
-      if (root.contains(active) || active.closest('.mn-popover')) {
+      const isInOverlayToolbar = !!this.overlayToolbarRef.current && this.overlayToolbarRef.current.contains(active);
+      const isInPopover = !!active.closest('.mn-popover');
+
+      if (isInPopover || isInOverlayToolbar || root.contains(active)) {
         return; // focus still in editor or a popover
       }
 
@@ -239,7 +251,11 @@ export class RichTextEditor extends Containable<IRichTextEditorProps, IRichTextE
     );
     if (this.props.toolbarMode === 'fixed') return toolbar;
     return (
-      <OverlayToolbar anchor={this.base.current} visible={!!this.state.ghostToolbarVisible}>
+      <OverlayToolbar
+        ref={this.overlayToolbarRef}
+        anchor={this.base.current}
+        visible={!!this.state.ghostToolbarVisible}
+      >
         <ToolbarPlugin
           options={this.props.toolbarOptions}
           colors={this.props.toolbarColors}

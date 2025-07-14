@@ -96,7 +96,7 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
     const actions = this.generatePopOverActions();
     if (!actions.length) return;
 
-    this.listPopoverId = app.$popover.actions(this.base.current.getBoundingClientRect(), {
+    this.listPopoverId = app.$popover.actions(this.base.current, {
       syncWidth: true,
       actions,
       className: 'mn-select-popover',

@@ -34,7 +34,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
   private showItems() {
     if (this.props.disabled || !this.base.current) return;
     app.$popover.show({
-      eventOrRect: this.base.current.getBoundingClientRect(),
+      eventOrElement: this.base.current,
       type: 'actions select-chips',
       Component: SelectChipsPopover<ID>,
       componentProps: {

@@ -160,9 +160,8 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
   private async showBelow(event: React.MouseEvent<HTMLLIElement>, item: IMenuItem) {
     if (app.$popover.visible && this.state.currentlyShown === item) return;
 
-    const eventTarget = event.target as HTMLLIElement;
-    const eventTargetParent = eventTarget?.parentElement as HTMLDivElement;
-    if (!eventTargetParent) return;
+    const eventTarget = event.currentTarget;
+    if (!eventTarget) return;
 
     if (this.menuPopoverId) app.$popover.remove(this.menuPopoverId);
 
@@ -180,28 +179,12 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
     }
 
     // Même longueur que le menu qu'on vient de survoler
-    let width = eventTargetParent.offsetWidth;
+    let width = eventTarget.offsetWidth;
     if (item.groupMinWidth && (!width || width < item.groupMinWidth)) {
       width = item.groupMinWidth;
     }
 
-    let rect = eventTargetParent.getBoundingClientRect();
-    if (this.base.current) {
-      const baseRect = this.base.current.getBoundingClientRect();
-      rect = {
-        x: rect.x,
-        y: rect.y,
-        height: rect.height,
-        width: rect.width,
-        left: rect.left,
-        right: rect.right,
-        toJSON: rect.toJSON,
-        top: baseRect.top,
-        bottom: baseRect.bottom,
-      };
-    }
-
-    this.menuPopoverId = app.$popover.actions(rect, {
+    this.menuPopoverId = app.$popover.actions(eventTarget, {
       actions,
       width,
       className: 'mn-top-menu-below-popover',

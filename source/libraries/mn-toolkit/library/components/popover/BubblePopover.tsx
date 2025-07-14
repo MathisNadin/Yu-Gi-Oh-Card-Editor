@@ -1,3 +1,4 @@
+import { isString } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
 import {
   IAbstractPopoverProps,
@@ -6,13 +7,7 @@ import {
   IAbstractPopoverStyle,
 } from './AbstractPopover';
 
-type TBubblePopoverPosition =
-  | 'top-center'
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-center'
-  | 'bottom-left'
-  | 'bottom-right';
+type TBubblePopoverPosition = 'top' | 'bottom';
 
 export interface IBubblePopoverProps extends IAbstractPopoverProps {
   triangleWidth?: number;
@@ -20,8 +15,15 @@ export interface IBubblePopoverProps extends IAbstractPopoverProps {
   preferBottom?: boolean;
 }
 
+export interface IBubblePopoverStyle extends IAbstractPopoverStyle {
+  '--triangle-x': string;
+  '--triangle-w': string;
+  '--triangle-h': string;
+}
+
 export interface IBubblePopoverState extends IAbstractPopoverState {
   position: TBubblePopoverPosition;
+  style?: IBubblePopoverStyle;
 }
 
 export class BubblePopover<
@@ -37,32 +39,30 @@ export class BubblePopover<
   }
 
   protected override calculatePosition() {
-    let { targetRectangle, syncWidth, syncHeight, top, left, preferBottom } = this.props;
-    if (!targetRectangle) return;
+    let { targetElement, syncWidth, syncHeight, top, left, preferBottom } = this.props;
+    if (!targetElement) return;
 
+    const targetRectangle = targetElement.getBoundingClientRect();
     const targetMidX = targetRectangle.left + targetRectangle.width / 2;
     const targetTopY = targetRectangle.top;
     const targetBottomY = targetRectangle.top + targetRectangle.height;
 
     const { screenWidth, screenHeight } = app.$device;
-    let preferredHeight: IAbstractPopoverStyle['height'] = syncHeight ? targetRectangle.height : this.props.height!;
+    let preferredHeight: IBubblePopoverStyle['height'] = syncHeight ? targetRectangle.height : this.props.height!;
     const preferredWidth = syncWidth ? targetRectangle.width : this.props.width!;
     const triangleWidth = this.props.triangleWidth! * 1.5; // To add some margin
     const triangleHeight = this.props.triangleHeight! * 1.5; // To add some margin
 
     // Initial guesses
-    let horizontalPosition: 'center' | 'left' | 'right' = 'center';
     left = left || targetMidX - preferredWidth / 2;
-    let verticalPosition: 'top' | 'bottom' = 'bottom'; // Favor top, but start with bottom for logic
+    let position: TBubblePopoverPosition = 'bottom'; // Favor top, but start with bottom for logic
     top = top || targetBottomY + triangleHeight;
 
     // Adjust for screen edges
     if (left! + preferredWidth + triangleWidth > screenWidth) {
       left = screenWidth - preferredWidth - triangleWidth;
-      horizontalPosition = 'right';
     } else if (left! - triangleWidth < 0) {
       left = triangleWidth;
-      horizontalPosition = 'left';
     }
 
     // Adjust vertical position based on available space
@@ -70,35 +70,57 @@ export class BubblePopover<
     const canBeBottom = targetBottomY + preferredHeight + triangleHeight < screenHeight;
     if (canBeTop && (!canBeBottom || !preferBottom)) {
       top = targetTopY - preferredHeight - triangleHeight;
-      verticalPosition = 'top';
+      position = 'top';
     } else if (canBeBottom) {
       top = targetBottomY + triangleHeight;
-      verticalPosition = 'bottom';
+      position = 'bottom';
     }
 
     // Final adjustments to ensure the popover doesn't go off-screen
     left = Math.max(0, left);
     top = Math.max(0, top);
 
-    // Assemble final position string
-    const position = `${verticalPosition}-${horizontalPosition}` as TBubblePopoverPosition;
-
     let visible = true;
     if (!preferredHeight) {
-      preferredHeight = 'fit-content';
-      visible = false;
+      preferredHeight = 'auto';
+      visible = this.state.visible; // If already visible, don't make it disapear and reappear again
     }
-    this.setState({ style: { top, left, width: preferredWidth, height: preferredHeight }, position, visible });
+
+    const triangleHalf = this.props.triangleWidth! / 2;
+    // Horizontal position (relative to the popover) that the arrow should aim at
+    let triangleX = targetMidX - left!; // center of the target in the popover marker
+    triangleX = Math.max(
+      triangleHalf, // prevent the arrow from leaving the frame
+      Math.min(preferredWidth - triangleHalf, triangleX)
+    );
+
+    this.setState(
+      {
+        style: {
+          top,
+          left,
+          width: Math.max(preferredWidth, 0),
+          height: isString(preferredHeight) ? preferredHeight : Math.max(preferredHeight, 0),
+          '--triangle-x': `${triangleX}px`,
+          '--triangle-w': `${this.props.triangleWidth}px`,
+          '--triangle-h': `${this.props.triangleHeight}px`,
+        },
+        position,
+        visible,
+      },
+      () => this.checkHeight()
+    );
   }
 
-  protected override checkHeight() {
-    if (this.state.style!.height !== 'fit-content' || this.state.visible || !this.base.current) {
+  protected checkHeight() {
+    if (this.state.style!.height !== 'auto' || !this.base.current) {
       return;
     }
 
-    let { targetRectangle, top, preferBottom } = this.props;
-    if (!targetRectangle) return;
+    let { targetElement, top, preferBottom } = this.props;
+    if (!targetElement) return;
 
+    const targetRectangle = targetElement.getBoundingClientRect();
     const targetTopY = targetRectangle.top;
     const targetBottomY = targetRectangle.top + targetRectangle.height;
 
@@ -107,23 +129,7 @@ export class BubblePopover<
     const triangleHeight = this.props.triangleHeight! * 1.5; // To add some margin
 
     // Initial guesses
-    let horizontalPosition: 'center' | 'left' | 'right';
-    switch (this.state.position) {
-      case 'top-right':
-      case 'bottom-right':
-        horizontalPosition = 'right';
-        break;
-
-      case 'top-left':
-      case 'bottom-left':
-        horizontalPosition = 'left';
-        break;
-
-      default:
-        horizontalPosition = 'center';
-        break;
-    }
-    let verticalPosition: 'top' | 'bottom' = 'bottom'; // Favor top, but start with bottom for logic
+    let position: TBubblePopoverPosition = 'bottom'; // Favor top, but start with bottom for logic
     top = top || targetBottomY + triangleHeight;
 
     // Adjust vertical position based on available space
@@ -131,21 +137,25 @@ export class BubblePopover<
     const canBeBottom = targetBottomY + preferredHeight + triangleHeight < screenHeight;
     if (canBeTop && (!canBeBottom || !preferBottom)) {
       top = targetTopY - preferredHeight - triangleHeight;
-      verticalPosition = 'top';
+      position = 'top';
     } else if (canBeBottom) {
       top = targetBottomY + triangleHeight;
-      verticalPosition = 'bottom';
+      position = 'bottom';
     }
-
-    // Final adjustments to ensure the popover doesn't go off-screen
-    top = Math.max(0, top);
-
-    // Assemble final position string
-    const position = `${verticalPosition}-${horizontalPosition}` as TBubblePopoverPosition;
 
     const style = { ...this.state.style! };
     style.top = top;
     this.setState({ style, position, visible: true });
+  }
+
+  public override renderStyle() {
+    const style = super.renderStyle();
+    if (this.state.style) {
+      style['--triangle-h'] = this.state.style['--triangle-h'];
+      style['--triangle-w'] = this.state.style['--triangle-w'];
+      style['--triangle-x'] = this.state.style['--triangle-x'];
+    }
+    return style;
   }
 
   protected override renderContent(): TJSXElementChild {

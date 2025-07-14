@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.3.1
+
+- ajout deepFreeze pour objects
+
 ## 2.3.0
 
+- bump to 2.3.0
 - fix appel des fonctions dans l'observable
 - try catch sur les listeners
 - observable bien mieux typé

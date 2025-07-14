@@ -49,7 +49,6 @@ declare global {
     'toolkit-diamond-shine': ISvgIcons;
     'toolkit-eye-open': ISvgIcons;
     'toolkit-eye-close': ISvgIcons;
-    'toolkit-millennium-puzzle': ISvgIcons;
     'toolkit-copy': ISvgIcons;
     'toolkit-close-disc': ISvgIcons;
     'toolkit-database': ISvgIcons;
@@ -1267,79 +1266,6 @@ export function loadSvgs() {
         d='M6 3H16C16.5523 3 17 2.55228 17 2C17 1.44772 16.5523 1 16 1H6C4.34315 1 3 2.34315 3 4V18C3 18.5523 3.44772 19 4 19C4.55228 19 5 18.5523 5 18V4C5 3.44772 5.44772 3 6 3Z'
         fill='currentColor'
       />
-    </svg>
-  );
-
-  app.$icon.register(
-    'toolkit-millennium-puzzle',
-    <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='-2 -2 128 128' height='128' width='128'>
-      <path
-        fill='none'
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M61.99999999999999 118.83333333333331 118.83333333333331 25.374171666666665H5.166666666666666L61.99999999999999 118.83333333333331Z'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        d='M61.99999999999999 58.21128333333333c-1.395 0 -2.525983333333333 -1.1309833333333332 -2.525983333333333 -2.525983333333333s1.1309833333333332 -2.525983333333333 2.525983333333333 -2.525983333333333'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        d='M61.99999999999999 58.21128333333333c1.395 0 2.525983333333333 -1.1309833333333332 2.525983333333333 -2.525983333333333s-1.1309833333333332 -2.525983333333333 -2.525983333333333 -2.525983333333333'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M44.318529999999996 46.844358333333325h4.551729999999999'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M79.68136666666666 46.844358333333325h-4.551833333333333'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M44.318529999999996 64.52598333333333h4.551729999999999'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M79.68136666666666 64.52598333333333h-4.551833333333333'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M48.94600333333333 64.52598333333333c1.3149166666666665 2.3012333333333332 3.215113333333333 4.214449999999999 5.507563333333333 5.544866666666666 2.2924499999999997 1.3304166666666666 4.895933333333333 2.0310166666666665 7.546433333333332 2.0310166666666665 2.6504999999999996 0 5.253983333333332 -0.7005999999999999 7.546433333333332 -2.0310166666666665s4.192749999999999 -3.243633333333333 5.507666666666666 -5.544866666666666'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M75.05409999999999 46.844255c-1.3149166666666665 -2.30144 -3.215216666666666 -4.214398333333333 -5.507666666666666 -5.544866666666666 -2.2924499999999997 -1.33052 -4.895933333333333 -2.031275 -7.546433333333332 -2.031275 -2.6504999999999996 0 -5.253983333333332 0.7007549999999999 -7.546433333333332 2.031275 -2.2924499999999997 1.3304683333333334 -4.192646666666666 3.2434266666666662 -5.507563333333333 5.544866666666666'
-        strokeWidth='8'
-      ></path>
-      <path
-        stroke='currentColor'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        d='M61.99999999999999 25.37406833333333c5.58 0 10.103933333333332 -4.523571666666666 10.103933333333332 -10.103674999999999C72.10393333333333 9.690238333333332 67.58 5.166666666666666 61.99999999999999 5.166666666666666s-10.103933333333332 4.523571666666666 -10.103933333333332 10.103726666666665c0 5.580103333333333 4.523933333333333 10.103674999999999 10.103933333333332 10.103674999999999Z'
-        strokeWidth='8'
-      ></path>
     </svg>
   );
 

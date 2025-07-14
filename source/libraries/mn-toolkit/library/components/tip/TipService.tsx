@@ -18,9 +18,9 @@ export class TipService {
     await app.$session.update({ member });
   }
 
-  public show(targetRectangle: DOMRect, tip: IContainableTip) {
+  public show(eventOrElement: React.MouseEvent | HTMLElement, tip: IContainableTip) {
     if (app.$popover.visible) return;
-    const popupId = app.$popover.walkthrough(targetRectangle, {
+    const popupId = app.$popover.walkthrough(eventOrElement, {
       focus: true,
       ignoreFocus: true,
       innerContent: (

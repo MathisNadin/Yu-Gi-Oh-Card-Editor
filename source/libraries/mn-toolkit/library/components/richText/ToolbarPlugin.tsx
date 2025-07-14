@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { Fragment, JSX, useCallback, useEffect, useState } from 'react';
 import {
   $getSelection,
   $isRangeSelection,
@@ -30,26 +30,22 @@ import { mergeRegister } from '@lexical/utils';
 import { HorizontalStack } from '../container';
 import { Icon } from '../icon';
 import { ColorPicker } from '../colorPicker';
-import { IToolbarPluginCustomTool, TRichTextToolId } from '.';
+import { TToolbarPluginTool, TRichTextToolGroupId, TRichTextBaseToolId } from '.';
 
-export interface IToolbarPluginProps {
-  options: Partial<{ [key in TRichTextToolId]: boolean }>;
+export interface IToolbarPluginProps<TOOL_IDS extends string = TRichTextBaseToolId> {
+  options: Partial<{ [key in TOOL_IDS]: boolean }>;
   colors?: string[];
-  customTools?: IToolbarPluginCustomTool[];
+  customTools?: TToolbarPluginTool<TOOL_IDS>[];
 }
 
-const undoRedoGroup: TRichTextToolId[] = ['undo', 'redo'];
-const formatGroup: TRichTextToolId[] = ['bold', 'italic', 'underline', 'strikethrough', 'color', 'backgroundColor'];
-const blockGroup: TRichTextToolId[] = ['ul', 'ol', 'indent', 'blockquote'];
-const structureGroup: TRichTextToolId[] = ['h1', 'h2', 'h3', 'paragraph'];
-const alignGroup: TRichTextToolId[] = ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify'];
-const linkGroup: TRichTextToolId[] = ['link'];
+// Define group order
+const groupOrder: TRichTextToolGroupId[] = ['undoRedo', 'format', 'block', 'structure', 'align', 'link', 'custom'];
 
-function isGroupVisible(options: Partial<{ [key in TRichTextToolId]: boolean }>, group: TRichTextToolId[]) {
-  return group.some((key) => options[key]);
-}
-
-export const ToolbarPlugin: FC<IToolbarPluginProps> = ({ options, colors, customTools }) => {
+export const ToolbarPlugin = <TOOL_IDS extends string = TRichTextBaseToolId>({
+  options,
+  colors,
+  customTools = [],
+}: IToolbarPluginProps<TOOL_IDS>): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -148,365 +144,288 @@ export const ToolbarPlugin: FC<IToolbarPluginProps> = ({ options, colors, custom
     });
   };
 
+  // Define standard tools
+  const standardTools: TToolbarPluginTool[] = [
+    {
+      id: 'undo',
+      group: 'undoRedo',
+      getIcon: (_editor) => 'toolkit-undo',
+      getHint: (_editor) => 'Annuler',
+      execute: (editor) => {
+        editor.dispatchCommand(UNDO_COMMAND, undefined);
+      },
+      isDisabled: (_editor) => !canUndo,
+    },
+    {
+      id: 'redo',
+      group: 'undoRedo',
+      getIcon: (_editor) => 'toolkit-redo',
+      getHint: (_editor) => 'Rétablir',
+      execute: (editor) => {
+        editor.dispatchCommand(REDO_COMMAND, undefined);
+      },
+      isDisabled: (_editor) => !canRedo,
+    },
+    {
+      id: 'bold',
+      group: 'format',
+      getIcon: (_editor) => 'toolkit-format-bold',
+      getHint: (_editor) => 'Passer la sélection en gras',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
+      },
+      isActive: (_editor) => isBold,
+    },
+    {
+      id: 'italic',
+      group: 'format',
+      getIcon: (_editor) => 'toolkit-format-italic',
+      getHint: (_editor) => 'Passer la sélection en italique',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
+      },
+      isActive: (_editor) => isItalic,
+    },
+    {
+      id: 'underline',
+      group: 'format',
+      getIcon: (_editor) => 'toolkit-format-underline',
+      getHint: (_editor) => 'Souligner la sélection',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
+      },
+      isActive: (_editor) => isUnderline,
+    },
+    {
+      id: 'strikethrough',
+      group: 'format',
+      getIcon: (_editor) => 'toolkit-format-strikethrough',
+      getHint: (_editor) => 'Texte barré',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
+      },
+      isActive: (_editor) => isStrikethrough,
+    },
+    {
+      id: 'color',
+      group: 'format',
+      getIcon: (_editor) => 'toolkit-format-color',
+      getHint: (_editor) => 'Changer la couleur du texte',
+      getStyle: (_editor) => {
+        if (!textColor) return undefined;
+        return { '--current-rich-text-color': textColor };
+      },
+      popoverContent: (editor) => (
+        <ColorPicker
+          selectedColor={textColor}
+          colors={colors}
+          onSelectColor={(color) => {
+            editor.update(() => {
+              const selection = $getSelection();
+              if (selection) $patchStyleText(selection, { color: color || null });
+            });
+          }}
+        />
+      ),
+      isActive: (_editor) => !!textColor,
+    },
+    {
+      id: 'backgroundColor',
+      group: 'format',
+      getIcon: (_editor) => 'toolkit-format-background-color',
+      getHint: (_editor) => 'Changer la couleur de fond',
+      getStyle: (_editor) => {
+        if (!bgColor) return undefined;
+        return { '--current-rich-text-background-color': bgColor };
+      },
+      popoverContent: (editor) => (
+        <ColorPicker
+          selectedColor={bgColor}
+          colors={colors}
+          onSelectColor={(color) => {
+            editor.update(() => {
+              const selection = $getSelection();
+              if (selection) $patchStyleText(selection, { 'background-color': color || null });
+            });
+          }}
+        />
+      ),
+      isActive: (_editor) => !!bgColor,
+    },
+    {
+      id: 'ul',
+      group: 'block',
+      getIcon: (_editor) => 'toolkit-format-ul',
+      getHint: (_editor) => 'Transformer en liste à puces',
+      execute: (editor) => {
+        if (isUl) editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        else editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+      },
+      isActive: (_editor) => isUl,
+    },
+    {
+      id: 'ol',
+      group: 'block',
+      getIcon: (_editor) => 'toolkit-format-ol',
+      getHint: (_editor) => 'Transformer en liste numérotée',
+      execute: (editor) => {
+        if (isOl) editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        else editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+      },
+      isActive: (_editor) => isOl,
+    },
+    {
+      id: 'indent',
+      group: 'block',
+      getIcon: (_editor) => 'toolkit-format-indent',
+      getHint: (_editor) => 'Augmenter le retrait',
+      execute: (editor) => {
+        editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
+      },
+    },
+    {
+      id: 'outdent',
+      group: 'block',
+      getIcon: (_editor) => 'toolkit-format-outdent',
+      getHint: (_editor) => 'Diminuer le retrait',
+      execute: (editor) => {
+        editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
+      },
+    },
+    {
+      id: 'blockquote',
+      group: 'block',
+      getIcon: (_editor) => 'toolkit-format-blockquote',
+      getHint: (_editor) => 'Citation',
+      execute: (_editor) => setBlockType(() => $createQuoteNode()),
+    },
+    {
+      id: 'h1',
+      group: 'structure',
+      getIcon: (_editor) => 'toolkit-format-header-1',
+      getHint: (_editor) => 'Titre 1',
+      execute: (_editor) => setBlockType(() => $createHeadingNode('h1')),
+    },
+    {
+      id: 'h2',
+      group: 'structure',
+      getIcon: (_editor) => 'toolkit-format-header-2',
+      getHint: (_editor) => 'Titre 2',
+      execute: (_editor) => setBlockType(() => $createHeadingNode('h2')),
+    },
+    {
+      id: 'h3',
+      group: 'structure',
+      getIcon: (_editor) => 'toolkit-format-header-3',
+      getHint: (_editor) => 'Titre 3',
+      execute: (_editor) => setBlockType(() => $createHeadingNode('h3')),
+    },
+    {
+      id: 'paragraph',
+      group: 'structure',
+      getIcon: (_editor) => 'toolkit-format-paragraph',
+      getHint: (_editor) => 'Paragraphe',
+      execute: (_editor) => setBlockType(() => new ParagraphNode()),
+    },
+    {
+      id: 'alignLeft',
+      group: 'align',
+      getIcon: (_editor) => 'toolkit-format-align-left',
+      getHint: (_editor) => 'Aligner à gauche',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
+      },
+    },
+    {
+      id: 'alignCenter',
+      group: 'align',
+      getIcon: (_editor) => 'toolkit-format-align-center',
+      getHint: (_editor) => 'Centrer',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
+      },
+    },
+    {
+      id: 'alignRight',
+      group: 'align',
+      getIcon: (_editor) => 'toolkit-format-align-right',
+      getHint: (_editor) => 'Aligner à droite',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
+      },
+    },
+    {
+      id: 'alignJustify',
+      group: 'align',
+      getIcon: (_editor) => 'toolkit-format-align-justify',
+      getHint: (_editor) => 'Justifier',
+      execute: (editor) => {
+        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
+      },
+    },
+    {
+      id: 'link',
+      group: 'link',
+      getIcon: (_editor) => (isLink ? 'toolkit-format-unlink' : 'toolkit-format-link'),
+      getHint: (_editor) => (isLink ? 'Supprimer le lien' : 'Ajouter un lien'),
+      execute: useCallback(() => {
+        if (isLink) {
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+        } else {
+          const url = window.prompt("Quelle est l'URL de votre lien ?");
+          if (url) editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
+        }
+      }, [isLink, editor]),
+      isActive: (_editor) => isLink,
+    },
+  ];
+
+  // Combine standard and custom tools
+  const allTools = [...(standardTools as TToolbarPluginTool<TOOL_IDS>[]), ...customTools];
+
+  // Group tools by their group, respecting options for standard tools
+  const toolsByGroup = groupOrder.map(
+    (group) =>
+      ({
+        id: group,
+        tools: allTools.filter((tool) => tool.group === group && tool.id in options && options[tool.id]),
+      }) as const
+  );
+
   return (
     <HorizontalStack className='mn-rich-text-editor-toolbar' gutter wrap>
-      {/* Undo/Redo */}
-      {isGroupVisible(options, undoRedoGroup) && (
-        <>
-          {options.undo && (
-            <Icon
-              disabled={!canUndo}
-              icon='toolkit-undo'
-              name='Annuler'
-              hint='Annuler'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(UNDO_COMMAND, undefined);
-              }}
-            />
-          )}
-          {options.redo && (
-            <Icon
-              disabled={!canRedo}
-              icon='toolkit-redo'
-              name='Rétablir'
-              hint='Rétablir'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(REDO_COMMAND, undefined);
-              }}
-            />
-          )}
-          <div className='mn-toolbar-separator' />
-        </>
+      {toolsByGroup.map((group, i) =>
+        group.tools.length > 0 ? (
+          <Fragment key={i}>
+            {group.tools.map((tool) => {
+              const hint = tool.getHint(editor);
+              return (
+                <Icon
+                  key={tool.id}
+                  disabled={tool.isDisabled?.(editor) || false}
+                  className={tool.isActive?.(editor) ? 'active' : undefined}
+                  style={tool.getStyle?.(editor)}
+                  icon={tool.getIcon(editor)}
+                  name={hint}
+                  hint={hint}
+                  onTap={async (e) => {
+                    e.preventDefault();
+                    if ('popoverContent' in tool && tool.popoverContent) {
+                      app.$popover.bubble(e, {
+                        onBlur: (e) => e.preventDefault(),
+                        content: tool.popoverContent(editor),
+                      });
+                    } else if ('execute' in tool && tool.execute) {
+                      await tool.execute?.(editor);
+                    }
+                  }}
+                />
+              );
+            })}
+            <div className='mn-toolbar-separator' />
+          </Fragment>
+        ) : null
       )}
-
-      {/* Format */}
-      {isGroupVisible(options, formatGroup) && (
-        <>
-          {options.bold && (
-            <Icon
-              className={isBold ? 'active' : undefined}
-              icon='toolkit-format-bold'
-              name='Passer la sélection en gras'
-              hint='Passer la sélection en gras'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
-              }}
-            />
-          )}
-          {options.italic && (
-            <Icon
-              className={isItalic ? 'active' : undefined}
-              icon='toolkit-format-italic'
-              name='Passer la sélection en italique'
-              hint='Passer la sélection en italique'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
-              }}
-            />
-          )}
-          {options.underline && (
-            <Icon
-              className={isUnderline ? 'active' : undefined}
-              icon='toolkit-format-underline'
-              name='Souligner la sélection'
-              hint='Souligner la sélection'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
-              }}
-            />
-          )}
-          {options.strikethrough && (
-            <Icon
-              className={isStrikethrough ? 'active' : undefined}
-              icon='toolkit-format-strikethrough'
-              name='Barré'
-              hint='Texte barré'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-              }}
-            />
-          )}
-          {options.color && (
-            <Icon
-              className={textColor ? 'active' : undefined}
-              style={textColor ? { '--current-rich-text-color': textColor } : undefined}
-              icon='toolkit-format-color'
-              name='Changer la couleur du texte'
-              hint='Changer la couleur du texte'
-              onTap={(e) => {
-                e.preventDefault();
-                app.$popover.bubble(e, {
-                  onBlur: (e) => e.preventDefault(),
-                  content: (
-                    <ColorPicker
-                      selectedColor={textColor}
-                      colors={colors}
-                      onSelectColor={(color) => {
-                        editor.update(() => {
-                          const selection = $getSelection();
-                          if (selection) $patchStyleText(selection, { color: color || null });
-                        });
-                      }}
-                    />
-                  ),
-                });
-              }}
-            />
-          )}
-          {options.backgroundColor && (
-            <Icon
-              className={bgColor ? 'active' : undefined}
-              style={bgColor ? { '--current-rich-text-background-color': bgColor } : undefined}
-              icon='toolkit-format-background-color'
-              name='Changer la couleur de fond'
-              hint='Changer la couleur de fond'
-              onTap={(e) => {
-                e.preventDefault();
-                app.$popover.bubble(e, {
-                  onBlur: (e) => e.preventDefault(),
-                  content: (
-                    <ColorPicker
-                      selectedColor={bgColor}
-                      colors={colors}
-                      onSelectColor={(color) => {
-                        editor.update(() => {
-                          const selection = $getSelection();
-                          if (selection) $patchStyleText(selection, { 'background-color': color || null });
-                        });
-                      }}
-                    />
-                  ),
-                });
-              }}
-            />
-          )}
-          <div className='mn-toolbar-separator' />
-        </>
-      )}
-
-      {/* Block */}
-      {isGroupVisible(options, blockGroup) && (
-        <>
-          {options.ul && (
-            <Icon
-              className={isUl ? 'active' : undefined}
-              icon='toolkit-format-ul'
-              name='Transformer en liste à puces'
-              hint='Transformer en liste à puces'
-              onTap={(e) => {
-                e.preventDefault();
-                if (isUl) editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-                else editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-              }}
-            />
-          )}
-          {options.ol && (
-            <Icon
-              className={isOl ? 'active' : undefined}
-              icon='toolkit-format-ol'
-              name='Transformer en liste numérotée'
-              hint='Transformer en liste numérotée'
-              onTap={(e) => {
-                e.preventDefault();
-                if (isOl) editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-                else editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-              }}
-            />
-          )}
-          {options.indent && (
-            <Icon
-              icon='toolkit-format-indent'
-              name='Augmenter le retrait'
-              hint='Augmenter le retrait'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
-              }}
-            />
-          )}
-          {options.indent && (
-            <Icon
-              icon='toolkit-format-outdent'
-              name='Diminuer le retrait'
-              hint='Diminuer le retrait'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
-              }}
-            />
-          )}
-          {options.blockquote && (
-            <Icon
-              icon='toolkit-format-blockquote'
-              name='Callout'
-              hint='Callout'
-              onTap={(e) => {
-                e.preventDefault();
-                setBlockType(() => $createQuoteNode());
-              }}
-            />
-          )}
-          <div className='mn-toolbar-separator' />
-        </>
-      )}
-
-      {/* Structure */}
-      {isGroupVisible(options, structureGroup) && (
-        <>
-          {options.h1 && (
-            <Icon
-              icon='toolkit-format-header-1'
-              name='Titre 1'
-              hint='Titre 1'
-              onTap={(e) => {
-                e.preventDefault();
-                setBlockType(() => $createHeadingNode('h1'));
-              }}
-            />
-          )}
-          {options.h2 && (
-            <Icon
-              icon='toolkit-format-header-2'
-              name='Titre 2'
-              hint='Titre 2'
-              onTap={(e) => {
-                e.preventDefault();
-                setBlockType(() => $createHeadingNode('h2'));
-              }}
-            />
-          )}
-          {options.h3 && (
-            <Icon
-              icon='toolkit-format-header-3'
-              name='Titre 3'
-              hint='Titre 3'
-              onTap={(e) => {
-                e.preventDefault();
-                setBlockType(() => $createHeadingNode('h3'));
-              }}
-            />
-          )}
-          {options.paragraph && (
-            <Icon
-              icon='toolkit-format-paragraph'
-              name='Paragraphe'
-              hint='Paragraphe'
-              onTap={(e) => {
-                e.preventDefault();
-                setBlockType(() => new ParagraphNode());
-              }}
-            />
-          )}
-          <div className='mn-toolbar-separator' />
-        </>
-      )}
-
-      {/* Align */}
-      {isGroupVisible(options, alignGroup) && (
-        <>
-          {options.alignLeft && (
-            <Icon
-              icon='toolkit-format-align-left'
-              name='Aligner à gauche'
-              hint='Aligner à gauche'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
-              }}
-            />
-          )}
-          {options.alignCenter && (
-            <Icon
-              icon='toolkit-format-align-center'
-              name='Centrer'
-              hint='Centrer'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
-              }}
-            />
-          )}
-          {options.alignRight && (
-            <Icon
-              icon='toolkit-format-align-right'
-              name='Aligner à droite'
-              hint='Aligner à droite'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
-              }}
-            />
-          )}
-          {options.alignJustify && (
-            <Icon
-              icon='toolkit-format-align-justify'
-              name='Justifier'
-              hint='Justifier'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
-              }}
-            />
-          )}
-          <div className='mn-toolbar-separator' />
-        </>
-      )}
-
-      {/* Link */}
-      {isGroupVisible(options, linkGroup) && (
-        <>
-          {options.link && !isLink && (
-            <Icon
-              icon='toolkit-format-link'
-              name='Ajouter un lien'
-              hint='Ajouter un lien'
-              onTap={(e) => {
-                e.preventDefault();
-                const url = window.prompt("Quelle est l'URL de votre lien ?");
-                if (url) {
-                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
-                }
-              }}
-            />
-          )}
-          {options.link && isLink && (
-            <Icon
-              icon='toolkit-format-unlink'
-              name='Supprimer le lien'
-              hint='Supprimer le lien'
-              onTap={(e) => {
-                e.preventDefault();
-                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-              }}
-            />
-          )}
-          <div className='mn-toolbar-separator' />
-        </>
-      )}
-
-      {/* ---------- Outils customs ---------- */}
-      {customTools?.map((tool) => {
-        const active = tool.isActive?.(editor) ?? false;
-        return (
-          <Icon
-            key={tool.id}
-            className={active ? 'active' : undefined}
-            icon={tool.icon}
-            name={tool.hint}
-            hint={tool.hint}
-            onTap={(e) => {
-              e.preventDefault();
-              tool.execute(editor);
-            }}
-          />
-        );
-      })}
     </HorizontalStack>
   );
 };

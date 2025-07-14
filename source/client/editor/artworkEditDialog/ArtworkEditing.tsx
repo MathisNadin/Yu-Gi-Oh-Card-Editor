@@ -270,7 +270,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               max={100}
               label='X'
               value={crop.x}
-              onChange={(x) => this.onCropPropertyChange('x', x)}
+              onChange={(x) => this.onCropPropertyChange('x', x || 0)}
             />
             <NumberInputField
               fill
@@ -278,7 +278,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               max={100}
               label='Y'
               value={crop.y}
-              onChange={(y) => this.onCropPropertyChange('y', y)}
+              onChange={(y) => this.onCropPropertyChange('y', y || 0)}
             />
           </VerticalStack>
 
@@ -289,7 +289,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               max={100}
               label='Largeur'
               value={crop.width}
-              onChange={(width) => this.onCropPropertyChange('width', width)}
+              onChange={(width) => this.onCropPropertyChange('width', width || 0)}
             />
             <NumberInputField
               fill
@@ -297,7 +297,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
               max={100}
               label='Hauteur'
               value={crop.height}
-              onChange={(height) => this.onCropPropertyChange('height', height)}
+              onChange={(height) => this.onCropPropertyChange('height', height || 0)}
             />
           </VerticalStack>
         </HorizontalStack>

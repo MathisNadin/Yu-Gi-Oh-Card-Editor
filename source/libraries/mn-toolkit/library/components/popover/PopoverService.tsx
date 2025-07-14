@@ -27,27 +27,27 @@ export class PopoverService extends AbstractObservable<IPopoverListener> {
     return !!this.focuses.length || !!this.popovers.find((p) => p.options.componentProps.overlay);
   }
 
-  public actions<ID = number>(eventOrRect: React.MouseEvent | DOMRect, props: IActionsPopoverProps<ID>) {
+  public actions<ID = number>(eventOrElement: React.MouseEvent | HTMLElement, props: IActionsPopoverProps<ID>) {
     return this.show<IActionsPopoverProps<ID>>({
-      eventOrRect,
+      eventOrElement,
       type: 'actions',
       Component: ActionsPopover<ID>,
       componentProps: props,
     });
   }
 
-  public bubble(eventOrRect: React.MouseEvent | DOMRect, props: IBubblePopoverProps) {
+  public bubble(eventOrElement: React.MouseEvent | HTMLElement, props: IBubblePopoverProps) {
     return this.show<IBubblePopoverProps>({
-      eventOrRect,
+      eventOrElement,
       type: 'bubble',
       Component: BubblePopover,
       componentProps: props,
     });
   }
 
-  public walkthrough(eventOrRect: React.MouseEvent | DOMRect, props: IWalkthroughPopoverProps) {
+  public walkthrough(eventOrElement: React.MouseEvent | HTMLElement, props: IWalkthroughPopoverProps) {
     return this.show<IWalkthroughPopoverProps>({
-      eventOrRect,
+      eventOrElement,
       type: 'walkthrough',
       Component: WalkthroughPopover,
       componentProps: props,
@@ -55,16 +55,25 @@ export class PopoverService extends AbstractObservable<IPopoverListener> {
   }
 
   public show<P extends IAbstractPopoverProps>(options: IPopoverOptions<P>) {
-    const { Component, componentProps, type } = options;
-    if (!componentProps.targetRectangle) {
-      if ('target' in options.eventOrRect) {
-        const targetElement = options.eventOrRect.target as HTMLElement;
-        componentProps.targetRectangle = targetElement?.getBoundingClientRect();
-      } else {
-        componentProps.targetRectangle = options.eventOrRect;
-      }
+    const { Component, componentProps, type, eventOrElement } = options;
+
+    // 1. React SyntheticEvent
+    if (eventOrElement && typeof eventOrElement === 'object' && 'nativeEvent' in eventOrElement) {
+      // Parfois le target est sur nativeEvent, parfois directement sur l'event
+      componentProps.targetElement = (eventOrElement.nativeEvent?.target ?? eventOrElement.target) as HTMLElement;
     }
-    if (!componentProps.targetRectangle) throw new Error('No target rectangle provided');
+    // 2. Native Event DOM
+    else if (typeof Event !== 'undefined' && eventOrElement instanceof Event) {
+      componentProps.targetElement = eventOrElement.target as HTMLElement;
+    }
+    // 3. Direct HTMLElement/Element
+    else if (
+      (typeof HTMLElement !== 'undefined' && eventOrElement instanceof HTMLElement) ||
+      (typeof Element !== 'undefined' && eventOrElement instanceof Element)
+    ) {
+      componentProps.targetElement = eventOrElement as HTMLElement;
+    }
+    if (!componentProps.targetElement) throw new Error('No target element provided');
 
     const id = `${type}-${this.popovers.length + 1}-${uuid()}`;
     const popoverElement = <Component {...componentProps} key={id} id={id} type={type} />;
@@ -74,7 +83,7 @@ export class PopoverService extends AbstractObservable<IPopoverListener> {
       options: options as unknown as IPopoverOptions<IAbstractPopoverProps>,
     });
     if (componentProps.focus) {
-      this.focuses.push({ popoverId: id, targetRectangle: componentProps.targetRectangle });
+      this.focuses.push({ popoverId: id, targetRectangle: componentProps.targetElement.getBoundingClientRect() });
     }
     this.dispatch('popoversChanged');
     return id;

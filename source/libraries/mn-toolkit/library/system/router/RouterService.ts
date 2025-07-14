@@ -441,8 +441,9 @@ export class RouterService extends AbstractObservable<IRouterListener> {
       }
     }
 
+    const pathKeys = eligible.pathKeys.filter((k) => k.type === 'path');
     for (let i = 1; i < match.length; ++i) {
-      key = eligible.pathKeys[i - 1];
+      key = pathKeys[i - 1];
       try {
         val = isString(match[i]) ? decodeURIComponent(match[i]!) : match[i]!;
       } catch {

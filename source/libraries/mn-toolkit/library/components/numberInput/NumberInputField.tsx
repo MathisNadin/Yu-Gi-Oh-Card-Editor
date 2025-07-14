@@ -3,13 +3,13 @@ import { isNumber } from 'mn-tools';
 import { FormField, IFormFieldProps, IFormFieldState, TFormField } from '../form';
 import { INumberInputSpecificProps, NumberInput } from './NumberInput';
 
-export interface INumberInputFieldProps extends IFormFieldProps<number>, INumberInputSpecificProps {
+export interface INumberInputFieldProps extends IFormFieldProps<number | undefined>, INumberInputSpecificProps {
   onSubmit?: (event: React.KeyboardEvent<HTMLInputElement>) => void | Promise<void>;
 }
 
 export interface INumberInputFieldState extends IFormFieldState {}
 
-export class NumberInputField extends FormField<number, INumberInputFieldProps, INumberInputFieldState> {
+export class NumberInputField extends FormField<number | undefined, INumberInputFieldProps, INumberInputFieldState> {
   protected inputElement = createRef<NumberInput>();
 
   public static override get defaultProps(): Omit<INumberInputFieldProps, 'label' | 'value' | 'onChange'> {

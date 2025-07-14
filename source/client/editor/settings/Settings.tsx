@@ -108,7 +108,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
         <Typography variant='document' contentType='text' content='Chemin de rendu par défaut' />
 
         <HorizontalStack verticalItemAlignment='middle'>
-          <Icon className='field-icon' size={24} icon='toolkit-millennium-puzzle' color='1' />
+          <Icon className='field-icon' size={24} icon='card-editor-millennium-puzzle' color='1' />
           {app.$device.isDesktop && (
             <FilePathInput
               fill

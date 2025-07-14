@@ -1,18 +1,24 @@
 import { createRef } from 'react';
 import { FormField, IFormFieldProps, IFormFieldState } from '../form';
-import { IRichTextEditorProps, RichTextEditor } from '.';
+import { IRichTextEditorProps, RichTextEditor, TRichTextBaseToolId } from '.';
 
-interface IRichTextEditorFieldProps extends IFormFieldProps<string>, IRichTextEditorProps {}
+interface IRichTextEditorFieldProps<TOOL_IDS extends string = TRichTextBaseToolId>
+  extends IFormFieldProps<string>,
+    IRichTextEditorProps<TOOL_IDS> {}
 
 interface IRichTextEditorFieldState extends IFormFieldState {}
 
-export class RichTextEditorField extends FormField<string, IRichTextEditorFieldProps, IRichTextEditorFieldState> {
-  private editorRef = createRef<RichTextEditor>();
+export class RichTextEditorField<TOOL_IDS extends string = TRichTextBaseToolId> extends FormField<
+  string,
+  IRichTextEditorFieldProps<TOOL_IDS>,
+  IRichTextEditorFieldState
+> {
+  private editorRef = createRef<RichTextEditor<TOOL_IDS>>();
 
   public static override get defaultProps(): Omit<
     IRichTextEditorFieldProps,
-    'label' | 'value' | 'onChange' | 'onEditorInit'
-  > {
+    'label' | 'value' | 'onChange' | 'onEditorInit' | 'toolbarOptions'
+  > & { toolbarOptions: typeof RichTextEditor.defaultProps.toolbarOptions } {
     return {
       ...super.defaultProps,
       initialConfig: RichTextEditor.defaultProps.initialConfig,
@@ -22,7 +28,7 @@ export class RichTextEditorField extends FormField<string, IRichTextEditorFieldP
     };
   }
 
-  public constructor(props: IRichTextEditorFieldProps) {
+  public constructor(props: IRichTextEditorFieldProps<TOOL_IDS>) {
     super(props, 'rich-text-editor');
   }
 
@@ -32,7 +38,7 @@ export class RichTextEditorField extends FormField<string, IRichTextEditorFieldP
 
   protected override renderControl() {
     return (
-      <RichTextEditor
+      <RichTextEditor<TOOL_IDS>
         ref={this.editorRef}
         initialConfig={this.props.initialConfig}
         toolbarMode={this.props.toolbarMode}

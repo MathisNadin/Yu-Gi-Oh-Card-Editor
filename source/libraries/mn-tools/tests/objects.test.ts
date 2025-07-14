@@ -25,6 +25,7 @@ import {
   objectDiff,
   arrayToRecord,
   arrayToRecordMultiple,
+  deepFreeze,
 } from '../library/objects';
 
 describe('objects.ts utility functions', () => {
@@ -37,6 +38,65 @@ describe('objects.ts utility functions', () => {
     it('should not match invalid date strings', () => {
       const invalidDate = '2023-04-12 12:34:56';
       expect(DATE_REGEXP.test(invalidDate)).toBe(false);
+    });
+  });
+
+  describe('deepFreeze', () => {
+    it('should deeply freeze a nested object and prevent modification', () => {
+      const obj = {
+        a: 1,
+        b: { c: 2, d: [3, 4] },
+        e: [{ f: 5 }],
+      };
+      const frozen = deepFreeze(obj);
+
+      // Check that all levels are frozen
+      expect(Object.isFrozen(frozen)).toBe(true);
+      expect(Object.isFrozen(frozen.b)).toBe(true);
+      expect(Object.isFrozen(frozen.b.d)).toBe(true);
+      expect(Object.isFrozen(frozen.e)).toBe(true);
+      expect(Object.isFrozen(frozen.e[0])).toBe(true);
+
+      // Mutation attempts: must throw TypeError
+      expect(() => {
+        frozen.a = 100;
+      }).toThrow(TypeError);
+      expect(() => {
+        frozen.b.c = 200;
+      }).toThrow(TypeError);
+      expect(() => {
+        frozen.b.d[0] = 999;
+      }).toThrow(TypeError);
+      expect(() => {
+        frozen.e[0]!.f = 42;
+      }).toThrow(TypeError);
+
+      // Add new property: must throw
+      expect(() => {
+        (frozen as { x?: number }).x = 999;
+      }).toThrow(TypeError);
+
+      // Ensure values are unchanged
+      expect(frozen.a).toBe(1);
+      expect(frozen.b.c).toBe(2);
+      expect(frozen.b.d[0]).toBe(3);
+      expect(frozen.e[0]!.f).toBe(5);
+      expect((frozen as { x?: number }).x).toBeUndefined();
+    });
+
+    it('should deeply freeze symbol properties', () => {
+      const sym = Symbol('test');
+      const obj = { a: 1, [sym]: { b: 2 } };
+      const frozen = deepFreeze(obj);
+
+      expect(Object.isFrozen(frozen)).toBe(true);
+      expect(Object.isFrozen(frozen[sym])).toBe(true);
+
+      // Try to mutate symbol property: must throw
+      expect(() => {
+        (frozen[sym] as { b: number }).b = 42;
+      }).toThrow(TypeError);
+      expect(frozen[sym].b).toBe(2);
     });
   });
 

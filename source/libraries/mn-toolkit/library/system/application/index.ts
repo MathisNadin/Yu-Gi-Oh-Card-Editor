@@ -36,7 +36,6 @@ declare global {
     baseUrl: string;
     apiUrl?: string;
     routerConfig?: IRouteRecord[];
-    sessionTokenName?: TApplicationCookie;
     dbName?: string;
     objectStoreName?: string;
     debug?: boolean;

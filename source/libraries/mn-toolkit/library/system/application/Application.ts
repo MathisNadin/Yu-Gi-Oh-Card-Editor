@@ -1,4 +1,4 @@
-import { AbstractObservable, each, isArray, sortDependencies } from 'mn-tools';
+import { AbstractObservable, each, deepFreeze, isArray, sortDependencies } from 'mn-tools';
 import { App as CapacitorApp } from '@capacitor/app';
 
 export interface IApplicationListener {
@@ -28,7 +28,7 @@ export class Application extends AbstractObservable<IApplicationListener> {
 
   public constructor(conf: IApplicationConfig) {
     super();
-    this._conf = conf;
+    this._conf = deepFreeze(conf);
     this.addListener(this);
   }
 

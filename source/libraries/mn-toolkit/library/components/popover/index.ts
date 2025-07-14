@@ -13,7 +13,7 @@ export interface IPopoverListener {
 }
 
 export interface IPopoverOptions<P extends IAbstractPopoverProps> {
-  eventOrRect: React.MouseEvent | DOMRect;
+  eventOrElement: React.MouseEvent | HTMLElement;
   type: string;
   Component: new (...args: P[]) => AbstractPopover;
   componentProps: P;

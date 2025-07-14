@@ -5,6 +5,27 @@ export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 export type TDictionary<T> = { [key: string]: T } | { [oid: number]: T };
 
 /**
+ * Recursively freezes an object, making it and all its nested properties immutable.
+ * This function also includes symbol properties.
+ * Note: Does not handle circular references.
+ *
+ * @param conf - The object to deeply freeze.
+ * @returns The now deeply frozen object.
+ */
+export function deepFreeze<T extends object>(conf: T): T {
+  Object.freeze(conf);
+  const properties = [...Object.getOwnPropertyNames(conf), ...Object.getOwnPropertySymbols(conf)];
+  for (const prop of properties) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const value = (conf as any)[prop];
+    if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+      deepFreeze(value);
+    }
+  }
+  return conf;
+}
+
+/**
  * Make a shallow clone of the source object.
  *
  * @param object Object to clone.

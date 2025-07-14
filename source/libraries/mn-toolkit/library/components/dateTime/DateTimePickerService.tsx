@@ -17,7 +17,7 @@ import {
 } from './choosers';
 
 export class DateTimePickerService {
-  public async pickDate(eventOrRect: React.MouseEvent | DOMRect, options: IDateChooserDialogProps) {
+  public async pickDate(eventOrElement: React.MouseEvent | HTMLElement, options: IDateChooserDialogProps) {
     if (app.$device.isTouch) return await DateChooserDialog.show(options);
 
     function DateChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
@@ -36,7 +36,7 @@ export class DateTimePickerService {
     }
 
     return await new Promise<Date | undefined>((resolve) => {
-      const id = app.$popover.bubble(eventOrRect, {
+      const id = app.$popover.bubble(eventOrElement, {
         preferBottom: true,
         width: app.$device.isMediumScreen ? app.$device.screenWidth / 2 : app.$device.screenWidth / 4,
         onClose: (onBlur) => {
@@ -54,7 +54,7 @@ export class DateTimePickerService {
     });
   }
 
-  public async pickTime(eventOrRect: React.MouseEvent | DOMRect, options: ITimeChooserDialogProps) {
+  public async pickTime(eventOrElement: React.MouseEvent | HTMLElement, options: ITimeChooserDialogProps) {
     if (app.$device.isTouch) return await TimeChooserDialog.show(options);
 
     function TimeChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
@@ -70,7 +70,7 @@ export class DateTimePickerService {
     }
 
     return await new Promise<Date | undefined>((resolve) => {
-      const id = app.$popover.bubble(eventOrRect, {
+      const id = app.$popover.bubble(eventOrElement, {
         preferBottom: true,
         width: 150,
         onClose: (onBlur) => {
@@ -88,7 +88,7 @@ export class DateTimePickerService {
     });
   }
 
-  public async pickDateTime(eventOrRect: React.MouseEvent | DOMRect, options: IDateTimeChooserDialogProps) {
+  public async pickDateTime(eventOrElement: React.MouseEvent | HTMLElement, options: IDateTimeChooserDialogProps) {
     if (app.$device.isTouch) return await DateTimeChooserDialog.show(options);
 
     let width: number;
@@ -123,7 +123,7 @@ export class DateTimePickerService {
     }
 
     return await new Promise<Date | undefined>((resolve) => {
-      const id = app.$popover.bubble(eventOrRect, {
+      const id = app.$popover.bubble(eventOrElement, {
         preferBottom: true,
         width,
         onClose: (onBlur) => {
@@ -141,7 +141,7 @@ export class DateTimePickerService {
     });
   }
 
-  public async pickWeek(eventOrRect: React.MouseEvent | DOMRect, options: IWeekChooserDialogProps) {
+  public async pickWeek(eventOrElement: React.MouseEvent | HTMLElement, options: IWeekChooserDialogProps) {
     if (app.$device.isTouch) return await WeekChooserDialog.show(options);
 
     function WeekChooserPopoverContent(props: { onChoose: (date: Date) => void }) {
@@ -161,7 +161,7 @@ export class DateTimePickerService {
     }
 
     return await new Promise<Date | undefined>((resolve) => {
-      const id = app.$popover.bubble(eventOrRect, {
+      const id = app.$popover.bubble(eventOrElement, {
         preferBottom: true,
         width: app.$device.isMediumScreen ? app.$device.screenWidth / 2 : app.$device.screenWidth / 4,
         onClose: (onBlur) => {

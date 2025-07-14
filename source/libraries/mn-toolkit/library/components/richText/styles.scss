@@ -17,6 +17,10 @@
       border-color: color-hsl($fg4);
       border-radius: calc(#{$defaultBorderRadius});
 
+      a {
+        cursor: text;
+      }
+
       > p:last-child {
         margin-bottom: 0;
       }

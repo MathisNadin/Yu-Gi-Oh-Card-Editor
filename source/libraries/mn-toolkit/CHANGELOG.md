@@ -1,7 +1,57 @@
 ## mn-toolkit change log
 
+## 8.2.5
+
+- deepFreeze l'app conf par sécurité
+
+## 8.2.4
+
+- bump to 8.2.4
+- session token intégralement géré par le serveur pour plus de sécurité
+- position dynamique du triangle sur les popovers
+- millennium puzzle n'a rien à faire ici
+
+## 8.2.3
+
+- bump to 8.2.3
+- fix trie event or element du popover service
+- cursor text sur les ancres dans l'éditeur rich text
+
+## 8.2.2
+
+- bump to 8.2.2
+- execute doit pouvoir prendre une promise aussi
+- amélioration du système d'options sur la toolbar du rich text
+
+## 8.2.1
+
+- bump to 8.2.1
+- fix overflow des popovers + fix identification du type event ou element dans popover service
+
+## 8.2.0
+
+- bump to 8.2.0
+- fix affichage popovers sur mobile + overlaytoolbar dans popovers + scroll des popovers
+
+## 8.1.3
+
+- bump to 8.1.3
+- fix test state pour ne prendre que les path keys par rapport au match
+
+## 8.1.2
+
+- bump to 8.1.2
+- fix rich text editor focus out pour prendre en compte overlay toolbar
+- number input doit pouvoir prendre une valeur undefined
+
+## 8.1.1
+
+- bump to 8.1.1
+- pas de nowrap sur les chips
+
 ## 8.1.0
 
+- bump to 8.1.0
 - fix events header
 - fix events du router
 - fix misued promises + adaptation au nv observable

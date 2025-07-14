@@ -58,16 +58,17 @@ export class ActionsPopover<
   }
 
   protected override calculatePosition() {
-    let { targetRectangle, syncWidth, syncHeight, actions: propsActions, maxVisibleActions, left, top } = this.props;
-    if (!targetRectangle) return;
+    let { targetElement, syncWidth, syncHeight, actions: propsActions, maxVisibleActions, left, top } = this.props;
+    if (!targetElement) return;
 
+    const targetRectangle = targetElement.getBoundingClientRect();
     const actions = propsActions.filter((a) => !!a);
     actions.sort((a, b) => (a.weight || 0) - (b.weight || 0));
 
-    const eventBottom = targetRectangle.bottom;
-    const eventLeft = targetRectangle.left;
-    const eventRight = targetRectangle.right;
-    const eventTop = targetRectangle.top;
+    const elementBottom = targetRectangle.bottom;
+    const elementLeft = targetRectangle.left;
+    const elementRight = targetRectangle.right;
+    const elementTop = targetRectangle.top;
 
     const { screenWidth, screenHeight } = app.$device;
     const preferredHeight = syncHeight ? targetRectangle.height : this.props.height;
@@ -86,49 +87,50 @@ export class ActionsPopover<
     let popoverWidth = preferredWidth;
 
     // Default position below target element
-    top = top || eventBottom;
-    left = left || eventLeft;
+    top = top || elementBottom;
+    left = left || elementLeft;
     let verticalPosition: 'top' | 'bottom' = 'bottom';
     let horizontalPosition: 'left' | 'right' = 'left';
 
     // Adjust if popover goes beyond the right edge
     if (left! + popoverWidth > screenWidth) {
-      left = eventRight - popoverWidth;
+      left = elementRight - popoverWidth;
       horizontalPosition = 'right';
     }
 
     // Adjust if popover goes beyond the bottom edge
     if (top! + popoverHeight > screenHeight) {
-      top = eventTop - popoverHeight; // Place above the target element
+      top = elementTop - popoverHeight; // Place above the target element
       verticalPosition = 'top';
     }
 
     // Further adjustments if popover does not fit in initial position
     if (left! < 0) {
-      if (screenWidth - eventRight > eventLeft) {
+      if (screenWidth - elementRight > elementLeft) {
         // More space on the right
-        left = eventRight;
-        popoverWidth = preferredWidth ? Math.min(preferredWidth, screenWidth - eventRight) : screenWidth - eventRight;
+        left = elementRight;
+        popoverWidth = preferredWidth
+          ? Math.min(preferredWidth, screenWidth - elementRight)
+          : screenWidth - elementRight;
         horizontalPosition = 'right';
       } else {
         // More space on the left
-        popoverWidth = preferredWidth ? Math.min(preferredWidth, eventLeft) : eventLeft;
+        popoverWidth = preferredWidth ? Math.min(preferredWidth, elementLeft) : elementLeft;
         left = 0; // Align with the left edge of the screen
         horizontalPosition = 'left';
       }
     }
 
     if (top! < 0) {
-      if (screenHeight - eventBottom > eventTop) {
+      if (screenHeight - elementBottom > elementTop) {
         // More space below
-        top = eventBottom;
-        popoverHeight = preferredHeight
-          ? Math.min(preferredHeight, screenHeight - eventBottom)
-          : screenHeight - eventBottom;
+        top = elementBottom;
+        const defaultHeight = elementBottom < 0 ? 0 : screenHeight - elementBottom;
+        popoverHeight = preferredHeight ? Math.min(preferredHeight, defaultHeight) : defaultHeight;
         verticalPosition = 'bottom';
       } else {
         // More space above
-        popoverHeight = preferredHeight ? Math.min(preferredHeight, eventTop) : eventTop;
+        popoverHeight = preferredHeight ? Math.min(preferredHeight, elementTop) : elementTop;
         top = 0; // Align with the top edge of the screen
         verticalPosition = 'top';
       }
@@ -144,13 +146,11 @@ export class ActionsPopover<
 
     this.setState({
       actions,
-      style: { top, left, width: popoverWidth!, height: popoverHeight },
+      style: { top, left, width: Math.max(popoverWidth, 0), height: Math.max(popoverHeight, 0) },
       position,
       visible: true,
     });
   }
-
-  protected override checkHeight() {}
 
   protected renderContent() {
     return (
