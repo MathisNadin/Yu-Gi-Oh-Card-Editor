@@ -68,7 +68,9 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
               content={crumb.title}
               href={crumb.href}
             />,
-            i < crumbs.length - 1 && <Icon key='separator' className='separator' icon='toolkit-angle-right' />,
+            i < crumbs.length - 1 && (
+              <Icon key='separator' className='separator' icon='toolkit-angle-right' marginX='tiny' />
+            ),
           ];
         }
         return <Typography key={i} className='bread' variant='document' contentType='markdown' content={crumb.title} />;

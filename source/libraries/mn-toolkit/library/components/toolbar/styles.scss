@@ -5,7 +5,7 @@
     background-color: color-hsl($bg1);
   }
 
-  $verticalPadding: calc(#{$defaultSpacing} / 2);
+  $verticalPadding: calc(#{$smallSpacing});
   $iconSize: 20px;
   $barHeight: 30px;
   $height: calc(#{$barHeight} + #{$verticalPadding} * 2);
@@ -17,7 +17,6 @@
 
   .mn-container-inside {
     padding: $verticalPadding calc(#{$defaultSpacing});
-    gap: calc(#{$defaultSpacing} / 2);
   }
 
   .mn-icon {
@@ -29,7 +28,7 @@
     height: $barHeight !important;
     min-height: $barHeight !important;
     max-height: $barHeight !important;
-    margin-right: calc(-1 * #{$defaultSpacing} / 4);
+    margin-right: calc(-1 * #{$tinySpacing});
   }
 
   .mn-button {

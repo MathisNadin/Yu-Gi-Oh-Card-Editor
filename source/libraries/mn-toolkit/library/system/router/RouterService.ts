@@ -15,19 +15,25 @@ import {
   IRouterListener,
   IResolvedState,
   IState,
-  IStateCrumb,
   TRouterState,
   IRouterHrefParams,
   TRouterParams,
   TRouterComponent,
   IAbstractViewStaticFunctions,
+  IStatePathKey,
 } from '.';
 
-type TRouterStates<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState> = {
-  [name in T]?: IState<T, P>;
+export interface IRouterBreadcrumb<T extends TRouterState = TRouterState> {
+  state: T;
+  parameters?: Exclude<TRouterParams<T>, 'initialServerData'>;
+}
+
+type TRouterStates<T extends TRouterState = TRouterState> = {
+  [K in T]?: IState<K>;
 };
 
 export class RouterService extends AbstractObservable<IRouterListener> {
+  private _breadcrumbs: IRouterBreadcrumb[] = [];
   private currentResolvedState?: IResolvedState;
   private states: TRouterStates = {};
   private resolving = false;
@@ -73,8 +79,8 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     return this.currentResolvedState;
   }
 
-  public get breadcrumb() {
-    return this.resolvedState?.breadcrumb;
+  public get breadcrumbs() {
+    return this._breadcrumbs;
   }
 
   public getByName<T extends TRouterState = TRouterState>(name: T) {
@@ -191,8 +197,12 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     return path;
   }
 
-  /** Update the current URL without reloading the current view */
-  public updateCurrentUrl<T extends TRouterState = TRouterState>(state: T, params?: TRouterParams<T>) {
+  /** Update the current URL and DOM Head Tags without reloading the current view */
+  public async updateCurrentUrl<T extends TRouterState = TRouterState>(
+    state: T,
+    params: TRouterParams<T>,
+    headTags: THeadTag[] = []
+  ) {
     // Makes no sense to get here without a current state
     if (!this.currentResolvedState) return;
 
@@ -215,20 +225,18 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     const resolvedState = this.resolveStateFromPath(path);
     if (!resolvedState) throw new Error(`No state for ${state}`);
 
-    // 5) Update current resolved state with the new one
+    // 5) Update breadcrumbs
+    this.updateBreadcrumbs(this.currentResolvedState);
+
+    // 6) Update current resolved state with the new one
     resolvedState.historyData = history.state || {};
     resolvedState.parameters = params as unknown as TRouterParams<TRouterState>;
     this.currentResolvedState = resolvedState;
 
-    const breadcrumb = this.buildBreadcrumb();
-    this.currentResolvedState.breadcrumb = breadcrumb;
-  }
+    this.updateDomHead(headTags, this.currentResolvedState.headTags);
+    this.currentResolvedState.headTags = headTags;
 
-  /** Update the current DOM Head Tags without changing the current state */
-  public updateCurrentHeadTags(newHeadTags: THeadTag[]) {
-    if (!this.currentResolvedState) return;
-    this.updateDomHead(newHeadTags, this.currentResolvedState.headTags);
-    this.currentResolvedState.headTags = newHeadTags;
+    await this.dispatchAsync('routerStateCurrentUrlUpdated', this.currentResolvedState);
   }
 
   private async checkCanLeave() {
@@ -262,13 +270,13 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     if (!resolvedState) throw new Error(`No state for ${state}`);
 
     resolvedState.parameters = params as unknown as TRouterParams<TRouterState>;
-    return this.finishNavigation(resolvedState);
+    await this.resolveState(resolvedState);
   }
 
   /**
    * Direct navigation from an already resolvedState
    */
-  private async goResolved<T extends TRouterState = TRouterState>(resolvedState: IResolvedState<T>) {
+  private async goResolved(resolvedState: IResolvedState) {
     if (!(await this.checkCanLeave())) return;
 
     // Only makes sense if there is a currently resolved state
@@ -282,30 +290,20 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     window.history.pushState({}, '', path);
     if (this.currentResolvedState) this.history.push(this.currentResolvedState);
 
-    await this.finishNavigation(resolvedState);
-  }
-
-  /**
-   * Finalize navigation (trigger events, etc.)
-   */
-  private async finishNavigation<T extends TRouterState = TRouterState>(resolvedState: IResolvedState<T>) {
     await this.resolveState(resolvedState);
-    app.$react.domReady(() => app.$errorManager.handlePromise(this.dispatchAsync('routerStateLoaded', resolvedState)));
   }
 
   public async back() {
     if (!this.hasHistory) return;
     const rs = this.history.pop()!;
-    return await this.resolveState(rs);
+    await this.resolveState(rs);
   }
 
   public async reload() {
     await this.go(this.currentState!.name, this.getParameters());
   }
 
-  private populateState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState>(
-    record: IState<T, P>
-  ) {
+  private populateState<T extends TRouterState = TRouterState>(record: IState<T>) {
     record.pathKeys = record.pathKeys || [];
 
     const iQs = record.path.indexOf('?');
@@ -327,13 +325,15 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     record.regExp = new RegExp(`^${path}\$`, 'i');
   }
 
-  public register<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState>(
+  public register<T extends TRouterState = TRouterState>(
     name: T,
     path: string,
     component: TRouterComponent,
-    options?: Partial<IState<T, P>>
+    options?: Partial<IState<T>>
   ) {
-    const route: IState<T, P> = {
+    if (this.states[name]) throw new Error(`route ${name} already exists`);
+
+    const route: IState<T> = {
       name,
       path: path || '/',
       component,
@@ -344,9 +344,9 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     if (options) extend(route, options);
     this.populateState(route);
 
-    if (this.states[name]) throw new Error(`route ${name} already exists`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.states[name] = route as any;
 
-    this.states[name] = route;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.goto as any)[name] = async (props: TRouterParams<T>) => {
       await this.go(name, props);
@@ -355,56 +355,9 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     return route;
   }
 
-  private getStatesTrail<T extends TRouterState = TRouterState>(
-    stateName: T,
-    parameters: TRouterParams<T>,
-    headTags: THeadTag[]
-  ): IResolvedState[] {
-    const state = this.getByName(stateName) as IState<T>;
-    const rs: IResolvedState<T> = {
-      state,
-      parameters,
-      path: 'fake',
-      headTags,
-    };
-
-    let parents: IResolvedState[] = [];
-    if (rs.state.parentState) {
-      parents = this.getStatesTrail(rs.state.parentState, {} as TRouterParams<TRouterState>, []);
-    }
-    parents.unshift(rs);
-    return parents;
-  }
-
-  private buildBreadcrumb(): IStateCrumb[] {
-    const bc = this.getStatesTrail(
-      this.currentState!.name,
-      this.currentResolvedState!.parameters,
-      this.currentResolvedState!.headTags
-    );
-
-    let last!: IResolvedState;
-    for (const rc of bc) {
-      if (last) rc.parameters = (last.parentParameters as TRouterParams<TRouterState>) || {};
-      last = rc;
-    }
-
-    const result: IStateCrumb[] = bc.map((x) => {
-      return {
-        state: x.state.name,
-        parameters: x.parameters || {},
-        title: x.title || '',
-      };
-    });
-    return result.reverse();
-  }
-
-  private testState<T extends TRouterState = TRouterState>(
-    eligible: IState<T>,
-    path: string
-  ): IResolvedState<T> | undefined {
-    let key;
-    let val;
+  private testState(eligible: IState, path: string): IResolvedState | undefined {
+    let key: IStatePathKey | undefined;
+    let val: string | undefined;
 
     const iqs = path.indexOf('?');
     let qs;
@@ -416,10 +369,10 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     const match = eligible.regExp.exec(path);
     if (!match) return undefined;
 
-    const state: IResolvedState<T> = {
+    const state: IResolvedState = {
       path,
       state: eligible,
-      parameters: {} as TRouterParams<T>,
+      parameters: {} as TRouterParams<TRouterState>,
       historyData: {},
       headTags: [],
     };
@@ -437,7 +390,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
         }
         if (!decodedValue) continue;
 
-        (state.parameters as { [key in typeof name]: string })[name] = decodedValue;
+        (state.parameters as unknown as { [key in typeof name]: string })[name] = decodedValue;
       }
     }
 
@@ -451,7 +404,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
       }
 
       if (key) {
-        (state.parameters as { [key in typeof key.name]: string })[key.name] = val;
+        (state.parameters as unknown as { [key in typeof key.name]: string })[key.name] = val;
       }
     }
     return state;
@@ -469,7 +422,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
       const state = this.states[routeName as TRouterState];
       if (!state) continue;
 
-      const resolvedState = this.testState(state, path);
+      const resolvedState = this.testState(state as IState, path);
       if (resolvedState) return resolvedState;
     }
 
@@ -500,15 +453,25 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     return isObject(data) ? unserialize(serialize(data)) : data;
   }
 
+  private updateBreadcrumbs(currentResolvedState: IResolvedState | undefined) {
+    if (!currentResolvedState?.state?.name) return;
+
+    // If there was a previous state, record it without initialServerData (useless and costly to keep)
+    const parameters = { ...currentResolvedState.parameters };
+    delete parameters.initialServerData;
+
+    this._breadcrumbs.push({
+      state: currentResolvedState.state.name,
+      parameters,
+    });
+  }
+
   private async resolveState(state: IResolvedState) {
     this.resolving = true;
-    await this.dispatchAsync('routerStateStart', state);
+    await this.dispatchAsync('routerStateBeforeResolve', state);
 
-    // Retrieve current state name, if any, to handle an eventual error
-    const oldState = this.currentResolvedState?.state?.name;
-
-    // Retrieve current tags, may be undefined if currently resolving the first state when loading the app
-    const oldHeadTags = this.currentResolvedState?.headTags;
+    // Save old resolved state to use it for breadcrumbs and in case of an error
+    const oldResolvedState = this.currentResolvedState ? { ...this.currentResolvedState } : undefined;
 
     // Wrap this function to use fallbackState
     try {
@@ -541,24 +504,29 @@ export class RouterService extends AbstractObservable<IRouterListener> {
         const canonicalLink: IHeadLinkTag = { tagName: 'link', rel: 'canonical', href: noQsPath };
         state.headTags = [...this._defaultHeadTags, canonicalLink];
       }
-      this.updateDomHead(state.headTags, oldHeadTags);
+      this.updateDomHead(state.headTags, oldResolvedState?.headTags);
 
-      const breadcrumb = this.buildBreadcrumb();
-      this.currentResolvedState.breadcrumb = breadcrumb;
+      // Update breadcrumbs
+      this.updateBreadcrumbs(oldResolvedState);
+
       this.resolving = false;
-      await this.dispatchAsync('routerStateChanged', this.currentResolvedState);
+      app.$react.domReady(() =>
+        app.$errorManager.handlePromise(this.dispatchAsync('routerStateChanged', this.currentResolvedState!))
+      );
     } catch (e) {
       // If anything breaks, pivot to fallbackState if it's a different state
       app.$errorManager.trigger(e as Error);
       this.resolving = false;
       const fallbackState = state.state.fallbackState || this.fallbackState;
-      if (fallbackState && fallbackState !== oldState) {
+      if (fallbackState && fallbackState !== oldResolvedState?.state?.name) {
         await this.go(fallbackState);
       }
     }
   }
 
   private areHeadTagsDifferent(newHeadTags: THeadTag[], oldHeadTags: THeadTag[] | undefined): boolean {
+    if (!oldHeadTags?.length && !newHeadTags.length) return false;
+
     if (!oldHeadTags || oldHeadTags.length !== newHeadTags.length) return true;
 
     // Simplified strategy: serialize and compare

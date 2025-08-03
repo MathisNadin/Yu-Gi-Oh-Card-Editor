@@ -64,7 +64,7 @@ export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDial
     return !!this.props.title ? super.renderHeader() : null;
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     const { message, messageContentType, icon, iconColor, confirmationWord } = this.props;
     if (!message) return null;
 

@@ -19,6 +19,8 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
     return {
       ...super.defaultProps,
       gutter: true,
+      paddingX: 'small',
+      paddingY: 'tiny',
       verticalItemAlignment: 'middle',
       canReset: true,
     };

@@ -25,6 +25,7 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
+      gutter: 'tiny',
       verticalItemAlignment: 'middle',
       canReset: true,
     };

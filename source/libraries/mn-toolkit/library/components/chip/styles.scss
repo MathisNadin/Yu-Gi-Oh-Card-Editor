@@ -24,12 +24,8 @@
 
 @mixin themeChip() {
   display: inline-flex;
-  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
   border-radius: calc(#{$defaultBorderRadius});
-
-  > .mn-container-inside {
-    gap: calc(#{$defaultSpacing} / 2);
-  }
+  padding: calc(#{$tinySpacing}) calc(#{$smallSpacing});
 
   &.no-left-icon {
     padding-left: calc(#{$defaultSpacing});
@@ -118,12 +114,6 @@
 @mixin themeChipsInput() {
   min-height: calc(#{$defaultItemHeight});
 
-  &.mn-layout-gutter {
-    > .mn-container-inside {
-      gap: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
-    }
-  }
-
   > .mn-container-inside {
     > input {
       border: none;
@@ -155,7 +145,7 @@
 
     .mn-chips-input {
       width: 100%;
-      padding: calc(#{$defaultSpacing} / 4);
+      padding: calc(#{$tinySpacing});
 
       input {
         display: flex;
@@ -236,13 +226,13 @@
       .chips,
       .placeholder {
         flex: 1;
-        padding: calc(#{$defaultSpacing} / 4);
+        padding: calc(#{$tinySpacing});
       }
 
       .drop-icon {
         background-color: color-hsl($bg3);
         color: color-hsl($fg1);
-        padding: calc(#{$defaultSpacing} / 4);
+        padding: calc(#{$tinySpacing});
         min-height: calc(#{$defaultItemHeight});
         height: auto;
         width: calc(#{$defaultItemHeight});

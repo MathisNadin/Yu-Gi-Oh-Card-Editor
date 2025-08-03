@@ -135,7 +135,7 @@ export abstract class AbstractPopup<
         <VerticalStack
           key='mn-popup-content-container'
           className='mn-popup-content-container'
-          gutter
+          gutter='small'
           fill={this.state.active}
           scroll={this.scrollInContent}
         >

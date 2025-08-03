@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { getCroppedArtworkBase64 } from 'mn-tools';
+import { formatFileSize, getCroppedArtworkBase64 } from 'mn-tools';
 import { IFileCropEffect, IFileEffect } from 'api/main';
 import { TJSXElementChildren } from '../../system';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
@@ -240,6 +240,13 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
   }
 
   private async onUploadFile(file: File) {
+    // Check max size
+    if (app.conf.maxFileUploadSize && file.size > app.conf.maxFileUploadSize) {
+      return app.$toaster.error(
+        `Le fichier "${file.name}" dépasse la taille maximale autorisée (${formatFileSize(app.conf.maxFileUploadSize)}).`
+      );
+    }
+
     try {
       // Start by checking the MIME type (especially for drag and drop)
       if (!file.type.startsWith('image/')) return;

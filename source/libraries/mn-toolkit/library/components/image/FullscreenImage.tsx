@@ -1,5 +1,5 @@
 import { IContainableProps, IContainableState, Containable } from '../containable';
-import { HorizontalStack } from '../container';
+import { HorizontalStack, VerticalStack } from '../container';
 import { Icon } from '../icon';
 import { IImageProps, Image as ToolkitImage } from '../image';
 import { Typography } from '../typography';
@@ -70,7 +70,7 @@ export class FullscreenImage extends Containable<IFullscreenImageProps, IFullscr
   public override get children() {
     if (!this.state.loaded) return null;
     return (
-      <Containable className='mn-fullscreen-image-inside'>
+      <VerticalStack className='mn-fullscreen-image-inside' gutter='small' padding itemAlignment='center'>
         <figure className='mn-fullscreen-image-content'>
           <HorizontalStack itemAlignment='right'>
             <Icon size={20} icon='toolkit-close' name='Fermer' onTap={() => this.close()} />
@@ -84,7 +84,7 @@ export class FullscreenImage extends Containable<IFullscreenImageProps, IFullscr
             </figcaption>
           )}
         </figure>
-      </Containable>
+      </VerticalStack>
     );
   }
 }

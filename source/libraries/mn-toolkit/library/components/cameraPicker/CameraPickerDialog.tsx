@@ -114,7 +114,7 @@ export class CameraPickerDialog extends AbstractPopup<string, ICameraPickerDialo
     await super.close(dataUrl);
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     return [
       <VerticalStack key='video' fill itemAlignment='center' verticalItemAlignment='middle'>
         <video ref={this.videoRef}>

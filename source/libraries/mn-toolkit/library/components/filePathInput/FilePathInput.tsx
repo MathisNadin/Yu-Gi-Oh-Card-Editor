@@ -5,6 +5,7 @@ import { Typography } from '../typography';
 interface IFilePathInputProps extends IContainerProps {
   placeholder?: string;
   defaultPath?: string;
+  fileFilters?: TFileFilter[];
   value: string;
   onChange: (value: string) => void | Promise<void>;
   overrideOnTapIcon?: (event: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => void | Promise<void>;
@@ -17,6 +18,8 @@ export class FilePathInput extends Container<IFilePathInputProps, IFilePathInput
     return {
       ...super.defaultProps,
       layout: 'horizontal',
+      gutter: 'small',
+      verticalItemAlignment: 'middle',
     };
   }
 
@@ -26,7 +29,11 @@ export class FilePathInput extends Container<IFilePathInputProps, IFilePathInput
     }
 
     if (!app.$device.isElectron(window)) return;
-    const path = await window.electron.ipcRenderer.invoke('getFilePath', this.props.defaultPath);
+    const path = await window.electron.ipcRenderer.invoke(
+      'getFilePath',
+      this.props.defaultPath,
+      this.props.fileFilters
+    );
     if (path) await this.props.onChange(path);
   }
 

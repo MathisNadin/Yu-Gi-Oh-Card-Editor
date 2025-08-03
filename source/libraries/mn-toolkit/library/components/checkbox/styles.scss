@@ -2,7 +2,7 @@
   align-items: center;
   cursor: pointer;
   user-select: none;
-  gap: calc(#{$defaultSpacing} / 2);
+  gap: calc(#{$smallSpacing});
 
   .toggle {
     position: relative;

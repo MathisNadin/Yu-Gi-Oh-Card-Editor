@@ -393,7 +393,7 @@ export const ToolbarPlugin = <TOOL_IDS extends string = TRichTextBaseToolId>({
   );
 
   return (
-    <HorizontalStack className='mn-rich-text-editor-toolbar' gutter wrap>
+    <HorizontalStack className='mn-rich-text-editor-toolbar' gutter='small' wrap>
       {toolsByGroup.map((group, i) =>
         group.tools.length > 0 ? (
           <Fragment key={i}>

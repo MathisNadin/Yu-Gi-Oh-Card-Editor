@@ -16,6 +16,70 @@
               border-color: color-hsl($negative) !important;
             }
           }
+
+          &.top-left {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(315 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.top {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.top-right {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(45 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.left {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(-90 8 8) translate(0 -1)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.right {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(90 8 8) translate(0 -1)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.bottom-left {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(225 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.bottom {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(180 8 8)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
+
+          &.bottom-right {
+            &.checked {
+              .toggle {
+                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(135 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
+              }
+            }
+          }
         }
       }
 
@@ -25,17 +89,17 @@
 
       .card-icons-grid {
         margin-top: -6px;
-        margin-bottom: calc(#{$defaultSpacing} / 2);
+        margin-bottom: calc(#{$smallSpacing});
       }
 
       .sub-title-container,
       .sub-title {
-        padding-bottom: calc(#{$defaultSpacing} / 2);
+        padding-bottom: calc(#{$smallSpacing});
         border-bottom: 1px solid $borderColor;
       }
 
       .sub-title-container {
-        margin-top: calc(#{$defaultSpacing} / 2);
+        margin-top: calc(#{$smallSpacing});
       }
 
       .sub-title-checkbox {
@@ -82,7 +146,7 @@
       }
 
       .field-icon {
-        margin-right: calc(#{$defaultSpacing} / 2);
+        margin-right: calc(#{$smallSpacing});
       }
 
       .pendulum-lock-icon {
@@ -97,22 +161,18 @@
         }
 
         > svg {
-          padding: calc(#{$defaultSpacing} / 4);
+          padding: calc(#{$tinySpacing});
         }
       }
 
       .mn-textarea-input-container {
-        min-width: calc(100% - 20px - #{$defaultSpacing} / 2);
-        max-width: calc(100% - 20px - #{$defaultSpacing} / 2);
+        min-width: calc(100% - 20px - #{$smallSpacing});
+        max-width: calc(100% - 20px - #{$smallSpacing});
       }
 
       .card-abilities {
-        > .mn-container-inside {
-          gap: calc(#{$defaultSpacing} / 2);
-        }
-
         .abilities-add {
-          margin-bottom: calc(-1 * #{$defaultSpacing} / 4);
+          margin-bottom: calc(-1 * #{$tinySpacing});
         }
 
         .card-abilities-list {
@@ -122,7 +182,7 @@
 
           .mn-inplace-edit {
             border-radius: 0;
-            margin: calc(#{$defaultSpacing} / 8) calc(#{$defaultSpacing} / 4);
+            margin: calc(#{$tinySpacing} / 2) calc(#{$tinySpacing});
             border-color: color-hsl($fg2);
             background-color: color-hsl($bg1);
 

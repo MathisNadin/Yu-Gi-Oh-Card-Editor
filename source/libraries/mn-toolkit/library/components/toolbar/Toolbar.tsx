@@ -2,18 +2,18 @@ import { Container, IContainerProps, IContainerState } from '../container';
 import { ReactElement } from 'react';
 
 interface IToolbarProps extends IContainerProps {
-  tools?: ReactElement[];
+  tools: ReactElement[];
   bordered: boolean;
 }
 
 interface IToolbarState extends IContainerState {}
 
 export class Toolbar extends Container<IToolbarProps, IToolbarState> {
-  public static override get defaultProps(): IToolbarProps {
+  public static override get defaultProps(): Omit<IToolbarProps, 'tools'> {
     return {
       ...super.defaultProps,
       layout: 'horizontal',
-      tools: [],
+      gutter: 'small',
       bordered: false,
     };
   }

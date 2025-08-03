@@ -19,6 +19,7 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState, HTM
   public static override get defaultProps(): Omit<ITextInputProps, 'label' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      paddingX: 'small',
       spellCheck: true,
       inputType: 'text',
     };

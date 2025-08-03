@@ -1,6 +1,6 @@
+import { formatFileSize } from 'mn-tools';
 import { TForegroundColor } from '../../system';
-import { IContainableProps, Containable, IContainableState } from '../containable';
-import { HorizontalStack, VerticalStack } from '../container';
+import { IContainerProps, Container, IContainerState, HorizontalStack, VerticalStack } from '../container';
 import { Progress } from '../progress';
 import { Typography } from '../typography';
 import { Button } from '../button';
@@ -15,32 +15,39 @@ export interface IFile {
   url?: string;
 }
 
-export interface IFileUploaderProps extends IContainableProps {
+export interface IFileUploaderProps extends IContainerProps {
   progressColor?: TForegroundColor;
   uploadBtnColor: TForegroundColor;
   resetBtnColor: TForegroundColor;
 
   multiple: boolean;
   accept?: string; // Only for filePicker, remember to check file.type manually for drag-and-drop
+  /** In octets (bytes) */
+  maxFileSize?: number;
   imageMimeType?: string; // Only for filePicker
   imageQuality?: number; // Only for filePicker
   value: IFile[];
   onChange: (files: IFile[]) => void | Promise<void>;
 }
 
-interface IFileUploaderState extends IContainableState {
+interface IFileUploaderState extends IContainerState {
   loadingFiles: boolean;
   loadingProgress: number;
   loadingTotal: number;
 }
 
-export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderState> {
+export class FileUploader extends Container<IFileUploaderProps, IFileUploaderState> {
   public static override get defaultProps(): Omit<IFileUploaderProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      gutter: true,
+      padding: 'huge',
+      layout: 'vertical',
+      itemAlignment: 'center',
       multiple: false,
       uploadBtnColor: 'positive',
       resetBtnColor: 'negative',
+      maxFileSize: app.conf.maxFileUploadSize,
     };
   }
 
@@ -64,6 +71,14 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       await this.setStateAsync({ loadingFiles: true, loadingProgress: 0, loadingTotal: fileListArray.length });
 
       for (const orgFile of fileListArray) {
+        // Check max size
+        if (app.conf.maxFileUploadSize && orgFile.size > app.conf.maxFileUploadSize) {
+          app.$toaster.error(
+            `Le fichier "${orgFile.name}" dépasse la taille maximale autorisée (${formatFileSize(app.conf.maxFileUploadSize)}).`
+          );
+          continue;
+        }
+
         try {
           this.setState((prevState) => ({ loadingProgress: prevState.loadingProgress + 1 }));
 
@@ -140,11 +155,16 @@ export class FileUploader extends Containable<IFileUploaderProps, IFileUploaderS
       ),
 
       !this.state.loadingFiles && !this.props.value.length && (
-        <Typography
-          key='instruction'
-          variant='help'
-          content='Glissez-déposez votre fichier ici, ou cliquez pour sélectionner'
-        />
+        <VerticalStack key='instructions' className='upload-instructions' gutter='tiny' verticalItemAlignment='middle'>
+          <Typography variant='help' content='Glissez-déposez votre fichier ici, ou cliquez pour sélectionner' />
+          {!!this.props.maxFileSize && (
+            <Typography
+              variant='help'
+              fontSize='tiny'
+              content={`Taille maximum autorisée : ${formatFileSize(this.props.maxFileSize)}`}
+            />
+          )}
+        </VerticalStack>
       ),
 
       !!this.props.value.length && (

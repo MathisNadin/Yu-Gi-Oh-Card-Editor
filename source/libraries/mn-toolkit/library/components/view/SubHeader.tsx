@@ -10,6 +10,8 @@ export class SubHeader extends Container<ISubHeaderProps, ISubHeaderState> {
       ...super.defaultProps,
       layout: 'horizontal',
       margin: false,
+      paddingX: true,
+      paddingY: 'small',
       gutter: true,
     };
   }

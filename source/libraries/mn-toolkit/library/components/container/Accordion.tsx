@@ -76,10 +76,11 @@ export class Accordion extends Containable<IAccordionProps, IAccordionState> {
     return (
       <HorizontalStack
         className='mn-accordion-header'
+        padding='small'
         verticalItemAlignment='top'
         onTap={() => this.props.onToggle(!this.props.open)}
       >
-        <HorizontalStack className='mn-accordion-header-inside' verticalItemAlignment='middle'>
+        <HorizontalStack className='mn-accordion-header-inside' gutter='small' verticalItemAlignment='middle'>
           <Icon color='1' icon={this.props.open ? 'toolkit-minus' : 'toolkit-plus'} />
           <Typography noWrap bold contentType='text' content={this.props.title} />
         </HorizontalStack>
@@ -90,7 +91,7 @@ export class Accordion extends Containable<IAccordionProps, IAccordionState> {
   private renderContent() {
     return (
       <div ref={this.contentWrapperRef} className='mn-accordion-content-wrapper'>
-        <Container className='mn-accordion-content' layout={this.props.contentLayout}>
+        <Container className='mn-accordion-content' layout={this.props.contentLayout} padding='small'>
           {this.children}
         </Container>
       </div>

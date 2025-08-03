@@ -1,6 +1,7 @@
 import { AllHTMLAttributes, isValidElement, ReactNode, RefObject } from 'react';
+import { isString } from 'mn-tools';
 import { IDeviceListener, IScreenSpec, TJSXElementChild, TJSXElementChildren } from '../../system';
-import { Containable, IContainableProps, IContainableState, IGridSpanParams } from '../containable';
+import { Containable, IContainableProps, IContainableState, IGridSpanParams, TSpacingSize } from '../containable';
 
 export type TContainerLayout = 'vertical' | 'horizontal' | 'grid';
 
@@ -27,9 +28,9 @@ export interface IContainerProps<
   LAYOUT extends TContainerLayout = TContainerLayout,
 > extends IContainableProps<BASE_ELEMENT> {
   layout?: LAYOUT;
-  gutter?: boolean;
-  padding?: boolean;
-  margin?: boolean;
+  gutter?: boolean | TSpacingSize;
+  gutterX?: boolean | TSpacingSize;
+  gutterY?: boolean | TSpacingSize;
   wrap?: boolean;
   scroll?: boolean;
   scrollX?: boolean;
@@ -87,16 +88,37 @@ export class Container<
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-container'] = true;
-    if (this.props.layout) classes[`mn-layout-${this.props.layout}-stack`] = true;
-    if (this.props.gutter) classes['mn-layout-gutter'] = true;
-    if (this.props.margin) classes['mn-layout-margin'] = true;
-    if (this.props.padding) classes['mn-layout-padding'] = true;
+    if (this.props.layout) {
+      classes[`mn-layout-${this.props.layout}-stack`] = true;
+    }
+
+    if (this.props.gutter) {
+      classes['mn-layout-gutter'] = true;
+      const gutter: TSpacingSize = isString(this.props.gutter) ? this.props.gutter : 'default';
+      classes[`mn-layout-gutter-${gutter}`] = true;
+    }
+    if (this.props.gutterX) {
+      classes['mn-layout-gutter-x'] = true;
+      const gutterX: TSpacingSize = isString(this.props.gutterX) ? this.props.gutterX : 'default';
+      classes[`mn-layout-gutter-x-${gutterX}`] = true;
+    }
+    if (this.props.gutterY) {
+      classes['mn-layout-gutter-y'] = true;
+      const gutterY: TSpacingSize = isString(this.props.gutterY) ? this.props.gutterY : 'default';
+      classes[`mn-layout-gutter-y-${gutterY}`] = true;
+    }
+
     if (this.props.wrap) classes['mn-layout-wrap'] = true;
     if (this.props.scroll) classes['mn-scroll'] = true;
     if (this.props.scrollX) classes['mn-scroll-x'] = true;
     if (this.props.frame) classes[`mn-frame-${this.props.frame}`] = true;
-    if (this.props.verticalItemAlignment) classes[`mn-layout-item-valign-${this.props.verticalItemAlignment}`] = true;
-    if (this.props.itemAlignment) classes[`mn-layout-item-align-${this.props.itemAlignment}`] = true;
+
+    if (this.props.verticalItemAlignment) {
+      classes[`mn-layout-item-valign-${this.props.verticalItemAlignment}`] = true;
+    }
+    if (this.props.itemAlignment) {
+      classes[`mn-layout-item-align-${this.props.itemAlignment}`] = true;
+    }
     return classes;
   }
 

@@ -38,14 +38,18 @@ export function setupIpcMainHandleChannels() {
     return existsSync(filePath);
   });
 
-  addIpcMainHandleChannel('getFilePath', async (_event: IpcMainInvokeEvent, defaultPath?: string) => {
-    const directoryPath = await dialog.showOpenDialog({
-      properties: ['openFile'],
-      defaultPath,
-    });
-    if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
-    return directoryPath.filePaths[0];
-  });
+  addIpcMainHandleChannel(
+    'getFilePath',
+    async (_event: IpcMainInvokeEvent, defaultPath?: string, filters?: TFileFilter[]) => {
+      const directoryPath = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        defaultPath,
+        filters,
+      });
+      if (!directoryPath || directoryPath.canceled || !directoryPath.filePaths?.length) return undefined;
+      return directoryPath.filePaths[0];
+    }
+  );
 
   addIpcMainHandleChannel('getDirectoryPath', async (_event: IpcMainInvokeEvent, defaultPath?: string) => {
     const directoryPath = await dialog.showOpenDialog({

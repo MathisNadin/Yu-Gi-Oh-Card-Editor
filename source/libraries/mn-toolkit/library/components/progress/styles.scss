@@ -186,10 +186,6 @@
       border-color: hsl(0deg, 0%, 88%);
     }
 
-    .step-text {
-      margin: calc(#{$defaultSpacing} / 2);
-    }
-
     .step-circle {
       display: block;
       position: relative;
@@ -305,7 +301,6 @@
     border-left: 3px solid transparent;
     padding-left: 4px;
     display: block;
-    margin: calc(#{$defaultSpacing} / 2) 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }

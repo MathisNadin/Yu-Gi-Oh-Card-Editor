@@ -5,7 +5,7 @@
     overflow: hidden;
     height: auto;
     width: auto;
-    max-height: calc(100% - #{$defaultSpacing} * 2);
+    max-height: calc(100% - #{$hugeSpacing});
     max-width: 100%;
     margin: calc(#{$defaultSpacing}) 0;
     border-radius: calc(#{$defaultBorderRadius});

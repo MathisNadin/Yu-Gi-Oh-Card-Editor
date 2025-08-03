@@ -21,7 +21,8 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
     return {
       ...super.defaultProps,
       layout: 'horizontal',
-      gutter: true,
+      gutterX: true,
+      gutterY: 'small',
       wrap: true,
       placeholder: 'Écrivez puis faites "entrer" pour valider...',
     };

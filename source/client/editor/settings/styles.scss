@@ -3,12 +3,6 @@
   $borderColor: color-hsla($fg1, 0.5);
   width: 100%;
 
-  .setting-field {
-    > .mn-container-inside {
-      gap: calc(#{$defaultSpacing} / 4);
-    }
-  }
-
   .mn-typography {
     color: black !important;
 
@@ -18,6 +12,6 @@
   }
 
   .field-icon {
-    margin-right: calc(#{$defaultSpacing} / 2);
+    margin-right: calc(#{$smallSpacing});
   }
 }

@@ -41,7 +41,7 @@
     }
 
     .mn-container-inside {
-      padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
+      padding: calc(#{$smallSpacing}) calc(#{$defaultSpacing});
 
       .mn-typography {
         color: color-hsl($bg1);
@@ -50,6 +50,13 @@
       .mn-icon {
         color: color-hsl($bg1);
         fill: color-hsl($bg1);
+
+        &.has-click {
+          &:hover {
+            color: color-hsla($bg1, 0.7);
+            fill: color-hsla($bg1, 0.7);
+          }
+        }
       }
     }
   }

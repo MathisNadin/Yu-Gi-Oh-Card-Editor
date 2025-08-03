@@ -25,7 +25,7 @@
 
   .default-select-label-decorator {
     display: flex;
-    gap: calc(#{$defaultSpacing} / 2);
+    gap: calc(#{$smallSpacing});
     align-items: center;
   }
 

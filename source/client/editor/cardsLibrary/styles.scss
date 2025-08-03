@@ -3,6 +3,10 @@
   width: 100%;
 
   .mn-table {
+    .mn-typography {
+      user-select: none;
+    }
+
     tbody {
       tr {
         &.selected {

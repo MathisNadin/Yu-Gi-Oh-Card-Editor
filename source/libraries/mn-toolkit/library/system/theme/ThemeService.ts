@@ -189,7 +189,11 @@ export class ThemeService {
       themes: this.buildDefaultThemes(),
       screens: this.buildDefaultScreens(),
       commons: {
+        'tiny-spacing': { value: 4, unit: 'px' },
+        'small-spacing': { value: 8, unit: 'px' },
         'default-spacing': { value: 16, unit: 'px' },
+        'large-spacing': { value: 24, unit: 'px' },
+        'huge-spacing': { value: 32, unit: 'px' },
         'default-item-height': { value: 32, unit: 'px' },
         'default-border-radius': { value: 6, unit: 'px' },
         'field-border-size': { value: 1, unit: 'px' },
@@ -213,16 +217,16 @@ export class ThemeService {
       info: [190, 78, 41], // hsl(190, 78%, 41%)
 
       // Theme Light Foreground Colors
-      'fg-1': [0, 0, 0], // hsl(0, 0%, 0%)
+      'fg-1': [0, 0, 3], // hsl(0, 0%, 3%)
       'fg-2': [0, 0, 35], // hsl(0, 0%, 35%)
       'fg-3': [0, 0, 60], // hsl(0, 0%, 60%)
       'fg-4': [0, 0, 85], // hsl(0, 0%, 85%)
 
       // Theme Light Background Colors
-      'bg-1': [0, 0, 100], // hsl(0, 0%, 100%)
-      'bg-2': [0, 10, 96], // hsl(0, 10%, 96%)
-      'bg-3': [0, 20, 92], // hsl(0, 20%, 92%)
-      'bg-4': [0, 30, 88], // hsl(0, 30%, 88%)
+      'bg-1': [0, 0, 98], // hsl(0, 0%, 98%)
+      'bg-2': [0, 1, 95], // hsl(0, 1%, 95%)
+      'bg-3': [0, 1, 90], // hsl(0, 1%, 90%)
+      'bg-4': [0, 1, 85], // hsl(0, 1%, 85%)
 
       // Link Colors
       link: [220, 60, 50], // hsl(220, 60%, 50%)

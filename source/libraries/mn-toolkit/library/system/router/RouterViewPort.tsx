@@ -40,11 +40,11 @@ export class RouterViewPort
     this.forceUpdate();
   }
 
-  public routerStateChanged() {
+  public routerStateBeforeResolve() {
     this.forceUpdate();
   }
 
-  public routerStateLoaded() {
+  public routerStateChanged() {
     this.forceUpdate();
   }
 

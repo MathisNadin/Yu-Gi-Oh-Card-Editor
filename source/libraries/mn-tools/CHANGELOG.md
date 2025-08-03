@@ -1,7 +1,18 @@
 ## mn-tools change log
 
+## 2.3.3
+
+- amelioration de formatFileSize
+
+## 2.3.2
+
+- bump to 2.3.2
+- ajout formatFileSize
+- fonction mimetype plus logique
+
 ## 2.3.1
 
+- bump to 2.3.1
 - ajout deepFreeze pour objects
 
 ## 2.3.0

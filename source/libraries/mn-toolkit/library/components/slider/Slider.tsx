@@ -1,3 +1,4 @@
+import { SLIDER_THUMB_SIZE } from '.';
 import { TForegroundColor } from '../../system';
 import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot } from '../containable';
 
@@ -28,6 +29,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
   public static override get defaultProps(): Omit<ISliderProps, 'min' | 'max' | 'step' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      margin: true,
       color: 'primary',
       valueDisplayMode: 'always',
     };
@@ -137,7 +139,6 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     const { value, min, max, valueDisplayMode, marks } = this.props;
     const { isHovered, isDragging } = this.state;
 
-    const thumbSize = 20;
     const filled = `${((value - min) / (max - min)) * 100}%`;
     const showValue = valueDisplayMode === 'always' || (valueDisplayMode === 'auto' && (isHovered || isDragging));
 
@@ -148,7 +149,11 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
       <button
         key='slider-thumb'
         className='slider-thumb'
-        style={{ height: thumbSize, width: thumbSize, left: `calc(${filled} - ${thumbSize / 2}px)` }}
+        style={{
+          height: SLIDER_THUMB_SIZE,
+          width: SLIDER_THUMB_SIZE,
+          left: `calc(${filled} - ${SLIDER_THUMB_SIZE / 2}px)`,
+        }}
         onMouseOver={() => this.setState({ isHovered: true })}
         onFocus={() => this.setState({ isHovered: true })}
         onMouseOut={() => this.setState({ isHovered: false })}
@@ -164,7 +169,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
             <div
               key={`slider-mark-${mark}`}
               className='slider-mark'
-              style={{ left: `${this.calculateMarkPosition(mark)}%` }}
+              style={{ left: `calc(${this.calculateMarkPosition(mark)}% + 2px)` }} // Plus thumb border size
             >
               {mark}
             </div>

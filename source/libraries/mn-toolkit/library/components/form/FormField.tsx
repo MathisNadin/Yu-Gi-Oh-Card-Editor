@@ -219,7 +219,7 @@ export abstract class FormField<
       <VerticalStack key='field-wrapper' className='field-wrapper' fill>
         {!this.props.hideLabel && this.renderLabel()}
 
-        <HorizontalStack fill className='input-wrapper' verticalItemAlignment='middle'>
+        <HorizontalStack fill className='input-wrapper' padding='small' gutter='small' verticalItemAlignment='middle'>
           {this.renderPropIcon()}
           {this.renderControl()}
           {this.renderStatusIcon()}

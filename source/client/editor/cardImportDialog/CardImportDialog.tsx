@@ -185,7 +185,7 @@ export class CardImportDialog extends AbstractPopup<
       }
     }
 
-    await this.sortCardsData(cardsData);
+    app.$errorManager.handlePromise(this.sortCardsData(cardsData));
     await this.setStateAsync({ yuginewsImporting: false });
   }
 
@@ -417,6 +417,8 @@ export class CardImportDialog extends AbstractPopup<
         <Image
           key='yuginews-logo'
           className={classNames('logo', 'yuginews', { selected: this.state.website === 'yuginews' })}
+          margin='small'
+          padding
           src={this.yuginewsLogo}
           alt='yuginews-logo'
           onTap={() => this.onSelectWesite('yuginews')}
@@ -424,6 +426,8 @@ export class CardImportDialog extends AbstractPopup<
         <Image
           key='yugipedia-logo'
           className={classNames('logo', 'yugipedia', { selected: this.state.website === 'yugipedia' })}
+          margin='small'
+          padding
           src={this.yugipediaLogo}
           alt='yugipedia-logo'
           onTap={() => this.onSelectWesite('yugipedia')}
@@ -485,7 +489,7 @@ export class CardImportDialog extends AbstractPopup<
     if (showAdded) {
       headers.cells.push({
         align: 'left',
-        content: 'Ajouté le',
+        content: 'Ajoutée le',
         sortOrder: cardsDataSortOption === 'added' ? cardsDataSortOrder : undefined,
         onChangeOrder: () => this.onChangeOrder('added'),
       });

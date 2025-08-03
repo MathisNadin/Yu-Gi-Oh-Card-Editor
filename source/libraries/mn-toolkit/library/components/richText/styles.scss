@@ -3,8 +3,8 @@
   display: block;
   width: 100%;
 
-  $editorTopBottomPadding: calc(#{$defaultSpacing} * 3 / 4);
-  $editorLeftRightPadding: calc(#{$defaultSpacing} / 2);
+  $editorTopBottomPadding: calc(#{$smallSpacing} * 1.5);
+  $editorLeftRightPadding: calc(#{$smallSpacing});
   .lexical-editor-inner {
     position: relative;
 
@@ -54,22 +54,15 @@
 }
 
 @mixin themeRichTextEditorToolbar() {
-  $iconSize: 20px;
-  $padding: calc(#{$defaultSpacing} / 4);
-  $containerSize: calc(#{$iconSize} + #{$padding} * 2);
-
-  padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing} / 4);
+  padding: calc(#{$smallSpacing}) calc(#{$tinySpacing});
   border-width: 1px;
   border-style: solid;
   border-color: color-hsl($fg4);
   border-radius: calc(#{$defaultBorderRadius});
 
-  &.mn-layout-gutter {
-    > .mn-container-inside {
-      gap: calc(#{$defaultSpacing} / 2);
-    }
-  }
-
+  $iconSize: 20px;
+  $padding: calc(#{$tinySpacing});
+  $containerSize: calc(#{$iconSize} + #{$padding} * 2);
   .mn-icon-container-button {
     height: $containerSize !important;
     min-height: $containerSize !important;

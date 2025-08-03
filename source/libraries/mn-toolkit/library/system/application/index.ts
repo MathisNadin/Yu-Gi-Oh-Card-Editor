@@ -29,16 +29,18 @@ declare global {
   type TApplicationStage = keyof IApplicationStage;
 
   interface IApplicationConfig {
-    name: string;
-    displayName: string;
-    stage: TApplicationStage;
-    version: string;
-    baseUrl: string;
-    apiUrl?: string;
-    routerConfig?: IRouteRecord[];
-    dbName?: string;
-    objectStoreName?: string;
-    debug?: boolean;
+    readonly name: string;
+    readonly displayName: string;
+    readonly stage: TApplicationStage;
+    readonly version: string;
+    readonly baseUrl: string;
+    readonly apiUrl?: string;
+    readonly routerConfig?: IRouteRecord[];
+    readonly dbName?: string;
+    readonly objectStoreName?: string;
+    /** In octets (bytes) */
+    readonly maxFileUploadSize?: number;
+    readonly debug?: boolean;
   }
 }
 

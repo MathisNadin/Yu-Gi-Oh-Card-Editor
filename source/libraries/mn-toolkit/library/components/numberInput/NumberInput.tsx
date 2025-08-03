@@ -20,6 +20,7 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
   public static get defaultProps(): Omit<INumberInputProps, 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      paddingX: 'small',
       autofocus: false,
     };
   }

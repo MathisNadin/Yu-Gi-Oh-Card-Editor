@@ -21,6 +21,8 @@ export class WeekPicker extends Container<IWeekPickerProps, IWeekPickerState> {
       ...super.defaultProps,
       layout: 'horizontal',
       gutter: true,
+      paddingX: 'small',
+      paddingY: 'tiny',
       verticalItemAlignment: 'middle',
       canReset: true,
     };

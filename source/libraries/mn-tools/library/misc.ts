@@ -999,7 +999,7 @@ export function dataFromDataUrl(dataUrl: string) {
 
 export function mimeTypeFromDataUrl(dataUrl: string) {
   const match = /^data:([^;]+);/.exec(dataUrl);
-  return match ? match[1] : 'unknown';
+  return match?.[1] || undefined;
 }
 
 const MIME_TO_EXT: { [mime: string]: string[] } = {
@@ -1333,18 +1333,39 @@ const MIME_TO_EXT: { [mime: string]: string[] } = {
   'video/webm': ['webm'],
 };
 
-export function mimetype(filename: string) {
+export function nameToMimetype(filename: string) {
   const match = /\.(.+)$/.exec(filename);
-  if (match) {
+  if (match?.[1]) {
     for (const mime in MIME_TO_EXT) {
-      if (MIME_TO_EXT[mime]!.includes(match[1]!)) return mime;
+      if (MIME_TO_EXT[mime]?.includes(match[1])) return mime;
     }
   }
-  return 'unknown';
+  return undefined;
 }
 
 export function mimetypeToExt(mimetype: string) {
   const exts = MIME_TO_EXT[mimetype];
   if (!exts?.length) return '';
   return exts[0]!;
+}
+
+export function formatFileSize(bytes: number): string {
+  // Helper to format with given decimals, but remove trailing .0/.00/etc.
+  const format = (value: number, decimals: number) => {
+    return value.toFixed(decimals).replace(/\.?0+$/, '');
+  };
+
+  if (bytes >= 1024 ** 3) {
+    // Display in Go (Gigabytes) with up to two decimals
+    return `${format(bytes / 1024 ** 3, 2)} Go`;
+  } else if (bytes >= 1024 ** 2) {
+    // Display in Mo (Megabytes) with up to one decimal
+    return `${format(bytes / 1024 ** 2, 1)} Mo`;
+  } else if (bytes >= 1024) {
+    // Display in Ko (Kilobytes) with no decimals
+    return `${format(bytes / 1024, 0)} Ko`;
+  } else {
+    // Display in octets (bytes) directly
+    return `${bytes} octets`;
+  }
 }

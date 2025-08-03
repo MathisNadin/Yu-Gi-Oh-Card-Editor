@@ -15,14 +15,6 @@
     width: 100%;
   }
 
-  &.mn-layout-margin {
-    margin: calc(#{$defaultSpacing});
-  }
-
-  &.mn-layout-padding {
-    padding: calc(#{$defaultSpacing});
-  }
-
   th {
     .mn-icon {
       &.hidden {
@@ -33,7 +25,7 @@
 
   th,
   td {
-    padding: calc(#{$defaultSpacing} / 2) calc(#{$defaultSpacing});
+    padding: calc(#{$smallSpacing}) calc(#{$defaultSpacing});
     vertical-align: middle;
 
     .mn-cell-content {

@@ -38,7 +38,7 @@ export class ApiJob {
       if (signal?.aborted) throw new Error('Aborted');
       attempts++;
 
-      const jobs = await app.$api.job.list({ id: this._id });
+      const jobs = await app.$api.job.list({ ids: [this._id] });
       if (!jobs.length) {
         if (attempts > 10) throw new Error('Job not found');
         await sleep(REFRESH_PERIOD);

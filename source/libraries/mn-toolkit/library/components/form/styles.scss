@@ -1,5 +1,5 @@
 $inputHeight: calc(#{$defaultItemHeight});
-$contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
+$contentHeight: calc($inputHeight - #{$smallSpacing});
 
 @mixin themeFormField() {
   $helper-height: 12px;
@@ -12,16 +12,11 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
     height: $inputHeight;
     min-height: $inputHeight;
     max-height: $inputHeight;
-    padding: calc(#{$defaultSpacing} / 2);
 
     border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
     border-radius: calc($defaultBorderRadius / 2);
     background-color: color-hsl($bg1);
     transition: all 0.4s ease;
-
-    > .mn-container-inside {
-      gap: calc(#{$defaultSpacing} / 2);
-    }
 
     .status-icon {
       position: relative;
@@ -39,7 +34,7 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
       border: none;
       background-color: transparent;
       color: color-hsl($fg1);
-      margin: calc(-1 * #{$defaultSpacing} / 2) 0;
+      margin: calc(-1 * #{$smallSpacing}) 0;
       display: block;
       width: 100%;
       appearance: textfield;
@@ -59,7 +54,6 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
       background-color: transparent;
       border: none;
       border-radius: 0;
-      line-height: 20px;
       min-width: 100%;
       padding: 0;
       resize: none;
@@ -71,15 +65,15 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
   }
 
   .form-label {
-    margin-bottom: calc(#{$defaultSpacing} / 2);
+    margin-bottom: calc(#{$smallSpacing});
 
     .form-label-with-info-icon {
-      margin-right: calc(#{$defaultSpacing} / 3);
+      margin-right: calc(#{$tinySpacing});
     }
   }
 
   .form-helper {
-    margin: calc(#{$defaultSpacing} / 2) 0 0 0;
+    margin: calc(#{$smallSpacing}) 0 0 0;
   }
 
   &.mn-field-layout-horizontal {
@@ -105,7 +99,7 @@ $contentHeight: calc($inputHeight - #{$defaultSpacing} / 2);
     > .mn-container-inside {
       > .prop-icon-container-button,
       > .prop-icon {
-        margin: calc(-1 * #{$defaultSpacing} * 0.5) 0;
+        margin: calc(-1 * #{$smallSpacing}) 0;
       }
     }
   }

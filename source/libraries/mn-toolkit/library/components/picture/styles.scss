@@ -22,14 +22,14 @@ $pictureBigSize: 300px;
     }
   }
 
-  $iconPadding: calc(#{$defaultSpacing} / 4);
+  $iconPadding: calc(#{$tinySpacing});
   $iconSize: calc(#{$pictureNormalSize} / 5 + #{$iconPadding} * 2);
   .icon-container {
     padding: $iconPadding;
     border-radius: 50%;
 
-    right: calc(#{$defaultSpacing} / 4);
-    bottom: calc(#{$defaultSpacing} / 4);
+    right: calc(#{$tinySpacing});
+    bottom: calc(#{$tinySpacing});
 
     width: $iconSize !important;
     min-width: $iconSize !important;
@@ -71,8 +71,8 @@ $pictureBigSize: 300px;
 
     &.circle-display {
       .icon-container {
-        right: calc(#{$defaultSpacing} / 8);
-        bottom: calc(#{$defaultSpacing} / 8);
+        right: calc(#{$tinySpacing} / 2);
+        bottom: calc(#{$tinySpacing} / 2);
       }
     }
   }

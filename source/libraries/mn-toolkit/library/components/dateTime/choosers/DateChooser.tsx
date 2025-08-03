@@ -241,7 +241,14 @@ export class DateChooser extends Container<IDateChooserProps, IDateChooserState>
           itemAlignment='center'
           verticalItemAlignment='middle'
         >
-          <Typography alignment='center' variant='document' content={`${year}`} onTap={() => this.onChangeYear(year)} />
+          <Typography
+            paddingX='small'
+            paddingY='tiny'
+            alignment='center'
+            variant='document'
+            content={`${year}`}
+            onTap={() => this.onChangeYear(year)}
+          />
         </HorizontalStack>
       );
     }

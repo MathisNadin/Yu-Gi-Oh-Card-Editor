@@ -1,3 +1,4 @@
+import { SLIDER_THUMB_SIZE } from '.';
 import { TForegroundColor } from '../../system';
 import { IContainableProps, Containable, IContainableState } from '../containable';
 import { TSliderValueDisplayMode } from './Slider';
@@ -31,6 +32,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
   public static override get defaultProps(): Omit<IRangeSliderProps, 'min' | 'max' | 'step' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
+      margin: true,
       color: 'primary',
       valueDisplayMode: 'always',
     };
@@ -117,7 +119,6 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
     const { value, min, max, marks, valueDisplayMode } = this.props;
     const { isHovered, isDragging } = this.state;
 
-    const thumbSize = 20;
     const lowerPercentage = ((value.lower - min) / (max - min)) * 100;
     const upperPercentage = ((value.upper - min) / (max - min)) * 100;
     const showValues = valueDisplayMode === 'always' || (valueDisplayMode === 'auto' && (isHovered || isDragging));
@@ -133,7 +134,11 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
       <button
         key='slider-thumb lower'
         className='slider-thumb lower'
-        style={{ height: thumbSize, width: thumbSize, left: `calc(${lowerPercentage}% - ${thumbSize / 2}px)` }}
+        style={{
+          height: SLIDER_THUMB_SIZE,
+          width: SLIDER_THUMB_SIZE,
+          left: `calc(${lowerPercentage}% - ${SLIDER_THUMB_SIZE / 2}px)`,
+        }}
         onMouseDown={this.handleMouseDown(true)}
         onTouchStart={this.handleMouseDown(true)}
         onMouseOver={() => this.setState({ isHovered: true })}
@@ -147,7 +152,11 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
       <button
         key='slider-thumb upper'
         className='slider-thumb upper'
-        style={{ height: thumbSize, width: thumbSize, left: `calc(${upperPercentage}% - ${thumbSize / 2}px)` }}
+        style={{
+          height: SLIDER_THUMB_SIZE,
+          width: SLIDER_THUMB_SIZE,
+          left: `calc(${upperPercentage}% - ${SLIDER_THUMB_SIZE / 2}px)`,
+        }}
         onMouseDown={this.handleMouseDown(false)}
         onTouchStart={this.handleMouseDown(false)}
         onMouseOver={() => this.setState({ isHovered: true })}
@@ -165,7 +174,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
             <div
               key={`slider-mark-${i}`}
               className='slider-mark'
-              style={{ left: `${this.calculateMarkPosition(mark)}%` }}
+              style={{ left: `calc(${this.calculateMarkPosition(mark)}% + 2px)` }} // Plus thumb border size
             >
               {mark}
             </div>

@@ -34,7 +34,7 @@ export class TimeChooserDialog extends AbstractPopup<Date, ITimeChooserDialogPro
     });
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     return [
       <TimeChooser
         key='time-chooser'

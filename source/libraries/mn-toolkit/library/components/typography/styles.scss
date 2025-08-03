@@ -134,9 +134,9 @@
 
 @mixin themeTypographyList() {
   list-style-position: outside;
-  margin: 0 0 calc(#{$defaultSpacing}) calc(#{$defaultSpacing} * 2);
+  margin: 0 0 calc(#{$defaultSpacing}) calc(#{$hugeSpacing});
   li {
-    margin-top: calc(#{$defaultSpacing} / 2);
+    margin-top: calc(#{$smallSpacing});
     line-height: 25px;
   }
 }

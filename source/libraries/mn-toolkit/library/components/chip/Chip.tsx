@@ -23,15 +23,11 @@ export class Chip extends Container<IChipProps, IChipState> {
       color: 'primary',
       disabled: false,
       selected: false,
-      gutter: false,
+      gutter: 'small',
       bg: '4',
       itemAlignment: 'center',
       verticalItemAlignment: 'middle',
     };
-  }
-
-  public constructor(props: IChipProps) {
-    super(props);
   }
 
   public override renderClasses() {

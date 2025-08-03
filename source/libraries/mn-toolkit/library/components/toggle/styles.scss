@@ -80,9 +80,9 @@
     border: none;
     box-shadow: none;
     padding-left: 0;
-    height: calc($inputHeight + #{$defaultSpacing} / 2);
-    min-height: calc($inputHeight + #{$defaultSpacing} / 2);
-    max-height: calc($inputHeight + #{$defaultSpacing} / 2);
+    height: calc($inputHeight + #{$smallSpacing});
+    min-height: calc($inputHeight + #{$smallSpacing});
+    max-height: calc($inputHeight + #{$smallSpacing});
 
     .form-label {
       flex: 1;
@@ -93,7 +93,7 @@
   }
 
   .form-helper {
-    margin-top: calc(-1 * #{$defaultSpacing} / 2);
+    margin-top: calc(-1 * #{$smallSpacing});
   }
 }
 

@@ -36,13 +36,18 @@
         .mn-typography {
           justify-content: center;
           border-radius: 50%;
-          width: calc(#{$defaultItemHeight});
           min-width: calc(#{$defaultItemHeight});
-          max-width: calc(#{$defaultItemHeight});
           height: calc(#{$defaultItemHeight});
           min-height: calc(#{$defaultItemHeight});
           max-height: calc(#{$defaultItemHeight});
           line-height: calc(#{$defaultItemHeight});
+        }
+      }
+
+      .day {
+        .mn-typography {
+          width: calc(#{$defaultItemHeight});
+          max-width: calc(#{$defaultItemHeight});
         }
       }
     }
@@ -59,7 +64,6 @@
       @include dateTimeHighlight();
 
       .mn-typography {
-        padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
         border-radius: calc(#{$defaultBorderRadius} * 4);
       }
     }
@@ -71,9 +75,7 @@
 }
 
 @mixin themeDatePicker() {
-  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
   border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
-
   border-radius: calc(#{$defaultBorderRadius} / 2);
   background-color: color-hsl($bg1);
 
@@ -104,14 +106,13 @@
 // Time --------------------------------------------------------------------------------------------
 
 @mixin themeTimeChooser() {
+  .minutes {
+    border-left: 1px solid;
+    border-color: color-hsla($fg1, 0.3);
+  }
+
   .hours,
   .minutes {
-    padding: 0 calc(#{$defaultSpacing} / 2);
-    &.minutes {
-      border-left: 1px solid;
-      border-color: color-hsla($fg1, 0.3);
-    }
-
     &.scroller {
       $height: 180px;
       height: $height;
@@ -121,7 +122,7 @@
       .hours-container,
       .minutes-container {
         > .mn-container-inside {
-          $gap: calc(#{$defaultSpacing} / 4);
+          $gap: calc(#{$tinySpacing});
           gap: $gap;
 
           &:after {
@@ -161,7 +162,6 @@
 }
 
 @mixin themeTimePicker() {
-  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
   border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
   border-radius: calc(#{$defaultBorderRadius} / 2);
   background-color: color-hsl($bg1);
@@ -194,7 +194,6 @@
 
 @mixin themeDateTimeChooserPopup() {
   .tab {
-    padding: calc(#{$defaultSpacing} / 2) 0;
     border-bottom: 1px solid color-hsla($fg1, 0.3);
 
     &.selected {
@@ -220,7 +219,7 @@
         .hours-container,
         .minutes-container {
           > .mn-container-inside {
-            $gap: calc(#{$defaultSpacing} / 4);
+            $gap: calc(#{$tinySpacing});
             gap: $gap;
 
             &:after {
@@ -245,7 +244,6 @@
 }
 
 @mixin themeDateTimePicker() {
-  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
   border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
   border-radius: calc(#{$defaultBorderRadius} / 2);
   background-color: color-hsl($bg1);
@@ -327,7 +325,6 @@
       @include dateTimeHighlight();
 
       .mn-typography {
-        padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
         border-radius: calc(#{$defaultBorderRadius} * 4);
       }
     }
@@ -339,9 +336,6 @@
 }
 
 @mixin themeWeekInput() {
-  > .mn-container-inside {
-    gap: calc(#{$defaultSpacing} / 4);
-  }
 }
 
 .mn-week-input {
@@ -349,7 +343,6 @@
 }
 
 @mixin themeWeekPicker() {
-  padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
   border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;
   border-radius: calc(#{$defaultBorderRadius} / 2);
   background-color: color-hsl($bg1);

@@ -56,7 +56,7 @@ export class StepProgress<ID = string> extends Container<IStepProgressProps<ID>,
             <Icon className='pointer' icon='toolkit-pin' />
           </div>
 
-          <VerticalStack className='step-text'>
+          <VerticalStack className='step-text' margin='small'>
             <Typography color='1' variant='document' content={step.label} />
             <Typography color='2' italic variant='help' content={step.description} />
           </VerticalStack>

@@ -28,7 +28,10 @@ export class Application extends AbstractObservable<IApplicationListener> {
 
   public constructor(conf: IApplicationConfig) {
     super();
-    this._conf = deepFreeze(conf);
+    this._conf = deepFreeze({
+      ...conf,
+      maxFileUploadSize: conf.maxFileUploadSize ?? 2 * 1024 * 1024 * 1024, // 2 Go
+    });
     this.addListener(this);
   }
 

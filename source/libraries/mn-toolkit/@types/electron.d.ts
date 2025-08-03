@@ -20,7 +20,7 @@ declare global {
     getAppVersion: { args: []; response: string };
     checkFileExists: { args: [path: string]; response: boolean };
     getPathForFile: { args: [file: File]; response: string };
-    getFilePath: { args: [defaultPath?: string]; response: string | undefined };
+    getFilePath: { args: [defaultPath?: string, filters?: TFileFilter[]]; response: string | undefined };
     getDirectoryPath: { args: [defaultPath?: string]; response: string | undefined };
     readFileUtf8: { args: [filters?: TFileFilter[]]; response: string | Buffer | undefined };
     writePngFile: { args: [defaultFileName: string, base64: string, filePath?: string]; response: void };

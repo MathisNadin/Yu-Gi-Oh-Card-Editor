@@ -25,6 +25,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
       layout: 'vertical',
       gutter: true,
       margin: false,
+      paddingY: 'small',
       showVersion: true,
     };
   }

@@ -478,6 +478,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             {app.$device.isDesktop && (
               <FilePathInput
                 fill
+                fileFilters={[{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }]}
                 placeholder="Chemin vers l'artwork"
                 value={this.state.card.artwork.url}
                 onChange={(url) => this.onArtworkURLChange(url)}
@@ -612,27 +613,27 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <HorizontalStack gutter>
           <Spacer />
           <HorizontalStack fill itemAlignment='center'>
-            <Checkbox value={this.state.card.linkArrows.topLeft} onChange={() => this.onLinkArrowChange('topLeft')} />
+            <Checkbox
+              className='top-left'
+              value={this.state.card.linkArrows.topLeft}
+              onChange={() => this.onLinkArrowChange('topLeft')}
+            />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <Checkbox value={this.state.card.linkArrows.top} onChange={() => this.onLinkArrowChange('top')} />
+            <Checkbox
+              className='top'
+              value={this.state.card.linkArrows.top}
+              onChange={() => this.onLinkArrowChange('top')}
+            />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <Checkbox value={this.state.card.linkArrows.topRight} onChange={() => this.onLinkArrowChange('topRight')} />
-          </HorizontalStack>
-          <Spacer />
-        </HorizontalStack>
-
-        <HorizontalStack gutter>
-          <Spacer />
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox value={this.state.card.linkArrows.left} onChange={() => this.onLinkArrowChange('left')} />
-          </HorizontalStack>
-          <Spacer />
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox value={this.state.card.linkArrows.right} onChange={() => this.onLinkArrowChange('right')} />
+            <Checkbox
+              className='top-right'
+              value={this.state.card.linkArrows.topRight}
+              onChange={() => this.onLinkArrowChange('topRight')}
+            />
           </HorizontalStack>
           <Spacer />
         </HorizontalStack>
@@ -641,17 +642,43 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           <Spacer />
           <HorizontalStack fill itemAlignment='center'>
             <Checkbox
+              className='left'
+              value={this.state.card.linkArrows.left}
+              onChange={() => this.onLinkArrowChange('left')}
+            />
+          </HorizontalStack>
+          <Spacer />
+          <HorizontalStack fill itemAlignment='center'>
+            <Checkbox
+              className='right'
+              value={this.state.card.linkArrows.right}
+              onChange={() => this.onLinkArrowChange('right')}
+            />
+          </HorizontalStack>
+          <Spacer />
+        </HorizontalStack>
+
+        <HorizontalStack gutter>
+          <Spacer />
+          <HorizontalStack fill itemAlignment='center'>
+            <Checkbox
+              className='bottom-left'
               value={this.state.card.linkArrows.bottomLeft}
               onChange={() => this.onLinkArrowChange('bottomLeft')}
             />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
-            <Checkbox value={this.state.card.linkArrows.bottom} onChange={() => this.onLinkArrowChange('bottom')} />
+            <Checkbox
+              className='bottom'
+              value={this.state.card.linkArrows.bottom}
+              onChange={() => this.onLinkArrowChange('bottom')}
+            />
           </HorizontalStack>
 
           <HorizontalStack fill itemAlignment='center'>
             <Checkbox
+              className='bottom-right'
               value={this.state.card.linkArrows.bottomRight}
               onChange={() => this.onLinkArrowChange('bottomRight')}
             />
@@ -741,7 +768,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </Grid>
         )}
 
-        <VerticalStack className='card-abilities'>
+        <VerticalStack className='card-abilities' gutter='small'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
             <Typography fill variant='help' content='Types' />
             <Icon size={24} icon='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />
@@ -796,7 +823,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   private renderPendulumCardDetails() {
-    const defaultSpacing = app.$theme.settings.commons?.['default-spacing']?.value || 16;
+    const tinySpacing = app.$theme.settings.commons?.['tiny-spacing']?.value || 4;
     return (
       <VerticalStack gutter className='card-editor-section pendulum-section'>
         <HorizontalStack fill gutter verticalItemAlignment='bottom'>
@@ -812,7 +839,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           </VerticalStack>
 
           <Icon
-            size={28 + defaultSpacing / 4}
+            size={28 + tinySpacing}
             className={classNames(
               'pendulum-lock-icon',
               { unlocked: !this.state.lockPend },

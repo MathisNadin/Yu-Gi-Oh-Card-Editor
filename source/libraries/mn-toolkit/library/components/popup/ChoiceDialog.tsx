@@ -28,7 +28,7 @@ export class ChoiceDialog<ID = string> extends AbstractPopup<ID, IChoiceDialogPr
     };
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     if (!this.props.message) return null;
     return [
       <Typography key='message' variant='document' contentType={this.props.messageType} content={this.props.message} />,

@@ -25,11 +25,8 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
       ...super.defaultProps,
       fill: false,
       gutter: true,
+      padding: 'small',
     };
-  }
-
-  public constructor(props: P) {
-    super(props);
   }
 
   public override componentDidMount() {
@@ -91,7 +88,7 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
         <div className='title-bar'>
           {!!app.$header.parts.left?.length && app.$header.parts.left.map((part) => part.component)}
 
-          <HorizontalStack fill className='center-part' verticalItemAlignment='middle'>
+          <HorizontalStack fill className='center-part' gutter='small' verticalItemAlignment='middle'>
             <Breadcrumb key='breadcrumb' crumbs={crumbs} onlyShowLastCrumb={this.props.onlyShowLastCrumb} />
             {!!app.$header.parts.center?.length && app.$header.parts.center.map((part) => part.component)}
           </HorizontalStack>

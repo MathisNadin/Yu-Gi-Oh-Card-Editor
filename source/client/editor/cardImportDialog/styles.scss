@@ -21,12 +21,8 @@ $legendaryDragon: #82b8d4;
 .mn-popup.import {
   .card-import-dialog-content {
     &.websites {
-      gap: calc(#{$defaultSpacing} * 2);
-
       .logo {
         @include shadow(2);
-        margin: calc(#{$defaultSpacing} / 2);
-        padding: calc(#{$defaultSpacing});
         width: 75%;
         max-height: 45%;
 

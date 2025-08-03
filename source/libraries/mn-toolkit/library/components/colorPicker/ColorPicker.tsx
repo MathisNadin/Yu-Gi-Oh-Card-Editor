@@ -60,6 +60,7 @@ export class ColorPicker extends Grid<IColorPickerProps, IColorPickerState> {
         key='unformat'
         colSpans={this.props.iconColSpans}
         rowSpans={this.props.iconRowSpans}
+        margin='tiny'
         icon='toolkit-format-unformat'
         name='Retirer la couleur'
         onTap={() => this.props.onSelectColor(undefined)}
@@ -76,6 +77,7 @@ export class ColorPicker extends Grid<IColorPickerProps, IColorPickerState> {
         rowSpans={this.props.iconRowSpans}
         className={classNames('mn-color-swatch', { selected: this.props.selectedColor === color })}
         style={{ backgroundColor: color }}
+        margin='tiny'
         onTap={() => this.props.onSelectColor(color)}
       />
     );

@@ -96,7 +96,12 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
         className='mn-top-menu-group'
         onMouseEnter={(event) => (hasBelow ? this.showBelow(event, item) : this.closePopover(event))}
       >
-        <HorizontalStack className='mn-top-menu-group-container' itemAlignment='center' verticalItemAlignment='middle'>
+        <HorizontalStack
+          className='mn-top-menu-group-container'
+          gutter='small'
+          itemAlignment='center'
+          verticalItemAlignment='middle'
+        >
           <Typography
             className='mn-top-menu-label'
             bold

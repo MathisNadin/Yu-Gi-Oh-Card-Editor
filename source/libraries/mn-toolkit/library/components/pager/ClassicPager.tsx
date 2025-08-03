@@ -79,7 +79,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
         </HorizontalStack>
       ),
 
-      <HorizontalStack key='pages' className='pages'>
+      <HorizontalStack key='pages' className='pages' gutter='small'>
         {this.pagesToDisplay}
       </HorizontalStack>,
 

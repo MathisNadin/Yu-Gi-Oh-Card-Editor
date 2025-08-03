@@ -1,7 +1,27 @@
 ## mn-toolkit change log
 
+## 8.3.0
+
+- ajout fileFilters sur FilePathInput
+- reajustement fg1
+- reajustement des couleurs fg et bg
+- override render content avec le bon keyword
+- reset input supplémentare + fix router view port + fix style textarea et chip
+- ajout de 5 tailles pour le spacing
+
+## 8.2.7
+
+- bump to 8.2.7
+- limite d'upload + adaptation aux nv apis stream et upload
+
+## 8.2.6
+
+- bump to 8.2.6
+- revision des breadcrumbs et events du router
+
 ## 8.2.5
 
+- bump to 8.2.5
 - deepFreeze l'app conf par sécurité
 
 ## 8.2.4

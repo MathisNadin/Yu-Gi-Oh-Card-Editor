@@ -121,7 +121,14 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
 
     if (this.props.mode === 'grid') {
       return [
-        <VerticalStack key='hours' className={classNames('hours', this.props.mode)} fill gutter itemAlignment='center'>
+        <VerticalStack
+          key='hours'
+          className={classNames('hours', this.props.mode)}
+          fill
+          gutter
+          paddingX='small'
+          itemAlignment='center'
+        >
           <Typography variant='label' content='HEURES' />
           <Grid className='hours-container'>{this.renderHours(selectedHour)}</Grid>
         </VerticalStack>,
@@ -131,6 +138,7 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
           className={classNames('minutes', this.props.mode)}
           fill
           gutter
+          paddingX='small'
           itemAlignment='center'
         >
           <Typography variant='label' content='MINUTES' />
@@ -139,13 +147,13 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
       ];
     } else {
       return [
-        <VerticalStack key='hours' className={classNames('hours', this.props.mode)} fill>
+        <VerticalStack key='hours' className={classNames('hours', this.props.mode)} fill paddingX='small'>
           <VerticalStack className='hours-container' scroll>
             {this.renderHours(selectedHour)}
           </VerticalStack>
         </VerticalStack>,
 
-        <VerticalStack key='minutes' className={classNames('minutes', this.props.mode)} fill>
+        <VerticalStack key='minutes' className={classNames('minutes', this.props.mode)} fill paddingX='small'>
           <VerticalStack className='minutes-container' scroll>
             {this.renderMinutes(selectedMinute)}
           </VerticalStack>

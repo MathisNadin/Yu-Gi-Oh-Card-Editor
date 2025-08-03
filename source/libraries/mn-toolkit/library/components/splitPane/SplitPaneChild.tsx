@@ -18,10 +18,6 @@ export class SplitPaneChild extends Containable<ISplitPaneChildProps, ISplitPane
     };
   }
 
-  public constructor(props: ISplitPaneChildProps) {
-    super(props);
-  }
-
   public override renderClasses() {
     const classes = super.renderClasses();
     classes['mn-split-pane-child'] = true;

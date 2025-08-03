@@ -22,7 +22,7 @@ import {
   classNames,
   dataFromDataUrl,
   mimeTypeFromDataUrl,
-  mimetype,
+  nameToMimetype,
   mimetypeToExt,
 } from '../library/misc';
 
@@ -422,7 +422,7 @@ describe('dataFromDataUrl and mimeTypeFromDataUrl', () => {
 describe('mimetype and mimetypeToExt', () => {
   it('mimetype should return a valid mime type for known extensions', () => {
     const fileName = 'photo.jpg';
-    const mime = mimetype(fileName);
+    const mime = nameToMimetype(fileName);
     expect(mime).toBe('image/jpeg');
   });
   it('mimetypeToExt should return the first extension for a given mime type', () => {

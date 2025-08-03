@@ -20,6 +20,8 @@ export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
     return {
       ...super.defaultProps,
       gutter: true,
+      paddingX: 'small',
+      paddingY: 'tiny',
       verticalItemAlignment: 'middle',
       canReset: true,
     };

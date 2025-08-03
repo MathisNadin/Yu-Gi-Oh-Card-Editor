@@ -246,7 +246,7 @@ export class PictureCropperDialog extends AbstractPopup<
     return false;
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     const { imageUrl, areaType } = this.props;
     const { position, scale, containerDimensions, cropAreaDimensions, imageDimensions } = this.state;
 

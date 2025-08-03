@@ -1,5 +1,5 @@
 import { AllHTMLAttributes, RefObject } from 'react';
-import { classNames, isDefined, isNumber } from 'mn-tools';
+import { classNames, isDefined, isNumber, isString } from 'mn-tools';
 import { TJSXElementChild, TBackgroundColor } from '../../system';
 import { TIconId } from '../icon';
 import { ToolkitComponent, IToolkitComponentProps, IToolkitComponentState } from './ToolkitComponent';
@@ -12,6 +12,8 @@ export interface IGridSpanParams {
   xxlarge?: number;
   xxxlarge?: number;
 }
+
+export type TSpacingSize = 'huge' | 'large' | 'default' | 'small' | 'tiny';
 
 export type TFloatPosition =
   | 'none'
@@ -58,6 +60,12 @@ export interface IContainableProps<BASE_ELEMENT extends HTMLElement = HTMLDivEle
   zIndex?: TZIndex;
   tabIndex?: number;
   floatPosition?: TFloatPosition;
+  padding?: boolean | TSpacingSize;
+  paddingX?: boolean | TSpacingSize;
+  paddingY?: boolean | TSpacingSize;
+  margin?: boolean | TSpacingSize;
+  marginX?: boolean | TSpacingSize;
+  marginY?: boolean | TSpacingSize;
   height?: number | string;
   maxHeight?: number | string;
   minHeight?: number | string;
@@ -108,10 +116,6 @@ export class Containable<
     };
   }
 
-  public constructor(props: PROPS) {
-    super(props);
-  }
-
   public override componentDidMount() {
     super.componentDidMount();
     this.showTips();
@@ -131,14 +135,48 @@ export class Containable<
     classes['mn-containable'] = true;
     if (this.props.className) classes[this.props.className] = true;
     if (this.props.theme) classes[`mn-${this.props.theme}-theme`] = true;
+
     classes['has-click'] = !!this.props.onTap;
     classes['mn-fill'] = !!this.props.fill;
     classes['mn-ghost'] = !!this.props.ghost;
     classes['mn-disabled'] = !!this.props.disabled;
     classes['mn-draggable'] = !!this.props.draggable;
+
     if (this.props.bg) classes[`mn-bg-${this.props.bg}`] = true;
     if (this.props.zIndex) classes[`mn-zindex-${this.props.zIndex}`] = true;
     if (this.props.floatPosition) classes[`mn-float-${this.props.floatPosition}`] = true;
+
+    if (this.props.margin) {
+      classes['mn-layout-margin'] = true;
+      const margin: TSpacingSize = isString(this.props.margin) ? this.props.margin : 'default';
+      classes[`mn-layout-margin-${margin}`] = true;
+    }
+    if (this.props.marginX) {
+      classes['mn-layout-margin-x'] = true;
+      const marginX: TSpacingSize = isString(this.props.marginX) ? this.props.marginX : 'default';
+      classes[`mn-layout-margin-x-${marginX}`] = true;
+    }
+    if (this.props.marginY) {
+      classes['mn-layout-margin-y'] = true;
+      const marginY: TSpacingSize = isString(this.props.marginY) ? this.props.marginY : 'default';
+      classes[`mn-layout-margin-y-${marginY}`] = true;
+    }
+
+    if (this.props.padding) {
+      classes['mn-layout-padding'] = true;
+      const padding: TSpacingSize = isString(this.props.padding) ? this.props.padding : 'default';
+      classes[`mn-layout-padding-${padding}`] = true;
+    }
+    if (this.props.paddingX) {
+      classes['mn-layout-padding-x'] = true;
+      const paddingX: TSpacingSize = isString(this.props.paddingX) ? this.props.paddingX : 'default';
+      classes[`mn-layout-padding-x-${paddingX}`] = true;
+    }
+    if (this.props.paddingY) {
+      classes['mn-layout-padding-y'] = true;
+      const paddingY: TSpacingSize = isString(this.props.paddingY) ? this.props.paddingY : 'default';
+      classes[`mn-layout-padding-y-${paddingY}`] = true;
+    }
     return classes;
   }
 

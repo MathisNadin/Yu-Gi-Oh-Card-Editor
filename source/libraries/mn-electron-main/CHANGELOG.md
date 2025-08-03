@@ -1,7 +1,12 @@
 ## mn-electron-main change log
 
+## 1.1.6
+
+- ajout filters option sur getFilePath
+
 ## 1.1.5
 
+- bump to 1.1.5
 - fix misused promises
 
 ## 1.1.4

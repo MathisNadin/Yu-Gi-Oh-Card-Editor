@@ -10,7 +10,6 @@
 
   color: color-hsl($fg1);
   background-color: color-hsl($bg1);
-  padding: 0 calc(#{$defaultSpacing} / 2);
   appearance: textfield;
 
   &::placeholder {

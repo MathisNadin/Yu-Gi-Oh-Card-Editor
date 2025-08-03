@@ -24,7 +24,7 @@ export class LabeledGroup extends Container<ILabeledGroupProps, ILabeledGroupSta
 
   public get children() {
     return [
-      <Container key='labeled-group-label' className='group-label-container' bg={this.props.bg}>
+      <Container key='labeled-group-label' className='group-label-container' paddingX bg={this.props.bg}>
         <Typography noWrap variant='label' content={this.props.label} />
       </Container>,
 

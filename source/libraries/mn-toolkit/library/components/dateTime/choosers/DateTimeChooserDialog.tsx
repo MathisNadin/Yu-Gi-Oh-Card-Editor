@@ -39,7 +39,7 @@ export class DateTimeChooserDialog extends AbstractPopup<
     });
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     return [
       <DateTimeChooser
         key='date-time-chooser'

@@ -25,7 +25,7 @@ export class InformDialog extends AbstractPopup<void, IInformDialogProps, IInfor
     return !!this.props.title ? super.renderHeader() : null;
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     if (!this.props.message) return null;
     return [<Typography key='message' variant='document' content={this.props.message} />];
   }

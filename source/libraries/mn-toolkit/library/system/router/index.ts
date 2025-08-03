@@ -31,21 +31,12 @@ export interface IRouterHrefParams<T extends TRouterState = TRouterState> {
   params: TRouterParams<T>;
 }
 
-export interface IStateCrumb<T extends TRouterState = TRouterState> {
-  title: string;
-  state: T;
-  parameters?: TRouterParams<T>;
-}
-
-export interface IResolvedState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState> {
+export interface IResolvedState<T extends TRouterState = TRouterState> {
   path: string;
-  state: IState<T, P>;
+  state: IState<T>;
   parameters: TRouterParams<T>;
   headTags: THeadTag[];
   historyData?: object;
-  title?: string;
-  parentParameters?: object;
-  breadcrumb?: IStateCrumb[];
 }
 
 export interface IStatePathKey {
@@ -63,11 +54,10 @@ export interface IAbstractViewStaticFunctions {
   resolver?<T extends TRouterState>(state: IResolvedState<T>): Promise<void>;
 }
 
-export interface IState<T extends TRouterState = TRouterState, P extends TRouterState = TRouterState> {
+export interface IState<T extends TRouterState = TRouterState> {
   name: T;
   path: string;
   pathKeys: IStatePathKey[];
-  parentState?: P;
   component: TRouterComponent;
   params: TRouterParams<T>;
   regExp: RegExp;
@@ -77,7 +67,7 @@ export interface IState<T extends TRouterState = TRouterState, P extends TRouter
 
 export interface IRouterListener {
   routerStateWillLeave: (resolvedState: IResolvedState) => string | Promise<string> | undefined | Promise<undefined>;
-  routerStateStart: (resolvedState: IResolvedState) => void | Promise<void>;
+  routerStateBeforeResolve: (resolvedState: IResolvedState) => void | Promise<void>;
   routerStateChanged: (resolvedState: IResolvedState) => void | Promise<void>;
-  routerStateLoaded: (resolvedState: IResolvedState) => void | Promise<void>;
+  routerStateCurrentUrlUpdated: (resolvedState: IResolvedState) => void | Promise<void>;
 }

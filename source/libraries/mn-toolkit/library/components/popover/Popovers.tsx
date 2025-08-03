@@ -40,7 +40,7 @@ export class Popovers extends Containable<IPopoversProps, IPopoversState> implem
 
   public override render() {
     const { hasOverlay, popovers, focuses } = app.$popover;
-    const focusSpace = (app.$theme.settings.commons?.['default-spacing']?.value || 16) / 4;
+    const focusSpace = app.$theme.settings.commons?.['tiny-spacing']?.value || 4;
     log.debug('render', popovers.length, focuses.length);
     return (
       <div ref={this.base} {...this.renderAttributes()}>

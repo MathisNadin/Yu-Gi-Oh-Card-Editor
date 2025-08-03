@@ -49,6 +49,134 @@
     left: $float-margin;
     top: 50%;
   }
+
+  &.mn-layout-margin-x {
+    &.mn-layout-margin-x-tiny {
+      margin-left: calc(#{$tinySpacing});
+      margin-right: calc(#{$tinySpacing});
+    }
+    &.mn-layout-margin-x-small {
+      margin-left: calc(#{$smallSpacing});
+      margin-right: calc(#{$smallSpacing});
+    }
+    &.mn-layout-margin-x-default {
+      margin-left: calc(#{$defaultSpacing});
+      margin-right: calc(#{$defaultSpacing});
+    }
+    &.mn-layout-margin-x-large {
+      margin-left: calc(#{$largeSpacing});
+      margin-right: calc(#{$largeSpacing});
+    }
+    &.mn-layout-margin-x-huge {
+      margin-left: calc(#{$hugeSpacing});
+      margin-right: calc(#{$hugeSpacing});
+    }
+  }
+
+  &.mn-layout-margin-y {
+    &.mn-layout-margin-y-tiny {
+      margin-top: calc(#{$tinySpacing});
+      margin-bottom: calc(#{$tinySpacing});
+    }
+    &.mn-layout-margin-y-small {
+      margin-top: calc(#{$smallSpacing});
+      margin-bottom: calc(#{$smallSpacing});
+    }
+    &.mn-layout-margin-y-default {
+      margin-top: calc(#{$defaultSpacing});
+      margin-bottom: calc(#{$defaultSpacing});
+    }
+    &.mn-layout-margin-y-large {
+      margin-top: calc(#{$largeSpacing});
+      margin-bottom: calc(#{$largeSpacing});
+    }
+    &.mn-layout-margin-y-huge {
+      margin-top: calc(#{$hugeSpacing});
+      margin-bottom: calc(#{$hugeSpacing});
+    }
+  }
+
+  &.mn-layout-margin {
+    &.mn-layout-margin-tiny {
+      margin: calc(#{$tinySpacing});
+    }
+    &.mn-layout-margin-small {
+      margin: calc(#{$smallSpacing});
+    }
+    &.mn-layout-margin-default {
+      margin: calc(#{$defaultSpacing});
+    }
+    &.mn-layout-margin-large {
+      margin: calc(#{$largeSpacing});
+    }
+    &.mn-layout-margin-huge {
+      margin: calc(#{$hugeSpacing});
+    }
+  }
+
+  &.mn-layout-padding-x {
+    &.mn-layout-padding-x-tiny {
+      padding-left: calc(#{$tinySpacing});
+      padding-right: calc(#{$tinySpacing});
+    }
+    &.mn-layout-padding-x-small {
+      padding-left: calc(#{$smallSpacing});
+      padding-right: calc(#{$smallSpacing});
+    }
+    &.mn-layout-padding-x-default {
+      padding-left: calc(#{$defaultSpacing});
+      padding-right: calc(#{$defaultSpacing});
+    }
+    &.mn-layout-padding-x-large {
+      padding-left: calc(#{$largeSpacing});
+      padding-right: calc(#{$largeSpacing});
+    }
+    &.mn-layout-padding-x-huge {
+      padding-left: calc(#{$hugeSpacing});
+      padding-right: calc(#{$hugeSpacing});
+    }
+  }
+
+  &.mn-layout-padding-y {
+    &.mn-layout-padding-y-tiny {
+      padding-top: calc(#{$tinySpacing});
+      padding-bottom: calc(#{$tinySpacing});
+    }
+    &.mn-layout-padding-y-small {
+      padding-top: calc(#{$smallSpacing});
+      padding-bottom: calc(#{$smallSpacing});
+    }
+    &.mn-layout-padding-y-default {
+      padding-top: calc(#{$defaultSpacing});
+      padding-bottom: calc(#{$defaultSpacing});
+    }
+    &.mn-layout-padding-y-large {
+      padding-top: calc(#{$largeSpacing});
+      padding-bottom: calc(#{$largeSpacing});
+    }
+    &.mn-layout-padding-y-huge {
+      padding-top: calc(#{$hugeSpacing});
+      padding-bottom: calc(#{$hugeSpacing});
+    }
+  }
+
+  &.mn-layout-padding {
+    &.mn-layout-padding-tiny {
+      padding: calc(#{$tinySpacing});
+    }
+    &.mn-layout-padding-small {
+      padding: calc(#{$smallSpacing});
+    }
+    &.mn-layout-padding-default {
+      padding: calc(#{$defaultSpacing});
+    }
+    &.mn-layout-padding-large {
+      padding: calc(#{$largeSpacing});
+    }
+    &.mn-layout-padding-huge {
+      padding: calc(#{$hugeSpacing});
+    }
+  }
 }
 
 .mn-containable {

@@ -142,7 +142,11 @@ declare global {
 
   // Variables that are always the same, no matter the teme or screen size
   interface IAppThemeCommons {
+    'tiny-spacing': IThemeUnitValue;
+    'small-spacing': IThemeUnitValue;
     'default-spacing': IThemeUnitValue;
+    'large-spacing': IThemeUnitValue;
+    'huge-spacing': IThemeUnitValue;
     'default-item-height': IThemeUnitValue;
     'default-border-radius': IThemeUnitValue;
     'field-border-size': IThemeUnitValue;

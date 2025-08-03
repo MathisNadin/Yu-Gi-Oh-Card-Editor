@@ -21,6 +21,8 @@ export class DateTimePicker extends Container<IDateTimePickerProps, IDateTimePic
     return {
       ...super.defaultProps,
       gutter: true,
+      paddingX: 'small',
+      paddingY: 'tiny',
       verticalItemAlignment: 'middle',
       canReset: true,
     };

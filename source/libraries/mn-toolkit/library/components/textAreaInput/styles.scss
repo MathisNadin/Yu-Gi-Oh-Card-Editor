@@ -7,8 +7,7 @@
     @include themeScrollBar();
     color: color-hsl($fg1);
     background-color: transparent;
-    line-height: 20px;
-    padding: calc(#{$defaultSpacing} / 2);
+    padding: calc(#{$smallSpacing});
     resize: none;
     flex: 1;
     min-width: 100%;

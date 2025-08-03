@@ -481,6 +481,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           {app.$device.isDesktop && (
             <FilePathInput
               fill
+              fileFilters={[{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }]}
               placeholder="Chemin vers l'artwork"
               value={this.state.card.artwork.url}
               onChange={(url) => this.onArtworkURLChange(url)}
@@ -862,7 +863,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
           </HorizontalStack>
         )}
 
-        <VerticalStack className='card-abilities'>
+        <VerticalStack className='card-abilities' gutter='small'>
           <HorizontalStack fill className='abilities-add' itemAlignment='right' verticalItemAlignment='middle'>
             <Typography fill variant='help' content='Types' />
             <Icon size={24} icon='toolkit-plus' color='positive' onTap={() => this.onAddAbility()} />

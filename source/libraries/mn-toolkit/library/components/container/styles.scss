@@ -32,9 +32,9 @@ $scrollBarSize: 5px;
 .mn-platform-web,
 .mn-platform-desktop {
   --container-scroll-padding-right: 0px;
-  --container-scroll-inside-width-margin: calc(#{$defaultSpacing} / 2);
+  --container-scroll-inside-width-margin: calc(#{$smallSpacing});
   --container-scroll-x-padding-bottom: 0px;
-  --container-scroll-x-inside-height-margin: calc(#{$defaultSpacing} / 2);
+  --container-scroll-x-inside-height-margin: calc(#{$smallSpacing});
 }
 
 .mn-platform-mobile {
@@ -67,9 +67,87 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 }
 
 @mixin themeContainer() {
+  &.mn-layout-gutter-x {
+    &.mn-layout-gutter-x-tiny {
+      > .mn-container-inside {
+        column-gap: calc(#{$tinySpacing});
+      }
+    }
+    &.mn-layout-gutter-x-small {
+      > .mn-container-inside {
+        column-gap: calc(#{$smallSpacing});
+      }
+    }
+    &.mn-layout-gutter-x-default {
+      > .mn-container-inside {
+        column-gap: calc(#{$defaultSpacing});
+      }
+    }
+    &.mn-layout-gutter-x-large {
+      > .mn-container-inside {
+        column-gap: calc(#{$largeSpacing});
+      }
+    }
+    &.mn-layout-gutter-x-huge {
+      > .mn-container-inside {
+        column-gap: calc(#{$hugeSpacing});
+      }
+    }
+  }
+
+  &.mn-layout-gutter-y {
+    &.mn-layout-gutter-y-tiny {
+      > .mn-container-inside {
+        row-gap: calc(#{$tinySpacing});
+      }
+    }
+    &.mn-layout-gutter-y-small {
+      > .mn-container-inside {
+        row-gap: calc(#{$smallSpacing});
+      }
+    }
+    &.mn-layout-gutter-y-default {
+      > .mn-container-inside {
+        row-gap: calc(#{$defaultSpacing});
+      }
+    }
+    &.mn-layout-gutter-y-large {
+      > .mn-container-inside {
+        row-gap: calc(#{$largeSpacing});
+      }
+    }
+    &.mn-layout-gutter-y-huge {
+      > .mn-container-inside {
+        row-gap: calc(#{$hugeSpacing});
+      }
+    }
+  }
+
   &.mn-layout-gutter {
-    > .mn-container-inside {
-      gap: calc(#{$defaultSpacing});
+    &.mn-layout-gutter-tiny {
+      > .mn-container-inside {
+        gap: calc(#{$tinySpacing});
+      }
+    }
+    &.mn-layout-gutter-small {
+      > .mn-container-inside {
+        gap: calc(#{$smallSpacing});
+      }
+    }
+    &.mn-layout-gutter-default {
+      > .mn-container-inside {
+        gap: calc(#{$defaultSpacing});
+      }
+    }
+    &.mn-layout-gutter-large {
+      > .mn-container-inside {
+        gap: calc(#{$largeSpacing});
+      }
+    }
+    &.mn-layout-gutter-huge {
+      > .mn-container-inside {
+        gap: calc(#{$hugeSpacing});
+      }
     }
   }
 
@@ -170,15 +248,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
     }
   }
 
-  &.mn-layout-margin {
-    margin: calc(#{$defaultSpacing});
-  }
-
-  &.mn-layout-padding {
-    padding: calc(#{$defaultSpacing});
-  }
-
-  $scrollBarSpace: calc(#{$defaultSpacing} / 2);
+  $scrollBarSpace: calc(#{$smallSpacing});
 
   &.mn-scroll {
     overflow-y: auto;
@@ -192,7 +262,8 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
       }
     }
 
-    &.mn-layout-padding {
+    &.mn-layout-padding,
+    &.mn-layout-padding-x {
       padding-right: calc($container-scroll-padding-right);
 
       > .mn-container-inside {
@@ -235,7 +306,8 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
       }
     }
 
-    &.mn-layout-padding {
+    &.mn-layout-padding,
+    &.mn-layout-padding-y {
       padding-bottom: calc($container-scroll-x-padding-bottom);
 
       > .mn-container-inside {
@@ -306,9 +378,8 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 
   .group-label-container {
     position: absolute;
-    top: calc(-1 * #{$medium-size} - #{$defaultSpacing} / 2);
-    left: calc(#{$defaultSpacing} / 2);
-    padding: 0 calc(#{$defaultSpacing});
+    top: calc(-1 * #{$medium-size} - #{$smallSpacing});
+    left: calc(#{$smallSpacing});
     max-width: 100%;
 
     // Set to 100% to make sure the top calc above is correct, as the text will be as high as $medium-size
@@ -366,25 +437,12 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 @mixin themeAccordion() {
   > .mn-accordion-header {
     border: 1px solid color-hsl($fg4);
-    padding: calc(#{$defaultSpacing} / 2);
-
-    > .mn-container-inside {
-      > .mn-accordion-header-inside {
-        > .mn-container-inside {
-          gap: calc(#{$defaultSpacing} / 2);
-        }
-      }
-    }
   }
 
   > .mn-accordion-content-wrapper {
     display: flex;
     overflow: hidden;
     border: 1px solid color-hsl($fg4);
-
-    > .mn-accordion-content {
-      padding: calc(#{$defaultSpacing} / 2);
-    }
   }
 
   &.header-top-position,

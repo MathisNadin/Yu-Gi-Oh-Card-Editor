@@ -59,6 +59,7 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
   public override componentDidMount() {
     super.componentDidMount();
     app.$errorManager.handlePromise(this.load());
+    if (!this.props.artworkURL) setTimeout(() => app.$errorManager.handlePromise(this.doSelectImgPath()), 200);
   }
 
   public override componentDidUpdate(
@@ -186,7 +187,8 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
     if (!app.$device.isElectron(window)) return;
     const path = await window.electron.ipcRenderer.invoke(
       'getFilePath',
-      this.state.artworkURL || app.$settings.settings.defaultArtworkPath
+      this.state.artworkURL || app.$settings.settings.defaultArtworkPath,
+      [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }]
     );
     if (!path) return;
     await this.onArtworkURLChange(path);

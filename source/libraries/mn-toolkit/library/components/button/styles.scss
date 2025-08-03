@@ -56,12 +56,12 @@ button {
 
   &.mn-button-icon-and-text {
     &.mn-icon-position-left {
-      padding-left: calc(#{$defaultSpacing} / 2);
+      padding-left: calc(#{$smallSpacing});
     }
 
     &.mn-icon-position-right {
       flex-direction: row-reverse;
-      padding-right: calc(#{$defaultSpacing} / 2);
+      padding-right: calc(#{$smallSpacing});
     }
   }
 
@@ -71,7 +71,7 @@ button {
     flex: 1;
     line-height: 100%;
     text-align: center;
-    padding: calc(#{$defaultSpacing} / 4) calc(#{$defaultSpacing} / 2);
+    padding: calc(#{$tinySpacing}) calc(#{$smallSpacing});
   }
 
   &.mn-button-block {
@@ -143,7 +143,6 @@ button {
 }
 
 @mixin themeButtonOutline() {
-  @include themeLayoutContainable();
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -180,7 +179,7 @@ button {
     width: $size;
     height: $size;
     line-height: $size;
-    margin-right: calc(#{$defaultSpacing} / 2);
+    margin-right: calc(#{$smallSpacing});
   }
 
   &.mn-color-primary {
@@ -261,7 +260,7 @@ button {
   font-weight: 300;
   position: relative;
   border-radius: calc(#{$defaultBorderRadius});
-  padding: 0 calc(#{$defaultSpacing} / 2);
+  padding: 0 calc(#{$smallSpacing});
 
   .label {
     @include text-overflow();
@@ -273,7 +272,7 @@ button {
     width: $size;
     height: $size;
     line-height: $size;
-    margin-right: calc(#{$defaultSpacing} / 2);
+    margin-right: calc(#{$smallSpacing});
   }
 
   &.mn-color-primary {
@@ -364,10 +363,10 @@ button {
   border: $border solid color-hsl($primary);
   max-width: 100%;
 
-  @include buttonIconSize(calc(#{$defaultItemHeight}), calc(#{$defaultSpacing} / 4), $border);
+  @include buttonIconSize(calc(#{$defaultItemHeight}), calc(#{$tinySpacing}), $border);
 
   &.mn-size-small {
-    @include buttonIconSize(calc(#{$defaultItemHeight} * 0.75), calc(#{$defaultSpacing} / 4), $border);
+    @include buttonIconSize(calc(#{$defaultItemHeight} * 3 / 4), calc(#{$tinySpacing}), $border);
   }
 
   &.mn-color-primary {

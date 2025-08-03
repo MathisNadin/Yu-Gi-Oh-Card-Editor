@@ -26,7 +26,7 @@ export class PromptDialog extends AbstractPopup<string, IPromptDialogProps, IPro
     await this.setStateAsync({ buttons, value: this.props.defaultValue || '' });
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     return (
       <Form fill={false} scroll={false}>
         {this.props.type === 'textarea' ? (

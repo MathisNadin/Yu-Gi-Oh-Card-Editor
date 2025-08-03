@@ -1,5 +1,5 @@
-import { extend, isDefined, isString, logger, AbstractObservable, parseUri, serialize } from 'mn-tools';
-import { HttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, ISessionEntity } from 'api/main';
+import { extend, isDefined, isString, logger, AbstractObservable, parseUri, serialize, formatFileSize } from 'mn-tools';
+import { THttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, ISessionEntity } from 'api/main';
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
 
@@ -66,7 +66,7 @@ export class ApiService extends AbstractObservable<IApiListener> {
   }
 
   private async http<RES>(
-    method: HttpMethod,
+    method: THttpMethod,
     path: string,
     requestData: { [k: string]: string },
     options?: IApiRequestOptions
@@ -159,6 +159,11 @@ export class ApiService extends AbstractObservable<IApiListener> {
   }
 
   public async uploadFileToFile(fileBlob: File, file: number, appInstance: number) {
+    if (app.conf.maxFileUploadSize && fileBlob.size > app.conf.maxFileUploadSize) {
+      throw new Error(
+        `Ce fichier dépasse la taille maximale autorisée (${formatFileSize(app.conf.maxFileUploadSize)}).`
+      );
+    }
     const ud: IUploadDescriptor = {
       fileBlob,
       offset: 0,
@@ -181,7 +186,6 @@ export class ApiService extends AbstractObservable<IApiListener> {
       const fd = new FormData();
       fd.append('chunkData', chunkData);
       fd.append('chunkCount', ud.chunkCount.toString());
-      fd.append('targetFileId', `${ud.targetFileId}`);
       ud.offset = ud.offset + BYTES_PER_CHUNK;
 
       app.$errorManager.handlePromise(this.dispatchAsync('apiUploadProgress', ud));
@@ -191,10 +195,10 @@ export class ApiService extends AbstractObservable<IApiListener> {
       xhr.addEventListener(
         'load',
         () => {
-          // On a fini, on part...
+          // We're done, leaving...
           if (ud.offset > ud.size) return resolve();
 
-          // Sinon on upload le suivant...
+          // Otherwise, upload next chunk...
           this.uploadNextChunk(ud)
             .then(() => resolve())
             .catch((e: Error) => app.$errorManager.trigger(e));
@@ -205,7 +209,7 @@ export class ApiService extends AbstractObservable<IApiListener> {
       xhr.upload.addEventListener('progress', (_event) => {}, false);
       xhr.addEventListener('error', (_event) => {}, false);
       xhr.addEventListener('abort', (_event) => {}, false);
-      const postUrl = `${this._settings.apiUrl}/file/upload/${ud.appInstance}`;
+      const postUrl = `${this._settings.apiUrl}/file/upload/${ud.appInstance}/${ud.targetFileId}/`;
       xhr.open('POST', postUrl);
       xhr.setRequestHeader('Cache-Control', 'no-cache');
 

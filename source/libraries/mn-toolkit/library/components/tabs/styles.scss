@@ -1,4 +1,4 @@
-$decay: calc(#{$defaultSpacing} / 4);
+$decay: calc(#{$tinySpacing});
 $tabBorderSize: 1px;
 
 @mixin themeTabbedPane() {
@@ -42,10 +42,10 @@ $tabBorderSize: 1px;
     color: color-hsl($fg2);
     position: relative;
     transition: background-color 0.2s;
-    gap: calc(#{$defaultSpacing} / 2);
+    gap: calc(#{$smallSpacing});
 
     .mn-indicators {
-      margin: 0 calc(#{$defaultSpacing} / 2);
+      margin: 0 calc(#{$smallSpacing});
       display: flex;
     }
 

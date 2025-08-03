@@ -6,11 +6,11 @@
 }
 
 $sliderHeight: 20px;
+$sliderThumbBorder: 2px;
 
 @mixin themeSlider() {
   position: relative;
   user-select: none;
-  margin: calc(#{$defaultSpacing});
   height: $sliderHeight;
   min-height: $sliderHeight;
   max-height: $sliderHeight;
@@ -31,7 +31,7 @@ $sliderHeight: 20px;
     position: absolute;
     border-radius: 50%;
     background-color: color-hsl($fg3);
-    border: 2px solid transparent;
+    border: $sliderThumbBorder solid transparent;
     cursor: pointer;
     padding: 10px;
     opacity: 1;
@@ -56,7 +56,7 @@ $sliderHeight: 20px;
 
   .slider-mark {
     position: absolute;
-    bottom: calc(-1 * #{$sliderHeight}); // Ajustez selon l'espacement souhaité sous le slider
+    bottom: calc(-1 * #{$sliderHeight} - #{$sliderThumbBorder}); // Ajustez selon l'espacement souhaité sous le slider
     transform: translateX(-50%); // Centrer le marqueur sous sa position
     @include themeFont('small');
     line-height: 120%;
@@ -108,7 +108,6 @@ $sliderHeight: 20px;
 @mixin themeRangeSlider() {
   position: relative;
   user-select: none;
-  margin: calc(#{$defaultSpacing});
   height: $sliderHeight;
   min-height: $sliderHeight;
   max-height: $sliderHeight;
@@ -129,7 +128,7 @@ $sliderHeight: 20px;
     position: absolute;
     border-radius: 50%;
     background-color: color-hsl($fg3);
-    border: 2px solid transparent;
+    border: $sliderThumbBorder solid transparent;
     cursor: pointer;
     padding: 10px;
     opacity: 1;
@@ -154,7 +153,7 @@ $sliderHeight: 20px;
 
   .slider-mark {
     position: absolute;
-    bottom: calc(-1 * #{$sliderHeight}); // Ajustez selon l'espacement souhaité sous le slider
+    bottom: calc(-1 * #{$sliderHeight} - #{$sliderThumbBorder}); // Ajustez selon l'espacement souhaité sous le slider
     transform: translateX(-50%); // Centrer le marqueur sous sa position
     @include themeFont('small');
     line-height: 120%;
@@ -205,7 +204,7 @@ $sliderHeight: 20px;
 
 @mixin themeSliderFields() {
   .input-wrapper {
-    $wrapperHeight: calc(#{$sliderHeight} + #{$defaultSpacing} * 2);
+    $wrapperHeight: calc(#{$sliderHeight} + #{$hugeSpacing});
     background-color: transparent;
     border: none;
     box-shadow: none;
@@ -245,7 +244,7 @@ $sliderHeight: 20px;
   }
 
   .form-helper {
-    padding-left: calc(#{$defaultSpacing} / 2);
+    padding-left: calc(#{$smallSpacing});
   }
 }
 

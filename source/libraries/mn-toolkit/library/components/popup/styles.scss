@@ -91,7 +91,6 @@ $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
       .mn-popup-content-container {
         display: flex;
         flex-direction: column;
-        gap: calc(#{$defaultSpacing} / 2);
 
         .mn-image {
           margin: 0 auto;

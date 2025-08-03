@@ -57,6 +57,7 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
             <HorizontalStack
               className={classNames('tab', { selected: tabIsDate })}
               fill
+              paddingY='small'
               itemAlignment='center'
               onTap={() => this.setStateAsync({ tab: 'date' })}
             >
@@ -66,6 +67,7 @@ export class DateTimeChooser extends Container<IDateTimeChooserProps, IDateTimeC
             <HorizontalStack
               className={classNames('tab', { selected: !tabIsDate })}
               fill
+              paddingY='small'
               itemAlignment='center'
               onTap={() => this.setStateAsync({ tab: 'time' })}
             >

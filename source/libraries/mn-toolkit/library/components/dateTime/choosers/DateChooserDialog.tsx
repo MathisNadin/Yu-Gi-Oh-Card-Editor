@@ -35,7 +35,7 @@ export class DateChooserDialog extends AbstractPopup<Date, IDateChooserDialogPro
     });
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     return [
       <DateChooser
         key='date-chooser'

@@ -1,7 +1,7 @@
 @mixin themeInplaceEdit() {
   background-color: color-hsl($bg1);
   color: color-hsl($fg1);
-  padding: 0 calc(#{$defaultSpacing} / 2);
+  padding: 0 calc(#{$smallSpacing});
   border-radius: calc(#{$defaultBorderRadius});
 }
 
@@ -9,10 +9,10 @@
   @include themeInplaceEdit();
   line-height: calc(#{$defaultItemHeight});
   min-height: calc(#{$defaultItemHeight});
-  padding: 0 calc(#{$defaultSpacing} / 2 + 1px);
+  padding: 0 calc(#{$smallSpacing} + 1px);
   cursor: pointer;
   align-items: center;
-  gap: calc(#{$defaultSpacing} / 2);
+  gap: calc(#{$smallSpacing});
 
   &.with-placeholder {
     color: color-hsl($fg2);

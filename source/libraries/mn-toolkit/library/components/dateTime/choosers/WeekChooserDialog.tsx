@@ -35,7 +35,7 @@ export class WeekChooserDialog extends AbstractPopup<Date, IWeekChooserDialogPro
     });
   }
 
-  public override renderContent() {
+  protected override renderContent() {
     return [
       <WeekChooser
         key='week-chooser'

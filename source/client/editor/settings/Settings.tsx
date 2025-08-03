@@ -104,7 +104,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
   public get children() {
     if (!this.state.settings) return <Spinner />;
     return [
-      <VerticalStack key='default-render-path' className='setting-field'>
+      <VerticalStack key='default-render-path' className='setting-field' gutter='tiny'>
         <Typography variant='document' contentType='text' content='Chemin de rendu par défaut' />
 
         <HorizontalStack verticalItemAlignment='middle'>
@@ -121,8 +121,8 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
         </HorizontalStack>
       </VerticalStack>,
 
-      <VerticalStack key='default-artwork-path' className='setting-field'>
-        <Typography variant='document' contentType='text' content='Chemin vers les artworks par défaut' />
+      <VerticalStack key='default-artwork-path' className='setting-field' gutter='tiny'>
+        <Typography variant='document' contentType='text' content='Chemin où rechercher les artworks par défaut' />
 
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-image' color='1' />
@@ -138,8 +138,8 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
         </HorizontalStack>
       </VerticalStack>,
 
-      <VerticalStack key='default-img-import' className='setting-field'>
-        <Typography variant='document' contentType='text' content="Chemin d'import des artworks par défaut" />
+      <VerticalStack key='default-img-import' className='setting-field' gutter='tiny'>
+        <Typography variant='document' contentType='text' content='Chemin où importer les artworks par défaut' />
 
         <HorizontalStack verticalItemAlignment='middle'>
           <Icon className='field-icon' size={24} icon='toolkit-image-sync' color='1' />

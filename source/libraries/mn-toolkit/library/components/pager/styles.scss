@@ -70,32 +70,28 @@ $pager-page-size: calc(#{$defaultItemHeight});
   }
 
   .pages {
-    > .mn-container-inside {
-      gap: calc(0.5 * #{$defaultSpacing});
+    .page {
+      @include themeFont('small');
+      height: $pager-page-size;
+      min-height: $pager-page-size;
+      max-height: $pager-page-size;
+      min-width: $pager-page-size;
 
-      .page {
-        @include themeFont('small');
-        height: $pager-page-size;
-        min-height: $pager-page-size;
-        max-height: $pager-page-size;
-        min-width: $pager-page-size;
+      &.dots {
+        width: $pager-page-size;
+        max-width: $pager-page-size;
+        align-items: end;
+        justify-content: center;
+      }
 
-        &.dots {
-          width: $pager-page-size;
-          max-width: $pager-page-size;
-          align-items: end;
-          justify-content: center;
-        }
+      &.number {
+        color: color-hsl($fg1);
+        background-color: transparent;
 
-        &.number {
-          color: color-hsl($fg1);
-          background-color: transparent;
-
-          .label {
-            // Override default button behavior
-            &:hover {
-              background-color: transparent;
-            }
+        .label {
+          // Override default button behavior
+          &:hover {
+            background-color: transparent;
           }
         }
       }
