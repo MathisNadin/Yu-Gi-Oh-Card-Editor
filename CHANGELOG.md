@@ -1,7 +1,12 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.3.1
+
+- axios va dans dependencies pour le main process
+
 ## 2.3.0
 
+- bump to 2.3.0
 - up libs + limite des extensions de fichier pour les images + triangles pour faire les flèches lien dans l'éditeur
 - up libs
 - up libs
