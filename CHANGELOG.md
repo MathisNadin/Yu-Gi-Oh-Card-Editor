@@ -1,7 +1,28 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.3.0
+
+- up libs + limite des extensions de fichier pour les images + triangles pour faire les flèches lien dans l'éditeur
+- up libs
+- up libs
+- frame effect par défaut sur les imports yuginews
+- ordre de tri dans les imports sur l'ajout ou l'ordre sur la page
+- adaptation au tk v8
+- implementation de la même triche sur l'affichage des fusions/rituels sans aucun effet principal sur l'import yuginews
+- fix style normal text
+- up libs
+- rush effect type par défaut sous certaines conditions dans le wiki text parser
+- requetes axios via le main process pour pouvoi definir un user agent propre
+- amélioration du parsing yugipedia et scheduler pour l'api
+- fix import yugipedia sur rushTypEeffect en master et rushTestMode pour l'affichage des cartes rush sans effet
+- meilleur import des skills et trads de leurs persos + fix affichage skill name
+- fix parsing card effect quand on a un flip ou pas de matériels
+- ajout de noUncheckedIndexedAccess dans la config ts
+- up tk avec nv grid et xxxlarge
+
 ## 2.2.1
 
+- bump to 2.2.1
 - fix du chargement des fonts
 
 ## 2.2.0
