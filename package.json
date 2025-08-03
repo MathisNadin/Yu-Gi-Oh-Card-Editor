@@ -49,6 +49,7 @@
     "build:web-server": "rm -rf ./.build && npx tsc -p tsconfig.build.json && npx tsc-alias -p tsconfig.build.json"
   },
   "dependencies": {
+    "axios": "^1.7.4",
     "electron-dl": "^3.5.2",
     "electron-updater": "^6.3.9"
   },
@@ -86,7 +87,6 @@
     "@types/webpack-node-externals": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",
-    "axios": "^1.7.4",
     "cheerio": "^1.0.0-rc.12",
     "chokidar": "^3.6.0",
     "concurrently": "^8.2.2",
