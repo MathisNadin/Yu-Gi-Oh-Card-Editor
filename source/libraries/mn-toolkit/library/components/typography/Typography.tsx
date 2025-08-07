@@ -1,13 +1,15 @@
 import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 import { AnchorHTMLAttributes, RefObject } from 'react';
-import { escapeHTML, isDefined, isString, isUndefined, markdownToHtml } from 'mn-tools';
+import { escapeHTML, isDefined, isString, isUndefined } from 'mn-tools';
 import { IRouterHrefParams, TForegroundColor, TRouterState } from '../../system';
 import { IContainableProps, IContainableState, Containable, TDidUpdateSnapshot } from '../containable';
+import { markdownToHtml } from '.';
 
 export type TControlTextContentType = 'html' | 'markdown' | 'text';
 
 export type TVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'label' | 'document' | 'help' | 'paragraph' | 'bullet';
+const MULTI_LINE_VARIANTS = new Set<TVariant>(['document', 'paragraph', 'help']);
 
 export type TTypographyHTMLElement = HTMLDivElement | HTMLAnchorElement | HTMLHeadingElement;
 
@@ -28,6 +30,7 @@ export interface ITypographyProps<T extends TRouterState = TRouterState>
   strikethrough?: boolean;
   color?: TForegroundColor;
   href?: string | IRouterHrefParams<T>;
+  linkify?: boolean;
 }
 
 export interface ITypographyState extends IContainableState {
@@ -48,6 +51,7 @@ export class Typography<
       color: '1',
       noWrap: false,
       sanitizeHTML: false,
+      linkify: true,
     };
   }
 
@@ -193,13 +197,20 @@ export class Typography<
 
     let content: string;
     if (this.props.contentType === 'markdown') {
-      content = markdownToHtml(this.props.content, this.props.variant !== 'document');
+      content = markdownToHtml(this.props.content, {
+        inline: !MULTI_LINE_VARIANTS.has(this.props.variant),
+        linkify: this.props.linkify,
+        sanitizeHTML: this.props.sanitizeHTML,
+      });
     } else {
       content = this.props.content.replace(/<a/g, '<a target="_blank"');
       if (this.props.contentType !== 'html') {
         content = escapeHTML(content);
       } else if (this.props.sanitizeHTML) {
-        content = DOMPurify.sanitize(content);
+        content = DOMPurify.sanitize(content, {
+          USE_PROFILES: { html: true },
+          ADD_ATTR: ['target', 'rel'],
+        });
       }
     }
 

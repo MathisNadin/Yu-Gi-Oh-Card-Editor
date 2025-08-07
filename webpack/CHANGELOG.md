@@ -1,7 +1,18 @@
 ## mn-webpack-builder change log
 
+## 1.2.3
+
+- ajout du port psql local pour la synchro
+
+## 1.2.2
+
+- bump to 1.2.2
+- ajout du script sync platform
+- utilisation de contenthash pour les noms desapp.js et styles.css
+
 ## 1.2.1
 
+- bump to 1.2.1
 - pas de linting du dossier scripts
 
 ## 1.2.0

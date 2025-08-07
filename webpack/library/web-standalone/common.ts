@@ -7,7 +7,8 @@ const webStandaloneCommonConfig: Configuration = {
   entry: path.resolve(__dirname, '..', '..', '..', './source/client/index.tsx'),
   output: {
     path: path.resolve(__dirname, '..', '..', '..', './.build-web'),
-    filename: 'app.js',
+    filename: 'app.[contenthash].js',
+    clean: true,
   },
   plugins: [
     new HtmlWebpackPlugin({

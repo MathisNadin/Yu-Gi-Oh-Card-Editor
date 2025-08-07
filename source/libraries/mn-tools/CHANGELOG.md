@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.3.4
+
+- suppr fonctions markdown
+
 ## 2.3.3
 
+- bump to 2.3.3
 - amelioration de formatFileSize
 
 ## 2.3.2

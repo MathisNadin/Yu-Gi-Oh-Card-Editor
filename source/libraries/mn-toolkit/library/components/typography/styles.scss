@@ -160,15 +160,26 @@
 @mixin themeTypographyLabel() {
   @include themeFont('medium');
   width: fit-content;
+  p {
+    @include themeFont('medium');
+  }
 }
 
 @mixin themeTypographyHelp() {
   @include themeFont('small');
+  p {
+    @include themeFont('small');
+  }
 }
 
 @mixin themeTypographyParagraph() {
   @include themeTypographyText();
   margin-bottom: calc(#{$defaultSpacing});
+
+  p {
+    @include themeTypographyText();
+    margin-bottom: calc(#{$defaultSpacing});
+  }
 }
 
 @mixin themeTypographyBlockquote() {
@@ -262,18 +273,33 @@
 
   &.mn-typography-large-font-size {
     @include themeFont('large');
+    p {
+      @include themeFont('large');
+    }
   }
   &.mn-typography-medium-font-size {
     @include themeFont('medium');
+    p {
+      @include themeFont('medium');
+    }
   }
   &.mn-typography-regular-font-size {
     @include themeFont('regular');
+    p {
+      @include themeFont('regular');
+    }
   }
   &.mn-typography-small-font-size {
     @include themeFont('small');
+    p {
+      @include themeFont('small');
+    }
   }
   &.mn-typography-tiny-font-size {
     @include themeFont('tiny');
+    p {
+      @include themeFont('tiny');
+    }
   }
 
   @include themeTypographyEnrichment();

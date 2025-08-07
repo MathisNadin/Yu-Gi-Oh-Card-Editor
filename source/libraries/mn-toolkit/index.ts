@@ -46,7 +46,7 @@ export async function setupAppAndToolkit(conf: IApplicationConfig, beforeBootstr
   app.service('$store', StoreService, { depends: ['$device', '$core'] });
   app.service('$permission', PermissionService);
   app.service('$cookie', CookieService, { depends: ['$store'] });
-  app.service('$session', SessionService, { depends: ['$store', '$cookie', '$permission', '$api'] });
+  app.service('$session', SessionService, { depends: ['$device', '$store', '$cookie', '$permission', '$api'] });
   app.service('$xhr', XhrService);
   app.service('$header', HeaderService);
   app.service('$api', ApiService);

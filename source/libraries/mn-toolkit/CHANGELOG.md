@@ -1,7 +1,22 @@
 ## mn-toolkit change log
 
+## 8.3.3
+
+- fix font size des paragraphes dans le style de typography
+
+## 8.3.2
+
+- bump to 8.3.2
+- installation marked + utilisation ici pour le markdown
+
+## 8.3.1
+
+- bump to 8.3.1
+- gestion des erreurs réseau lors de l'authentification du token pour lancer la session
+
 ## 8.3.0
 
+- bump to 8.3.0
 - ajout fileFilters sur FilePathInput
 - reajustement fg1
 - reajustement des couleurs fg et bg

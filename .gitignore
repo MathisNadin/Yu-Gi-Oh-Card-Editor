@@ -7,6 +7,7 @@
 node_modules
 
 config/platform-webpack.ts
+config/platform-sync.js
 config/platform.js
 
 *.log
