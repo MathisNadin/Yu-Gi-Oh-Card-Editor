@@ -1,7 +1,22 @@
 ## mn-toolkit change log
 
+## 8.3.6
+
+- declaration de davantage de types de fichiers gérés par le builder
+
+## 8.3.5
+
+- bump to 8.3.5
+- fix certains styles after + ajout svgs pour bell
+
+## 8.3.4
+
+- bump to 8.3.4
+- fix des styles overridés manquants pour les effets sur les textes + bread utilise directement le bold de typography
+
 ## 8.3.3
 
+- bump to 8.3.3
 - fix font size des paragraphes dans le style de typography
 
 ## 8.3.2

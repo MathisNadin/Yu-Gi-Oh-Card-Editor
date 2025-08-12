@@ -39,8 +39,6 @@ export class Drawer<P extends IDrawerProps = IDrawerProps, S extends IDrawerStat
       loaded: true,
       visible: false,
       hidding: false,
-      height: this.props.height,
-      width: this.props.width || (app.$device.isSmallScreen ? '100%' : '80%'),
     } as S;
   }
 

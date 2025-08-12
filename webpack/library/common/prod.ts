@@ -26,6 +26,9 @@ const commonProdConfig: Configuration = {
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'style.[contenthash].css',
+    }),
     new CspHtmlWebpackPlugin(
       {
         'style-src': ["'self'", 'https://fonts.googleapis.com'],

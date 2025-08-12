@@ -4,6 +4,10 @@
   strong,
   b {
     font-weight: bold;
+
+    p {
+      font-weight: bold;
+    }
   }
 
   &.italic-style,
@@ -11,23 +15,39 @@
   em,
   i {
     font-style: italic;
+
+    p {
+      font-style: italic;
+    }
   }
 
   &.underline-decoration,
   .underline-decoration,
   u {
     text-decoration: underline;
+
+    p {
+      text-decoration: underline;
+    }
   }
 
   &.strikethrough-decoration,
   .strikethrough-decoration,
   s {
     text-decoration: line-through;
+
+    p {
+      text-decoration: line-through;
+    }
   }
 
   &.underline-decoration.strikethrough-decoration,
   .underline-decoration.strikethrough-decoration {
     text-decoration: underline line-through;
+
+    p {
+      text-decoration: underline line-through;
+    }
   }
 
   &.mn-typography-anchor,
@@ -42,6 +62,10 @@
     &:hover {
       color: color-hsl($linkHover);
       text-decoration: underline;
+
+      p {
+        text-decoration: underline;
+      }
     }
 
     &:visited {

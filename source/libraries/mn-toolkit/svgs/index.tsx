@@ -113,10 +113,63 @@ declare global {
     'toolkit-comment-left': ISvgIcons;
     'toolkit-comment-line-left': ISvgIcons;
     'toolkit-comment-ellipsis-left': ISvgIcons;
+    'toolkit-bell': ISvgIcons;
+    'toolkit-bell-off': ISvgIcons;
+    'toolkit-bell-badged': ISvgIcons;
+    'toolkit-bell-badged-full': ISvgIcons;
   }
 }
 
 export function loadSvgs() {
+  app.$icon.register(
+    'toolkit-bell',
+    <svg width='800px' height='800px' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg' fill='none'>
+      <g fill='currentColor'>
+        <path
+          fillRule='evenodd'
+          d='M13 8.78c0 1.334.788 1.72 1.25 1.72a.75.75 0 010 1.5H1.75a.75.75 0 010-1.5c.462 0 1.25-.386 1.25-1.72V6.405C3 3.665 4.907 1 8 1s5 2.665 5 5.405V8.78zM4.5 6.405C4.5 4.275 5.938 2.5 8 2.5c2.062 0 3.5 1.776 3.5 3.905V8.78c0 .677.145 1.252.387 1.72H4.113c.242-.468.387-1.043.387-1.72V6.405z'
+          clipRule='evenodd'
+        />
+        <path d='M6.898 12.872a.75.75 0 00-1.296.756A2.773 2.773 0 008 15c1.023 0 1.918-.55 2.398-1.372a.75.75 0 00-1.296-.756c-.219.374-.63.628-1.102.628-.473 0-.883-.254-1.102-.628z' />
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-bell-off',
+    <svg width='800px' height='800px' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg' fill='none'>
+      <g fill='currentColor'>
+        <path d='M8 2.5c-.546 0-1.033.12-1.457.326a.75.75 0 01-.655-1.35A4.802 4.802 0 018 1c3.093 0 5 2.665 5 5.405v1.78a.75.75 0 01-1.5 0v-1.78C11.5 4.275 10.062 2.5 8 2.5z' />
+        <path
+          fillRule='evenodd'
+          d='M3.343 4.404L1.22 2.28a.75.75 0 011.06-1.06l12.5 12.5a.75.75 0 11-1.06 1.06L10.94 12H1.75a.75.75 0 010-1.5c.462 0 1.25-.386 1.25-1.72V6.405c0-.691.118-1.37.343-2.001zM9.44 10.5H4.113c.242-.468.387-1.043.387-1.72V6.405c0-.264.023-.524.067-.777L9.439 10.5z'
+          clipRule='evenodd'
+        />
+        <path d='M5.872 12.602a.75.75 0 011.026.27c.219.374.63.628 1.102.628.473 0 .883-.254 1.102-.628a.75.75 0 011.296.756A2.773 2.773 0 018 15a2.773 2.773 0 01-2.398-1.372.75.75 0 01.27-1.026z' />
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-bell-badged',
+    <svg width='800px' height='800px' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg' fill='none'>
+      <g fill='currentColor'>
+        <path d='M8 2.5c-2.062 0-3.5 1.776-3.5 3.905V8.78c0 .677-.145 1.252-.387 1.72h7.774c-.242-.468-.387-1.043-.387-1.72V6.781a.75.75 0 011.5 0V8.78c0 1.334.788 1.72 1.25 1.72a.75.75 0 010 1.5H1.75a.75.75 0 010-1.5c.462 0 1.25-.386 1.25-1.72V6.405C3 3.665 4.907 1 8 1c.2 0 .395.011.587.034a.75.75 0 01-.174 1.49A3.578 3.578 0 008 2.5z' />
+        <path d='M14 3a2 2 0 11-4 0 2 2 0 014 0zM6.898 12.872a.75.75 0 00-1.296.756A2.773 2.773 0 008 15c1.023 0 1.918-.55 2.398-1.372a.75.75 0 00-1.296-.756c-.219.374-.63.628-1.102.628-.473 0-.883-.254-1.102-.628z' />
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-bell-badged-full',
+    <svg width='800px' height='800px' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg' fill='none'>
+      <g fill='currentColor'>
+        <path d='M14.25 10.5c-.462 0-1.25-.386-1.25-1.72V6.742a.75.75 0 00-.8-.749 3 3 0 01-3.037-3.975.75.75 0 00-.63-.99A5.092 5.092 0 008 1C4.907 1 3 3.665 3 6.405V8.78c0 1.334-.788 1.72-1.25 1.72a.75.75 0 000 1.5h12.5a.75.75 0 000-1.5z' />
+        <path d='M12 5a2 2 0 100-4 2 2 0 000 4zM6.898 12.872a.75.75 0 00-1.296.756A2.773 2.773 0 008 15c1.023 0 1.918-.55 2.398-1.372a.75.75 0 00-1.296-.756c-.219.374-.63.628-1.102.628-.473 0-.883-.254-1.102-.628z' />
+      </g>
+    </svg>
+  );
+
   app.$icon.register(
     'toolkit-format-bold',
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>

@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.3.5
+
+- utilisation de console.warn pour les log warning
+
 ## 2.3.4
 
+- bump to 2.3.4
 - suppr fonctions markdown
 
 ## 2.3.3

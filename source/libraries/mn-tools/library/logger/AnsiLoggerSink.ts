@@ -1,4 +1,4 @@
-import { formatDate } from '../..';
+import { formatDate, isString } from '../..';
 import { AbstractLoggerSink, ILogRecord } from './AbstractLoggerSink';
 import { LogLevel } from './Logger';
 
@@ -103,7 +103,7 @@ let ansi = new Ansi();
 export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
   public pipe(record: ILogRecord) {
     let prefix = record.bulk;
-    let output;
+    let output: typeof console.log;
     switch (record.logLevel) {
       case LogLevel.DEBUG:
         prefix = ansi.magenta(prefix);
@@ -113,14 +113,12 @@ export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
 
       case LogLevel.ERROR:
         prefix = ansi.red(prefix);
-
         output = console.error;
         break;
 
       case LogLevel.WARNING:
         prefix = ansi.yellow(prefix);
-
-        output = console.error;
+        output = console.warn || console.error;
         break;
 
       default:
@@ -129,11 +127,12 @@ export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
         output = console.log;
         break;
     }
-    let args = record.data
+
+    const args = record.data
       .slice(0)
       .map((data) => {
-        if (data?.stack) {
-          let stack = '\n' + (data.stack as string).split(/\n/).slice(1).join('\n');
+        if (isString(data?.stack)) {
+          const stack = `\n${data.stack.split(/\n/).slice(1).join('\n')}`;
           delete data.stack;
           return [stack, data];
         } else {
@@ -144,7 +143,7 @@ export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
 
     args.unshift(prefix);
     args.unshift(ansi.gray(formatDate(record.timestamp, '%d/%M %H:%m:%s')));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    output.apply(console, args as any);
+
+    output.apply(console, args);
   }
 }

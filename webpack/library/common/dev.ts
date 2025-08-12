@@ -1,4 +1,5 @@
 import 'webpack-dev-server';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { Configuration, LoaderOptionsPlugin } from 'webpack';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
@@ -16,6 +17,9 @@ const commonDevConfig: Configuration = {
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'style.css',
+    }),
     new LoaderOptionsPlugin({
       debug: true,
     }),

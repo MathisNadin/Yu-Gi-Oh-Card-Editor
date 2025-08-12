@@ -5,11 +5,6 @@ import { Configuration } from 'webpack';
 const webServedCommonConfig: Configuration = {
   target: 'web',
   entry: path.resolve(__dirname, '..', '..', '..', './source/client/index.tsx'),
-  output: {
-    path: path.resolve(__dirname, '..', '..', '..', './.build-web'),
-    filename: 'app.[contenthash].js',
-    clean: true,
-  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '..', '..', '..', 'source', 'client', 'index.html'),

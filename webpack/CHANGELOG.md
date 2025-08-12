@@ -1,7 +1,20 @@
 ## mn-webpack-builder change log
 
+## 1.3.0
+
+- fix de tous les scripts de sync
+- ajout de formats supplémentaires de fichiers pris en charge dans le builder
+- ajout app-script batch
+
+## 1.2.4
+
+- bump to 1.2.4
+- Merge branch 'master' of https://github.com/MathisNadin/mn-webpack-builder
+- output sans contenthash en mode dev
+
 ## 1.2.3
 
+- bump to 1.2.3
 - ajout du port psql local pour la synchro
 
 ## 1.2.2

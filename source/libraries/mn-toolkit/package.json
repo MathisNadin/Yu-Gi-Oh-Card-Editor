@@ -1,7 +1,7 @@
 {
   "name": "mn-toolkit",
   "displayName": "MN Toolkit",
-  "version": "8.3.3",
+  "version": "8.3.6",
   "description": "Bibliothèque React Typescript pour des fonctions et composants réutilisables",
   "repository": {
     "type": "git",

@@ -49,6 +49,7 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
         <Typography
           key='bread'
           className='bread'
+          bold
           variant='document'
           contentType='markdown'
           content={crumbs[crumbs.length - 1]?.title}
@@ -73,7 +74,9 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
             ),
           ];
         }
-        return <Typography key={i} className='bread' variant='document' contentType='markdown' content={crumb.title} />;
+        return (
+          <Typography key={i} className='bread' bold variant='document' contentType='markdown' content={crumb.title} />
+        );
       }),
 
       this.props.children,

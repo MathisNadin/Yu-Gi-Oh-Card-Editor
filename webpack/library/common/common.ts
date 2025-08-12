@@ -1,5 +1,4 @@
 import path from 'path';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { Configuration } from 'webpack';
 
@@ -33,12 +32,27 @@ const commonConfig: Configuration = {
       },
       // Images
       {
-        test: /\.(png|jpg|jpeg|gif|ico)$/i,
+        test: /\.(png|jpg|jpeg|gif|ico|bmp|webp|avif)$/i,
+        type: 'asset/resource',
+      },
+      // Audio
+      {
+        test: /\.(mp3|wav|ogg)$/i,
+        type: 'asset/resource',
+      },
+      // Vidéo
+      {
+        test: /\.(mp4|webm)$/i,
+        type: 'asset/resource',
+      },
+      // PDF
+      {
+        test: /\.pdf$/i,
         type: 'asset/resource',
       },
       // Texts
       {
-        test: /\.(txt|md)$/,
+        test: /\.(txt|md|csv|xml|ya?ml)$/i,
         use: 'raw-loader',
       },
     ],
@@ -46,11 +60,6 @@ const commonConfig: Configuration = {
   performance: {
     hints: false,
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'style.[contenthash].css',
-    }),
-  ],
 };
 
 export { commonConfig };
