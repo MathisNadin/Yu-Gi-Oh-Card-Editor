@@ -1,7 +1,15 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.3.2
+
+- gestion des chars grecques non affichés par les polices de base
+- up toolkit
+- up libs
+- up libs et sync deps/scripts
+
 ## 2.3.1
 
+- bump to 2.3.1
 - axios va dans dependencies pour le main process
 
 ## 2.3.0
