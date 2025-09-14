@@ -16,7 +16,10 @@ export class FullscreenImageService extends AbstractObservable<IFullscreenImageL
     super();
     this.fullscreenImages = [];
     app.$device.addListener({
-      deviceBackButton: () => app.$fullscreenImage.removeLast(),
+      deviceBackButton: () => app.$fullscreenImage.closeLast(),
+    });
+    app.$router.addListener({
+      routerStateChanged: () => app.$fullscreenImage.closeAll(),
     });
   }
 
@@ -79,11 +82,17 @@ export class FullscreenImageService extends AbstractObservable<IFullscreenImageL
 
   public async closeLast() {
     if (!this.fullscreenImages.length) return;
-    const lastFullscreenImage = this.fullscreenImages[this.fullscreenImages.length - 1];
+    const lastFullscreenImage = this.fullscreenImages.at(-1);
     if (lastFullscreenImage?.ref && typeof lastFullscreenImage.ref.close === 'function') {
       await lastFullscreenImage.ref.close();
     } else {
       this.removeLast();
+    }
+  }
+
+  public async closeAll() {
+    while (this.fullscreenImages.length) {
+      await this.closeLast();
     }
   }
 }

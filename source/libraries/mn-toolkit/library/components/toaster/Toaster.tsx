@@ -78,9 +78,12 @@ export class Toaster<
     if (this.timeout) clearTimeout(this.timeout);
     await app.$device.keyboardClose();
     await this.setStateAsync({ hidding: true });
-    setTimeout(() => {
-      app.$toaster.remove(this.props.id!);
-    }, 250);
+    return await new Promise<void>((resolve) =>
+      setTimeout(() => {
+        app.$toaster.remove(this.props.id!);
+        resolve();
+      }, 250)
+    );
   }
 
   public override renderAttributes() {

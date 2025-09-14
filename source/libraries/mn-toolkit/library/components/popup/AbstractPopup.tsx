@@ -103,10 +103,13 @@ export abstract class AbstractPopup<
   public async close(R?: R) {
     await app.$device.keyboardClose();
     await this.setStateAsync({ hidding: true });
-    setTimeout(() => {
-      app.$popup.remove(this.props.id!);
-      if (this.props.onClose) this.props.onClose(R!);
-    }, 200);
+    return await new Promise<void>((resolve) =>
+      setTimeout(() => {
+        app.$popup.remove(this.props.id!);
+        if (this.props.onClose) this.props.onClose(R!);
+        resolve();
+      }, 200)
+    );
   }
 
   public override renderClasses() {

@@ -9,7 +9,7 @@
   border-radius: calc(#{$defaultBorderRadius});
 
   color: color-hsl($fg1);
-  background-color: color-hsl($bg1);
+  background-color: transparent;
   appearance: textfield;
 
   &::placeholder {

@@ -117,10 +117,57 @@ declare global {
     'toolkit-bell-off': ISvgIcons;
     'toolkit-bell-badged': ISvgIcons;
     'toolkit-bell-badged-full': ISvgIcons;
+    'toolkit-mail': ISvgIcons;
+    'toolkit-phone': ISvgIcons;
+    'toolkit-location-pin': ISvgIcons;
   }
 }
 
 export function loadSvgs() {
+  app.$icon.register(
+    'toolkit-mail',
+    <svg width='800px' height='800px' viewBox='0 -4 32 32' version='1.1' xmlns='http://www.w3.org/2000/svg'>
+      <g id='Page-1' stroke='none' strokeWidth='1' fill='none' fillRule='evenodd'>
+        <g id='Icon-Set' transform='translate(-412.000000, -259.000000)' fill='currentColor'>
+          <path
+            d='M442,279 C442,279.203 441.961,279.395 441.905,279.578 L433,270 L442,263 L442,279 L442,279 Z M415.556,280.946 L424.58,271.33 L428,273.915 L431.272,271.314 L440.444,280.946 C440.301,280.979 415.699,280.979 415.556,280.946 L415.556,280.946 Z M414,279 L414,263 L423,270 L414.095,279.578 C414.039,279.395 414,279.203 414,279 L414,279 Z M441,261 L428,271 L415,261 L441,261 L441,261 Z M440,259 L416,259 C413.791,259 412,260.791 412,263 L412,279 C412,281.209 413.791,283 416,283 L440,283 C442.209,283 444,281.209 444,279 L444,263 C444,260.791 442.209,259 440,259 L440,259 Z'
+            id='mail'
+          ></path>
+        </g>
+      </g>
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-phone',
+    <svg width='800px' height='800px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M2.00589 4.54166C1.905 3.11236 3.11531 2 4.54522 2H7.60606C8.34006 2 9.00207 2.44226 9.28438 3.1212L10.5643 6.19946C10.8761 6.94932 10.6548 7.81544 10.0218 8.32292L9.22394 8.96254C8.86788 9.24798 8.74683 9.74018 8.95794 10.1448C10.0429 12.2241 11.6464 13.9888 13.5964 15.2667C14.008 15.5364 14.5517 15.4291 14.8588 15.0445L15.6902 14.003C16.1966 13.3687 17.0609 13.147 17.8092 13.4594L20.8811 14.742C21.5587 15.0249 22 15.6883 22 16.4238V19.5C22 20.9329 20.8489 22.0955 19.4226 21.9941C10.3021 21.3452 2.65247 13.7017 2.00589 4.54166Z'
+        fill='currentColor'
+      />
+    </svg>
+  );
+
+  app.$icon.register(
+    'toolkit-location-pin',
+    <svg width='800px' height='800px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M12 21C15.5 17.4 19 14.1764 19 10.2C19 6.22355 15.866 3 12 3C8.13401 3 5 6.22355 5 10.2C5 14.1764 8.5 17.4 12 21Z'
+        stroke='currentColor'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z'
+        stroke='currentColor'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+    </svg>
+  );
+
   app.$icon.register(
     'toolkit-bell',
     <svg width='800px' height='800px' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg' fill='none'>

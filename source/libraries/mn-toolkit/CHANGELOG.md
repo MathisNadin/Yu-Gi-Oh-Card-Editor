@@ -1,7 +1,32 @@
 ## mn-toolkit change log
 
+## 8.3.10
+
+- nouvelles svg
+
+## 8.3.9
+
+- bump to 8.3.9
+- fix backgrounds sur les inputs
+
+## 8.3.8
+
+- bump to 8.3.8
+- meilleur typing sur api job
+
+## 8.3.7
+
+- bump to 8.3.7
+- virer d'autres resets problématiques
+- ajustements affichage fullscreen image
+- fermeture de fullscreen image plus facile
+- spinner intelligent sur fullscreen image
+- gestion du close des éléments en overlay quand le router change de state
+- ne pas ignorer text adjust et touch callout
+
 ## 8.3.6
 
+- bump to 8.3.6
 - declaration de davantage de types de fichiers gérés par le builder
 
 ## 8.3.5

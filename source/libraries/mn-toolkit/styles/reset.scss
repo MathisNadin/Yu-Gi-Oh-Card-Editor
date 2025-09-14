@@ -100,7 +100,7 @@
   ul,
   li {
     @include resetBlockTag();
-    flex-shrink: 0;
+    // flex-shrink: 0;
   }
 
   article,
@@ -216,27 +216,27 @@
 @mixin resetHtml() {
   html {
     @include resetBlockTag();
-    touch-action: pan-y;
-    overflow: hidden;
+    // touch-action: pan-y;
+    // overflow: hidden;
     background-color: color-hsl($fg1);
   }
 
   body {
     @include resetBlockTag();
 
-    -webkit-touch-callout: none;
+    // -webkit-touch-callout: none;
     font-smooth: always;
-    -webkit-text-size-adjust: none;
-    text-size-adjust: none;
+    // -webkit-text-size-adjust: none;
+    // text-size-adjust: none;
     -webkit-tap-highlight-color: transparent;
     margin: 0;
     padding: 0;
     word-wrap: break-word;
     text-rendering: optimizeLegibility;
-    backface-visibility: hidden;
+    // backface-visibility: hidden;
     -webkit-user-drag: none;
-    -ms-content-zooming: none;
-    touch-action: none;
+    // -ms-content-zooming: none;
+    // touch-action: none;
 
     @include themeTypographyText();
     @include themeTypographyEnrichment();

@@ -22,7 +22,10 @@ export class PopupService extends AbstractObservable<IPopupListener> {
     super();
     this.popups = [];
     app.$device.addListener({
-      deviceBackButton: () => app.$popup.removeLast(),
+      deviceBackButton: () => app.$popup.closeLast(),
+    });
+    app.$router.addListener({
+      routerStateChanged: () => app.$popup.closeAll(),
     });
   }
 
@@ -147,6 +150,12 @@ export class PopupService extends AbstractObservable<IPopupListener> {
       await lastPopup.ref.close();
     } else {
       this.removeLast();
+    }
+  }
+
+  public async closeAll() {
+    while (this.popups.length) {
+      await this.closeLast();
     }
   }
 }

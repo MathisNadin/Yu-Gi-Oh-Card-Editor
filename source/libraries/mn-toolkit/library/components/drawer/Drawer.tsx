@@ -50,9 +50,12 @@ export class Drawer<P extends IDrawerProps = IDrawerProps, S extends IDrawerStat
   public async close() {
     await app.$device.keyboardClose();
     await this.setStateAsync({ hidding: true });
-    setTimeout(() => {
-      app.$drawer.remove(this.props.id!);
-    }, 200);
+    return await new Promise<void>((resolve) =>
+      setTimeout(() => {
+        app.$drawer.remove(this.props.id!);
+        resolve();
+      }, 200)
+    );
   }
 
   public override renderClasses() {

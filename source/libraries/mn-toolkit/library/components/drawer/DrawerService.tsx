@@ -18,7 +18,10 @@ export class DrawerService extends AbstractObservable<IDrawerListener> {
     super();
     this.drawers = [];
     app.$device.addListener({
-      deviceBackButton: () => app.$drawer.removeLast(),
+      deviceBackButton: () => app.$drawer.closeLast(),
+    });
+    app.$router.addListener({
+      routerStateChanged: () => app.$drawer.closeAll(),
     });
   }
 
@@ -109,6 +112,12 @@ export class DrawerService extends AbstractObservable<IDrawerListener> {
       await lastDrawer.ref.close();
     } else {
       this.removeLast();
+    }
+  }
+
+  public async closeAll() {
+    while (this.drawers.length) {
+      await this.closeLast();
     }
   }
 }

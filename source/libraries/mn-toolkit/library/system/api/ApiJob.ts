@@ -4,14 +4,14 @@ import { IJob } from 'api/main';
 // Arbitrary 3 seconds
 const REFRESH_PERIOD = 3000;
 
-export class ApiJob {
+export class ApiJob<RESULT = unknown> {
   private _id: string;
   private _progress?: number;
   private _total?: number;
   private _description?: string;
   private _message?: string;
 
-  public constructor(job: IJob) {
+  public constructor(job: IJob<RESULT>) {
     this._id = job.id;
     app.$errorManager.handlePromise(app.$api.dispatchAsync('apiJobStarted', job));
   }
@@ -32,7 +32,7 @@ export class ApiJob {
     return this._message;
   }
 
-  public async wait<RESULT>(onProgress?: (job: IJob<RESULT>) => void, signal?: AbortSignal) {
+  public async wait(onProgress?: (job: IJob<RESULT>) => void, signal?: AbortSignal) {
     let attempts = 0;
     while (true) {
       if (signal?.aborted) throw new Error('Aborted');

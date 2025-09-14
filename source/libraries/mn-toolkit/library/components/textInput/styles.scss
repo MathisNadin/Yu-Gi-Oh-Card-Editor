@@ -10,7 +10,7 @@
 
   color: color-hsl($fg1);
   appearance: textfield;
-  background-color: color-hsl($bg1);
+  background-color: transparent;
 
   &::placeholder {
     color: color-hsl($fg3);

@@ -17,6 +17,9 @@ export class PopoverService extends AbstractObservable<IPopoverListener> {
     app.$device.addListener({
       deviceBackButton: () => app.$popover.removeLast(),
     });
+    app.$router.addListener({
+      routerStateChanged: () => app.$popover.removeAll(),
+    });
   }
 
   public get visible() {
