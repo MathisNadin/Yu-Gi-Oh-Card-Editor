@@ -150,6 +150,18 @@
           font-family: fontName;
           font-size: 78px;
         }
+
+        &.small-pi {
+          font-family: fontDescTcgAt;
+        }
+
+        &.capital-delta {
+          font-family: fontName;
+        }
+
+        &.capital-omega {
+          font-family: fontDescTcgAt;
+        }
       }
 
       &.token-name-container,
@@ -403,6 +415,18 @@
           .hash-char {
             font-family: fontName;
           }
+
+          .small-pi-char {
+            font-family: fontDescTcgAt;
+          }
+
+          .capital-delta-char {
+            font-family: fontName;
+          }
+
+          .capital-omega-char {
+            font-family: fontDescTcgAt;
+          }
         }
 
         .with-bullet-point {
@@ -464,6 +488,22 @@
 
           .plusminus-char {
             font-family: fontName;
+          }
+
+          .hash-char {
+            font-family: fontName;
+          }
+
+          .small-pi-char {
+            font-family: fontDescTcgAt;
+          }
+
+          .capital-delta-char {
+            font-family: fontName;
+          }
+
+          .capital-omega-char {
+            font-family: fontDescTcgAt;
           }
         }
 

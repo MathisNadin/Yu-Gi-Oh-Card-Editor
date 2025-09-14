@@ -11,8 +11,12 @@ export class CardBuilderService {
   public getNameSpecialCharClass(part: string, tcgAt: boolean) {
     return classNames('special-char-span', {
       'tcg-at': tcgAt && part === '@',
+      // These specific characters are absent from the special-char font
       hash: part === '#',
       plusminus: part === '±',
+      'small-pi': part === 'π',
+      'capital-delta': part === 'Δ',
+      'capital-omega': part === 'Ω',
     });
   }
 
@@ -71,8 +75,8 @@ export class CardBuilderService {
       if (part === '●' || part === '•') {
         nextHasBullet = true;
       } else {
-        // Split the part on '@' and '±' while keeping the symbols
-        const modifiedPart = part.split(/(@|#|±)/).map((token, subIndex) => {
+        // Split the part on specific chars while keeping the symbols
+        const modifiedPart = part.split(/(@|#|±|π|Δ|Ω)/).map((token, subIndex) => {
           if (token === '@') {
             return (
               <span key={`at-${index}-${i}-${subIndex}`} className='at-char'>
@@ -91,6 +95,27 @@ export class CardBuilderService {
             return (
               <span key={`pm-${index}-${i}-${subIndex}`} className='plusminus-char'>
                 ±
+              </span>
+            );
+          }
+          if (token === 'π') {
+            return (
+              <span key={`pm-${index}-${i}-${subIndex}`} className='small-pi-char'>
+                π
+              </span>
+            );
+          }
+          if (token === 'Δ') {
+            return (
+              <span key={`pm-${index}-${i}-${subIndex}`} className='capital-delta-char'>
+                Δ
+              </span>
+            );
+          }
+          if (token === 'Ω') {
+            return (
+              <span key={`pm-${index}-${i}-${subIndex}`} className='capital-omega-char'>
+                Ω
               </span>
             );
           }
