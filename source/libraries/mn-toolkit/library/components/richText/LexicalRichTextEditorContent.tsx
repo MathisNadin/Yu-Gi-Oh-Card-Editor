@@ -11,6 +11,9 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { ListPlugin } from './ListPlugin';
 
 export interface ILexicalRichTextEditorContentProps {
+  inputId: string | undefined;
+  inputName: string | undefined;
+  spellCheck: boolean;
   placeholder: string;
   value: EditorState | undefined;
   onChange: (value: EditorState) => void | Promise<void>;
@@ -19,6 +22,9 @@ export interface ILexicalRichTextEditorContentProps {
 
 // Inner component to manage editor state and plugins
 export function LexicalRichTextEditorContent({
+  inputId,
+  inputName,
+  spellCheck,
   placeholder,
   value,
   onChange,
@@ -68,6 +74,9 @@ export function LexicalRichTextEditorContent({
         contentEditable={
           <ContentEditable
             className='lexical-editor-input'
+            id={inputId}
+            name={inputName}
+            spellCheck={spellCheck}
             aria-placeholder={shownPlaceholder}
             placeholder={<div className='lexical-editor-placeholder'>{shownPlaceholder}</div>}
           />

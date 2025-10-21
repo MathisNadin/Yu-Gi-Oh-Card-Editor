@@ -17,7 +17,7 @@ export class RichTextEditorField<TOOL_IDS extends string = TRichTextBaseToolId> 
 
   public static override get defaultProps(): Omit<
     IRichTextEditorFieldProps,
-    'label' | 'value' | 'onChange' | 'onEditorInit' | 'toolbarOptions'
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName' | 'onEditorInit' | 'toolbarOptions'
   > & { toolbarOptions: typeof RichTextEditor.defaultProps.toolbarOptions } {
     return {
       ...super.defaultProps,
@@ -25,6 +25,7 @@ export class RichTextEditorField<TOOL_IDS extends string = TRichTextBaseToolId> 
       toolbarOptions: RichTextEditor.defaultProps.toolbarOptions,
       toolbarMode: RichTextEditor.defaultProps.toolbarMode,
       placeholder: RichTextEditor.defaultProps.placeholder,
+      spellCheck: RichTextEditor.defaultProps.spellCheck,
     };
   }
 
@@ -40,6 +41,8 @@ export class RichTextEditorField<TOOL_IDS extends string = TRichTextBaseToolId> 
     return (
       <RichTextEditor<TOOL_IDS>
         ref={this.editorRef}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
         initialConfig={this.props.initialConfig}
         toolbarMode={this.props.toolbarMode}
         toolbarOptions={this.props.toolbarOptions}

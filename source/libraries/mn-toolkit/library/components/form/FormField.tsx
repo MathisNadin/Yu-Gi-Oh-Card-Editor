@@ -26,6 +26,9 @@ export interface IFormFieldProps<TFormFieldDataType> extends IContainableProps {
   required?: boolean;
   onValidate?: (field: IFormField) => void | Promise<void>;
 
+  fieldId: string;
+  fieldName: string;
+
   hideLabel?: boolean;
   label: string;
 
@@ -77,8 +80,11 @@ export abstract class FormField<
   protected validators: ((field: this) => void | Promise<void>)[];
   private shouldValidateValue = false;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static override get defaultProps(): Omit<IFormFieldProps<any>, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    IFormFieldProps<any>,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
     };
@@ -259,7 +265,7 @@ export abstract class FormField<
   protected abstract renderControl(): TJSXElementChildren;
 
   protected renderStatusIcon(): TJSXElementChildren {
-    if (!this.props.onValidate) return;
+    if (!this.props.onValidate) return null;
     let statusIcon: TIconId;
     let statusName: string;
     switch (this.state.validationState) {
@@ -290,14 +296,16 @@ export abstract class FormField<
   protected renderLabel() {
     if (!this.props.label) return null;
     return (
-      <HorizontalStack verticalItemAlignment='middle' className='form-label'>
-        <Typography
-          fill={!this.props.infoIcon}
-          bold
-          variant='document'
-          content={this.props.label}
-          className={classNames({ 'form-label-with-info-icon': !!this.props.infoIcon })}
-        />
+      <HorizontalStack verticalItemAlignment='middle' className='form-label-container'>
+        <label
+          htmlFor={this.props.fieldId}
+          className={classNames('form-label', {
+            'with-info-icon': !!this.props.infoIcon,
+            'mn-fill': !this.props.infoIcon,
+          })}
+        >
+          {this.props.label}
+        </label>
 
         {!!this.props.infoIcon && (
           <HorizontalStack

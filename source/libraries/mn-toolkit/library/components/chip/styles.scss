@@ -1,23 +1,27 @@
 // ------------------------- Chip ---------------------------
 
 @mixin colorizeChip($color) {
-  .mn-typography,
-  .mn-icon {
+  .center-label,
+  .icon-left,
+  .icon-right {
     color: color-hsl($light-bg1);
     fill: color-hsl($light-bg1);
   }
 
   &.mn-selected {
     background-color: color-hsl($color);
-    color: color-hsl($bg1);
 
-    .mn-typography {
-      color: color-hsl($bg1);
-    }
-
-    .mn-icon {
+    .center-label,
+    .icon-left {
       color: color-hsl($bg1);
       fill: color-hsl($bg1);
+    }
+
+    &:not(:hover) {
+      .icon-right:hover {
+        color: color-hsl($bg1);
+        fill: color-hsl($bg1);
+      }
     }
   }
 }
@@ -25,7 +29,6 @@
 @mixin themeChip() {
   display: inline-flex;
   border-radius: calc(#{$defaultBorderRadius});
-  padding: calc(#{$tinySpacing}) calc(#{$smallSpacing});
 
   &.no-left-icon {
     padding-left: calc(#{$defaultSpacing});
@@ -37,12 +40,6 @@
 
   &.mn-color-primary {
     @include colorizeChip($primary);
-
-    .icon-right {
-      &:hover {
-        color: color-hsl($secondary);
-      }
-    }
   }
   &.mn-color-secondary {
     @include colorizeChip($secondary);
@@ -76,6 +73,12 @@
   }
   &.mn-color-4 {
     @include colorizeChip($fg4);
+  }
+
+  > .mn-container-inside {
+    .center-label {
+      line-height: 100%;
+    }
   }
 }
 

@@ -64,11 +64,20 @@ $contentHeight: calc($inputHeight - #{$smallSpacing});
     }
   }
 
-  .form-label {
+  .form-label-container {
     margin-bottom: calc(#{$smallSpacing});
 
-    .form-label-with-info-icon {
-      margin-right: calc(#{$tinySpacing});
+    .form-label {
+      display: block;
+      @include themeTypographyDocument();
+      font-weight: bold;
+
+      @include themeTypographyEnrichment();
+      @include themeTypographyColor();
+
+      &.with-info-icon {
+        margin-right: calc(#{$tinySpacing});
+      }
     }
   }
 
@@ -83,7 +92,7 @@ $contentHeight: calc($inputHeight - #{$smallSpacing});
       align-items: center;
     }
 
-    .form-label {
+    .form-label-container {
       transform: none !important;
       position: static;
       flex: 1;
@@ -124,7 +133,7 @@ $contentHeight: calc($inputHeight - #{$smallSpacing});
   }
 
   &.required {
-    .form-label {
+    .form-label-container {
       .mn-typography::after {
         content: '*';
         @include themeFont('medium');

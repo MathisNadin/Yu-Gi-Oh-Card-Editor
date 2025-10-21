@@ -8,7 +8,7 @@ interface IPictureEditorFieldState extends IFormFieldState {}
 export class PictureEditorField extends FormField<IPicture, IPictureEditorFieldProps, IPictureEditorFieldState> {
   public static override get defaultProps(): Omit<
     IPictureEditorFieldProps,
-    'imgAlt' | 'imgHint' | 'label' | 'value' | 'onChange'
+    'imgAlt' | 'imgHint' | 'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
   > {
     return {
       ...super.defaultProps,
@@ -31,6 +31,8 @@ export class PictureEditorField extends FormField<IPicture, IPictureEditorFieldP
     return (
       <PictureEditor
         display={this.props.display}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
         size={this.props.size}
         options={this.props.options}
         placeholder={this.props.placeholder}

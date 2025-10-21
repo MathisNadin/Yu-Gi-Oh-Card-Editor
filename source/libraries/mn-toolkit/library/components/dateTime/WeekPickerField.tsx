@@ -6,7 +6,10 @@ interface IWeekPickerFieldProps extends IFormFieldProps<Date | undefined>, IWeek
 interface IWeekPickerFieldState extends IFormFieldState {}
 
 export class WeekPickerField extends FormField<Date | undefined, IWeekPickerFieldProps, IWeekPickerFieldState> {
-  public static override get defaultProps(): Omit<IWeekPickerFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    IWeekPickerFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       canReset: WeekPicker.defaultProps.canReset,
@@ -21,6 +24,8 @@ export class WeekPickerField extends FormField<Date | undefined, IWeekPickerFiel
     return (
       <WeekPicker
         disabled={this.props.disabled}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         canReset={this.props.canReset}

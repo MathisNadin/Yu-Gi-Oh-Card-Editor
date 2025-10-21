@@ -1,15 +1,5 @@
 .settings {
-  background-color: color-hsl($bg1);
-  $borderColor: color-hsla($fg1, 0.5);
   width: 100%;
-
-  .mn-typography {
-    color: black !important;
-
-    .mn-dark-theme & {
-      color: white !important;
-    }
-  }
 
   .field-icon {
     margin-right: calc(#{$smallSpacing});

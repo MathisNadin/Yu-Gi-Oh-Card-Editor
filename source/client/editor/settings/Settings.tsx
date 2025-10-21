@@ -27,6 +27,7 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
       padding: true,
       gutter: true,
       layout: 'vertical',
+      bg: '1',
     };
   }
 
@@ -160,6 +161,8 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
       <HorizontalStack key='import-export-data' gutter verticalItemAlignment='middle'>
         <Button
           fill
+          size='small'
+          name='Importer des données'
           label='Importer des données'
           color='primary'
           onTap={() => app.$errorManager.handlePromise(app.$settings.importData())}
@@ -167,6 +170,8 @@ export class Settings extends Container<ISettingsProps, ISettingsState> implemen
 
         <Button
           fill
+          size='small'
+          name='Exporter les données'
           label='Exporter les données'
           color='secondary'
           onTap={() => app.$errorManager.handlePromise(app.$settings.exportData())}

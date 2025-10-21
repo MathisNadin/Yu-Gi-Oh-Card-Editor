@@ -86,7 +86,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
 
   private async onHandleDragStart(e: React.UIEvent<HTMLDivElement>) {
     await this.setStateAsync({ handlerDown: true });
-    if (!(e.target instanceof HTMLElement)) return;
+    if (!(e.target instanceof Element)) return;
 
     const target = e.target.parentElement;
     if (!target) return;
@@ -98,7 +98,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
   private onDragStart(e: React.UIEvent<HTMLDivElement>) {
     e.preventDefault();
     const target = e.target;
-    if (!(target instanceof HTMLElement)) return;
+    if (!(target instanceof Element)) return;
 
     const index = Array.prototype.indexOf.call(target.parentNode?.children, target);
     this.setState({ dragSourceIndex: index });
@@ -107,7 +107,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
   private onDragEnter(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const target = e.target;
-    if (!(target instanceof HTMLElement)) return;
+    if (!(target instanceof Element)) return;
 
     const index = Array.prototype.indexOf.call(target.parentNode?.children, target);
     this.setState({ dragTargetIndex: index });
@@ -116,7 +116,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
   private onDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const target = e.target;
-    if (!(target instanceof HTMLElement)) return;
+    if (!(target instanceof Element)) return;
 
     const index = Array.prototype.indexOf.call(target.parentNode?.children, target);
     const bounding = target.getBoundingClientRect();
@@ -127,7 +127,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
   private onDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const target = e.target;
-    if (!(target instanceof HTMLElement)) return;
+    if (!(target instanceof Element)) return;
 
     const index = Array.prototype.indexOf.call(target.parentNode?.children, target);
     this.setState((prevState) => {

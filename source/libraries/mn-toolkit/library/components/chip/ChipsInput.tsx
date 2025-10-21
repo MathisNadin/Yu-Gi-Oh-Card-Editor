@@ -6,6 +6,8 @@ import { IChipItem } from './Chips';
 export interface IChipInputItem<ID = number> extends Omit<IChipItem<ID>, 'actionIcon' | 'onActionTap'> {}
 
 export interface IChipsInputProps<ID = number> extends IContainerProps {
+  inputId?: string;
+  inputName?: string;
   placeholder?: string;
   value: IChipInputItem<ID>[];
   onChange: (value: IChipInputItem<ID>[]) => void | Promise<void>;
@@ -21,8 +23,7 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
     return {
       ...super.defaultProps,
       layout: 'horizontal',
-      gutterX: true,
-      gutterY: 'small',
+      gutter: 'small',
       wrap: true,
       placeholder: 'Écrivez puis faites "entrer" pour valider...',
     };
@@ -84,6 +85,8 @@ export class ChipsInput<ID = number> extends Container<IChipsInputProps<ID>, ICh
       <input
         key='input'
         type='text'
+        id={this.props.inputId}
+        name={this.props.inputName}
         placeholder={this.props.disabled ? '' : this.props.placeholder}
         value={this.state.inputValue}
         onChange={(e) => app.$errorManager.handlePromise(this.handleInputChange(e))}

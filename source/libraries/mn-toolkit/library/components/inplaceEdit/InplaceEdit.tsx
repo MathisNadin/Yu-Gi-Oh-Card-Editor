@@ -71,7 +71,6 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState,
           {...this.renderAttributes()}
           ref={this.base as RefObject<HTMLInputElement>}
           type='text'
-          name={this.props.name}
           disabled={this.props.disabled}
           placeholder={this.props.inputPlaceholder}
           value={this.props.value}

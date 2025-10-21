@@ -1,5 +1,3 @@
-$button-height: calc(#{$defaultItemHeight});
-
 button {
   @include themeFont('regular');
   line-height: 100%;
@@ -12,16 +10,25 @@ button {
 @mixin colorizeButton($bgColor) {
   background-color: color-hsl($bgColor);
   border: 3px solid color-hsla($bgColor, 0);
-  color: color-hsl($bg1);
 
-  .mn-icon {
+  .label,
+  .icon {
     color: color-hsl($bg1);
-    fill: color-hsl($fg1);
+    fill: color-hsl($bg1);
   }
 
   &:hover,
   &:active {
     background-color: lighten-color-hsl($bgColor);
+  }
+}
+
+@mixin buttonSize($paddingX, $paddingY, $fontWeight) {
+  padding: $paddingY $paddingX;
+
+  .label {
+    font-weight: $fontWeight;
+    line-height: 100%;
   }
 }
 
@@ -33,8 +40,6 @@ button {
   border: none;
   width: fit-content;
   height: fit-content;
-  font-weight: 400;
-  letter-spacing: 0.5px;
   max-width: 100%;
 
   cursor: pointer;
@@ -46,32 +51,17 @@ button {
   border-radius: calc(#{$defaultBorderRadius});
   transition: all 0.4s ease;
 
-  .icon {
-    $size: 30px;
-    display: inline-block;
-    width: $size;
-    height: $size;
-    line-height: $size;
+  @include buttonSize($defaultSpacing, $smallSpacing, 500);
+  &.mn-size-small {
+    @include buttonSize($smallSpacing, $tinySpacing, 400);
   }
 
   &.mn-button-icon-and-text {
-    &.mn-icon-position-left {
-      padding-left: calc(#{$smallSpacing});
-    }
+    gap: calc(#{$smallSpacing});
 
     &.mn-icon-position-right {
       flex-direction: row-reverse;
-      padding-right: calc(#{$smallSpacing});
     }
-  }
-
-  .label {
-    @include text-overflow();
-    display: block;
-    flex: 1;
-    line-height: 100%;
-    text-align: center;
-    padding: calc(#{$tinySpacing}) calc(#{$smallSpacing});
   }
 
   &.mn-button-block {
@@ -131,14 +121,27 @@ button {
   border: 1px solid transparent;
   border-color: color-hsl($color);
 
+  .label {
+    color: color-hsl($color);
+  }
+
   &:hover,
   &:active {
     background-color: color-hsl($color);
-    color: color-hsl($bg1);
-  }
 
-  .icon {
-    color: color-hsl($color);
+    .label {
+      color: color-hsl($bg1);
+    }
+  }
+}
+
+@mixin buttonOutlineSize($paddingX, $paddingY, $fontSize, $fontWeight) {
+  padding: $paddingY $paddingX;
+
+  .label {
+    @include themeFont($fontSize);
+    font-weight: $fontWeight;
+    line-height: 100%;
   }
 }
 
@@ -147,9 +150,6 @@ button {
   flex-direction: row;
   align-items: center;
   justify-items: center;
-  min-height: $button-height;
-  max-height: $button-height;
-  line-height: $button-height;
   width: fit-content;
   max-width: 100%;
   cursor: pointer;
@@ -164,22 +164,13 @@ button {
   border-style: solid;
   @include fx(border-color, background-color);
 
-  .label {
-    flex: 1;
-    @include text-overflow();
+  @include buttonOutlineSize($defaultSpacing, $smallSpacing, 'regular', 500);
+  &.mn-size-small {
+    @include buttonOutlineSize($smallSpacing, $tinySpacing, 'regular', 400);
   }
 
   &:hover {
     text-decoration: none;
-  }
-
-  .icon {
-    $size: 30px;
-    display: inline-block;
-    width: $size;
-    height: $size;
-    line-height: $size;
-    margin-right: calc(#{$smallSpacing});
   }
 
   &.mn-color-primary {
@@ -230,14 +221,9 @@ button {
 
 @mixin colorizeButtonLink($color) {
   color: color-hsl($color) !important;
-  background-color: color-hsla($color, 0);
   &:hover {
     color: darken-color-hsl($color) !important;
     text-decoration: none;
-  }
-
-  .icon {
-    fill: color-hsl($fg1);
   }
 }
 
@@ -248,32 +234,13 @@ button {
   border: none;
   @include text-overflow();
   max-width: 100%;
-  min-height: $button-height;
-  max-height: $button-height;
-  line-height: $button-height;
   width: fit-content;
   cursor: pointer;
   user-select: none;
   text-align: center;
   text-shadow: none;
   background-image: none;
-  font-weight: 300;
   position: relative;
-  border-radius: calc(#{$defaultBorderRadius});
-  padding: 0 calc(#{$smallSpacing});
-
-  .label {
-    @include text-overflow();
-  }
-
-  .icon {
-    $size: 30px;
-    display: inline-block;
-    width: $size;
-    height: $size;
-    line-height: $size;
-    margin-right: calc(#{$smallSpacing});
-  }
 
   &.mn-color-primary {
     @include colorizeButtonLink($primary);
@@ -364,7 +331,6 @@ button {
   max-width: 100%;
 
   @include buttonIconSize(calc(#{$defaultItemHeight}), calc(#{$tinySpacing}), $border);
-
   &.mn-size-small {
     @include buttonIconSize(calc(#{$defaultItemHeight} * 3 / 4), calc(#{$tinySpacing}), $border);
   }
@@ -409,33 +375,4 @@ button {
 
 .mn-button-icon {
   @include themeButtonIcon();
-}
-
-// ----------------------------------------------------------
-
-.mn-ghost {
-  z-index: $z-index-content + 1;
-  will-change: opacity, transform !important;
-  transform: translate3d(0, -10px, 0);
-  opacity: 0;
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease !important;
-
-  &.mn-button-icon {
-    &.mn-size-xs {
-      padding: 0 0px;
-      width: 24px;
-      top: 3px;
-      right: 4px;
-      border-radius: 10px;
-    }
-  }
-}
-
-*:hover {
-  > .mn-ghost {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
 }

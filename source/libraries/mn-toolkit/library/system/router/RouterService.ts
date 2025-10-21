@@ -92,7 +92,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     // When the user clicks on the browser's "back" or "forward" button
     window.addEventListener('popstate', () => app.$errorManager.handlePromise(this.documentUrlToState()));
     document.addEventListener('click', (event) => {
-      if (!(event.target instanceof HTMLElement)) return;
+      if (!(event.target instanceof Element)) return;
 
       const link = event.target.closest('a');
       if (!link) return;

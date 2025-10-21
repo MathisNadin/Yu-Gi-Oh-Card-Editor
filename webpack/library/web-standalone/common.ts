@@ -12,6 +12,7 @@ const webStandaloneCommonConfig: Configuration = {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
         removeComments: true,
+        useShortDoctype: false,
       },
     }),
   ],

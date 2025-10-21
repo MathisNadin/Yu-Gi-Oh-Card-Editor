@@ -48,7 +48,7 @@ export class SortableDialog<ID = string> extends AbstractPopup<
 
   protected override renderContent() {
     return [
-      <Sortable key='sortable' padding onSort={(from, to, before) => this.onSortItems(from, to, before)}>
+      <Sortable key='sortable' onSort={(from, to, before) => this.onSortItems(from, to, before)}>
         {this.state.items.map((item, i) => {
           if (isString(item.content)) {
             return <Typography key={i} variant='document' contentType='text' content={item.content} />;

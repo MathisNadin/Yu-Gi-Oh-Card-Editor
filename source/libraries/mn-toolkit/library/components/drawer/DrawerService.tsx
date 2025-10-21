@@ -107,7 +107,7 @@ export class DrawerService extends AbstractObservable<IDrawerListener> {
 
   public async closeLast() {
     if (!this.drawers.length) return;
-    const lastDrawer = this.drawers[this.drawers.length - 1];
+    const lastDrawer = this.drawers.at(-1);
     if (lastDrawer?.ref && typeof lastDrawer.ref.close === 'function') {
       await lastDrawer.ref.close();
     } else {

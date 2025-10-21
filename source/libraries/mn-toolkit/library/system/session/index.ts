@@ -18,6 +18,7 @@ declare global {
 export type TSessionStoreKey = 'session';
 
 export interface ISessionListener {
+  sessionWillUpdate: (addedData: Partial<ISessionData>, nextSessionData: ISessionData) => void | Promise<void>;
   sessionUpdated: (sessionData: ISessionData) => void | Promise<void>;
   sessionCreated: (sessionData: ISessionData) => void | Promise<void>;
   sessionDropped: () => void | Promise<void>;

@@ -1,6 +1,6 @@
 import { classNames, isString } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { IContainerProps, IContainerState, Container } from '../container';
+import { IContainerProps, IContainerState, Container, AnchorContainer } from '../container';
 import { Icon } from '../icon';
 import { Typography } from '../typography';
 import { IMenuItem, isMenuItemActive } from '.';
@@ -114,30 +114,54 @@ export class LeftMenu extends Container<ILeftMenuProps, ILeftMenuState, HTMLElem
   private renderSubItem(subItem: IMenuItem) {
     if (subItem.permission && !app.$permission.hasPermission(subItem.permission)) return null;
     const isActive = isMenuItemActive(subItem);
+
+    const inside: TJSXElementChild[] = [];
+    if (subItem.icon) {
+      inside.push(
+        <Icon
+          key='icon-space'
+          icon={subItem.icon}
+          className='mn-left-menu-icon-space'
+          name={!subItem.href ? undefined : 'Visiter le lien'}
+          onTap={!subItem.href ? undefined : () => {}}
+        />
+      );
+    } else {
+      inside.push(<span key='icon-space-empty' className='mn-left-menu-icon-space' />);
+    }
+    inside.push(
+      <Typography
+        key='mn-left-menu-subitem-text'
+        className='mn-left-menu-subitem-text'
+        noWrap
+        fill
+        bold={isActive}
+        color='1'
+        content={subItem.label}
+      />
+    );
+
     return (
       <li
         key={`mn-left-menu-subitem-${subItem.id}-${subItem.label}`}
         className={classNames('mn-left-menu-subitem', { active: isActive })}
         onClick={(e) => this.onClickItem(e, subItem)}
       >
-        {!subItem.icon && <span className='mn-left-menu-icon' />}
-        {!!subItem.icon && (
-          <Icon
-            icon={subItem.icon}
-            className='mn-left-menu-icon'
-            name={!subItem.href ? undefined : 'Visiter le lien'}
-            onTap={!subItem.href ? undefined : () => this.goToHref(subItem.href)}
-          />
+        {!!subItem.href ? (
+          <AnchorContainer
+            href={subItem.href}
+            fill
+            height='100%'
+            minHeight='100%'
+            maxHeight='100%'
+            gutter='small'
+            verticalItemAlignment='middle'
+          >
+            {inside}
+          </AnchorContainer>
+        ) : (
+          inside
         )}
-
-        <Typography
-          className='mn-left-menu-subitem-text'
-          fill
-          href={subItem.href}
-          bold={isActive}
-          color='1'
-          content={subItem.label}
-        />
       </li>
     );
   }

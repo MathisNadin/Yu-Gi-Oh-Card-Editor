@@ -3,6 +3,8 @@ import { Icon } from '../icon';
 import { Typography } from '../typography';
 
 interface IFilePathInputProps extends IContainerProps {
+  inputId?: string;
+  inputName?: string;
   placeholder?: string;
   defaultPath?: string;
   fileFilters?: TFileFilter[];
@@ -52,7 +54,8 @@ export class FilePathInput extends Container<IFilePathInputProps, IFilePathInput
       <input
         key='input'
         type='text'
-        name={this.props.name}
+        id={this.props.inputId}
+        name={this.props.inputName}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         value={this.props.value}

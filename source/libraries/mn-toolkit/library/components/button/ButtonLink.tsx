@@ -19,6 +19,8 @@ export class ButtonLink<T extends TRouterState = TRouterState> extends Containab
   public static override get defaultProps(): Omit<IButtonLinkProps, 'label'> {
     return {
       ...super.defaultProps,
+      paddingX: 'small',
+      paddingY: 'tiny',
       color: 'neutral',
       disabled: false,
     };

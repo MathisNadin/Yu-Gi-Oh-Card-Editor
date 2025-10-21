@@ -266,7 +266,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
       }
 
       // Attempt expanding right
-      const lastVal = combined[combined.length - 1]!; // might be totalPages
+      const lastVal = combined.at(-1)!; // might be totalPages
       if (lastVal < totalPages) {
         combined.push(lastVal + 1);
         extraNeeded--;
@@ -322,6 +322,7 @@ export class ClassicPager extends Container<IClassicPagerProps, IClassicPagerSta
       <Button
         key={index}
         className={classNames('page', 'number', { current: position === this.props.position })}
+        size='small'
         name={`Aller à la page N°${number}`}
         label={`${number}`}
         onTap={() => this.props.onChange(position)}

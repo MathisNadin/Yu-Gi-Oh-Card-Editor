@@ -1,18 +1,41 @@
+import { isDefined } from 'mn-tools';
 import { JSX } from 'react';
 import { createRoot } from 'react-dom/client';
 
 export class ReactService {
-  private scrollbarSize!: number;
+  private _scrollbarSize?: number;
 
-  public async renderContentInParent(divContent: JSX.Element, parent: Element): Promise<HTMLElement> {
+  public get scrollbarSize(): number {
+    if (isDefined(this._scrollbarSize)) return this._scrollbarSize;
+
+    if (isDefined(document)) {
+      const div = document.createElement('div');
+      this.setStyle(div, {
+        width: 100,
+        height: 100,
+        position: 'absolute',
+        top: -9999,
+        overflow: 'scroll',
+        MsOverflowStyle: 'scrollbar',
+      });
+      document.body.appendChild(div);
+      this._scrollbarSize = div.offsetWidth - div.clientWidth - 1;
+      document.body.removeChild(div);
+    } else {
+      this._scrollbarSize = 0;
+    }
+    return this._scrollbarSize ?? 0;
+  }
+
+  public async renderContentInParent(divContent: JSX.Element, parent: Element): Promise<ChildNode | null> {
     return new Promise((resolve) => {
-      // Rend le contenu JSX dans l'élément parent
+      // Renders the JSX content in the parent element
       const root = createRoot(parent);
       root.render(divContent);
 
-      // Utilise une micro-tâche pour s'assurer que le rendu est terminé
+      // Uses a microtask to ensure rendering is complete
       setTimeout(() => {
-        resolve(parent.lastChild as HTMLElement);
+        resolve(parent.lastChild);
       });
     });
   }
@@ -61,28 +84,6 @@ export class ReactService {
     const { clientHeight } = element;
     const { paddingTop, paddingBottom } = window.getComputedStyle(element);
     return clientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
-  }
-
-  public getScrollbarSize() {
-    if (typeof this.scrollbarSize !== 'undefined') return this.scrollbarSize;
-    /* istanbul ignore else */
-    if (typeof document !== 'undefined') {
-      const div = document.createElement('div');
-      this.setStyle(div, {
-        width: 100,
-        height: 100,
-        position: 'absolute',
-        top: -9999,
-        overflow: 'scroll',
-        MsOverflowStyle: 'scrollbar',
-      });
-      document.body.appendChild(div);
-      this.scrollbarSize = div.offsetWidth - div.clientWidth - 1;
-      document.body.removeChild(div);
-    } else {
-      this.scrollbarSize = 0;
-    }
-    return this.scrollbarSize ?? 0;
   }
 
   public domReady(fn: () => void) {

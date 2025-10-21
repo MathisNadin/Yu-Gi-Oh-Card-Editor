@@ -10,7 +10,10 @@ export class DateTimePickerField extends FormField<
   IDateTimePickerFieldProps,
   IDateTimePickerFieldState
 > {
-  public static override get defaultProps(): Omit<IDateTimePickerFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    IDateTimePickerFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       canReset: DateTimePicker.defaultProps.canReset,
@@ -25,6 +28,8 @@ export class DateTimePickerField extends FormField<
     return (
       <DateTimePicker
         disabled={this.props.disabled}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         canReset={this.props.canReset}

@@ -1,7 +1,58 @@
 ## mn-toolkit change log
 
+## 8.5.1
+
+- gutter entre les chips réglable sur le field
+- mn-ghost contraint aux conteneurs basiques
+
+## 8.5.0
+
+- bump to 8.5.0
+- oubli sur chips
+- icon size peut être basé sur une font size pourcollerà un texte et gérer le responsive
+- content type flexible sur les crumbs
+- spellcheck sur les field input spécifiques + fix props du password field sur son input
+- implémentation concrète de label, avec for, id, et name sur les fields etboutons + fix arborescence ul li dans checbox tree
+- style inutile
+
+## 8.4.3
+
+- bump to 8.4.3
+- fix key left menu subitem text
+
+## 8.4.2
+
+- bump to 8.4.2
+- utilisation de instanceof Element au lieu de HTMLElement là où ça a du sens
+- fix taille de l'ancre dans un left menu subitem
+
+## 8.4.1
+
+- bump to 8.4.1
+- fix style et position de l'ancre dans les subitems de left menu
+- meilleur gutter dans les chips input et select
+
+## 8.4.0
+
+- bump to 8.4.0
+- amelioration de walkthrough et tip
+- fix couleur classic pager
+- reajustement bg 1
+- amelioration design boutons et dialogs
+
+## 8.3.12
+
+- bump to 8.3.12
+- ajout de sessionWillUpdate
+
+## 8.3.11
+
+- bump to 8.3.11
+- add stats svg
+
 ## 8.3.10
 
+- bump to 8.3.10
 - nouvelles svg
 
 ## 8.3.9

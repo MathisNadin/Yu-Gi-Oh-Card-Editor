@@ -106,8 +106,12 @@ export class SessionService extends AbstractObservable<ISessionListener> impleme
   }
 
   public async update(data: Partial<ISessionData>) {
-    if (this._data) extend(this._data, data);
-    else this._data = data as ISessionData;
+    if (this._data) {
+      extend(this._data, data);
+    } else {
+      this._data = data as ISessionData;
+    }
+    await this.dispatchAsync('sessionWillUpdate', data, this._data);
 
     await app.$store.set<ISessionData, TSessionStoreKey>('session', this._data);
     await this.dispatchAsync('sessionUpdated', this._data);

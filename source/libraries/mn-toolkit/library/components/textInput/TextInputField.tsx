@@ -1,4 +1,5 @@
 import { createRef } from 'react';
+import { TJSXElementChildren } from '../../system';
 import { FormField, IFormFieldProps, IFormFieldState, TFormField } from '../form';
 import { ITextInputSpecificProps, TextInput } from './TextInput';
 
@@ -15,7 +16,10 @@ export class TextInputField<PROPS extends ITextInputFieldProps, STATE extends IT
 > {
   protected inputElement = createRef<TextInput>();
 
-  public static override get defaultProps(): Omit<ITextInputFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    ITextInputFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       spellCheck: TextInput.defaultProps.spellCheck,
@@ -37,13 +41,16 @@ export class TextInputField<PROPS extends ITextInputFieldProps, STATE extends IT
     );
   }
 
-  protected override renderControl() {
+  protected override renderControl(): TJSXElementChildren {
     return (
       <TextInput
         ref={this.inputElement}
-        name={this.props.name}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
+        autoComplete={this.props.autoComplete}
+        inputMode={this.props.inputMode}
         spellCheck={this.props.spellCheck}
-        inputType={this.props.inputType!}
+        inputType={this.props.inputType}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         minLength={this.props.minLength}

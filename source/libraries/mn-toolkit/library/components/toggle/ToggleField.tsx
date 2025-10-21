@@ -7,7 +7,7 @@ interface IToggleFieldProps extends IFormFieldProps<boolean>, IToggleProps {}
 interface IToggleFieldState extends IFormFieldState {}
 
 export class ToggleField extends FormField<boolean, IToggleFieldProps, IToggleFieldState> {
-  public static get defaultProps(): Omit<IToggleFieldProps, 'value' | 'onChange'> {
+  public static get defaultProps(): Omit<IToggleFieldProps, 'value' | 'onChange' | 'fieldId' | 'fieldName'> {
     return {
       ...super.defaultProps,
       hideLabel: true,
@@ -27,7 +27,13 @@ export class ToggleField extends FormField<boolean, IToggleFieldProps, IToggleFi
     return (
       <HorizontalStack verticalItemAlignment='middle' width='100%' gutter>
         {this.renderLabel()}
-        <Toggle disabled={this.props.disabled} value={this.value} onChange={(value) => this.onChange(value)} />
+        <Toggle
+          disabled={this.props.disabled}
+          id={this.props.fieldId}
+          name={this.props.fieldName}
+          value={this.value}
+          onChange={(value) => this.onChange(value)}
+        />
       </HorizontalStack>
     );
   }

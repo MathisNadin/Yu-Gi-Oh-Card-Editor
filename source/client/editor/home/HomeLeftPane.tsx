@@ -98,13 +98,17 @@ export class HomeLeftPane extends Container<IHomeLeftPaneProps, IHomeLeftPaneSta
       <HorizontalStack key='button-tabs' className='button-tabs' gutter itemAlignment='center'>
         <Button
           className={classNames('button-tab', 'master-button-tab', { selected: isMaster })}
+          size='small'
           color={isMaster ? 'primary' : '4'}
+          name='Master'
           label='Master'
           onTap={() => this.onTabChange('master')}
         />
         <Button
           className={classNames('button-tab', 'rush-button-tab', { selected: isRush })}
+          size='small'
           color={isRush ? 'negative' : '4'}
+          name='Rush'
           label='Rush'
           onTap={() => this.onTabChange('rush')}
         />

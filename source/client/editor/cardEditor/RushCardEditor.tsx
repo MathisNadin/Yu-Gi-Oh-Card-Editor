@@ -395,6 +395,8 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
       <HorizontalStack key='top-options' padding className='top-options'>
         <Button
           disabled={this.state.rendering}
+          size='small'
+          name={this.state.rendering ? 'Rendu en cours...' : 'Faire le rendu'}
           label={this.state.rendering ? 'Rendu en cours...' : 'Faire le rendu'}
           color='neutral'
           onTap={() => this.renderCurrentCard()}
@@ -403,6 +405,8 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         {!app.$card.tempCurrentCard && (
           <Button
             disabled={this.state.rendering}
+            size='small'
+            name='Réinitialiser'
             label='Réinitialiser'
             color='negative'
             onTap={() => app.$card.resetCurrentCard()}
@@ -411,6 +415,8 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
         <Spacer />
         <Button
           disabled={this.state.rendering}
+          size='small'
+          name='Sauvegarder'
           label='Sauvegarder'
           color='positive'
           onTap={() => app.$card.saveCurrentOrTempToLocal()}

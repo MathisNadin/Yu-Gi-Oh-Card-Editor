@@ -370,11 +370,27 @@ export class CardImportDialog extends AbstractPopup<
     if (!step) return [];
     switch (website) {
       case 'yugipedia':
-        return [{ disabled: importing, label: 'Importer', color: 'positive', onTap: () => this.doYugipediaImport() }];
+        return [
+          {
+            disabled: importing,
+            name: 'Importer',
+            label: 'Importer',
+            color: 'positive',
+            onTap: () => this.doYugipediaImport(),
+          },
+        ];
 
       case 'yuginews':
         if (!cardsData?.length) return [];
-        return [{ disabled: importing, label: 'Importer', color: 'positive', onTap: () => this.doYuginewsImport() }];
+        return [
+          {
+            disabled: importing,
+            name: 'Importer',
+            label: 'Importer',
+            color: 'positive',
+            onTap: () => this.doYuginewsImport(),
+          },
+        ];
 
       default:
         return [];
@@ -511,7 +527,13 @@ export class CardImportDialog extends AbstractPopup<
             value={yuginewsUrl}
             onChange={(value) => this.setState({ yuginewsUrl: value })}
           />
-          <Button color='neutral' label='Rechercher' onTap={() => this.getYuginewsCards()} />
+          <Button
+            size='small'
+            color='neutral'
+            name='Rechercher'
+            label='Rechercher'
+            onTap={() => this.getYuginewsCards()}
+          />
         </HorizontalStack>
 
         {yuginewsImporting && <Spinner />}
@@ -607,7 +629,9 @@ export class CardImportDialog extends AbstractPopup<
 
         <VerticalStack itemAlignment='center' gutter fill>
           <Button
+            size='small'
             color='neutral'
+            name='Ajouter un terme à remplacer dans les textes de la carte'
             label='Ajouter un terme à remplacer dans les textes de la carte'
             onTap={() => this.addReplaceMatrix()}
           />

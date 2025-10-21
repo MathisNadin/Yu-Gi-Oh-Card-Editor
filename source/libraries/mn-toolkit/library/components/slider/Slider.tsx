@@ -149,6 +149,7 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
       <button
         key='slider-thumb'
         className='slider-thumb'
+        name='slider-thumb'
         style={{
           height: SLIDER_THUMB_SIZE,
           width: SLIDER_THUMB_SIZE,

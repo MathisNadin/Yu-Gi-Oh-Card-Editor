@@ -10,7 +10,10 @@ export class CheckboxTreeField<ID = number> extends FormField<
   ICheckboxTreeFieldProps<ID>,
   ICheckboxTreeFieldState
 > {
-  public static override get defaultProps(): Omit<ICheckboxTreeFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    ICheckboxTreeFieldProps,
+    'label' | 'items' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
     };
@@ -24,6 +27,8 @@ export class CheckboxTreeField<ID = number> extends FormField<
     return (
       <CheckboxTree<ID>
         disabled={this.props.disabled}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
         items={this.props.items}
         value={this.value}
         onChange={(value) => this.onChange(value)}

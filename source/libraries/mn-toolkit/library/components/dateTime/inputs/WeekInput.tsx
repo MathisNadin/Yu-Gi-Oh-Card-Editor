@@ -6,6 +6,8 @@ import { Typography } from '../../typography';
 import { TDidUpdateSnapshot } from '../../containable';
 
 export interface IWeekInputProps extends IContainerProps {
+  inputId?: string;
+  inputName?: string;
   yearRange?: [number, number];
   canReset: boolean;
   value: Date | undefined;
@@ -235,6 +237,8 @@ export class WeekInput extends Container<IWeekInputProps, IWeekInputState> {
       <input
         key='week-input'
         ref={this.inputRef}
+        id={this.props.inputId}
+        name={this.props.inputName}
         type='text'
         placeholder='SS/AAAA'
         value={value}

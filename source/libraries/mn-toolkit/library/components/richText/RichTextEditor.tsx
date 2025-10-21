@@ -85,6 +85,9 @@ const defaultToolbarSettings: { [key in TRichTextBaseToolId]: boolean } = {
 };
 
 export interface IRichTextEditorProps<TOOL_IDS extends string = TRichTextBaseToolId> extends IContainableProps {
+  inputId?: string;
+  inputName?: string;
+  spellCheck: boolean;
   initialConfig: InitialConfigType;
   toolbarMode: 'fixed' | 'ghost';
   toolbarOptions: IToolbarPluginProps<TOOL_IDS>['options'];
@@ -118,6 +121,7 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
       toolbarOptions: defaultToolbarSettings,
       toolbarMode: 'ghost',
       placeholder: 'Écrivez ici...',
+      spellCheck: true,
     };
   }
 
@@ -187,7 +191,7 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
 
     window.setTimeout(() => {
       const root = this.base.current;
-      const active = document.activeElement as HTMLElement | null;
+      const active = document.activeElement;
       if (!root || !active) return;
 
       const isInOverlayToolbar = !!this.overlayToolbarRef.current && this.overlayToolbarRef.current.contains(active);
@@ -230,6 +234,9 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
         <div ref={this.base} {...this.renderAttributes()}>
           {this.renderToolbar()}
           <LexicalRichTextEditorContent
+            inputId={this.props.inputId}
+            inputName={this.props.inputName}
+            spellCheck={this.props.spellCheck}
             placeholder={this.props.placeholder}
             value={this.state.editorState}
             onChange={this.onChange}

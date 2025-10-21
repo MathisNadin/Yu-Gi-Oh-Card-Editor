@@ -1,7 +1,7 @@
 import { JSX } from 'react';
 import { classNames } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { Container, IContainerProps, IContainerState } from '../container';
+import { Containable, IContainableProps, IContainableState } from '../containable';
 import { Checkbox } from './Checkbox';
 
 export interface ICheckboxTreeItem<ID = number> {
@@ -18,16 +18,18 @@ export interface ICheckboxTreeSpecificProps<ID = number> {
   onChange: (value: ID[]) => void | Promise<void>;
 }
 
-interface ICheckboxTreeProps<ID = number> extends ICheckboxTreeSpecificProps<ID>, IContainerProps<HTMLUListElement> {}
+interface ICheckboxTreeProps<ID = number> extends ICheckboxTreeSpecificProps<ID>, IContainableProps<HTMLUListElement> {}
 
-interface ICheckboxTreeState extends IContainerState {}
+interface ICheckboxTreeState extends IContainableState {}
 
-export class CheckboxTree<ID = number> extends Container<ICheckboxTreeProps<ID>, ICheckboxTreeState, HTMLUListElement> {
+export class CheckboxTree<ID = number> extends Containable<
+  ICheckboxTreeProps<ID>,
+  ICheckboxTreeState,
+  HTMLUListElement
+> {
   public static get defaultProps(): Omit<ICheckboxTreeProps, 'items' | 'value' | 'onChange'> {
     return {
       ...super.defaultProps,
-      gutter: true,
-      layout: 'vertical',
     };
   }
 
@@ -79,7 +81,7 @@ export class CheckboxTree<ID = number> extends Container<ICheckboxTreeProps<ID>,
     const path = this.findPathById(this.props.items, id);
     if (!path) return; // ID not found in the tree
 
-    const currentItem = path[path.length - 1];
+    const currentItem = path.at(-1);
     if (!currentItem) return;
 
     if (checked) {
@@ -138,7 +140,7 @@ export class CheckboxTree<ID = number> extends Container<ICheckboxTreeProps<ID>,
   public override render(): TJSXElementChild {
     return (
       <ul ref={this.base} {...this.renderAttributes()}>
-        {this.inside}
+        {this.children}
       </ul>
     );
   }

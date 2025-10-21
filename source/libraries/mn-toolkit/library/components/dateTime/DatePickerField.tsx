@@ -6,7 +6,10 @@ interface IDatePickerFieldProps extends IFormFieldProps<Date | undefined>, IDate
 interface IDatePickerFieldState extends IFormFieldState {}
 
 export class DatePickerField extends FormField<Date | undefined, IDatePickerFieldProps, IDatePickerFieldState> {
-  public static override get defaultProps(): Omit<IDatePickerFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    IDatePickerFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       canReset: DatePicker.defaultProps.canReset,
@@ -21,6 +24,8 @@ export class DatePickerField extends FormField<Date | undefined, IDatePickerFiel
     return (
       <DatePicker
         disabled={this.props.disabled}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         canReset={this.props.canReset}

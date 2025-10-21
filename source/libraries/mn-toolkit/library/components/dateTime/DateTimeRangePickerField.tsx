@@ -10,7 +10,10 @@ export class DateTimeRangePickerField extends FormField<
   IDateTimeRangePickerFieldProps,
   IDateTimeRangePickerFieldState
 > {
-  public static override get defaultProps(): Omit<IDateTimeRangePickerFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    IDateTimeRangePickerFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       canReset: DateTimeRangePicker.defaultProps.canReset,
@@ -29,6 +32,10 @@ export class DateTimeRangePickerField extends FormField<
     return (
       <DateTimeRangePicker
         disabled={this.props.disabled}
+        lowerFieldId={this.props.fieldId}
+        lowerFieldName={this.props.fieldName}
+        higherFieldId={`${this.props.fieldId}-higher`}
+        higherFieldName={`${this.props.fieldName}-higher`}
         fill={this.props.fill}
         lowerPopupTitle={this.props.lowerPopupTitle}
         higherPopupTitle={this.props.higherPopupTitle}

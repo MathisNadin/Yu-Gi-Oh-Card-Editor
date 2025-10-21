@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { IRouterHrefParams, TRouterState } from '../../system';
 import { IActionsPopoverAction } from '../popover';
+import { TControlTextContentType } from '../typography';
 import { HeaderService } from './HeaderService';
 
 export * from './AbstractView';
@@ -23,6 +24,7 @@ export interface IHeaderComponent {
 
 export interface IHeaderCrumb<T extends TRouterState = TRouterState> {
   title: string;
+  contentType?: TControlTextContentType;
   href?: IRouterHrefParams<T>;
 }
 

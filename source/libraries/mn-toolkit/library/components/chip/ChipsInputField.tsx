@@ -12,7 +12,7 @@ export class ChipsInputField<ID = number> extends FormField<
 > {
   public static override get defaultProps(): Omit<
     IChipsInputFieldProps,
-    'label' | 'value' | 'onChange' | 'onAskCreateId'
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName' | 'onAskCreateId'
   > {
     return {
       ...super.defaultProps,
@@ -27,6 +27,8 @@ export class ChipsInputField<ID = number> extends FormField<
     return (
       <ChipsInput<ID>
         disabled={this.props.disabled}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
         placeholder={this.props.placeholder}
         value={this.props.value}
         onChange={(value) => this.onChange(value)}

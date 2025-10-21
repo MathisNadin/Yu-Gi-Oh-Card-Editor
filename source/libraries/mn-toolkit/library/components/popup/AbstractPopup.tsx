@@ -38,8 +38,6 @@ export abstract class AbstractPopup<
     return {
       ...super.defaultProps,
       layout: 'vertical',
-      gutter: true,
-      padding: true,
       bg: '1',
       zIndex: 'popup',
       title: '',
@@ -138,7 +136,8 @@ export abstract class AbstractPopup<
         <VerticalStack
           key='mn-popup-content-container'
           className='mn-popup-content-container'
-          gutter='small'
+          gutter={this.contentContainerGutter}
+          padding
           fill={this.state.active}
           scroll={this.scrollInContent}
         >
@@ -148,6 +147,10 @@ export abstract class AbstractPopup<
 
       this.state.loaded && this.renderFooter(),
     ];
+  }
+
+  protected get contentContainerGutter(): IContainerProps['gutter'] {
+    return 'small';
   }
 
   protected get scrollInContent() {
@@ -160,7 +163,7 @@ export abstract class AbstractPopup<
 
   protected renderHeader(): TJSXElementChild {
     return (
-      <HorizontalStack key='header' className='mn-popup-header'>
+      <HorizontalStack key='header' className='mn-popup-header' bg='3' padding>
         <Typography
           className='mn-popup-title'
           bold
@@ -185,7 +188,7 @@ export abstract class AbstractPopup<
     const buttons = this.buttons;
     if (!buttons.length) return null;
     return (
-      <HorizontalStack key='footer' className='mn-popup-footer' gutter itemAlignment='right'>
+      <HorizontalStack key='footer' className='mn-popup-footer' bg='2' padding gutter itemAlignment='right'>
         {buttons.map((props, i) => (
           <Button {...props} key={`popup-footer-button-${i}`} />
         ))}

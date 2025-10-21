@@ -331,21 +331,39 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
       !cardsToRender && (
         <HorizontalStack key='buttons' padding gutter itemAlignment='center'>
           {selectAllMode && (
-            <Button icon='toolkit-check-mark' color='positive' label='Tout' onTap={() => this.selectAll()} />
+            <Button
+              icon='toolkit-check-mark'
+              size='small'
+              color='positive'
+              name='Tout'
+              label='Tout'
+              onTap={() => this.selectAll()}
+            />
           )}
           {!selectAllMode && (
-            <Button icon='toolkit-check-mark' color='negative' label='Tout' onTap={() => this.unselectAll()} />
+            <Button
+              icon='toolkit-check-mark'
+              size='small'
+              color='negative'
+              name='Tout'
+              label='Tout'
+              onTap={() => this.unselectAll()}
+            />
           )}
           <Button
             fill
             disabled={!selectedCardsNum}
+            size='small'
             color='neutral'
+            name='Rendu'
             label='Rendu'
             onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
           />
           <Button
             fill
+            size='small'
             color='primary'
+            name='Importer'
             label='Importer'
             onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
           />

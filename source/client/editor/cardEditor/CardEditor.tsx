@@ -390,6 +390,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
       <HorizontalStack key='top-options' padding className='top-options'>
         <Button
           disabled={this.state.rendering}
+          size='small'
+          name={this.state.rendering ? 'Rendu en cours...' : 'Faire le rendu'}
           label={this.state.rendering ? 'Rendu en cours...' : 'Faire le rendu'}
           color='neutral'
           onTap={() => this.renderCurrentCard()}
@@ -398,6 +400,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         {!app.$card.tempCurrentCard && (
           <Button
             disabled={this.state.rendering}
+            size='small'
+            name='Réinitialiser'
             label='Réinitialiser'
             color='negative'
             onTap={() => app.$card.resetCurrentCard()}
@@ -406,6 +410,8 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
         <Spacer />
         <Button
           disabled={this.state.rendering}
+          size='small'
+          name='Sauvegarder'
           label='Sauvegarder'
           color='positive'
           onTap={() => app.$card.saveCurrentOrTempToLocal()}
@@ -923,7 +929,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <Button color='positive' label='Générer' onTap={() => this.generatePasscode()} />
+          <Button size='small' color='positive' name='Générer' label='Générer' onTap={() => this.generatePasscode()} />
         </HorizontalStack>
 
         <Grid>

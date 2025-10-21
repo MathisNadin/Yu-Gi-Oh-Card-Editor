@@ -24,7 +24,7 @@ export class TipService {
       focus: true,
       ignoreFocus: true,
       innerContent: (
-        <HorizontalStack gutter className='mn-tip-content'>
+        <HorizontalStack key='inner-content' className='mn-tip-content' gutter>
           <Icon icon={tip.icon} />
           <Typography variant='label' content={tip.message} />
         </HorizontalStack>

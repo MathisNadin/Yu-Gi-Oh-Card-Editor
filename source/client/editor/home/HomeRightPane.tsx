@@ -67,14 +67,18 @@ export class HomeRightPane
         {!!app.$card.localCards?.length && (
           <Button
             className={classNames('button-tab', 'library-button-tab', { selected: isLibrary })}
+            size='small'
             color={isLibrary ? 'neutral' : '4'}
+            name='Bibliothèque'
             label='Bibliothèque'
             onTap={() => this.onTabChange('library')}
           />
         )}
         <Button
           className={classNames('button-tab', 'settings-button-tab', { selected: !isLibrary })}
+          size='small'
           color={!isLibrary ? 'info' : '4'}
+          name='Paramètres'
           label='Paramètres'
           onTap={() => this.onTabChange('settings')}
         />

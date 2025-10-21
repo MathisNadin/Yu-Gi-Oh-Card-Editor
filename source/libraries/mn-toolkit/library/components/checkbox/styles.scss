@@ -94,6 +94,9 @@
 }
 
 @mixin themeCheckboxTree() {
+  flex-direction: column;
+  gap: calc(#{$defaultSpacing});
+
   // Reset ul/li styles
   list-style: none;
   margin: 0;

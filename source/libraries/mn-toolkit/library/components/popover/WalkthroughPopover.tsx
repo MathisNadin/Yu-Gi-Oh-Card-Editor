@@ -1,5 +1,6 @@
+import { isString } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { HorizontalStack } from '../container';
+import { HorizontalStack, IContainerProps } from '../container';
 import { ButtonLink } from '../button';
 import {
   IAbstractPopoverProps,
@@ -7,7 +8,6 @@ import {
   AbstractPopover,
   IAbstractPopoverStyle,
 } from './AbstractPopover';
-import { isString } from 'mn-tools';
 
 type TWalkthroughPopoverPosition = 'top' | 'bottom';
 
@@ -161,6 +161,10 @@ export class WalkthroughPopover<
       style['--triangle-x'] = this.state.style['--triangle-x'];
     }
     return style;
+  }
+
+  protected override get contentWrapperPadding(): IContainerProps['padding'] {
+    return 'small';
   }
 
   protected override renderContent(): TJSXElementChild {

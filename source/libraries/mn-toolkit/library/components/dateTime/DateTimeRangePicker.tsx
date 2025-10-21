@@ -9,6 +9,10 @@ export interface IDateTimeRange {
 }
 
 export interface IDateTimeRangePickerProps extends IContainerProps {
+  lowerFieldId?: string;
+  lowerFieldName?: string;
+  higherFieldId?: string;
+  higherFieldName?: string;
   lowerPopupTitle?: string;
   higherPopupTitle?: string;
   yearRange?: [number, number];
@@ -58,6 +62,8 @@ export class DateTimeRangePicker extends Container<IDateTimeRangePickerProps, ID
     return [
       <DateTimePicker
         key='lower-date-time-picker'
+        inputId={this.props.lowerFieldId}
+        inputName={this.props.lowerFieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         popupTitle={this.props.lowerPopupTitle}
@@ -68,6 +74,8 @@ export class DateTimeRangePicker extends Container<IDateTimeRangePickerProps, ID
       <Icon key='separator' icon='toolkit-minus' />,
       <DateTimePicker
         key='higher-date-time-picker'
+        inputId={this.props.higherFieldId}
+        inputName={this.props.higherFieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         popupTitle={this.props.higherPopupTitle}

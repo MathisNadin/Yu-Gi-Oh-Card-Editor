@@ -12,7 +12,10 @@ export interface INumberInputFieldState extends IFormFieldState {}
 export class NumberInputField extends FormField<number | undefined, INumberInputFieldProps, INumberInputFieldState> {
   protected inputElement = createRef<NumberInput>();
 
-  public static override get defaultProps(): Omit<INumberInputFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    INumberInputFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
     };
@@ -45,7 +48,8 @@ export class NumberInputField extends FormField<number | undefined, INumberInput
     return (
       <NumberInput
         ref={this.inputElement}
-        name={this.props.name}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
         disabled={this.props.disabled}
         autofocus={this.props.autofocus}
         placeholder={this.props.placeholder}

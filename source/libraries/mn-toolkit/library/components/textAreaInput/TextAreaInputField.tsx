@@ -6,7 +6,10 @@ interface ITextAreaInputFieldProps extends IFormFieldProps<string>, ITextAreaInp
 interface ITextAreaInputFieldState extends IFormFieldState {}
 
 export class TextAreaInputField extends FormField<string, ITextAreaInputFieldProps, ITextAreaInputFieldState> {
-  public static override get defaultProps(): Omit<ITextAreaInputFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    ITextAreaInputFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
     };
@@ -25,7 +28,10 @@ export class TextAreaInputField extends FormField<string, ITextAreaInputFieldPro
   protected override renderControl() {
     return (
       <TextAreaInput
-        name={this.props.name}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
+        inputMode={this.props.inputMode}
+        autoComplete={this.props.autoComplete}
         disabled={this.props.disabled}
         minRows={this.props.minRows}
         maxRows={this.props.maxRows}

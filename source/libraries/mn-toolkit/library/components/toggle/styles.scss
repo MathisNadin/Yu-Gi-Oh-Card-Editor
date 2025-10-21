@@ -84,7 +84,7 @@
     min-height: calc($inputHeight + #{$smallSpacing});
     max-height: calc($inputHeight + #{$smallSpacing});
 
-    .form-label {
+    .form-label-container {
       flex: 1;
       overflow: hidden;
       margin-bottom: 0;

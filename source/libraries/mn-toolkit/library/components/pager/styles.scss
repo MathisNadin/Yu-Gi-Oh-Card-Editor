@@ -3,6 +3,10 @@ $pager-page-size: calc(#{$defaultItemHeight});
 @mixin colorizeClassicPager($bgColor) {
   .pages {
     .page.number {
+      .label {
+        color: color-hsl($fg1);
+      }
+
       &:hover {
         background-color: color-hsla($bgColor, 0.2);
       }
@@ -10,16 +14,18 @@ $pager-page-size: calc(#{$defaultItemHeight});
       &.current {
         background-color: color-hsl($bgColor);
 
-        @if $bgColor == $bg1 {
-          color: color-hsl($fg1);
-        } @else if $bgColor == $bg2 {
-          color: color-hsl($fg1);
-        } @else if $bgColor == $bg3 {
-          color: color-hsl($fg1);
-        } @else if $bgColor == $bg4 {
-          color: color-hsl($fg1);
-        } @else {
-          color: color-hsl($bg1);
+        .label {
+          @if $bgColor == $bg1 {
+            color: color-hsl($fg1);
+          } @else if $bgColor == $bg2 {
+            color: color-hsl($fg1);
+          } @else if $bgColor == $bg3 {
+            color: color-hsl($fg1);
+          } @else if $bgColor == $bg4 {
+            color: color-hsl($fg1);
+          } @else {
+            color: color-hsl($bg1);
+          }
         }
       }
     }

@@ -267,17 +267,23 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
         <HorizontalStack key='size-fields' gutter wrap>
           <VerticalStack gutter fill>
             <NumberInputField
+              fieldId='x'
+              fieldName='x'
               fill
               min={0}
               max={100}
+              name='X'
               label='X'
               value={crop.x}
               onChange={(x) => this.onCropPropertyChange('x', x || 0)}
             />
             <NumberInputField
+              fieldId='y'
+              fieldName='y'
               fill
               min={0}
               max={100}
+              name='Y'
               label='Y'
               value={crop.y}
               onChange={(y) => this.onCropPropertyChange('y', y || 0)}
@@ -286,17 +292,23 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
 
           <VerticalStack gutter fill>
             <NumberInputField
+              fieldId='width'
+              fieldName='width'
               fill
               min={1}
               max={100}
+              name='Largeur'
               label='Largeur'
               value={crop.width}
               onChange={(width) => this.onCropPropertyChange('width', width || 0)}
             />
             <NumberInputField
+              fieldId='height'
+              fieldName='height'
               fill
               min={1}
               max={100}
+              name='Hauteur'
               label='Hauteur'
               value={crop.height}
               onChange={(height) => this.onCropPropertyChange('height', height || 0)}
@@ -308,7 +320,9 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
       !!croppedArtworkBase64?.length && (
         <HorizontalStack key='card-preset' verticalItemAlignment='middle' gutter wrap>
           <Button
+            size='small'
             color='neutral'
+            name='Appliquer'
             label='Appliquer'
             onTap={() => (this.props.isRush ? this.setFullRushCardPreset() : this.setFullCardPreset())}
           />
@@ -322,7 +336,13 @@ export class ArtworkEditing extends Container<IArtworkEditingProps, IArtworkEdit
 
       !!croppedArtworkBase64?.length && !this.props.isRush && (
         <HorizontalStack key='pendulum-card-preset' verticalItemAlignment='middle' gutter wrap>
-          <Button color='info' label='Appliquer' onTap={() => this.setFullPendulumCardPreset()} />
+          <Button
+            size='small'
+            color='info'
+            name='Appliquer'
+            label='Appliquer'
+            onTap={() => this.setFullPendulumCardPreset()}
+          />
           <Typography
             variant='help'
             contentType='text'

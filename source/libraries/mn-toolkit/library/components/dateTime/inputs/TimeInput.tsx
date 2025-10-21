@@ -4,6 +4,8 @@ import { TJSXElementChildren } from '../../../system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../../containable';
 
 export interface ITimeInputProps extends IContainableProps {
+  inputId?: string;
+  inputName?: string;
   canReset: boolean;
   value: Date | undefined;
   onChange: (value: Date | undefined) => void | Promise<void>;
@@ -209,6 +211,8 @@ export class TimeInput extends Containable<ITimeInputProps, ITimeInputState> {
       <input
         ref={this.inputRef}
         key='time-input'
+        id={this.props.inputId}
+        name={this.props.inputName}
         type='text'
         placeholder='HH:MM'
         value={value}

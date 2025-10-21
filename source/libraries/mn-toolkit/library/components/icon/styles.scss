@@ -14,6 +14,14 @@
   object-fit: cover;
   object-position: center;
 
+  $size: var(--icon-size);
+  width: $size;
+  min-width: $size;
+  max-width: $size;
+  height: $size;
+  min-height: $size;
+  max-height: $size;
+
   &.mn-color-primary {
     @include colorizeIcon($primary);
   }

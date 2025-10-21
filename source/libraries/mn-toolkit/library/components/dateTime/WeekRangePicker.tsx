@@ -9,6 +9,10 @@ export interface IWeekRange {
 }
 
 export interface IWeekRangePickerProps extends IContainerProps {
+  lowerFieldId?: string;
+  lowerFieldName?: string;
+  higherFieldId?: string;
+  higherFieldName?: string;
   lowerPopupTitle: string;
   higherPopupTitle: string;
   yearRange?: [number, number];
@@ -59,6 +63,8 @@ export class WeekRangePicker extends Container<IWeekRangePickerProps, IWeekRange
     return [
       <WeekPicker
         key='lower-week-picker'
+        inputId={this.props.lowerFieldId}
+        inputName={this.props.lowerFieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         popupTitle={this.props.lowerPopupTitle}
@@ -69,6 +75,8 @@ export class WeekRangePicker extends Container<IWeekRangePickerProps, IWeekRange
       <Icon key='separator' className='separator' icon='toolkit-minus' />,
       <WeekPicker
         key='higher-week-picker'
+        inputId={this.props.higherFieldId}
+        inputName={this.props.higherFieldName}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         popupTitle={this.props.higherPopupTitle}

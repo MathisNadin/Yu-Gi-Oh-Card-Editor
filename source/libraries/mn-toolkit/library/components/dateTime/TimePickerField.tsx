@@ -6,7 +6,10 @@ interface ITimePickerFieldProps extends IFormFieldProps<Date | undefined>, ITime
 interface ITimePickerFieldState extends IFormFieldState {}
 
 export class TimePickerField extends FormField<Date | undefined, ITimePickerFieldProps, ITimePickerFieldState> {
-  public static override get defaultProps(): Omit<ITimePickerFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    ITimePickerFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       canReset: TimePicker.defaultProps.canReset,
@@ -21,6 +24,8 @@ export class TimePickerField extends FormField<Date | undefined, ITimePickerFiel
     return (
       <TimePicker
         disabled={this.props.disabled}
+        inputId={this.props.fieldId}
+        inputName={this.props.fieldName}
         fill={this.props.fill}
         canReset={this.props.canReset}
         value={this.value}

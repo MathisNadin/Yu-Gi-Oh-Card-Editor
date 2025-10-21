@@ -28,7 +28,7 @@ export class Chips<ID = number> extends Container<IChipsProps<ID>, IChipsState> 
     return {
       ...super.defaultProps,
       layout: 'horizontal',
-      gutter: true,
+      gutter: 'default',
       wrap: true,
     };
   }

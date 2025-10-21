@@ -6,10 +6,15 @@ interface IEmailFieldProps extends ITextInputFieldProps {}
 interface IEmailFieldState extends ITextInputFieldState {}
 
 export class EmailField extends TextInputField<IEmailFieldProps, IEmailFieldState> {
-  public static override get defaultProps(): Omit<IEmailFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    IEmailFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       inputType: 'email',
+      autoComplete: 'email',
+      spellCheck: false,
     };
   }
 

@@ -202,8 +202,37 @@
     transform 0.4s ease !important;
 }
 
-*:hover {
-  > .mn-ghost {
+$mn-ghost-containers: (
+  '.mn-ghost-parent',
+  div,
+  section,
+  article,
+  main,
+  header,
+  footer,
+  nav,
+  aside,
+  figure,
+  figcaption,
+  ul,
+  ol,
+  li,
+  dl,
+  dt,
+  dd,
+  fieldset,
+  table,
+  tr,
+  td,
+  th,
+  span,
+  label,
+  a,
+  button
+);
+
+@each $sel in $mn-ghost-containers {
+  #{unquote($sel)}:hover > .mn-ghost {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }

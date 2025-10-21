@@ -7,7 +7,10 @@ interface ISliderFieldProps extends IFormFieldProps<number>, ISliderProps {}
 interface ISliderFieldState extends IFormFieldState {}
 
 export class SliderField extends FormField<number, ISliderFieldProps, ISliderFieldState> {
-  public static get defaultProps(): Omit<ISliderFieldProps, 'min' | 'max' | 'step' | 'value' | 'onChange'> {
+  public static get defaultProps(): Omit<
+    ISliderFieldProps,
+    'min' | 'max' | 'step' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       hideLabel: true,
@@ -30,6 +33,8 @@ export class SliderField extends FormField<number, ISliderFieldProps, ISliderFie
         {this.renderLabel()}
         <Slider
           disabled={this.props.disabled}
+          id={this.props.fieldId}
+          name={this.props.fieldName}
           min={this.props.min}
           max={this.props.max}
           step={this.props.step}

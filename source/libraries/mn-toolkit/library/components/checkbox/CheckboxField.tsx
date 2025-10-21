@@ -6,7 +6,7 @@ interface ICheckboxFieldProps extends IFormFieldProps<boolean>, ICheckboxProps {
 interface ICheckboxFieldState extends IFormFieldState {}
 
 export class CheckboxField extends FormField<boolean, ICheckboxFieldProps, ICheckboxFieldState> {
-  public static override get defaultProps(): Omit<ICheckboxFieldProps, 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<ICheckboxFieldProps, 'value' | 'onChange' | 'fieldId' | 'fieldName'> {
     return {
       ...super.defaultProps,
       label: '',
@@ -22,6 +22,8 @@ export class CheckboxField extends FormField<boolean, ICheckboxFieldProps, IChec
     return (
       <Checkbox
         disabled={this.props.disabled}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
         label={this.props.label}
         labelPosition={this.props.labelPosition}
         value={this.value}

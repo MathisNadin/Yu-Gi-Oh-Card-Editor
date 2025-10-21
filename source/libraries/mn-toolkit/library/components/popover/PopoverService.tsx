@@ -63,18 +63,18 @@ export class PopoverService extends AbstractObservable<IPopoverListener> {
     // 1. React SyntheticEvent
     if (eventOrElement && typeof eventOrElement === 'object' && 'nativeEvent' in eventOrElement) {
       // Parfois le target est sur nativeEvent, parfois directement sur l'event
-      componentProps.targetElement = (eventOrElement.nativeEvent?.target ?? eventOrElement.target) as HTMLElement;
+      componentProps.targetElement = (eventOrElement.nativeEvent?.target ?? eventOrElement.target) as Element;
     }
     // 2. Native Event DOM
     else if (typeof Event !== 'undefined' && eventOrElement instanceof Event) {
-      componentProps.targetElement = eventOrElement.target as HTMLElement;
+      componentProps.targetElement = eventOrElement.target as Element;
     }
     // 3. Direct HTMLElement/Element
     else if (
       (typeof HTMLElement !== 'undefined' && eventOrElement instanceof HTMLElement) ||
       (typeof Element !== 'undefined' && eventOrElement instanceof Element)
     ) {
-      componentProps.targetElement = eventOrElement as HTMLElement;
+      componentProps.targetElement = eventOrElement;
     }
     if (!componentProps.targetElement) throw new Error('No target element provided');
 
@@ -100,7 +100,7 @@ export class PopoverService extends AbstractObservable<IPopoverListener> {
 
   public removeLast() {
     if (!this.popovers.length) return;
-    const lastId = this.popovers[this.popovers.length - 1]!.id;
+    const lastId = this.popovers.at(-1)!.id;
     this.remove(lastId);
   }
 

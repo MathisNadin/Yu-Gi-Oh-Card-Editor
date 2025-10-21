@@ -10,7 +10,7 @@ interface IRangeSliderFieldState extends IFormFieldState {}
 export class RangeSliderField extends FormField<IRangeSliderValues, IRangeSliderFieldProps, IRangeSliderFieldState> {
   public static override get defaultProps(): Omit<
     IRangeSliderFieldProps,
-    'min' | 'max' | 'step' | 'value' | 'onChange'
+    'min' | 'max' | 'step' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
   > {
     return {
       ...super.defaultProps,
@@ -34,6 +34,8 @@ export class RangeSliderField extends FormField<IRangeSliderValues, IRangeSlider
         {this.renderLabel()}
         <RangeSlider
           disabled={this.props.disabled}
+          id={this.props.fieldId}
+          name={this.props.fieldName}
           min={this.props.min}
           max={this.props.max}
           step={this.props.step}

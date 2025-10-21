@@ -145,7 +145,7 @@ export class PopupService extends AbstractObservable<IPopupListener> {
 
   public async closeLast() {
     if (!this.popups.length) return;
-    const lastPopup = this.popups[this.popups.length - 1];
+    const lastPopup = this.popups.at(-1);
     if (lastPopup?.ref && typeof lastPopup.ref.close === 'function') {
       await lastPopup.ref.close();
     } else {

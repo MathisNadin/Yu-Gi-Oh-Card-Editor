@@ -12,6 +12,7 @@ const webServedCommonConfig: Configuration = {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
         removeComments: true,
+        useShortDoctype: false,
       },
     }),
   ],

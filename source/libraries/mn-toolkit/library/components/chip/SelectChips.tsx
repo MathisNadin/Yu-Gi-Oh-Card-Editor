@@ -26,7 +26,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
       ...super.defaultProps,
       layout: 'horizontal',
       verticalItemAlignment: 'middle',
-      gutter: true,
+      gutter: 'small',
       placeholder: 'Choisissez une option',
     };
   }

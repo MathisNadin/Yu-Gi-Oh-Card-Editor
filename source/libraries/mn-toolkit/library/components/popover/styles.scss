@@ -205,8 +205,10 @@
       background-color: color-hsl($info);
       color: color-hsl($dark-fg1);
 
+      .mn-icon,
       .mn-typography {
         color: color-hsl($dark-fg1);
+        fill: color-hsl($dark-fg1);
       }
 
       .mn-button-link {

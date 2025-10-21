@@ -4,6 +4,7 @@ import { Containable, IContainableProps, IContainableState } from '../containabl
 import { TIconId } from '../icon';
 
 interface IButtonIconProps extends IContainableProps<HTMLButtonElement> {
+  name: string;
   icon: TIconId;
   color?: TForegroundColor;
   bg?: TBackgroundColor;
@@ -15,7 +16,7 @@ interface IButtonIconProps extends IContainableProps<HTMLButtonElement> {
 interface IButtonIconState extends IContainableState {}
 
 export class ButtonIcon extends Containable<IButtonIconProps, IButtonIconState, HTMLButtonElement> {
-  public static override get defaultProps(): Omit<IButtonIconProps, 'icon'> {
+  public static override get defaultProps(): Omit<IButtonIconProps, 'name' | 'icon'> {
     return {
       ...super.defaultProps,
       color: '1',

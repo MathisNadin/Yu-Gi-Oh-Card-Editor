@@ -50,7 +50,6 @@ export class NumberInput extends Containable<INumberInputProps, INumberInputStat
         {...this.renderAttributes()}
         type='number'
         ref={this.base}
-        name={this.props.name}
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
         min={this.props.min}

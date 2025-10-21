@@ -1,13 +1,17 @@
-import { IDeviceListener, IScreenSpec } from 'mn-toolkit/library/system';
+import { FormEvent, HTMLAttributes, HTMLInputAutoCompleteAttribute } from 'react';
+import { IDeviceListener, IScreenSpec } from '../../system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../containable';
 import { classNames, integer, isDefined, isUndefined } from 'mn-tools';
-import { FormEvent } from 'react';
 
 export interface ITextAreaInputProps extends IContainableProps {
   minRows?: number;
   maxRows?: number;
   autoGrow?: boolean;
   autofocus?: boolean;
+  autoComplete?: HTMLInputAutoCompleteAttribute;
+  inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
+  inputId?: string;
+  inputName?: string;
   placeholder?: string;
   spellCheck?: boolean;
   value: string;
@@ -123,7 +127,10 @@ export class TextAreaInput
         key='input'
         ref={(c) => this.onDomInput(c!)}
         className={classNames('mn-textarea-input', this.props.className)}
-        name={this.props.name}
+        id={this.props.inputId}
+        name={this.props.inputName}
+        inputMode={this.props.inputMode}
+        autoComplete={this.props.autoComplete}
         spellCheck={this.props.spellCheck}
         disabled={this.props.disabled}
         rows={this.state.rows}

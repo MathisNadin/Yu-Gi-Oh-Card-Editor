@@ -1,9 +1,11 @@
-import { HTMLInputTypeAttribute } from 'react';
+import { HTMLAttributes, HTMLInputAutoCompleteAttribute, HTMLInputTypeAttribute } from 'react';
 import { IContainableProps, IContainableState, Containable } from '../containable';
 
 export interface ITextInputSpecificProps {
   spellCheck: boolean;
   inputType?: HTMLInputTypeAttribute;
+  autoComplete?: HTMLInputAutoCompleteAttribute;
+  inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
   placeholder?: string;
   minLength?: number;
   maxLength?: number;
@@ -44,8 +46,10 @@ export class TextInput extends Containable<ITextInputProps, ITextInputState, HTM
       <input
         {...this.renderAttributes()}
         ref={this.base}
+        autoComplete={this.props.autoComplete}
         spellCheck={this.props.spellCheck}
         type={this.props.inputType}
+        inputMode={this.props.inputMode}
         disabled={this.props.disabled}
         minLength={this.props.minLength}
         maxLength={this.props.maxLength}

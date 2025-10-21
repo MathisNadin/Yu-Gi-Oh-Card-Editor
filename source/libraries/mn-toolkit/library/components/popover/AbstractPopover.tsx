@@ -7,7 +7,7 @@ export interface IAbstractPopoverProps extends IContainerProps {
   type?: string;
   overlay?: boolean;
   focus?: boolean;
-  targetElement?: HTMLElement;
+  targetElement?: Element;
   height?: number;
   width?: number;
   top?: number;
@@ -102,7 +102,7 @@ export abstract class AbstractPopover<
     if (this.props.ignoreFocus) return;
 
     // Check if the related target is inside the popover
-    const relatedTarget = event.relatedTarget as HTMLElement | null;
+    const relatedTarget = event.relatedTarget;
     if (relatedTarget && this.base.current?.contains(relatedTarget)) {
       // If not an anchor, don't close here, let the component clicked on handle it
       if (relatedTarget.tagName !== 'A') return;
@@ -154,13 +154,22 @@ export abstract class AbstractPopover<
     return super.render();
   }
 
+  protected get contentWrapperPadding(): IContainerProps['padding'] {
+    return undefined;
+  }
+
+  protected get contentWrapperGutter(): IContainerProps['gutter'] {
+    return 'default';
+  }
+
   public override get children() {
     return (
       <VerticalStack
         key='popover-content-wrapper'
         className='popover-content-wrapper'
         scroll={isNumber(this.state.style!.height)}
-        gutter
+        padding={this.contentWrapperPadding}
+        gutter={this.contentWrapperGutter}
       >
         {this.props.content || this.renderContent()}
       </VerticalStack>

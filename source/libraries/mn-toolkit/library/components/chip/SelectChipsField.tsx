@@ -6,7 +6,10 @@ interface ISelectChipsFieldProps<ID = number> extends IFormFieldProps<ID[]>, ISe
 interface ISelectChipsFieldState extends IFormFieldState {}
 
 export class SelectChipsField<ID = number> extends FormField<ID[], ISelectChipsFieldProps<ID>, ISelectChipsFieldState> {
-  public static override get defaultProps(): Omit<ISelectChipsFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    ISelectChipsFieldProps,
+    'label' | 'items' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
     };
@@ -20,6 +23,8 @@ export class SelectChipsField<ID = number> extends FormField<ID[], ISelectChipsF
     return (
       <SelectChips<ID>
         disabled={this.props.disabled}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
         placeholder={this.props.placeholder}
         items={this.props.items}
         value={this.props.value}

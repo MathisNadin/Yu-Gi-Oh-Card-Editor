@@ -44,6 +44,7 @@ export class ArtworkEditDialog extends AbstractPopup<
   public async onInitializePopup() {
     this.state.buttons.push({
       color: 'positive',
+      name: 'Valider',
       label: 'Valider',
       onTap: () =>
         this.close({

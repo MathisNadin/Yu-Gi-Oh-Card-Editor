@@ -10,7 +10,10 @@ export class WeekRangePickerField extends FormField<
   IWeekRangePickerFieldProps,
   IWeekRangePickerFieldState
 > {
-  public static override get defaultProps(): Omit<IWeekRangePickerFieldProps, 'label' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    IWeekRangePickerFieldProps,
+    'label' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       canReset: WeekRangePicker.defaultProps.canReset,
@@ -31,6 +34,10 @@ export class WeekRangePickerField extends FormField<
     return (
       <WeekRangePicker
         disabled={this.props.disabled}
+        lowerFieldId={this.props.fieldId}
+        lowerFieldName={this.props.fieldName}
+        higherFieldId={`${this.props.fieldId}-higher`}
+        higherFieldName={`${this.props.fieldName}-higher`}
         fill={this.props.fill}
         yearRange={this.props.yearRange}
         value={this.value}

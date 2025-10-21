@@ -109,6 +109,16 @@ $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
         }
       }
     }
+
+    .mn-popup-header {
+      border-bottom: 1px solid color-hsl($fg4);
+      border-radius: calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0 0;
+    }
+
+    .mn-popup-footer {
+      border-top: 1px solid color-hsl($fg4);
+      border-radius: 0 0 calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius});
+    }
   }
 }
 

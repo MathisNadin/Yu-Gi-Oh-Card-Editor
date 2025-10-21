@@ -134,6 +134,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
       <button
         key='slider-thumb lower'
         className='slider-thumb lower'
+        name='slider-thumb lower'
         style={{
           height: SLIDER_THUMB_SIZE,
           width: SLIDER_THUMB_SIZE,
@@ -152,6 +153,7 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
       <button
         key='slider-thumb upper'
         className='slider-thumb upper'
+        name='slider-thumb upper'
         style={{
           height: SLIDER_THUMB_SIZE,
           width: SLIDER_THUMB_SIZE,

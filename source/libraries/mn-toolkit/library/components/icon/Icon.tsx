@@ -1,14 +1,16 @@
 import { ButtonHTMLAttributes, createRef, RefObject } from 'react';
-import { classNames } from 'mn-tools';
+import { classNames, isNumber, isString } from 'mn-tools';
 import { TForegroundColor } from '../../system';
 import { Containable, IContainableProps, IContainableState } from '../containable';
+import { TTypographyFontSize } from '../typography';
 
 export type TIconId = keyof ISvgIcons;
 
 export interface IIconProps extends IContainableProps<HTMLButtonElement | HTMLDivElement> {
   icon: TIconId;
   color: TForegroundColor;
-  size: number;
+  size: number | TTypographyFontSize;
+  buttonName?: string;
   buttonType?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
 }
 
@@ -36,12 +38,17 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
 
   public override renderStyle() {
     const style = super.renderStyle();
-    style.width = `${this.props.size}px`;
-    style.height = `${this.props.size}px`;
-    style.maxWidth = `${this.props.size}px`;
-    style.maxHeight = `${this.props.size}px`;
-    style.minWidth = `${this.props.size}px`;
-    style.minHeight = `${this.props.size}px`;
+
+    let size: string;
+    if (isNumber(this.props.size)) {
+      size = `${this.props.size}px`;
+    } else if (isString(this.props.size)) {
+      size = `var(--${this.props.size}-size)`;
+    } else {
+      size = '';
+    }
+
+    style['--icon-size'] = size;
     return style;
   }
 
@@ -98,6 +105,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
         <button
           ref={this.base as RefObject<HTMLButtonElement>}
           {...attributes}
+          name={this.props.buttonName || `${this.props.name || this.props.icon}-button-container`}
           onClick={(e) => this.onTapFunction!(e)}
           type={this.props.buttonType}
         >

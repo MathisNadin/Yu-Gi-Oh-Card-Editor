@@ -4,6 +4,8 @@ import { Icon } from '../icon';
 import { DateInput } from './inputs';
 
 export interface IDatePickerProps extends IContainerProps {
+  inputId?: string;
+  inputName?: string;
   popupTitle?: string;
   yearRange?: [number, number];
   canReset: boolean;
@@ -72,6 +74,8 @@ export class DatePicker extends Container<IDatePickerProps, IDatePickerState> {
       >
         <DateInput
           disabled={app.$device.isTouch}
+          inputId={this.props.inputId}
+          inputName={this.props.inputName}
           fill={this.props.fill}
           canReset={this.props.canReset}
           value={this.props.value}

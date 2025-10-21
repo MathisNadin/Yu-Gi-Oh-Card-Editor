@@ -4,6 +4,8 @@ import { TJSXElementChildren } from '../../../system';
 import { IContainableProps, Containable, IContainableState, TDidUpdateSnapshot } from '../../containable';
 
 export interface IDateTimeInputProps extends IContainableProps {
+  inputId?: string;
+  inputName?: string;
   yearRange?: [number, number];
   canReset?: boolean;
   value: Date | undefined;
@@ -299,6 +301,8 @@ export class DateTimeInput extends Containable<IDateTimeInputProps, IDateTimeInp
       <input
         ref={this.inputRef}
         key='date-time-input'
+        id={this.props.inputId}
+        name={this.props.inputName}
         type='text'
         placeholder='JJ/MM/AAAA HH:MM'
         value={value}

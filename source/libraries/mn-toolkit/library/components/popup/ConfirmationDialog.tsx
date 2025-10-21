@@ -1,9 +1,10 @@
 import { TJSXElementChild, TForegroundColor } from '../../system';
+import { HorizontalStack, IContainerProps, VerticalStack } from '../container';
 import { TControlTextContentType, Typography } from '../typography';
 import { Icon, TIconId } from '../icon';
-import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './AbstractPopup';
-import { HorizontalStack, VerticalStack } from '../container';
 import { TextInputField } from '../textInput';
+import { Button } from '../button';
+import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './AbstractPopup';
 
 export interface IConfirmationDialogProps extends IAbstractPopupProps<boolean> {
   message?: string;
@@ -28,40 +29,20 @@ export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDial
   }
 
   protected override async onInitializePopup() {
-    const buttons = this.state.buttons;
-    buttons.push({
-      name: 'Annuler',
-      label: 'Annuler',
-      color: 'neutral',
-      onTap: () => this.close(false),
-    });
-    buttons.push({
-      name: 'Valider',
-      label: 'Valider',
-      color: 'primary',
-      onTap: async () => {
-        if (
-          this.props.confirmationWord &&
-          this.state.confirmationResponse.toLowerCase() !== this.props.confirmationWord.toLowerCase()
-        ) {
-          await this.setStateAsync({ confirmationError: "Vous n'avez pas saisi le même mot, veuillez recommencer" });
-        } else {
-          await this.close(true);
-        }
-      },
-    });
-
     let confirmationLabel = '';
     if (this.props.confirmationWord) {
       confirmationLabel = `Tapez le mot&nbsp;: **${this.props.confirmationWord}**`;
     }
-
-    await this.setStateAsync({ buttons, confirmationLabel, confirmationResponse: '', confirmationError: '' });
+    await this.setStateAsync({ confirmationLabel, confirmationResponse: '', confirmationError: '' });
   }
 
   // By default there is no title, and in this Popup there is no need for the close button
   protected override renderHeader(): TJSXElementChild {
     return !!this.props.title ? super.renderHeader() : null;
+  }
+
+  protected override get contentContainerGutter(): IContainerProps['gutter'] {
+    return 'default';
   }
 
   protected override renderContent() {
@@ -84,6 +65,8 @@ export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDial
           />
           <TextInputField
             autofocus
+            fieldId='confirmation-response'
+            fieldName='confirmation-response'
             hideLabel
             label=''
             value={confirmationResponse}
@@ -94,6 +77,26 @@ export class ConfirmationDialog extends AbstractPopup<boolean, IConfirmationDial
           )}
         </VerticalStack>
       ),
+      <HorizontalStack key='buttons' gutter itemAlignment='right'>
+        <Button name='Annuler' label='Annuler' color='neutral' onTap={() => this.close(false)} />
+        <Button
+          name='Valider'
+          label='Valider'
+          color='primary'
+          onTap={async () => {
+            if (
+              this.props.confirmationWord &&
+              this.state.confirmationResponse.toLowerCase() !== this.props.confirmationWord.toLowerCase()
+            ) {
+              await this.setStateAsync({
+                confirmationError: "Vous n'avez pas saisi le même mot, veuillez recommencer",
+              });
+            } else {
+              await this.close(true);
+            }
+          }}
+        />
+      </HorizontalStack>,
     ];
   }
 }

@@ -4,6 +4,8 @@ import { Icon } from '../icon';
 import { TimeInput } from './inputs';
 
 export interface ITimePickerProps extends IContainerProps {
+  inputId?: string;
+  inputName?: string;
   popupTitle?: string;
   canReset: boolean;
   value: Date | undefined;
@@ -70,6 +72,8 @@ export class TimePicker extends Container<ITimePickerProps, ITimePickerState> {
       >
         <TimeInput
           disabled={app.$device.isTouch}
+          inputId={this.props.inputId}
+          inputName={this.props.inputName}
           fill={this.props.fill}
           canReset={this.props.canReset}
           value={this.props.value}

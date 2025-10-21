@@ -33,6 +33,8 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
     app.$header.dispatch('breadcrumbAlter', crumbs);
 
     if (this.props.onlyShowLastCrumb || app.$device.isSmallScreen) {
+      const secondToLastItem = crumbs.at(-2);
+      const lastItem = crumbs.at(-1);
       return [
         crumbs.length > 1 && (
           <Icon
@@ -40,8 +42,8 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
             icon='toolkit-angle-left'
             name='Revenir en arrière'
             onTap={
-              crumbs[crumbs.length - 2]?.href?.state
-                ? () => app.$router.go(crumbs[crumbs.length - 2]!.href!.state, crumbs[crumbs.length - 2]!.href!.params)
+              secondToLastItem?.href?.state
+                ? () => app.$router.go(secondToLastItem.href!.state, secondToLastItem.href!.params)
                 : undefined
             }
           />
@@ -51,8 +53,8 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
           className='bread'
           bold
           variant='document'
-          contentType='markdown'
-          content={crumbs[crumbs.length - 1]?.title}
+          contentType={lastItem?.contentType || 'markdown'}
+          content={lastItem?.title}
         />,
       ];
     }
@@ -65,7 +67,7 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
               key={i}
               className='crumb'
               variant='document'
-              contentType='markdown'
+              contentType={crumb.contentType || 'markdown'}
               content={crumb.title}
               href={crumb.href}
             />,
@@ -75,7 +77,14 @@ export class Breadcrumb extends Container<IBreadcrumbProps, IBreadcrumbState> {
           ];
         }
         return (
-          <Typography key={i} className='bread' bold variant='document' contentType='markdown' content={crumb.title} />
+          <Typography
+            key={i}
+            className='bread'
+            bold
+            variant='document'
+            contentType={crumb.contentType || 'markdown'}
+            content={crumb.title}
+          />
         );
       }),
 

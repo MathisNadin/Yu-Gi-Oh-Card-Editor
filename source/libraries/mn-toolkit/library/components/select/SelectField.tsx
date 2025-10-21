@@ -6,7 +6,10 @@ interface ISelectFieldProps<ID = number> extends IFormFieldProps<ID>, Omit<ISele
 interface ISelectFieldState extends IFormFieldState {}
 
 export class SelectField<ID = number> extends FormField<ID, ISelectFieldProps<ID>, ISelectFieldState> {
-  public static override get defaultProps(): Omit<ISelectFieldProps, 'label' | 'items' | 'value' | 'onChange'> {
+  public static override get defaultProps(): Omit<
+    ISelectFieldProps,
+    'label' | 'items' | 'value' | 'onChange' | 'fieldId' | 'fieldName'
+  > {
     return {
       ...super.defaultProps,
       labelDecorator: Select.defaultProps.labelDecorator,
@@ -21,6 +24,8 @@ export class SelectField<ID = number> extends FormField<ID, ISelectFieldProps<ID
     return (
       <Select<ID>
         disabled={this.props.disabled}
+        id={this.props.fieldId}
+        name={this.props.fieldName}
         items={this.props.items}
         value={this.value}
         onChange={(value) => this.onChange(value)}

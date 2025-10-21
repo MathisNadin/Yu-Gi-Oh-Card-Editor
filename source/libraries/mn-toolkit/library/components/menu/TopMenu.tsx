@@ -132,11 +132,11 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
     event: React.MouseEvent<HTMLDivElement | HTMLLIElement> | undefined,
     classNames: string[]
   ): boolean {
-    if (!event?.relatedTarget || !(event.relatedTarget instanceof HTMLElement)) {
+    if (!event?.relatedTarget || !(event.relatedTarget instanceof Element)) {
       return false;
     }
 
-    let currentElement: HTMLElement | null = event.relatedTarget;
+    let currentElement: Element | null = event.relatedTarget;
 
     while (currentElement) {
       for (const className of classNames) {

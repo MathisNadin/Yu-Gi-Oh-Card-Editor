@@ -1,7 +1,17 @@
 ## mn-webpack-builder change log
 
+## 1.4.0
+
+- config csp plus détaillée + suppot adsense + fix doctype
+
+## 1.3.1
+
+- bump to 1.3.1
+- desactiver minify selectors sur les builds prod
+
 ## 1.3.0
 
+- bump to 1.3.0
 - fix de tous les scripts de sync
 - ajout de formats supplémentaires de fichiers pris en charge dans le builder
 - ajout app-script batch
