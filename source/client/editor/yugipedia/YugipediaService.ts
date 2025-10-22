@@ -80,7 +80,7 @@ export class YugipediaService {
     if (!app.$device.isElectron(window)) return undefined;
     return await this.scheduleRequest(
       () =>
-        window.electron!.ipcRenderer.invoke('axiosGetData', this.baseApiUrl, {
+        window.electron!.ipcRenderer.invoke('axiosGet', this.baseApiUrl, {
           params,
           headers: {
             'User-Agent': this.userAgent,

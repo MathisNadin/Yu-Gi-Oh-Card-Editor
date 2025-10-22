@@ -26,7 +26,7 @@ import { IReplaceMatrix } from '../yugipedia';
 import { IYuginewsCardData } from '../yuginews';
 import { ICard } from '../card';
 
-type TWebsite = 'yugipedia' | 'yuginews';
+type TWebsite = 'yugipedia' | 'yuginews' | 'codexygo';
 
 type TCardsDataSortOption = 'theme' | 'id' | 'name' | 'set' | 'added' | 'pageOrder';
 
@@ -37,7 +37,8 @@ interface ICardImportDialogProps extends IAbstractPopupProps<ICardImportDialogRe
 interface ICardImportDialogState extends IAbstractPopupState {
   step: number;
   website: TWebsite;
-  import: string;
+  yugipediaImport: string;
+  codexYgoImport: string;
   importing: boolean;
   useFr: boolean;
   generatePasscode: boolean;
@@ -62,6 +63,7 @@ export class CardImportDialog extends AbstractPopup<
 > {
   private yugipediaLogo = require(`assets/images/yugipediaLogo.png`);
   private yuginewsLogo = require(`assets/images/yuginewsLogo.png`);
+  private codexygoLogo = require(`assets/images/codexygoLogo.png`);
 
   public static async show(options: ICardImportDialogProps = {}) {
     options.title = options.title || 'Importer depuis un site';
@@ -81,7 +83,8 @@ export class CardImportDialog extends AbstractPopup<
       loaded: true,
       step: 0,
       website: undefined!,
-      import: '',
+      yugipediaImport: '',
+      codexYgoImport: '',
       importing: false,
       useFr: false,
       generatePasscode: false,
@@ -133,11 +136,11 @@ export class CardImportDialog extends AbstractPopup<
   }
 
   private async doYugipediaImport() {
-    if (this.state.importing || !this.state.import) return;
+    if (this.state.importing || !this.state.yugipediaImport) return;
     await this.setStateAsync({ importing: true });
 
     const newCards: ICard[] = [];
-    const importLinks = this.state.import.split('\n');
+    const importLinks = this.state.yugipediaImport.split('\n');
     const batches = importLinks.filter((l) => l.includes('yugipedia.com/wiki/')).chunk(10);
 
     for (const batch of batches) {
@@ -160,7 +163,61 @@ export class CardImportDialog extends AbstractPopup<
       }
     }
 
-    if (!newCards.length) return await this.setStateAsync({ importing: false, import: '' });
+    if (!newCards.length) return await this.setStateAsync({ importing: false, yugipediaImport: '' });
+
+    await this.setStateAsync({ cardsToImport: newCards.length });
+    await app.$card.importCards(newCards);
+    await this.close();
+  }
+
+  private async doCodexYgoImport() {
+    if (this.state.importing || !this.state.codexYgoImport) return;
+    await this.setStateAsync({ importing: true });
+
+    const newCards: ICard[] = [];
+    const importLinks = this.state.codexYgoImport.split('\n').filter((l) => l.includes(app.$codexygo.baseUrl));
+
+    for (const link of importLinks) {
+      try {
+        const cardsData = await app.$codexygo.getCodexCardsFromArticle(link);
+        for (const cardData of cardsData) {
+          if (cardData.imageUrl && this.state.importArtworks && this.state.artworkSaveDirPath) {
+            try {
+              const filePath = await app.$card.importArtwork(cardData.imageUrl, this?.state.artworkSaveDirPath);
+              if (!filePath) return;
+
+              cardData.card.artwork.url = filePath;
+              if (cardData.card.rush) cardData.card.dontCoverRushArt = true;
+
+              // These are not full artworks
+              if (
+                !filePath.endsWith('-OW.webp') &&
+                !filePath.endsWith('-OW.png') &&
+                !filePath.endsWith('-OW.jpg') &&
+                !filePath.endsWith('-OW.jpeg')
+              ) {
+                if (cardData.card.rush) {
+                  cardData.card.dontCoverRushArt = true;
+                  cardData.card.artwork = { ...cardData.card.artwork, ...app.$card.getFullRushCardPreset() };
+                } else if (cardData.card.pendulum) {
+                  cardData.card.artwork = { ...cardData.card.artwork, ...app.$card.getFullPendulumCardPreset() };
+                } else {
+                  cardData.card.artwork = { ...cardData.card.artwork, ...app.$card.getFullCardPreset() };
+                }
+              }
+            } catch (e) {
+              app.$errorManager.trigger(e as Error);
+            }
+          }
+
+          newCards.push(cardData.card);
+        }
+      } catch (e) {
+        app.$errorManager.trigger(e as Error);
+      }
+    }
+
+    if (!newCards.length) return await this.setStateAsync({ importing: false, codexYgoImport: '' });
 
     await this.setStateAsync({ cardsToImport: newCards.length });
     await app.$card.importCards(newCards);
@@ -349,6 +406,8 @@ export class CardImportDialog extends AbstractPopup<
         return 'Yugipedia';
       case 'yuginews':
         return 'YugiNews';
+      case 'codexygo':
+        return 'CodexYGO';
       default:
         return 'Choisissez un site pour importer des cartes';
     }
@@ -360,19 +419,21 @@ export class CardImportDialog extends AbstractPopup<
         return 'Collez les liens des cartes';
       case 'yuginews':
         return "Collez le lien de l'article";
+      case 'codexygo':
+        return 'Collez les liens des articles';
       default:
         return '';
     }
   }
 
   protected get buttons(): IButtonProps[] {
-    const { step, website, importing, cardsData } = this.state;
+    const { step, website, importing, cardsData, yugipediaImport, codexYgoImport } = this.state;
     if (!step) return [];
     switch (website) {
       case 'yugipedia':
         return [
           {
-            disabled: importing,
+            disabled: importing || !yugipediaImport,
             name: 'Importer',
             label: 'Importer',
             color: 'positive',
@@ -389,6 +450,17 @@ export class CardImportDialog extends AbstractPopup<
             label: 'Importer',
             color: 'positive',
             onTap: () => this.doYuginewsImport(),
+          },
+        ];
+
+      case 'codexygo':
+        return [
+          {
+            disabled: importing || !codexYgoImport,
+            name: 'Importer',
+            label: 'Importer',
+            color: 'positive',
+            onTap: () => this.doCodexYgoImport(),
           },
         ];
 
@@ -418,6 +490,7 @@ export class CardImportDialog extends AbstractPopup<
       step === 0 && this.renderWebsitesTab(),
       step === 1 && website === 'yuginews' && this.renderYuginewsTab(),
       step === 1 && website === 'yugipedia' && this.renderYugipediaTab(),
+      // step === 1 && website === 'codexygo' && this.renderCodexYgoTab(),
     ];
   }
 
@@ -439,6 +512,15 @@ export class CardImportDialog extends AbstractPopup<
           alt='yuginews-logo'
           onTap={() => this.onSelectWesite('yuginews')}
         />
+        {/* <Image
+          key='codexygo-logo'
+          className={classNames('logo', 'codexygo', { selected: this.state.website === 'codexygo' })}
+          margin='small'
+          padding
+          src={this.codexygoLogo}
+          alt='codexygo-logo'
+          onTap={() => this.onSelectWesite('codexygo')}
+        /> */}
         <Image
           key='yugipedia-logo'
           className={classNames('logo', 'yugipedia', { selected: this.state.website === 'yugipedia' })}
@@ -601,7 +683,8 @@ export class CardImportDialog extends AbstractPopup<
 
   private renderYugipediaTab() {
     if (!this.state) return null;
-    const { cardsImported, cardsToImport, importing, useFr, generatePasscode, replaceMatrixes } = this.state;
+    const { yugipediaImport, cardsImported, cardsToImport, importing, useFr, generatePasscode, replaceMatrixes } =
+      this.state;
     return (
       <VerticalStack key='yugipedia' className='card-import-dialog-content yugipedia' fill scroll gutter>
         <Typography
@@ -613,8 +696,8 @@ export class CardImportDialog extends AbstractPopup<
           minRows={5}
           maxRows={15}
           autoGrow
-          value={this.state.import}
-          onChange={(value) => this.setState({ import: value })}
+          value={yugipediaImport}
+          onChange={(yugipediaImport) => this.setState({ yugipediaImport })}
         />
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
@@ -674,10 +757,55 @@ export class CardImportDialog extends AbstractPopup<
     );
   }
 
+  private renderCodexYgoTab() {
+    if (!this.state) return null;
+    const { codexYgoImport, cardsImported, cardsToImport, importing, generatePasscode } = this.state;
+    return (
+      <VerticalStack key='codexygo' className='card-import-dialog-content codexygo' fill scroll gutter>
+        <Typography
+          variant='help'
+          content='Collez les liens des articles CodexYGO (revenir à la ligne entre chaque lien)'
+        />
+
+        <TextAreaInput
+          minRows={5}
+          maxRows={15}
+          autoGrow
+          value={codexYgoImport}
+          onChange={(codexYgoImport) => this.setState({ codexYgoImport })}
+        />
+
+        <HorizontalStack verticalItemAlignment='middle' gutter>
+          <Checkbox
+            label='Si absent, générer un code'
+            value={generatePasscode}
+            onChange={(generatePasscode) => this.setState({ generatePasscode })}
+          />
+          {this.renderUrlImporter('codexygo')}
+        </HorizontalStack>
+
+        <VerticalStack itemAlignment='center' gutter fill>
+          {!!importing && (
+            <HorizontalStack margin itemAlignment='center'>
+              <Progress
+                fill
+                showPercent
+                color='positive'
+                message='Import en cours...'
+                progress={cardsImported}
+                total={cardsToImport}
+              />
+            </HorizontalStack>
+          )}
+        </VerticalStack>
+      </VerticalStack>
+    );
+  }
+
   private renderUrlImporter(website: TWebsite) {
     if (!app.$device.isElectron(window)) return undefined;
     return (
-      <HorizontalStack fill={website === 'yugipedia'} gutter>
+      <HorizontalStack fill={website !== 'yuginews'} gutter>
         <Checkbox
           label='Importer les images'
           value={this.state.importArtworks}

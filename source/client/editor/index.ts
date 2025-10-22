@@ -9,3 +9,4 @@ export * from './home';
 export * from './yugipedia';
 export * from './settings';
 export * from './yuginews';
+export * from './codexygo';

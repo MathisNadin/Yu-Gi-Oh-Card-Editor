@@ -3,6 +3,11 @@ import { app, IpcMainInvokeEvent } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { addIpcMainHandleChannel } from '../../libraries/mn-electron-main';
 
+type TAxiosPostOptions = AxiosRequestConfig & {
+  /** User-Agent à envoyer (écrase le header si déjà présent) */
+  userAgent?: string;
+};
+
 declare global {
   interface IIpcMainSendChannel {
     renderCurrentCard: [];
@@ -13,8 +18,8 @@ declare global {
   }
 
   interface IIpcRendererInvokeChannel {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    axiosGetData: { args: [url: string, options?: AxiosRequestConfig]; response: any | undefined };
+    axiosGet: { args: [url: string, options?: AxiosRequestConfig]; response: unknown | undefined };
+    axiosPost: { args: [url: string, data: object, options?: TAxiosPostOptions]; response: unknown | undefined };
   }
 }
 
@@ -22,14 +27,37 @@ declare global {
 app.commandLine.appendSwitch('force-device-scale-factor', '1');
 
 export function patchIpcMain(_ipcMain: TIpcMain) {
+  addIpcMainHandleChannel('axiosGet', async (_event: IpcMainInvokeEvent, url: string, options?: AxiosRequestConfig) => {
+    try {
+      const response = await axios.get(url, options);
+      return response?.data;
+    } catch (error) {
+      console.error('GET request error:', error);
+      return undefined;
+    }
+  });
+
   addIpcMainHandleChannel(
-    'axiosGetData',
-    async (_event: IpcMainInvokeEvent, url: string, options?: AxiosRequestConfig) => {
+    'axiosPost',
+    async (_event: IpcMainInvokeEvent, url: string, data: object, options: TAxiosPostOptions = {}) => {
+      const { userAgent, headers, ...rest } = options;
+
+      // Fusion des headers avec Content-Type / Accept par défaut
+      const mergedHeaders = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        ...(headers ?? {}),
+        ...(userAgent ? { 'User-Agent': userAgent } : {}),
+      };
+
       try {
-        const response = await axios.get(url, options);
-        return response?.data;
+        const res = await axios.post(url, data, {
+          ...rest,
+          headers: mergedHeaders,
+        });
+        return res?.data;
       } catch (error) {
-        console.error('GET request error:', error);
+        console.error('POST request error:', error);
         return undefined;
       }
     }

@@ -4,28 +4,6 @@ import { TForbidTypeChanges, TJSONValue, TLanguageLocale } from 'mn-tools';
 
 
 
-
-export interface IMemberTableIndexes {
-  userName: ITableIndexDefinition<IMemberEntity, IMemberEntity['userName'], IMemberTableStoreContextData>;
-}
-
-
-export interface IMemberApiAuthenticateOptions {
-  oid: IMemberEntity['oid'];
-  device: IDeviceSpec;
-}
-
-
-export interface IMemberApi {
-  authenticate(options: IMemberApiAuthenticateOptions): Promise<IMemberAPILoginResponse>;
-}
-
-
-declare global {
-  interface IApplicationCookie {
-    mariage_laubier_tutrel_session_token: string;
-  }
-}
 // For <title>
 export interface IHeadTitleTag {
   tagName: 'title';
@@ -329,40 +307,6 @@ declare global {
 }
 
 
-export interface IExceptionEntity extends TAbstractEntity {
-  timestamp: Date;
-  source: string;
-  terminal: { version: string };
-  os: { name: string; version: string };
-}
-
-
-export type TExceptionTableIndexes = 'timestamp' | 'source' | 'version';
-
-
-export interface IExceptionTable extends IAbstractTable<IExceptionEntity, TExceptionTableIndexes> {
-  name: 'Exception';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    timestamp: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['timestamp']>;
-    source: ITableIndexDefinition<IExceptionEntity, IExceptionEntity['source']>;
-    version: ITableIndexDefinition<IExceptionEntity, number>;
-  };
-}
-
-
-export interface IExceptionApi {
-  log(entitySpec: Partial<IExceptionEntity>): Promise<void>;
-}
-
-
-declare global {
-  interface IAPI {
-    exception: IExceptionApi;
-  }
-}
-
-
 interface IAbstractEntity {
   oid: number;
   created: Date;
@@ -382,6 +326,9 @@ export type TAbstractEntity = TForbidTypeChanges<IAbstractEntity, IAbstractEntit
 export type TEntityDraft<T extends IAbstractEntity> = Omit<T, keyof IAbstractEntity> & // remove all abstract props
   Partial<TAbstractEntity>;
  // re-add them as optional
+
+export type TAbstractTableStoreQuery = 'insert' | 'update';
+
 
 export interface ITableIndexDefinition<
   ENTITY extends TAbstractEntity,
@@ -490,23 +437,55 @@ export interface IAbstractTable<
   drop: (entity: ENTITY) => Promise<void>;
   restore: (entity: ENTITY) => Promise<void>;
   onBeforeStore: (entity: ENTITY, changedByAdmin: boolean) => Promise<void>;
-  onAfterStore: (entity: ENTITY) => Promise<void>;
+  onAfterStore: (entity: ENTITY, queryType: TAbstractTableStoreQuery) => Promise<void>;
   onBeforeDrop: (entity: ENTITY) => Promise<void>;
   onBeforeRestore: (entity: ENTITY) => Promise<void>;
 }
 
 
 export interface IPostgresTypeMapping {
-  string: 'text' | 'varchar' | 'char';
-  number: 'integer' | 'float' | 'double precision' | 'numeric';
+  string:
+    | 'text'
+    | 'varchar'
+    | 'char'
+    | 'citext' // case-insensitive text
+    | 'uuid' // string in UUID format
+    | 'json'
+    | 'jsonb'
+    | 'xml'
+    | 'name'; // internal PostgreSQL identifier
+
+  number:
+    | 'smallint' // int16 → -32,768 to 32,767
+    | 'integer' // int32 → -2,147,483,648 to 2,147,483,647
+    | 'bigint' // int64
+    | 'real' // float4 (single precision)
+    | 'double precision' // float8 (double precision)
+    | 'numeric' // arbitrary precision number
+    | 'serial' // auto-increment int
+    | 'bigserial' // auto-increment bigint
+    | 'money'; // monetary format (rarely recommended)
+
   boolean: 'boolean';
-  Date: 'timestamp without time zone' | 'date';
-  null: 'text'; // Peut-être changé selon le contexte
-  undefined: 'text'; // Peut-être changé selon le contexte
-  stringArray: 'text[]' | 'varchar[]' | 'char[]';
-  numberArray: 'integer[]' | 'float[]' | 'double precision[]' | 'numeric[]';
+
+  Date:
+    | 'timestamp without time zone'
+    | 'timestamp with time zone'
+    | 'date'
+    | 'time without time zone'
+    | 'time with time zone'
+    | 'interval'; // used to store a duration
+
+  null: 'text' | 'json' | 'jsonb' | 'unknown'; // 'unknown' can be useful in SQL functions
+  undefined: 'text' | 'json' | 'jsonb' | 'unknown';
+
+  stringArray: 'text[]' | 'varchar[]' | 'char[]' | 'citext[]' | 'uuid[]' | 'jsonb[]';
+
+  numberArray: 'smallint[]' | 'integer[]' | 'bigint[]' | 'real[]' | 'double precision[]' | 'numeric[]';
+
   booleanArray: 'boolean[]';
-  DateArray: 'timestamp[]' | 'date[]';
+
+  DateArray: 'timestamp without time zone[]' | 'timestamp with time zone[]' | 'date[]' | 'interval[]';
 }
 
 
@@ -851,6 +830,48 @@ export interface IQuery<
     otherQuery: IQuery<JOIN_ENTITY, JOIN_TABLE, JOIN_BASE_INDEXES, JOIN_VECTOR_INDEXES, JOIN_STORE_CONTEXT_DATA>,
     joinConditions: IJoinCondition<ENTITY, BASE_INDEXES, JOIN_ENTITY, JOIN_BASE_INDEXES>[]
   ): this;
+  exists<
+    EXISTS_ENTITY extends TAbstractEntity,
+    EXISTS_TABLE extends IAbstractTable<
+      EXISTS_ENTITY,
+      EXISTS_BASE_INDEXES,
+      EXISTS_VECTOR_INDEXES,
+      EXISTS_STORE_CONTEXT_DATA
+    >,
+    EXISTS_BASE_INDEXES extends string = never,
+    EXISTS_VECTOR_INDEXES extends string = never,
+    EXISTS_STORE_CONTEXT_DATA extends object = never,
+  >(
+    otherQuery: IQuery<
+      EXISTS_ENTITY,
+      EXISTS_TABLE,
+      EXISTS_BASE_INDEXES,
+      EXISTS_VECTOR_INDEXES,
+      EXISTS_STORE_CONTEXT_DATA
+    >,
+    joinConditions: IJoinCondition<ENTITY, BASE_INDEXES, EXISTS_ENTITY, EXISTS_BASE_INDEXES>[]
+  ): this;
+  notExists<
+    EXISTS_ENTITY extends TAbstractEntity,
+    EXISTS_TABLE extends IAbstractTable<
+      EXISTS_ENTITY,
+      EXISTS_BASE_INDEXES,
+      EXISTS_VECTOR_INDEXES,
+      EXISTS_STORE_CONTEXT_DATA
+    >,
+    EXISTS_BASE_INDEXES extends string = never,
+    EXISTS_VECTOR_INDEXES extends string = never,
+    EXISTS_STORE_CONTEXT_DATA extends object = never,
+  >(
+    otherQuery: IQuery<
+      EXISTS_ENTITY,
+      EXISTS_TABLE,
+      EXISTS_BASE_INDEXES,
+      EXISTS_VECTOR_INDEXES,
+      EXISTS_STORE_CONTEXT_DATA
+    >,
+    joinConditions: IJoinCondition<ENTITY, BASE_INDEXES, EXISTS_ENTITY, EXISTS_BASE_INDEXES>[]
+  ): this;
   buildConditionClause(condition: TQueryCondition, startIndex: number): string;
   count(): Promise<number>;
   grabIds(options?: IQueryPagerOptions): Promise<number[]>;
@@ -1117,8 +1138,8 @@ export type TEntityRolesType = keyof IEntityRolesTypes;
 
 
 export interface IEntityRolesEntity extends TAbstractEntity {
-  id: TAbstractEntity['oid'];
-  type: TEntityRolesType;
+  entityOid: TAbstractEntity['oid'];
+  entityType: TEntityRolesType;
   roles: TAbstractEntity['oid'][];
 }
 
@@ -1130,8 +1151,8 @@ export interface IEntityRolesTable extends IAbstractTable<IEntityRolesEntity, IE
   name: 'EntityRoles';
   useDataField: false;
   indexes: TTableIndexDefinitions & {
-    id: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['id']>;
-    type: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['type']>;
+    entityType: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['entityType']>;
+    entityOid: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['entityOid']>;
     roles: ITableIndexDefinition<IEntityRolesEntity, IEntityRolesEntity['roles']>;
   };
 }
@@ -1139,8 +1160,8 @@ export interface IEntityRolesTable extends IAbstractTable<IEntityRolesEntity, IE
 
 export interface IEntityRolesListOptions
   extends IEntityListOptions<IEntityRolesEntity, IEntityRolesTable, IEntityRolesTableIndexes> {
-  type?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'type', IEntityRolesTableIndexes>;
-  ids?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'id', IEntityRolesTableIndexes>[];
+  entityType?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'entityType', IEntityRolesTableIndexes>;
+  entityOids?: TTableIndexReturnType<IEntityRolesEntity, IEntityRolesTable, 'entityOid', IEntityRolesTableIndexes>[];
 }
 
 
@@ -1269,59 +1290,6 @@ interface IPushMessageReleasePayload {
 
 
 export interface IPushMessageRelease extends IPushMessage<IPushMessageReleasePayload> {}
-
-
-export interface INotificationEntity extends TAbstractEntity {
-  timestamp: Date;
-  sender: number;
-  recipient: number;
-  parameters: { [key: string]: Date | string };
-  title: string;
-  body: string;
-  seen?: Date;
-  target: string;
-}
-
-
-export type TNotificationTableIndexes = 'recipient' | 'seen';
-
-
-export interface INotificationTable extends IAbstractTable<INotificationEntity, TNotificationTableIndexes> {
-  name: 'Notification';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    recipient: ITableIndexDefinition<INotificationEntity, INotificationEntity['recipient']>;
-    seen: ITableIndexDefinition<INotificationEntity, INotificationEntity['seen']>;
-  };
-}
-
-
-export interface INotificationListOptions
-  extends IEntityListOptions<INotificationEntity, INotificationTable, TNotificationTableIndexes> {
-  recipient?: TTableIndexReturnType<INotificationEntity, INotificationTable, 'recipient', TNotificationTableIndexes>;
-}
-
-
-export interface INotificationApiSeenOptions {
-  notificationIds: TTableIndexReturnType<INotificationEntity, INotificationTable, 'oid', TNotificationTableIndexes>[];
-}
-
-
-export interface INotificationApi {
-  count(options?: INotificationListOptions): Promise<number>;
-  list(options?: INotificationListOptions): Promise<INotificationEntity[]>;
-  listIds(options?: INotificationListOptions): Promise<number[]>;
-  store(entitySpec: Partial<INotificationEntity>): Promise<INotificationEntity>;
-  trash(options: IEntityTrashOptions): Promise<INotificationEntity>;
-  seen(options: INotificationApiSeenOptions): Promise<void>;
-}
-
-
-declare global {
-  interface IAPI {
-    notification: INotificationApi;
-  }
-}
 
 
 export interface IDeviceSpec {
@@ -1500,14 +1468,12 @@ declare global {
 export type TMailStatus = 'sent' | 'new' | 'error';
 
 
-export interface IMailTemplateVariables {
+export interface IBaseMailTemplateVariables {
   language?: TLanguageLocale;
-  attachment?: {
+  attachments?: {
     filename: string;
     content: string;
-  };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  }[];
 }
 
 
@@ -1519,7 +1485,7 @@ export interface IMailEntity extends TAbstractEntity {
   cc?: string;
   recipients: string;
   template: string;
-  variables: IMailTemplateVariables;
+  variables: IBaseMailTemplateVariables;
   lastError?: string;
   links: string[];
 }
@@ -1536,82 +1502,6 @@ export interface IMailTable extends IAbstractTable<IMailEntity, TMailTableIndexe
     status: ITableIndexDefinition<IMailEntity, IMailEntity['status']>;
     recipients: ITableIndexDefinition<IMailEntity, IMailEntity['recipients']>;
   };
-}
-
-
-export interface IMailEventEntity extends TAbstractEntity {
-  timestamp: Date;
-  mid: string;
-  recipient: string;
-  mailClass: string;
-  status: TMailStatus;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  params: { [key: string]: any };
-}
-
-
-export type TMailEventTableIndexes = 'timestamp' | 'mid' | 'recipient' | 'mailClass' | 'status';
-
-
-export interface IMailEventTable extends IAbstractTable<IMailEventEntity, TMailEventTableIndexes> {
-  name: 'MailEvent';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    timestamp: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['timestamp']>;
-    mid: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['mid']>;
-    recipient: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['recipient']>;
-    mailClass: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['mailClass']>;
-    status: ITableIndexDefinition<IMailEventEntity, IMailEventEntity['status']>;
-  };
-}
-
-
-export interface ILogRecordEntity extends TAbstractEntity {
-  timestamp: Date;
-  bulk: string;
-  logLevel: number;
-  message: string;
-  data: {
-    action?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-  };
-}
-
-
-export type TLogRecordTableIndexes = 'timestamp' | 'bulk' | 'logLevel' | 'action';
-
-
-export interface ILogRecordTable extends IAbstractTable<ILogRecordEntity, TLogRecordTableIndexes> {
-  name: 'LogRecord';
-  useDataField: true;
-  indexes: TTableIndexDefinitions & {
-    timestamp: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['timestamp']>;
-    bulk: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['bulk']>;
-    logLevel: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['logLevel']>;
-    action: ITableIndexDefinition<ILogRecordEntity, ILogRecordEntity['data']['action']>;
-  };
-}
-
-
-export interface ILogRecordListOptions
-  extends IEntityListOptions<ILogRecordEntity, ILogRecordTable, TLogRecordTableIndexes> {}
-
-
-export interface ILogRecordApi {
-  count(options?: ILogRecordListOptions): Promise<number>;
-  list(options?: ILogRecordListOptions): Promise<ILogRecordEntity[]>;
-  listIds(options?: ILogRecordListOptions): Promise<number[]>;
-  store(entitySpec: Partial<ILogRecordEntity>): Promise<ILogRecordEntity>;
-  trash(options: IEntityTrashOptions): Promise<ILogRecordEntity>;
-  flushRecordStack(exception?: object): Promise<void>;
-}
-
-
-declare global {
-  interface IAPI {
-    logRecord: ILogRecordApi;
-  }
 }
 
 
@@ -1642,7 +1532,6 @@ export interface ISessionEntity extends TAbstractEntity {
   push?: { token: string; provider: TPushProvider; timestamp: Date };
   lastAccess: Date;
   closed?: Date;
-  saving: boolean;
 }
 
 
@@ -1681,8 +1570,10 @@ export interface ISessionListOptions extends IEntityListOptions<ISessionEntity, 
 declare global {
   interface IDerivatives {
     thumbnail: null;
-    webp: null;
     media: null;
+    avatar: null;
+    cardCompact: null;
+    webp: null;
   }
 }
 
@@ -1741,17 +1632,6 @@ declare global {
     | 'file entity - trash own'
     | 'file entity - trash all';
 
-  type TLogRecordEntityPermission =
-    | 'log record entity - count own'
-    | 'log record entity - count all'
-    | 'log record entity - list own'
-    | 'log record entity - list all'
-    | 'log record entity - create own'
-    | 'log record entity - update own'
-    | 'log record entity - update all'
-    | 'log record entity - trash own'
-    | 'log record entity - trash all';
-
   type TSessionEntityPermission =
     | 'session entity - count own'
     | 'session entity - count all'
@@ -1777,39 +1657,6 @@ declare global {
     | 'member entity - list self'
     | 'member entity - update self'
     | 'member entity - trash self';
-
-  type TAlbumEntityPermission =
-    | 'album entity - count own'
-    | 'album entity - count all'
-    | 'album entity - list own'
-    | 'album entity - list all'
-    | 'album entity - create own'
-    | 'album entity - update own'
-    | 'album entity - update all'
-    | 'album entity - trash own'
-    | 'album entity - trash all';
-
-  type TGuestbookEntryEntityPermission =
-    | 'guestbook entry entity - count own'
-    | 'guestbook entry entity - count all'
-    | 'guestbook entry entity - list own'
-    | 'guestbook entry entity - list all'
-    | 'guestbook entry entity - create own'
-    | 'guestbook entry entity - update own'
-    | 'guestbook entry entity - update all'
-    | 'guestbook entry entity - trash own'
-    | 'guestbook entry entity - trash all';
-
-  type TMediaEntityPermission =
-    | 'media entity - count own'
-    | 'media entity - count all'
-    | 'media entity - list own'
-    | 'media entity - list all'
-    | 'media entity - create own'
-    | 'media entity - update own'
-    | 'media entity - update all'
-    | 'media entity - trash own'
-    | 'media entity - trash all';
 
   type TEntityRolesAPIPermission =
     | 'entity roles api - count'
@@ -1852,25 +1699,7 @@ declare global {
 
   type TEntityAPIPermission = 'entity api - list' | 'entity api - reindex';
 
-  type TExceptionAPIPermission = 'exception api - log';
-
   type TJobAPIPermission = 'job api - list';
-
-  type TLogRecordAPIPermission =
-    | 'log record api - count'
-    | 'log record api - list'
-    | 'log record api - list ids'
-    | 'log record api - store'
-    | 'log record api - trash'
-    | 'log record api - flush record stack';
-
-  type TNotificationAPIPermission =
-    | 'notification api - count'
-    | 'notification api - list'
-    | 'notification api - list ids'
-    | 'notification api - store'
-    | 'notification api - trash'
-    | 'notification api - seen';
 
   type TPushServerAPIPermission = 'push server api - register';
 
@@ -1883,7 +1712,6 @@ declare global {
     | 'member api - get instances'
     | 'member api - check mail'
     | 'member api - authenticate token'
-    | 'member api - authenticate'
     | 'member api - login'
     | 'member api - register'
     | 'member api - get permissions'
@@ -1898,12 +1726,8 @@ declare global {
     | TRoleEntityPermission
     | TApplicationInstanceEntityPermission
     | TFileEntityPermission
-    | TLogRecordEntityPermission
     | TSessionEntityPermission
     | TMemberEntityPermission
-    | TAlbumEntityPermission
-    | TGuestbookEntryEntityPermission
-    | TMediaEntityPermission
     | TEntityRolesAPIPermission
     | TRoleAPIPermission
     | TPermissionAPIPermission
@@ -1911,10 +1735,7 @@ declare global {
     | TFileAPIPermission
     | TBatchAPIPermission
     | TEntityAPIPermission
-    | TExceptionAPIPermission
     | TJobAPIPermission
-    | TLogRecordAPIPermission
-    | TNotificationAPIPermission
     | TPushServerAPIPermission
     | TMemberAPIPermission
     | TRootAPIPermission;

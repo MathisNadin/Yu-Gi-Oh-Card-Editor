@@ -27,6 +27,10 @@ const devProjectWebpackConfig: Configuration = {
           'wss://localhost:*',
           'https://yuginews.fr',
           'https://www.yuginews.fr',
+          'https://codexygo.test',
+          'https://int.codexygo.fr',
+          'https://codexygo.fr',
+          'https://www.codexygo.fr',
         ],
       },
       {
