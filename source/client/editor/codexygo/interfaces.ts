@@ -280,18 +280,18 @@ export interface ICodexYgoCardListOptions
     'abilitiesEn',
     TCodexYgoCardTableIndexes
   >;
-  limitationTextFr?: TTableIndexReturnType<
+  limitationTextsFr?: TTableIndexReturnType<
     ICodexYgoCardEntity,
     ICodexYgoCardTable,
     'limitationTextFr',
     TCodexYgoCardTableIndexes
-  >;
-  limitationTextEn?: TTableIndexReturnType<
+  >[];
+  limitationTextsEn?: TTableIndexReturnType<
     ICodexYgoCardEntity,
     ICodexYgoCardTable,
     'limitationTextEn',
     TCodexYgoCardTableIndexes
-  >;
+  >[];
   frames?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>[];
   stTypes?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'stType', TCodexYgoCardTableIndexes>[];
   attributes?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'attribute', TCodexYgoCardTableIndexes>[];
