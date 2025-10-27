@@ -114,6 +114,8 @@ export type TCodexYgoCardTableIndexes =
   | 'nameEn'
   | 'abilitiesFr'
   | 'abilitiesEn'
+  | 'limitationTextFr'
+  | 'limitationTextEn'
   | 'frame'
   | 'stType'
   | 'attribute'
@@ -140,6 +142,8 @@ export interface ICodexYgoCardTable
     nameEn: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['name']>;
     abilitiesFr: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['abilities']>;
     abilitiesEn: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['abilities']>;
+    limitationTextFr: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['limitationText']>;
+    limitationTextEn: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['limitationText']>;
     frame: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['frame']>;
     stType: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['stType']>;
     attribute: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['attribute']>;
@@ -274,6 +278,18 @@ export interface ICodexYgoCardListOptions
     ICodexYgoCardEntity,
     ICodexYgoCardTable,
     'abilitiesEn',
+    TCodexYgoCardTableIndexes
+  >;
+  limitationTextFr?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'limitationTextFr',
+    TCodexYgoCardTableIndexes
+  >;
+  limitationTextEn?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'limitationTextEn',
     TCodexYgoCardTableIndexes
   >;
   frames?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>[];
