@@ -92,6 +92,7 @@ export interface IYugipediaCardTranslation {
   rushCondition?: string;
   rushEffect?: string;
   rushChoiceEffects?: string[];
+  limitationText?: string;
 }
 
 export type TYugipediaCardAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine';

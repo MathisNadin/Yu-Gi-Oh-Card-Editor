@@ -27,7 +27,11 @@ export type TCodexYgoCardFrame =
   | 'trap'
   | 'token'
   | 'monsterToken'
-  | 'skill';
+  | 'skill'
+  | 'obelisk'
+  | 'slifer'
+  | 'ra'
+  | 'legendaryDragon';
 
 export type TCodexYgoCardAttribute = 'dark' | 'light' | 'water' | 'fire' | 'earth' | 'wind' | 'divine';
 
@@ -72,6 +76,7 @@ export interface ICodexYgoCardTranslation {
   rushCondition?: string;
   rushEffect?: string;
   rushChoiceEffects?: string[];
+  limitationText?: string;
 }
 
 export type TCodexYgoCardTranslations = { [key in TCodexYgoCardLanguage]?: ICodexYgoCardTranslation };
@@ -107,6 +112,8 @@ export type TCodexYgoCardTableIndexes =
   | 'yugipediaSlug'
   | 'nameFr'
   | 'nameEn'
+  | 'abilitiesFr'
+  | 'abilitiesEn'
   | 'frame'
   | 'stType'
   | 'attribute'
@@ -115,10 +122,11 @@ export type TCodexYgoCardTableIndexes =
   | 'atk'
   | 'def'
   | 'scale'
+  | 'linkArrows'
   | 'rush'
   | 'legend';
 
-export type TCodexYgoCardTableVectorIndexes = 'searchVector';
+export type TCodexYgoCardTableVectorIndexes = 'nameSearchVector' | 'descriptionSearchVector' | 'pendEffectSearchVector';
 
 export interface ICodexYgoCardTable
   extends IAbstractTable<ICodexYgoCardEntity, TCodexYgoCardTableIndexes, TCodexYgoCardTableVectorIndexes> {
@@ -130,6 +138,8 @@ export interface ICodexYgoCardTable
     yugipediaSlug: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['yugipediaSlug']>;
     nameFr: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['name']>;
     nameEn: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['name']>;
+    abilitiesFr: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['abilities']>;
+    abilitiesEn: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardTranslation['abilities']>;
     frame: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['frame']>;
     stType: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['stType']>;
     attribute: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['attribute']>;
@@ -138,11 +148,14 @@ export interface ICodexYgoCardTable
     atk: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['atk']>;
     def: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['def']>;
     scale: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardScales['left'] | undefined>;
+    linkArrows: ITableIndexDefinition<ICodexYgoCardEntity, TCodexYgoCardLinkArrow[] | undefined>;
     rush: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['rush']>;
     legend: ITableIndexDefinition<ICodexYgoCardEntity, ICodexYgoCardEntity['legend']>;
   };
   vectorIndexes: {
-    searchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
+    nameSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
+    descriptionSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
+    pendEffectSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
   };
 }
 
@@ -249,16 +262,29 @@ export interface ICodexYgoCardListOptions
     TCodexYgoCardTableVectorIndexes
   > {
   konamiIds?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'konamiId', TCodexYgoCardTableIndexes>[];
-  frame?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>;
-  stType?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'stType', TCodexYgoCardTableIndexes>;
-  attribute?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'attribute', TCodexYgoCardTableIndexes>;
-  level?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'level', TCodexYgoCardTableIndexes>;
-  atkMax?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atkMax', TCodexYgoCardTableIndexes>;
-  atk?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atk', TCodexYgoCardTableIndexes>;
-  def?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'def', TCodexYgoCardTableIndexes>;
-  scale?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'scale', TCodexYgoCardTableIndexes>;
-  maximum?: boolean;
-  pendulum?: boolean;
+  namesFr?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'nameFr', TCodexYgoCardTableIndexes>[];
+  namesEn?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'nameEn', TCodexYgoCardTableIndexes>[];
+  abilitiesFr?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'abilitiesFr',
+    TCodexYgoCardTableIndexes
+  >;
+  abilitiesEn?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'abilitiesEn',
+    TCodexYgoCardTableIndexes
+  >;
+  frames?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>[];
+  stTypes?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'stType', TCodexYgoCardTableIndexes>[];
+  attributes?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'attribute', TCodexYgoCardTableIndexes>[];
+  levels?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'level', TCodexYgoCardTableIndexes>[];
+  atkMaxs?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atkMax', TCodexYgoCardTableIndexes>[];
+  atks?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atk', TCodexYgoCardTableIndexes>[];
+  defs?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'def', TCodexYgoCardTableIndexes>[];
+  scales?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'scale', TCodexYgoCardTableIndexes>[];
+  linkArrows?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'linkArrows', TCodexYgoCardTableIndexes>;
   rush?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'rush', TCodexYgoCardTableIndexes>;
   public?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'public', TCodexYgoCardTableIndexes>;
 }
@@ -275,9 +301,9 @@ export interface IArticleListOptions
 
 export interface IContentBlockListOptions
   extends IEntityListOptions<IContentBlockEntity, IContentBlockTable, TContentBlockTableIndexes> {
-  article?: TTableIndexReturnType<IContentBlockEntity, IContentBlockTable, 'article', TContentBlockTableIndexes>;
-  type?: TTableIndexReturnType<IContentBlockEntity, IContentBlockTable, 'type', TContentBlockTableIndexes>;
-  theme?: TTableIndexReturnType<IContentBlockEntity, IContentBlockTable, 'theme', TContentBlockTableIndexes>;
+  articles?: TTableIndexReturnType<IContentBlockEntity, IContentBlockTable, 'article', TContentBlockTableIndexes>[];
+  types?: TTableIndexReturnType<IContentBlockEntity, IContentBlockTable, 'type', TContentBlockTableIndexes>[];
+  themes?: TTableIndexReturnType<IContentBlockEntity, IContentBlockTable, 'theme', TContentBlockTableIndexes>[];
 }
 
 /* ------------------------------------------- */

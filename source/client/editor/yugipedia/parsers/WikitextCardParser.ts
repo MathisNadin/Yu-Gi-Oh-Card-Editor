@@ -1,9 +1,12 @@
 import { integer } from 'mn-tools';
+import { TFrame } from '../../card';
 import { IYugipediaCard, IYugipediaCardPrint, TYugipediaCardClass, TYugipediaCardLanguage } from '..';
 import { AbstractWikitextParser } from './AbstractWikitextParser';
 
 export class WikitextCardParser extends AbstractWikitextParser {
   private card: IYugipediaCard;
+
+  private cardclass?: string;
 
   private name?: string;
   private enName?: string;
@@ -87,6 +90,15 @@ export class WikitextCardParser extends AbstractWikitextParser {
     // --- Process French card name
     else if (line.includes('| fr_name')) {
       this.card.translations.fr_fr.name = this.getMetadataLineValue(line);
+    }
+    // --- Process limitation text
+    else if (line.includes('| limitation_text')) {
+      this.card.translations.en_us.limitationText = this.getMetadataLineValue(line);
+      if (this.card.translations.en_us.limitationText === 'This card cannot be used in a Duel.') {
+        this.card.translations.fr_fr.limitationText = 'Cette carte ne peut pas être utilisée en Duel.';
+      } else if (this.card.translations.en_us.limitationText === 'This card cannot be in a Deck.') {
+        this.card.translations.fr_fr.limitationText = 'Cette carte ne peut pas être dans un Deck.';
+      }
     }
     // --- Process attribute
     else if (line.includes('| attribute')) {
@@ -269,16 +281,24 @@ export class WikitextCardParser extends AbstractWikitextParser {
         else this.card.translations.en_us.abilities = [value];
         break;
 
+      case 'Token':
+        this.card.frames.push('token');
+        break;
+
       case 'Legendary Dragon':
         this.card.frames.push('legendaryDragon');
+        break;
+
+      case 'Spell':
+        this.card.frames.push('spell');
         break;
 
       case 'Trap':
         this.card.frames.push('trap');
         break;
 
+      case 'Non-game':
       default:
-        this.card.frames.push('spell');
         break;
     }
   }
@@ -287,6 +307,11 @@ export class WikitextCardParser extends AbstractWikitextParser {
    * Process the types line.
    */
   private processTypesLine(value: string) {
+    this.card.translations.en_us.abilities = value.split(' / ');
+
+    // If already defined -> skip
+    if (this.card.frames.length) return;
+
     if (value.includes('/ Ritual')) this.card.frames.push('ritual');
     if (value.includes('/ Fusion')) this.card.frames.push('fusion');
     if (value.includes('/ Synchro')) this.card.frames.push('synchro');
@@ -324,8 +349,6 @@ export class WikitextCardParser extends AbstractWikitextParser {
     else if (this.card.frames.length === 2 && this.card.frames[0] === 'effect') {
       this.card.frames = [this.card.frames[1]!];
     }
-
-    this.card.translations.en_us.abilities = value.split(' / ');
   }
 
   /**
@@ -470,9 +493,18 @@ export class WikitextCardParser extends AbstractWikitextParser {
     this.card.translations.en_us.name =
       this.name || this.enName || this.extractNameBeforeParenthesis(this.pageTitle) || '';
 
-    if (this.card.translations.en_us.name && this.card.frames.length === 1 && this.card.frames[0] === 'normal') {
-      if (this.card.translations.en_us.name === 'Token') this.card.frames.push('token');
-      else if (this.card.translations.en_us.name.includes('Token')) this.card.frames.push('monsterToken');
+    if (this.cardclass) {
+      const cardclassFrame = this.getFrameFromCardclass();
+      if (cardclassFrame) this.card.frames = [cardclassFrame];
+    }
+
+    if (
+      this.card.frames.length === 1 &&
+      this.card.frames[0] === 'token' &&
+      !!this.card.translations.en_us &&
+      this.card.translations.en_us.name !== 'Token'
+    ) {
+      this.card.frames = ['monsterToken'];
     }
 
     // Process lore for each language
@@ -779,6 +811,47 @@ export class WikitextCardParser extends AbstractWikitextParser {
 
       default:
         return ability;
+    }
+  }
+
+  /**
+   * Deduce a frame from the card class
+   */
+  private getFrameFromCardclass(): TFrame | undefined {
+    if (!this.cardclass) return undefined;
+    switch (this.cardclass) {
+      case 'normal':
+        return 'normal';
+      case 'effect':
+        return 'effect';
+      case 'ritual':
+        return 'ritual';
+      case 'fusion':
+        return 'fusion';
+      case 'synchro':
+        return 'synchro';
+      case 'synchro':
+        return 'synchro';
+      case 'xyz':
+        return 'xyz';
+      case 'link':
+        return 'link';
+      case 'spell':
+        return 'spell';
+      case 'trap':
+        return 'trap';
+      case 'token':
+        return 'token';
+      case 'skill':
+        return 'skill';
+      case 'obelisk':
+        return 'obelisk';
+      case 'slifer':
+        return 'slifer';
+      case 'ra':
+        return 'ra';
+      default:
+        return undefined;
     }
   }
 }

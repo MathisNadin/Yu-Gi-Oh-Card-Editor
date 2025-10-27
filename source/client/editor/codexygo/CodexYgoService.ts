@@ -188,8 +188,11 @@ export class CodexYgoService {
     const [article] = await this.listArticles({ oids: [oid], published: true, deleted: false });
     if (!article) return cards;
 
+    const cardBlockType: IContentCardContentBlock['type'] = 'a504be26-45d0-4bb9-8649-74d37bc0ef99';
+    const fakeCardBlockType: IContentFakeCardContentBlock['type'] = '81f39442-0004-4e87-ac7f-c8c7b9370d71';
     const contentBlocks = await this.listContentBlocks({
-      article: article.oid,
+      articles: [article.oid],
+      types: [cardBlockType, fakeCardBlockType],
       deleted: false,
       sort: [
         { field: 'weight', order: 'asc' },
@@ -221,9 +224,6 @@ export class CodexYgoService {
           }
           break;
         }
-
-        default:
-          break;
       }
     }
     if (!cardOidSet.size) return cards;
@@ -299,6 +299,20 @@ export class CodexYgoService {
           card.abilities = translations.abilities.filter(isString);
           card.maximum = card.abilities.includes('Maximum');
           card.pendulum = isFr ? card.abilities.includes('Pendule') : card.abilities.includes('Pendulum');
+        }
+
+        if (isString(translations.limitationText)) {
+          switch (translations.limitationText) {
+            case 'Cette carte ne peut pas être utilisée en Duel.':
+            case 'This card cannot be used in a Duel.':
+              card.edition = 'forbidden';
+              break;
+
+            case 'Cette carte ne peut pas être dans un Deck.':
+            case 'This card cannot be in a Deck.':
+              card.edition = 'forbiddenDeck';
+              break;
+          }
         }
       }
     }
