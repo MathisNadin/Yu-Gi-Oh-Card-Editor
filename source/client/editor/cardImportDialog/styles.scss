@@ -24,8 +24,7 @@ $legendaryDragon: #82b8d4;
       .logo {
         @include shadow(2);
         width: 75%;
-        max-height: 45%;
-        // max-height: 30%;
+        max-height: 30%;
 
         &.codexygo {
           background: linear-gradient(

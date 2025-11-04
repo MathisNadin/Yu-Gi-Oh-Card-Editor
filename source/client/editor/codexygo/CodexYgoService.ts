@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { isArray, isBoolean, isNumber, isObject, isString } from 'mn-tools';
-import { TEntityDraft } from 'api/main';
+import { IFileEntity, TEntityDraft } from 'api/main';
 import { ICard } from '../card';
 import {
   ICodexYgoCardEntity,
@@ -17,7 +17,7 @@ import {
 export class CodexYgoService {
   public readonly masterCardBack = require('assets/images/master-card-back-en.png');
   public readonly rushCardBack = require('assets/images/rush-card-back-jp.png');
-  public readonly baseUrl = 'https://int.codexygo.fr';
+  public readonly baseUrl = 'https://codexygo.fr';
 
   private userAgent = '';
   private requestQueue: Array<() => void> = [];
@@ -203,6 +203,7 @@ export class CodexYgoService {
 
     const cardOidSet = new Set<ICodexYgoCardEntity['oid']>();
     const cardSetIdByOid: Record<ICodexYgoCardEntity['oid'], string | undefined> = {};
+    const cardOverrideImageByOid: Record<ICodexYgoCardEntity['oid'], IFileEntity['oid'] | undefined> = {};
     for (const block of contentBlocks) {
       switch (true) {
         case this.isContentFakeCard(block): {
@@ -211,7 +212,7 @@ export class CodexYgoService {
             card.cardSet = block.setId || '';
             cards.push({
               card,
-              imageUrl: this.getCardImageUrl(block.fakeCard),
+              imageUrl: this.getFileUrl(block.fakeCard.image),
             });
           }
           break;
@@ -221,6 +222,7 @@ export class CodexYgoService {
           if (isNumber(block.card)) {
             cardOidSet.add(block.card);
             if (isString(block.setId)) cardSetIdByOid[block.card] = block.setId;
+            if (isNumber(block.overrideImage)) cardOverrideImageByOid[block.card] = block.overrideImage;
           }
           break;
         }
@@ -234,9 +236,10 @@ export class CodexYgoService {
     for (const codexCard of codexCards) {
       const card = this.getCardFromCodexCard(codexCard, 'fr_fr');
       card.cardSet = cardSetIdByOid[codexCard.oid] || '';
+      const image = cardOverrideImageByOid[codexCard.oid] || codexCard.image;
       cards.push({
         card,
-        imageUrl: this.getCardImageUrl(codexCard),
+        imageUrl: this.getFileUrl(image),
       });
     }
     return cards;
@@ -254,14 +257,16 @@ export class CodexYgoService {
     return contentBlock.type === id;
   }
 
-  /** ------------------------------ Card Tools ------------------------------ */
+  /** ----------------------------- Generic Tools ----------------------------- */
 
-  public getCardImageUrl(codexCard: TEntityDraft<ICodexYgoCardEntity>, derivative?: TDerivative) {
-    if (!codexCard.image) return undefined;
-    const url = new URL(`${this.baseUrl}/api/file/download/1/${codexCard.image}/`);
+  public getFileUrl(fileOid: IFileEntity['oid'] | undefined, derivative?: TDerivative) {
+    if (!fileOid) return undefined;
+    const url = new URL(`${this.baseUrl}/api/file/download/1/${fileOid}/`);
     if (derivative) url.searchParams.set('derivative', derivative);
     return url.toString();
   }
+
+  /** ------------------------------ Card Tools ------------------------------ */
 
   private getCardFromCodexCard(codexCard: TEntityDraft<ICodexYgoCardEntity>, language: TCodexYgoCardLanguage): ICard {
     const card = app.$card.defaultImportCard;

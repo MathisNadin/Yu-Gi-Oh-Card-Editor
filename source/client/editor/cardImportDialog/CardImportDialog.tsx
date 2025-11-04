@@ -490,7 +490,7 @@ export class CardImportDialog extends AbstractPopup<
       step === 0 && this.renderWebsitesTab(),
       step === 1 && website === 'yuginews' && this.renderYuginewsTab(),
       step === 1 && website === 'yugipedia' && this.renderYugipediaTab(),
-      // step === 1 && website === 'codexygo' && this.renderCodexYgoTab(),
+      step === 1 && website === 'codexygo' && this.renderCodexYgoTab(),
     ];
   }
 
@@ -512,7 +512,7 @@ export class CardImportDialog extends AbstractPopup<
           alt='yuginews-logo'
           onTap={() => this.onSelectWesite('yuginews')}
         />
-        {/* <Image
+        <Image
           key='codexygo-logo'
           className={classNames('logo', 'codexygo', { selected: this.state.website === 'codexygo' })}
           margin='small'
@@ -520,7 +520,7 @@ export class CardImportDialog extends AbstractPopup<
           src={this.codexygoLogo}
           alt='codexygo-logo'
           onTap={() => this.onSelectWesite('codexygo')}
-        /> */}
+        />
         <Image
           key='yugipedia-logo'
           className={classNames('logo', 'yugipedia', { selected: this.state.website === 'yugipedia' })}
@@ -766,13 +766,17 @@ export class CardImportDialog extends AbstractPopup<
           variant='help'
           content='Collez les liens des articles CodexYGO (revenir à la ligne entre chaque lien)'
         />
-
         <TextAreaInput
           minRows={5}
           maxRows={15}
           autoGrow
           value={codexYgoImport}
           onChange={(codexYgoImport) => this.setState({ codexYgoImport })}
+        />
+        <Typography
+          variant='help'
+          fontSize='tiny'
+          content="Cela n'importera que les cartes qui sont affichées en entier dans les articles, pas celles uniquement mentionnées dans du texte."
         />
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
