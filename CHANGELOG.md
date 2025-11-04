@@ -1,7 +1,16 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.4.0
+
+- implementation codexygo
+- gestion limitation text et cardclass et cartes non-game + update interfaces
+- preps 2.4
+- up libs
+- fix nowrap sur les card abilities
+
 ## 2.3.2
 
+- bump to 2.3.2
 - gestion des chars grecques non affichés par les polices de base
 - up toolkit
 - up libs
