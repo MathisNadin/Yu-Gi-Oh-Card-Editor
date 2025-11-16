@@ -283,8 +283,15 @@ export class CodexYgoService {
     if (isString(codexCard.atk)) card.atk = codexCard.atk;
     if (isString(codexCard.def)) card.def = codexCard.def;
 
-    if (isString(codexCard.stType)) card.stType = codexCard.stType;
     if (isString(codexCard.attribute)) card.attribute = codexCard.attribute;
+    if (isString(codexCard.stType)) {
+      card.stType = codexCard.stType;
+      if (isString(codexCard.frame) && codexCard.frame === 'trap') {
+        card.attribute = 'trap';
+      } else {
+        card.attribute = 'spell';
+      }
+    }
     if (isNumber(codexCard.level)) card.level = codexCard.level;
 
     if (isObject(codexCard.translations)) {
