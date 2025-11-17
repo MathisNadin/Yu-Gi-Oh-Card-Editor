@@ -1,7 +1,17 @@
 ## yu-gi-oh-card-editor change log
 
+## 2.4.1
+
+- fix import du code jap des cartes yugipedia
+- import de l'image yugipedia plus fiable
+- suppression du support yuginews
+- ajout des règles csp pour les sites autorisés
+- up libs + analyse des images pour determiner les rations à appliquer au lieu du nom du fichier (plus fiable avec codex)
+- fix import de carte codexygo sur le s-t attribute
+
 ## 2.4.0
 
+- bump to 2.4.0
 - implementation codexygo
 - gestion limitation text et cardclass et cartes non-game + update interfaces
 - preps 2.4
