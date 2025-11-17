@@ -195,7 +195,7 @@ export class YugipediaService {
     if (useFr) {
       cardSet = yugipediaCard.frPrints[0]?.code;
     } else {
-      cardSet = yugipediaCard.enPrints[0]?.code || yugipediaCard.naPrints[0]?.code;
+      cardSet = yugipediaCard.enPrints[0]?.code || yugipediaCard.naPrints[0]?.code || yugipediaCard.jpPrints[0]?.code;
     }
 
     let edition: ICard['edition'] | undefined;
