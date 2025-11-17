@@ -1,5 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { app, IpcMainInvokeEvent } from 'electron';
+import { extname } from 'path';
+import { existsSync, statSync } from 'fs';
+import { app, IpcMainInvokeEvent, nativeImage } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { addIpcMainHandleChannel } from '../../libraries/mn-electron-main';
 
@@ -7,6 +9,19 @@ type TAxiosPostOptions = AxiosRequestConfig & {
   /** User-Agent à envoyer (écrase le header si déjà présent) */
   userAgent?: string;
 };
+
+export interface ITallCardOptions {
+  /**
+   * Minimal height/width ratio required to consider the image
+   * clearly portrait-oriented (e.g. 1.3 = 30% taller than wide).
+   */
+  minPortraitRatio?: number;
+}
+
+export interface IImageSize {
+  width: number;
+  height: number;
+}
 
 declare global {
   interface IIpcMainSendChannel {
@@ -18,6 +33,7 @@ declare global {
   }
 
   interface IIpcRendererInvokeChannel {
+    getImageSizeFromPath: { args: [imagePath: string]; response: IImageSize | undefined };
     axiosGet: { args: [url: string, options?: AxiosRequestConfig]; response: unknown | undefined };
     axiosPost: { args: [url: string, data: object, options?: TAxiosPostOptions]; response: unknown | undefined };
   }
@@ -26,7 +42,47 @@ declare global {
 // Ignore OS zoom as html-to-img does not handle it well
 app.commandLine.appendSwitch('force-device-scale-factor', '1');
 
+/**
+ * Set of file extensions considered as image files.
+ * This is a first-level filter before trying to decode the image.
+ */
+const SUPPORTED_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+
+/**
+ * Returns true if the provided path looks like an image file path
+ * based on its extension.
+ */
+function isImageFilePath(filePath: string): boolean {
+  const ext = extname(filePath).toLowerCase();
+  return SUPPORTED_IMAGE_EXTENSIONS.has(ext);
+}
+
 export function patchIpcMain(_ipcMain: TIpcMain) {
+  addIpcMainHandleChannel('getImageSizeFromPath', async (_event: IpcMainInvokeEvent, imagePath: string) => {
+    try {
+      // Basic checks: file exists and is a regular file
+      if (!existsSync(imagePath)) return undefined;
+
+      const stat = statSync(imagePath);
+      if (!stat.isFile()) return undefined;
+
+      // Check extension is an image extension
+      if (!isImageFilePath(imagePath)) return undefined;
+
+      // Let Electron decode the image
+      const img = nativeImage.createFromPath(imagePath);
+      const { width, height } = img.getSize();
+
+      // If Electron cannot decode it, size will be 0x0
+      if (!width || !height) return undefined;
+
+      return { width, height };
+    } catch {
+      // Any error (permissions, invalid file, etc.) is treated as "not an image"
+      return undefined;
+    }
+  });
+
   addIpcMainHandleChannel('axiosGet', async (_event: IpcMainInvokeEvent, url: string, options?: AxiosRequestConfig) => {
     try {
       const response = await axios.get(url, options);

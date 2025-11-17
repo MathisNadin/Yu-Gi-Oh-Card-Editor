@@ -190,12 +190,7 @@ export class CardImportDialog extends AbstractPopup<
               if (cardData.card.rush) cardData.card.dontCoverRushArt = true;
 
               // These are not full artworks
-              if (
-                !filePath.endsWith('-OW.webp') &&
-                !filePath.endsWith('-OW.png') &&
-                !filePath.endsWith('-OW.jpg') &&
-                !filePath.endsWith('-OW.jpeg')
-              ) {
+              if (await app.$card.isImageFullCard(filePath)) {
                 if (cardData.card.rush) {
                   cardData.card.dontCoverRushArt = true;
                   cardData.card.artwork = { ...cardData.card.artwork, ...app.$card.getFullRushCardPreset() };

@@ -47,9 +47,8 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
     z-index: $z-index-drawer;
 
     .mn-icon {
+      margin: auto;
       transition: 0.3s;
-      color: white;
-      fill: white;
     }
 
     &:hover {

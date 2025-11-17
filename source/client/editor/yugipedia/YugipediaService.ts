@@ -413,14 +413,7 @@ export class YugipediaService {
       if (editorCard.rush) editorCard.dontCoverRushArt = true;
 
       // These are full artworks
-      if (
-        filePath.endsWith('-OW.webp') ||
-        filePath.endsWith('-OW.png') ||
-        filePath.endsWith('-OW.jpg') ||
-        filePath.endsWith('-OW.jpeg')
-      ) {
-        return;
-      }
+      if (!(await app.$card.isImageFullCard(filePath))) return;
 
       if (editorCard.rush) {
         editorCard.dontCoverRushArt = true;

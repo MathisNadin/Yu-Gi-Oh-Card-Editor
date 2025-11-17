@@ -1,7 +1,17 @@
 ## mn-toolkit change log
 
+## 8.5.3
+
+- fix shrink btn du menu pane
+
+## 8.5.2
+
+- bump to 8.5.2
+- dans le rich text editor, last child a margin bottm 0 en general, pas que les p
+
 ## 8.5.1
 
+- bump to 8.5.1
 - gutter entre les chips réglable sur le field
 - mn-ghost contraint aux conteneurs basiques
 

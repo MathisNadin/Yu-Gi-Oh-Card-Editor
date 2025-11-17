@@ -1,7 +1,12 @@
 ## mn-webpack-builder change log
 
+## 1.4.1
+
+- ajout dépendance csp plugin
+
 ## 1.4.0
 
+- bump to 1.4.0
 - config csp plus détaillée + suppot adsense + fix doctype
 
 ## 1.3.1

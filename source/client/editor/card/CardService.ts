@@ -5,6 +5,7 @@ import { IStoreListener } from 'mn-toolkit';
 import { AbstractObservable, deepClone, sanitizeFileName, uuid } from 'mn-tools';
 import { CardImportDialog } from '../cardImportDialog';
 import { ICard, TCardStorageKey, TFrame, TAttribute, TStIcon, TCardLanguage, TSticker, TEdition, TLegendType } from '.';
+import type { ITallCardOptions } from '../../electron-patchs/main';
 
 export interface ICardsExportData {
   'current-card': ICard;
@@ -1097,6 +1098,39 @@ export class CardService extends AbstractObservable<ICardListener> implements Pa
     path = path || (await window.electron.ipcRenderer.invoke('getDirectoryPath'));
     if (!path) return '';
     return await window.electron.ipcRenderer.invoke('download', path, url);
+  }
+
+  public async isImageFullCard(imagePath: string, options?: ITallCardOptions): Promise<boolean> {
+    if (!app.$device.isElectron(window)) return false;
+
+    const size = await window.electron.ipcRenderer.invoke('getImageSizeFromPath', imagePath);
+    // Not an image, unreadable, or invalid dimensions
+    if (!size) return false;
+
+    return this.isTallCardLikeSize(size.width, size.height, options);
+  }
+
+  private isTallCardLikeSize(width: number, height: number, options: ITallCardOptions = {}): boolean {
+    const { minPortraitRatio = 1.3 } = options;
+
+    if (width <= 0 || height <= 0) {
+      return false;
+    }
+
+    const ratio = height / width;
+
+    // We only want clearly taller-than-wide rectangles:
+    // - height > width
+    // - AND ratio >= minPortraitRatio
+    if (ratio >= minPortraitRatio) {
+      return true;
+    }
+
+    // All other cases:
+    // - square-ish (ratio ≈ 1)
+    // - landscape (ratio < 1)
+    // - slightly portrait but not enough (e.g. ratio = 1.05)
+    return false;
   }
 
   private getDefaultCurrentCard(): ICard {
