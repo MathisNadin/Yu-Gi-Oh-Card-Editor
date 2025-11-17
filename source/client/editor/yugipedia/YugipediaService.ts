@@ -89,18 +89,21 @@ export class YugipediaService {
     );
   }
 
-  private async getCardImageUrl(yugipediaCardPage: IYugipediaGetPageByTitleApiResponse) {
-    const pageKeys = Object.keys(yugipediaCardPage.query.pages);
-    if (!pageKeys[0]) return undefined;
+  private async getCardImageUrl(yugipediaCard: IYugipediaCard, yugipediaCardPage: IYugipediaGetPageByTitleApiResponse) {
+    let fileName = yugipediaCard.image;
+    if (!fileName) {
+      const pageKeys = Object.keys(yugipediaCardPage.query.pages);
+      if (!pageKeys[0]) return undefined;
 
-    const pageInfo = yugipediaCardPage.query.pages[pageKeys[0]];
-    if (!pageInfo) return undefined;
+      const pageInfo = yugipediaCardPage.query.pages[pageKeys[0]];
+      if (!pageInfo) return undefined;
 
-    const yugipediaCardPageImg = await this.getCardPageImg(pageInfo.title);
-    if (!yugipediaCardPageImg?.parse?.images?.length) return undefined;
+      const yugipediaCardPageImg = await this.getCardPageImg(pageInfo.title);
+      if (!yugipediaCardPageImg?.parse?.images?.length) return undefined;
 
-    const fileName = yugipediaCardPageImg.parse.images.find((image) => image.endsWith('.png'));
-    if (!fileName) return;
+      fileName = yugipediaCardPageImg.parse.images.find((image) => image.endsWith('.png'));
+      if (!fileName) return;
+    }
 
     const yugipediaCardImg = await this.getCardImg(fileName);
     if (!yugipediaCardImg?.query?.pages) return undefined;
@@ -390,20 +393,20 @@ export class YugipediaService {
     } else if (await window.electron.ipcRenderer.invoke('checkFileExists', defaultJpg)) {
       editorCard.artwork.url = defaultJpg;
     } else if (importArtwork && artworkDirectoryPath?.length) {
-      await this.importArtwork({ yugipediaCardPage, editorCard, artworkDirectoryPath });
+      await this.importArtwork(yugipediaCard, yugipediaCardPage, editorCard, artworkDirectoryPath);
     }
 
     return editorCard;
   }
 
-  private async importArtwork(options: {
-    yugipediaCardPage: IYugipediaGetPageByTitleApiResponse;
-    editorCard: ICard;
-    artworkDirectoryPath: string;
-  }) {
-    const { yugipediaCardPage, editorCard, artworkDirectoryPath } = options;
+  private async importArtwork(
+    yugipediaCard: IYugipediaCard,
+    yugipediaCardPage: IYugipediaGetPageByTitleApiResponse,
+    editorCard: ICard,
+    artworkDirectoryPath: string
+  ) {
     try {
-      const url = await this.getCardImageUrl(yugipediaCardPage);
+      const url = await this.getCardImageUrl(yugipediaCard, yugipediaCardPage);
       if (!url) return;
 
       const filePath = await app.$card.importArtwork(url, artworkDirectoryPath);

@@ -108,6 +108,7 @@ export interface IYugipediaCardPrint {
 export interface IYugipediaCard {
   konamiId?: number;
   password?: string;
+  image?: string;
   class?: TYugipediaCardClass;
   rush?: boolean;
   legend?: boolean;

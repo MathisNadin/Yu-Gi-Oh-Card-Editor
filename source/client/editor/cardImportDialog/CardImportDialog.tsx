@@ -29,7 +29,7 @@ interface ICardImportDialogProps extends IAbstractPopupProps<ICardImportDialogRe
 
 interface ICardImportDialogState extends IAbstractPopupState {
   step: number;
-  website: TWebsite;
+  website?: TWebsite;
   yugipediaImport: string;
   codexYgoImport: string;
   importing: boolean;
@@ -67,7 +67,7 @@ export class CardImportDialog extends AbstractPopup<
       ...this.state,
       loaded: true,
       step: 0,
-      website: undefined!,
+      website: undefined,
       yugipediaImport: '',
       codexYgoImport: '',
       importing: false,
