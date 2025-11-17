@@ -18,13 +18,13 @@ $slifer: #d9654b;
 $ra: #d4b055;
 $legendaryDragon: #82b8d4;
 
-.mn-popup.import {
+.mn-popup.card-import {
   .card-import-dialog-content {
     &.websites {
       .logo {
         @include shadow(2);
         width: 75%;
-        max-height: 30%;
+        max-height: 45%;
 
         &.codexygo {
           background: linear-gradient(
@@ -38,55 +38,6 @@ $legendaryDragon: #82b8d4;
         &.selected {
           border: 2px solid color-hsl($primary);
           border-radius: calc(#{$defaultBorderRadius});
-        }
-      }
-    }
-
-    &.yuginews {
-      tbody {
-        tr {
-          background: $effect;
-
-          @each $class,
-            $color
-              in (
-                Normal: $normal,
-                Effet: $effect,
-                Rituel: $ritual,
-                Fusion: $fusion,
-                Synchro: $synchro,
-                Xyz: $xyz,
-                Lien: $link,
-                Magie: $spell,
-                Piège: $trap,
-                Jeton: $token,
-                Compétence: $skill
-              )
-          {
-            &.#{$class} {
-              background: $color;
-
-              &.Pendule {
-                background: linear-gradient(250deg, green -29%, aquamarine 35%, $color 82%);
-              }
-            }
-          }
-
-          .mn-typography {
-            display: block;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            min-width: 100%;
-            max-width: 100%;
-            user-select: none;
-            color: black;
-          }
-
-          filter: brightness(0.8);
-          &.selected {
-            filter: brightness(1.1);
-          }
         }
       }
     }

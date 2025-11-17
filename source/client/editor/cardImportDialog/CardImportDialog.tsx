@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-import { classNames, formatDate, isString } from 'mn-tools';
+import { classNames } from 'mn-tools';
 import {
-  Spinner,
   HorizontalStack,
   Checkbox,
   VerticalStack,
   TextInput,
   Button,
-  Table,
   Typography,
   Progress,
   TextAreaInput,
@@ -19,16 +17,11 @@ import {
   StepProgress,
   Image,
   IButtonProps,
-  ITableHeadRow,
-  TTableHeaderSortOrder,
 } from 'mn-toolkit';
 import { IReplaceMatrix } from '../yugipedia';
-import { IYuginewsCardData } from '../yuginews';
 import { ICard } from '../card';
 
-type TWebsite = 'yugipedia' | 'yuginews' | 'codexygo';
-
-type TCardsDataSortOption = 'theme' | 'id' | 'name' | 'set' | 'added' | 'pageOrder';
+type TWebsite = 'yugipedia' | 'codexygo';
 
 export interface ICardImportDialogResult {}
 
@@ -44,13 +37,6 @@ interface ICardImportDialogState extends IAbstractPopupState {
   generatePasscode: boolean;
   replaceMatrixes: IReplaceMatrix[];
   importArtworks: boolean;
-  yuginewsImporting: boolean;
-  yuginewsUrl: string;
-  cardsData: IYuginewsCardData[];
-  selectedCards: { [cardUuid: string]: boolean };
-  selectedCardsNum: number;
-  cardsDataSortOption: TCardsDataSortOption;
-  cardsDataSortOrder: TTableHeaderSortOrder;
   artworkSaveDirPath: string;
   cardsToImport: number;
   cardsImported: number;
@@ -62,7 +48,6 @@ export class CardImportDialog extends AbstractPopup<
   ICardImportDialogState
 > {
   private yugipediaLogo = require(`assets/images/yugipediaLogo.png`);
-  private yuginewsLogo = require(`assets/images/yuginewsLogo.png`);
   private codexygoLogo = require(`assets/images/codexygoLogo.png`);
 
   public static async show(options: ICardImportDialogProps = {}) {
@@ -70,7 +55,7 @@ export class CardImportDialog extends AbstractPopup<
     options.width = options.width || '70%';
     options.height = options.height || '80%';
     return await app.$popup.show<ICardImportDialogResult, ICardImportDialogProps>({
-      type: 'import',
+      type: 'card-import',
       Component: CardImportDialog,
       componentProps: options,
     });
@@ -90,17 +75,14 @@ export class CardImportDialog extends AbstractPopup<
       generatePasscode: false,
       replaceMatrixes: [],
       importArtworks: false,
-      yuginewsUrl: '',
-      cardsData: [],
-      selectedCards: {},
-      selectedCardsNum: 0,
-      cardsDataSortOption: 'added',
-      cardsDataSortOrder: 'desc',
       artworkSaveDirPath: `${app.$settings.settings.defaultImgImportPath}`,
-      yuginewsImporting: false,
       cardsImported: 0,
       cardsToImport: 0,
     };
+  }
+
+  public override componentDidMount() {
+    super.componentDidMount();
     app.$card.addListener(this);
   }
 
@@ -219,168 +201,6 @@ export class CardImportDialog extends AbstractPopup<
     await this.close();
   }
 
-  private async getYuginewsCards() {
-    if (!this.state.yuginewsUrl) return;
-    await this.setStateAsync({ cardsData: [], yuginewsImporting: true });
-
-    const cardsData = await app.$yuginews.getPageCards(this.state.yuginewsUrl);
-
-    if (cardsData.length) {
-      if (this.state.cardsDataSortOption === 'added' && !cardsData[0]!.added) {
-        await this.setStateAsync({ cardsDataSortOption: 'pageOrder' });
-      } else if (this.state.cardsDataSortOption === 'pageOrder' && cardsData[0]!.added) {
-        await this.setStateAsync({ cardsDataSortOption: 'added' });
-      } else if (this.state.cardsDataSortOption === 'theme' && !cardsData[0]!.theme?.length) {
-        await this.setStateAsync({ cardsDataSortOption: 'id' });
-      } else if (this.state.cardsDataSortOption === 'set' && cardsData[0]!.theme?.length) {
-        await this.setStateAsync({ cardsDataSortOption: 'theme' });
-      }
-    }
-
-    app.$errorManager.handlePromise(this.sortCardsData(cardsData));
-    await this.setStateAsync({ yuginewsImporting: false });
-  }
-
-  private async doYuginewsImport() {
-    const selectedCards = this.state.cardsData.filter((c) => this.state.selectedCards[c.uuid!]);
-    if (!selectedCards?.length) return;
-
-    await this.setStateAsync({ importing: true, selectedCards: {}, selectedCardsNum: 0 });
-    const newCards = await app.$yuginews.importFromCardData({
-      cardsData: selectedCards,
-      importArtworks: this.state.importArtworks,
-      artworkDirectoryPath: this.state.artworkSaveDirPath,
-    });
-
-    if (newCards.length) {
-      await this.setStateAsync({ cardsToImport: newCards.length });
-      await app.$card.importCards(newCards);
-      await this.close();
-    } else {
-      await this.setStateAsync({ importing: false });
-    }
-  }
-
-  private toggleSelectCard(cardUuid: string) {
-    const selectedCards = { ...this.state.selectedCards };
-    selectedCards[cardUuid] = !selectedCards[cardUuid];
-    const selectedCardsNum = selectedCards[cardUuid]
-      ? this.state.selectedCardsNum + 1
-      : this.state.selectedCardsNum - 1;
-    this.setState({ selectedCards, selectedCardsNum });
-  }
-
-  private toggleAll() {
-    let { selectedCards, selectedCardsNum, cardsData } = this.state;
-    if (selectedCardsNum === cardsData.length) {
-      selectedCardsNum = 0;
-      selectedCards = {};
-    } else {
-      selectedCardsNum = cardsData.length;
-      for (const card of cardsData) {
-        if (card.uuid) selectedCards[card.uuid] = true;
-      }
-    }
-    this.setState({ selectedCards: { ...selectedCards }, selectedCardsNum });
-  }
-
-  private async onChangeOrder(cardsDataSortOption: TCardsDataSortOption) {
-    let { cardsDataSortOrder } = this.state;
-    if (this.state.cardsDataSortOption === cardsDataSortOption) {
-      switch (cardsDataSortOrder) {
-        case 'asc':
-          cardsDataSortOrder = 'desc';
-          break;
-
-        case 'desc':
-          cardsDataSortOrder = 'asc';
-          break;
-
-        default:
-          break;
-      }
-    } else {
-      cardsDataSortOrder = 'asc';
-    }
-    await this.setStateAsync({ cardsDataSortOption, cardsDataSortOrder });
-    await this.sortCardsData();
-  }
-
-  private async sortCardsData(cardsData: IYuginewsCardData[] = this.state.cardsData) {
-    const { cardsDataSortOption, cardsDataSortOrder } = this.state;
-    switch (cardsDataSortOption) {
-      case 'theme':
-        if (cardsDataSortOrder === 'asc') cardsData.sort((a, b) => (a.theme || '').localeCompare(b.theme || ''));
-        else cardsData.sort((a, b) => (b.theme || '').localeCompare(a.theme || ''));
-        break;
-
-      case 'set':
-        if (cardsDataSortOrder === 'asc') cardsData.sort((a, b) => (a.setId || '').localeCompare(b.setId || ''));
-        else cardsData.sort((a, b) => (b.setId || '').localeCompare(a.setId || ''));
-        break;
-
-      case 'name':
-        if (cardsDataSortOrder === 'asc') cardsData.sort((a, b) => (a.nameFR || '').localeCompare(b.nameFR || ''));
-        else cardsData.sort((a, b) => (b.nameFR || '').localeCompare(a.nameFR || ''));
-        break;
-
-      case 'id':
-        cardsData.sort((a, b) => {
-          const aIsString = isString(a.id);
-          const bIsString = isString(b.id);
-          let result = 0;
-          if (aIsString && bIsString) {
-            result = (a.id as string).localeCompare(b.id as string);
-          } else if (aIsString && !bIsString) {
-            result = 1;
-          } else if (!aIsString && bIsString) {
-            result = -1;
-          } else {
-            result = ((a.id as number) || 0) - ((b.id as number) || 0);
-          }
-          if (cardsDataSortOrder === 'asc') return result;
-          else return -1 * result;
-        });
-        break;
-
-      case 'added':
-        if (cardsDataSortOrder === 'asc') {
-          cardsData.sort((a, b) => {
-            const dateA = a.added ? a.added.getTime() : 0;
-            const dateB = b.added ? b.added.getTime() : 0;
-            return dateA - dateB;
-          });
-        } else {
-          cardsData.sort((a, b) => {
-            const dateA = a.added ? a.added.getTime() : 0;
-            const dateB = b.added ? b.added.getTime() : 0;
-            return dateB - dateA;
-          });
-        }
-        break;
-
-      case 'pageOrder':
-        if (cardsDataSortOrder === 'asc') {
-          cardsData.sort((a, b) => {
-            const orderA = a.pageOrder ?? Number.NEGATIVE_INFINITY;
-            const orderB = b.pageOrder ?? Number.NEGATIVE_INFINITY;
-            return orderB - orderA;
-          });
-        } else {
-          cardsData.sort((a, b) => {
-            const orderA = a.pageOrder ?? Number.POSITIVE_INFINITY;
-            const orderB = b.pageOrder ?? Number.POSITIVE_INFINITY;
-            return orderA - orderB;
-          });
-        }
-        break;
-
-      default:
-        break;
-    }
-    await this.setStateAsync({ cardsDataSortOption, cardsDataSortOrder, cardsData: [...cardsData] });
-  }
-
   private async selectArtworkSaveDirPath() {
     if (!app.$device.isElectron(window)) return;
     const artworkSaveDirPath = await window.electron.ipcRenderer.invoke(
@@ -399,8 +219,6 @@ export class CardImportDialog extends AbstractPopup<
     switch (this.state.website) {
       case 'yugipedia':
         return 'Yugipedia';
-      case 'yuginews':
-        return 'YugiNews';
       case 'codexygo':
         return 'CodexYGO';
       default:
@@ -412,8 +230,6 @@ export class CardImportDialog extends AbstractPopup<
     switch (this.state.website) {
       case 'yugipedia':
         return 'Collez les liens des cartes';
-      case 'yuginews':
-        return "Collez le lien de l'article";
       case 'codexygo':
         return 'Collez les liens des articles';
       default:
@@ -422,7 +238,7 @@ export class CardImportDialog extends AbstractPopup<
   }
 
   protected get buttons(): IButtonProps[] {
-    const { step, website, importing, cardsData, yugipediaImport, codexYgoImport } = this.state;
+    const { step, website, importing, yugipediaImport, codexYgoImport } = this.state;
     if (!step) return [];
     switch (website) {
       case 'yugipedia':
@@ -433,18 +249,6 @@ export class CardImportDialog extends AbstractPopup<
             label: 'Importer',
             color: 'positive',
             onTap: () => this.doYugipediaImport(),
-          },
-        ];
-
-      case 'yuginews':
-        if (!cardsData?.length) return [];
-        return [
-          {
-            disabled: importing,
-            name: 'Importer',
-            label: 'Importer',
-            color: 'positive',
-            onTap: () => this.doYuginewsImport(),
           },
         ];
 
@@ -483,7 +287,6 @@ export class CardImportDialog extends AbstractPopup<
         ]}
       />,
       step === 0 && this.renderWebsitesTab(),
-      step === 1 && website === 'yuginews' && this.renderYuginewsTab(),
       step === 1 && website === 'yugipedia' && this.renderYugipediaTab(),
       step === 1 && website === 'codexygo' && this.renderCodexYgoTab(),
     ];
@@ -498,15 +301,6 @@ export class CardImportDialog extends AbstractPopup<
         gutter
         itemAlignment='center'
       >
-        <Image
-          key='yuginews-logo'
-          className={classNames('logo', 'yuginews', { selected: this.state.website === 'yuginews' })}
-          margin='small'
-          padding
-          src={this.yuginewsLogo}
-          alt='yuginews-logo'
-          onTap={() => this.onSelectWesite('yuginews')}
-        />
         <Image
           key='codexygo-logo'
           className={classNames('logo', 'codexygo', { selected: this.state.website === 'codexygo' })}
@@ -525,153 +319,6 @@ export class CardImportDialog extends AbstractPopup<
           alt='yugipedia-logo'
           onTap={() => this.onSelectWesite('yugipedia')}
         />
-      </VerticalStack>
-    );
-  }
-
-  private renderYuginewsTab() {
-    if (!this.state) return null;
-
-    const {
-      cardsDataSortOption,
-      cardsDataSortOrder,
-      yuginewsUrl,
-      yuginewsImporting,
-      importing,
-      cardsData,
-      cardsImported,
-      cardsToImport,
-      selectedCardsNum,
-    } = this.state;
-    const showTheme = !!cardsData.length && !!cardsData[0]!.theme?.length;
-    const showAdded = !!cardsData.length && !!cardsData[0]!.added;
-    const headers: ITableHeadRow = {
-      cells: [
-        {
-          content: <Checkbox value={selectedCardsNum === cardsData.length} onChange={() => this.toggleAll()} />,
-        },
-      ],
-    };
-    if (showTheme) {
-      headers.cells.push({
-        align: 'left',
-        content: 'Thème',
-        sortOrder: cardsDataSortOption === 'theme' ? cardsDataSortOrder : undefined,
-        onChangeOrder: () => this.onChangeOrder('theme'),
-      });
-    } else {
-      headers.cells.push({
-        align: 'left',
-        content: 'Set',
-        sortOrder: cardsDataSortOption === 'set' ? cardsDataSortOrder : undefined,
-        onChangeOrder: () => this.onChangeOrder('set'),
-      });
-    }
-    headers.cells.push({
-      align: 'left',
-      content: 'ID',
-      sortOrder: cardsDataSortOption === 'id' ? cardsDataSortOrder : undefined,
-      onChangeOrder: () => this.onChangeOrder('id'),
-    });
-    headers.cells.push({
-      align: 'left',
-      content: 'Nom',
-      sortOrder: cardsDataSortOption === 'name' ? cardsDataSortOrder : undefined,
-      onChangeOrder: () => this.onChangeOrder('name'),
-    });
-    if (showAdded) {
-      headers.cells.push({
-        align: 'left',
-        content: 'Ajoutée le',
-        sortOrder: cardsDataSortOption === 'added' ? cardsDataSortOrder : undefined,
-        onChangeOrder: () => this.onChangeOrder('added'),
-      });
-    } else {
-      headers.cells.push({
-        align: 'left',
-        content: "Ordre dans l'article",
-        sortOrder: cardsDataSortOption === 'pageOrder' ? cardsDataSortOrder : undefined,
-        onChangeOrder: () => this.onChangeOrder('pageOrder'),
-      });
-    }
-
-    return (
-      <VerticalStack key='yuginews' className='card-import-dialog-content yuginews' scroll gutter>
-        <HorizontalStack gutter verticalItemAlignment='middle'>
-          <TextInput
-            fill
-            placeholder="Lien de l'article"
-            value={yuginewsUrl}
-            onChange={(value) => this.setState({ yuginewsUrl: value })}
-          />
-          <Button
-            size='small'
-            color='neutral'
-            name='Rechercher'
-            label='Rechercher'
-            onTap={() => this.getYuginewsCards()}
-          />
-        </HorizontalStack>
-
-        {yuginewsImporting && <Spinner />}
-
-        {!!cardsData?.length && this.renderUrlImporter('yuginews')}
-
-        {!!cardsData?.length && (
-          <Table
-            className='yuginews-cards-table'
-            headers={[headers]}
-            rows={cardsData.map((card) => ({
-              className: classNames('yuginews-card-row', this.getCardDataStyle(card), {
-                selected: this.state.selectedCards[card.uuid!],
-              }),
-              onTap: () => this.toggleSelectCard(card.uuid!),
-              cells: [
-                {
-                  content: <Checkbox value={this.state.selectedCards[card.uuid!] ?? false} onChange={() => {}} />,
-                },
-                {
-                  align: 'left',
-                  content: <Typography content={showTheme ? card.theme : card.setId || '-'} variant='help' />,
-                },
-                {
-                  align: 'left',
-                  content: <Typography content={`${card.id ?? '-'}`} variant='help' />,
-                },
-                {
-                  align: 'left',
-                  content: <Typography content={card.nameFR} variant='help' />,
-                },
-                {
-                  align: 'left',
-                  content: (
-                    <Typography
-                      content={
-                        showAdded ? (card.added ? formatDate(card.added, '%d/%M/%Y') : '-') : `${card.pageOrder || '-'}`
-                      }
-                      variant='help'
-                    />
-                  ),
-                },
-              ],
-            }))}
-          />
-        )}
-
-        {!!importing && (
-          <HorizontalStack itemAlignment='center'>
-            <HorizontalStack margin itemAlignment='center'>
-              <Progress
-                fill
-                showPercent
-                color='positive'
-                message='Import en cours...'
-                progress={cardsImported}
-                total={cardsToImport}
-              />
-            </HorizontalStack>
-          </HorizontalStack>
-        )}
       </VerticalStack>
     );
   }
@@ -702,7 +349,7 @@ export class CardImportDialog extends AbstractPopup<
             value={generatePasscode}
             onChange={(generatePasscode) => this.setState({ generatePasscode })}
           />
-          {this.renderUrlImporter('yugipedia')}
+          {this.renderUrlImporter()}
         </HorizontalStack>
 
         <VerticalStack itemAlignment='center' gutter fill>
@@ -780,7 +427,7 @@ export class CardImportDialog extends AbstractPopup<
             value={generatePasscode}
             onChange={(generatePasscode) => this.setState({ generatePasscode })}
           />
-          {this.renderUrlImporter('codexygo')}
+          {this.renderUrlImporter()}
         </HorizontalStack>
 
         <VerticalStack itemAlignment='center' gutter fill>
@@ -801,10 +448,10 @@ export class CardImportDialog extends AbstractPopup<
     );
   }
 
-  private renderUrlImporter(website: TWebsite) {
+  private renderUrlImporter() {
     if (!app.$device.isElectron(window)) return undefined;
     return (
-      <HorizontalStack fill={website !== 'yuginews'} gutter>
+      <HorizontalStack fill gutter>
         <Checkbox
           label='Importer les images'
           value={this.state.importArtworks}
@@ -820,18 +467,5 @@ export class CardImportDialog extends AbstractPopup<
         )}
       </HorizontalStack>
     );
-  }
-
-  private getCardDataStyle(cardsData: IYuginewsCardData): string {
-    if (cardsData.cardType) {
-      if (cardsData.cardType === '2') {
-        return 'Magie';
-      } else if (cardsData.cardType === '3') {
-        return 'Piège';
-      } else if (cardsData.abilities?.length) {
-        return cardsData.abilities.join(' ');
-      }
-    }
-    return '';
   }
 }

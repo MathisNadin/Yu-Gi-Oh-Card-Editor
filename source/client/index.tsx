@@ -5,7 +5,6 @@ import {
   SettingsService,
   YugipediaService,
   CardService,
-  YuginewsService,
   HomeView,
   CardBuilderService,
   CodexYgoService,
@@ -68,7 +67,6 @@ setupAppAndToolkit(
     app.service('$yugipedia', YugipediaService, { depends: ['$axios'] });
     app.service('$card', CardService, { depends: ['$store'] });
     app.service('$cardBuilder', CardBuilderService);
-    app.service('$yuginews', YuginewsService, { depends: ['$axios'] });
     app.service('$codexygo', CodexYgoService, { depends: ['$axios'] });
     app.$router.register('home', '/home/', HomeView);
   }
