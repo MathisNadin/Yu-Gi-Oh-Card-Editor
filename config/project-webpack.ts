@@ -5,6 +5,23 @@ import { cspCommon } from '../webpack/library/common/csp-common';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 
+const externalMediaHosts = [
+  'https://yuginews.fr',
+  'https://www.yuginews.fr',
+  'https://codexygo.test',
+  'https://int.codexygo.fr',
+  'https://codexygo.fr',
+  'https://www.codexygo.fr',
+  'https://www.db.yugioh-card.com',
+  'https://db.ygoresources.com',
+  'https://artworks-en-n.ygoresources.com',
+  'https://yugipedia.com',
+  'https://ms.yugipedia.com',
+  'https://www.scanflip.fr',
+  'https://media.scanflip.fr',
+  'https://www.cards-capital.com',
+];
+
 const devProjectWebpackConfig: Configuration = {
   plugins: [
     new CspHtmlWebpackPlugin(
@@ -21,17 +38,11 @@ const devProjectWebpackConfig: Configuration = {
 
         'style-src-elem': [...cspCommon['style-src-elem']!, "'unsafe-inline'"],
 
-        'connect-src': [
-          ...cspCommon['connect-src']!,
-          'ws://localhost:*',
-          'wss://localhost:*',
-          'https://yuginews.fr',
-          'https://www.yuginews.fr',
-          'https://codexygo.test',
-          'https://int.codexygo.fr',
-          'https://codexygo.fr',
-          'https://www.codexygo.fr',
-        ],
+        'connect-src': [...cspCommon['connect-src']!, 'ws://localhost:*', 'wss://localhost:*', ...externalMediaHosts],
+
+        'img-src': [...cspCommon['img-src']!, ...externalMediaHosts],
+
+        'media-src': ["'self'", ...externalMediaHosts],
       },
       {
         enabled: true,
@@ -73,6 +84,12 @@ const prodProjectWebpackConfig: Configuration = {
           // keep if AdSense / your app inject inline styles; remove if you serve CSS files only
           "'unsafe-inline'",
         ],
+
+        'connect-src': [...cspCommon['connect-src']!, ...externalMediaHosts],
+
+        'img-src': [...cspCommon['img-src']!, ...externalMediaHosts],
+
+        'media-src': ["'self'", ...externalMediaHosts],
       },
       {
         enabled: true,
