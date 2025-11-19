@@ -399,6 +399,8 @@
         margin-bottom: calc(var(--description-text-margin-bottom));
 
         .span-text {
+          line-height: calc(var(--description-text-line-height));
+
           &.rush-label {
             text-transform: uppercase;
             font-weight: bold;
@@ -482,6 +484,8 @@
         margin-bottom: calc(var(--pendulum-effect-text-margin-bottom));
 
         .span-text {
+          line-height: calc(var(--pendulum-effect-text-line-height));
+
           &.with-tcg-at {
             .at-char {
               font-family: fontDescTcgAt;
