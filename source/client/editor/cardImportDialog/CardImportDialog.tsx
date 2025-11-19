@@ -187,6 +187,10 @@ export class CardImportDialog extends AbstractPopup<
             }
           }
 
+          if (this.state.generatePasscode && !cardData.card.passcode) {
+            cardData.card.passcode = app.$card.generatePasscode();
+          }
+
           newCards.push(cardData.card);
         }
       } catch (e) {
