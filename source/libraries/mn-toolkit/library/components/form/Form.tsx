@@ -87,7 +87,7 @@ export class Form<PROPS extends IFormProps = IFormProps, STATE extends IFormStat
       <FormContext.Provider value={this.contextValue}>
         <form
           ref={this.base as React.RefObject<HTMLFormElement>}
-          {...(this.renderAttributes() as React.AllHTMLAttributes<HTMLFormElement>)}
+          {...this.renderAttributes()}
           onSubmit={(e) => e.preventDefault()}
         >
           {this.inside}

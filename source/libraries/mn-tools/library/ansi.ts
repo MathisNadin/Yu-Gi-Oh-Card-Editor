@@ -1,4 +1,4 @@
-import { isNumber, TJSONValue } from '..';
+import { isNumber, isObject, TJSONValue } from '..';
 
 const underline = 4;
 const notUnderline = 24;
@@ -156,13 +156,15 @@ class Ansi {
     console.log(bottomLine);
   }
   public filterAnsi(value: TJSONValue) {
-    return `${value}`.replace(/\u001b\[\d+m/g, '');
+    const stringValue = isObject(value) ? JSON.stringify(value) : String(value);
+    return stringValue.replace(/\u001b\[\d+m/g, '');
   }
 
   private formatValue(value: TJSONValue) {
     // if (isString(value)) return ansi.red(value);
     if (isNumber(value)) return ansi.green(`${value}`);
-    return `${value}`;
+    if (isObject(value)) return JSON.stringify(value);
+    return String(value);
   }
 
   private pad(value: TJSONValue, width: number) {

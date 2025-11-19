@@ -15,7 +15,7 @@ function toRegex(url: string): RegExp {
 export function parseURLs(cssText: string): string[] {
   const urls: string[] = [];
 
-  cssText.replace(URL_REGEX, (raw, quotation, url) => {
+  cssText.replace(URL_REGEX, (raw, _quotation, url: string) => {
     urls.push(url);
     return raw;
   });
@@ -51,7 +51,6 @@ function filterPreferredFontFormat(str: string, { preferredFontFormat }: Options
   return !preferredFontFormat
     ? str
     : str.replace(FONT_SRC_REGEX, (match: string) => {
-        // eslint-disable-next-line no-constant-condition
         while (true) {
           const [src, , format] = URL_WITH_FORMAT_REGEX.exec(match) || [];
           if (!format) {

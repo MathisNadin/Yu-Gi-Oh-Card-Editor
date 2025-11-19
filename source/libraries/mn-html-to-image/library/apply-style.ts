@@ -17,10 +17,9 @@ export function applyStyle<T extends HTMLElement>(node: T, options: Options): T 
 
   const manual = options.style;
   if (manual != null) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Object.keys(manual).forEach((key: any) => {
-      style[key] = manual[key] as string;
-    });
+    for (const key in manual) {
+      style[key] = manual[key]!;
+    }
   }
 
   return node;

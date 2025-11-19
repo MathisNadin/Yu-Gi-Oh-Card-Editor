@@ -15,12 +15,12 @@
   $tx: var(--triangle-x, 50%);
 
   &.bottom {
-    &:before {
+    &::before {
       @include triangle('top', 'bottom', $border-color, $tw, $th);
       top: calc(-1 * #{$th});
       margin-left: calc($tx - #{$tw} / 2);
     }
-    &:after {
+    &::after {
       @include triangle('top', 'bottom', $color, calc($tw - 2 * $border-width), calc($th - $border-width));
       top: calc(-1 * #{$th} + 2 * #{$border-width});
       margin-left: calc($tx - #{$tw} / 2 + #{$border-width});
@@ -29,12 +29,12 @@
   }
 
   &.top {
-    &:before {
+    &::before {
       @include triangle('bottom', 'top', $border-color, $tw, $th);
       bottom: calc(-1 * #{$th});
       margin-left: calc($tx - #{$tw} / 2);
     }
-    &:after {
+    &::after {
       @include triangle('bottom', 'top', $color, calc($tw - 2 * $border-width), calc($th - $border-width));
       bottom: calc(-1 * #{$th} + 2 * #{$border-width});
       margin-left: calc($tx - #{$tw} / 2 + #{$border-width});
@@ -65,7 +65,7 @@
 
   .mn-popover-focus {
     position: fixed;
-    box-shadow: 0 0 0 10000px hsl(0deg 0% 0% / 0.5);
+    box-shadow: 0 0 0 10000px hsl(0deg 0% 0% / 50%);
     border-radius: calc(#{$defaultBorderRadius});
     z-index: $z-index-popover-overlay;
   }
@@ -75,7 +75,7 @@
     pointer-events: auto;
     border-radius: calc(#{$defaultBorderRadius});
     background-color: color-hsl($bg1);
-    box-shadow: color-hsla($fg1, 0.2) 0px 1px 0.25rem 0px;
+    box-shadow: color-hsla($fg1, 0.2) 0 1px 0.25rem 0;
 
     visibility: hidden;
     &.visible {
@@ -96,13 +96,13 @@
 
     &.actions {
       > .mn-container-inside {
-        padding-right: 0px;
+        padding-right: 0;
       }
 
       .popover-content-wrapper {
         &.mn-scroll {
           > .mn-container-inside {
-            padding-right: 0px;
+            padding-right: 0;
           }
         }
       }
@@ -176,7 +176,7 @@
                 background-color: color-hsla($fg1, 0.3);
               }
 
-              &:not(.mn-disabled):not(.separator) {
+              &:not(.mn-disabled, .separator) {
                 &:hover {
                   background-color: color-hsl($bg2);
                 }
@@ -200,7 +200,7 @@
     }
 
     &.walkthrough {
-      @include popoverTriangle($info, transparent, 0px);
+      @include popoverTriangle($info, transparent, 0);
 
       background-color: color-hsl($info);
       color: color-hsl($dark-fg1);

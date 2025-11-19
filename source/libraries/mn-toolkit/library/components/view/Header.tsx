@@ -33,7 +33,7 @@ export class Header<P extends IHeaderProps = IHeaderProps, S extends IContainerS
     super.componentDidMount();
     app.$xhr.addListener(this);
     app.$header.addListener(this);
-    app.$errorManager.handlePromise(app.$header.update());
+    app.$header.update();
   }
 
   public override componentWillUnmount() {

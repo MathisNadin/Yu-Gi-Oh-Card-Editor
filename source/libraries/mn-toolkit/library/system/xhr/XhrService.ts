@@ -1,4 +1,4 @@
-import { AbstractObservable, unserialize, uuid, each, serialize } from 'mn-tools';
+import { AbstractObservable, unserialize, uuid, each, serialize, isDefined, isString, normalizeError } from 'mn-tools';
 import { IXhrListener, IXhrProgress, IXhrRequestOptions } from '.';
 
 declare global {
@@ -10,8 +10,7 @@ declare global {
   }
 
   interface ActiveXObject {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (s: string): any;
+    new (s: string): XMLHttpRequest;
   }
 }
 
@@ -26,31 +25,23 @@ export class XhrError extends Error {
   }
 }
 
-export function isXhrError(value: Error): value is XhrError {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return typeof (value as any).statusCode !== 'undefined';
-}
-
 /**
  * This class manage the XHR communication with the server.
  *
  * @memberOf $xhr
  */
 export class XhrService extends AbstractObservable<IXhrListener> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async request(options: IXhrRequestOptions): Promise<any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new Promise<any>((resolve, reject) => {
+  public async request<RES>(options: IXhrRequestOptions): Promise<RES> {
+    return new Promise<RES>((resolve, reject) => {
       options.timeout = options.timeout || 0;
       options.binary = options.binary || false;
       options.headers = options.headers || {};
 
-      let request!: XMLHttpRequest;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (typeof (window as any).XMLHttpRequest !== 'undefined') {
+      let request: XMLHttpRequest | undefined;
+      if (isDefined(window.XMLHttpRequest)) {
         request = new XMLHttpRequest();
       } else {
-        let versions = [
+        const versions = [
           'MSXML2.XmlHttp.5.0',
           'MSXML2.XmlHttp.4.0',
           'MSXML2.XmlHttp.3.0',
@@ -62,7 +53,9 @@ export class XhrService extends AbstractObservable<IXhrListener> {
           try {
             request = new ActiveXObject(versions[i]!);
             break;
-          } catch {}
+          } catch (e) {
+            app.$errorManager.trigger(e as Error);
+          }
         }
       }
       if (typeof request === 'undefined') return reject(new XhrError('No XHR'));
@@ -98,7 +91,7 @@ export class XhrService extends AbstractObservable<IXhrListener> {
 
       if (options.timeout) {
         request.timeout = options.timeout;
-        request.ontimeout = () => reject('timeout');
+        request.ontimeout = () => reject(new Error('timeout'));
       }
 
       request.upload.addEventListener(
@@ -138,18 +131,17 @@ export class XhrService extends AbstractObservable<IXhrListener> {
             return reject(new XhrError(`Status HTTP Code ${this.status}`, this.status));
           } else {
             app.$errorManager.handlePromise(self.dispatchAsync('xhrStop', request.$id));
-            let data = this.response;
+            let data = this.response as unknown;
             try {
-              let contentType = this.getResponseHeader('content-type') as string;
+              let contentType = this.getResponseHeader('content-type') || '';
               let tokens = contentType.split(/\s*;\s*/);
-              if (tokens[0] === 'application/json') {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              if (tokens[0] === 'application/json' && isString(data)) {
                 data = unserialize(data);
               }
             } catch (e) {
-              return reject(e);
+              return reject(normalizeError(e));
             }
-            return resolve(data);
+            return resolve(data as RES);
           }
         }
       };

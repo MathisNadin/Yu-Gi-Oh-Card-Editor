@@ -199,7 +199,7 @@
         background-color: transparent;
       }
 
-      &:not(.mn-disabled):not(.separator) {
+      &:not(.mn-disabled, .separator) {
         &:hover {
           background-color: color-hsla($primary, 0.5);
         }

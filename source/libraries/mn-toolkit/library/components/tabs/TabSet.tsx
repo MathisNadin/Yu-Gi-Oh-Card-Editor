@@ -88,8 +88,8 @@ export class TabSet<ID = number> extends Containable<ITabSetProps<ID>, ITabSetSt
 
       items.map((item, index) => (
         <span
-          key={`${item.tabId}-${index}`}
-          id={`mn-tab-button-${item.tabId}`}
+          key={`${String(item.tabId)}-${index}`}
+          id={`mn-tab-button-${String(item.tabId)}`}
           onClick={() => app.$errorManager.handlePromise(this.props.onChange(item.tabId))}
           className={classNames(
             'item',

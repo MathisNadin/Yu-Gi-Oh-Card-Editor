@@ -96,9 +96,7 @@
   time,
   mark,
   audio,
-  video,
-  ul,
-  li {
+  video {
     @include resetBlockTag();
     // flex-shrink: 0;
   }
@@ -196,8 +194,8 @@
   }
 
   *,
-  *:before,
-  *:after {
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -231,8 +229,8 @@
     -webkit-tap-highlight-color: transparent;
     margin: 0;
     padding: 0;
-    word-wrap: break-word;
-    text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+    text-rendering: optimizelegibility;
     // backface-visibility: hidden;
     -webkit-user-drag: none;
     // -ms-content-zooming: none;

@@ -22,7 +22,7 @@ const defaultIpcRenderer: Partial<IIpcRenderer> = {
     channel: C,
     ...args: TIpcRendererInvokeChannelArgs<C>
   ): Promise<TIpcRendererInvokeChannelResponse<C>> {
-    return await ipcRenderer.invoke(channel, ...args);
+    return (await ipcRenderer.invoke(channel, ...args)) as TIpcRendererInvokeChannelResponse<C>;
   },
 
   getPathForFile(file: File): string {

@@ -1,7 +1,5 @@
 import { createRef } from 'react';
-import { $getRoot, CLEAR_HISTORY_COMMAND, ParagraphNode, TextNode } from 'lexical';
-import { LexicalEditor } from 'lexical/LexicalEditor';
-import { EditorState } from 'lexical/LexicalEditorState';
+import { $getRoot, CLEAR_HISTORY_COMMAND, ParagraphNode, TextNode, LexicalEditor, EditorState } from 'lexical';
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
@@ -142,10 +140,11 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
 
     const serializedBase = EMPTY_EDITOR_STATE_JSON;
     const editorState = this.editor.parseEditorState(serializedBase, () => {
+      if (!this.editor) return;
       const dom = new DOMParser().parseFromString(this.props.value || '<p></p>', 'text/html');
       const root = $getRoot();
       root.clear();
-      root.append(...$generateNodesFromDOM(this.editor!, dom));
+      root.append(...$generateNodesFromDOM(this.editor, dom));
     });
     this.setState({ editorState, lastHtmlValue: this.props.value }, () =>
       this.editor!.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined)
@@ -240,7 +239,7 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
             placeholder={this.props.placeholder}
             value={this.state.editorState}
             onChange={this.onChange}
-            onEditorInit={this.onEditorInit}
+            onEditorInit={(editor) => this.onEditorInit(editor)}
           />
           {this.props.children}
         </div>
@@ -272,26 +271,28 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
     );
   }
 
-  private onEditorInit = async (editor: LexicalEditor) => {
+  private onEditorInit = (editor: LexicalEditor) => {
     this.editor = editor;
 
     let serializedState: ReturnType<EditorState['toJSON']>;
     this.editor.update(() => {
+      if (!this.editor) return;
+
       const parser = new DOMParser();
       const dom = parser.parseFromString(this.state.lastHtmlValue || '<p></p>', 'text/html');
       const root = $getRoot();
 
       // Clear any default content and insert nodes parsed from HTML
       root.clear();
-      const nodes = $generateNodesFromDOM(this.editor!, dom);
+      const nodes = $generateNodesFromDOM(this.editor, dom);
       root.append(...nodes);
 
       // Serialize the new state for parsing
-      serializedState = this.editor!.getEditorState().toJSON();
-    });
+      serializedState = this.editor.getEditorState().toJSON();
 
-    // parseEditorState expects a string or a serialized JSON object
-    await this.setStateAsync({ editorState: this.editor.parseEditorState(serializedState!) });
+      // parseEditorState expects a string or a serialized JSON object
+      this.setState({ editorState: this.editor.parseEditorState(serializedState) });
+    });
   };
 
   private onChange = async (editorState: EditorState) => {

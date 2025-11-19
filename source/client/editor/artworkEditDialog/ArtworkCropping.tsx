@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-named-as-default
 import ReactCrop, { Crop } from 'react-image-crop';
 import { IContainerProps, IContainerState, Container, VerticalStack } from 'mn-toolkit';
 
@@ -31,7 +30,9 @@ export class ArtworkCropping extends Container<IArtworkCroppingProps, IArtworkCr
       <VerticalStack fill itemAlignment='center' verticalItemAlignment='top'>
         <ReactCrop
           crop={this.props.crop}
-          onChange={(_cropPx: Crop, percentageCrop: Crop) => this.onCroppingChange(percentageCrop)}
+          onChange={(_cropPx: Crop, percentageCrop: Crop) =>
+            app.$errorManager.handlePromise(this.onCroppingChange(percentageCrop))
+          }
         >
           <img src={this.props.artworkBase64} alt='artwork' />
         </ReactCrop>

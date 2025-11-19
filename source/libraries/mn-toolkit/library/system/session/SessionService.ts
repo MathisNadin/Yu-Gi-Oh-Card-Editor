@@ -1,7 +1,7 @@
 import { extend, logger, AbstractObservable } from 'mn-tools';
 import { IMemberAPILoginResponse } from 'api/main';
 import { IDeviceListener } from '../device';
-import { isXhrError } from '../xhr';
+import { XhrError } from '../xhr';
 import { ISessionListener, TSessionStoreKey } from '.';
 
 const log = logger('session');
@@ -59,7 +59,7 @@ export class SessionService extends AbstractObservable<ISessionListener> impleme
       const err = e as Error;
       app.$errorManager.trigger(err);
 
-      if (isXhrError(err) && NETWORK_STATUS_CODES.includes(err.statusCode)) {
+      if (err instanceof XhrError && NETWORK_STATUS_CODES.includes(err.statusCode)) {
         // Offline/network error → keep local session, mark for later retry
         log.debug('Network/offline error: keeping session locally');
         this._needsTokenAuth = true;

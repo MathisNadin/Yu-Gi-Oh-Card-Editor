@@ -1,41 +1,42 @@
+/* stylelint-disable font-family-no-missing-generic-family-keyword */
 @font-face {
   font-family: fontDesc;
-  src: url(assets/fonts/matrixBook.ttf);
+  src: url('assets/fonts/matrixBook.ttf');
 }
 
 @font-face {
   font-family: fontDescTcgAt;
-  src: url(assets/fonts/NCAASanDiegoStAztecs.ttf);
+  src: url('assets/fonts/NCAASanDiegoStAztecs.ttf');
 }
 
 @font-face {
   font-family: fontName;
-  src: url(assets/fonts/yuGiOhMatrixRegularSmallCaps1.ttf);
+  src: url('assets/fonts/yuGiOhMatrixRegularSmallCaps1.ttf');
 }
 
 @font-face {
   font-family: fontAbilities;
-  src: url(assets/fonts/itcStoneSerifBold.ttf);
+  src: url('assets/fonts/itcStoneSerifBold.ttf');
 }
 
 @font-face {
   font-family: fontPasscode;
-  src: url(assets/fonts/itcStoneSerif.ttf);
+  src: url('assets/fonts/itcStoneSerif.ttf');
 }
 
 @font-face {
   font-family: fontCardSet;
-  src: url(assets/fonts/itcStoneSerif.ttf);
+  src: url('assets/fonts/itcStoneSerif.ttf');
 }
 
 @font-face {
   font-family: fontAtkDef;
-  src: url(assets/fonts/matrixBoldSmallCaps.ttf);
+  src: url('assets/fonts/matrixBoldSmallCaps.ttf');
 }
 
 @font-face {
   font-family: fontRushAtkDef;
-  src: url(assets/fonts/RoGSanSrfStd-Bd.otf);
+  src: url('assets/fonts/RoGSanSrfStd-Bd.otf');
 }
 
 .card-builder {
@@ -56,7 +57,7 @@
     font-variant: normal;
     font-weight: normal;
     line-height: 100%;
-    letter-spacing: 0px;
+    letter-spacing: 0;
     margin-bottom: unset;
   }
 

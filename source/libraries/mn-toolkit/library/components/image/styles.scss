@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @mixin themeImage() {
   overflow: hidden;
   width: auto;
@@ -33,7 +35,7 @@
 
   &.active {
     transition: background-color 0.4s ease;
-    background-color: hsl(0deg 0% 0% / 0.75);
+    background-color: hsl(0deg 0% 0% / 75%);
     pointer-events: auto;
 
     .overlay {
@@ -87,8 +89,8 @@
       }
 
       .mn-image {
-        $font-values: map-get($theme-fonts, 'small');
-        $font-size: map-get($font-values, 'size');
+        $font-values: map.get($theme-fonts, 'small');
+        $font-size: map.get($font-values, 'size');
         $iconSize: 20px;
         max-height: calc(100% - #{$contentGap} * 2 - #{$font-size} * 2 - #{$iconSize});
         margin: 0 auto;
@@ -109,7 +111,7 @@
       bottom: 0;
 
       .spinner-circle {
-        border-top-color: hsl(0deg, 0%, 100%); // better contrast with the dark overlay
+        border-top-color: hsl(0deg 0% 100%); // better contrast with the dark overlay
       }
     }
 

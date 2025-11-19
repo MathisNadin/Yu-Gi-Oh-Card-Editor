@@ -1,4 +1,4 @@
-import { LexicalEditor } from 'lexical/LexicalEditor';
+import { LexicalEditor } from 'lexical';
 import { IAbstractPopoverProps } from '../popover';
 import { IIconProps, TIconId } from '../icon';
 

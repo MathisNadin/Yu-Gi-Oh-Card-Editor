@@ -1,0 +1,28 @@
+module.exports = {
+  extends: ['stylelint-config-standard-scss'],
+  plugins: ['stylelint-scss'],
+  rules: {
+    'no-empty-source': null,
+    'selector-class-pattern': null,
+    'declaration-empty-line-before': null,
+    'property-no-vendor-prefix': null,
+    'no-descending-specificity': null,
+    'shorthand-property-no-redundant-values': null,
+    'at-rule-empty-line-before': null,
+    'declaration-block-no-redundant-longhand-properties': null,
+    'rule-empty-line-before': null,
+    'keyframes-name-pattern': null,
+    'scss/at-mixin-pattern': null,
+    'scss/at-mixin-argumentless-call-parentheses': null,
+    'scss/double-slash-comment-empty-line-before': null,
+    'scss/dollar-variable-pattern': null,
+    'scss/dollar-variable-empty-line-before': null,
+  },
+  ignoreFiles: [
+    '**/.build-web/**',
+    '**/.temp-desktop/**',
+    '**/.build-desktop/**',
+    '**/.package-desktop/**',
+    '**/node_modules/**',
+  ],
+};

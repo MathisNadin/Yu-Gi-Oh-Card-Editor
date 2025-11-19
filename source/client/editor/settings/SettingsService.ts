@@ -1,4 +1,4 @@
-import { AbstractObservable, deepClone, isObject, isString, unserialize } from 'mn-tools';
+import { AbstractObservable, deepClone, isArray, isObject, isString, unserialize } from 'mn-tools';
 import { IStoreListener } from 'mn-toolkit';
 import { ICardsExportData } from 'client/editor/card';
 
@@ -94,10 +94,10 @@ export class SettingsService extends AbstractObservable<ISettingsListener> imple
       const stringContent = resultIsString ? result : decoder.decode(result.content);
       if (!stringContent) return;
 
-      const data = unserialize(stringContent) as IExportData;
+      const data = unserialize(stringContent);
       if (!data || !isObject(data)) return;
 
-      if (data.settings) {
+      if ('settings' in data && this.isUserSettings(data.settings)) {
         const settings = deepClone(data.settings);
         this.correct(settings);
         this._settings = settings;
@@ -105,9 +105,29 @@ export class SettingsService extends AbstractObservable<ISettingsListener> imple
         this.fireSettingsUpdated();
       }
 
-      if (data.cards) await app.$card.importCardData(data.cards);
+      if ('cards' in data && this.isCardsExportData(data.cards)) {
+        await app.$card.importCardData(data.cards);
+      }
     } catch (error) {
       console.error(error);
     }
+  }
+
+  private isUserSettings(settings: unknown): settings is IUserSettings {
+    return (
+      isObject(settings) &&
+      (('defaultRenderPath' in settings && isString(settings.defaultRenderPath)) ||
+        ('defaultArtworkPath' in settings && isString(settings.defaultArtworkPath)) ||
+        ('defaultImgImportPath' in settings && isString(settings.defaultImgImportPath)))
+    );
+  }
+
+  private isCardsExportData(cards: unknown): cards is ICardsExportData {
+    return (
+      isObject(cards) &&
+      (('current-card' in cards && isObject(cards['current-card'])) ||
+        ('temp-current-card' in cards && isObject(cards['temp-current-card'])) ||
+        ('local-cards' in cards && isArray(cards['local-cards'])))
+    );
   }
 }

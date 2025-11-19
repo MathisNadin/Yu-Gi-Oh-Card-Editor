@@ -1,6 +1,6 @@
 import { JSX } from 'react';
 import { AbstractObservable, uuid } from 'mn-tools';
-import { IToasterListener, Toaster, TToastType } from '.';
+import { IToasterListener, IToasterProps, Toaster, TToastType } from '.';
 
 export class ToasterService extends AbstractObservable<IToasterListener> {
   public toasters: JSX.Element[] = [];
@@ -29,7 +29,7 @@ export class ToasterService extends AbstractObservable<IToasterListener> {
   }
 
   public remove(id: string) {
-    this.toasters = this.toasters.filter((p) => p.props.id !== id);
+    this.toasters = this.toasters.filter((p) => (p.props as IToasterProps).id !== id);
     this.dispatch('toastersChanged');
   }
 

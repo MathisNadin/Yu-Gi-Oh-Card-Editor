@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { createRef, CSSProperties } from 'react';
 import { IContainableProps, IContainableState, Containable, TJSXElementChild, TDidUpdateSnapshot } from 'mn-toolkit';
 import { deepClone, isDeepEqual, preloadImage, wait } from 'mn-tools';

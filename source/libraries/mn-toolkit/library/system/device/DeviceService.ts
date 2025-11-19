@@ -13,6 +13,7 @@ import {
   logger,
   AbstractObservable,
   serialize,
+  normalizeError,
 } from 'mn-tools';
 import { IDeviceSpec } from 'api/main';
 import { IApplicationListener } from '../../system';
@@ -93,8 +94,8 @@ export class DeviceService extends AbstractObservable<IDeviceListener> implement
         time: new Date(),
         timeOffset: this.timeOffset,
         screen: {
-          width: this.screenWidth!,
-          height: this.screenHeight!,
+          width: this.screenWidth,
+          height: this.screenHeight,
           pixelWidth: window.devicePixelRatio || 1,
         },
       },
@@ -272,10 +273,10 @@ export class DeviceService extends AbstractObservable<IDeviceListener> implement
     return this._screenSpec;
   }
   public get screenWidth() {
-    return this._screenSpec.width!;
+    return this._screenSpec.width;
   }
   public get screenHeight() {
-    return this._screenSpec.height!;
+    return this._screenSpec.height;
   }
   public get isPortrait() {
     return !!this._screenSpec.isPortrait;
@@ -534,6 +535,7 @@ export class DeviceService extends AbstractObservable<IDeviceListener> implement
   public get isChrome() {
     const isChromium = window.chrome;
     const winNav = window.navigator;
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const vendorName = winNav.vendor;
     const isOpera = isDefined(window.opr);
     const isIEedge = winNav.userAgent.indexOf('Edge') > -1;
@@ -615,7 +617,7 @@ export class DeviceService extends AbstractObservable<IDeviceListener> implement
               name: file.name,
             });
           };
-          reader.onerror = () => reject(reader.error);
+          reader.onerror = () => reject(normalizeError(reader.error));
           reader.readAsArrayBuffer(file);
         };
         input.click();

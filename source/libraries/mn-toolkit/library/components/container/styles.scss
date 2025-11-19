@@ -13,18 +13,18 @@ $scrollBarSize: 5px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: hsl(0deg 0% 0% / 0.1);
+      background-color: hsl(0deg 0% 0% / 10%);
       border-radius: 3px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background-color: hsl(0deg 0% 0% / 0.3);
+      background-color: hsl(0deg 0% 0% / 30%);
     }
   }
 
   .without-webkit & {
     scrollbar-width: thin;
-    scrollbar-color: hsl(0deg 0% 0% / 0.1) transparent;
+    scrollbar-color: hsl(0deg 0% 0% / 10%) transparent;
   }
 }
 
@@ -278,7 +278,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
           max-width: calc(100% - #{$defaultSpacing});
         }
 
-        &:after {
+        &::after {
           content: ' ';
           min-height: calc(#{$defaultSpacing});
         }
@@ -286,7 +286,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 
       &.mn-layout-gutter {
         > .mn-container-inside {
-          &:after {
+          &::after {
             margin-top: calc(-1 * #{$defaultSpacing});
           }
         }
@@ -322,7 +322,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
           max-height: calc(100% - #{$defaultSpacing});
         }
 
-        &:after {
+        &::after {
           content: ' ';
           min-width: calc(#{$defaultSpacing});
         }
@@ -330,7 +330,7 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 
       &.mn-layout-gutter {
         > .mn-container-inside {
-          &:after {
+          &::after {
             margin-left: calc(-1 * #{$defaultSpacing});
           }
         }

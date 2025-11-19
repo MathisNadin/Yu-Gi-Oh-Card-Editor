@@ -40,8 +40,8 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
     width: 30px;
     border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 3px 10px -3px hsl(260deg 44% 32% / 0.3);
-    right: -00px;
+    box-shadow: 0 3px 10px -3px hsl(260deg 44% 32% / 30%);
+    right: -0;
     transform: translateY(-50%) translateX(-8px);
     transition: 0.3s;
     z-index: $z-index-drawer;
@@ -70,10 +70,6 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
       min-height: $height;
       max-height: $height;
     }
-  }
-
-  &.open {
-    width: $menu-width;
   }
 
   &.close {
@@ -284,7 +280,7 @@ $menu-contracted-width: calc(#{$defaultSpacing} * 2.5 + 20px + 5px + 1px) !defau
             }
           }
 
-          &:not(.mn-disabled):not(.separator) {
+          &:not(.mn-disabled, .separator) {
             &:hover {
               background-color: color-hsl($dark-bg1);
 

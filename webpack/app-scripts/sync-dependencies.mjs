@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import path from 'path';
 import { promises as fs } from 'fs';
 
@@ -21,25 +20,50 @@ async function findPackageJsonFiles(dir) {
 async function loadDependencies(files) {
   const dependencies = {};
   const devDependencies = {};
-  const conflicts = [];
+  const versionConflicts = [];
+  const placementConflicts = [];
+
+  // Pour suivre où apparaît chaque package (dep/dev + fichier)
+  const allPackages = {};
 
   for (const file of files) {
     const content = JSON.parse(await fs.readFile(file, 'utf8'));
-    ['dependencies', 'devDependencies'].forEach((depType) => {
-      if (content[depType]) {
-        for (const [pkg, version] of Object.entries(content[depType])) {
-          const depCollection = depType === 'dependencies' ? dependencies : devDependencies;
-          if (depCollection[pkg] && depCollection[pkg] !== version) {
-            conflicts.push(`Conflit pour ${pkg}: ${depCollection[pkg]} vs ${version} dans ${file}`);
-          } else {
-            depCollection[pkg] = version;
-          }
+
+    const depTypes = ['dependencies', 'devDependencies'];
+
+    depTypes.forEach((depType) => {
+      const deps = content[depType];
+      if (!deps) return;
+
+      Object.entries(deps).forEach(([pkg, version]) => {
+        // Suivi global pour placement deps/dev
+        if (!allPackages[pkg]) {
+          allPackages[pkg] = [];
         }
-      }
+        allPackages[pkg].push({ file, depType, version });
+
+        // Logique existante : conflit de version au sein du même depType
+        const depCollection = depType === 'dependencies' ? dependencies : devDependencies;
+        if (depCollection[pkg] && depCollection[pkg] !== version) {
+          versionConflicts.push(
+            `Conflit de version pour ${pkg} (${depType}) : ${depCollection[pkg]} vs ${version} dans ${file}`
+          );
+        } else {
+          depCollection[pkg] = version;
+        }
+      });
     });
   }
 
-  return { dependencies, devDependencies, conflicts };
+  for (const [pkg, locations] of Object.entries(allPackages)) {
+    const depTypes = new Set(locations.map((l) => l.depType));
+    if (depTypes.size > 1) {
+      const detail = locations.map((l) => `${l.depType} (${l.version}) dans ${l.file}`).join(' ; ');
+      placementConflicts.push(`Package ${pkg} utilisé à la fois en dependencies et devDependencies : ${detail}`);
+    }
+  }
+
+  return { dependencies, devDependencies, versionConflicts, placementConflicts };
 }
 
 // Fonction pour trier un objet par ses clés
@@ -50,6 +74,35 @@ function sortObjectByKeys(obj) {
       result[key] = obj[key];
       return result;
     }, {});
+}
+
+// Vérification des overrides du package.json racine
+function checkOverrides(rootPackageContent, dependencies, devDependencies) {
+  const overrides = rootPackageContent.overrides;
+  if (!overrides) return [];
+
+  const messages = [];
+
+  for (const [pkg, overrideValue] of Object.entries(overrides)) {
+    // Deux cas : string direct ou objet (pour des sous-dépendances)
+    if (typeof overrideValue === 'string') {
+      const aggVersion = dependencies[pkg] ?? devDependencies[pkg];
+      if (!aggVersion) {
+        messages.push(
+          `Override pour ${pkg} (${overrideValue}) mais ce package n'apparaît pas dans les deps agrégées des sous-librairies.`
+        );
+      } else if (aggVersion !== overrideValue) {
+        messages.push(`Override pour ${pkg}: ${overrideValue}, mais version agrégée trouvée: ${aggVersion}`);
+      }
+    } else if (overrideValue && typeof overrideValue === 'object') {
+      // Exemple: "firebase-admin": { "whatwg-url": "^15.0.0" }
+      messages.push(
+        `Override complexe pour ${pkg} (objet). Vérification manuelle recommandée : ${JSON.stringify(overrideValue)}`
+      );
+    }
+  }
+
+  return messages;
 }
 
 // Fonction pour synchroniser les dépendances avec le package.json racine
@@ -75,28 +128,41 @@ async function syncRootPackageJson(dependencies, devDependencies) {
     rootPackageContent[depType] = sortObjectByKeys(rootPackageContent[depType]);
   });
 
+  // Vérifier les overrides après mise à jour des deps
+  const overrideMessages = checkOverrides(rootPackageContent, dependencies, devDependencies);
+
   await fs.writeFile(rootPackagePath, JSON.stringify(rootPackageContent, null, 2), 'utf8');
-  return modifications;
+  return { modifications, overrideMessages };
 }
 
 // Fonction principale
 (async () => {
   const webpackPath = path.join(process.cwd(), 'webpack');
   const [webpackPackageJsonFile] = await findPackageJsonFiles(webpackPath);
+
   const sourceLibrariesPath = path.join(process.cwd(), 'source', 'libraries');
   const libsPackageJsonFiles = await findPackageJsonFiles(sourceLibrariesPath);
+
   const packageJsonFiles = [webpackPackageJsonFile, ...libsPackageJsonFiles];
 
-  const { dependencies, devDependencies, conflicts } = await loadDependencies(packageJsonFiles);
+  const { dependencies, devDependencies, versionConflicts, placementConflicts } =
+    await loadDependencies(packageJsonFiles);
 
-  if (conflicts.length > 0) {
+  if (versionConflicts.length > 0) {
     console.log('Des conflits de versions ont été détectés :');
-    conflicts.forEach((conflict) => console.log(conflict));
+    versionConflicts.forEach((conflict) => console.log(conflict));
   } else {
     console.log('Aucun conflit de versions détecté.');
   }
 
-  const modifications = await syncRootPackageJson(dependencies, devDependencies);
+  if (placementConflicts.length > 0) {
+    console.log('\nDes différences de placement (dependencies vs devDependencies) ont été détectées :');
+    placementConflicts.forEach((c) => console.log(c));
+  } else {
+    console.log('\nAucune différence de placement dependencies/devDependencies détectée.');
+  }
+
+  const { modifications, overrideMessages } = await syncRootPackageJson(dependencies, devDependencies);
 
   if (modifications.length > 0) {
     console.log('\nModifications apportées au package.json racine :');
@@ -104,4 +170,14 @@ async function syncRootPackageJson(dependencies, devDependencies) {
   } else {
     console.log('\nAucune modification nécessaire sur le package.json racine.');
   }
-})();
+
+  if (overrideMessages.length > 0) {
+    console.log('\nAnalyse des overrides du package.json racine :');
+    overrideMessages.forEach((msg) => console.log(msg));
+  } else {
+    console.log('\nAucun problème détecté sur les overrides du package.json racine.');
+  }
+})().catch((err) => {
+  console.error('Erreur lors de l’exécution du script :', err);
+  process.exit(1);
+});

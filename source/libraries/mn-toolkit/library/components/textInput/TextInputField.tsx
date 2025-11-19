@@ -35,9 +35,11 @@ export class TextInputField<PROPS extends ITextInputFieldProps, STATE extends IT
     super.componentDidMount();
     if (!this.props.autofocus || app.$device.isNative) return;
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        if (this.inputElement.current) this.inputElement.current.doFocus();
-      })
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (this.inputElement.current) this.inputElement.current.doFocus();
+        })
+      )
     );
   }
 

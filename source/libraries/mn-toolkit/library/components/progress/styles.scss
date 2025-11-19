@@ -46,7 +46,7 @@
       color: gray;
       padding-left: 0.5em;
 
-      &:after {
+      &::after {
         content: '%';
       }
     }
@@ -183,7 +183,7 @@
 
     &:last-child .step-circle::after {
       border-style: dotted;
-      border-color: hsl(0deg, 0%, 88%);
+      border-color: hsl(0deg 0% 88%);
     }
 
     .step-circle {
@@ -227,7 +227,7 @@
         right: -12px;
         width: 100%;
         height: 4px;
-        border-top: 0px solid red;
+        border-top: 0 solid red;
         border-bottom: 4px solid color-hsl($fg3);
         transition:
           border-color 0.3s,
@@ -235,15 +235,9 @@
       }
     }
 
-    &.active {
-      .pointer {
-        visibility: visible;
-      }
-    }
-
     &:not(.disabled) {
       .step-circle {
-        &:before {
+        &::before {
           background-color: color-hsl($secondary);
         }
       }
@@ -254,8 +248,8 @@
 
     &.completed {
       .step-circle {
-        &:after,
-        &:before {
+        &::after,
+        &::before {
           background-color: color-hsl($primary);
           border-color: color-hsl($primary);
         }
@@ -266,13 +260,15 @@
     }
 
     &.active {
-      .step-circle {
-        &:before {
-          background-color: color-hsl($primary);
-        }
-      }
       .pointer {
         display: block;
+        visibility: visible;
+      }
+
+      .step-circle {
+        &::before {
+          background-color: color-hsl($primary);
+        }
       }
     }
 
@@ -289,7 +285,7 @@
         border-left: 3px dotted color-hsl($primary);
       }
       .step-circle {
-        &:before {
+        &::before {
           background-color: darken-color-hsl($primary);
         }
       }

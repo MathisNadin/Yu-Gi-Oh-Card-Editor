@@ -1177,7 +1177,7 @@ export function timeZoneRecord(timezone: string) {
     if (!record) throw new Error(`Unable to find a timezone record for ${timezone}`);
     cache[timezone] = record;
   }
-  return cache[timezone]!;
+  return cache[timezone];
 }
 
 export function isDaySavingTime(date: Date) {

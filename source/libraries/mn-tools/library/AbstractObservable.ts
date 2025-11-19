@@ -143,7 +143,7 @@ export abstract class AbstractObservable<L> {
       if (typeof fn !== 'function') continue;
 
       try {
-        const result = (fn as TExtractFunction<L, K>).apply(listener, args);
+        const result: unknown = (fn as TExtractFunction<L, K>).apply(listener, args);
         if (isDefined(result) && result !== null) return result as R;
       } catch (err) {
         console.error(`Listener error in ${String(method)}:`, err);
@@ -185,7 +185,7 @@ export abstract class AbstractObservable<L> {
       if (typeof fn !== 'function') continue;
 
       try {
-        const result = await (fn as TExtractFunction<L, K>).apply(listener, args);
+        const result: unknown = await (fn as TExtractFunction<L, K>).apply(listener, args);
         if (isDefined(result) && result !== null) return result as R;
       } catch (err) {
         console.error(`Async listener error in ${String(method)}:`, err);

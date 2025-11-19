@@ -18,13 +18,13 @@
     "bump": "node scripts/bump-version.mjs"
   },
   "dependencies": {
-    "electron-dl": "^3.5.2",
-    "electron-updater": "^6.3.9"
+    "electron-dl": "^4.0.0",
+    "electron-updater": "^6.6.2",
+    "os": "^0.1.2"
   },
   "devDependencies": {
-    "electron": "^34.0.0",
-    "electron-builder": "^25.1.8",
-    "electronmon": "^2.0.3",
-    "os": "^0.1.2"
+    "electron": "^39.2.1",
+    "electron-builder": "^26.0.12",
+    "electronmon": "^2.0.4"
   }
 }

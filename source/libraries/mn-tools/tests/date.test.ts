@@ -10,6 +10,7 @@ install();
 // This ensures that the '%W' format code returns a predictable value.
 let originalGetWeekNumber: (() => number) | undefined;
 beforeAll(() => {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   originalGetWeekNumber = Date.prototype.getWeekNumber;
   if (typeof Date.prototype.getWeekNumber !== 'function') {
     Date.prototype.getWeekNumber = function (): number {
@@ -28,6 +29,7 @@ describe('formatDate', () => {
   // Force offset 0 for this suite of tests
   let originalGetTimezoneOffset: typeof Date.prototype.getTimezoneOffset;
   beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     originalGetTimezoneOffset = Date.prototype.getTimezoneOffset;
     Date.prototype.getTimezoneOffset = () => 0;
   });
@@ -202,6 +204,7 @@ describe('Prototype methods on Date (truncation, day adjustments, etc.)', () => 
 
   it('should convert date to another timezone', () => {
     // getTimezoneOffset temporary patch
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const originalGetTimezoneOffset = Date.prototype.getTimezoneOffset;
     Date.prototype.getTimezoneOffset = () => 0;
 

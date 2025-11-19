@@ -131,6 +131,7 @@ export class ThemeService {
     } else if (isString(variable)) {
       document.documentElement.style.setProperty(variableName, variable);
     } else if (isDefined(variable)) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       document.documentElement.style.setProperty(variableName, `${variable}`);
     }
   }
@@ -157,8 +158,8 @@ export class ThemeService {
         const link = document.createElement('link');
 
         for (const key in linkAttributes) {
-          const value = linkAttributes[key as keyof React.LinkHTMLAttributes<HTMLLinkElement>];
-          if (isDefined(value)) link.setAttribute(key, value.toString());
+          const value = linkAttributes[key as keyof React.LinkHTMLAttributes<HTMLLinkElement>] as unknown;
+          if (isDefined(value)) link.setAttribute(key, String(value));
         }
 
         document.head.appendChild(link);

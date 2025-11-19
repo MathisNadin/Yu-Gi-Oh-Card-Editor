@@ -55,7 +55,7 @@ export class ColorPicker extends Grid<IColorPickerProps, IColorPickerState> {
 
   public override get children(): TJSXElementChildren {
     const children: TJSXElementChild[] = [
-      ...this.props.colors!.map((c) => this.renderColorSwatch(c)),
+      ...this.props.colors.map((c) => this.renderColorSwatch(c)),
       <Icon
         key='unformat'
         colSpans={this.props.iconColSpans}

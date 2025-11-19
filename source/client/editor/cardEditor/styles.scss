@@ -1,6 +1,8 @@
+@use 'sass:color';
+
 @font-face {
   font-family: fontAbilities;
-  src: url(assets/fonts/itcStoneSerifBold.ttf);
+  src: url('assets/fonts/itcStoneSerifBold.ttf');
 }
 
 .card-editor {
@@ -138,7 +140,7 @@
               text-align: center;
               line-height: $fontSize;
               font-size: $fontSize;
-              background-color: adjust-hue(hsl(0, 70%, 50%), 20 * $i);
+              background-color: color.adjust(hsl(0deg 70% 50%), $hue: 20 * $i);
               color: #fff;
             }
           }

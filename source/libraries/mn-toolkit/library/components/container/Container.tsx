@@ -146,7 +146,7 @@ export class Container<
       return this.renderGridItem(this.props.children, 0);
     }
 
-    return this.props.children.map((element, idx) => this.renderGridItem(element, idx));
+    return this.props.children.map((element: ReactNode, idx) => this.renderGridItem(element, idx));
   }
 
   protected renderGridItem(element: ReactNode, idx: number) {

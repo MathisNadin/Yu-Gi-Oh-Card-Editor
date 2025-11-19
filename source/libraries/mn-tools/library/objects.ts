@@ -16,8 +16,7 @@ export function deepFreeze<T extends object>(conf: T): T {
   Object.freeze(conf);
   const properties = [...Object.getOwnPropertyNames(conf), ...Object.getOwnPropertySymbols(conf)];
   for (const prop of properties) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const value = (conf as any)[prop];
+    const value = (conf as Record<PropertyKey, unknown>)[prop];
     if (value && typeof value === 'object' && !Object.isFrozen(value)) {
       deepFreeze(value);
     }
@@ -32,11 +31,17 @@ export function deepFreeze<T extends object>(conf: T): T {
  * @return A shallow copy of the object.
  */
 export function clone<T>(object: T): T {
-  if (object === undefined) return undefined as T;
-  if (object === null) return null as T;
-  if (isArray(object)) return object.slice(0) as unknown as T;
-  const copy = Object.create(Object.getPrototypeOf(object));
-  extend(copy, object);
+  if (object === undefined || object === null || typeof object !== 'object') {
+    return object;
+  }
+
+  if (isArray(object)) {
+    return object.slice(0) as unknown as T;
+  }
+
+  const proto = Object.getPrototypeOf(object) as object | null;
+  const copy = Object.create(proto) as T;
+  extend(copy, object as Partial<T>);
   return copy;
 }
 
@@ -57,12 +62,14 @@ export function deepClone<T>(object: T): T {
  */
 export function unserialize<T = unknown>(json: string): T {
   try {
-    return JSON.parse(json, (_key, value) => {
+    const parsed: unknown = JSON.parse(json, (_key, value: unknown) => {
       if (typeof value === 'string' && DATE_REGEXP.exec(value)) {
         return new Date(value);
       }
       return value;
     });
+
+    return parsed as T;
   } catch (error) {
     // Add additional info to error if needed.
     (error as { more?: { json: string } }).more = { json };
@@ -76,7 +83,7 @@ export function unserialize<T = unknown>(json: string): T {
  * @param data Data to serialize.
  */
 export function serialize(data: unknown): string {
-  return JSON.stringify(data, (k, v) => {
+  return JSON.stringify(data, (k, v: unknown) => {
     if (typeof k === 'string' && k.length > 0 && k.charAt(0) === '$') return undefined;
     return v;
   });
@@ -181,7 +188,7 @@ export function mapa<T, U>(source: Record<string, T>, iteratee: (item: T, key: s
   const boundIteratee = iteratee.bind(context);
   let result: U[] = [];
   for (const key in source) {
-    if (isDefined(source[key])) result.push(boundIteratee(source[key]!, key));
+    if (isDefined(source[key])) result.push(boundIteratee(source[key], key));
   }
   return result;
 }
@@ -398,7 +405,7 @@ export function keyByAccumulated<T>(a: T[], fieldOrCallback: string | KeyByCallb
     if (result[key] === undefined) {
       result[key] = [];
     }
-    result[key]!.push(v);
+    result[key].push(v);
   });
   return result;
 }
@@ -453,7 +460,7 @@ export function keyByMultiple<T>(
  */
 export function keys(object: unknown): string[] {
   if (!isObject(object)) return [];
-  return Object.keys(object as object);
+  return Object.keys(object);
 }
 
 /**
@@ -465,7 +472,7 @@ export function keys(object: unknown): string[] {
 export function values<T>(object: TDictionary<T>): T[] {
   const ks = keys(object);
   const length = ks.length;
-  const vals: T[] = new Array(length);
+  const vals = new Array(length) as T[];
   for (let i = 0; i < length; i++) {
     vals[i] = (object as Record<string, T>)[ks[i]!]!;
   }

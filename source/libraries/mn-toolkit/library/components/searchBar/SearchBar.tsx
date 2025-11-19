@@ -36,9 +36,11 @@ export class SearchBar extends Container<ISearchBarProps, ISearchBarState> {
     super.componentDidMount();
     if (!this.props.autofocus || app.$device.isNative) return;
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        if (this.inputElement.current) this.inputElement.current.doFocus();
-      })
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (this.inputElement.current) this.inputElement.current.doFocus();
+        })
+      )
     );
   }
 

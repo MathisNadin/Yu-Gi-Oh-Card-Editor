@@ -45,7 +45,7 @@ export class FullscreenImages
     log.debug('render', app.$fullscreenImage.fullscreenImages.length);
     return (
       <div ref={this.base} {...this.renderAttributes()}>
-        <div className='overlay' onClick={() => app.$fullscreenImage.closeLast()} />
+        <div className='overlay' onClick={() => app.$errorManager.handlePromise(app.$fullscreenImage.closeLast())} />
         {app.$fullscreenImage.fullscreenImages.map((p) => p.element)}
       </div>
     );

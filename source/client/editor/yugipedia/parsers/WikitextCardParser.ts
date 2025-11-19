@@ -544,7 +544,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
 
       // Format abilities
       if (this.card.translations[ln].abilities?.length) {
-        this.card.translations[ln].abilities = this.card.translations[ln].abilities!.map((ability) =>
+        this.card.translations[ln].abilities = this.card.translations[ln].abilities.map((ability) =>
           ability ? this.formatTranslation(ability) : ability
         );
       }
@@ -588,7 +588,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
       // Format rush choice effects
       if (this.card.translations[ln].rushChoiceEffects?.length) {
         if (this.card.rush) {
-          this.card.translations[ln].rushChoiceEffects = this.card.translations[ln].rushChoiceEffects!.map(
+          this.card.translations[ln].rushChoiceEffects = this.card.translations[ln].rushChoiceEffects.map(
             (choiceEffect) => (choiceEffect ? this.formatTranslation(choiceEffect) : choiceEffect)
           );
         } else {
@@ -605,7 +605,7 @@ export class WikitextCardParser extends AbstractWikitextParser {
     if (!text) return '';
     return text
       .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-      .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) => String.fromCharCode(parseInt(hex, 16)))
       .replace(/&quot;/g, '"')
       .replace(/&amp;/g, '&')
       .replace(/&lt;/g, '<')
@@ -832,8 +832,6 @@ export class WikitextCardParser extends AbstractWikitextParser {
         return 'ritual';
       case 'fusion':
         return 'fusion';
-      case 'synchro':
-        return 'synchro';
       case 'synchro':
         return 'synchro';
       case 'xyz':

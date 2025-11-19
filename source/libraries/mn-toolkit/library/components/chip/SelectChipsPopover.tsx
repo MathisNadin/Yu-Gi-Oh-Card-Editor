@@ -16,7 +16,7 @@ export class SelectChipsPopover<ID = number> extends ActionsPopover<
     return (
       <li
         key={`action-${i}`}
-        id={action.id ? `${action.id}` : undefined}
+        id={action.id ? String(action.id) : undefined}
         className={classNames(this.renderActionClasses(action))}
         onClick={(event) => !!action.onTap && app.$errorManager.handlePromise(this.onTapAction(event, action))}
       >

@@ -24,7 +24,7 @@ export class IndexedDBService implements IStoreService {
         resolve();
       };
       request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-        const db = (event.target as IDBOpenDBRequest).result as IDBDatabase;
+        const db = (event.target as IDBOpenDBRequest).result;
         db.createObjectStore(this.objectStoreName);
       };
     });
@@ -36,7 +36,7 @@ export class IndexedDBService implements IStoreService {
 
   public async set<T extends TStoreValue = TStoreValue, K extends string = string>(key: K, value: T) {
     return new Promise<void>((resolve, reject) => {
-      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const transaction = this.db.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
       const request = objectStore.put(value, key);
       request.onerror = () => {
@@ -49,22 +49,22 @@ export class IndexedDBService implements IStoreService {
   }
 
   public async get<T extends TStoreValue, K extends string = string>(key: K, defaultValue?: T) {
-    return await new Promise<T>((resolve, reject) => {
-      const transaction = this.db!.transaction([this.objectStoreName]);
+    return await new Promise<T | undefined>((resolve, reject) => {
+      const transaction = this.db.transaction([this.objectStoreName]);
       const objectStore = transaction.objectStore(this.objectStoreName);
       const request = objectStore.get(key);
       request.onerror = () => {
         reject(new Error(`Failed to get object with key ${key}`));
       };
       request.onsuccess = () => {
-        resolve(isDefined(request.result) ? request.result : defaultValue);
+        resolve(isDefined(request.result) ? (request.result as T) : defaultValue);
       };
     });
   }
 
   public async remove<K extends string>(key: K) {
     return new Promise<void>((resolve, reject) => {
-      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const transaction = this.db.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
       const request = objectStore.delete(key);
       request.onerror = () => {
@@ -78,7 +78,7 @@ export class IndexedDBService implements IStoreService {
 
   public async clear() {
     return new Promise<void>((resolve, reject) => {
-      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const transaction = this.db.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
       const request = objectStore.clear();
       request.onerror = () => {
@@ -92,7 +92,7 @@ export class IndexedDBService implements IStoreService {
 
   public async importData(jsonData: string) {
     return new Promise<object>((resolve, reject) => {
-      const transaction = this.db!.transaction([this.objectStoreName], 'readwrite');
+      const transaction = this.db.transaction([this.objectStoreName], 'readwrite');
       const objectStore = transaction.objectStore(this.objectStoreName);
       const data = unserialize<Record<string | number, TStoreValue>>(jsonData);
       const clearRequest = objectStore.clear();
@@ -114,17 +114,22 @@ export class IndexedDBService implements IStoreService {
   }
 
   public async exportData() {
-    return new Promise<string>((resolve, reject) => {
-      const transaction = this.db!.transaction([this.objectStoreName]);
+    return new Promise<string | undefined>((resolve, reject) => {
+      const transaction = this.db.transaction([this.objectStoreName]);
       const objectStore = transaction.objectStore(this.objectStoreName);
       const request = objectStore.getAll();
       request.onerror = () => {
         reject(new Error(`Failed to get all objects from object store ${this.objectStoreName}`));
       };
       request.onsuccess = () => {
-        const data = request.result;
-        const jsonData = serialize(data);
-        resolve(jsonData);
+        try {
+          const data = request.result;
+          const jsonData = serialize(data);
+          resolve(jsonData);
+        } catch (e) {
+          app.$errorManager.trigger(e as Error);
+          resolve(undefined);
+        }
       };
     });
   }

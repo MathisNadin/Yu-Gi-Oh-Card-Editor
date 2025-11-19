@@ -3,6 +3,9 @@ import { THttpMethod, IFileApiDownloadOptions, IFileEffect, IFileEntity, ISessio
 import { IXhrRequestOptions } from '../xhr';
 import { IApiListener, IApiRequestOptions, IApiSettings, IUploadDescriptor } from '.';
 
+type TApiMethod = (data: object, options: IApiRequestOptions) => Promise<unknown>;
+type TApiGroup = Record<string, TApiMethod>;
+
 interface IFileGetUrlOptions extends Omit<IFileApiDownloadOptions, 'oid' | 'effects' | 'instance'> {
   oid?: IFileEntity['oid'];
   effects?: IFileEffect[];
@@ -10,7 +13,7 @@ interface IFileGetUrlOptions extends Omit<IFileApiDownloadOptions, 'oid' | 'effe
   token?: ISessionEntity['token'];
 }
 
-const BYTES_PER_CHUNK = 1048576; // 1MB chunk sizes.
+const BYTES_PER_CHUNK = 1_048_576; // 1MB chunk sizes.
 
 const log = logger('api');
 
@@ -31,37 +34,47 @@ export class ApiService extends AbstractObservable<IApiListener> {
 
   public configure(options: IApiSettings) {
     extend(this._settings, options);
-    if (this._settings.router) {
-      this._settings.router.forEach((record) => {
-        if (!record.className) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!(this as any)[record.className]) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this as any)[record.className] = {};
-        }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this as any)[record.className][record.methodName] = ((self, record) => {
+    const routerRecords = this._settings.router;
+    if (!routerRecords) return;
+
+    const apiGroups = this as unknown as Record<string, TApiGroup>;
+
+    for (const record of routerRecords) {
+      if (!record.className) continue;
+
+      const className = record.className;
+      const methodName = record.methodName;
+
+      if (!apiGroups[className]) {
+        apiGroups[className] = {} as TApiGroup;
+      }
+
+      const group = apiGroups[className];
+
+      const createMethod = (self: ApiService, r: typeof record): TApiMethod => {
+        return async (data: object, options: IApiRequestOptions) => {
+          const path = r.path.replace(/^\/api\//, '');
+          const response = await self.post<object, { result: unknown }>(path, data, options);
+          if (isDefined(response.result)) return response.result;
+          return undefined;
+        };
+      };
+
+      group[methodName] = createMethod(this, record);
+
+      if (methodName === 'list') {
+        const createListMethod = (self: ApiService, r: typeof record): TApiMethod => {
           return async (data: object, options: IApiRequestOptions) => {
-            const path = record.path.replace(/^\/api\//, '');
-            const response = await self.post<object, { result: object }>(path, data, options);
+            const path = r.path.replace(/^\/api\//, '');
+            const response = await self.post<object, { result: unknown }>(path, data, options);
             if (isDefined(response.result)) return response.result;
             return undefined;
           };
-        })(this, record);
+        };
 
-        if (record.methodName === 'list') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this as any)[record.className].list = ((self, record) => {
-            return async (data: object, options: IApiRequestOptions) => {
-              const path = record.path.replace(/^\/api\//, '');
-              const response = await self.post<object, { result: object }>(path, data, options);
-              if (response.result) return response.result;
-              return undefined;
-            };
-          })(this, record);
-        }
-      });
+        group.list = createListMethod(this, record);
+      }
     }
   }
 
@@ -95,9 +108,9 @@ export class ApiService extends AbstractObservable<IApiListener> {
       }
     }
     log.debug('Envoi', request);
-    const data = await app.$xhr.request(request);
+    const data = await app.$xhr.request<RES>(request);
     log.debug('Résultat', data);
-    return data as RES;
+    return data;
   }
 
   public async post<REQ = object, RES = object>(path: string, request: REQ, options?: IApiRequestOptions) {

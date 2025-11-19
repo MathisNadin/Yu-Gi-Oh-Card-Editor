@@ -59,7 +59,7 @@ $top-bottom-drawer-max-height: var(--top-bottom-drawer-max-height);
 
   &.active {
     transition: background-color 0.4s ease;
-    background-color: hsl(0deg 0% 0% / 0.3);
+    background-color: hsl(0deg 0% 0% / 30%);
     pointer-events: auto;
 
     .overlay {

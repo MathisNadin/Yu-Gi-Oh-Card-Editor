@@ -150,7 +150,7 @@ export class Sortable extends Container<ISortableProps, ISortableState> {
     if (dragSourceIndex === dragTargetIndex) return;
 
     const bounding = target.getBoundingClientRect();
-    const visualIndex = Array.prototype.indexOf.call(target.parentNode?.children, target) as number;
+    const visualIndex = Array.prototype.indexOf.call(target.parentNode?.children, target);
     const offset = bounding.y + bounding.height / 2;
     const before = visualIndex === 0 && e.clientY - offset < 0;
     let toIndex = dragTargetIndex!;

@@ -1,4 +1,4 @@
-import { isDefined, isString, logger, serialize, unserialize } from 'mn-tools';
+import { isDefined, isObject, isString, logger, normalizeError, serialize, unserialize } from 'mn-tools';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { App as CapacitorApp } from '@capacitor/app';
 import { IStoreOptions, IStoreService, TStoreValue } from '.';
@@ -70,7 +70,8 @@ export class CapacitorSQLiteService implements IStoreService {
     this.connectionPromise = new Promise<void>((resolve, reject) => {
       this.checkConnection()
         .then(() => resolve())
-        .catch((error) => {
+        .catch((err) => {
+          const error = normalizeError(err);
           log.error('Error while opening Connection', error);
           reject(error);
         });
@@ -120,12 +121,12 @@ export class CapacitorSQLiteService implements IStoreService {
     }
   }
 
-  private unserializeDBValue(value: string) {
+  private unserializeDBValue<T extends TStoreValue>(value: string) {
     // Wasn't serialized, so it's just a string
     if (!value.startsWith('{')) {
-      return value;
+      return value as T;
     } else {
-      return unserialize<Record<string, TStoreValue>>(value);
+      return unserialize<T>(value);
     }
   }
 
@@ -137,7 +138,7 @@ export class CapacitorSQLiteService implements IStoreService {
       value,
       type: typeof value,
       serialized: serializedValue,
-      unserialized: this.unserializeDBValue(serializedValue),
+      unserialized: this.unserializeDBValue<T>(serializedValue),
     });
     await this.db.execute(
       `INSERT OR REPLACE INTO ${this.tableName} (key, value) VALUES ('${key}', '${serializedValue}');`,
@@ -149,7 +150,9 @@ export class CapacitorSQLiteService implements IStoreService {
     await this.waitForConnection();
     log.debug('Getting item from SQLite:', { key, defaultValue });
     const { values } = await this.db.query(`SELECT value FROM ${this.tableName} WHERE key = '${key}';`);
-    if (values?.length && isDefined(values[0]?.value)) return this.unserializeDBValue(values[0].value) as T;
+    if (values?.length && isObject(values[0]) && 'value' in values[0] && isString(values[0]?.value)) {
+      return this.unserializeDBValue<T>(values[0].value);
+    }
     return defaultValue;
   }
 
@@ -178,11 +181,14 @@ export class CapacitorSQLiteService implements IStoreService {
   public async exportData() {
     await this.waitForConnection();
     const { values } = await this.db.query(`SELECT key, value FROM ${this.tableName};`);
-    if (!values) return '';
+    if (!values) return undefined;
 
     const data: { [key: string]: TStoreValue } = {};
-    for (const { key, value } of values) {
-      data[key] = this.unserializeDBValue(value);
+    for (const valueObject of values) {
+      if (!isObject(valueObject)) continue;
+      if (!('key' in valueObject) || !isString(valueObject.key)) continue;
+      if (!('value' in valueObject) || !isString(valueObject.value)) continue;
+      data[valueObject.key] = this.unserializeDBValue<TStoreValue>(valueObject.value);
     }
     return serialize(data);
   }

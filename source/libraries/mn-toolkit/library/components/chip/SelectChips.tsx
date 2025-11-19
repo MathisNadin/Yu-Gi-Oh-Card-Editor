@@ -88,7 +88,7 @@ export class SelectChips<ID = number> extends Container<ISelectChipsProps<ID>, I
         <HorizontalStack key='chips' className='chips' fill gutter wrap>
           {selectedItems.map((item) => (
             <Chip
-              key={`${item.id}`}
+              key={String(item.id)}
               selected
               className={item.className}
               label={item.label}

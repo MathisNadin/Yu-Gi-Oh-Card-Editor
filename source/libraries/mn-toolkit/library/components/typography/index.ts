@@ -181,7 +181,7 @@ export function removeMarkdown(source: string, opts: RemoveMarkdownOptions = {})
   };
 
   /** Extract raw text from inline tokens (strong, em, link, image, etc.). */
-  const innerText = (inline?: Token[] | undefined): string => {
+  const innerText = (inline?: Token[]): string => {
     if (!inline) return '';
     let txt = '';
     for (const token of inline) {

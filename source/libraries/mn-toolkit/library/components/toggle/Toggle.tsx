@@ -24,7 +24,7 @@ export class Toggle extends Container<IToggleProps, IToggleState> {
 
   public override renderAttributes() {
     const attributes = super.renderAttributes();
-    attributes.onClick = (e) => this.doToggle(e);
+    attributes.onClick = (e) => app.$errorManager.handlePromise(this.doToggle(e));
     return attributes;
   }
 

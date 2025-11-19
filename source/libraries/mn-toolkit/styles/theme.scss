@@ -1,3 +1,8 @@
+@use 'sass:string';
+@use 'sass:map';
+@use 'sass:meta';
+@use 'sass:list';
+
 $theme-color-variables: (
   // Globals
   'positive',
@@ -261,7 +266,7 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
   @if $color == transparent {
     @return transparent;
   }
-  @return unquote('hsl(' + $color + ')');
+  @return string.unquote('hsl(' + $color + ')');
 }
 
 @function color-hsla($color, $alpha) {
@@ -271,18 +276,20 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
   }
 
   // If $color is a raw CSS value
-  @else if type-of($color) == string {
-    @return unquote('hsla(' + $color + ', ' + $alpha + ')');
+  @else if meta.type-of($color) == string {
+    @return string.unquote('hsla(' + $color + ', ' + $alpha + ')');
   }
 
   // Handle other cases (for ex., raw HSL list)
-  @else if type-of($color) == list and length($color) == 3 {
-    @return unquote('hsla(' + nth($color, 1) + ', ' + nth($color, 2) + ', ' + nth($color, 3) + ', ' + $alpha + ')');
+  @else if meta.type-of($color) == list and list.length($color) == 3 {
+    @return string.unquote(
+      'hsla(' + list.nth($color, 1) + ', ' + list.nth($color, 2) + ', ' + list.nth($color, 3) + ', ' + $alpha + ')'
+    );
   }
 
   // Handle non-identified values (by default)
   @else {
-    @return unquote('hsla(' + $color + ', ' + $alpha + ')');
+    @return string.unquote('hsla(' + $color + ', ' + $alpha + ')');
   }
 }
 
@@ -312,25 +319,25 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
 
 @function darken-color-hsl($color) {
   @if $color == $positive {
-    @return unquote('hsl(' + var(--positive-darken) + ')');
+    @return string.unquote('hsl(' + var(--positive-darken) + ')');
   } @else if $color == $negative {
-    @return unquote('hsl(' + var(--negative-darken) + ')');
+    @return string.unquote('hsl(' + var(--negative-darken) + ')');
   } @else if $color == $neutral {
-    @return unquote('hsl(' + var(--neutral-darken) + ')');
+    @return string.unquote('hsl(' + var(--neutral-darken) + ')');
   } @else if $color == $warning {
-    @return unquote('hsl(' + var(--warning-darken) + ')');
+    @return string.unquote('hsl(' + var(--warning-darken) + ')');
   } @else if $color == $info {
-    @return unquote('hsl(' + var(--info-darken) + ')');
+    @return string.unquote('hsl(' + var(--info-darken) + ')');
   } @else if $color == $primary {
-    @return unquote('hsl(' + var(--primary-darken) + ')');
+    @return string.unquote('hsl(' + var(--primary-darken) + ')');
   } @else if $color == $secondary {
-    @return unquote('hsl(' + var(--secondary-darken) + ')');
+    @return string.unquote('hsl(' + var(--secondary-darken) + ')');
   } @else if $color == $tertiary {
-    @return unquote('hsl(' + var(--tertiary-darken) + ')');
+    @return string.unquote('hsl(' + var(--tertiary-darken) + ')');
   } @else if $color == transparent {
     @return transparent;
   } @else {
-    @return unquote('hsl(' + $color + ')');
+    @return string.unquote('hsl(' + $color + ')');
   }
 }
 
@@ -360,25 +367,25 @@ $topMenuBelowActionBg: var(--top-menu-below-action-bg);
 
 @function lighten-color-hsl($color) {
   @if $color == $positive {
-    @return unquote('hsl(' + var(--positive-lighten) + ')');
+    @return string.unquote('hsl(' + var(--positive-lighten) + ')');
   } @else if $color == $negative {
-    @return unquote('hsl(' + var(--negative-lighten) + ')');
+    @return string.unquote('hsl(' + var(--negative-lighten) + ')');
   } @else if $color == $neutral {
-    @return unquote('hsl(' + var(--neutral-lighten) + ')');
+    @return string.unquote('hsl(' + var(--neutral-lighten) + ')');
   } @else if $color == $warning {
-    @return unquote('hsl(' + var(--warning-lighten) + ')');
+    @return string.unquote('hsl(' + var(--warning-lighten) + ')');
   } @else if $color == $info {
-    @return unquote('hsl(' + var(--info-lighten) + ')');
+    @return string.unquote('hsl(' + var(--info-lighten) + ')');
   } @else if $color == $primary {
-    @return unquote('hsl(' + var(--primary-lighten) + ')');
+    @return string.unquote('hsl(' + var(--primary-lighten) + ')');
   } @else if $color == $secondary {
-    @return unquote('hsl(' + var(--secondary-lighten) + ')');
+    @return string.unquote('hsl(' + var(--secondary-lighten) + ')');
   } @else if $color == $tertiary {
-    @return unquote('hsl(' + var(--tertiary-lighten) + ')');
+    @return string.unquote('hsl(' + var(--tertiary-lighten) + ')');
   } @else if $color == transparent {
     @return transparent;
   } @else {
-    @return unquote('hsl(' + $color + ')');
+    @return string.unquote('hsl(' + $color + ')');
   }
 }
 

@@ -372,8 +372,12 @@ export const ToolbarPlugin = <TOOL_IDS extends string = TRichTextBaseToolId>({
         if (isLink) {
           editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
         } else {
-          const url = window.prompt("Quelle est l'URL de votre lien ?");
-          if (url) editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
+          app.$popup
+            .prompt("Quelle est l'URL de votre lien ?")
+            .then((url) => {
+              if (url) editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
+            })
+            .catch(console.error);
         }
       }, [isLink, editor]),
       isActive: (_editor) => isLink,

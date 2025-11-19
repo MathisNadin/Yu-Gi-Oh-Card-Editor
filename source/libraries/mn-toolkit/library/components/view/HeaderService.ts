@@ -25,11 +25,11 @@ export class HeaderService extends AbstractObservable<IHeaderListener> implement
     app.$router.addListener(this);
   }
 
-  public async routerStateChanged() {
-    await this.update();
+  public routerStateChanged() {
+    this.update();
   }
 
-  public async update() {
+  public update() {
     this._pageActions = [];
     this._parts = {
       left: [],

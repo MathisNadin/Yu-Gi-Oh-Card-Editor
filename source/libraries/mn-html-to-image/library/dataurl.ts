@@ -1,3 +1,4 @@
+import { normalizeError } from 'mn-tools';
 import { Options } from './types';
 
 function getContentFromDataUrl(dataURL: string) {
@@ -29,7 +30,7 @@ export async function fetchAsDataURL<T>(
       try {
         resolve(process({ res, result: reader.result as string }));
       } catch (error) {
-        reject(error);
+        reject(normalizeError(error));
       }
     };
 
@@ -63,7 +64,6 @@ export async function resourceToDataURL(resourceUrl: string, contentType: string
 
   // ref: https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Bypassing_the_cache
   if (options.cacheBust) {
-    // eslint-disable-next-line no-param-reassign
     resourceUrl += (/\?/.test(resourceUrl) ? '&' : '?') + new Date().getTime();
   }
 
@@ -71,7 +71,6 @@ export async function resourceToDataURL(resourceUrl: string, contentType: string
   try {
     const content = await fetchAsDataURL(resourceUrl, options.fetchRequestInit, ({ res, result }) => {
       if (!contentType) {
-        // eslint-disable-next-line no-param-reassign
         contentType = res.headers.get('Content-Type') || '';
       }
       return getContentFromDataUrl(result);

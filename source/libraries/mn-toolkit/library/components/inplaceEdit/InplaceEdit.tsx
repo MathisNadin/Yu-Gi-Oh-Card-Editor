@@ -40,7 +40,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState,
     }
   }
 
-  private async onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  private onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!this.props.validateOnEnter || e.key !== 'Enter') return;
     if (this.base.current instanceof HTMLInputElement) {
       this.base.current.blur();
@@ -76,7 +76,7 @@ export class InplaceEdit extends Containable<InplaceEditProps, InplaceEditState,
           value={this.props.value}
           onChange={(e) => app.$errorManager.handlePromise(this.onChange(e))}
           onKeyUp={(e) => this.props.onKeyUp && app.$errorManager.handlePromise(this.props.onKeyUp(e))}
-          onKeyDown={(e) => app.$errorManager.handlePromise(this.onKeyDown(e))}
+          onKeyDown={(e) => this.onKeyDown(e)}
           onBlur={(e) => app.$errorManager.handlePromise(this.onBlur(e))}
         />
       );

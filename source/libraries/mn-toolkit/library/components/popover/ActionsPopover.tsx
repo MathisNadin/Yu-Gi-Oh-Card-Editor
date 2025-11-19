@@ -169,7 +169,7 @@ export class ActionsPopover<
     return (
       <hr
         key={`action-separator-${i}`}
-        id={action.id ? `${action.id}` : undefined}
+        id={action.id ? String(action.id) : undefined}
         className={classNames('action', 'separator', action.className)}
       />
     );
@@ -192,7 +192,7 @@ export class ActionsPopover<
     return (
       <li
         key={`action-${i}`}
-        id={action.id ? `${action.id}` : undefined}
+        id={action.id ? String(action.id) : undefined}
         className={classNames(this.renderActionClasses(action))}
         onClick={(event) => !!action.onTap && app.$errorManager.handlePromise(this.onTapAction(event, action))}
       >

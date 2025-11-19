@@ -57,8 +57,10 @@ export class ErrorManagerService {
       // app.$toaster.pop(error.message);
       component.setState({ loading: false });
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     window.$oldErrorManager.call(window.console, error);
     if (!this.options || !this.options.apiUrl) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       window.$oldErrorManager('$errorManager not connected');
       return;
     }
@@ -84,7 +86,7 @@ export class ErrorManagerService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handlePromise(result: Promise<any> | any) {
+  public handlePromise(result: any) {
     if (result instanceof Promise) result.catch((e: Error) => console.error(e));
   }
 }

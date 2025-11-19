@@ -60,7 +60,6 @@
 
   .error & {
     .toggle {
-      border-color: color-hsl($negative);
       border: 1px solid color-hsl($negative);
       background-color: color-hsla($negative, 0.1);
       > .handle {

@@ -214,7 +214,7 @@
     margin: calc(#{$defaultSpacing}) 0 !important;
     padding: calc(#{$defaultSpacing}) !important;
     quotes: none;
-    &:before {
+    &::before {
       color: color-hsl($fg2);
       content: '“';
       font-size: 4em;

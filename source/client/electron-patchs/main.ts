@@ -3,6 +3,7 @@ import { extname } from 'path';
 import { existsSync, statSync } from 'fs';
 import { app, IpcMainInvokeEvent, nativeImage } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import { normalizeError } from '../../libraries/mn-tools';
 import { addIpcMainHandleChannel } from '../../libraries/mn-electron-main';
 
 type TAxiosPostOptions = AxiosRequestConfig & {
@@ -34,8 +35,8 @@ declare global {
 
   interface IIpcRendererInvokeChannel {
     getImageSizeFromPath: { args: [imagePath: string]; response: IImageSize | undefined };
-    axiosGet: { args: [url: string, options?: AxiosRequestConfig]; response: unknown | undefined };
-    axiosPost: { args: [url: string, data: object, options?: TAxiosPostOptions]; response: unknown | undefined };
+    axiosGet: { args: [url: string, options?: AxiosRequestConfig]; response: unknown };
+    axiosPost: { args: [url: string, data: object, options?: TAxiosPostOptions]; response: unknown };
   }
 }
 
@@ -76,10 +77,10 @@ export function patchIpcMain(_ipcMain: TIpcMain) {
       // If Electron cannot decode it, size will be 0x0
       if (!width || !height) return undefined;
 
-      return { width, height };
+      return Promise.resolve({ width, height });
     } catch {
       // Any error (permissions, invalid file, etc.) is treated as "not an image"
-      return undefined;
+      return Promise.resolve(undefined);
     }
   });
 
@@ -225,19 +226,27 @@ export function buildProjectMenuDarwinTemplate(
     submenu: [
       {
         label: 'Learn More',
-        click: () => shell.openExternal('https://electronjs.org'),
+        click: () => {
+          shell.openExternal('https://electronjs.org').catch(console.error);
+        },
       },
       {
         label: 'Documentation',
-        click: () => shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme'),
+        click: () => {
+          shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme').catch(console.error);
+        },
       },
       {
         label: 'Community Discussions',
-        click: () => shell.openExternal('https://www.electronjs.org/community'),
+        click: () => {
+          shell.openExternal('https://www.electronjs.org/community').catch(console.error);
+        },
       },
       {
         label: 'Search Issues',
-        click: () => shell.openExternal('https://github.com/electron/electron/issues'),
+        click: () => {
+          shell.openExternal('https://github.com/electron/electron/issues').catch(console.error);
+        },
       },
     ],
   };
@@ -323,14 +332,16 @@ export function buildProjectMenuTemplate(
       submenu: [
         {
           label: 'Rechercher les mises à jour',
-          click: () => autoUpdater.checkForUpdates().catch((e) => console.error(e)),
+          click: () => {
+            autoUpdater.checkForUpdates().catch((e) => console.error(e));
+          },
         },
         {
           label: 'Documentation',
           click: () => {
             shell
               .openExternal('https://github.com/MathisNadin/Yu-Gi-Oh-Card-Editor')
-              .catch((e) => console.error(`Failed to open URL: ${e.message}`));
+              .catch((e) => console.error(`Failed to open URL: ${normalizeError(e).message}`));
           },
         },
       ],

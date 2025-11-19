@@ -100,10 +100,20 @@ class Ansi {
 
 let ansi = new Ansi();
 
+function hasStringStack(value: unknown): value is { stack: string } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'stack' in value &&
+    typeof (value as { stack: unknown }).stack === 'string'
+  );
+}
+
 export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
-  public pipe(record: ILogRecord) {
+  public pipe(record: ILogRecord): void {
     let prefix = record.bulk;
     let output: typeof console.log;
+
     switch (record.logLevel) {
       case LogLevel.DEBUG:
         prefix = ansi.magenta(prefix);
@@ -128,18 +138,21 @@ export class AnsiLoggerSinkRenderer extends AbstractLoggerSink {
         break;
     }
 
-    const args = record.data
-      .slice(0)
-      .map((data) => {
-        if (isString(data?.stack)) {
-          const stack = `\n${data.stack.split(/\n/).slice(1).join('\n')}`;
-          delete data.stack;
-          return [stack, data];
-        } else {
-          return data;
-        }
-      })
-      .flat();
+    const args: unknown[] = record.data.slice(0).flatMap((data): unknown => {
+      if (
+        hasStringStack(data) ||
+        (typeof data === 'object' && data !== null && isString((data as { stack: unknown }).stack))
+      ) {
+        const stackStr = String((data as { stack?: string }).stack ?? '');
+        const stack = `\n${stackStr.split(/\n/).slice(1).join('\n')}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { stack: _stack, ...rest } = data as { stack?: string; [k: string]: unknown };
+        return [stack, rest];
+      }
+
+      return data;
+    });
 
     args.unshift(prefix);
     args.unshift(ansi.gray(formatDate(record.timestamp, '%d/%M %H:%m:%s')));

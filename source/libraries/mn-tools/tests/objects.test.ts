@@ -163,7 +163,7 @@ describe('objects.ts utility functions', () => {
     it('should serialize an object and omit keys starting with "$"', () => {
       const obj = { a: 1, $b: 2, c: { $d: 3, e: 4 } };
       const json = serialize(obj);
-      const parsed = JSON.parse(json);
+      const parsed = JSON.parse(json) as typeof obj;
       expect(parsed).toEqual({ a: 1, c: { e: 4 } });
     });
   });

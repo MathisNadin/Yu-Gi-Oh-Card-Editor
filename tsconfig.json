@@ -2,9 +2,10 @@
   "include": ["source/**/*", "webpack/**/*.ts"],
   "typeRoots": ["./node_modules/@types", "./source/libraries/mn-toolkit/@types"],
   "compilerOptions": {
+    "types": ["node", "jest"],
     "target": "ES6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
     "module": "ESNext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
-    "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */ /* Type declaration files to be included in compilation. */,
+    "moduleResolution": "bundler" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */ /* Type declaration files to be included in compilation. */,
     "lib": ["DOM", "ESNext"] /* Specify library files to be included in the compilation. */,
     "jsx": "react-jsx" /* Specify JSX code generation: 'preserve', 'react-native', 'react' or 'react-jsx'. */,
     "noEmit": true /* Do not emit outputs. */,
@@ -18,23 +19,18 @@
     "checkJs": true /* Report errors in .js files. Works in tandem with allowJs. */,
     "allowSyntheticDefaultImports": true,
     "noUncheckedIndexedAccess": true,
-    "baseUrl": "./source",
     "paths": {
-      "api/*": ["./api/*"],
-      "client/*": ["./client/*"],
-      "assets/*": ["./assets/*"],
-      "*": ["./libraries/*"],
-    },
+      "api/*": ["./source/api/*"],
+      "client/*": ["./source/client/*"],
+      "assets/*": ["./source/assets/*"],
+      "*": ["./source/libraries/*"]
+    }
   },
   "ts-node": {
     "compilerOptions": {
-      "module": "CommonJS",
-      "paths": {
-        "api/*": ["./api/*"],
-        "client/*": ["./client/*"],
-        "assets/*": ["./assets/*"],
-        "*": ["./libraries/*"],
-      },
-    },
-  },
+      "types": ["node", "jest"],
+      "module": "node16",
+      "moduleResolution": "node16"
+    }
+  }
 }

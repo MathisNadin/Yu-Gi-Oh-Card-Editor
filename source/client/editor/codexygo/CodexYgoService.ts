@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-import { isArray, isBoolean, isNumber, isObject, isString } from 'mn-tools';
+import { isArray, isBoolean, isNumber, isObject, isString, normalizeError } from 'mn-tools';
 import { IFileEntity, TEntityDraft } from 'api/main';
 import { ICard } from '../card';
 import {
@@ -15,15 +15,15 @@ import {
 } from './interfaces';
 
 export class CodexYgoService {
-  public readonly masterCardBack = require('assets/images/master-card-back-en.png');
-  public readonly rushCardBack = require('assets/images/rush-card-back-jp.png');
+  public readonly masterCardBack = require('assets/images/master-card-back-en.png') as string;
+  public readonly rushCardBack = require('assets/images/rush-card-back-jp.png') as string;
   public readonly baseUrl = 'https://codexygo.fr';
 
   private userAgent = '';
   private requestQueue: Array<() => void> = [];
   private isQueueProcessing = false;
 
-  public async setup() {
+  public setup() {
     const { displayName, version, author, repository } = app.conf;
     if (displayName && version && repository.url && author.email) {
       this.userAgent = `${displayName}/${version} (${repository.url}; ${author.email})`;
@@ -45,7 +45,7 @@ export class CodexYgoService {
             resolveOuter(result);
           })
           .catch((err) => {
-            rejectOuter(err);
+            rejectOuter(normalizeError(err));
           })
           .finally(() => {
             // After fn() completes (success or failure), wait 1 second before processing next task

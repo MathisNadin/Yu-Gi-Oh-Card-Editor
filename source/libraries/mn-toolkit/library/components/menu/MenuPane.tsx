@@ -77,7 +77,7 @@ export class MenuPane extends Pane<IMenuPaneProps, IMenuPaneState> {
 
     setTimeout(() => {
       if (this.props.onStateChanged) this.props.onStateChanged(open);
-      app.$errorManager.handlePromise(app.$header.update());
+      app.$header.update();
     }, 500);
   }
 

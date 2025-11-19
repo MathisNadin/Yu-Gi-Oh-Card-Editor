@@ -60,7 +60,7 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
 
   public override get inside() {
     return (
-      <div className='mn-container-inside' onMouseLeave={(e) => this.closePopover(e)}>
+      <div className='mn-container-inside' onMouseLeave={(e) => app.$errorManager.handlePromise(this.closePopover(e))}>
         <HorizontalStack
           fill
           height='100%'
@@ -94,7 +94,11 @@ export class TopMenu extends Container<ITopMenuProps, ITopMenuState, HTMLElement
       <li
         key={`mn-top-menu-group-${item.id}-${item.label}`}
         className='mn-top-menu-group'
-        onMouseEnter={(event) => (hasBelow ? this.showBelow(event, item) : this.closePopover(event))}
+        onMouseEnter={(event) =>
+          hasBelow
+            ? app.$errorManager.handlePromise(this.showBelow(event, item))
+            : app.$errorManager.handlePromise(this.closePopover(event))
+        }
       >
         <HorizontalStack
           className='mn-top-menu-group-container'

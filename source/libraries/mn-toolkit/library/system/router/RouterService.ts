@@ -44,7 +44,9 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     this._defaultHeadTags = tags || [];
   }
 
-  public goto: IRouter = {} as IRouter;
+  public goto = {} as {
+    [K in TRouterState]: (props: TRouterParams<K>) => Promise<void>;
+  };
 
   private _fallbackState?: TRouterState;
   public get fallbackState(): TRouterState | undefined {
@@ -159,7 +161,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     const qs: string[] = [];
     for (const key of currentState.pathKeys) {
       const keyName = key.name as keyof TRouterParams<TRouterState>;
-      const param = parameters[keyName];
+      const param = parameters[keyName] as unknown;
 
       // This key is taken into account in this loop, so we know we don't have to handle it later
       allKeys.delete(keyName);
@@ -172,7 +174,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
       let value = '';
       if (isString(param) || isNumber(param) || isBoolean(param)) {
         // Typing trick
-        value = encodeURIComponent(param as string | number | boolean);
+        value = encodeURIComponent(param);
       }
 
       if (key.type === 'path') {
@@ -185,7 +187,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     // Add all additional keys, that would have been added to the url, which mean they are query strings
     if (!ignoreQs) {
       allKeys.forEach((key) => {
-        const value = parameters[key];
+        const value = parameters[key] as unknown;
         if (key && (isString(value) || isNumber(value) || isBoolean(value))) {
           qs.push(`${key}=${value}`);
         }
@@ -229,7 +231,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     this.updateBreadcrumbs(this.currentResolvedState);
 
     // 6) Update current resolved state with the new one
-    resolvedState.historyData = history.state || {};
+    resolvedState.historyData = (history.state as object) || {};
     resolvedState.parameters = params as unknown as TRouterParams<TRouterState>;
     this.currentResolvedState = resolvedState;
 
@@ -317,7 +319,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
       record.path = record.path.substring(0, iQs);
     }
 
-    const path = record.path.replace(/:([a-zA-Z]+)/g, (_, key) => {
+    const path = record.path.replace(/:([a-zA-Z]+)/g, (_, key: string) => {
       record.pathKeys.push({ name: key, type: 'path', optional: false });
       return '([^/]+)';
     });
@@ -344,13 +346,11 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     if (options) extend(route, options);
     this.populateState(route);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.states[name] = route as any;
+    this.states[name] = route as TRouterStates<keyof IRouter>[T];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (this.goto as any)[name] = async (props: TRouterParams<T>) => {
+    this.goto[name] = (async (props: TRouterParams<T>) => {
       await this.go(name, props);
-    };
+    }) as (typeof this.goto)[T];
 
     return route;
   }
@@ -441,7 +441,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
   }
 
   private getInitialServerData() {
-    const data = window.__INITIAL_SERVER_DATA__;
+    const data: unknown = window.__INITIAL_SERVER_DATA__;
     if (!data) return data;
 
     delete window.__INITIAL_SERVER_DATA__;
@@ -476,7 +476,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     // Wrap this function to use fallbackState
     try {
       // Update current resolved state with the new one
-      state.historyData = history.state || {};
+      state.historyData = (history.state as object) || {};
       this.currentResolvedState = state;
 
       // Check if we have server data
@@ -500,7 +500,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
         const noQsPath = this.getLink(
           { state: this.currentResolvedState.state.name, params: this.currentResolvedState.parameters },
           true
-        )!;
+        );
         const canonicalLink: IHeadLinkTag = { tagName: 'link', rel: 'canonical', href: noQsPath };
         state.headTags = [...this._defaultHeadTags, canonicalLink];
       }

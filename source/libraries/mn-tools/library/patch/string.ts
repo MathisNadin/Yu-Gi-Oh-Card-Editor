@@ -759,7 +759,28 @@ prototype.format = function (this: string, ...tokens: object[]) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   let result = this;
   for (let i = 0; i < tokens.length; i++) {
-    result = result.replace(`$${i}`, tokens[i]?.toString() || '');
+    const value = tokens[i];
+
+    let str: string;
+
+    if (value == null) {
+      str = '';
+    } else if (typeof value === 'string') {
+      str = value;
+    } else if (typeof value === 'number' || typeof value === 'boolean') {
+      str = String(value);
+    } else if (typeof value === 'object') {
+      try {
+        str = JSON.stringify(value);
+      } catch {
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        str = String(value);
+      }
+    } else {
+      str = String(value);
+    }
+
+    result = result.replace(`$${i}`, str);
   }
   return result;
 };
@@ -857,13 +878,13 @@ prototype.utfDecode = function (this: string) {
       i++;
     } else if (c > 191 && c < 224) {
       c2 = this.charCodeAt(i + 1);
-      // eslint-disable-next-line no-bitwise
+
       string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
       i += 2;
     } else {
       c2 = this.charCodeAt(i + 1);
       c3 = this.charCodeAt(i + 2);
-      // eslint-disable-next-line no-bitwise
+
       string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
       i += 3;
     }

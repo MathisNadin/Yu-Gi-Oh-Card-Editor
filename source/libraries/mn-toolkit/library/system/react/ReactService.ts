@@ -1,6 +1,21 @@
-import { isDefined } from 'mn-tools';
 import { JSX } from 'react';
 import { createRoot } from 'react-dom/client';
+import { isDefined } from 'mn-tools';
+
+type TStyleValue = string | number | boolean;
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+type TStyleKey = keyof CSSStyleDeclaration | string;
+type TStyleObject = Partial<Record<TStyleKey, TStyleValue>>;
+
+function convert(key: string, value: TStyleValue): string {
+  if (
+    typeof value === 'number' &&
+    ['width', 'height', 'left', 'top', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'].includes(key)
+  ) {
+    return `${value}px`;
+  }
+  return String(value);
+}
 
 export class ReactService {
   private _scrollbarSize?: number;
@@ -47,29 +62,20 @@ export class ReactService {
     return div;
   }
 
-  public setStyle(
-    element: HTMLElement,
-    key: { [key: string]: string | boolean | number } | string,
-    value?: string | boolean | number
-  ) {
-    function convert(key: string, value: string | boolean | number) {
-      if (
-        typeof value === 'number' &&
-        ['width', 'height', 'left', 'top', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'].includes(key)
-      ) {
-        value = `${value}px`;
-      } else {
-        value = `${value}`;
-      }
-      return value;
-    }
+  public setStyle(element: HTMLElement, key: TStyleObject | TStyleKey, value?: TStyleValue): void {
+    const applyStyle = (prop: string, v: TStyleValue): void => {
+      const cssValue = convert(prop, v);
+      // pas de `any` ici, setProperty prend (string, string)
+      element.style.setProperty(prop, cssValue);
+    };
+
     if (typeof key === 'string') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      element.style[key as any] = convert(key, value as string | number | boolean);
+      if (value === undefined) return;
+      applyStyle(key, value);
     } else {
-      for (const k in key) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (element.style as any)[k] = convert(k, key[k]!);
+      for (const [prop, v] of Object.entries(key)) {
+        if (v === undefined) continue;
+        applyStyle(prop, v as TStyleValue);
       }
     }
   }

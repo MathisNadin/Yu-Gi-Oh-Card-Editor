@@ -1,47 +1,43 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import Logger, { ILoggerSinkConfig } from './Logger';
 
 export interface ILoggerWrapper {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (...args: any[]): void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error: (...args: any[]) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  warning: (...args: any[]) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  debug: (...args: any[]) => void;
+  (...args: unknown[]): void;
+  error: (...args: unknown[]) => void;
+  warning: (...args: unknown[]) => void;
+  debug: (...args: unknown[]) => void;
   configure: (config: ILoggerSinkConfig) => void;
 }
 
 export class Loggers {
-  private loggers: { [name: string]: ILoggerWrapper } = {};
-
-  public constructor() {}
+  private loggers: Record<string, ILoggerWrapper> = {};
 
   public createLogger(name: string): ILoggerWrapper {
-    if (this.loggers[name]) return this.loggers[name]!;
+    const existing = this.loggers[name];
+    if (existing) return existing;
+
     const logger = new Logger(this, name);
 
-    this.loggers[name] = (() => {
-      const _f: any = (...args: any[]) => {
-        logger.info(...args);
-      };
-      _f.warning = (...args: any[]) => {
-        logger.warning(...args);
-      };
-      _f.debug = (...args: any[]) => {
-        logger.debug(...args);
-      };
-      _f.error = (...args: any[]) => {
-        logger.error(...args);
-      };
-      _f.configure = (config: ILoggerSinkConfig) => {
-        logger.configure(config);
-      };
-      return _f;
-    })();
+    const wrapper = ((...args: unknown[]) => {
+      logger.info(...args);
+    }) as ILoggerWrapper;
 
-    return this.loggers[name]!;
+    wrapper.warning = (...args: unknown[]) => {
+      logger.warning(...args);
+    };
+
+    wrapper.debug = (...args: unknown[]) => {
+      logger.debug(...args);
+    };
+
+    wrapper.error = (...args: unknown[]) => {
+      logger.error(...args);
+    };
+
+    wrapper.configure = (config: ILoggerSinkConfig) => {
+      logger.configure(config);
+    };
+
+    this.loggers[name] = wrapper;
+    return wrapper;
   }
 }

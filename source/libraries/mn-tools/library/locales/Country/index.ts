@@ -246,7 +246,6 @@ export interface ICountries {
 }
 export type TCountry = keyof ICountries;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export let CountryList: TCountry[] = [
   'ad',
   'ae',

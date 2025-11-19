@@ -125,7 +125,7 @@
           $gap: calc(#{$tinySpacing});
           gap: $gap;
 
-          &:after {
+          &::after {
             content: ' ';
             $afterHeight: calc(#{$height} - #{$defaultItemHeight} - #{$gap});
             min-height: $afterHeight;
@@ -222,7 +222,7 @@
             $gap: calc(#{$tinySpacing});
             gap: $gap;
 
-            &:after {
+            &::after {
               content: ' ';
               $afterHeight: calc(#{$height} - #{$defaultItemHeight} - #{$gap});
               min-height: $afterHeight;
@@ -335,12 +335,12 @@
   @include themeWeekChooser();
 }
 
-@mixin themeWeekInput() {
+/* @mixin themeWeekInput() {
 }
 
 .mn-week-input {
   @include themeWeekInput();
-}
+} */
 
 @mixin themeWeekPicker() {
   border: calc(#{$fieldBorderSize}) solid $fieldBorderColor;

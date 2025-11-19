@@ -67,7 +67,7 @@ export class Chips<ID = number> extends Container<IChipsProps<ID>, IChipsState> 
   public override get children(): TJSXElementChildren {
     return this.props.items.map((item) => (
       <Chip
-        key={`${item.id}`}
+        key={String(item.id)}
         disabled={this.props.disabled}
         className={item.className}
         selected={this.isSelected(item)}

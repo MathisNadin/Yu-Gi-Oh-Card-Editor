@@ -1,7 +1,7 @@
 @mixin themeOverlay {
   @include fill-all();
   position: fixed;
-  background-color: hsl(0deg, 0%, 0%);
+  background-color: hsl(0deg 0% 0%);
   z-index: $z-index-overlay;
   opacity: 0;
   will-change: opacity;

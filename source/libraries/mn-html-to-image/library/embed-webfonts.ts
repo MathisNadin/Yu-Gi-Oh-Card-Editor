@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import type { Options } from './types';
 import { toArray } from './util';
 import { fetchAsDataURL } from './dataurl';
@@ -55,10 +54,8 @@ function parseCSS(source: string) {
   // strip out comments
   let cssText = source.replace(commentsRegex, '');
 
-  // eslint-disable-next-line prefer-regex-literals
   const keyframesRegex = new RegExp('((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})', 'gi');
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const matches = keyframesRegex.exec(cssText);
     if (matches === null) {
@@ -75,7 +72,6 @@ function parseCSS(source: string) {
   // unified regex
   const unifiedRegex = new RegExp(combinedCSSRegex, 'gi');
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     let matches = importRegex.exec(cssText);
     if (matches === null) {
@@ -103,9 +99,9 @@ async function getCSSRules(styleSheets: CSSStyleSheet[], options: Options): Prom
     if ('cssRules' in sheet) {
       try {
         toArray<CSSRule>(sheet.cssRules || []).forEach((item, index) => {
-          if (item.type === CSSRule.IMPORT_RULE) {
+          if (item instanceof CSSImportRule) {
             let importIndex = index + 1;
-            const url = (item as CSSImportRule).href;
+            const url = item.href;
             const deferred = fetchCSS(url)
               .then((metadata) => embedFonts(metadata, options))
               .then((cssText) =>
@@ -121,7 +117,7 @@ async function getCSSRules(styleSheets: CSSStyleSheet[], options: Options): Prom
                 })
               )
               .catch((e) => {
-                console.error('Error loading remote css', e.toString());
+                console.error('Error loading remote css', e);
               });
 
             deferreds.push(deferred);
@@ -166,9 +162,9 @@ async function getCSSRules(styleSheets: CSSStyleSheet[], options: Options): Prom
   });
 }
 
-function getWebFontRules(cssRules: CSSStyleRule[]): CSSStyleRule[] {
+function getWebFontRules(cssRules: CSSRule[]): CSSFontFaceRule[] {
   return cssRules
-    .filter((rule) => rule.type === CSSRule.FONT_FACE_RULE)
+    .filter((rule): rule is CSSFontFaceRule => rule instanceof CSSFontFaceRule)
     .filter((rule) => shouldEmbed(rule.style.getPropertyValue('src')));
 }
 

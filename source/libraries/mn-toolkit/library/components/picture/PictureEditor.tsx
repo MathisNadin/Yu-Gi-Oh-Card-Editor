@@ -131,7 +131,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
   private async onTap(e: React.MouseEvent<HTMLDivElement>) {
     if (this.props.onTap) await this.props.onTap(e);
 
-    const options = this.props.options!;
+    const options = this.props.options;
     const cropEffectUuid: IFileCropEffect['uuid'] = 'a9339c53-7084-4a6a-be2f-92c257bcd2be';
     const cropEffects = this.props.value.effects.filter(
       (effect): effect is IFileCropEffect => effect.uuid === cropEffectUuid
@@ -258,7 +258,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       };
 
       if (
-        this.props.options!.crop &&
+        this.props.options.crop &&
         newValue.fileDataUrl &&
         (this.props.display === 'circle' || this.props.display === 'square')
       ) {
@@ -286,7 +286,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
       effects: [],
     };
     if (
-      this.props.options!.crop &&
+      this.props.options.crop &&
       newValue.cameraDataUrl &&
       (this.props.display === 'circle' || this.props.display === 'square')
     ) {
@@ -312,7 +312,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
 
   public override renderAttributes() {
     const attributes = super.renderAttributes();
-    attributes.onClick = (e) => this.onTap(e);
+    attributes.onClick = (e) => app.$errorManager.handlePromise(this.onTap(e));
     attributes.onDragEnter = (e) => {
       e.preventDefault();
       if (this.base.current) this.base.current.classList.add('dragged-over');
@@ -364,7 +364,7 @@ export class PictureEditor extends Containable<IPictureEditorProps, IPictureEdit
     }
 
     return [
-      <Image key='image' src={displayUrl || placeholder!} alt={imgAlt} hint={imgHint} />,
+      <Image key='image' src={displayUrl || placeholder} alt={imgAlt} hint={imgHint} />,
       <HorizontalStack
         key='icon-container'
         className='icon-container'

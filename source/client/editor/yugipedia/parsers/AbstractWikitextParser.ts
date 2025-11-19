@@ -33,12 +33,12 @@ export class AbstractWikitextParser {
    */
   protected parseWikitextLore(text: string): string {
     text = text.slice(text.indexOf('= ') + 2);
-    text = text.replaceAll(/\[\[([^\]]+)\]\]/g, (_, content) => {
+    text = text.replaceAll(/\[\[([^\]]+)\]\]/g, (_, content: string) => {
       const lastIndex = content.lastIndexOf('|');
       return lastIndex !== -1 ? content.substring(lastIndex + 1) : content;
     });
     text = text.replaceAll(/\[\[|\]\]/g, '');
-    text = text.replaceAll(/(\[\[?\w+)(?:\|[\w\s-]+)?(\]\]?)/g, (_, before, after) => before + after);
+    text = text.replaceAll(/(\[\[?\w+)(?:\|[\w\s-]+)?(\]\]?)/g, (_, before: string, after: string) => before + after);
     text = text.replaceAll(/\s+/g, ' ');
     text = text.replaceAll(/<br\s*\/?>/gi, '\n');
     text = text.replaceAll("''", '');

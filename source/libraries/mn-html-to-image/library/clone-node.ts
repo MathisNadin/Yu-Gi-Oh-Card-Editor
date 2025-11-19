@@ -140,11 +140,11 @@ function cloneCSSStyle<T extends HTMLElement>(nativeNode: T, clonedNode: T, opti
 
 function cloneInputValue<T extends HTMLElement>(nativeNode: T, clonedNode: T) {
   if (isInstanceOfElement(nativeNode, HTMLTextAreaElement)) {
-    clonedNode.innerHTML = nativeNode.value;
+    clonedNode.innerHTML = nativeNode.value as string;
   }
 
   if (isInstanceOfElement(nativeNode, HTMLInputElement)) {
-    clonedNode.setAttribute('value', nativeNode.value);
+    clonedNode.setAttribute('value', nativeNode.value as string);
   }
 }
 
@@ -177,6 +177,7 @@ async function ensureSVGSymbols<T extends HTMLElement>(
   options: Options,
   cloneCSSStyleOptions: ICloneCSSStyleOptions
 ) {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   const uses = clone.querySelectorAll ? clone.querySelectorAll('use') : [];
   if (uses.length === 0) {
     return clone;
@@ -190,7 +191,6 @@ async function ensureSVGSymbols<T extends HTMLElement>(
       const exist = clone.querySelector(id);
       const definition = document.querySelector(id) as HTMLElement;
       if (!exist && definition && !processedDefs[id]) {
-        // eslint-disable-next-line no-await-in-loop
         processedDefs[id] = (await cloneNode(definition, options, cloneCSSStyleOptions, true))!;
       }
     }

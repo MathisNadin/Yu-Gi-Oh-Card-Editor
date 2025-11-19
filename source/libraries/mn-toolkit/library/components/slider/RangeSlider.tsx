@@ -79,18 +79,18 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
     }
     await this.updateValue(clientX, isLowerThumb);
 
-    const moveHandler = async (moveEvent: TMouseEvents | TTouchEvents) => {
+    const moveHandler = (moveEvent: TMouseEvents | TTouchEvents) => {
       let clientX: number;
       if ('touches' in moveEvent) {
         clientX = moveEvent.touches[0]!.clientX;
       } else {
         clientX = moveEvent.clientX;
       }
-      await this.updateValue(clientX, isLowerThumb);
+      app.$errorManager.handlePromise(this.updateValue(clientX, isLowerThumb));
     };
 
-    const upHandler = async () => {
-      await this.setStateAsync({ isDragging: false });
+    const upHandler = () => {
+      this.setState({ isDragging: false });
       window.removeEventListener('mousemove', moveHandler);
       window.removeEventListener('mouseup', upHandler);
       window.removeEventListener('touchmove', moveHandler);
@@ -140,8 +140,8 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
           width: SLIDER_THUMB_SIZE,
           left: `calc(${lowerPercentage}% - ${SLIDER_THUMB_SIZE / 2}px)`,
         }}
-        onMouseDown={this.handleMouseDown(true)}
-        onTouchStart={this.handleMouseDown(true)}
+        onMouseDown={() => app.$errorManager.handlePromise(this.handleMouseDown(true))}
+        onTouchStart={() => app.$errorManager.handlePromise(this.handleMouseDown(true))}
         onMouseOver={() => this.setState({ isHovered: true })}
         onFocus={() => this.setState({ isHovered: true })}
         onMouseOut={() => this.setState({ isHovered: false })}
@@ -159,8 +159,8 @@ export class RangeSlider extends Containable<IRangeSliderProps, IRangeSliderStat
           width: SLIDER_THUMB_SIZE,
           left: `calc(${upperPercentage}% - ${SLIDER_THUMB_SIZE / 2}px)`,
         }}
-        onMouseDown={this.handleMouseDown(false)}
-        onTouchStart={this.handleMouseDown(false)}
+        onMouseDown={() => app.$errorManager.handlePromise(this.handleMouseDown(false))}
+        onTouchStart={() => app.$errorManager.handlePromise(this.handleMouseDown(false))}
         onMouseOver={() => this.setState({ isHovered: true })}
         onFocus={() => this.setState({ isHovered: true })}
         onMouseOut={() => this.setState({ isHovered: false })}

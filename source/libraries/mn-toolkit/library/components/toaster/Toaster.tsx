@@ -69,7 +69,7 @@ export class Toaster<
     setTimeout(() => {
       this.setState({ visible: true }, () => {
         if (this.props.type === 'error') return;
-        this.timeout = setTimeout(() => this.close(), TIMEOUT);
+        this.timeout = setTimeout(() => app.$errorManager.handlePromise(this.close()), TIMEOUT);
       });
     });
   }
@@ -80,7 +80,7 @@ export class Toaster<
     await this.setStateAsync({ hidding: true });
     return await new Promise<void>((resolve) =>
       setTimeout(() => {
-        app.$toaster.remove(this.props.id!);
+        app.$toaster.remove(this.props.id);
         resolve();
       }, 250)
     );

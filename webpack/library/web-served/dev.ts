@@ -13,7 +13,18 @@ const webServedDevConfig: Configuration = {
       // Styles
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                silenceDeprecations: ['import'],
+              },
+            },
+          },
+        ],
       },
     ],
   },

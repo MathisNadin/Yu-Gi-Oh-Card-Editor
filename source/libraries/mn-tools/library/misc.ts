@@ -1,5 +1,11 @@
-import { isEmpty, isBoolean, isString } from './is';
+import { isEmpty, isBoolean, isString, isObject } from './is';
 import { each } from './objects';
+
+export function normalizeError(error: unknown): Error {
+  if (error instanceof Error) return error;
+  if (typeof error === 'string') return new Error(error);
+  return new Error(JSON.stringify(error));
+}
 
 export interface ICropBase64Options {
   /**
@@ -40,7 +46,7 @@ export async function getCroppedArtworkBase64(options: ICropBase64Options) {
   image.src = options.src;
   await new Promise<void>((resolve, reject) => {
     image.onload = () => resolve();
-    image.onerror = (err) => reject(err);
+    image.onerror = (err) => reject(normalizeError(err));
   });
 
   const canvas = document.createElement('canvas');
@@ -147,8 +153,6 @@ export function seq(count: number, from = 0, step = 1) {
 /**
  * Convert any value to an integer.
  *
- * @param {any} x source value
- * @return {number} integer value
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function integer(x: any) {
@@ -158,11 +162,8 @@ export function integer(x: any) {
 /**
  * Convert any value to a positive integer.
  *
- * @param {any} x source value
- * @return {number} integer value
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function positiveInteger(x: any) {
+export function positiveInteger(x: unknown) {
   let ix = integer(x);
   return ix < 0 ? 0 : ix;
 }
@@ -170,25 +171,18 @@ export function positiveInteger(x: any) {
 /**
  * Convert any value to an float.
  *
- * @param {any} x source value
- * @return {number} integer value
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function float(x: any) {
-  let sx = isEmpty(x) ? '0.0' : `${x}`;
+export function float(x: unknown) {
+  let sx = isEmpty(x) ? '0.0' : String(x);
   sx = sx.replace(/,/g, '.');
-  let ix = parseFloat(sx);
+  const ix = parseFloat(sx);
   return Number.isNaN(ix) ? 0.0 : ix;
 }
 
 /**
  * Convert any value to a positive float.
- *
- * @param {any} x source value
- * @return {number} integer value
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function positiveFloat(x: any) {
+export function positiveFloat(x: unknown) {
   let ix = float(x);
   return ix < 0 ? 0 : ix;
 }
@@ -196,11 +190,8 @@ export function positiveFloat(x: any) {
 /**
  * Convert any value to an boolean.
  *
- * @param {any} x source value
- * @return {boolean} integer value
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function boolean(x: any, d = false) {
+export function boolean(x: unknown, d = false) {
   if (typeof x === 'undefined') return d;
   if (isBoolean(x)) return x;
   if (isString(x)) return x.toLowerCase() === 'true';
@@ -211,34 +202,27 @@ export async function wait(ms: number) {
   return await new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export function debounce(func: Function, wait?: number) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let timeout: any;
-  // var count = 0;
-  if (typeof wait === 'undefined') wait = 200;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return function (this: any, ...args: any[]) {
-    let later = () => {
-      timeout = null;
-      // if (count > 1) {
-      // console.log('calling '+func.name+'() debounced '+count+' time(s)');
-      // }
-      // count = 0;
-      func.apply(this, args);
-    };
+export function debounce<F extends (...args: unknown[]) => unknown>(
+  func: F,
+  wait = 200
+): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait) as unknown as number;
-    // count++;
+  return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(() => {
+      timeout = null;
+      func.apply(this, args);
+    }, wait);
   };
 }
 
 /**
  * Sort dependencies
  *
- * @param {any} x graph
- * @return {number} integer value
  */
 export function sortDependencies(graph: { [name: string]: string[] }) {
   let sorted: string[] = [];
@@ -251,7 +235,7 @@ export function sortDependencies(graph: { [name: string]: string[] }) {
   function visit(name: string) {
     if (visited[name]) return;
     visited[name] = true;
-    if (graph[name]) graph[name]!.forEach((dependency) => visit(dependency));
+    if (graph[name]) graph[name].forEach((dependency) => visit(dependency));
     sorted.push(name);
   }
   return sorted;
@@ -326,7 +310,7 @@ export function md5(string: string) {
     let lNumberOfWordsTemp1 = lMessageLength + 8;
     let lNumberOfWordsTemp2 = (lNumberOfWordsTemp1 - (lNumberOfWordsTemp1 % 64)) / 64;
     let lNumberOfWords = (lNumberOfWordsTemp2 + 1) * 16;
-    let lWordArray: number[] = Array(lNumberOfWords - 1);
+    let lWordArray = Array(lNumberOfWords - 1) as number[];
     let lBytePosition = 0;
     let lByteCount = 0;
     while (lByteCount < lMessageLength) {
@@ -855,7 +839,7 @@ export interface IParsedURI {
 export function parseUri(uri: string): IParsedURI {
   if (!uri) throw new Error('URI is empty, nothing to parse');
 
-  let keys: (keyof IParsedURI)[] = [
+  const keys: (keyof IParsedURI)[] = [
     'source',
     'protocol',
     'authority',
@@ -871,22 +855,31 @@ export function parseUri(uri: string): IParsedURI {
     'query',
     'anchor',
   ];
-  let strictParser =
+
+  const strictParser =
     /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/;
-  let matches = strictParser.exec(uri);
+
+  const matches = strictParser.exec(uri);
   if (!matches) {
     throw new Error('Unable to parse this URL: format is invalid or unsupported');
   }
-  let result: IParsedURI = {} as IParsedURI;
 
-  for (let iKey = 14; iKey >= 0; iKey--) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (result as any)[keys[iKey]!] = matches[iKey] || '';
+  const result = {} as IParsedURI;
+
+  // Vue typée "string-only" pour les clés listées dans `keys`
+  const stringFields = result as unknown as Record<(typeof keys)[number], string>;
+
+  // matches[0] → 'source', matches[1] → 'protocol', etc.
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]!;
+    stringFields[key] = matches[i] ?? '';
   }
+
+  // Paramètres de query string
   result.parameters = {};
-  result.query.replace(/(?:^|&)([^&=]*)=?([^&]*)/g, (foo, key: string, value: string) => {
+  result.query.replace(/(?:^|&)([^&=]*)=?([^&]*)/g, (fullMatch, key: string, value: string) => {
     if (key) result.parameters[key] = decodeURIComponent(value);
-    return foo;
+    return fullMatch;
   });
 
   return result;
@@ -976,12 +969,13 @@ export function imageResizer(options: ImageResizerOptions, cb: (error: Error | u
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function classNames(...args: any[]): string {
-  const result = [];
+export function classNames(
+  ...args: (string | number | boolean | undefined | Record<string, string | number | boolean | undefined>)[]
+): string {
+  const result: (string | number | boolean)[] = [];
   for (const arg of args) {
     if (!arg) continue;
-    if (typeof arg === 'object' && !Array.isArray(arg)) {
+    if (isObject(arg)) {
       for (const k in arg) {
         if (!!arg[k]) result.push(k);
       }

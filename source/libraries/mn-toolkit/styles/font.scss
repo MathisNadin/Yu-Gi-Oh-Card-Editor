@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 // Small
 $small-h1-family: var(--small-h1-family);
 $small-h1-size: var(--small-h1-size);
@@ -944,18 +946,18 @@ $theme-fonts: (
 );
 
 @mixin themeFont($category) {
-  $font-values: map-get($theme-fonts, $category);
-  @if $font-values == null {
+  $font-values: map.get($theme-fonts, $category);
+  @if not $font-values {
     @error "The #{$category} category doesn't exist in the $theme-fonts map";
   }
 
   // Apply all properties in the current CSS rule
-  font-family: map-get($font-values, 'family');
-  font-size: map-get($font-values, 'size');
-  font-stretch: map-get($font-values, 'stretch');
-  font-style: map-get($font-values, 'style');
-  font-variant: map-get($font-values, 'variant');
-  font-weight: map-get($font-values, 'weight');
-  line-height: map-get($font-values, 'line-height');
-  letter-spacing: map-get($font-values, 'letter-spacing');
+  font-family: map.get($font-values, 'family');
+  font-size: map.get($font-values, 'size');
+  font-stretch: map.get($font-values, 'stretch');
+  font-style: map.get($font-values, 'style');
+  font-variant: map.get($font-values, 'variant');
+  font-weight: map.get($font-values, 'weight');
+  line-height: map.get($font-values, 'line-height');
+  letter-spacing: map.get($font-values, 'letter-spacing');
 }

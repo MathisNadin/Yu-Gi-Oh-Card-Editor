@@ -40,7 +40,7 @@ export class HomeRightPane
     app.$card.removeListener(this);
   }
 
-  private async onTabChange(tabIndex: TtabIndex) {
+  private onTabChange(tabIndex: TtabIndex) {
     this.setState({ tabIndex });
   }
 

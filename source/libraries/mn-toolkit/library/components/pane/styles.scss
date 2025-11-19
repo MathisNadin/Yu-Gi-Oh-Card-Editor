@@ -181,7 +181,7 @@
   // Specific style for the top menu, as it's mostly the intended use for the top position
   &.mn-pane-top {
     .mn-top-menu {
-      &:after {
+      &::after {
         content: ' ';
         position: fixed;
         background-color: color-hsl($bg1);

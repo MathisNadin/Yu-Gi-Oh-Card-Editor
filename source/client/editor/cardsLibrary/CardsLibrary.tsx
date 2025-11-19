@@ -103,7 +103,7 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
     this.setState({ edited: undefined, current: undefined });
   }
 
-  private async onChangeOrder(sortOption: TCardSortOption) {
+  private onChangeOrder(sortOption: TCardSortOption) {
     let { sortOrder } = this.state;
     if (this.state.sortOption === sortOption) {
       switch (sortOrder) {

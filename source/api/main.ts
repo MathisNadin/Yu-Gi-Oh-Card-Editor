@@ -1,4 +1,4 @@
-/* eslint-disable import/export */
+ 
 
 import { TForbidTypeChanges, TJSONValue, TLanguageLocale } from 'mn-tools';
 

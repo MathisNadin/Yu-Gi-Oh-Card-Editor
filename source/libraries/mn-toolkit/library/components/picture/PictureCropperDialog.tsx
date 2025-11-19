@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { classNames } from 'mn-tools';
+import { classNames, normalizeError } from 'mn-tools';
 import { IFileCropEffect } from 'api/main';
 import { AbstractPopup, IAbstractPopupProps, IAbstractPopupState } from '../popup';
 import { Slider } from '../slider';
@@ -61,7 +61,7 @@ export class PictureCropperDialog extends AbstractPopup<
           const img = new Image();
           img.src = this.props.imageUrl;
           img.onload = () => resolve(img);
-          img.onerror = (err) => reject(err);
+          img.onerror = (err) => reject(normalizeError(err));
         });
         this.originalImageDimensions.width = img.width;
         this.originalImageDimensions.height = img.height;

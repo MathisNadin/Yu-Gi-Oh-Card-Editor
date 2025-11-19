@@ -25,7 +25,7 @@ export interface IStoreService {
   remove<K extends string = string>(key: K): Promise<void>;
   clear(): Promise<void>;
   importData(jsonData: string): Promise<object>;
-  exportData(): Promise<string>;
+  exportData(): Promise<string | undefined>;
 }
 
 declare global {

@@ -62,10 +62,11 @@ export class RouterViewPort
     const currentState = app.$router.currentState!;
 
     const routerParameters = app.$router.getParameters();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-unsafe-assignment
     const { initialServerData, ...paramsWithoutData } = routerParameters;
     const routerKey = `${this.navVersion}${currentState.name}${serialize(paramsWithoutData)}`;
     const key = 'key' in routerParameters ? routerParameters.key : '';
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const newContentKey = `${key}${routerKey}content`;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

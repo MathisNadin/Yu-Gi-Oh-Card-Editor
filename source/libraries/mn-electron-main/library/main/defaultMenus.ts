@@ -118,19 +118,27 @@ export function buildDefaultDarwinTemplate(
     submenu: [
       {
         label: 'Learn More',
-        click: () => shell.openExternal('https://electronjs.org'),
+        click: () => {
+          shell.openExternal('https://electronjs.org').catch(console.error);
+        },
       },
       {
         label: 'Documentation',
-        click: () => shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme'),
+        click: () => {
+          shell.openExternal('https://github.com/electron/electron/tree/main/docs#readme').catch(console.error);
+        },
       },
       {
         label: 'Community Discussions',
-        click: () => shell.openExternal('https://www.electronjs.org/community'),
+        click: () => {
+          shell.openExternal('https://www.electronjs.org/community').catch(console.error);
+        },
       },
       {
         label: 'Search Issues',
-        click: () => shell.openExternal('https://github.com/electron/electron/issues'),
+        click: () => {
+          shell.openExternal('https://github.com/electron/electron/issues').catch(console.error);
+        },
       },
     ],
   };

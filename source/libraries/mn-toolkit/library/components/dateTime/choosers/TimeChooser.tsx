@@ -48,26 +48,28 @@ export class TimeChooser extends Container<ITimeChooserProps, ITimeChooserState>
   private scrollToSelectedHour(behavior: ScrollBehavior = 'smooth') {
     if (this.props.mode === 'grid') return;
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        if (!this.base.current) return;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (!this.base.current) return;
 
-        const hoursContainer = this.base.current.querySelector('.hours-container');
-        if (!hoursContainer) return;
+          const hoursContainer = this.base.current.querySelector('.hours-container');
+          if (!hoursContainer) return;
 
-        const selectedHourElement = hoursContainer.querySelector('.hour.selected');
-        if (!selectedHourElement) return;
+          const selectedHourElement = hoursContainer.querySelector('.hour.selected');
+          if (!selectedHourElement) return;
 
-        const containerTop = hoursContainer.getBoundingClientRect().top;
-        const selectedTop = selectedHourElement.getBoundingClientRect().top;
+          const containerTop = hoursContainer.getBoundingClientRect().top;
+          const selectedTop = selectedHourElement.getBoundingClientRect().top;
 
-        // Calculate the offset position to scroll to
-        const offset = selectedTop - containerTop + hoursContainer.scrollTop;
+          // Calculate the offset position to scroll to
+          const offset = selectedTop - containerTop + hoursContainer.scrollTop;
 
-        hoursContainer.scrollTo({
-          top: offset,
-          behavior,
-        });
-      })
+          hoursContainer.scrollTo({
+            top: offset,
+            behavior,
+          });
+        })
+      )
     );
   }
 

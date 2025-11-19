@@ -32,8 +32,7 @@ export default class Logger {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private log(level: LogLevel, ...args: any[]) {
+  private log(level: LogLevel, ...args: unknown[]) {
     const record: ILogRecord = {
       timestamp: new Date(),
       logLevel: level,
@@ -46,23 +45,19 @@ export default class Logger {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public info(...args: any[]) {
+  public info(...args: unknown[]) {
     this.log(LogLevel.INFO, ...args);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public warning(...args: any[]) {
+  public warning(...args: unknown[]) {
     this.log(LogLevel.WARNING, ...args);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public debug(...args: any[]) {
+  public debug(...args: unknown[]) {
     this.log(LogLevel.DEBUG, ...args);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public error(...args: any[]) {
+  public error(...args: unknown[]) {
     this.log(LogLevel.ERROR, ...args);
   }
 }

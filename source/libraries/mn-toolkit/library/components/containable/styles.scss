@@ -1,3 +1,5 @@
+@use 'sass:string';
+
 @mixin themeLayoutContainable() {
   display: flex;
   position: relative;
@@ -232,7 +234,7 @@ $mn-ghost-containers: (
 );
 
 @each $sel in $mn-ghost-containers {
-  #{unquote($sel)}:hover > .mn-ghost {
+  #{string.unquote($sel)}:hover > .mn-ghost {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }

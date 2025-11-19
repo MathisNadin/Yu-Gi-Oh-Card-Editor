@@ -5,7 +5,7 @@ export * from './Application';
 
 declare global {
   interface IApp extends Application {}
-  // eslint-disable-next-line vars-on-top, no-var
+
   var app: IApp;
 
   interface IVendors {}

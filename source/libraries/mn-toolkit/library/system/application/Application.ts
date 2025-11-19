@@ -9,9 +9,8 @@ export interface IApplicationListener {
 interface IServiceOptions<T> {
   depends?: (keyof IApp)[];
   name?: string;
-  clazz?: T;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  instance?: any;
+  clazz?: new () => T;
+  instance?: T;
 }
 
 export interface IBootstrapOptions {
@@ -21,8 +20,7 @@ export interface IBootstrapOptions {
 
 export class Application extends AbstractObservable<IApplicationListener> {
   private configurationCallBack: () => void = () => {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _services: { [name: string]: IServiceOptions<any> } = {};
+  private _services: Partial<Record<keyof IApp, IServiceOptions<unknown>>> = {};
   private _ready = false;
   private _conf: IApplicationConfig = {} as IApplicationConfig;
 
@@ -86,7 +84,7 @@ export class Application extends AbstractObservable<IApplicationListener> {
   }
 
   public applicationReady() {
-    setTimeout(() => app.$device.hideSplash());
+    setTimeout(() => app.$errorManager.handlePromise(app.$device.hideSplash()));
   }
 
   public async exit() {
@@ -95,49 +93,71 @@ export class Application extends AbstractObservable<IApplicationListener> {
   }
 
   private async bootstrapServices() {
-    const graph: { [service: string]: string[] } = {};
+    const graph: { [service: string]: (keyof IApp)[] } = {};
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    each(this._services, (options: IServiceOptions<any>, name: string) => {
-      if (this._services[name]!.depends!.length === 0 && !this._services[name]!.clazz.prototype.setup) {
-        return;
-      }
-      graph[name] = options.depends!;
+    each(this._services, (options, name) => {
+      if (!options) return;
+
+      const depends = options.depends ?? [];
+      graph[name as keyof IApp] = depends;
     });
 
     const sortedGraph = sortDependencies(graph) as (keyof IApp)[];
     for (const serviceName of sortedGraph) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const service = app[serviceName] as { setup?: () => void | Promise<void> };
+      const service = app[serviceName] as { setup?: () => void | Promise<void> } | undefined;
+
       if (!service) {
-        console.warn(`Le service ${serviceName} n'existe pas`);
-      } else if (service.setup) {
+        console.warn(`Le service ${String(serviceName)} n'existe pas`);
+      } else if (typeof service.setup === 'function') {
         await service.setup();
       }
     }
   }
 
-  public service<T>(name: keyof IApp, clazz: T, options: IServiceOptions<T> = {}) {
-    if (!clazz) throw new Error(`Nous avons besoin d'une classe pour ${name}`);
+  public service<T>(name: keyof IApp, clazz: new () => T, options: IServiceOptions<T> = {}): void {
+    if (!clazz) {
+      throw new Error(`Nous avons besoin d'une classe pour ${String(name)}`);
+    }
 
-    options.depends = options.depends || [];
-    if (!isArray(options.depends)) throw new Error(`Mauvaises dépendances pour ${name} : ${options.depends}`);
+    const depends = options.depends ?? [];
+    if (!isArray(depends)) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      throw new Error(`Mauvaises dépendances pour ${String(name)} : ${depends}`);
+    }
 
-    options.name = name;
-    options.clazz = clazz;
-    this._services[name] = options;
+    const serviceOptions: IServiceOptions<unknown> = {
+      depends,
+      name,
+      clazz: clazz as new () => unknown,
+      instance: undefined,
+    };
+
+    this._services[name] = serviceOptions;
+
     Object.defineProperty(this, name, {
       get: () => {
-        if (!this._services[name]!.instance) {
+        const stored = this._services[name];
+
+        if (!stored) {
+          throw new Error(`Le service ${String(name)} n'est pas enregistré`);
+        }
+
+        if (!stored.instance) {
           try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this._services[name]!.instance = new (clazz as any)();
-          } catch (e) {
-            console.error(e);
+            const Ctor = stored.clazz as (new () => unknown) | undefined;
+            if (!Ctor) {
+              throw new Error(`La classe pour le service ${String(name)} est manquante.`);
+            }
+            stored.instance = new Ctor();
+          } catch (error) {
+            app.$errorManager.trigger(error as Error);
           }
         }
-        return this._services[name]!.instance;
+
+        return stored.instance;
       },
+      configurable: false,
+      enumerable: true,
     });
   }
 

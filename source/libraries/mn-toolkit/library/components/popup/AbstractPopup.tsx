@@ -104,7 +104,7 @@ export abstract class AbstractPopup<
     return await new Promise<void>((resolve) =>
       setTimeout(() => {
         app.$popup.remove(this.props.id!);
-        if (this.props.onClose) this.props.onClose(R!);
+        if (this.props.onClose) this.props.onClose(R);
         resolve();
       }, 200)
     );

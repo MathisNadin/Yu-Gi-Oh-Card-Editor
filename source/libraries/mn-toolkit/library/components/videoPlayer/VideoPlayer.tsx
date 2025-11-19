@@ -162,7 +162,6 @@ export class VideoPlayer extends Containable<IVideoPlayerProps, IVideoPlayerStat
 
   public override render() {
     return (
-      // eslint-disable-next-line jsx-a11y/media-has-caption
       <video ref={this.base} {...this.renderAttributes()}>
         {this.props.sources.map((source, i) => (
           <source key={i} src={source.src} type={source.mimeType} />

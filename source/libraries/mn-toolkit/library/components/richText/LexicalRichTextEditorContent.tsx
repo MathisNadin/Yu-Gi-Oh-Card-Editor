@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LexicalEditor } from 'lexical/LexicalEditor';
-import { EditorState } from 'lexical/LexicalEditorState';
+import { LexicalEditor, EditorState } from 'lexical';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -83,7 +82,7 @@ export function LexicalRichTextEditorContent({
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
-      <OnChangePlugin onChange={onChange} />
+      <OnChangePlugin onChange={(value) => app.$errorManager.handlePromise(onChange(value))} />
       <HistoryPlugin />
       <ListPlugin />
       <LinkPlugin />

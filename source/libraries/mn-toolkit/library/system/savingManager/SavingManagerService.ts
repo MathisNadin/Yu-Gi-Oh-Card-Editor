@@ -43,7 +43,7 @@ export class SavingManagerService
             handler: jobOrFunction,
           };
         } else {
-          job = jobOrFunction as ISaveJob;
+          job = jobOrFunction;
           job.id = job.id ? `${uuid}::${job.id}` : uuid;
         }
         log.debug('Queuing Job', job.id);

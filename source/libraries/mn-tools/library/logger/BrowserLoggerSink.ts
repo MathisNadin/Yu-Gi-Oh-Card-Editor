@@ -65,7 +65,7 @@ export class BrowserLoggerSinkRenderer extends AbstractLoggerSink {
       args.unshift(a);
     });
     args.unshift('%c' + prefixes.join('%c'));
-    // eslint-disable-next-line prefer-spread, @typescript-eslint/no-explicit-any, no-console
-    console.log.apply(console, args as any);
+    // eslint-disable-next-line prefer-spread, no-console
+    console.log.apply(console, args);
   }
 }

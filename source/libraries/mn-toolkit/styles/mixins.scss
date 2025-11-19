@@ -11,12 +11,12 @@
   position: absolute;
   left: $left;
   top: $top;
-  @if ($height != 0) {
+  @if $height != 0 {
     height: $height;
   } @else {
     bottom: $bottom;
   }
-  @if ($width != 0) {
+  @if $width != 0 {
     width: $width;
   } @else {
     right: $right;
@@ -52,7 +52,7 @@
 
 @mixin ios-top($prop, $adding: 0) {
   @include on(ios) {
-    @if ($adding == 0) {
+    @if $adding == 0 {
       #{$prop}: constant(safe-area-inset-top);
       #{$prop}: env(safe-area-inset-top);
     } @else {
@@ -96,27 +96,27 @@
       @content;
     }
   } @else {
-    @error "Unknown media '"+$media+"'";
+    @error "Unknown media '" + $media + "'";
   }
 }
 
 @mixin frame($name) {
   border-radius: calc(#{$defaultBorderRadius});
-  @if ($name== 'shadow-0') {
+  @if $name == 'shadow-0' {
     @include shadow(0);
-  } @else if ($name== 'shadow-1') {
+  } @else if $name == 'shadow-1' {
     @include shadow(1);
-  } @else if ($name== 'shadow-2') {
+  } @else if $name == 'shadow-2' {
     @include shadow(2);
-  } @else if ($name== 'shadow-3') {
+  } @else if $name == 'shadow-3' {
     @include shadow(3);
-  } @else if ($name== 'shadow-4') {
+  } @else if $name == 'shadow-4' {
     @include shadow(4);
-  } @else if ($name== 'shadow-5') {
+  } @else if $name == 'shadow-5' {
     @include shadow(5);
-  } @else if ($name== 'shadow-6') {
+  } @else if $name == 'shadow-6' {
     @include shadow(6);
-  } @else if ($name== 'dashed') {
+  } @else if $name == 'dashed' {
     border-style: dashed;
     border-width: 1px;
     border-color: color-hsl($fg3);

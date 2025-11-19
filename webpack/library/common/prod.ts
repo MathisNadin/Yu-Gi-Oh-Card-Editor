@@ -1,12 +1,13 @@
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import { Configuration } from 'webpack';
+import { Configuration, WebpackPluginInstance } from 'webpack';
 import { FixDoctypePlugin } from './FixDoctypePlugin';
 import { cspCommon } from './csp-common';
 
+import type CspHtmlWebpackPluginClass from 'csp-html-webpack-plugin';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin') as typeof CspHtmlWebpackPluginClass;
 
 const commonProdConfig: Configuration = {
   mode: 'production',
@@ -16,7 +17,18 @@ const commonProdConfig: Configuration = {
       // Styles
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                silenceDeprecations: ['import'],
+              },
+            },
+          },
+        ],
       },
     ],
   },
@@ -76,7 +88,7 @@ const commonProdConfig: Configuration = {
           'style-src-elem': false,
         },
       }
-    ),
+    ) as unknown as WebpackPluginInstance,
     new FixDoctypePlugin(),
   ],
 };

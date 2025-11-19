@@ -68,7 +68,7 @@ export abstract class AbstractPopover<
 
     this.waitForVisible()
       .then(() => setTimeout(() => this.base.current?.focus(), 100))
-      .catch((e) => app.$errorManager.trigger(e));
+      .catch((e) => app.$errorManager.trigger(e as Error));
   }
 
   public override componentWillUnmount() {

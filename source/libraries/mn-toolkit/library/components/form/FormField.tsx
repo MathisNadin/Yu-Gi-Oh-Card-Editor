@@ -4,7 +4,7 @@ import { Containable, IContainableProps, IContainableState, TDidUpdateSnapshot }
 import { HorizontalStack, VerticalStack } from '../container';
 import { TIconId, Icon } from '../icon';
 import { Typography } from '../typography';
-import { FormContext, IFormContext } from './FormContext';
+import { FormContext } from './FormContext';
 
 type TFormFieldData = string | number | boolean | object | undefined;
 export type TFormFieldDataType = TFormFieldData | TFormFieldData[];
@@ -74,7 +74,7 @@ export abstract class FormField<
   implements IFormField
 {
   public static override contextType = FormContext;
-  public override context: IFormContext | undefined;
+  declare public context: React.ContextType<typeof FormContext>;
 
   private type: string;
   protected validators: ((field: this) => void | Promise<void>)[];

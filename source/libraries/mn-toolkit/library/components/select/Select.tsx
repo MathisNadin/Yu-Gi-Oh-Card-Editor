@@ -81,11 +81,11 @@ export class Select<ID = number> extends Containable<ISelectProps<ID>, ISelectSt
   }
 
   private async selectItem(item: ISelectItem<ID>) {
-    await this.hideList();
+    this.hideList();
     await this.props.onChange(item.id);
   }
 
-  private async hideList() {
+  private hideList() {
     if (this.listPopoverId) app.$popover.remove(this.listPopoverId);
     if (this.base.current) this.base.current.blur();
   }

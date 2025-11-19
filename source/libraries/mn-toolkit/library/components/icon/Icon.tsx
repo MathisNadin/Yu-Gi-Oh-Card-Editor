@@ -93,6 +93,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
 
   /** Defines if the icon is a button */
   protected get onTapFunction() {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     return this.onTap || this.props.onTap;
   }
 
@@ -106,7 +107,7 @@ export class Icon<P extends IIconProps, S extends IIconState> extends Containabl
           ref={this.base as RefObject<HTMLButtonElement>}
           {...attributes}
           name={this.props.buttonName || `${this.props.name || this.props.icon}-button-container`}
-          onClick={(e) => this.onTapFunction!(e)}
+          onClick={(e) => app.$errorManager.handlePromise(this.onTapFunction!(e))}
           type={this.props.buttonType}
         >
           {app.$icon.get(this.icon, { ...attributes, className: classNames(this.renderIconClasses()) }, this.iconRef)}

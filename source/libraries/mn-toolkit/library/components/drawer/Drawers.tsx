@@ -81,7 +81,7 @@ export class Drawers extends Containable<IDrawersProps, IDrawersState> implement
         onTouchStart={topOrientation ? (e) => this.onTouchStart(e) : undefined}
         onTouchEnd={topOrientation ? (e) => this.onTouchEnd(e, topOrientation) : undefined}
       >
-        <div className='overlay' onClick={() => app.$drawer.closeLast()} />
+        <div className='overlay' onClick={() => app.$errorManager.handlePromise(app.$drawer.closeLast())} />
         {app.$drawer.drawers.map((p) => p.element)}
       </div>
     );

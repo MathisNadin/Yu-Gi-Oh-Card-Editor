@@ -1,11 +1,12 @@
 import 'webpack-dev-server';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { Configuration, LoaderOptionsPlugin } from 'webpack';
+import { Configuration, LoaderOptionsPlugin, WebpackPluginInstance } from 'webpack';
 import { FixDoctypePlugin } from './FixDoctypePlugin';
 import { cspCommon } from './csp-common';
 
+import type CspHtmlWebpackPluginClass from 'csp-html-webpack-plugin';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin') as typeof CspHtmlWebpackPluginClass;
 
 const commonDevConfig: Configuration = {
   mode: 'development',
@@ -15,7 +16,18 @@ const commonDevConfig: Configuration = {
       // Styles
       {
         test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                silenceDeprecations: ['import'],
+              },
+            },
+          },
+        ],
       },
     ],
   },
@@ -54,7 +66,7 @@ const commonDevConfig: Configuration = {
           'style-src-elem': false,
         },
       }
-    ),
+    ) as unknown as WebpackPluginInstance,
     new FixDoctypePlugin(),
   ],
 };

@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { existsSync, readFileSync, writeFile } from 'fs';
 import { app, BrowserWindow, shell, ipcMain, dialog, IpcMainInvokeEvent } from 'electron';
-import { download } from 'electron-dl';
 
 export function addIpcMainHandleChannel<C extends TIpcRendererInvokeChannel>(
   channel: C,
@@ -31,11 +30,11 @@ export function addIpcMainHandleOnceChannel<C extends TIpcRendererInvokeChannel>
 
 export function setupIpcMainHandleChannels() {
   addIpcMainHandleChannel('getAppVersion', async (_event: IpcMainInvokeEvent) => {
-    return app.getVersion();
+    return Promise.resolve(app.getVersion());
   });
 
   addIpcMainHandleChannel('checkFileExists', async (_event: IpcMainInvokeEvent, filePath: string) => {
-    return existsSync(filePath);
+    return Promise.resolve(existsSync(filePath));
   });
 
   addIpcMainHandleChannel(
@@ -86,7 +85,7 @@ export function setupIpcMainHandleChannels() {
 
       if (!canceled && filePath) {
         const finalFilePath = filePath.endsWith('.json') ? filePath : `${filePath}.json`;
-        // eslint-disable-next-line consistent-return
+
         writeFile(finalFilePath, jsonData, (err) => {
           if (!err) return finalFilePath;
         });
@@ -115,7 +114,6 @@ export function setupIpcMainHandleChannels() {
         const buffer = Buffer.from(base64, 'base64');
         const uint8Array = new Uint8Array(buffer); // Convertir le buffer en Uint8Array
 
-        // eslint-disable-next-line consistent-return
         writeFile(finalFilePath, uint8Array, (err) => {
           if (!err) return finalFilePath;
         });
@@ -142,6 +140,8 @@ export function setupIpcMainHandleChannels() {
         if (allWindows?.length) win = allWindows[0]!;
       }
       if (!win) throw new Error('No window found');
+
+      const { download } = await import('electron-dl');
       const file = await download(win, url, { directory, filename });
       return file.getSavePath();
     }

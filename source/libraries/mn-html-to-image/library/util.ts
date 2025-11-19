@@ -38,9 +38,7 @@ export const uuid = (() => {
   let counter = 0;
 
   // ref: http://stackoverflow.com/a/6248722/2519373
-  const random = () =>
-    // eslint-disable-next-line no-bitwise
-    `0000${((Math.random() * 36 ** 4) << 0).toString(36)}`.slice(-4);
+  const random = () => `0000${((Math.random() * 36 ** 4) << 0).toString(36)}`.slice(-4);
 
   return () => {
     counter += 1;
@@ -55,12 +53,13 @@ export function delay<T>(ms: number) {
     });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function toArray<T>(arrayLike: any): T[] {
+export function toArray<T>(
+  arrayLike: Node[] | NodeListOf<ChildNode> | CSSStyleDeclaration | CSSRuleList | StyleSheetList
+): T[] {
   const arr: T[] = [];
 
   for (let i = 0, l = arrayLike.length; i < l; i++) {
-    arr.push(arrayLike[i]);
+    arr.push(arrayLike[i] as T);
   }
 
   return arr;
@@ -165,8 +164,10 @@ export function canvasToBlob(canvas: HTMLCanvasElement, options: Options = {}): 
 export function createImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    img.decode = () => resolve(img) as any;
+    img.decode = () => {
+      resolve(img);
+      return Promise.resolve();
+    };
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.crossOrigin = 'anonymous';
@@ -208,8 +209,7 @@ export const isInstanceOfElement = <T extends typeof Element | typeof HTMLElemen
 ): node is T['prototype'] => {
   if (node instanceof instance) return true;
 
-  const nodePrototype = Object.getPrototypeOf(node);
-
+  const nodePrototype = Object.getPrototypeOf(node) as Element | HTMLElement | SVGImageElement;
   if (nodePrototype === null) return false;
 
   return nodePrototype.constructor.name === instance.name || isInstanceOfElement(nodePrototype, instance);

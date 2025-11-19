@@ -1,4 +1,4 @@
-import { extend, sanitizeFileName, isDefined } from 'mn-tools';
+import { extend, sanitizeFileName, isDefined, normalizeError } from 'mn-tools';
 import { ICard } from '../card';
 import {
   IYugipediaCard,
@@ -25,7 +25,7 @@ export class YugipediaService {
     this.baseArtworkUrl = 'F:\\Images\\Images Yu-Gi-Oh!\\Artworks\\';
   }
 
-  public async setup() {
+  public setup() {
     const { displayName, version, author, repository } = app.conf;
     if (displayName && version && repository.url && author.email) {
       this.userAgent = `${displayName}/${version} (${repository.url}; ${author.email})`;
@@ -45,7 +45,7 @@ export class YugipediaService {
             resolveOuter(result);
           })
           .catch((err) => {
-            rejectOuter(err);
+            rejectOuter(normalizeError(err));
           })
           .finally(() => {
             // After fn() completes (success or failure), wait 1 second before processing next task

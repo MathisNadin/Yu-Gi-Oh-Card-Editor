@@ -38,7 +38,7 @@
   &.toolbar-fixed-mode {
     .mn-rich-text-editor-toolbar {
       border-radius: calc(#{$defaultBorderRadius}) calc(#{$defaultBorderRadius}) 0 0;
-      border-bottom: 0px;
+      border-bottom: 0;
     }
 
     .lexical-editor-inner {
@@ -74,9 +74,7 @@
     padding: $padding;
     border-radius: calc(#{$defaultBorderRadius});
 
-    &:not(.active-container-button):not(.mn-icon-toolkit-undo-container-button):not(
-        .mn-icon-toolkit-redo-container-button
-      ) {
+    &:not(.active-container-button, .mn-icon-toolkit-undo-container-button, .mn-icon-toolkit-redo-container-button) {
       opacity: 0.7;
       filter: grayscale(1);
     }

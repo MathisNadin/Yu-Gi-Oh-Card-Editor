@@ -36,12 +36,17 @@ function stringify(o: unknown): string {
  * @return True if the subject is a class.
  */
 export function isClass(subject: unknown): boolean {
-  if (typeof subject === 'function') {
-    const str = Function.prototype.toString.call(subject);
-    if (/^class\s/.test(str)) return true;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    return hasKeys((subject as Function).prototype);
-  }
+  if (typeof subject !== 'function') return false;
+
+  const str = Function.prototype.toString.call(subject);
+
+  // 1. Native ES6 class
+  if (/^class\s/.test(str)) return true;
+
+  // 2. TypeScript/Babel-transpiled class
+  // → constructor has a `_classCallCheck`
+  if (/^function\s[A-Z]/.test(str)) return true;
+
   return false;
 }
 
@@ -130,7 +135,7 @@ export function isDefined<T>(subject: T | undefined): subject is T {
  * @param subject - The subject to test.
  */
 export function isNumeric(subject: unknown): boolean {
-  return NUMERIC_REGEXP.test(`${subject}`);
+  return NUMERIC_REGEXP.test(String(subject));
 }
 
 /**

@@ -56,22 +56,22 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
     if (stepDecimals !== this.state.stepDecimals) this.setState({ stepDecimals });
   }
 
-  public handleMouseDown = async (_e: TMouseEvents | TTouchEvents) => {
+  public handleMouseDown(_e: TMouseEvents | TTouchEvents) {
     if (this.props.disabled) return;
-    await this.setStateAsync({ isDragging: true });
+    this.setState({ isDragging: true });
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
     window.addEventListener('touchmove', this.handleMouseMove);
     window.addEventListener('touchend', this.handleMouseUp);
-  };
+  }
 
-  public handleMouseMove = async (e: TMouseEvents | TTouchEvents) => {
+  public handleMouseMove = (e: TMouseEvents | TTouchEvents) => {
     e.preventDefault();
-    await this.updateValue(e);
+    app.$errorManager.handlePromise(this.updateValue(e));
   };
 
-  public handleMouseUp = async (_e: TMouseEvents | TTouchEvents) => {
-    await this.setStateAsync({ isDragging: false });
+  public handleMouseUp = (_e: TMouseEvents | TTouchEvents) => {
+    this.setState({ isDragging: false });
     window.removeEventListener('mousemove', this.handleMouseMove);
     window.removeEventListener('mouseup', this.handleMouseUp);
     window.removeEventListener('touchmove', this.handleMouseMove);
@@ -118,11 +118,11 @@ export class Slider extends Containable<ISliderProps, ISliderState> {
   public override renderAttributes() {
     const attributes = super.renderAttributes();
     attributes.onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-      app.$errorManager.handlePromise(this.handleMouseDown(e));
+      this.handleMouseDown(e);
       if (this.props.onMouseDown) app.$errorManager.handlePromise(this.props.onMouseDown(e));
     };
     attributes.onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-      app.$errorManager.handlePromise(this.handleMouseDown(e));
+      this.handleMouseDown(e);
       if (this.props.onTouchStart) app.$errorManager.handlePromise(this.props.onTouchStart(e));
     };
     return attributes;

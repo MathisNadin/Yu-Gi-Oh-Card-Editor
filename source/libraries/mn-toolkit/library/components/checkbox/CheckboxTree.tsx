@@ -158,7 +158,7 @@ export class CheckboxTree<ID = number> extends Containable<
       const hasChildren = !!item.children?.length;
       return (
         <li
-          key={`${item.id}`}
+          key={String(item.id)}
           className={classNames('checkbox-tree-item', { 'has-children': hasChildren, 'mn-disabled': item.disabled })}
           style={{ paddingLeft }}
         >
