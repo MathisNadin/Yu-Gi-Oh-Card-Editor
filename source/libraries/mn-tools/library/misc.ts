@@ -202,7 +202,8 @@ export async function wait(ms: number) {
   return await new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
-export function debounce<F extends (...args: unknown[]) => unknown>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function debounce<F extends (...args: any[]) => any>(
   func: F,
   wait = 200
 ): (this: ThisParameterType<F>, ...args: Parameters<F>) => void {

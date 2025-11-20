@@ -25,7 +25,7 @@ function copyFilesToClients() {
     const destJsonPath = path.join(__dirname, `../../${clientProject}/source/api/main.json`);
 
     // Ajouter les lignes spécifiques au début du fichier main.ts
-    const tsFileContent = `/* eslint-disable import/export */\n\n${fs.readFileSync(apiConfigFilePath, 'utf-8')}`;
+    const tsFileContent = fs.readFileSync(apiConfigFilePath, 'utf-8');
 
     // Écriture du fichier .ts avec les lignes supplémentaires
     fs.writeFileSync(destTsPath, tsFileContent);

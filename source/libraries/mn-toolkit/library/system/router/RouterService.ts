@@ -44,9 +44,7 @@ export class RouterService extends AbstractObservable<IRouterListener> {
     this._defaultHeadTags = tags || [];
   }
 
-  public goto = {} as {
-    [K in TRouterState]: (props: TRouterParams<K>) => Promise<void>;
-  };
+  public goto = {} as IRouter;
 
   private _fallbackState?: TRouterState;
   public get fallbackState(): TRouterState | undefined {
