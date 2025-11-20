@@ -1,7 +1,13 @@
 ## mn-electron-main change log
 
+## 1.2.0
+
+- fix import electron dl v4
+- up versions
+
 ## 1.1.6
 
+- bump to 1.1.6
 - ajout filters option sur getFilePath
 
 ## 1.1.5

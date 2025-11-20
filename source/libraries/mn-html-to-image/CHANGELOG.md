@@ -1,7 +1,12 @@
 ## mn-html-to-image change log
 
+## 1.1.0
+
+- fix erreurs et éléments dépréciés
+
 ## 1.0.4
 
+- bump to 1.0.4
 - ajout de noUncheckedIndexedAccess dans la config ts
 
 ## 1.0.3

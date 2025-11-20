@@ -1,7 +1,17 @@
 ## mn-webpack-builder change log
 
+## 1.5.0
+
+- plus nécessaire
+- oops
+- ajout stylelint et silence sur les warnings sass import
+- types glbo inutile
+- reorga des deps + script sync deps mis à jour
+- upgrade des versions
+
 ## 1.4.1
 
+- bump to 1.4.1
 - ajout dépendance csp plugin
 
 ## 1.4.0

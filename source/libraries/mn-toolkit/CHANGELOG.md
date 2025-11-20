@@ -1,7 +1,16 @@
 ## mn-toolkit change log
 
+## 8.6.0
+
+- fix goto
+- fix imports lexical et declare context
+- utilisation du popup prompt au lieu de window.prompt
+- corections stylelint
+- up versions
+
 ## 8.5.3
 
+- bump to 8.5.3
 - fix shrink btn du menu pane
 
 ## 8.5.2
