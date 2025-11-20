@@ -8,7 +8,7 @@ import {
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
 import { ICard, TCardLanguage, TRushEffectType, TRushTextMode } from '../../card';
-import { TTextAdjustState } from '../CardBuilderService';
+import { CardBuilderService, TTextAdjustState } from '../CardBuilderService';
 
 interface IRushCardDescProps extends IToolkitComponentProps {
   card: ICard;
@@ -340,14 +340,12 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
         break;
     }
 
-    const fontSize = 30;
-    const lineHeight = 1.2;
-    if (!lines.length) return { fontSize, lineHeight };
+    if (!lines.length) {
+      return { fontSize: CardBuilderService.MAX_FONT_SIZE, lineHeight: CardBuilderService.MAX_LINE_HEIGHT };
+    }
 
     return app.$cardBuilder.predictSizes({
       lines,
-      fontSize,
-      lineHeight,
       maxWidth: 700,
       maxHeight: 194,
     });
@@ -387,6 +385,8 @@ export class RushCardDesc extends ToolkitComponent<IRushCardDescProps, IRushCard
     this.setState({
       checkState: 0,
       adjustState: 'unknown',
+      fontSize: result.fontSize ?? this.state.fontSize,
+      lineHeight: result.lineHeight ?? this.state.lineHeight,
     });
   }
 

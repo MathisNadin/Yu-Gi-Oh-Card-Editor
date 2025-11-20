@@ -8,7 +8,7 @@ import {
 } from 'mn-toolkit';
 import { classNames } from 'mn-tools';
 import { ICard } from '../../card';
-import { TTextAdjustState } from '../CardBuilderService';
+import { CardBuilderService, TTextAdjustState } from '../CardBuilderService';
 
 interface ICardDescProps extends IToolkitComponentProps {
   card: ICard;
@@ -126,10 +126,9 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     includesSkill: boolean;
   }) {
     const { text, hasAbilities, hasPendulumFrame, includesLink, includesSkill } = options;
-
-    const fontSize = 30;
-    const lineHeight = 1.2;
-    if (!text) return { fontSize, lineHeight };
+    if (!text) {
+      return { fontSize: CardBuilderService.MAX_FONT_SIZE, lineHeight: CardBuilderService.MAX_LINE_HEIGHT };
+    }
 
     let maxHeight = 214;
     if (hasAbilities) maxHeight = 147;
@@ -138,8 +137,6 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
 
     return app.$cardBuilder.predictSizes({
       lines: text.split('\n'),
-      fontSize,
-      lineHeight,
       maxWidth: 680,
       maxHeight,
     });
@@ -192,6 +189,8 @@ export class CardDesc extends ToolkitComponent<ICardDescProps, ICardDescState> {
     this.setState({
       checkState: 0,
       adjustState: 'unknown',
+      fontSize: result.fontSize ?? this.state.fontSize,
+      lineHeight: result.lineHeight ?? this.state.lineHeight,
     });
   }
 

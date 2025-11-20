@@ -1,11 +1,33 @@
 import { Fragment, JSX } from 'react';
 import { classNames } from 'mn-tools';
 
-export type TTextAdjustState = 'unknown' | 'tooBig' | 'tooSmall';
+export type TTextAdjustState = 'unknown' | 'growingFont' | 'shrinkingFont' | 'growingLineHeight';
+
+interface ITextAdjustResult {
+  fit: boolean;
+  adjustState: TTextAdjustState;
+  fontSize?: number;
+  lineHeight?: number;
+}
 
 export class CardBuilderService {
   public get specialCharsRegex() {
     return /([^a-zA-Z0-9éäöüçñàèùâêîôûÉÄÖÜÇÑÀÈÙÂÊÎÔÛ\s.,;:'"/?!+-/&"'()`_^=])/;
+  }
+
+  public static readonly MIN_FONT_SIZE = 5;
+  public static readonly MAX_FONT_SIZE = 30;
+  public static readonly FONT_STEP = 0.1;
+
+  public static readonly MAX_LINE_HEIGHT = 1.2;
+  public static readonly LINE_HEIGHT_STEP = 0.01;
+
+  // Minimum line-height depends on font size (hard-coded thresholds)
+  public getMinLineHeightForFontSize(fontSize: number): number {
+    // For small text, a compact line-height is fine
+    if (fontSize < 25) return 1.05;
+    if (fontSize < 28) return 1.1;
+    return 1.15;
   }
 
   public getNameSpecialCharClass(part: string, tcgAt: boolean) {
@@ -20,44 +42,76 @@ export class CardBuilderService {
     });
   }
 
-  private adjustLineHeight(fontSize: number): number {
-    const newLineHeight = Math.round((1 + (30 - fontSize) / 90) * 10) / 10;
-    if (newLineHeight < 1.05) return 1.05;
-    if (newLineHeight > 1.2) return 1.2;
-    return newLineHeight;
-  }
-
-  public predictSizes(options: {
-    lines: string[];
+  public predictSizes(options: { lines: string[]; maxWidth: number; maxHeight: number }): {
     fontSize: number;
     lineHeight: number;
-    maxWidth: number;
-    maxHeight: number;
-  }) {
-    let { lines, fontSize, lineHeight, maxWidth, maxHeight } = options;
+  } {
+    const { lines, maxWidth, maxHeight } = options;
 
-    let estimatedWidth: number;
-    let estimatedHeight: number;
-    do {
-      const averageCharWidth = fontSize * 0.5;
-      const charsPerLine = Math.floor(maxWidth / averageCharWidth);
+    if (!lines.length) {
+      return { fontSize: CardBuilderService.MAX_FONT_SIZE, lineHeight: CardBuilderService.MAX_LINE_HEIGHT };
+    }
+
+    let fontSize = CardBuilderService.MAX_FONT_SIZE;
+    const minFont = CardBuilderService.MIN_FONT_SIZE;
+    const step = CardBuilderService.FONT_STEP;
+
+    // Helper to estimate number of lines and text height
+    const estimateHeight = (fontSize: number, lineHeight: number) => {
+      const averageCharWidth = fontSize * 0.5; // heuristic approximation
+      const charsPerLine = Math.max(1, Math.floor(maxWidth / averageCharWidth));
+
       let lineCount = 0;
       for (const line of lines) {
-        lineCount += Math.ceil(line.length / charsPerLine);
+        const length = line.length || 1;
+        lineCount += Math.ceil(length / charsPerLine);
       }
 
-      estimatedWidth = charsPerLine * averageCharWidth;
-      estimatedHeight = lineCount * lineHeight * fontSize;
+      const estimatedHeight = lineCount * fontSize * lineHeight;
+      return estimatedHeight;
+    };
 
-      if (estimatedWidth > maxWidth || estimatedHeight > maxHeight) {
-        fontSize = Math.round((fontSize - 0.1) * 10) / 10; // Diminuer la taille de la police
-        lineHeight = this.adjustLineHeight(fontSize); // Ajuster l'interligne
+    let bestFontSize: number | null = null;
+    let bestLineHeight: number | null = null;
+
+    // Phase 1: find largest font size that fits with its minimal line-height
+    while (fontSize >= minFont) {
+      const minLH = this.getMinLineHeightForFontSize(fontSize);
+      const height = estimateHeight(fontSize, minLH);
+
+      if (height <= maxHeight) {
+        bestFontSize = fontSize;
+        bestLineHeight = minLH;
+        break; // we are going from big to small, so first fit is the best font size
+      }
+
+      fontSize = Math.round((fontSize - step) * 10) / 10;
+    }
+
+    // If nothing fits, fallback to minimal font size and its minimal line-height
+    if (bestFontSize === null || bestLineHeight === null) {
+      const fallbackFont = minFont;
+      const fallbackLH = this.getMinLineHeightForFontSize(fallbackFont);
+      return { fontSize: fallbackFont, lineHeight: fallbackLH };
+    }
+
+    // Phase 2: increase line-height step by step until we reach the limit or overflow
+    let testLH = bestLineHeight + CardBuilderService.LINE_HEIGHT_STEP;
+    while (testLH <= CardBuilderService.MAX_LINE_HEIGHT + 0.0001) {
+      const roundedTestLH = Math.min(CardBuilderService.MAX_LINE_HEIGHT, Math.round(testLH * 100) / 100);
+
+      const height = estimateHeight(bestFontSize, roundedTestLH);
+      if (height <= maxHeight) {
+        bestLineHeight = roundedTestLH;
+        if (roundedTestLH >= CardBuilderService.MAX_LINE_HEIGHT - 0.0001) break;
+        testLH += CardBuilderService.LINE_HEIGHT_STEP;
       } else {
-        break; // Taille acceptable trouvée
+        // Overflow: last working value was bestLineHeight
+        break;
       }
-    } while (fontSize > 5 && (estimatedWidth > maxWidth || estimatedHeight > maxHeight));
+    }
 
-    return { fontSize, lineHeight };
+    return { fontSize: bestFontSize, lineHeight: bestLineHeight };
   }
 
   public getProcessedText(options: { text: string; index: number; tcgAt: boolean; forceBulletAtStart?: boolean }) {
@@ -148,85 +202,229 @@ export class CardBuilderService {
     currentAdjustState: TTextAdjustState;
     currentFontSize: number;
     currentLineHeight: number;
-  }): {
-    fit: boolean;
-    adjustState: TTextAdjustState;
-    fontSize?: number;
-    lineHeight?: number;
-  } {
-    const { container, currentFontSize, currentLineHeight, currentAdjustState } = options;
+  }): ITextAdjustResult {
+    let { currentAdjustState, currentFontSize, currentLineHeight } = options;
+    const { container } = options;
 
-    // Get paragraph elements
+    const minFont = CardBuilderService.MIN_FONT_SIZE;
+    const maxFont = CardBuilderService.MAX_FONT_SIZE;
+    const fontStep = CardBuilderService.FONT_STEP;
+
+    const maxLH = CardBuilderService.MAX_LINE_HEIGHT;
+    const lhStep = CardBuilderService.LINE_HEIGHT_STEP;
+
+    // Get paragraph-like children
     const texts = container.childNodes as NodeListOf<HTMLParagraphElement>;
     if (!texts?.length || currentFontSize === 0) {
       return { fit: true, adjustState: 'unknown' };
     }
 
-    // Calculate dimensions
+    // Measure total text height
     let textHeight = 0;
-    let textWidth = 0;
     texts.forEach((text) => {
       textHeight += text.clientHeight;
-      if (text.clientWidth > textWidth) textWidth = text.clientWidth;
     });
 
     const containerHeight = container.clientHeight;
-    const containerWidth = container.clientWidth;
 
-    // If text is larger than container, we need to shrink it.
-    if (textHeight > containerHeight || textWidth > containerWidth) {
-      const newFontSize = Math.round((currentFontSize - 0.1) * 10) / 10;
+    const epsilon = 0.5; // pixels
+    const taller = textHeight > containerHeight;
+    const shorter = textHeight + epsilon < containerHeight;
 
-      // If we can still shrink
-      if (newFontSize >= 5) {
+    // Helper to clamp font size
+    const clampFont = (value: number) => Math.max(minFont, Math.min(maxFont, value));
+
+    // Helper to clamp line-height
+    const clampLH = (fontSize: number, value: number) => {
+      const minLH = this.getMinLineHeightForFontSize(fontSize);
+      const clamped = Math.max(minLH, Math.min(maxLH, value));
+      return Math.round(clamped * 100) / 100;
+    };
+
+    // ================================
+    // State: unknown (initial check)
+    // ================================
+    if (currentAdjustState === 'unknown') {
+      // 1.B - Text is too tall: start shrinking font
+      if (taller) {
+        if (currentFontSize <= minFont + 0.001) {
+          // Cannot shrink further, try enforcing minimal line-height for this font
+          const minLH = this.getMinLineHeightForFontSize(currentFontSize);
+          if (currentLineHeight > minLH + 0.001) {
+            return {
+              fit: false,
+              adjustState: 'shrinkingFont',
+              lineHeight: minLH,
+            };
+          }
+          return { fit: true, adjustState: 'unknown' };
+        }
+
+        const newFont = clampFont(currentFontSize - fontStep);
+        const newLH = this.getMinLineHeightForFontSize(newFont);
         return {
           fit: false,
-          fontSize: newFontSize,
-          lineHeight: this.adjustLineHeight(newFontSize),
-          adjustState: 'tooBig',
+          adjustState: 'shrinkingFont',
+          fontSize: Math.round(newFont * 10) / 10,
+          lineHeight: newLH,
         };
-      } else {
-        // Can't shrink further
-        return { fit: true, adjustState: 'unknown' };
       }
-    }
 
-    // If text is smaller than container, maybe we can enlarge it or improve line spacing.
-    if (textHeight < containerHeight || textWidth < containerWidth) {
-      // If we previously shrank text ('tooBig'), try adjusting lineHeight slightly
-      if (currentAdjustState === 'tooBig') {
-        if (currentLineHeight < 1.2) {
-          let newLineHeight = currentLineHeight + 0.1;
-          if (newLineHeight > 1.2) newLineHeight = 1.2;
-          return {
-            fit: false,
-            lineHeight: newLineHeight,
-            adjustState: currentAdjustState,
-          };
-        } else {
-          // We've hit our optimal line height limit
+      // 1.A - Text is too short: start growing font
+      if (shorter) {
+        if (currentFontSize >= maxFont - 0.001) {
+          // Already at max font: go directly to line-height growing phase
+          if (currentLineHeight < maxLH - 0.001) {
+            const newLH = clampLH(currentFontSize, currentLineHeight + lhStep);
+            return {
+              fit: false,
+              adjustState: 'growingLineHeight',
+              lineHeight: newLH,
+            };
+          }
           return { fit: true, adjustState: 'unknown' };
         }
-      } else {
-        // Otherwise, try making the text bigger
-        const newFontSize = Math.round((currentFontSize + 0.1) * 10) / 10;
 
-        // Can we still enlarge?
-        if (newFontSize <= 30) {
-          return {
-            fit: false,
-            fontSize: newFontSize,
-            lineHeight: this.adjustLineHeight(newFontSize),
-            adjustState: 'tooSmall',
-          };
-        } else {
-          // We've reached a max size limit
-          return { fit: true, adjustState: 'unknown' };
-        }
+        const newFont = clampFont(currentFontSize + fontStep);
+        const newLH = this.getMinLineHeightForFontSize(newFont);
+        return {
+          fit: false,
+          adjustState: 'growingFont',
+          fontSize: Math.round(newFont * 10) / 10,
+          lineHeight: newLH,
+        };
       }
+
+      // Text height is close enough to container: we accept it as is
+      return { fit: true, adjustState: 'unknown' };
     }
 
-    // If we are here, it means text perfectly fits as is
+    // ================================
+    // State: growingFont (phase 1.A)
+    // ================================
+    if (currentAdjustState === 'growingFont') {
+      // Overflow detected: step back one font-size and start line-height phase
+      if (taller) {
+        const prevFont = clampFont(currentFontSize - fontStep);
+        const minLH = this.getMinLineHeightForFontSize(prevFont);
+        return {
+          fit: false,
+          adjustState: 'growingLineHeight',
+          fontSize: Math.round(prevFont * 10) / 10,
+          lineHeight: minLH,
+        };
+      }
+
+      // Still shorter than container: continue growing font if possible
+      if (shorter) {
+        if (currentFontSize >= maxFont - 0.001) {
+          // Cannot grow font further: switch to line-height phase
+          if (currentLineHeight < maxLH - 0.001) {
+            const newLH = clampLH(currentFontSize, currentLineHeight + lhStep);
+            return {
+              fit: false,
+              adjustState: 'growingLineHeight',
+              lineHeight: newLH,
+            };
+          }
+          return { fit: true, adjustState: 'unknown' };
+        }
+
+        const newFont = clampFont(currentFontSize + fontStep);
+        const newLH = this.getMinLineHeightForFontSize(newFont);
+        return {
+          fit: false,
+          adjustState: 'growingFont',
+          fontSize: Math.round(newFont * 10) / 10,
+          lineHeight: newLH,
+        };
+      }
+
+      // Height is close to the container: switch to line-height phase
+      if (currentLineHeight < maxLH - 0.001) {
+        const newLH = clampLH(currentFontSize, currentLineHeight + lhStep);
+        return {
+          fit: false,
+          adjustState: 'growingLineHeight',
+          lineHeight: newLH,
+        };
+      }
+
+      return { fit: true, adjustState: 'unknown' };
+    }
+
+    // ================================
+    // State: shrinkingFont (phase 1.B)
+    // ================================
+    if (currentAdjustState === 'shrinkingFont') {
+      // Still too tall: keep shrinking font if possible
+      if (taller) {
+        if (currentFontSize <= minFont + 0.001) {
+          const minLH = this.getMinLineHeightForFontSize(currentFontSize);
+          if (currentLineHeight > minLH + 0.001) {
+            return {
+              fit: false,
+              adjustState: 'shrinkingFont',
+              lineHeight: minLH,
+            };
+          }
+          return { fit: true, adjustState: 'unknown' };
+        }
+
+        const newFont = clampFont(currentFontSize - fontStep);
+        const newLH = this.getMinLineHeightForFontSize(newFont);
+        return {
+          fit: false,
+          adjustState: 'shrinkingFont',
+          fontSize: Math.round(newFont * 10) / 10,
+          lineHeight: newLH,
+        };
+      }
+
+      // First font-size that does not overflow: fix font, now try line-height phase
+      if (currentLineHeight < maxLH - 0.001) {
+        const newLH = clampLH(currentFontSize, currentLineHeight + lhStep);
+        return {
+          fit: false,
+          adjustState: 'growingLineHeight',
+          lineHeight: newLH,
+        };
+      }
+
+      return { fit: true, adjustState: 'unknown' };
+    }
+
+    // ================================
+    // State: growingLineHeight (phase 2)
+    // ================================
+    if (currentAdjustState === 'growingLineHeight') {
+      // If overflow occurs, step back one line-height and finish
+      if (taller) {
+        const prevLH = clampLH(currentFontSize, currentLineHeight - lhStep);
+        return {
+          fit: true,
+          adjustState: 'unknown',
+          lineHeight: prevLH,
+        };
+      }
+
+      // If still clearly shorter and not at max line-height, increase it
+      if (shorter && currentLineHeight < maxLH - 0.001) {
+        const newLH = clampLH(currentFontSize, currentLineHeight + lhStep);
+        if (newLH > currentLineHeight + 0.0001) {
+          return {
+            fit: false,
+            adjustState: 'growingLineHeight',
+            lineHeight: newLH,
+          };
+        }
+      }
+
+      // Height is close enough or line-height is max: we are done
+      return { fit: true, adjustState: 'unknown' };
+    }
+
+    // Fallback: consider the text fitted
     return { fit: true, adjustState: 'unknown' };
   }
 }
