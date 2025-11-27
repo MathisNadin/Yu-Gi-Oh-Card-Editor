@@ -694,7 +694,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                   />
                 </HorizontalStack>,
 
-                <VerticalStack key='choice-choice-effects' className='card-choice-effects'>
+                <VerticalStack key='choice-choice-effects' className='card-choice-effects' gutter='tiny'>
                   <HorizontalStack
                     fill
                     className='choice-effects-add'
@@ -706,7 +706,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
                     <Icon size={24} icon='toolkit-plus' color='positive' onTap={() => this.onAddChoiceEffect()} />
                   </HorizontalStack>
 
-                  <VerticalStack className='card-choice-effects-list'>
+                  <VerticalStack className='card-choice-effects-list' gutter='tiny'>
                     {this.state.card.rushChoiceEffects.map((choiceEff, iChoiceEff) => (
                       <VerticalStack
                         key={`choice-effect-line-${iChoiceEff}`}
