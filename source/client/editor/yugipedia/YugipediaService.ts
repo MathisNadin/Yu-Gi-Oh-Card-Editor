@@ -15,21 +15,33 @@ export interface IReplaceMatrix {
 
 export class YugipediaService {
   private baseApiUrl: string;
-  private baseArtworkUrl: string;
+  private privateBaseArtworkUrl: string;
+  public enablePrivateUsage = false;
+
   private userAgent = '';
   private requestQueue: Array<() => void> = [];
   private isQueueProcessing = false;
 
   public constructor() {
     this.baseApiUrl = 'https://yugipedia.com/api.php';
-    this.baseArtworkUrl = 'F:\\Images\\Images Yu-Gi-Oh!\\Artworks\\';
+    this.privateBaseArtworkUrl = 'F:\\Images\\Images Yu-Gi-Oh!\\Artworks\\';
   }
 
-  public setup() {
+  public async setup() {
     const { displayName, version, author, repository } = app.conf;
     if (displayName && version && repository.url && author.email) {
       this.userAgent = `${displayName}/${version} (${repository.url}; ${author.email})`;
     }
+
+    if (!app.$device.isElectron(window)) return;
+
+    try {
+      this.enablePrivateUsage = await window.electron.ipcRenderer.invoke('checkFileExists', this.privateBaseArtworkUrl);
+    } catch (e) {
+      app.$errorManager.trigger(e as Error);
+    }
+
+    // this.enablePrivateUsage = false;
   }
 
   /**
@@ -384,7 +396,7 @@ export class YugipediaService {
     const enName = yugipediaCard.translations.en_us.name;
     if (!enName) return editorCard;
 
-    const artworkDefaultPath = `${this.baseArtworkUrl}${sanitizeFileName(enName)} Artwork`;
+    const artworkDefaultPath = `${this.privateBaseArtworkUrl}${sanitizeFileName(enName)} Artwork`;
     const defaultPng = `${artworkDefaultPath}.png`;
     const defaultJpg = `${artworkDefaultPath}.jpg`;
 

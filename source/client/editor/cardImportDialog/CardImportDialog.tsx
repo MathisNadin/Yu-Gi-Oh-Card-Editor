@@ -348,22 +348,26 @@ export class CardImportDialog extends AbstractPopup<
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
           <Checkbox label='Textes français' value={useFr} onChange={(useFr) => this.setState({ useFr })} />
-          <Checkbox
-            label='Si absent, générer un code'
-            value={generatePasscode}
-            onChange={(generatePasscode) => this.setState({ generatePasscode })}
-          />
+          {app.$yugipedia.enablePrivateUsage && (
+            <Checkbox
+              label='Si absent, générer un code'
+              value={generatePasscode}
+              onChange={(generatePasscode) => this.setState({ generatePasscode })}
+            />
+          )}
           {this.renderUrlImporter()}
         </HorizontalStack>
 
         <VerticalStack itemAlignment='center' gutter fill>
-          <Button
-            size='small'
-            color='neutral'
-            name='Ajouter un terme à remplacer dans les textes de la carte'
-            label='Ajouter un terme à remplacer dans les textes de la carte'
-            onTap={() => this.addReplaceMatrix()}
-          />
+          {app.$yugipedia.enablePrivateUsage && (
+            <Button
+              size='small'
+              color='neutral'
+              name='Ajouter un terme à remplacer dans les textes de la carte'
+              label='Ajouter un terme à remplacer dans les textes de la carte'
+              onTap={() => this.addReplaceMatrix()}
+            />
+          )}
 
           {!!replaceMatrixes.length && (
             <VerticalStack gutter scroll fill>
@@ -426,11 +430,13 @@ export class CardImportDialog extends AbstractPopup<
         />
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
-          <Checkbox
-            label='Si absent, générer un code'
-            value={generatePasscode}
-            onChange={(generatePasscode) => this.setState({ generatePasscode })}
-          />
+          {app.$yugipedia.enablePrivateUsage && (
+            <Checkbox
+              label='Si absent, générer un code'
+              value={generatePasscode}
+              onChange={(generatePasscode) => this.setState({ generatePasscode })}
+            />
+          )}
           {this.renderUrlImporter()}
         </HorizontalStack>
 
