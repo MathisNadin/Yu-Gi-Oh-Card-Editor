@@ -8,6 +8,12 @@
 .card-editor {
   $borderColor: color-hsla($fg1, 0.5);
 
+  .top-options {
+    > .mn-container-inside {
+      justify-content: space-between;
+    }
+  }
+
   .card-editor-sections {
     .card-editor-section {
       &.link-arrows-section {
@@ -89,7 +95,7 @@
         min-height: calc(#{$defaultItemHeight});
       }
 
-      .card-icons-grid {
+      .card-icons-editor {
         margin-top: -6px;
         margin-bottom: calc(#{$smallSpacing});
       }

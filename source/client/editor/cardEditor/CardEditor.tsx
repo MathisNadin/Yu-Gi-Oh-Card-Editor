@@ -19,6 +19,7 @@ import {
   InplaceEdit,
   Image,
   TDidUpdateSnapshot,
+  Masonry,
 } from 'mn-toolkit';
 import {
   ICard,
@@ -387,7 +388,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
   public get children() {
     return [
-      <HorizontalStack key='top-options' padding className='top-options'>
+      <HorizontalStack key='top-options' wrap padding gutter className='top-options'>
         <Button
           disabled={this.state.rendering}
           size='small'
@@ -396,7 +397,6 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
           color='neutral'
           onTap={() => this.renderCurrentCard()}
         />
-        <Spacer />
         {!app.$card.tempCurrentCard && (
           <Button
             disabled={this.state.rendering}
@@ -404,17 +404,22 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             name='Réinitialiser'
             label='Réinitialiser'
             color='negative'
-            onTap={() => app.$card.resetCurrentCard()}
+            onTap={async () => {
+              const confirm = await app.$popup.confirm('Êtes-vous sûr de vouloir réinitialiser la carte ?');
+              if (confirm) await app.$card.resetCurrentCard();
+            }}
           />
         )}
-        <Spacer />
         <Button
           disabled={this.state.rendering}
           size='small'
           name='Sauvegarder'
           label='Sauvegarder'
           color='positive'
-          onTap={() => app.$card.saveCurrentOrTempToLocal()}
+          onTap={async () => {
+            if (!this.state.card.name) return app.$toaster.error('La carte doit avoir un nom pour être sauvegardée');
+            await app.$card.saveCurrentOrTempToLocal();
+          }}
         />
       </HorizontalStack>,
 
@@ -512,7 +517,61 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
             />
           </HorizontalStack>
 
-          <Grid>
+          <Masonry
+            masonryTemplateColumns={{
+              small: {
+                kind: 'track-list',
+                segments: [
+                  {
+                    kind: 'repeat',
+                    count: 'auto-fill',
+                    track: {
+                      kind: 'track',
+                      size: {
+                        kind: 'minmax',
+                        min: '1px',
+                        max: '1fr',
+                      },
+                    },
+                  },
+                ],
+              },
+              xlarge: {
+                kind: 'track-list',
+                segments: [
+                  {
+                    kind: 'repeat',
+                    count: 'auto-fill',
+                    track: {
+                      kind: 'track',
+                      size: {
+                        kind: 'minmax',
+                        min: '10px',
+                        max: '1fr',
+                      },
+                    },
+                  },
+                ],
+              },
+              xxxlarge: {
+                kind: 'track-list',
+                segments: [
+                  {
+                    kind: 'repeat',
+                    count: 'auto-fill',
+                    track: {
+                      kind: 'track',
+                      size: {
+                        kind: 'minmax',
+                        min: '40px',
+                        max: '1fr',
+                      },
+                    },
+                  },
+                ],
+              },
+            }}
+          >
             {this.state.cardFrames.map((frame, i) => {
               let className = 'card-frame';
               const frameIndex = this.state.card.frames.indexOf(frame);
@@ -538,7 +597,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                 </HorizontalStack>
               );
             })}
-          </Grid>
+          </Masonry>
         </VerticalStack>
 
         {!this.state.card.frames.includes('skill') && !this.state.card.frames.includes('token') && (
@@ -552,7 +611,62 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
               />
             </HorizontalStack>
 
-            <Grid className='card-icons-grid'>
+            <Masonry
+              className='card-icons-editor'
+              masonryTemplateColumns={{
+                small: {
+                  kind: 'track-list',
+                  segments: [
+                    {
+                      kind: 'repeat',
+                      count: 'auto-fill',
+                      track: {
+                        kind: 'track',
+                        size: {
+                          kind: 'minmax',
+                          min: '1px',
+                          max: '1fr',
+                        },
+                      },
+                    },
+                  ],
+                },
+                xlarge: {
+                  kind: 'track-list',
+                  segments: [
+                    {
+                      kind: 'repeat',
+                      count: 'auto-fill',
+                      track: {
+                        kind: 'track',
+                        size: {
+                          kind: 'minmax',
+                          min: '5px',
+                          max: '1fr',
+                        },
+                      },
+                    },
+                  ],
+                },
+                xxxlarge: {
+                  kind: 'track-list',
+                  segments: [
+                    {
+                      kind: 'repeat',
+                      count: 'auto-fill',
+                      track: {
+                        kind: 'track',
+                        size: {
+                          kind: 'minmax',
+                          min: '30px',
+                          max: '1fr',
+                        },
+                      },
+                    },
+                  ],
+                },
+              }}
+            >
               {this.state.cardAttributes.map((attribute, i) => (
                 <HorizontalStack
                   key={`card-attribute-${i}`}
@@ -568,14 +682,69 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   />
                 </HorizontalStack>
               ))}
-            </Grid>
+            </Masonry>
           </VerticalStack>
         )}
 
         {app.$card.isBackrow(this.state.card) && (
           <VerticalStack gutter>
             <Typography fill className='sub-title' variant='help' content='Type de Magie/Piège' />
-            <Grid className='card-icons-grid'>
+            <Masonry
+              className='card-icons-editor'
+              masonryTemplateColumns={{
+                small: {
+                  kind: 'track-list',
+                  segments: [
+                    {
+                      kind: 'repeat',
+                      count: 'auto-fill',
+                      track: {
+                        kind: 'track',
+                        size: {
+                          kind: 'minmax',
+                          min: '1px',
+                          max: '1fr',
+                        },
+                      },
+                    },
+                  ],
+                },
+                xlarge: {
+                  kind: 'track-list',
+                  segments: [
+                    {
+                      kind: 'repeat',
+                      count: 'auto-fill',
+                      track: {
+                        kind: 'track',
+                        size: {
+                          kind: 'minmax',
+                          min: '5px',
+                          max: '1fr',
+                        },
+                      },
+                    },
+                  ],
+                },
+                xxxlarge: {
+                  kind: 'track-list',
+                  segments: [
+                    {
+                      kind: 'repeat',
+                      count: 'auto-fill',
+                      track: {
+                        kind: 'track',
+                        size: {
+                          kind: 'minmax',
+                          min: '30px',
+                          max: '1fr',
+                        },
+                      },
+                    },
+                  ],
+                },
+              }}
+            >
               {this.state.cardStTypes.map((stType, i) => (
                 <HorizontalStack
                   key={`card-st-icon-${i}`}
@@ -591,7 +760,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
                   />
                 </HorizontalStack>
               ))}
-            </Grid>
+            </Masonry>
           </VerticalStack>
         )}
 
