@@ -58,6 +58,8 @@ export const cspCommon: Policy = {
   // XHR/fetch endpoints used by ad scripts
   'connect-src': [
     "'self'",
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com',
     'https://pagead2.googlesyndication.com',
     'https://tpc.googlesyndication.com',
     'https://googleads.g.doubleclick.net',

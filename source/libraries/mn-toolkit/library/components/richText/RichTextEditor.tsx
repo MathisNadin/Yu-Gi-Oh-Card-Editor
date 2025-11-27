@@ -128,6 +128,67 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
     this.state = { ...this.state, lastHtmlValue: props.value };
   }
 
+  /**
+   * Ensures the value is wrapped in valid HTML block elements that Lexical can use as root nodes.
+   * Lexical's root can only contain element or decorator nodes, not inline elements like span, strong, etc.
+   * Valid root elements: p, h1-h6, blockquote, ul, ol, etc.
+   * If the value contains only inline elements, wraps it in a paragraph.
+   */
+  private ensureValidHtmlRoot(value: string): string {
+    if (!value) return '<p></p>';
+
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return '<p></p>';
+
+    // Check if the value starts with an HTML tag
+    if (!trimmedValue.startsWith('<')) {
+      // If it's raw text, wrap it in a paragraph
+      return `<p>${value}</p>`;
+    }
+
+    // Parse the HTML to check if the root elements are valid for Lexical
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(trimmedValue, 'text/html');
+    const bodyChildren = Array.from(dom.body.childNodes);
+
+    // Valid block elements that can be root nodes in Lexical
+    const validBlockElements = new Set([
+      'P',
+      'H1',
+      'H2',
+      'H3',
+      'H4',
+      'H5',
+      'H6',
+      'BLOCKQUOTE',
+      'UL',
+      'OL',
+      'DIV',
+      'ARTICLE',
+      'SECTION',
+    ]);
+
+    // Check if all direct children of body are valid block elements or text
+    const hasInvalidElements = bodyChildren.some((node) => {
+      // Text nodes are OK
+      if (node.nodeType === 3) {
+        return node.textContent?.trim() === '';
+      }
+      // Element nodes should be valid block elements
+      if (node.nodeType === 1) {
+        return !validBlockElements.has((node as Element).tagName);
+      }
+      return false;
+    });
+
+    if (hasInvalidElements) {
+      // If there are invalid elements (like span, strong, etc.), wrap everything in a paragraph
+      return `<p>${trimmedValue}</p>`;
+    }
+
+    return trimmedValue;
+  }
+
   public override componentDidUpdate(
     prevProps: Readonly<IRichTextEditorProps<TOOL_IDS>>,
     prevState: Readonly<IRichTextEditorState>,
@@ -141,7 +202,8 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
     const serializedBase = EMPTY_EDITOR_STATE_JSON;
     const editorState = this.editor.parseEditorState(serializedBase, () => {
       if (!this.editor) return;
-      const dom = new DOMParser().parseFromString(this.props.value || '<p></p>', 'text/html');
+      const validHtml = this.ensureValidHtmlRoot(this.props.value);
+      const dom = new DOMParser().parseFromString(validHtml, 'text/html');
       const root = $getRoot();
       root.clear();
       root.append(...$generateNodesFromDOM(this.editor, dom));
@@ -279,7 +341,8 @@ export class RichTextEditor<TOOL_IDS extends string = TRichTextBaseToolId> exten
       if (!this.editor) return;
 
       const parser = new DOMParser();
-      const dom = parser.parseFromString(this.state.lastHtmlValue || '<p></p>', 'text/html');
+      const validHtml = this.ensureValidHtmlRoot(this.state.lastHtmlValue);
+      const dom = parser.parseFromString(validHtml, 'text/html');
       const root = $getRoot();
 
       // Clear any default content and insert nodes parsed from HTML

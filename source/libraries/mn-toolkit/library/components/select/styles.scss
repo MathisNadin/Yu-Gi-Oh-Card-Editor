@@ -12,6 +12,10 @@
   background-color: color-hsl($bg1);
 
   .label {
+    // To let accents and smiliar apparent
+    padding-top: 4px;
+    padding-bottom: 4px;
+
     margin: 0 calc(#{$defaultSpacing});
     flex: 1;
     position: relative;

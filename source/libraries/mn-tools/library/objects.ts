@@ -5,6 +5,23 @@ export const DATE_REGEXP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 export type TDictionary<T> = { [key: string]: T } | { [oid: number]: T };
 
 /**
+ * Makes every property required and allows each value to be undefined.
+ * (Removes optional modifier `?` and adds `| undefined`.)
+ */
+export type UndefinableRequired<T> = {
+  [K in keyof Required<T>]: Required<T>[K] | undefined;
+};
+
+/**
+ * Preserves whether properties were optional or not,
+ * but allows each value to be undefined.
+ * (Keeps `?` if present and adds `| undefined`.)
+ */
+export type UndefinableLoose<T> = {
+  [K in keyof T]: T[K] | undefined;
+};
+
+/**
  * Recursively freezes an object, making it and all its nested properties immutable.
  * This function also includes symbol properties.
  * Note: Does not handle circular references.

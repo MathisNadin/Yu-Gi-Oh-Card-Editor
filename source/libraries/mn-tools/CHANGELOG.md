@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.4.1
+
+- utilitaires type Undefinable
+
 ## 2.4.0
 
+- bump to 2.4.0
 - debounce utilise any
 - upgrade des versions
 

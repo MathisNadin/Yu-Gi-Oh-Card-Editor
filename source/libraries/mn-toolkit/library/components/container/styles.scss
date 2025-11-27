@@ -366,6 +366,35 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 
 // ----------------------------------------------------------
 
+// ------------------------ Masonry -------------------------
+
+@mixin themeMasonry() {
+  > .mn-container-inside {
+    display: grid;
+
+    // Optional template columns configuration, default to auto
+    grid-template-columns: var(--mn-masonry-template-columns);
+
+    // Optional template rows configuration, default to auto
+    grid-template-rows: var(--mn-masonry-template-rows);
+
+    // Optional areas configuration; default is no named areas
+    grid-template-areas: var(--mn-masonry-template-areas);
+
+    // Reuse the same span logic as for the "grid" layout
+    > .mn-grid-item {
+      grid-column: span var(--mn-grid-col-span);
+      grid-row: span var(--mn-grid-row-span);
+    }
+  }
+}
+
+.mn-layout-masonry-stack {
+  @include themeMasonry();
+}
+
+// ----------------------------------------------------------
+
 // --------------------- Labeled Group ----------------------
 
 @mixin themeLabeledGroup() {
@@ -392,27 +421,6 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
 
 .mn-labeled-group {
   @include themeLabeledGroup();
-}
-
-// ----------------------------------------------------------
-
-// ------------------------ Masonry -------------------------
-
-@mixin themeMasonry() {
-  .mn-masonry-item {
-    > * {
-      width: 100%;
-      min-width: 100%;
-      max-width: 100%;
-      height: 100%;
-      min-height: 100%;
-      max-height: 100%;
-    }
-  }
-}
-
-.mn-masonry {
-  @include themeMasonry();
 }
 
 // ----------------------------------------------------------

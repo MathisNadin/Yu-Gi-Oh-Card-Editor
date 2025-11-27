@@ -1,7 +1,19 @@
 ## mn-toolkit change log
 
+## 8.6.2
+
+- fix label select
+- Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
+- tests masonry utilisant grid
+
+## 8.6.1
+
+- bump to 8.6.1
+- verif value dans rich text editor pour loader dans l'éditeur un root node valide
+
 ## 8.6.0
 
+- bump to 8.6.0
 - fix goto
 - fix imports lexical et declare context
 - utilisation du popup prompt au lieu de window.prompt

@@ -12,6 +12,9 @@ export class Grid<P extends IGridProps = IGridProps, S extends IGridState = IGri
       gutter: true,
       gridColumns: 12,
       gridRows: 1,
+      masonryTemplateAreas: undefined,
+      masonryTemplateColumns: undefined,
+      masonryTemplateRows: undefined,
     };
   }
 }

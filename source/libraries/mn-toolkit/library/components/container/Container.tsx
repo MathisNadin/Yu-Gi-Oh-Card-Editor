@@ -1,9 +1,9 @@
 import { AllHTMLAttributes, isValidElement, ReactNode, RefObject } from 'react';
-import { isString } from 'mn-tools';
-import { IDeviceListener, IScreenSpec, TJSXElementChild, TJSXElementChildren } from '../../system';
-import { Containable, IContainableProps, IContainableState, IGridSpanParams, TSpacingSize } from '../containable';
+import { isArray, isObject, isString, isUndefined } from 'mn-tools';
+import { IDeviceListener, IScreenSpec, TJSXElementChild, TJSXElementChildren, TScreenSize } from '../../system';
+import { Containable, IContainableProps, IContainableState, TSpacingSize } from '../containable';
 
-export type TContainerLayout = 'vertical' | 'horizontal' | 'grid';
+export type TContainerLayout = 'vertical' | 'horizontal' | 'grid' | 'masonry';
 
 export type THorizontalAlignment = 'left' | 'right' | 'center';
 
@@ -23,6 +23,157 @@ export interface EventTargetWithValue extends EventTarget {
   value: string;
 }
 
+// Track size expression: can be a raw CSS string or a structured expression
+export type TTrackSizeExpr =
+  | string // e.g. "100px", "1fr", "min-content", "max-content"
+  | ITrackSizeMinmax
+  | ITrackSizeFitContent;
+
+export interface ITrackSizeMinmax {
+  kind: 'minmax';
+  min: TTrackSizeExpr | string;
+  max: TTrackSizeExpr | string;
+}
+
+export interface ITrackSizeFitContent {
+  kind: 'fit-content';
+  value: string; // e.g. "40%", "300px"
+}
+
+// A single template segment inside grid-template-*
+export type TGridTemplateSegment =
+  | string // raw CSS segment, e.g. "200px", "[foo] 100px [bar]"
+  | IGridTemplateNamedTrack
+  | IGridTemplateRepeat;
+
+// A single named track segment: [names] size [names]
+export interface IGridTemplateNamedTrack {
+  kind: 'track';
+  lineNamesBefore?: string | string[];
+  size: TTrackSizeExpr;
+  lineNamesAfter?: string | string[];
+}
+
+// A repeat(...) segment
+export interface IGridTemplateRepeat {
+  kind: 'repeat';
+  count: number | 'auto-fill' | 'auto-fit';
+  track: TGridTemplateSegment | TGridTemplateSegment[];
+}
+
+// Top-level preset: either a keyword or a track list
+export type IGridTemplatePreset = IGridTemplateKeyword | IGridTemplateTrackList;
+
+// Keywords like "none", "inherit", "initial", "unset"
+export interface IGridTemplateKeyword {
+  kind: 'keyword';
+  value: 'none' | 'inherit' | 'initial' | 'unset';
+}
+
+// A full track list composed of segments
+export interface IGridTemplateTrackList {
+  kind: 'track-list';
+  segments: TGridTemplateSegment[];
+}
+
+export type TGridTemplateValue = string | IGridTemplatePreset;
+
+export type TGridTemplateParams = {
+  [K in TScreenSize]?: TGridTemplateValue;
+};
+
+// Type guard for template preset
+function isGridTemplatePreset(value: unknown): value is IGridTemplatePreset {
+  return !!value && typeof value === 'object' && 'kind' in value;
+}
+
+// Type guard for responsive map
+function isGridTemplateParams(value: unknown): value is TGridTemplateParams {
+  if (!isObject(value)) return false;
+  if ('kind' in value) return false;
+  if (
+    isUndefined((value as TGridTemplateParams).small) &&
+    isUndefined((value as TGridTemplateParams).medium) &&
+    isUndefined((value as TGridTemplateParams).large) &&
+    isUndefined((value as TGridTemplateParams).xlarge) &&
+    isUndefined((value as TGridTemplateParams).xxlarge) &&
+    isUndefined((value as TGridTemplateParams).xxxlarge)
+  ) {
+    return false;
+  }
+  return true;
+}
+
+// Convert a track size expression to a CSS string
+function stringifyTrackSize(size: TTrackSizeExpr | string): string {
+  if (isString(size)) return size;
+
+  if (size.kind === 'minmax') {
+    const min = stringifyTrackSize(size.min);
+    const max = stringifyTrackSize(size.max);
+    return `minmax(${min}, ${max})`;
+  }
+
+  if (size.kind === 'fit-content') {
+    return `fit-content(${size.value})`;
+  }
+
+  // Fallback for unexpected shapes
+  return '';
+}
+
+// Convert a single template segment to a CSS fragment
+function stringifyTemplateSegment(segment: TGridTemplateSegment): string {
+  // Raw CSS segment
+  if (isString(segment)) return segment;
+
+  if (segment.kind === 'track') {
+    const before = segment.lineNamesBefore
+      ? isArray(segment.lineNamesBefore)
+        ? `[${segment.lineNamesBefore.join(' ')}] `
+        : `[${segment.lineNamesBefore}] `
+      : '';
+
+    const size = stringifyTrackSize(segment.size);
+
+    const after = segment.lineNamesAfter
+      ? isArray(segment.lineNamesAfter)
+        ? ` [${segment.lineNamesAfter.join(' ')}]`
+        : ` [${segment.lineNamesAfter}]`
+      : '';
+
+    return `${before}${size}${after}`;
+  }
+
+  if (segment.kind === 'repeat') {
+    const trackSegments = isArray(segment.track) ? segment.track : [segment.track];
+
+    const inner = trackSegments.map(stringifyTemplateSegment).filter(Boolean).join(' ');
+
+    return `repeat(${segment.count}, ${inner})`;
+  }
+
+  // Fallback
+  return '';
+}
+
+// Convert a template value (string or preset) to a CSS string
+export function stringifyGridTemplateValue(value: TGridTemplateValue): string {
+  // Raw CSS string directly provided
+  if (isString(value)) return value;
+
+  switch (value.kind) {
+    case 'keyword':
+      return value.value;
+    case 'track-list':
+      return value.segments.map(stringifyTemplateSegment).filter(Boolean).join(' ');
+    default:
+      return '';
+  }
+}
+
+const GRID_SCREEN_ORDER: TScreenSize[] = ['small', 'medium', 'large', 'xlarge', 'xxlarge', 'xxxlarge'] as const;
+
 export interface IContainerProps<
   BASE_ELEMENT extends HTMLElement = HTMLDivElement,
   LAYOUT extends TContainerLayout = TContainerLayout,
@@ -41,6 +192,11 @@ export interface IContainerProps<
   // For grid layout
   gridColumns?: LAYOUT extends 'grid' ? number : never;
   gridRows?: LAYOUT extends 'grid' ? number : never;
+
+  // For masonry layout using CSS grid-template-* with responsive presets
+  masonryTemplateColumns?: LAYOUT extends 'masonry' ? TGridTemplateValue | TGridTemplateParams : never;
+  masonryTemplateRows?: LAYOUT extends 'masonry' ? TGridTemplateValue | TGridTemplateParams : never;
+  masonryTemplateAreas?: LAYOUT extends 'masonry' ? TGridTemplateValue | TGridTemplateParams : never;
 }
 
 export interface IContainerState extends IContainableState {}
@@ -63,25 +219,59 @@ export class Container<
 
   public override componentDidMount() {
     super.componentDidMount();
-    if (this.props.layout === 'grid') app.$device.addListener(this);
+    // grid and masonry both depend on screen specification
+    if (this.props.layout === 'grid' || this.props.layout === 'masonry') {
+      app.$device.addListener(this);
+    }
   }
 
   public override componentWillUnmount() {
     super.componentWillUnmount();
-    if (this.props.layout === 'grid') app.$device.removeListener(this);
+    if (this.props.layout === 'grid' || this.props.layout === 'masonry') {
+      app.$device.removeListener(this);
+    }
   }
 
   public deviceScreenSpecificationChanged(_newSpec: IScreenSpec, _oldSpec: IScreenSpec, screenSizeChanged: boolean) {
-    if (!screenSizeChanged || this.props.layout !== 'grid') return;
+    if (!screenSizeChanged) return;
+    if (this.props.layout !== 'grid' && this.props.layout !== 'masonry') return;
+
+    // Same behavior as for grid: force a re-render to recompute spans/templates
     this.forceUpdate();
   }
 
   public override renderStyle() {
     const style = super.renderStyle();
-    if (this.props.layout !== 'grid') return style;
 
-    style['--mn-grid-columns'] = this.props.gridColumns || 1;
-    style['--mn-grid-rows'] = this.props.gridRows || 1;
+    if (this.props.layout === 'grid') {
+      // Grid uses fixed number of columns/rows
+      style['--mn-grid-columns'] = this.props.gridColumns || 1;
+      style['--mn-grid-rows'] = this.props.gridRows || 1;
+      return style;
+    }
+
+    if (this.props.layout === 'masonry') {
+      // Masonry uses full grid-template-* strings with responsive configuration
+      const columns = this.resolveResponsiveTemplate(this.props.masonryTemplateColumns);
+      const rows = this.resolveResponsiveTemplate(this.props.masonryTemplateRows);
+      const areas = this.resolveResponsiveTemplate(this.props.masonryTemplateAreas);
+
+      if (columns) {
+        // Full CSS value for grid-template-columns
+        style['--mn-masonry-template-columns'] = columns;
+      }
+      if (rows) {
+        // Full CSS value for grid-template-rows
+        style['--mn-masonry-template-rows'] = rows;
+      }
+      if (areas) {
+        // Full CSS value for grid-template-areas
+        style['--mn-masonry-template-areas'] = areas;
+      }
+
+      return style;
+    }
+
     return style;
   }
 
@@ -138,7 +328,9 @@ export class Container<
   }
 
   public override get children(): TJSXElementChildren {
-    if (this.props.layout !== 'grid') return super.children;
+    if (this.props.layout !== 'grid' && this.props.layout !== 'masonry') {
+      return super.children;
+    }
 
     if (!this.props.children) return this.props.children;
 
@@ -167,16 +359,8 @@ export class Container<
     // extract the typed props for spans
     const props = element.props as IContainableProps;
 
-    const screenOrder: (keyof IGridSpanParams)[] = [
-      'small',
-      'medium',
-      'large',
-      'xlarge',
-      'xxlarge',
-      'xxxlarge',
-    ] as const;
-    const currentScreen = app.$device?.screenSpec?.screenSize ?? 'small';
-    const currentIndex = screenOrder.indexOf(currentScreen);
+    const currentScreen = app.$device.screenSpec.screenSize;
+    const currentIndex = GRID_SCREEN_ORDER.indexOf(currentScreen);
 
     // Initialize with fallback = 1
     let colSpan = 1;
@@ -184,7 +368,7 @@ export class Container<
 
     // Single loop to resolve both column and row spans
     for (let i = 0; i <= currentIndex; i++) {
-      const key = screenOrder[i]!;
+      const key = GRID_SCREEN_ORDER[i]!;
 
       // if a specific colSpan is provided for this breakpoint, use it
       const c = props.colSpans?.[key];
@@ -199,5 +383,37 @@ export class Container<
       '--mn-grid-col-span': `${colSpan}`,
       '--mn-grid-row-span': `${rowSpan}`,
     } as React.CSSProperties;
+  }
+
+  protected resolveResponsiveTemplate(template?: TGridTemplateValue | TGridTemplateParams): string | undefined {
+    // No template, nothing to apply
+    if (!template) return undefined;
+
+    // Direct string or direct preset
+    if (typeof template === 'string' || isGridTemplatePreset(template)) {
+      return stringifyGridTemplateValue(template as TGridTemplateValue);
+    }
+
+    // Responsive map keyed by screen sizes
+    if (isGridTemplateParams(template)) {
+      const currentScreen = app.$device?.screenSpec?.screenSize ?? 'small';
+      const currentIndex = GRID_SCREEN_ORDER.indexOf(currentScreen);
+
+      let resolved: TGridTemplateValue | undefined;
+
+      // Same logic as colSpans / rowSpans: walk from smallest to current
+      for (let i = 0; i <= currentIndex; i++) {
+        const key = GRID_SCREEN_ORDER[i]!;
+        const value = template[key];
+        if (value != null) {
+          resolved = value;
+        }
+      }
+
+      return resolved ? stringifyGridTemplateValue(resolved) : undefined;
+    }
+
+    // Fallback: try to stringify as raw string (should not happen with correct typing)
+    return String(template);
   }
 }

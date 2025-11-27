@@ -1,7 +1,12 @@
 ## mn-webpack-builder change log
 
+## 1.5.1
+
+- ajout domaines font foofle sur csp connect-src
+
 ## 1.5.0
 
+- bump to 1.5.0
 - plus nécessaire
 - oops
 - ajout stylelint et silence sur les warnings sass import
