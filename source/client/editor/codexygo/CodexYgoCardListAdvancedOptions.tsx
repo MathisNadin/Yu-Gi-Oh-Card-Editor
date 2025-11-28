@@ -124,6 +124,12 @@ const MONSTER_TYPES_FR_EXCLUSIVE_RUSH: TCodexYgoMonsterTypeFr[] = [
   'Galaxie',
 ];
 
+const LEGEND_ITEMS: ISelectItem<ICodexYgoCardListAdvancedOptions['legend']>[] = [
+  { id: undefined, label: '-' },
+  { id: false, label: 'Cartes non-Légende' },
+  { id: true, label: 'Cartes Légende' },
+];
+
 /**
  * Get attributes available in the given format
  */
@@ -283,6 +289,7 @@ const cleanOptionsForFormat = (options: ICodexYgoCardListAdvancedOptions): ICode
 
   if (options.format === 'master') {
     cleanedOptions.atkMaxsAny = undefined;
+    cleanedOptions.legend = undefined;
   } else if (options.format === 'rush') {
     cleanedOptions.scalesAny = undefined;
     cleanedOptions.linkArrowsAny = undefined;
@@ -290,6 +297,10 @@ const cleanOptionsForFormat = (options: ICodexYgoCardListAdvancedOptions): ICode
 
     if (cleanedOptions.levelsAny?.length) {
       cleanedOptions.levelsAny = cleanedOptions.levelsAny.filter((l) => l !== 0 && l !== 13);
+    }
+
+    if (options.cardTypesAny?.[0] === 'skill' && options.cardTypesAny.length === 1) {
+      cleanedOptions.legend = undefined;
     }
   }
 
@@ -1051,6 +1062,27 @@ const LinkArrowsSection: FC<ISectionProps> = ({ options, onChange }) => {
 };
 
 /**
+ * Legend property filter section component
+ */
+const LegendSection: FC<ISectionProps> = ({ options, onChange }) => {
+  if (options.format === 'master') return null;
+  if (options.cardTypesAny?.[0] === 'skill' && options.cardTypesAny.length === 1) {
+    return null;
+  }
+
+  return (
+    <VerticalStack paddingX='tiny' gutter='small'>
+      <SectionHeader title='Légende' />
+      <Select<ICodexYgoCardListAdvancedOptions['legend']>
+        items={LEGEND_ITEMS}
+        value={options.legend}
+        onChange={(value) => updateOptions(options, { legend: isDefined(value) ? value : undefined }, onChange)}
+      />
+    </VerticalStack>
+  );
+};
+
+/**
  * ATK/DEF range filter section component
  */
 const AtkDefSection: FC<ISectionProps> = ({ options, onChange }) => {
@@ -1237,6 +1269,7 @@ export const CodexYgoCardListAdvancedOptions: FC<ICodexYgoCardListAdvancedOption
       <LevelSection options={options} onChange={onChange} />
       <ScaleSection options={options} onChange={onChange} />
       <LinkArrowsSection options={options} onChange={onChange} />
+      <LegendSection options={options} onChange={onChange} />
       <AtkDefSection options={options} onChange={onChange} />
     </VerticalStack>
   );

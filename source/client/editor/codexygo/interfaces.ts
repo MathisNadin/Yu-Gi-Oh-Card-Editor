@@ -494,6 +494,7 @@ export interface ICodexYgoCardListOptions
   >;
 
   rush?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'rush', TCodexYgoCardTableIndexes>;
+  legend?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'legend', TCodexYgoCardTableIndexes>;
   public?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'public', TCodexYgoCardTableIndexes>;
 }
 
@@ -539,6 +540,7 @@ export interface ICodexYgoCardListAdvancedOptions {
   scalesAny?: ICodexYgoCardListOptions['scalesAny'];
   linkArrowsAny?: ICodexYgoCardListOptions['linkArrowsAny'];
   linkArrowsAll?: ICodexYgoCardListOptions['linkArrowsAll'];
+  legend?: ICodexYgoCardListOptions['legend'];
   atkMaxsAny?: ICodexYgoCardListOptions['atkMaxsAny'];
   atksAny?: ICodexYgoCardListOptions['atksAny'];
   defsAny?: ICodexYgoCardListOptions['defsAny'];

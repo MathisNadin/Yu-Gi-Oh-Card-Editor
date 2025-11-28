@@ -1,7 +1,7 @@
-import { IYugipediaGetPageByTitleApiResponse } from '..';
+import { IYugipediaGetPageByUrlOrTitleApiResponse } from '..';
 
 export class AbstractWikitextParser {
-  protected page: IYugipediaGetPageByTitleApiResponse;
+  protected page: IYugipediaGetPageByUrlOrTitleApiResponse;
   protected wikitextLines: string[];
   protected pageTitle?: string;
 
