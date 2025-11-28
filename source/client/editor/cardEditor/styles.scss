@@ -8,86 +8,12 @@
 .card-editor {
   $borderColor: color-hsla($fg1, 0.5);
 
-  .top-options {
-    > .mn-container-inside {
-      justify-content: space-between;
-    }
-  }
-
   .card-editor-sections {
     .card-editor-section {
       &.link-arrows-section {
-        .mn-checkbox {
-          &.checked {
-            .toggle {
-              background-color: color-hsl($negative) !important;
-              border-color: color-hsl($negative) !important;
-            }
-          }
-
-          &.top-left {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(315 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.top {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.top-right {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(45 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.left {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(-90 8 8) translate(0 -1)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.right {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(90 8 8) translate(0 -1)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.bottom-left {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(225 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.bottom {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(180 8 8)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
-
-          &.bottom-right {
-            &.checked {
-              .toggle {
-                background-image: url('data:image/svg+xml;utf8,<svg width="12" height="12" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><rect width="16" height="16" id="icon-bound" fill="none" /><polygon transform="rotate(135 8 8) translate(0 -2)" points="8,3 16,11 0,11" /></svg>');
-              }
-            }
-          }
+        .mn-link-arrows-editor {
+          margin: -8px auto 0 auto;
+          background: color-hsl($bg1);
         }
       }
 

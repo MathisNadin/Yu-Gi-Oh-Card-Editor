@@ -128,7 +128,11 @@ export type TCodexYgoCardTableIndexes =
   | 'rush'
   | 'legend';
 
-export type TCodexYgoCardTableVectorIndexes = 'nameSearchVector' | 'descriptionSearchVector' | 'pendEffectSearchVector';
+export type TCodexYgoCardTableVectorIndexes =
+  | 'nameSearchVector'
+  | 'descriptionSearchVector'
+  | 'pendEffectSearchVector'
+  | 'limitationTextSearchVector';
 
 export interface ICodexYgoCardTable
   extends IAbstractTable<ICodexYgoCardEntity, TCodexYgoCardTableIndexes, TCodexYgoCardTableVectorIndexes> {
@@ -160,6 +164,7 @@ export interface ICodexYgoCardTable
     nameSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
     descriptionSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
     pendEffectSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
+    limitationTextSearchVector: ITableVectorIndexDefinition<ICodexYgoCardEntity>;
   };
 }
 
@@ -258,6 +263,112 @@ export interface IContentCardContentBlock extends IContentBlockContentEntity {
 
 /* ------------------- API ------------------- */
 
+export type TCodexYgoCardRuleFormat = 'all' | 'master' | 'rush';
+
+export type TCodexYgoCardType = 'monster' | 'spell' | 'trap' | 'skill';
+
+export type TCodexYgoMonsterCardTypeFr =
+  | 'Normal'
+  | 'Effet'
+  | 'Rituel'
+  | 'Fusion'
+  | 'Synchro'
+  | 'Xyz'
+  | 'Pendule'
+  | 'Lien'
+  | 'Toon'
+  | 'Spirit'
+  | 'Union'
+  | 'Gémeau'
+  | 'Syntoniseur'
+  | 'Flip'
+  | 'Maximum';
+
+export type TCodexYgoMonsterCardTypeEn =
+  | 'Normal'
+  | 'Effect'
+  | 'Ritual'
+  | 'Fusion'
+  | 'Synchro'
+  | 'Xyz'
+  | 'Pendulum'
+  | 'Link'
+  | 'Toon'
+  | 'Spirit'
+  | 'Union'
+  | 'Gemini'
+  | 'Tuner'
+  | 'Flip'
+  | 'Maximum';
+
+export type TCodexYgoMonsterTypeFr =
+  | 'Magicien'
+  | 'Dragon'
+  | 'Zombie'
+  | 'Guerrier'
+  | 'Bête-Guerrier'
+  | 'Bête'
+  | 'Bête Ailée'
+  | 'Démon'
+  | 'Elfe'
+  | 'Insecte'
+  | 'Dinosaure'
+  | 'Reptile'
+  | 'Poisson'
+  | 'Serpent de Mer'
+  | 'Aqua'
+  | 'Pyro'
+  | 'Tonnerre'
+  | 'Rocher'
+  | 'Plante'
+  | 'Machine'
+  | 'Psychique'
+  | 'Bête Divine'
+  | 'Dieu Créateur'
+  | 'Wyrm'
+  | 'Cyberse'
+  | 'Illusion'
+  | 'Cyborg'
+  | 'Chevalier Magique'
+  | 'Grand Dragon'
+  | 'Psychique Oméga'
+  | 'Guerrier Céleste'
+  | 'Galaxie';
+
+export type TCodexYgoMonsterTypeEn =
+  | 'Spellcaster'
+  | 'Dragon'
+  | 'Zombie'
+  | 'Warrior'
+  | 'Beast-Warrior'
+  | 'Beast'
+  | 'Winged Beast'
+  | 'Fiend'
+  | 'Fairy'
+  | 'Insect'
+  | 'Dinosaur'
+  | 'Reptile'
+  | 'Fish'
+  | 'Sea Serpent'
+  | 'Aqua'
+  | 'Pyro'
+  | 'Thunder'
+  | 'Rock'
+  | 'Plant'
+  | 'Machine'
+  | 'Psychic'
+  | 'Divine-Beast'
+  | 'Creator God'
+  | 'Wyrm'
+  | 'Cyberse'
+  | 'Illusion'
+  | 'Cyborg'
+  | 'Magical Knight'
+  | 'High Dragon'
+  | 'Omega Psychic'
+  | 'Celestial Warrior'
+  | 'Galaxy';
+
 export interface ICodexYgoCardListOptions
   extends IEntityListOptions<
     ICodexYgoCardEntity,
@@ -266,41 +377,122 @@ export interface ICodexYgoCardListOptions
     TCodexYgoCardTableVectorIndexes
   > {
   konamiIds?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'konamiId', TCodexYgoCardTableIndexes>[];
+
   namesFr?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'nameFr', TCodexYgoCardTableIndexes>[];
   namesEn?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'nameEn', TCodexYgoCardTableIndexes>[];
-  abilitiesFr?: TTableIndexReturnType<
-    ICodexYgoCardEntity,
-    ICodexYgoCardTable,
-    'abilitiesFr',
-    TCodexYgoCardTableIndexes
-  >;
-  abilitiesEn?: TTableIndexReturnType<
-    ICodexYgoCardEntity,
-    ICodexYgoCardTable,
-    'abilitiesEn',
-    TCodexYgoCardTableIndexes
-  >;
+
   limitationTextsFr?: TTableIndexReturnType<
     ICodexYgoCardEntity,
     ICodexYgoCardTable,
     'limitationTextFr',
     TCodexYgoCardTableIndexes
-  >[];
+  >;
   limitationTextsEn?: TTableIndexReturnType<
     ICodexYgoCardEntity,
     ICodexYgoCardTable,
     'limitationTextEn',
     TCodexYgoCardTableIndexes
+  >;
+
+  /** Match cards that have at least one of these Card Types */
+  cardTypesAny?: TCodexYgoCardType[];
+
+  /** Match cards that have at least one of these Monster Card Types in french */
+  monsterCardTypesFrAny?: TCodexYgoMonsterCardTypeFr[];
+  /** Match cards that have all of these Monster Card Types in french */
+  monsterCardTypesFrAll?: TCodexYgoMonsterCardTypeFr[];
+
+  /** Match cards that have at least one of these Monster Card Types in english */
+  monsterCardTypesEnAny?: TCodexYgoMonsterCardTypeEn[];
+  /** Match cards that have all of these Monster Card Types in english */
+  monsterCardTypesEnAll?: TCodexYgoMonsterCardTypeEn[];
+
+  /** Match cards that have at least one of these Monster Types in french */
+  monsterTypesFrAny?: TCodexYgoMonsterTypeFr[];
+  /** Match cards that have all of these Monster Types in french */
+  monsterTypesFrAll?: TCodexYgoMonsterTypeFr[];
+
+  /** Match cards that have at least one of these Monster Types in english */
+  monsterTypesEnAny?: TCodexYgoMonsterTypeEn[];
+  /** Match cards that have all of these Monster Types in english */
+  monsterTypesEnAll?: TCodexYgoMonsterTypeEn[];
+
+  /** Match cards that have at least one of these abilities in french */
+  abilitiesFrAny?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'abilitiesFr',
+    TCodexYgoCardTableIndexes
+  >;
+  /** Match cards that have all of these abilities in french */
+  abilitiesFrAll?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'abilitiesFr',
+    TCodexYgoCardTableIndexes
+  >;
+
+  /** Match cards that have at least one of these abilities in english */
+  abilitiesEnAny?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'abilitiesEn',
+    TCodexYgoCardTableIndexes
+  >;
+  /** Match cards that have all of these abilities in english */
+  abilitiesEnAll?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'abilitiesEn',
+    TCodexYgoCardTableIndexes
+  >;
+
+  /** Match cards that have at least one of these frames */
+  framesAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>[];
+  /** Match cards that have all of these frames */
+  framesAll?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have any of these spell/trap types */
+  stTypesAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'stType', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have any of these attributes */
+  attributesAny?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'attribute',
+    TCodexYgoCardTableIndexes
   >[];
-  frames?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'frame', TCodexYgoCardTableIndexes>[];
-  stTypes?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'stType', TCodexYgoCardTableIndexes>[];
-  attributes?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'attribute', TCodexYgoCardTableIndexes>[];
-  levels?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'level', TCodexYgoCardTableIndexes>[];
-  atkMaxs?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atkMax', TCodexYgoCardTableIndexes>[];
-  atks?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atk', TCodexYgoCardTableIndexes>[];
-  defs?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'def', TCodexYgoCardTableIndexes>[];
-  scales?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'scale', TCodexYgoCardTableIndexes>[];
-  linkArrows?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'linkArrows', TCodexYgoCardTableIndexes>;
+
+  /** Match cards that have any of these levels */
+  levelsAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'level', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have any of these ATK max values */
+  atkMaxsAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atkMax', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have any of these ATK values */
+  atksAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'atk', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have any of these DEF values */
+  defsAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'def', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have any of these scales */
+  scalesAny?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'scale', TCodexYgoCardTableIndexes>[];
+
+  /** Match cards that have at least one of these link arrows */
+  linkArrowsAny?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'linkArrows',
+    TCodexYgoCardTableIndexes
+  >;
+  /** Match cards that have all of these link arrows */
+  linkArrowsAll?: TTableIndexReturnType<
+    ICodexYgoCardEntity,
+    ICodexYgoCardTable,
+    'linkArrows',
+    TCodexYgoCardTableIndexes
+  >;
+
   rush?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'rush', TCodexYgoCardTableIndexes>;
   public?: TTableIndexReturnType<ICodexYgoCardEntity, ICodexYgoCardTable, 'public', TCodexYgoCardTableIndexes>;
 }
@@ -323,3 +515,31 @@ export interface IContentBlockListOptions
 }
 
 /* ------------------------------------------- */
+
+/* ------------- Advanced Options ------------ */
+
+export type TCodexYgoCardAdvancedSearchType = 'name' | 'description' | 'pendulumEffect' | 'limitationText';
+
+/**
+ * Advanced list options managed by CardListOptions component
+ * These represent the filterable properties supported by the advanced filter interface
+ */
+export interface ICodexYgoCardListAdvancedOptions {
+  language: TCodexYgoCardLanguage;
+  format: TCodexYgoCardRuleFormat;
+  search: string;
+  searchType: TCodexYgoCardAdvancedSearchType;
+  cardTypesAny?: ICodexYgoCardListOptions['cardTypesAny'];
+  attributesAny?: ICodexYgoCardListOptions['attributesAny'];
+  stTypesAny?: ICodexYgoCardListOptions['stTypesAny'];
+  monsterCardTypesFrAny?: ICodexYgoCardListOptions['monsterCardTypesFrAny'];
+  monsterCardTypesFrAll?: ICodexYgoCardListOptions['monsterCardTypesFrAll'];
+  monsterTypesFrAny?: ICodexYgoCardListOptions['monsterTypesFrAny'];
+  levelsAny?: ICodexYgoCardListOptions['levelsAny'];
+  scalesAny?: ICodexYgoCardListOptions['scalesAny'];
+  linkArrowsAny?: ICodexYgoCardListOptions['linkArrowsAny'];
+  linkArrowsAll?: ICodexYgoCardListOptions['linkArrowsAll'];
+  atkMaxsAny?: ICodexYgoCardListOptions['atkMaxsAny'];
+  atksAny?: ICodexYgoCardListOptions['atksAny'];
+  defsAny?: ICodexYgoCardListOptions['defsAny'];
+}

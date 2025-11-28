@@ -5,7 +5,7 @@ import { Containable, IContainableProps, IContainableState, TSpacingSize } from 
 
 export type TContainerLayout = 'vertical' | 'horizontal' | 'grid' | 'masonry';
 
-export type THorizontalAlignment = 'left' | 'right' | 'center';
+export type THorizontalAlignment = 'left' | 'right' | 'center' | 'space-between';
 
 export type TVerticalAlignment = 'top' | 'bottom' | 'middle';
 

@@ -6,7 +6,6 @@ import {
   VerticalStack,
   HorizontalStack,
   Button,
-  Spacer,
   Typography,
   TextInput,
   Select,
@@ -33,6 +32,7 @@ import {
   TSticker,
 } from '../card';
 import { ArtworkEditDialog } from '../artworkEditDialog';
+import { LinkArrowsEditor } from '../codexygo';
 
 interface ICardEditorProps extends IContainerProps {
   card: ICard;
@@ -299,9 +299,19 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
     await this.setStateAsync({ card: newCard });
   }
 
-  private async onLinkArrowChange(arrow: TLinkArrows) {
+  private async onLinkArrowsChange(newLinkArrows: TLinkArrows[]) {
+    const arrowSet = new Set(newLinkArrows);
     const newCard: ICard = { ...this.state.card };
-    newCard.linkArrows[arrow] = !newCard.linkArrows[arrow];
+    newCard.linkArrows = {
+      top: arrowSet.has('top'),
+      bottom: arrowSet.has('bottom'),
+      left: arrowSet.has('left'),
+      right: arrowSet.has('right'),
+      topLeft: arrowSet.has('topLeft'),
+      topRight: arrowSet.has('topRight'),
+      bottomLeft: arrowSet.has('bottomLeft'),
+      bottomRight: arrowSet.has('bottomRight'),
+    };
     await this.setStateAsync({ card: newCard });
   }
 
@@ -388,7 +398,7 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
 
   public get children() {
     return [
-      <HorizontalStack key='top-options' wrap padding gutter className='top-options'>
+      <HorizontalStack key='top-options' wrap padding gutter itemAlignment='space-between' className='top-options'>
         <Button
           disabled={this.state.rendering}
           size='small'
@@ -781,85 +791,18 @@ export class CardEditor extends Container<ICardEditorProps, ICardEditorState> {
   }
 
   private renderLinkArrows() {
+    let value: TLinkArrows[] = [];
+    for (const arrow in this.state.card.linkArrows) {
+      const linkArrow = arrow as TLinkArrows;
+      if (this.state.card.linkArrows[linkArrow]) value.push(linkArrow);
+    }
     return (
       <VerticalStack gutter className='card-editor-section link-arrows-section'>
         <Typography fill className='sub-title' variant='help' content='Flèches Lien' />
-
-        <HorizontalStack gutter>
-          <Spacer />
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='top-left'
-              value={this.state.card.linkArrows.topLeft}
-              onChange={() => this.onLinkArrowChange('topLeft')}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='top'
-              value={this.state.card.linkArrows.top}
-              onChange={() => this.onLinkArrowChange('top')}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='top-right'
-              value={this.state.card.linkArrows.topRight}
-              onChange={() => this.onLinkArrowChange('topRight')}
-            />
-          </HorizontalStack>
-          <Spacer />
-        </HorizontalStack>
-
-        <HorizontalStack gutter>
-          <Spacer />
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='left'
-              value={this.state.card.linkArrows.left}
-              onChange={() => this.onLinkArrowChange('left')}
-            />
-          </HorizontalStack>
-          <Spacer />
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='right'
-              value={this.state.card.linkArrows.right}
-              onChange={() => this.onLinkArrowChange('right')}
-            />
-          </HorizontalStack>
-          <Spacer />
-        </HorizontalStack>
-
-        <HorizontalStack gutter>
-          <Spacer />
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='bottom-left'
-              value={this.state.card.linkArrows.bottomLeft}
-              onChange={() => this.onLinkArrowChange('bottomLeft')}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='bottom'
-              value={this.state.card.linkArrows.bottom}
-              onChange={() => this.onLinkArrowChange('bottom')}
-            />
-          </HorizontalStack>
-
-          <HorizontalStack fill itemAlignment='center'>
-            <Checkbox
-              className='bottom-right'
-              value={this.state.card.linkArrows.bottomRight}
-              onChange={() => this.onLinkArrowChange('bottomRight')}
-            />
-          </HorizontalStack>
-          <Spacer />
-        </HorizontalStack>
+        <LinkArrowsEditor
+          value={value}
+          onChange={(newLinkArrows) => app.$errorManager.handlePromise(this.onLinkArrowsChange(newLinkArrows))}
+        />
       </VerticalStack>
     );
   }

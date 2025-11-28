@@ -745,7 +745,7 @@ export class CardService extends AbstractObservable<ICardListener> implements Pa
         app.$errorManager.handlePromise(app.$card.saveCurrentOrTempToLocal())
       );
 
-      window.electron.ipcRenderer.addListener('importCards', () =>
+      window.electron.ipcRenderer.addListener('importUrlCards', () =>
         app.$errorManager.handlePromise(app.$card.showImportDialog())
       );
     }

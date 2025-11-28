@@ -28,7 +28,8 @@ declare global {
   interface IIpcMainSendChannel {
     renderCurrentCard: [];
     saveCurrentOrTempToLocal: [];
-    importCards: [];
+    importUrlCards: [];
+    importCodexYgoCards: [];
     importData: [];
     exportData: [];
   }
@@ -288,9 +289,14 @@ export function buildProjectMenuTemplate(
           click: () => mainWindow.webContents.send('saveCurrentOrTempToLocal'),
         },
         {
-          label: '&Importer depuis un site',
+          label: "&Importer depuis les URLs d'un site",
           accelerator: 'F3',
-          click: () => mainWindow.webContents.send('importCards'),
+          click: () => mainWindow.webContents.send('importUrlCards'),
+        },
+        {
+          label: '&Importer depuis CodexYGO',
+          accelerator: 'F4',
+          click: () => mainWindow.webContents.send('importCodexYgoCards'),
         },
         {
           label: '&Importer des données',

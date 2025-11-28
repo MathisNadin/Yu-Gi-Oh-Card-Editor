@@ -357,15 +357,21 @@ export class CardsLibrary extends Container<ICardsLibraryProps, ICardsLibrarySta
             color='neutral'
             name='Rendu'
             label='Rendu'
-            onTap={() => app.$errorManager.handlePromise(this.renderSelectedCards())}
+            onTap={() => this.renderSelectedCards()}
           />
           <Button
             fill
             size='small'
             color='primary'
-            name='Importer'
-            label='Importer'
-            onTap={() => app.$errorManager.handlePromise(app.$card.showImportDialog())}
+            name='Importer (URLs)'
+            label='Importer (URLs)'
+            onTap={() => app.$card.showImportDialog()}
+          />
+          <Icon
+            size={24}
+            name='Importer depuis la DB CodexYGO'
+            icon='card-editor-codexygo-app-icon'
+            onTap={() => app.$codexygo.showCardListDialog()}
           />
         </HorizontalStack>
       ),

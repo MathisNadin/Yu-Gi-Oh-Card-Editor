@@ -23,9 +23,7 @@ import { ICard } from '../card';
 
 type TWebsite = 'yugipedia' | 'codexygo';
 
-export interface ICardImportDialogResult {}
-
-interface ICardImportDialogProps extends IAbstractPopupProps<ICardImportDialogResult> {}
+interface ICardImportDialogProps extends IAbstractPopupProps<void> {}
 
 interface ICardImportDialogState extends IAbstractPopupState {
   step: number;
@@ -42,19 +40,15 @@ interface ICardImportDialogState extends IAbstractPopupState {
   cardsImported: number;
 }
 
-export class CardImportDialog extends AbstractPopup<
-  ICardImportDialogResult,
-  ICardImportDialogProps,
-  ICardImportDialogState
-> {
+export class CardImportDialog extends AbstractPopup<void, ICardImportDialogProps, ICardImportDialogState> {
   private yugipediaLogo = require(`assets/images/yugipediaLogo.png`) as string;
   private codexygoLogo = require(`assets/images/codexygoLogo.png`) as string;
 
   public static async show(options: ICardImportDialogProps = {}) {
-    options.title = options.title || 'Importer depuis un site';
+    options.title = options.title || "Importer depuis les URLs d'un site";
     options.width = options.width || '70%';
     options.height = options.height || '80%';
-    return await app.$popup.show<ICardImportDialogResult, ICardImportDialogProps>({
+    return await app.$popup.show({
       type: 'card-import',
       Component: CardImportDialog,
       componentProps: options,

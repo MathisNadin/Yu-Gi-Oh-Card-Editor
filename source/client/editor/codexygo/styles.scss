@@ -1,0 +1,273 @@
+.mn-card-list-advanced-options {
+  .section-header {
+    margin-bottom: calc(#{$tinySpacing});
+
+    .section-title {
+      line-height: 1;
+    }
+
+    .mn-button-icon.clear-selection {
+      $padding: 1px;
+      $size: calc(calc(#{$defaultItemHeight} * 2 / 4) + calc(#{$padding} * 2));
+      $border: 1px;
+
+      border: $border solid color-hsl($negative);
+
+      min-height: $size;
+      max-height: $size;
+      min-width: $size;
+      max-width: $size;
+      padding: $padding;
+
+      $iconSize: calc(#{$size} - #{$padding} * 2 - #{$border} * 2);
+      font-size: $iconSize;
+      line-height: $iconSize;
+
+      svg {
+        min-height: $iconSize;
+        max-height: $iconSize;
+        min-width: $iconSize;
+        max-width: $iconSize;
+        display: inline-block;
+      }
+    }
+  }
+
+  .mn-toggle-button {
+    border: 2px solid transparent;
+    border-radius: calc(#{$defaultBorderRadius});
+
+    > .mn-container-inside {
+      min-height: 26px;
+    }
+
+    transition: all 0.2s;
+    .mn-typography {
+      transition: all 0.2s;
+      line-height: 1;
+    }
+
+    &:not(.pressed) {
+      background-color: color-hsl($bg3);
+      border-color: color-hsl($bg3);
+
+      &:hover {
+        background-color: color-hsla($primary, 0.2);
+        border-color: color-hsl($primary);
+      }
+    }
+
+    &.pressed {
+      background-color: lighten-color-hsl($primary);
+      border-color: lighten-color-hsl($primary);
+
+      .mn-typography {
+        color: color-hsl($bg1);
+      }
+    }
+  }
+}
+
+.mn-link-arrows-editor {
+  /* Container is a responsive square */
+
+  /* This keeps the whole thing square regardless of width */
+  position: relative; /* Needed for absolute children */
+  aspect-ratio: 1 / 1;
+  width: min(60vmin, 150px);
+  max-width: 100%;
+
+  background: color-hsl($bg3);
+  border-radius: 0.5rem;
+
+  box-sizing: border-box;
+
+  .link-arrows-cell {
+    /* Each slot is absolutely positioned */
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---- Corner sizes & positions (base 94x94 → 32x32) ---- */
+  .link-arrows-cell--topLeft,
+  .link-arrows-cell--topRight,
+  .link-arrows-cell--bottomLeft,
+  .link-arrows-cell--bottomRight {
+    width: 34%;
+    height: 34%;
+    z-index: 1;
+  }
+
+  $spaceFromBorder: calc(#{$tinySpacing});
+
+  .link-arrows-cell--topLeft {
+    top: $spaceFromBorder;
+    left: $spaceFromBorder;
+  }
+
+  .link-arrows-cell--topRight {
+    top: $spaceFromBorder;
+    right: $spaceFromBorder;
+  }
+
+  .link-arrows-cell--bottomLeft {
+    bottom: $spaceFromBorder;
+    left: $spaceFromBorder;
+  }
+
+  .link-arrows-cell--bottomRight {
+    bottom: $spaceFromBorder;
+    right: $spaceFromBorder;
+  }
+
+  /* ---- Cardinal sizes & positions ---- */
+  .link-arrows-cell--top,
+  .link-arrows-cell--bottom {
+    width: 46.8%;
+    height: 25.5%;
+    left: 26.6%;
+    z-index: 2;
+  }
+
+  .link-arrows-cell--top {
+    top: $spaceFromBorder;
+  }
+
+  .link-arrows-cell--bottom {
+    bottom: $spaceFromBorder;
+  }
+
+  .link-arrows-cell--left,
+  .link-arrows-cell--right {
+    width: 25.5%;
+    height: 46.8%;
+    top: 26.6%;
+    z-index: 2;
+  }
+
+  .link-arrows-cell--left {
+    left: $spaceFromBorder;
+  }
+
+  .link-arrows-cell--right {
+    right: $spaceFromBorder;
+  }
+
+  /* ---- Checkbox + triangle visuals ---- */
+
+  .link-arrows-checkbox {
+    /* Hide the native checkbox visually */
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .link-arrows-triangle {
+    /* Make the label fill its slot with inner margin */
+    width: 100%;
+    height: 100%;
+    padding: 3%; /* base */
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .link-arrows-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .link-arrows-shape {
+    /* Default inactive color */
+    fill: color-hsl($bg4);
+
+    /* Outline similar to the card frame */
+    stroke: color-hsl($fg1);
+    stroke-width: 3px;
+  }
+
+  .link-arrows-checkbox:checked + .link-arrows-triangle .link-arrows-shape {
+    /* Activated triangle color (red) */
+    fill: hsl(0deg 100% 50%);
+  }
+
+  .link-arrows-triangle:hover .link-arrows-shape,
+  .link-arrows-checkbox:focus-visible + .link-arrows-triangle .link-arrows-shape {
+    /* Slightly brighter when hovered or focused */
+    fill: color-hsl($bg1);
+  }
+
+  .link-arrows-cell--top .link-arrows-triangle,
+  .link-arrows-cell--bottom .link-arrows-triangle {
+    /* Wide but short -> smaller vertical padding */
+    padding-inline: 8%;
+    padding-block: 3%;
+  }
+
+  .link-arrows-cell--left .link-arrows-triangle,
+  .link-arrows-cell--right .link-arrows-triangle {
+    /* Tall but narrow -> padding proportionnellement plus grand possible */
+    padding-inline: 3%;
+    padding-block: 8%;
+  }
+
+  /* ----- Orientation handling ----- */
+
+  /* Cardinals now have dedicated polygons, so no rotation needed */
+
+  /* Corner triangles: we rotate the square to reuse the same polygon */
+
+  .link-arrows-triangle--topRight {
+    transform: rotate(90deg);
+  }
+
+  .link-arrows-triangle--bottomRight {
+    transform: rotate(180deg);
+  }
+
+  .link-arrows-triangle--bottomLeft {
+    transform: rotate(-90deg);
+  }
+}
+
+.codexygo-card-search {
+  .selectable-card {
+    padding: calc(#{$smallSpacing});
+    padding-bottom: calc(#{$tinySpacing});
+
+    .codexygo-card-display {
+      height: 100%;
+    }
+
+    &.selected {
+      $borderSize: 2px;
+      border: $borderSize solid color-hsl($primary);
+
+      padding: calc(#{$smallSpacing} - #{$borderSize});
+      padding-bottom: calc(#{$tinySpacing} - #{$borderSize});
+    }
+  }
+}
+
+.codexygo-card-display {
+  .mn-image {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+  }
+
+  .mn-typography {
+    margin: 0 auto;
+    max-width: 100%;
+    @include themeFont('small');
+
+    &.bold-weight {
+      font-weight: bold;
+    }
+  }
+}

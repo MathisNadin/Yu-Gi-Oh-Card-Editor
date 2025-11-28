@@ -1,7 +1,12 @@
 ## mn-toolkit change log
 
+## 8.6.3
+
+- ajout alignment space-between
+
 ## 8.6.2
 
+- bump to 8.6.2
 - fix label select
 - Merge branch 'master' of https://github.com/MathisNadin/mn-toolkit
 - tests masonry utilisant grid

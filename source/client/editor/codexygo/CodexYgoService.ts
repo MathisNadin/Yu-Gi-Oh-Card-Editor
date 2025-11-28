@@ -13,6 +13,7 @@ import {
   IContentCardContentBlock,
   TCodexYgoCardLanguage,
 } from './interfaces';
+import { CodexYgoCardListDialog } from './CodexYgoCardListDialog';
 
 export class CodexYgoService {
   public readonly masterCardBack = require('assets/images/master-card-back-en.png') as string;
@@ -27,6 +28,12 @@ export class CodexYgoService {
     const { displayName, version, author, repository } = app.conf;
     if (displayName && version && repository.url && author.email) {
       this.userAgent = `${displayName}/${version} (${repository.url}; ${author.email})`;
+    }
+
+    if (app.$device.isElectron(window)) {
+      window.electron.ipcRenderer.addListener('importCodexYgoCards', () =>
+        app.$errorManager.handlePromise(app.$codexygo.showCardListDialog())
+      );
     }
   }
 
@@ -98,9 +105,18 @@ export class CodexYgoService {
     return isArray(data?.result) ? data.result : [];
   }
 
+  public async countCards(options: ICodexYgoCardListOptions): Promise<number> {
+    const data = await this.electronAxiosPost<number>('card/count', options);
+    return isNumber(data?.result) ? data.result : 0;
+  }
+
   public async listCards(options: ICodexYgoCardListOptions): Promise<ICodexYgoCardEntity[]> {
     const data = await this.electronAxiosPost<ICodexYgoCardEntity[]>('card/list', options);
     return isArray(data?.result) ? data.result : [];
+  }
+
+  public async showCardListDialog() {
+    await CodexYgoCardListDialog.show();
   }
 
   /** ----------------------------- Article Tools ----------------------------- */
@@ -268,7 +284,7 @@ export class CodexYgoService {
 
   /** ------------------------------ Card Tools ------------------------------ */
 
-  private getCardFromCodexCard(codexCard: TEntityDraft<ICodexYgoCardEntity>, language: TCodexYgoCardLanguage): ICard {
+  public getCardFromCodexCard(codexCard: TEntityDraft<ICodexYgoCardEntity>, language: TCodexYgoCardLanguage): ICard {
     const card = app.$card.defaultImportCard;
 
     const isFr = language === 'fr_fr';

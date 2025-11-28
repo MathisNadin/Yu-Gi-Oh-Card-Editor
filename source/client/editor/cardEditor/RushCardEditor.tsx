@@ -392,7 +392,7 @@ export class RushCardEditor extends Container<IRushCardEditorProps, IRushCardEdi
 
   public get children() {
     return [
-      <HorizontalStack key='top-options' wrap padding gutter className='top-options'>
+      <HorizontalStack key='top-options' wrap padding gutter itemAlignment='space-between' className='top-options'>
         <Button
           disabled={this.state.rendering}
           size='small'

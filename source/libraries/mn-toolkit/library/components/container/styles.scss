@@ -197,6 +197,12 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
     }
   }
 
+  &.mn-layout-item-align-space-between {
+    > .mn-container-inside {
+      justify-content: space-between;
+    }
+  }
+
   &.mn-layout-horizontal-stack {
     > .mn-container-inside {
       flex-direction: row;
@@ -226,6 +232,13 @@ $container-scroll-x-inside-height-margin: var(--container-scroll-x-inside-height
       > .mn-container-inside {
         align-items: flex-end;
         justify-content: initial;
+      }
+    }
+
+    &.mn-layout-item-align-space-between {
+      > .mn-container-inside {
+        align-items: stretch;
+        justify-content: space-between;
       }
     }
 
