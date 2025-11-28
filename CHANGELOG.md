@@ -1,7 +1,25 @@
 ## yu-gi-oh-card-editor change log
 
+## 3.0.0
+
+- rajout de l'option legend
+- autre option pouvant indiquer une LEGEND sur yugipedia
+- incentive à utiliser l'import codex depuis le dialog d'imports d'urls
+- utiliser yugipedia slug pour aller plus vite
+- ajout des options import image et card set sur le dialog codex
+- ajout dialog import codex + link arrow editor
+- ajustements visuels des layouts
+- pas de sens pour les autres
+- meilleurs espacements sur les choice effects dans l'éditeur
+- up libs
+- nouvelle logique d'ajustement de font size et line height
+- fix gen passcode sur import codexygo
+- fix line height span texts
+- up libs et fixs des erreurs
+
 ## 2.4.1
 
+- bump to 2.4.1
 - fix import du code jap des cartes yugipedia
 - import de l'image yugipedia plus fiable
 - suppression du support yuginews
