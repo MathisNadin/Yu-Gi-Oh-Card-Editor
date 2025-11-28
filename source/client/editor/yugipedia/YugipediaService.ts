@@ -10,6 +10,7 @@ import { WikitextCardParser } from './parsers';
 
 interface IGetCardPageOptions {
   cardDbId?: string | number;
+  yugipediaSlug?: string;
   enCardName?: string;
   isRush: boolean;
 }
@@ -342,11 +343,13 @@ export class YugipediaService {
   }
 
   public async getCardPage(options: IGetCardPageOptions) {
-    const { cardDbId, enCardName, isRush } = options;
+    const { cardDbId, yugipediaSlug, enCardName, isRush } = options;
 
     const isMasterSkill = typeof cardDbId === 'number' && !isNaN(cardDbId) && cardDbId < 0;
     const titles: string[] = [];
     const errors: Error[] = [];
+
+    if (yugipediaSlug) titles.push(yugipediaSlug);
 
     if (cardDbId && !isMasterSkill) titles.push(`${cardDbId}`);
 

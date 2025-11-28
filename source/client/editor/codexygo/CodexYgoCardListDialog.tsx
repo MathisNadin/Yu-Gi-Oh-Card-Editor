@@ -124,6 +124,7 @@ export class CodexYgoCardListDialog extends AbstractPopup<
             cardDbId: codexCard.konamiId,
             isRush: !!codexCard.rush,
             enCardName: codexCard.translations.en_us?.name,
+            yugipediaSlug: codexCard.yugipediaSlug,
           });
 
           if (yugipediaCardPage) {
