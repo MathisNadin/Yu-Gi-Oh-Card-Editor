@@ -4,9 +4,15 @@ import {
   IYugipediaCard,
   IYugipediaGetCardImgApiResponse,
   IYugipediaGetCardPageImgApiResponse,
-  IYugipediaGetPageByTitleApiResponse,
+  IYugipediaGetPageByUrlOrTitleApiResponse,
 } from '.';
 import { WikitextCardParser } from './parsers';
+
+interface IGetCardPageOptions {
+  cardDbId?: string | number;
+  enCardName?: string;
+  isRush: boolean;
+}
 
 export interface IReplaceMatrix {
   toReplace: string;
@@ -101,7 +107,10 @@ export class YugipediaService {
     );
   }
 
-  private async getCardImageUrl(yugipediaCard: IYugipediaCard, yugipediaCardPage: IYugipediaGetPageByTitleApiResponse) {
+  private async getCardImageUrl(
+    yugipediaCard: IYugipediaCard,
+    yugipediaCardPage: IYugipediaGetPageByUrlOrTitleApiResponse
+  ) {
     let fileName = yugipediaCard.image;
     if (!fileName) {
       const pageKeys = Object.keys(yugipediaCardPage.query.pages);
@@ -158,17 +167,19 @@ export class YugipediaService {
    * Generic function to fetch a page by title.
    * This function manages redirects by recursively calling itself if needed.
    */
-  private async getPageByTitle(pageTitle: string): Promise<IYugipediaGetPageByTitleApiResponse | undefined> {
+  private async getPageByUrlOrTitle(
+    pageUrlOrTitle: string
+  ): Promise<IYugipediaGetPageByUrlOrTitleApiResponse | undefined> {
     try {
       // Decode URL encoded characters in one step
       // and replace spaces with underscores and adjust invalid characters as needed
-      const titles = decodeURIComponent(pageTitle)
+      const titles = decodeURIComponent(pageUrlOrTitle)
         .replace(/ /g, '_') // replace spaces with underscores
         .replace(/\[/g, '(') // replace [ with (
         .replace(/\]/g, ')') // replace ] with )
         .replace(/[<>#]/g, ''); // remove <, >, and #
 
-      const response = await this.electronAxiosGet<IYugipediaGetPageByTitleApiResponse>({
+      const response = await this.electronAxiosGet<IYugipediaGetPageByUrlOrTitleApiResponse>({
         action: 'query',
         titles,
         prop: 'revisions',
@@ -190,7 +201,7 @@ export class YugipediaService {
       const redirectMatch = content.match(/#REDIRECT\s+\[\[([^\]]+)\]\]/i);
       if (redirectMatch && redirectMatch[1]) {
         // Recursively fetch the page using the new title from the redirect
-        return await this.getPageByTitle(redirectMatch[1]);
+        return await this.getPageByUrlOrTitle(redirectMatch[1]);
       } else {
         return response;
       }
@@ -199,15 +210,14 @@ export class YugipediaService {
     }
   }
 
-  private buildEditorCard(yugipediaCard: IYugipediaCard, useFr: boolean): ICard {
+  public buildEditorCard(yugipediaCard: IYugipediaCard, useFr: boolean): ICard {
     const frTranslations = yugipediaCard.translations.fr_fr;
     const enTranslations = yugipediaCard.translations.en_us;
 
-    let cardSet: ICard['cardSet'] | undefined;
+    let cardSet: ICard['cardSet'] | undefined =
+      yugipediaCard.enPrints[0]?.code || yugipediaCard.naPrints[0]?.code || yugipediaCard.jpPrints[0]?.code;
     if (useFr) {
-      cardSet = yugipediaCard.frPrints[0]?.code;
-    } else {
-      cardSet = yugipediaCard.enPrints[0]?.code || yugipediaCard.naPrints[0]?.code || yugipediaCard.jpPrints[0]?.code;
+      cardSet = yugipediaCard.frPrints[0]?.code || cardSet;
     }
 
     let edition: ICard['edition'] | undefined;
@@ -331,6 +341,39 @@ export class YugipediaService {
     return 'regular';
   }
 
+  public async getCardPage(options: IGetCardPageOptions) {
+    const { cardDbId, enCardName, isRush } = options;
+
+    const isMasterSkill = typeof cardDbId === 'number' && !isNaN(cardDbId) && cardDbId < 0;
+    const titles: string[] = [];
+    const errors: Error[] = [];
+
+    if (cardDbId && !isMasterSkill) titles.push(`${cardDbId}`);
+
+    if (enCardName) {
+      if (isRush) titles.push(`${enCardName} (Rush Duel)`);
+      if (isRush || isMasterSkill) titles.push(`${enCardName} (Skill Card)`);
+      if (!isMasterSkill) titles.push(`${enCardName} (card)`);
+      titles.push(enCardName);
+    }
+
+    for (const title of titles) {
+      try {
+        const response = await this.getPageByUrlOrTitle(title);
+        if (response) return response;
+      } catch (error) {
+        errors.push(error as Error);
+      }
+    }
+
+    // If everything failed, show all errors
+    for (const error of errors) {
+      app.$errorManager.trigger(error);
+    }
+
+    return undefined;
+  }
+
   public async importCard(options: {
     titles: string;
     useFr: boolean;
@@ -341,7 +384,7 @@ export class YugipediaService {
   }): Promise<ICard | undefined> {
     const { titles, useFr, generatePasscode, replaceMatrixes, importArtwork, artworkDirectoryPath } = options;
 
-    const yugipediaCardPage = await this.getPageByTitle(titles);
+    const yugipediaCardPage = await this.getPageByUrlOrTitle(titles);
     if (!yugipediaCardPage) return undefined;
 
     const yugipediaCard = new WikitextCardParser(yugipediaCardPage).parse();
@@ -413,7 +456,7 @@ export class YugipediaService {
 
   private async importArtwork(
     yugipediaCard: IYugipediaCard,
-    yugipediaCardPage: IYugipediaGetPageByTitleApiResponse,
+    yugipediaCardPage: IYugipediaGetPageByUrlOrTitleApiResponse,
     editorCard: ICard,
     artworkDirectoryPath: string
   ) {

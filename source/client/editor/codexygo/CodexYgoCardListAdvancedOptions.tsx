@@ -1,8 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import {
   ButtonIcon,
+  CheckboxField,
   Chips,
   HorizontalStack,
+  Icon,
   Image,
   IMasonryProps,
   ISelectItem,
@@ -1151,7 +1153,49 @@ const TopOptionsSection: FC<ISectionProps> = ({ options, onChange }) => {
   );
 };
 
-interface ICodexYgoCardListAdvancedOptionsProps extends ISectionProps {
+interface ICheckboxesSectionProps {
+  importArtworks: boolean;
+  onImportArtworksChange: (importArtworks: boolean) => void;
+  withSetId: boolean;
+  onWithSetIdChange: (withSetId: boolean) => void;
+}
+
+const CheckboxesSection: FC<ICheckboxesSectionProps> = ({
+  importArtworks,
+  onImportArtworksChange,
+  withSetId,
+  onWithSetIdChange,
+}) => {
+  return (
+    <HorizontalStack gutterX='large' gutterY='small' wrap itemAlignment='space-between'>
+      <CheckboxField
+        fieldId='importArtworks'
+        fieldName='importArtworks'
+        label='Importer les images'
+        value={importArtworks}
+        onChange={onImportArtworksChange}
+      />
+
+      <HorizontalStack
+        gutter='small'
+        verticalItemAlignment='middle'
+        hint="Ceci utilise Yugipedia, l'import sera donc plus lent"
+        onTap={() => onWithSetIdChange(!withSetId)}
+      >
+        <CheckboxField
+          fieldId='withSetId'
+          fieldName='withSetId'
+          label='Importer les IDs de set'
+          value={withSetId}
+          onChange={() => {}}
+        />
+        <Icon size='regular' icon='toolkit-info-circle' />
+      </HorizontalStack>
+    </HorizontalStack>
+  );
+};
+
+interface ICodexYgoCardListAdvancedOptionsProps extends ISectionProps, ICheckboxesSectionProps {
   colSpans?: IVerticalStackProps['colSpans'];
 }
 
@@ -1159,6 +1203,10 @@ export const CodexYgoCardListAdvancedOptions: FC<ICodexYgoCardListAdvancedOption
   colSpans,
   options,
   onChange,
+  importArtworks,
+  onImportArtworksChange,
+  withSetId,
+  onWithSetIdChange,
 }) => {
   // Clean options when format changes
   useEffect(() => {
@@ -1170,7 +1218,16 @@ export const CodexYgoCardListAdvancedOptions: FC<ICodexYgoCardListAdvancedOption
 
   return (
     <VerticalStack className='mn-card-list-advanced-options' gutter='large' colSpans={colSpans}>
-      <TopOptionsSection options={options} onChange={onChange} />
+      <VerticalStack gutter>
+        <CheckboxesSection
+          importArtworks={importArtworks}
+          onImportArtworksChange={onImportArtworksChange}
+          withSetId={withSetId}
+          onWithSetIdChange={onWithSetIdChange}
+        />
+        <TopOptionsSection options={options} onChange={onChange} />
+      </VerticalStack>
+
       <SearchTypeSection options={options} onChange={onChange} />
       <CardTypeSection options={options} onChange={onChange} />
       <AttributeSection options={options} onChange={onChange} />

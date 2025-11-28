@@ -61,9 +61,13 @@ export function decideSearchMode(
 }
 
 interface ICodexYgoCardSearchProps {
+  onSelectionChange: (cards: ICodexYgoCardEntity[]) => void;
   initialLanguage: TCodexYgoCardLanguage;
   onLanguageChange: (language: TCodexYgoCardLanguage) => void;
-  onSelectionChange: (cards: ICodexYgoCardEntity[]) => void;
+  importArtworks: boolean;
+  onImportArtworksChange: (importArtworks: boolean) => void;
+  withSetId: boolean;
+  onWithSetIdChange: (withSetId: boolean) => void;
 }
 
 interface ICardWithImageUrl {
@@ -78,9 +82,13 @@ const PAGE_SIZE = 8;
  * Applies debounce to API calls
  */
 export const CodexYgoCardSearch: FC<ICodexYgoCardSearchProps> = ({
+  onSelectionChange,
   initialLanguage,
   onLanguageChange,
-  onSelectionChange,
+  importArtworks,
+  onImportArtworksChange,
+  withSetId,
+  onWithSetIdChange,
 }) => {
   // State management
   const [advancedListOptions, setAdvancedListOptions] = useState<ICodexYgoCardListAdvancedOptions>({
@@ -229,7 +237,14 @@ export const CodexYgoCardSearch: FC<ICodexYgoCardSearchProps> = ({
   return (
     <HorizontalStack className='codexygo-card-search' gutter='large' maxHeight='100%'>
       <VerticalStack scroll minWidth='40%' maxWidth='40%'>
-        <CodexYgoCardListAdvancedOptions options={advancedListOptions} onChange={handleAdvancedOptionsChange} />
+        <CodexYgoCardListAdvancedOptions
+          options={advancedListOptions}
+          onChange={handleAdvancedOptionsChange}
+          importArtworks={importArtworks}
+          onImportArtworksChange={onImportArtworksChange}
+          withSetId={withSetId}
+          onWithSetIdChange={onWithSetIdChange}
+        />
       </VerticalStack>
 
       <VerticalStack gutter='small' fill>

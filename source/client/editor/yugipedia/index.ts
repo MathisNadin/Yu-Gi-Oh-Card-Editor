@@ -1,6 +1,7 @@
 import { IScales, TFrame, TLinkArrows, TStIcon } from '../card';
 import { YugipediaService } from './YugipediaService';
 
+export * from './parsers';
 export * from './YugipediaService';
 
 declare global {
@@ -9,7 +10,7 @@ declare global {
   }
 }
 
-export interface IYugipediaGetPageByTitleApiResponse {
+export interface IYugipediaGetPageByUrlOrTitleApiResponse {
   batchcomplete: string;
   query: {
     normalized?: {

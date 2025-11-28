@@ -263,6 +263,7 @@
 
   .mn-typography {
     margin: 0 auto;
+    padding: 0 4px;
     max-width: 100%;
     @include themeFont('small');
 
