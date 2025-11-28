@@ -237,6 +237,10 @@ export class WikitextCardParser extends AbstractWikitextParser {
     else if (line.includes('| misc') && line.includes('Legend Card')) {
       this.card.legend = true;
     }
+    // --- Process Legend Card status (other way those are labelled)
+    else if (line === '* Legend Card') {
+      this.card.legend = true;
+    }
     // --- Process image name
     else if (line.includes('| image')) {
       this.card.image = this.getMetadataLineValue(line);
