@@ -40,6 +40,9 @@ interface ICardImportDialogState extends IAbstractPopupState {
   cardsImported: number;
 }
 
+const CODEX_YGO_IMPORT_INCENTIVE =
+  "<span>Sinon, vous pouvez importer directement depuis la base de données CodexYGO en cliquant sur l'icone en bas à droite de la <strong>Bibliothèque</strong>, ou en appuyant sur <strong>F4</strong>.</span>";
+
 export class CardImportDialog extends AbstractPopup<void, ICardImportDialogProps, ICardImportDialogState> {
   private yugipediaLogo = require(`assets/images/yugipediaLogo.png`) as string;
   private codexygoLogo = require(`assets/images/codexygoLogo.png`) as string;
@@ -331,7 +334,6 @@ export class CardImportDialog extends AbstractPopup<void, ICardImportDialogProps
           variant='help'
           content='Collez les liens Yugipedia de cartes (revenir à la ligne entre chaque lien)'
         />
-
         <TextAreaInput
           minRows={5}
           maxRows={15}
@@ -339,6 +341,7 @@ export class CardImportDialog extends AbstractPopup<void, ICardImportDialogProps
           value={yugipediaImport}
           onChange={(yugipediaImport) => this.setState({ yugipediaImport })}
         />
+        <Typography variant='help' fontSize='tiny' contentType='html' content={CODEX_YGO_IMPORT_INCENTIVE} />
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
           <Checkbox label='Textes français' value={useFr} onChange={(useFr) => this.setState({ useFr })} />
@@ -417,11 +420,14 @@ export class CardImportDialog extends AbstractPopup<void, ICardImportDialogProps
           value={codexYgoImport}
           onChange={(codexYgoImport) => this.setState({ codexYgoImport })}
         />
-        <Typography
-          variant='help'
-          fontSize='tiny'
-          content="Cela n'importera que les cartes qui sont affichées en entier dans les articles, pas celles uniquement mentionnées dans du texte."
-        />
+        <VerticalStack gutter='small'>
+          <Typography
+            variant='help'
+            fontSize='tiny'
+            content="Cela n'importera que les cartes qui sont affichées en entier dans les articles, pas celles uniquement mentionnées dans du texte."
+          />
+          <Typography variant='help' fontSize='tiny' contentType='html' content={CODEX_YGO_IMPORT_INCENTIVE} />
+        </VerticalStack>
 
         <HorizontalStack verticalItemAlignment='middle' gutter>
           {app.$yugipedia.enablePrivateUsage && (
