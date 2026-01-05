@@ -1,7 +1,13 @@
 ## yu-gi-oh-card-editor change log
 
+## 3.0.1
+
+- up libs
+- nativeImage -> image-size pour pouvoir gérer les webp
+
 ## 3.0.0
 
+- bump to 3.0.0
 - rajout de l'option legend
 - autre option pouvant indiquer une LEGEND sur yugipedia
 - incentive à utiliser l'import codex depuis le dialog d'imports d'urls
