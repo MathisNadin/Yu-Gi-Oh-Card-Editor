@@ -620,7 +620,14 @@ prototype.isThisWeek = function (this: Date): boolean {
  * @returns True if it is next week.
  */
 prototype.isNextWeek = function (this: Date): boolean {
-  return this.isThisYear() && this.getWeekNumber() === new Date().toNextWeek().getWeekNumber();
+  const nextWeek = new Date().toNextWeek();
+  const thisYear = this.getFullYear();
+  const nextWeekYear = nextWeek.getFullYear();
+  const thisWeekNum = this.getWeekNumber();
+  const nextWeekNum = nextWeek.getWeekNumber();
+
+  // Compare year and week number together
+  return thisYear === nextWeekYear && thisWeekNum === nextWeekNum;
 };
 
 /**
@@ -628,7 +635,14 @@ prototype.isNextWeek = function (this: Date): boolean {
  * @returns True if it is the previous week.
  */
 prototype.isPreviousWeek = function (this: Date): boolean {
-  return this.isThisYear() && this.getWeekNumber() === new Date().toPreviousWeek().getWeekNumber();
+  const previousWeek = new Date().toPreviousWeek();
+  const thisYear = this.getFullYear();
+  const previousWeekYear = previousWeek.getFullYear();
+  const thisWeekNum = this.getWeekNumber();
+  const previousWeekNum = previousWeek.getWeekNumber();
+
+  // Compare year and week number together
+  return thisYear === previousWeekYear && thisWeekNum === previousWeekNum;
 };
 
 /**

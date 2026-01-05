@@ -20,7 +20,9 @@ $contentHeight: calc($inputHeight - #{$smallSpacing});
 
     > .mn-container-inside {
       > .prop-icon-container-button,
-      > .prop-icon {
+      > .prop-icon,
+      > .status-icon-container-button,
+      > .status-icon {
         margin: calc(-1 * #{$smallSpacing}) 0;
       }
     }
@@ -132,7 +134,7 @@ $contentHeight: calc($inputHeight - #{$smallSpacing});
 
   &.required {
     .form-label-container {
-      .mn-typography::after {
+      .form-label::after {
         content: '*';
         @include themeFont('medium');
         line-height: 100%;

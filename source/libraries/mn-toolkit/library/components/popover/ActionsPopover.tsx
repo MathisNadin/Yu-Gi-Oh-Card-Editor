@@ -1,4 +1,4 @@
-import { classNames, isString } from 'mn-tools';
+import { classNames, isDefined, isString } from 'mn-tools';
 import { IRouterHrefParams, TRouterState, TBackgroundColor, TForegroundColor } from '../../system';
 import { VerticalStack } from '../container';
 import { Typography } from '../typography';
@@ -37,6 +37,7 @@ type TActionsPopoverPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bott
 export interface IActionsPopoverProps<ID = number> extends IAbstractPopoverProps {
   maxVisibleActions?: number;
   actionHeight?: number;
+  separatorHeight?: number;
   actions: IActionsPopoverAction<ID>[];
 }
 
@@ -51,9 +52,12 @@ export class ActionsPopover<
   S extends IActionsPopoverState<ID> = IActionsPopoverState<ID>,
 > extends AbstractPopover<P, S> {
   public static override get defaultProps(): Omit<IActionsPopoverProps, 'actions'> {
+    const smallSpacing = app.$theme.settings.commons?.['small-spacing']?.value || 8;
     return {
       ...super.defaultProps,
       actionHeight: app.$theme.settings.commons?.['default-item-height']?.value || 32,
+      // Margin + border
+      separatorHeight: 2 + smallSpacing * 2,
     };
   }
 
@@ -62,7 +66,7 @@ export class ActionsPopover<
     if (!targetElement) return;
 
     const targetRectangle = targetElement.getBoundingClientRect();
-    const actions = propsActions.filter((a) => !!a);
+    const actions = propsActions.filter(isDefined);
     actions.sort((a, b) => (a.weight || 0) - (b.weight || 0));
 
     const elementBottom = targetRectangle.bottom;
@@ -74,13 +78,17 @@ export class ActionsPopover<
     const preferredHeight = syncHeight ? targetRectangle.height : this.props.height;
     const preferredWidth = syncWidth ? targetRectangle.width : this.props.width!;
     const actionHeight = this.props.actionHeight!;
+    const separatorHeight = this.props.separatorHeight!;
 
     let totalActions = actions.length;
     let maxActionsHeight = 0;
     for (let i = 0; i < totalActions; i++) {
       if (maxVisibleActions && i === maxVisibleActions) break;
-      if (actions[i]!.separator) maxActionsHeight += 1;
-      else maxActionsHeight += actionHeight;
+      if (actions[i]?.separator) {
+        maxActionsHeight += separatorHeight;
+      } else {
+        maxActionsHeight += actionHeight;
+      }
     }
 
     let popoverHeight = preferredHeight ? Math.min(preferredHeight, maxActionsHeight) : maxActionsHeight;

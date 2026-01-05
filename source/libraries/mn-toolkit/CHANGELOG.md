@@ -1,7 +1,24 @@
 ## mn-toolkit change log
 
+## 8.6.6
+
+- fix margin icons dans input-wrapper + popp-overlay + min height de placeholder dans sortable en mode wrap
+
+## 8.6.5
+
+- bump to 8.6.5
+- revamp complet du visuel et du fonctionnel du Sortable
+
+## 8.6.4
+
+- bump to 8.6.4
+- fix reset block tag sur la line-height
+- fix form label required style
+- fix separator height dans les actions popovers
+
 ## 8.6.3
 
+- bump to 8.6.3
 - ajout alignment space-between
 
 ## 8.6.2

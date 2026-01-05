@@ -34,6 +34,15 @@ $popup-active-animation-duration: var(--popup-active-animation-duration);
 $popup-hidding-animation-name: var(--popup-hidding-animation-name);
 $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
 
+@keyframes popupOverlayFadeIn {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: hsl(0deg 0% 0% / 15%);
+  }
+}
+
 @mixin themePopups() {
   @include fill-all();
   pointer-events: none;
@@ -46,6 +55,13 @@ $popup-hidding-animation-duration: var(--popup-hidding-animation-duration);
   &.active {
     transition: background-color 0.4s ease;
     background-color: hsl(0deg 0% 0% / 30%);
+    pointer-events: auto;
+  }
+
+  .mn-popup-overlay {
+    @include fill-all();
+    animation: popupOverlayFadeIn 0.3s ease forwards;
+    z-index: $z-index-popup;
     pointer-events: auto;
   }
 

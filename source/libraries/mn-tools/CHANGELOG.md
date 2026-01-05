@@ -1,7 +1,12 @@
 ## mn-tools change log
 
+## 2.4.2
+
+- fix isPreviousWeek et isNextYear pour les edge cases
+
 ## 2.4.1
 
+- bump to 2.4.1
 - utilitaires type Undefinable
 
 ## 2.4.0

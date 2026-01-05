@@ -1,95 +1,213 @@
+/**
+ * Main theme mixin for Sortable component.
+ * Handles all visual aspects including drag states, handlers, and layouts.
+ */
 @mixin themeSortable() {
-  &.mn-layout-gutter {
-    &.mn-layout-gutter-tiny {
-      > .mn-container-inside {
-        row-gap: 0;
+  // Add visual feedback when dragging is active
+  &.is-dragging {
+    user-select: none;
 
-        .mn-sortable-item {
-          padding-top: calc(#{$tinySpacing} / 2);
-          padding-bottom: calc(#{$tinySpacing} / 2);
-        }
-      }
-    }
-    &.mn-layout-gutter-small {
-      > .mn-container-inside {
-        row-gap: 0;
-
-        .mn-sortable-item {
-          padding-top: calc(#{$smallSpacing} / 2);
-          padding-bottom: calc(#{$smallSpacing} / 2);
-        }
-      }
-    }
-    &.mn-layout-gutter-default {
-      > .mn-container-inside {
-        row-gap: 0;
-
-        .mn-sortable-item {
-          padding-top: calc(#{$defaultSpacing} / 2);
-          padding-bottom: calc(#{$defaultSpacing} / 2);
-        }
-      }
-    }
-    &.mn-layout-gutter-large {
-      > .mn-container-inside {
-        row-gap: 0;
-
-        .mn-sortable-item {
-          padding-top: calc(#{$largeSpacing} / 2);
-          padding-bottom: calc(#{$largeSpacing} / 2);
-        }
-      }
-    }
-    &.mn-layout-gutter-huge {
-      > .mn-container-inside {
-        row-gap: 0;
-
-        .mn-sortable-item {
-          padding-top: calc(#{$hugeSpacing} / 2);
-          padding-bottom: calc(#{$hugeSpacing} / 2);
-        }
-      }
+    // Enable smooth transitions for direct child items only during drag
+    > .mn-container-inside > .mn-sortable-item {
+      transition: transform 0.2s ease;
     }
   }
 
-  .mn-sortable-item {
+  // Visual placeholder that shows where the dragged item will be inserted
+  > .mn-container-inside > .mn-sortable-placeholder {
     display: flex;
+    position: relative;
+    opacity: 0;
+    border-radius: 4px;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
 
-    > .handler {
-      width: 20px;
-      max-width: 20px;
-      align-self: center;
-      text-align: center;
-      cursor: grab;
-      * {
-        pointer-events: none;
+    @include themeSortablePlaceholderColor();
+
+    // Vertical layout placeholder
+    &.layout-vertical {
+      flex-direction: row;
+      align-items: center;
+      height: auto;
+
+      // Animate appearance
+      animation: placeholderFadeIn 0.15s ease forwards;
+    }
+
+    // Horizontal layout placeholder
+    &.layout-horizontal {
+      flex-direction: column;
+      align-items: stretch;
+      width: auto;
+
+      // Animate appearance
+      animation: placeholderFadeIn 0.15s ease forwards;
+    }
+  }
+
+  @keyframes placeholderFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  // Only target direct child items, not nested sortable items
+  > .mn-container-inside > .mn-sortable-item {
+    display: flex;
+    position: relative;
+    transition: background 0.15s ease;
+
+    // Vertical layout (default) - only for direct children
+    &.layout-vertical {
+      flex-direction: row;
+      align-items: center;
+
+      > .sortable-item-content {
+        flex: 1;
+        min-width: 0; // Prevent flex item from overflowing
       }
     }
 
-    > * {
-      flex: 1;
+    // Horizontal layout - only for direct children
+    &.layout-horizontal {
+      flex-direction: column;
+      align-items: stretch;
+
+      > .sortable-item-content {
+        flex: 1;
+        min-height: 0; // Prevent flex item from overflowing
+      }
+
+      > .handler {
+        width: 100%;
+        max-width: 100%;
+        align-self: stretch;
+
+        &.handler-left {
+          padding-bottom: calc(#{$tinySpacing});
+        }
+
+        &.handler-right {
+          padding-top: calc(#{$tinySpacing});
+        }
+      }
     }
 
+    // Drag handler styling - only direct child handler
+    > .handler {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      max-width: 20px;
+      flex-shrink: 0;
+      cursor: grab;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+
+      // Prevent pointer events on icon to ensure handler receives all events
+      * {
+        pointer-events: none;
+      }
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      &:active {
+        cursor: grabbing;
+        opacity: 1;
+      }
+    }
+
+    // When item is draggable (handler is active or no handler mode)
     &[draggable='true'] {
-      > * {
+      cursor: grab;
+
+      // Prevent interaction with direct children during drag
+      > .sortable-item-content > * {
         pointer-events: none;
       }
 
       &:active {
-        cursor: grabbing !important;
+        cursor: grabbing;
       }
+    }
 
-      &.mn-drag-target {
-        background: linear-gradient(to bottom, transparent calc(100% - 4px), color-hsl($warning) calc(100% - 4px));
-      }
+    // Source item being dragged
+    &.drag-source {
+      opacity: 0.4;
 
-      &.mn-drag-target-above {
-        background: linear-gradient(to top, transparent calc(100% - 4px), color-hsl($info) calc(100% - 4px));
+      // Slightly scale down for visual feedback - only direct content
+      > .sortable-item-content {
+        transform: scale(0.95);
+        transition: transform 0.2s ease;
       }
     }
   }
 }
 
+/**
+ * Color theme mixin for sortable placeholder.
+ * Applies background and border colors based on the placeholder color class.
+ */
+@mixin themeSortablePlaceholderColor() {
+  &.color-primary {
+    @include colorizeSortablePlaceholder($primary);
+  }
+  &.color-secondary {
+    @include colorizeSortablePlaceholder($secondary);
+  }
+  &.color-tertiary {
+    @include colorizeSortablePlaceholder($tertiary);
+  }
+  &.color-positive {
+    @include colorizeSortablePlaceholder($positive);
+  }
+  &.color-negative {
+    @include colorizeSortablePlaceholder($negative);
+  }
+  &.color-neutral {
+    @include colorizeSortablePlaceholder($neutral);
+  }
+  &.color-warning {
+    @include colorizeSortablePlaceholder($warning);
+  }
+  &.color-info {
+    @include colorizeSortablePlaceholder($info);
+  }
+  &.color-1 {
+    @include colorizeSortablePlaceholder($bg1);
+  }
+  &.color-2 {
+    @include colorizeSortablePlaceholder($bg2);
+  }
+  &.color-3 {
+    @include colorizeSortablePlaceholder($bg3);
+  }
+  &.color-4 {
+    @include colorizeSortablePlaceholder($bg4);
+  }
+}
+
+/**
+ * Colorize mixin for sortable placeholder.
+ * Applies background and border colors for the placeholder.
+ */
+@mixin colorizeSortablePlaceholder($color) {
+  background: color-hsla($color, 0.1);
+  border: 2px dashed color-hsla($color, 0.4);
+}
+
+/**
+ * Main Sortable component styles.
+ * Apply the theme to all sortable containers.
+ */
 .mn-sortable {
   @include themeSortable();
 }

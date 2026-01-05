@@ -173,6 +173,8 @@
                 min-width: $separatorWidth;
                 max-width: $separatorWidth;
 
+                margin: calc(#{$smallSpacing}) calc(#{$tinySpacing});
+
                 background-color: color-hsla($fg1, 0.3);
               }
 

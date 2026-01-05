@@ -42,7 +42,10 @@ export class Popups extends Containable<IPopupsProps, IPopupsState> implements P
     log.debug('render', app.$popup.popups.length);
     return (
       <div ref={this.base} {...this.renderAttributes()}>
-        {app.$popup.popups.map((p) => p.element)}
+        {app.$popup.popups.map((p, i) => [
+          !!i && <div key={`popup-overlay-${i}`} className='mn-popup-overlay' />,
+          p.element,
+        ])}
       </div>
     );
   }

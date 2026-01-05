@@ -1,6 +1,6 @@
 import { isString } from 'mn-tools';
 import { TJSXElementChild } from '../../system';
-import { Sortable } from '../sortable';
+import { Sortable, ISortableProps } from '../sortable';
 import { Typography } from '../typography';
 import { IAbstractPopupProps, IAbstractPopupState, AbstractPopup } from './AbstractPopup';
 
@@ -11,6 +11,10 @@ export interface ISortableDialogItem<ID = string> {
 
 export interface ISortableDialogProps<ID = string> extends IAbstractPopupProps<ID[]> {
   items: ISortableDialogItem<ID>[];
+  sortableGutter?: ISortableProps['gutter'];
+  useHandler?: ISortableProps['useHandler'];
+  placeholderColor?: ISortableProps['placeholderColor'];
+  placeholderMinSize?: ISortableProps['placeholderMinSize'];
 }
 
 interface ISortableDialogState<ID = string> extends IAbstractPopupState {
@@ -25,6 +29,8 @@ export class SortableDialog<ID = string> extends AbstractPopup<
   public static override get defaultProps(): Omit<ISortableDialogProps<string>, 'items'> {
     return {
       ...super.defaultProps,
+      sortableGutter: 'small',
+      placeholderMinSize: 35,
     };
   }
 
@@ -48,12 +54,17 @@ export class SortableDialog<ID = string> extends AbstractPopup<
 
   protected override renderContent() {
     return [
-      <Sortable key='sortable' onSort={(from, to, before) => this.onSortItems(from, to, before)}>
+      <Sortable
+        key='sortable'
+        gutter={this.props.sortableGutter}
+        useHandler={this.props.useHandler}
+        placeholderColor={this.props.placeholderColor}
+        placeholderMinSize={this.props.placeholderMinSize}
+        onSort={(from, to, before) => this.onSortItems(from, to, before)}
+      >
         {this.state.items.map((item, i) => {
-          if (isString(item.content)) {
-            return <Typography key={i} variant='document' contentType='text' content={item.content} />;
-          }
-          return item.content;
+          if (!isString(item.content)) return item.content;
+          return <Typography key={i} paddingY='tiny' variant='document' contentType='text' content={item.content} />;
         })}
       </Sortable>,
     ];
