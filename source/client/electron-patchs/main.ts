@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { extname } from 'path';
 import { existsSync, statSync } from 'fs';
-import { app, IpcMainInvokeEvent, nativeImage } from 'electron';
+import { imageSizeFromFile } from 'image-size/fromFile';
+import { app, IpcMainInvokeEvent } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { normalizeError } from '../../libraries/mn-tools';
 import { addIpcMainHandleChannel } from '../../libraries/mn-electron-main';
@@ -44,21 +44,6 @@ declare global {
 // Ignore OS zoom as html-to-img does not handle it well
 app.commandLine.appendSwitch('force-device-scale-factor', '1');
 
-/**
- * Set of file extensions considered as image files.
- * This is a first-level filter before trying to decode the image.
- */
-const SUPPORTED_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
-
-/**
- * Returns true if the provided path looks like an image file path
- * based on its extension.
- */
-function isImageFilePath(filePath: string): boolean {
-  const ext = extname(filePath).toLowerCase();
-  return SUPPORTED_IMAGE_EXTENSIONS.has(ext);
-}
-
 export function patchIpcMain(_ipcMain: TIpcMain) {
   addIpcMainHandleChannel('getImageSizeFromPath', async (_event: IpcMainInvokeEvent, imagePath: string) => {
     try {
@@ -68,14 +53,8 @@ export function patchIpcMain(_ipcMain: TIpcMain) {
       const stat = statSync(imagePath);
       if (!stat.isFile()) return undefined;
 
-      // Check extension is an image extension
-      if (!isImageFilePath(imagePath)) return undefined;
-
-      // Let Electron decode the image
-      const img = nativeImage.createFromPath(imagePath);
-      const { width, height } = img.getSize();
-
-      // If Electron cannot decode it, size will be 0x0
+      // Let image-size decode the image
+      const { width, height } = await imageSizeFromFile(imagePath);
       if (!width || !height) return undefined;
 
       return Promise.resolve({ width, height });
